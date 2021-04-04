@@ -1,0 +1,4 @@
+# See https://git-scm.com/docs/gitignore for the syntaxes
+
+# Don't include any history files! It might make an accident... :scream:
+*hist*
