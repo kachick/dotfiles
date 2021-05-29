@@ -11,9 +11,6 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Customize to your needs...
-
-
 # My useful commands!
 alias git-switch-default='git checkout develop 2>/dev/null || git checkout development 2>/dev/null || git checkout main 2>/dev/null || git checkout trunk 2>/dev/null || git checkout master 2>/dev/null'
 alias git-current-branch='git symbolic-ref --short HEAD'
@@ -22,15 +19,13 @@ alias git-remote-upsteram="git remote | grep -E '^upstream$'|| git remote | grep
 alias git-delete-merged-branches="git branch --merged | grep -vE '((^\*)|^ *(main|master|develop|development|trunk)$)' | xargs -I % git branch -d %"
 alias git-cleanup-branches='git-switch-default && git pull $(git-remote-upsteram) $(git-current-branch) && git fetch $(git-remote-upsteram) --tags --prune && git-delete-merged-branches'
 
+# Overriding the definition of `modules/history/init.sh`
+HISTSIZE=100000
+SAVEHIST=4200000
 
-#
-# Workaround for: https://github.com/sorin-ionescu/prezto/issues/1744
-#
-export HISTFILE="${ZDOTDIR:-$HOME}/.zhistory" # The path to the history file.
-
-# Don't use asdf-ruby, at least https://github.com/asdf-vm/asdf-ruby/issues/204 and https://github.com/asdf-vm/asdf-ruby/pull/205 rsolved.
+# Don't use asdf-ruby, at least https://github.com/asdf-vm/asdf-ruby/issues/204 rsolved.
 source /usr/local/share/chruby/chruby.sh
-chruby ruby-3.0.0
+chruby 3.0
 
 # Don't use nvm. It is heavy.
 
