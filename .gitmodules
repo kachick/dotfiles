@@ -1,3 +1,4 @@
 [submodule ".zprezto"]
 	path = .zprezto
 	url = git@github.com:sorin-ionescu/prezto.git
+	ignore = dirty
