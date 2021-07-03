@@ -37,7 +37,14 @@ fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit
 compinit
 
+path=(
+    `npm bin --global` # https://qiita.com/joe-re/items/12987cdeee506dea3889
+    ${path}
+)
+
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # if (which zprof > /dev/null 2>&1) ;then
 #   zprof
 # fi
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"

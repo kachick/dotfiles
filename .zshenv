@@ -37,6 +37,7 @@ path=(
     # /usr/local/opt/gnu-sed/libexec/gnubin(N-/) # sed
     # /usr/local/opt/gnu-tar/libexec/gnubin(N-/) # tar
     # /usr/local/opt/grep/libexec/gnubin(N-/) # grep
+    /Users/kachick/bin(N-/)
     ${path}
 )
 manpath=(
