@@ -1,0 +1,16 @@
+[user]
+	email = kachick1@gmail.com
+	name = Kenichi Kamiya
+
+[core]
+	editor = code --wait
+[credential "https://github.com"]
+	helper =
+	helper = !/home/linuxbrew/.linuxbrew/Cellar/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/home/linuxbrew/.linuxbrew/Cellar/gh auth git-credential
+[init]
+	defaultBranch = main
+[color]
+	ui = true

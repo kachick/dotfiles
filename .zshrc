@@ -47,4 +47,11 @@ path=(
 #   zprof
 # fi
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+case ${OSTYPE} in
+	darwin*)
+		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+		;;
+	linux*)
+		export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+		;;
+esac

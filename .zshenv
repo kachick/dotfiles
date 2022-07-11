@@ -28,7 +28,7 @@ if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; t
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
-# To use GNU `ls` in Mac OS X. Required to prepare with `brew install coreutils` 
+# To use GNU `ls` in Mac OS X. Required to prepare with `brew install coreutils`
 # https://qiita.com/eumesy/items/3bb39fc783c8d4863c5f
 path=(
     /usr/local/opt/coreutils/libexec/gnubin(N-/) # coreutils
@@ -49,3 +49,4 @@ manpath=(
     # /usr/local/opt/grep/libexec/gnuman(N-/) # grep
     ${manpath}
 )
+. "$HOME/.cargo/env"
