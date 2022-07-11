@@ -6,9 +6,9 @@ Personal dotfiles for @kachick. Excluded sensitive commands/histories :yum:.
 
 At first, install one of terminal. (Or use vscode terminal.)
 
-* Windows - Windows Terminal
-* Mac OS - iTerm2 or tabby
-* Linux - tabby
+- Windows - Windows Terminal
+- Mac OS - iTerm2 or tabby
+- Linux - tabby
 
 Manually install belows
 
@@ -42,5 +42,5 @@ for i in $(seq 1 10); do time zsh -i -c exit; done
 
 ## Other references
 
-* [Linux - Pop! OS](https://github.com/kachick/times_kachick/issues/174)
-* [Colorize](https://github.com/kachick/times_kachick/issues/93)
+- [Linux - Pop! OS](https://github.com/kachick/times_kachick/issues/174)
+- [Colorize](https://github.com/kachick/times_kachick/issues/93)
