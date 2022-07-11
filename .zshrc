@@ -25,7 +25,7 @@ SAVEHIST=4200000
 
 # Don't use asdf-ruby, at least https://github.com/asdf-vm/asdf-ruby/issues/204 rsolved.
 source /usr/local/share/chruby/chruby.sh
-chruby 3.0
+chruby 3.1
 
 # Don't use nvm. It is heavy.
 
