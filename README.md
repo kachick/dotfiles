@@ -1,6 +1,6 @@
-# What is this repository
+# public_dotfiles
 
-Personal dotfiles for @kachick. Excluded sensitive commands/histories :yum:.
+dotfiles. Excluded sensitive information like command histories :yum:.
 
 ## Installation
 
@@ -28,7 +28,7 @@ And do below
 1. `zprezto-update`
 1. Sync vscode config with cloud account
 
-## Maintenance policy
+## Remember!
 
 I would keep `not heavy` to lunch shell.
 
@@ -42,5 +42,30 @@ for i in $(seq 1 10); do time zsh -i -c exit; done
 
 ## Other references
 
-- [Linux - Pop! OS](https://github.com/kachick/times_kachick/issues/174)
-- [Colorize](https://github.com/kachick/times_kachick/issues/93)
+- [Linux - Pop! OS(ja)](https://github.com/kachick/times_kachick/issues/174)
+- [Colorize(ja)](https://github.com/kachick/times_kachick/issues/93)
+
+## Dependent tools
+
+- [zsh-users/zsh](https://github.com/zsh-users/zsh)
+- [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
+- [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
+- [git/git](https://github.com/git/git)
+- [microsoft/vscode](https://github.com/microsoft/vscode)
+- [Homebrew/brew](https://github.com/Homebrew/brew)
+- [asdf-vm/asdf](https://github.com/asdf-vm/asdf)
+- [asdf-vm/asdf-nodejs](https://github.com/asdf-vm/asdf-nodejs)
+- [asdf-community/asdf-dprint](https://github.com/asdf-community/asdf-dprint)
+- [asdf-community/asdf-crystal](https://github.com/asdf-community/asdf-crystal)
+- [asdf-community/asdf-deno](https://github.com/asdf-community/asdf-deno)
+- [asdf-community/asdf-elm](https://github.com/asdf-community/asdf-elm)
+- [asdf-community/asdf-haskell](https://github.com/asdf-community/asdf-haskell)
+- [postmodern/chruby](https://github.com/postmodern/chruby)
+- [postmodern/ruby-install](https://github.com/postmodern/ruby-install)
+- [ruby/irb](https://github.com/ruby/irb)
+- [kachick/irb-power_assert](https://github.com/kachick/irb-power_assert)
+- [gnachman/iTerm2](https://github.com/gnachman/iTerm2)
+
+## Might add the dependency...
+
+- [Eugeny/tabby](https://github.com/Eugeny/tabby)
