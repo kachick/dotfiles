@@ -23,7 +23,7 @@ alias git-cleanup-branches='git-switch-default && git pull $(git-remote-upsteram
 HISTSIZE=100000
 SAVEHIST=4200000
 
-# Don't use asdf-ruby, at least https://github.com/asdf-vm/asdf-ruby/issues/204 rsolved.
+# Not yet tracked the conclusion of https://github.com/asdf-vm/asdf-ruby/issues/204.
 source /usr/local/share/chruby/chruby.sh
 chruby 3.1
 
@@ -37,10 +37,13 @@ fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit
 compinit
 
-path=(
-    `npm bin --global` # https://qiita.com/joe-re/items/12987cdeee506dea3889
-    ${path}
-)
+# This section will take few seconds... :<
+#
+# ref: https://qiita.com/joe-re/items/12987cdeee506dea3889
+# path=(
+#     `npm bin --global`
+#     ${path}
+# )
 
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # if (which zprof > /dev/null 2>&1) ;then
