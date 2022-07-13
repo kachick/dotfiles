@@ -57,6 +57,12 @@ function () {
 }
 
 function update_tools() {
+  case ${OSTYPE} in
+    linux*)
+      sudo apt update && sudo apt upgrade
+      ;;
+  esac
+
   # Update brew itself. Included in upgrade option...?
   brew update
 
