@@ -56,6 +56,19 @@ function () {
   chruby 3.1
 }
 
+function update_tools() {
+  # Update brew itself. Included in upgrade option...?
+  brew update
+
+  # Docs say `Upgrade everything`
+  brew upgrade
+
+  asdf update
+  asdf plugin update --all
+
+  zprezto-update
+}
+
 case ${OSTYPE} in
 	darwin*)
 		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
