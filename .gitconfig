@@ -14,5 +14,7 @@
 	defaultBranch = main
 [color]
 	ui = true
+[grep]
+	lineNumber = true
 [pull]
 	ff = only
