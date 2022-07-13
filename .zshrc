@@ -23,10 +23,6 @@ alias git-cleanup-branches='git-switch-default && git pull $(git-remote-upsteram
 HISTSIZE=100000
 SAVEHIST=4200000
 
-# Not yet tracked the conclusion of https://github.com/asdf-vm/asdf-ruby/issues/204.
-source /usr/local/share/chruby/chruby.sh
-chruby 3.1
-
 # Don't use nvm. It is heavy.
 
 # https://asdf-vm.com/#/core-manage-asdf
@@ -50,11 +46,18 @@ compinit
 #   zprof
 # fi
 
+# Clean room of declaring variables
+function () {
+  local brew_prefix="$(brew --prefix)"
+  export PATH="${brew_prefix}/bin:$PATH"
+
+  # Not yet tracked the conclusion of https://github.com/asdf-vm/asdf-ruby/issues/204.
+  source "$(brew --prefix)/opt/chruby/share/chruby/chruby.sh"
+  chruby 3.1
+}
+
 case ${OSTYPE} in
 	darwin*)
 		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-		;;
-	linux*)
-		export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 		;;
 esac
