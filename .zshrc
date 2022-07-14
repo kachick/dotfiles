@@ -85,6 +85,15 @@ function update_tools() {
   zprezto-update
 }
 
+# Might be needed around `corepack enable`.
+# https://github.com/asdf-vm/asdf-nodejs/issues/42#issuecomment-1136701667
+yarn() {
+  command yarn "$@"
+  if [ "$1" = global ]; then
+    asdf reshim nodejs
+  fi
+}
+
 case ${OSTYPE} in
 	darwin*)
 		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
