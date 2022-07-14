@@ -48,7 +48,17 @@ compinit
 
 # Clean room of declaring variables
 function () {
-  local brew_prefix="$(brew --prefix)"
+  local brew_prefix
+
+  case ${OSTYPE} in
+    linux*)
+      brew_prefix='/home/linuxbrew/.linuxbrew'
+      ;;
+    darwin*)
+      brew_prefix='/opt/homebrew'
+      ;;
+  esac
+
   export PATH="${brew_prefix}/bin:$PATH"
 
   # Not yet tracked the conclusion of https://github.com/asdf-vm/asdf-ruby/issues/204.
