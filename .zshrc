@@ -47,7 +47,7 @@ compinit
 # fi
 
 # Clean room of declaring variables
-function () {
+() {
   local brew_prefix
 
   case ${OSTYPE} in
@@ -66,7 +66,7 @@ function () {
   chruby 3.1
 }
 
-function update_tools() {
+update_tools() {
   case ${OSTYPE} in
     linux*)
       sudo apt update && sudo apt upgrade
