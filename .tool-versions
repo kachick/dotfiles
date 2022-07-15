@@ -3,7 +3,7 @@ elm 0.19.1
 deno 1.23.4
 dprint 0.30.3
 crystal 1.5.0
-haskell 8.10.7
+haskell 9.2.3
 golang 1.18.4
 rust 1.62.0
 zig 0.9.1
