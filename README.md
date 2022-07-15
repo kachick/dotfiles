@@ -14,15 +14,9 @@ Manually install belows
 
 1. vscode
 1. (if windows) WSL2
-1. brew
-1. asdf-vm
-1. `asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git`
-1. `asdf install nodejs 16.15.1` ref: [LTS](https://nodejs.org/en/download/)
-1. chruby
-1. ruby-install
-1. `ruby-install ruby-3.1.2` ref: [News(ja)](https://www.ruby-lang.org/ja/news/)
+1. `./install.bash`
 
-See .zshrc for overview and copy them to my $HOME
+See .zshrc for overview and create symlinks to my $HOME
 And do below
 
 1. `zprezto-update`
