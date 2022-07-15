@@ -3,6 +3,10 @@
 set -eux
 
 brew_install() {
+  which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  # Needed to add the brew path...?
+
   brew install git coreutils tig tree curl wget \
               zsh sheldon \
               asdf openssl@1.1 ruby-install \
@@ -61,4 +65,4 @@ asdf_ommited_install
 
 # When faced an OpenSSL issue, look at https://github.com/kachick/times_kachick/issues/180
 # e.g: ruby-install ruby 3.1.2 -- --with-openssl-dir=$(brew --prefix openssl@3)
-ruby-install ruby-3.1.2
+ls ~/.rubies/ruby-3.1.2 || ruby-install ruby-3.1.2
