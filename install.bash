@@ -14,7 +14,7 @@ brew_install() {
 }
 
 required_asdf_plugins() {
-  # java is needed in early stage when I added scala, kotling, clojure
+  # java is needed in early stage when I added scala, kotlin, clojure
 
   cat <<EOD
 crystal
