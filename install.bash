@@ -39,9 +39,9 @@ missing_asdf_plugins() {
   comm -23 <(required_asdf_plugins | sort) <(asdf plugin list | sort)
 }
 
-# `asdf install` simply installs and respects current `.tool-versions`. However it takes long time for my global list.
-# And having some depencies as JVM. (I didn't check it actually make problem or not in `asdf install`)
-# So provided this omitted version for now. Consider to drop this in future.
+# `asdf install` simply installs and respects current `.tool-versions`. However it takes a long time for my global list.
+# And having some dependencies as JVM. (I didn't check it actually make problem or not in `asdf install`)
+# So provided this omitted version for now. Consider dropping this in future.
 asdf_ommited_install() {
   missing_asdf_plugins | while read -r plugin
   do
