@@ -5,3 +5,9 @@ dprint 0.30.3
 crystal 1.5.0
 haskell 8.10.7
 golang 1.18.3
+rust 1.62.0
+zig 0.9.1
+ocaml 4.14.0
+nim 1.6.6
+java adoptopenjdk-16.0.0+36
+clojure 1.10.2.790
