@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install dependencies and ensure the version
+        run: |
+          # ubuntu-latest includes shellcheck
+          shellcheck --version
       - run: (shopt -s globstar && shellcheck **/*.bash)
   dprint:
     runs-on: ubuntu-latest
@@ -20,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install dependencies
-        run: curl -sS https://webinstall.dev/shfmt | bash
+      - name: Install dependencies and ensure the version
+        run: |
+          curl -sS https://webinstall.dev/shfmt | bash
+          shfmt --version
       - run: (shopt -s globstar && shfmt -d **/*.bash)
