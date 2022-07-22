@@ -21,5 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: go get -u github.com/mvdan/sh/cmd/shfmt
+        run: curl -sS https://webinstall.dev/shfmt | bash
       - run: (shopt -s globstar && shfmt -d **/*.bash)
