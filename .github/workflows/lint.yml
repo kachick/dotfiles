@@ -19,10 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: curl -sS https://webinstall.dev/shfmt | bash
       - run: shfmt -d **/*.bash
-    # runs-on: macos-latest
-    # steps:
-    #   - uses: actions/checkout@v3
-    #   - name: Install dependencies
-    #     run: brew install shfmt
-    #     run: shfmt -d **/*.bash
