@@ -10,9 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Bash env
-        run: shopt -s globstar
-      - run: shellcheck **/*.bash
+      - run: (shopt -s globstar && shellcheck **/*.bash)
   dprint:
     runs-on: ubuntu-latest
     steps:
@@ -22,8 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Bash env
-        run: shopt -s globstar
       - name: Install dependencies
         run: go get -u github.com/mvdan/sh/cmd/shfmt
-      - run: shfmt -d **/*.bash
+      - run: (shopt -s globstar && shfmt -d **/*.bash)
