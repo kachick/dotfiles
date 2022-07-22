@@ -2,6 +2,8 @@
 
 set -eux
 
+# Keep idempotent as possible
+
 brew_install() {
   which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
@@ -51,6 +53,8 @@ asdf_omitted_install() {
 
     # asdf global is needless except java. Because .tool-versions is managed in same repository.
   done
+
+  # asdf will skip installed versions with exit `0`. So needless as `(asdf list ruby | grep '3.1.2') || asdf install...`
 
   # ref: https://github.com/kachick/times_kachick/issues/180
   ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@3) asdf install ruby 3.1.2
