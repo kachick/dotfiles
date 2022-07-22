@@ -1,5 +1,7 @@
 # public_dotfiles
 
+[![Build Status](https://github.com/kachick/public_dotfiles/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/kachick/public_dotfiles/actions/workflows/lint.yml?query=branch%3Amain+)
+
 dotfiles. Excluded sensitive information like command histories :yum:.
 
 ## Installation
