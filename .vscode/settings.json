@@ -6,6 +6,12 @@
     "dprint",
     "Eugeny",
     "gnachman",
+    "mvdan",
+    "shfmt",
+    "shopt",
     "sorin-ionescu"
-  ]
+  ],
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
 }
