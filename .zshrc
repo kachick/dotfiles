@@ -60,10 +60,6 @@ compinit
   esac
 
   export PATH="${brew_prefix}/bin:$PATH"
-
-  # Not yet tracked the conclusion of https://github.com/asdf-vm/asdf-ruby/issues/204.
-  source "${brew_prefix}/opt/chruby/share/chruby/chruby.sh"
-  chruby 3.1
 }
 
 update_tools() {
