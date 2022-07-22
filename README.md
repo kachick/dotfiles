@@ -50,7 +50,7 @@ for i in $(seq 1 10); do time zsh -i -c exit; done
 - [microsoft/vscode](https://github.com/microsoft/vscode)
 - [Homebrew/brew](https://github.com/Homebrew/brew)
 - [asdf-vm/asdf](https://github.com/asdf-vm/asdf)
-- [asdf-vm/asdf-ruby](https://github.com/asdf-vm/asdf-ruby) with [rbenv/ruby-build](https://github.com/rbenv/ruby-build)
+- [asdf-vm/asdf-ruby](https://github.com/asdf-vm/asdf-ruby) (includes [rbenv/ruby-build](https://github.com/rbenv/ruby-build))
 - [asdf-vm/asdf-nodejs](https://github.com/asdf-vm/asdf-nodejs)
 - [asdf-community/asdf-dprint](https://github.com/asdf-community/asdf-dprint)
 - [asdf-community/asdf-crystal](https://github.com/asdf-community/asdf-crystal)
