@@ -41,7 +41,7 @@ missing_asdf_plugins() {
 # `asdf install` simply installs and respects current `.tool-versions`. However it takes a long time for my global list.
 # And having some dependencies as JVM. (I didn't check it actually make problem or not in `asdf install`)
 # So provided this omitted version for now. Consider dropping this in future.
-asdf_ommited_install() {
+asdf_omitted_install() {
   missing_asdf_plugins | while read -r plugin; do
     asdf plugin add "$plugin"
 
@@ -63,6 +63,6 @@ asdf_ommited_install() {
 }
 
 brew_install
-asdf_ommited_install
+asdf_omitted_install
 
 # When faced an ruby with OpenSSL issue, look at https://github.com/kachick/times_kachick/issues/180
