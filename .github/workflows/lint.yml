@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dependencies and ensure the version
         run: |
-          # ubuntu-latest includes shellcheck
+          # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use latest.
+          curl -sS https://webinstall.dev/shellcheck | bash
           shellcheck --version
       - run: (shopt -s globstar && shellcheck **/*.bash)
   dprint:
