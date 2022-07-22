@@ -4,6 +4,7 @@
     "dprint.dprint",
     "streetsidesoftware.code-spell-checker",
     "redhat.vscode-yaml",
-    "timonwong.shellcheck"
+    "timonwong.shellcheck",
+    "foxundermoon.shell-format"
   ]
 }

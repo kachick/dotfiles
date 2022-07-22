@@ -8,9 +8,9 @@ brew_install() {
   # Needed to add the brew path...?
 
   brew install git coreutils tig tree curl wget \
-              zsh sheldon \
-              asdf openssl@1.1 ruby-install \
-              jq gh ripgrep sqlite postgresql imagemagick pngquant \
+    zsh sheldon \
+    asdf openssl@1.1 ruby-install \
+    jq gh ripgrep sqlite postgresql imagemagick pngquant
 
   brew install chruby --HEAD
 
@@ -43,12 +43,10 @@ missing_asdf_plugins() {
 # And having some dependencies as JVM. (I didn't check it actually make problem or not in `asdf install`)
 # So provided this omitted version for now. Consider dropping this in future.
 asdf_ommited_install() {
-  missing_asdf_plugins | while read -r plugin
-  do
+  missing_asdf_plugins | while read -r plugin; do
     asdf plugin add "$plugin"
 
-    if [ "$plugin" != 'java' ]
-    then
+    if [ "$plugin" != 'java' ]; then
       asdf install "$plugin" latest
     fi
 
