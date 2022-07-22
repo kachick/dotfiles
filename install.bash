@@ -9,10 +9,8 @@ brew_install() {
 
   brew install git coreutils tig tree curl wget \
     zsh sheldon \
-    asdf openssl@1.1 ruby-install \
+    asdf openssl@1.1 openssl@3 \
     jq gh ripgrep sqlite postgresql imagemagick pngquant
-
-  brew install chruby --HEAD
 
   # Might need some setup after brew install
 }
@@ -21,6 +19,7 @@ required_asdf_plugins() {
   # java is needed in early stage when I added scala, kotlin, clojure
 
   cat <<EOD
+ruby
 crystal
 nodejs
 deno
@@ -46,12 +45,17 @@ asdf_ommited_install() {
   missing_asdf_plugins | while read -r plugin; do
     asdf plugin add "$plugin"
 
-    if [ "$plugin" != 'java' ]; then
+    if [ "$plugin" != 'java' ] && [ "$plugin" != 'ruby' ]; then
       asdf install "$plugin" latest
     fi
 
     # asdf global is needless except java. Because .tool-versions is managed in same repository.
   done
+
+  # ref: https://github.com/kachick/times_kachick/issues/180
+  ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@3) asdf install ruby 3.1.2
+  ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 3.0.4
+  ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 2.7.6
 
   # https://github.com/halcyon/asdf-java/tree/master/data
   asdf install java adoptopenjdk-16.0.2+7
@@ -61,6 +65,4 @@ asdf_ommited_install() {
 brew_install
 asdf_ommited_install
 
-# When faced an OpenSSL issue, look at https://github.com/kachick/times_kachick/issues/180
-# e.g: ruby-install ruby 3.1.2 -- --with-openssl-dir=$(brew --prefix openssl@3)
-ls ~/.rubies/ruby-3.1.2 || ruby-install ruby-3.1.2
+# When faced an ruby with OpenSSL issue, look at https://github.com/kachick/times_kachick/issues/180
