@@ -6,8 +6,7 @@ set -eux
 
 brew_install() {
   which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-  # Needed to add the brew path...?
+  brew --prefix || add_brew_path
 
   brew install git coreutils tig tree curl wget \
     zsh sheldon \
@@ -15,6 +14,27 @@ brew_install() {
     jq gh ripgrep sqlite postgresql imagemagick pngquant
 
   # Might need some setup after brew install
+}
+
+add_brew_path() {
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    # https://docs.brew.sh/Homebrew-on-Linux
+    test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
+    test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    test -r ~/.bash_profile && echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.bash_profile
+    echo "eval \"\$($(brew --prefix)/bin/brew shellenv)\"" >>~/.profile
+    sudo apt-get install build-essential procps curl file git
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    # https://docs.brew.sh/Installation
+    mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+    eval "$(homebrew/bin/brew shellenv)"
+    brew update --force --quiet
+    chmod -R go-w "$(brew --prefix)/share/zsh"
+  elif [[ "$OSTYPE" == "freebsd"* ]]; then
+    echo 'brew does not support FreeBSD'
+  else
+    echo 'Running on unknown platform. Might be windows? Use WSL2'
+  fi
 }
 
 required_asdf_plugins() {
