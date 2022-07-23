@@ -14,9 +14,8 @@ At first, install one of terminal. (Or use vscode terminal.)
 
 Manually install belows
 
-1. vscode
-1. (if windows) WSL2
-1. `./install.bash`
+1. Ubuntu. Or Ubuntu on WSL2 or lima
+1. [`./bootstrap.sh`](bootstrap.sh)
 
 See .zshrc for overview and create symlinks to my $HOME
 And do below
