@@ -34,7 +34,7 @@ install_brew_dependencies_for_linux() {
 
 install_tools_with_brew() {
   brew install git coreutils tig tree curl wget \
-    zsh asdf \
+    nushell zsh asdf \
     openssl@1.1 openssl@3 \
     jq gh ripgrep sqlite postgresql imagemagick pngquant
 
@@ -94,6 +94,12 @@ make_symlinks() {
   done
 }
 
+# Experimental
+make_nushell_as_login_shell() {
+  which nu | sudo tee -a /etc/shells
+  chsh -s "$(which nu)"
+}
+
 make_symlinks
 install_brew
 brew --prefix || add_brew_path
@@ -103,6 +109,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 
 install_tools_with_brew # Includes asdf
+make_nushell_as_login_shell
 which asdf || add_asdf_path
 install_asdf_plugins
 install_asdf_managed_tools

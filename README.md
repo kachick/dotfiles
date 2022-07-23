@@ -18,6 +18,7 @@ And do below
 ## Dependent tools
 
 - [Homebrew/brew](https://github.com/Homebrew/brew)
+- [Nushell](https://github.com/nushell/nushell)
 - [zsh-users/zsh](https://github.com/zsh-users/zsh)
 - [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 - [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
