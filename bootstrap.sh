@@ -49,7 +49,7 @@ add_asdf_path() {
       echo -e "\n. $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash" >>~/.bash_profile
   )
 
-  # `ZDOTDIR` might not be appear in bach, keeping the code as note
+  # `ZDOTDIR` might not be appear in bash, keeping the code as note
   # official: test -r ${ZDOTDIR:-~}/.zshrc && echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >>${ZDOTDIR:-~}/.zshrc
   test -r ~/.zshrc && echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >>~/.zshrc
 
@@ -78,7 +78,7 @@ install_asdf_plugins() {
 install_asdf_managed_tools() {
   asdf install
 
-  # When faced an ruby with OpenSSL issue, look at https://github.com/kachick/times_kachick/issues/180
+  # When faced ruby with OpenSSL issues, look at https://github.com/kachick/times_kachick/issues/180
   # Following scripts might run
   # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@3) asdf install ruby 3.1.2
   # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 3.0.4
