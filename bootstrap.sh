@@ -76,13 +76,12 @@ install_asdf_plugins() {
 }
 
 install_asdf_managed_tools() {
-  asdf install
-
   # When faced ruby with OpenSSL issues, look at https://github.com/kachick/times_kachick/issues/180
-  # Following scripts might run
-  # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@3) asdf install ruby 3.1.2
-  # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 3.0.4
-  # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 2.7.6
+  RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@3) asdf install ruby 3.1.2
+  RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 3.0.4
+  RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 2.7.6
+
+  asdf install
 }
 
 make_symlinks() {
