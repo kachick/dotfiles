@@ -14,10 +14,10 @@ At first, install one of terminal. (Or use vscode terminal.)
 
 Manually install belows
 
-1. Ubuntu. Or Ubuntu on WSL2 or lima
+1. "Ubuntu" or "Ubuntu on WSL2 or lima"
 1. [`./bootstrap.sh`](bootstrap.sh)
 
-See .zshrc for overview and create symlinks to my $HOME
+See [.zshrc](.config/.zshrc) for overview and create symlinks to my $HOME
 And do below
 
 1. `zprezto-update`
