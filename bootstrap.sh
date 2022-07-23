@@ -96,7 +96,7 @@ make_symlinks() {
 
 # Experimental
 make_nushell_as_login_shell() {
-  which nu | sudo tee -a /etc/shells
+  grep '\/nu$' /etc/shells || which nu | sudo tee -a /etc/shells
   chsh -s "$(which nu)"
 }
 
