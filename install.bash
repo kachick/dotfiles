@@ -6,7 +6,7 @@ set -eux
 
 brew_install() {
   which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  brew --prefix || add_brew_path
+  brew --prefix || next_steps_after_installed_brew
 
   brew install git coreutils tig tree curl wget \
     zsh sheldon \
@@ -16,7 +16,7 @@ brew_install() {
   # Might need some setup after brew install
 }
 
-add_brew_path() {
+next_steps_after_installed_brew() {
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # https://docs.brew.sh/Homebrew-on-Linux
     test -d ~/.linuxbrew && eval "$(~/.linuxbrew/bin/brew shellenv)"
