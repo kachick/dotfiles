@@ -2,11 +2,11 @@
 
 [![Build Status](https://github.com/kachick/public_dotfiles/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/kachick/public_dotfiles/actions/workflows/lint.yml?query=branch%3Amain+)
 
-dotfiles. Excluded sensitive information like command histories :yum:.
+Personal dotfiles. :see_no_evil: Excluded sensitive information like command histories :yum:.
 
 ## Installation
 
-1. "Ubuntu" or "Ubuntu on WSL2 or lima"
+1. "[Pop! OS](https://github.com/system76/docs)([Ubuntu](https://github.com/ubuntu))" or "Ubuntu on [WSL2](https://github.com/microsoft/WSL2-Linux-Kernel) or [lima](https://github.com/lima-vm/lima)"
 1. [`./bootstrap.sh`](bootstrap.sh)
 
 See [.zshrc](.config/.zshrc) for overview and create symlinks to my $HOME
@@ -18,7 +18,7 @@ And do below
 ## Dependent tools
 
 - [Homebrew/brew](https://github.com/Homebrew/brew)
-- [Nushell](https://github.com/nushell/nushell)
+- [nushell/nushell](https://github.com/nushell/nushell)
 - [zsh-users/zsh](https://github.com/zsh-users/zsh)
 - [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 - [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
@@ -37,10 +37,10 @@ And do below
 
 ## Note
 
-- Do not manage rust with asdf. Prefer [official steps and rustup](https://www.rust-lang.org/ja/tools/install).
+- Do not manage [Rust](https://github.com/rust-lang/rust) with asdf. Prefer [official steps and rustup](https://www.rust-lang.org/ja/tools/install).
 - [Which shell? zsh? bash? fish? nushell?](https://github.com/kachick/times_kachick/issues/184)
 - [docker => singularity](https://github.com/kachick/times_kachick/issues/186)
-- [Linux - Pop! OS](https://github.com/kachick/times_kachick/issues/174)
+- [Note of Pop! OS](https://github.com/kachick/times_kachick/issues/174)
 - [Colorize](https://github.com/kachick/times_kachick/issues/93)
 
 ## Terminal
