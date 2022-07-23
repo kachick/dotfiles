@@ -59,7 +59,7 @@ add_asdf_path() {
 
 required_asdf_plugins() {
   # java is needed in early stage when I added scala, kotlin, clojure
-  grep -Po '^\S+' '.tool-versions'
+  ggrep -Po '^\S+' '.tool-versions'
 }
 
 missing_asdf_plugins() {
