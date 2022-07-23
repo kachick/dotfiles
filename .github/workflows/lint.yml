@@ -11,8 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use latest.
+        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
       - name: asdf_install
         uses: asdf-vm/actions/install@v1
+        with:
+          tool_versions: 'shellcheck 0.8.0'
       - run: (shopt -s globstar && shellcheck **/*.sh)
   dprint:
     runs-on: ubuntu-latest
@@ -23,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
       - name: asdf_install
         uses: asdf-vm/actions/install@v1
+        with:
+          tool_versions: 'shfmt 3.5.1'
       - run: (shopt -s globstar && shfmt -d **/*.sh)
