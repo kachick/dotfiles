@@ -85,6 +85,16 @@ install_asdf_managed_tools() {
   # ASDF_RUBY_BUILD_VERSION=v20220721 RUBY_CONFIGURE_OPTS=--with-openssl-dir=$(brew --prefix openssl@1.1) asdf install ruby 2.7.6
 }
 
+make_symlinks() {
+  local dotfile
+
+  for dotfile in ./.config/.??*; do
+    # https://linuxjm.osdn.jp/info/GNU_coreutils/coreutils-ja_86.html
+    ln --symbolic --verbose --interactive --backup --relative --no-dereference --target-directory="$HOME" "$dotfile"
+  done
+}
+
+make_symlinks
 install_brew
 brew --prefix || add_brew_path
 
