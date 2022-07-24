@@ -103,3 +103,5 @@ case ${OSTYPE} in
 		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 		;;
 esac
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

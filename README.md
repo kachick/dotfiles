@@ -18,10 +18,10 @@ And do below
 ## Dependent tools
 
 - [Homebrew/brew](https://github.com/Homebrew/brew)
-- [nushell/nushell](https://github.com/nushell/nushell)
 - [zsh-users/zsh](https://github.com/zsh-users/zsh)
 - [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 - [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
+- [nushell/nushell](https://github.com/nushell/nushell)
 - [git/git](https://github.com/git/git)
 - [microsoft/vscode](https://github.com/microsoft/vscode)
 - [asdf-vm/asdf](https://github.com/asdf-vm/asdf)

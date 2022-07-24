@@ -34,11 +34,13 @@ install_brew_dependencies_for_linux() {
 
 install_tools_with_brew() {
   brew install git coreutils tig tree curl wget \
-    nushell zsh asdf \
+    zsh nushell asdf \
     openssl@1.1 openssl@3 \
-    jq gh ripgrep sqlite postgresql imagemagick pngquant
+    jq gh ripgrep fzf fd sqlite postgresql imagemagick pngquant
 
   # Might need some setup after brew install
+
+  "$(brew --prefix)/opt/fzf/install"
 }
 
 add_asdf_path() {
@@ -107,8 +109,11 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   install_brew_dependencies_for_linux
 fi
 
-install_tools_with_brew # Includes asdf
-make_nushell_as_login_shell
+install_tools_with_brew # Includes asd
+
+# Wait to prefer nushell until https://github.com/nushell/nushell/issues/1616 resolved
+# make_nushell_as_login_shell
+
 which asdf || add_asdf_path
 install_asdf_plugins
 install_asdf_managed_tools
