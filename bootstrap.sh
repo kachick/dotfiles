@@ -34,7 +34,7 @@ install_brew_dependencies_for_linux() {
 
 install_tools_with_brew() {
   brew install git coreutils tig tree curl wget \
-    zsh nushell asdf \
+    zsh nushell starship asdf \
     openssl@1.1 openssl@3 \
     jq gh ripgrep fzf fd sqlite postgresql imagemagick pngquant
 
