@@ -49,4 +49,4 @@ manpath=(
     # /usr/local/opt/grep/libexec/gnuman(N-/) # grep
     ${manpath}
 )
-. "$HOME/.cargo/env"
+# . "$HOME/.cargo/env"

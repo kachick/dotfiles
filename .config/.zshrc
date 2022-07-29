@@ -26,7 +26,13 @@ SAVEHIST=4200000
 # Don't use nvm. It is heavy.
 
 # https://asdf-vm.com/#/core-manage-asdf
-. $HOME/.asdf/asdf.sh
+if [ -r "$HOME/.asdf/asdf.sh" ]; then
+  . "$HOME/.asdf/asdf.sh"
+else
+  # brew command makes slow? Then considert to extarct to .zshrc.local
+  . "$(brew --prefix asdf)/libexec/asdf.sh"
+fi
+
 # append completions to fpath
 fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit

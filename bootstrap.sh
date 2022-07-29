@@ -54,9 +54,11 @@ add_asdf_path() {
       echo -e "\n. $(brew --prefix asdf)/etc/bash_completion.d/asdf.bash" >>~/.bash_profile
   )
 
+  # TODO: This automated adding to public_dotfiles. It is not good!
+  #
   # `ZDOTDIR` might not be appear in bash, keeping the code as note
   # official: test -r ${ZDOTDIR:-~}/.zshrc && echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >>${ZDOTDIR:-~}/.zshrc
-  test -r ~/.zshrc && echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >>~/.zshrc
+  # test -r ~/.zshrc && echo -e "\n. $(brew --prefix asdf)/libexec/asdf.sh" >>~/.zshrc
 
   # shellcheck source=/dev/null
   source "$(brew --prefix asdf)/libexec/asdf.sh"
