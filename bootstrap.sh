@@ -68,6 +68,7 @@ required_asdf_plugins() {
   rg --only-matching --no-line-number '^\S+' '.tool-versions'
 
   echo ruby
+  echo crystal
 }
 
 missing_asdf_plugins() {
@@ -92,6 +93,8 @@ install_asdf_managed_tools() {
   RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@3)" asdf install ruby latest
   # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 3.0.4
   # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 2.7.6
+
+  PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(brew --prefix openssl@3)/lib/pkgconfig" asdf install crystal latest
 
   asdf install
 }
