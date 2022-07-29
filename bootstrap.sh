@@ -28,8 +28,11 @@ add_brew_path() {
   fi
 }
 
-install_brew_dependencies_for_linux() {
-  sudo apt-get install build-essential procps curl file git
+install_base_dependencies_for_linux() {
+  sudo apt-get install -y build-essential procps curl file git
+
+  # Required to build ruby
+  sudo apt-get install -y zlib1g-dev
 }
 
 install_tools_with_brew() {
@@ -113,7 +116,7 @@ install_brew
 brew --prefix || add_brew_path
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  install_brew_dependencies_for_linux
+  install_base_dependencies_for_linux
 fi
 
 install_tools_with_brew # Includes asd
