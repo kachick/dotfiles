@@ -33,7 +33,7 @@ install_brew_dependencies_for_linux() {
 }
 
 install_tools_with_brew() {
-  brew install git coreutils tig tree curl wget \
+  brew install gcc git coreutils tig tree curl wget \
     zsh nushell starship asdf \
     pkg-config openssl@1.1 openssl@3 \
     jq gh ripgrep fzf fd sqlite postgresql imagemagick pngquant
@@ -61,7 +61,8 @@ add_asdf_path() {
 
 required_asdf_plugins() {
   # java is needed in early stage when I added scala, kotlin, clojure
-  ggrep -Po '^\S+' '.tool-versions'
+  # Using rg for ensuring PCRE. Do not consider grep/ggrep...
+  rg --only-matching --no-line-number '^\S+' '.tool-versions'
 }
 
 missing_asdf_plugins() {
