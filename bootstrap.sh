@@ -74,7 +74,11 @@ missing_asdf_plugins() {
 
 install_asdf_plugins() {
   missing_asdf_plugins | while read -r plugin; do
-    asdf plugin add "$plugin"
+    if [ "$plugin" == 'dprint' ]; then
+      asdf plugin-add dprint https://github.com/asdf-community/asdf-dprint
+    else
+      asdf plugin add "$plugin"
+    fi
   done
 }
 
