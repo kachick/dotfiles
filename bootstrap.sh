@@ -125,7 +125,7 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   install_base_dependencies_for_linux
 fi
 
-install_tools_with_brew # Includes asd
+install_tools_with_brew # Includes asdf
 
 # Wait to prefer nushell until https://github.com/nushell/nushell/issues/1616 resolved
 # make_nushell_as_login_shell
