@@ -107,3 +107,6 @@ esac
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 eval "$(starship init zsh)"
+
+# For Crystal with libssl issue. ref: https://github.com/kachick/times_kachick/issues/188
+export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(brew --prefix openssl@3)/lib/pkgconfig"
