@@ -94,6 +94,7 @@ install_asdf_managed_tools() {
   # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 3.0.4
   # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 2.7.6
 
+  PKG_CONFIG_PATH="${PKG_CONFIG_PATH-}"
   PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(brew --prefix openssl@3)/lib/pkgconfig" asdf install crystal latest
 
   asdf install
@@ -104,7 +105,7 @@ make_symlinks() {
 
   for dotfile in ./.config/.??*; do
     # https://linuxjm.osdn.jp/info/GNU_coreutils/coreutils-ja_86.html
-    ln --symbolic --verbose --interactive --backup --relative --no-dereference --target-directory="$HOME" "$dotfile"
+    ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$HOME" "$dotfile"
   done
 }
 
