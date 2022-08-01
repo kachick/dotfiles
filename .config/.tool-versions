@@ -4,6 +4,6 @@ elm 0.19.1
 deno 1.24.1
 dprint 0.30.3
 crystal 1.5.0
-golang 1.18.4
+golang 1.18.5
 shellcheck 0.8.0
 shfmt 3.5.1
