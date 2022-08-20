@@ -1,7 +1,8 @@
 [user]
 	email = kachick1@gmail.com
 	name = Kenichi Kamiya
-
+[includeIf "gitdir:~/boardgame-repos/"]
+   path = ~/.gitconfig_boardgamer
 [core]
 	editor = code --wait
 [credential "https://github.com"]
