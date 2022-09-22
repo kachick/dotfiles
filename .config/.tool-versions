@@ -1,7 +1,7 @@
 ruby 3.1.2
 nodejs 18.9.0
 elm 0.19.1
-deno 1.25.3
+deno 1.25.4
 dprint 0.32.1
 crystal 1.5.1
 golang 1.19.1
