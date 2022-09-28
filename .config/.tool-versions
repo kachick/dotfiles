@@ -1,5 +1,5 @@
 ruby 3.1.2
-nodejs 18.9.1
+nodejs 18.10.0
 elm 0.19.1
 deno 1.25.4
 dprint 0.32.1
