@@ -3,7 +3,7 @@ nodejs 18.10.0
 elm 0.19.1
 deno 1.26.1
 dprint 0.32.1
-crystal 1.5.1
+crystal 1.6.0
 golang 1.19.2
 shellcheck 0.8.0
 shfmt 3.5.1
