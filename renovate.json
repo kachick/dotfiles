@@ -7,5 +7,11 @@
   ],
   "labels": ["dependencies", "renovate"],
   "automerge": true,
-  "enabledManagers": ["regex"]
+  "enabledManagers": ["regex"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["nodejs/node"],
+      "allowedVersions": "/^v?18\\./"
+    }
+  ]
 }
