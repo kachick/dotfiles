@@ -2,7 +2,7 @@ ruby 3.1.2
 nodejs 18.11.0
 elm 0.19.1
 deno 1.26.2
-dprint 0.32.1
+dprint 0.32.2
 crystal 1.6.1
 golang 1.19.2
 shellcheck 0.8.0
