@@ -7,3 +7,7 @@ crystal 1.6.1
 golang 1.19.2
 shellcheck 0.8.0
 shfmt 3.5.1
+cargo-make 0.36.2
+just 1.6.0
+haskell 9.4.2
+bun 0.2.1
