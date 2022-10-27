@@ -131,3 +131,5 @@ fi
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 eval "$(starship init bash)"
+
+. ~/.aliases.sh
