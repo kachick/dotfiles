@@ -13,6 +13,7 @@ $deno\
 $bun\
 $nodejs\
 $cmd_duration\
+$shell\
 $line_break\
 $time\
 $character"""
@@ -53,3 +54,6 @@ style = "yellow"
 [python]
 format = "[$virtualenv]($style) "
 style = "bright-black"
+
+[shell]
+disabled = false
