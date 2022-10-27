@@ -7,7 +7,7 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 ## Installation
 
 1. "[Pop! OS](https://github.com/system76/docs)([Ubuntu](https://github.com/ubuntu))" or "Ubuntu on [WSL2](https://github.com/microsoft/WSL2-Linux-Kernel) or [lima](https://github.com/lima-vm/lima)"
-1. [`./bootstrap.sh`](bootstrap.sh)
+1. [`bootstrap.sh`](scripts/bootstrap.sh)
 
 See [.zshrc](.config/.zshrc) for overview and create symlinks to my $HOME
 And do below

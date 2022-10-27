@@ -102,22 +102,13 @@ install_asdf_managed_tools() {
   asdf install
 }
 
-make_symlinks() {
-  local dotfile
-
-  for dotfile in ./.config/.??*; do
-    # https://linuxjm.osdn.jp/info/GNU_coreutils/coreutils-ja_86.html
-    ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$HOME" "$dotfile"
-  done
-}
-
 # Experimental
 make_nushell_as_login_shell() {
   grep '\/nu$' /etc/shells || which nu | sudo tee -a /etc/shells
   chsh -s "$(which nu)"
 }
 
-make_symlinks
+./scripts/make_symlinks.bash
 install_brew
 brew --prefix || add_brew_path
 
