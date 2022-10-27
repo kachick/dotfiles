@@ -43,8 +43,8 @@ zstyle ':prezto:load' pmodule \
   'osx' \
   'tmux' \
   'syntax-highlighting' \
-  'history-substring-search' \
-  'prompt'
+  'history-substring-search'
+  # 'prompt'
 
 #
 # Autosuggestions
