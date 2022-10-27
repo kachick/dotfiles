@@ -37,7 +37,7 @@ install_base_dependencies_for_linux() {
 
 install_tools_with_brew() {
   brew install gcc git coreutils tig tree curl wget \
-    zsh nushell starship asdf direnv \
+    zsh bash nushell starship asdf direnv \
     pkg-config openssl@1.1 openssl@3 \
     jq gh ripgrep fzf fd sqlite postgresql imagemagick pngquant
 
@@ -102,6 +102,7 @@ install_asdf_managed_tools() {
   asdf install
 }
 
+# I feel rust does not scope other installers as asdf :<s
 install_rust() {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 }
