@@ -102,6 +102,10 @@ install_asdf_managed_tools() {
   asdf install
 }
 
+install_rust() {
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+
 # Experimental
 make_nushell_as_login_shell() {
   grep '\/nu$' /etc/shells || which nu | sudo tee -a /etc/shells
@@ -124,3 +128,4 @@ install_tools_with_brew # Includes asdf
 which asdf || add_asdf_path
 install_asdf_plugins
 install_asdf_managed_tools
+install_rust
