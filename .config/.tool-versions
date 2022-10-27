@@ -10,4 +10,4 @@ shfmt 3.5.1
 cargo-make 0.36.2
 just 1.7.0
 haskell 9.4.2
-bun 0.2.1
+bun 0.2.2
