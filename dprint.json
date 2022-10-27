@@ -12,7 +12,8 @@
   "includes": ["**/*.{json,md,yml,toml}"],
   "excludes": [
     ".git",
-    "**/*-lock.json"
+    "**/*-lock.json",
+    ".zprezto"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.15.6.wasm",
