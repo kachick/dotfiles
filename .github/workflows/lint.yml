@@ -27,7 +27,7 @@ jobs:
         uses: asdf-vm/actions/install@v1
         with:
           tool_versions: 'shellcheck ${{ fromJson(needs.asdf-parser.outputs.tool-versions).shellcheck }}'
-      - run: (shopt -s globstar && shellcheck **/*.sh)
+      - run: 'shopt -s globstar && shellcheck **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
   dprint:
     needs: [asdf-parser]
     runs-on: ubuntu-latest
@@ -48,4 +48,4 @@ jobs:
         uses: asdf-vm/actions/install@v1
         with:
           tool_versions: 'shfmt ${{ fromJson(needs.asdf-parser.outputs.tool-versions).shfmt }}'
-      - run: (shopt -s globstar && shfmt -d **/*.sh)
+      - run: 'shopt -s globstar && shfmt --diff **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
