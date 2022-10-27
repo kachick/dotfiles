@@ -57,3 +57,4 @@ style = "bright-black"
 
 [shell]
 disabled = false
+bash_indicator = 'bash'
