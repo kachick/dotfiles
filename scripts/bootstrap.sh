@@ -129,4 +129,4 @@ install_tools_with_brew # Includes asdf
 which asdf || add_asdf_path
 install_asdf_plugins
 install_asdf_managed_tools
-install_rust
+which rust || install_rust
