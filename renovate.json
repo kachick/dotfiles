@@ -8,7 +8,7 @@
   "enabledManagers": ["asdf", "regex"],
   "packageRules": [
     {
-      "matchPackageNames": ["nodejs/node"],
+      "matchPackageNames": ["node"],
       "allowedVersions": "/^v?18\\./"
     }
   ]
