@@ -9,4 +9,4 @@ shellcheck 0.8.0
 shfmt 3.5.1
 cargo-make 0.36.3
 just 1.9.0
-bun 0.2.2
+bun 0.3.0
