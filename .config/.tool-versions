@@ -6,7 +6,7 @@ dprint 0.33.0
 crystal 1.6.2
 golang 1.19.4
 shellcheck 0.8.0
-shfmt 3.5.1
+shfmt 3.6.0
 cargo-make 0.36.3
 just 1.9.0
 bun 0.3.0
