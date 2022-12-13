@@ -5,7 +5,7 @@ deno 1.28.3
 dprint 0.33.0
 crystal 1.6.2
 golang 1.19.4
-shellcheck 0.8.0
+shellcheck 0.9.0
 shfmt 3.6.0
 cargo-make 0.36.3
 just 1.9.0
