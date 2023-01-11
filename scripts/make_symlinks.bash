@@ -10,14 +10,32 @@ make_symlink() {
   ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$create_in" "$source_path"
 }
 
+paths_to_root() {
+  cat <<'EOD'
+.stack
+.asdfrc
+.default-gems
+.irbrc
+.zlogin
+.zpreztorc
+.zshenv
+starship.toml
+.aliases.sh
+.bashrc
+.gitconfig
+.tool-versions
+.zlogout
+.zprofile
+.zshrc
+EOD
+}
+
 make_symlinks() {
-  local dotfile
+  # Can't reuse shell functions in passing to xargs... :<
+  paths_to_root | xargs -I{} ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$HOME/.config" "./.config/{}"
 
-  for dotfile in ./.config/.??*; do
-    make_symlink "$HOME" "$dotfile"
-  done
-
-  make_symlink "$HOME/.config" ./.config/starship.toml
+  mkdir -p "$HOME/.stack"
+  make_symlink "$HOME/.stack" ./.config/.stack/config.yaml
 }
 
 make_symlinks
