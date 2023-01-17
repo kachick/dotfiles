@@ -14,6 +14,12 @@ jobs:
       - uses: cachix/install-nix-action@v18
         with:
           nix_path: nixpkgs=channel:nixos-unstable
+      - run: nix-shell
+      - name: print dependency versions
+        run: |
+          shellcheck --version
+          shfmt --version
+          dprint --version
       - name: shellcheck
         run: 'shopt -s globstar && shellcheck **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
       - name: shfmt
