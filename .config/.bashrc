@@ -120,15 +120,18 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
-if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
-  bind '"\e[A":history-substring-search-backward'
-  bind '"\e[B":history-substring-search-forward'
-fi
-
 . "$HOME/.cargo/env"
 
+# # https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
+# if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
+#   bind '"\e[A":history-substring-search-backward'
+#   bind '"\e[B":history-substring-search-forward'
+# fi
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Delegate history search with "Up arrow key" to fzf
+bind '"\e[A":"\C-r"'
 
 eval "$(starship init bash)"
 
