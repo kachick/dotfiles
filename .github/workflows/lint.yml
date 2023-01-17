@@ -16,6 +16,7 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
       - uses: cachix/cachix-action@v12
         with:
+          name: publicdotfiles
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: print dependency versions
         run: |
