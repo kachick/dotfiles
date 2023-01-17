@@ -6,46 +6,17 @@ on:
   workflow_dispatch:
 
 jobs:
-  asdf-parser:
+  lint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - uses: kachick/action-parse-asdf-tool-versions@v3
-        id: parse
-    outputs:
-      tool-versions: '${{ steps.parse.outputs.json }}'
-  shellcheck:
-    needs: [asdf-parser]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v3
-        # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
-        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
-      - name: asdf_install
-        uses: asdf-vm/actions/install@v1
+      - uses: cachix/install-nix-action@v18
         with:
-          tool_versions: 'shellcheck ${{ fromJson(needs.asdf-parser.outputs.tool-versions).shellcheck }}'
-      - run: 'shopt -s globstar && shellcheck **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
-  dprint:
-    needs: [asdf-parser]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dprint/check@v2.1
-        with:
-          dprint-version: '${{ fromJson(needs.asdf-parser.outputs.tool-versions).dprint }}'
-  shfmt:
-    needs: [asdf-parser]
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v3
-        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
-      - name: asdf_install
-        uses: asdf-vm/actions/install@v1
-        with:
-          tool_versions: 'shfmt ${{ fromJson(needs.asdf-parser.outputs.tool-versions).shfmt }}'
-      - run: 'shopt -s globstar && shfmt --diff **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: shellcheck
+        run: 'shopt -s globstar && shellcheck **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
+      - name: shfmt
+        run: 'shopt -s globstar && shfmt --diff **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
+      - name: dprint
+        run: dprint check

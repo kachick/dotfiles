@@ -2,12 +2,15 @@
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
   "cSpell.words": [
+    "cachix",
     "deno",
     "dprint",
     "Eugeny",
     "ghcup",
     "gnachman",
     "mvdan",
+    "nixos",
+    "nixpkgs",
     "shfmt",
     "shopt",
     "sorin-ionescu"
