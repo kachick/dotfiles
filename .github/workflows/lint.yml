@@ -18,7 +18,8 @@ jobs:
         with:
           name: publicdotfiles
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: print dependency versions
+      - run: nix-build
+      - name: Print dependency versions
         run: |
           nix-shell --run '
             shellcheck --version
