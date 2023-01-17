@@ -30,4 +30,4 @@ jobs:
       - name: shfmt
         run: nix-shell --run 'shopt -s globstar && shfmt --diff **/*.sh **/*.bash scripts/*.bash .config/.bashrc'
       - name: dprint
-        run: nix-shell --run dprint check
+        run: nix-shell --run 'dprint check'
