@@ -29,22 +29,30 @@ zstyle ':prezto:*:*' color 'yes'
 
 # Set the Prezto modules to load (browse modules).
 # The order matters.
+# zstyle ':prezto:load' pmodule \
+#   'environment' \
+#   'terminal' \
+#   'editor' \
+#   'history' \
+#   'directory' \
+#   'spectrum' \
+#   'utility' \
+#   'osx' \
+#   'completion' \
+#   'git' \
+#   'ssh' \
+#   'tmux' \
+#   'syntax-highlighting' \
+#   'history-substring-search'
+#   'prompt'
+
+# I'd like to start from minimumn features
 zstyle ':prezto:load' pmodule \
-  'environment' \
-  'terminal' \
-  'editor' \
   'history' \
-  'directory' \
-  'spectrum' \
   'utility' \
-  'completion' \
-  'git' \
-  'ssh' \
-  'osx' \
-  'tmux' \
+  'directory' \
   'syntax-highlighting' \
   'history-substring-search'
-  # 'prompt'
 
 #
 # Autosuggestions
