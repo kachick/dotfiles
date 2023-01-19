@@ -17,20 +17,16 @@ And do below
 
 ## Dependent tools
 
+- [Nix, the purely functional package manager](https://github.com/NixOS/nix)
+- [Nix Packages collection](https://github.com/NixOS/nixpkgs)
 - [Homebrew/brew](https://github.com/Homebrew/brew)
+- [asdf-vm/asdf](https://github.com/asdf-vm/asdf)
 - [zsh-users/zsh](https://github.com/zsh-users/zsh)
 - [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 - [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
 - [nushell/nushell](https://github.com/nushell/nushell)
 - [git/git](https://github.com/git/git)
 - [microsoft/vscode](https://github.com/microsoft/vscode)
-- [asdf-vm/asdf](https://github.com/asdf-vm/asdf)
-- [asdf-vm/asdf-ruby](https://github.com/asdf-vm/asdf-ruby) (includes [rbenv/ruby-build](https://github.com/rbenv/ruby-build))
-- [asdf-vm/asdf-nodejs](https://github.com/asdf-vm/asdf-nodejs)
-- [asdf-community/asdf-dprint](https://github.com/asdf-community/asdf-dprint)
-- [asdf-community/asdf-crystal](https://github.com/asdf-community/asdf-crystal)
-- [asdf-community/asdf-deno](https://github.com/asdf-community/asdf-deno)
-- [asdf-community/asdf-elm](https://github.com/asdf-community/asdf-elm)
 - [ruby/irb](https://github.com/ruby/irb)
 - [kachick/irb-power_assert](https://github.com/kachick/irb-power_assert)
 - [gnachman/iTerm2](https://github.com/gnachman/iTerm2)
