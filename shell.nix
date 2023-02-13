@@ -7,5 +7,6 @@ pkgs.mkShell {
     pkgs.shfmt
     pkgs.nil
     pkgs.nixpkgs-fmt
+    pkgs.pre-commit
   ];
 }
