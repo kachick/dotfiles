@@ -33,6 +33,9 @@ success_symbol = "[❯](purple)"
 error_symbol = "[❯](red)"
 vimcmd_symbol = "[❮](green)"
 
+[git_commit]
+only_detached = false
+
 [git_branch]
 format = "[$branch]($style)"
 # Changed from https://github.com/starship/starship/pull/3066/files
