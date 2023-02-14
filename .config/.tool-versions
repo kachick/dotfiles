@@ -1,4 +1,4 @@
-# Do not manage Haskell and Rust with asdf. They should be managed by special tools as ghcup and rustup
+# Do not manage Haskell and Rust with asdf. They should be managed by Nix or special tools as ghcup and rustup
 ruby 3.2.1
 deno 1.30.3
 dprint 0.34.5
