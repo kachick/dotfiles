@@ -67,9 +67,7 @@ add_asdf_path() {
 required_asdf_plugins() {
   # java is needed in early stage when I added scala, kotlin, clojure
   # Using rg for ensuring PCRE. Do not consider grep/ggrep...
-  rg --only-matching --no-line-number '^\S+' '.tool-versions'
-
-  echo ruby
+  rg --only-matching --no-line-number '^[^#]\S*' './.config/.tool-versions'
 }
 
 missing_asdf_plugins() {
