@@ -6,8 +6,13 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 
 ## Installation
 
-1. "[Pop! OS](https://github.com/system76/docs)([Ubuntu](https://github.com/ubuntu))" or "Ubuntu on [WSL2](https://github.com/microsoft/WSL2-Linux-Kernel) or [lima](https://github.com/lima-vm/lima)"
-1. [`bootstrap.sh`](scripts/bootstrap.sh)
+1. Install [Nix](https://nixos.org/) package manager
+2. Run `nix-shell` or `nix-shell --command 'zsh'`
+3. `makers setup`
+
+### Deprecated following steps
+
+[`bootstrap.sh`](scripts/bootstrap.sh)
 
 See [.zshrc](.config/.zshrc) for overview and create symlinks to my $HOME
 And do below
@@ -19,12 +24,9 @@ And do below
 
 - [Nix, the purely functional package manager](https://github.com/NixOS/nix)
 - [Nix Packages collection](https://github.com/NixOS/nixpkgs)
-- [Homebrew/brew](https://github.com/Homebrew/brew)
-- [asdf-vm/asdf](https://github.com/asdf-vm/asdf)
 - [zsh-users/zsh](https://github.com/zsh-users/zsh)
 - [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
 - [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
-- [nushell/nushell](https://github.com/nushell/nushell)
 - [git/git](https://github.com/git/git)
 - [microsoft/vscode](https://github.com/microsoft/vscode)
 - [ruby/irb](https://github.com/ruby/irb)

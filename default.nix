@@ -7,5 +7,7 @@ pkgs.mkShell {
     pkgs.shfmt
     pkgs.nil
     pkgs.nixpkgs-fmt
+    pkgs.gitleaks
+    pkgs.cargo-make
   ];
 }
