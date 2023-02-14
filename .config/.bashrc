@@ -122,8 +122,6 @@ fi
 
 . "$HOME/.cargo/env"
 
-[ -f "/home/kachick/.ghcup/env" ] && source "/home/kachick/.ghcup/env" # ghcup-env
-
 # https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
 if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
   bind '"\e[A":history-substring-search-backward'

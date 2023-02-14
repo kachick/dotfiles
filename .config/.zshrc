@@ -116,4 +116,3 @@ precmd_functions+=(set_win_title)
 
 eval "$(direnv hook zsh)"
 
-[ -f "/home/kachick/.ghcup/env" ] && source "/home/kachick/.ghcup/env" # ghcup-env
