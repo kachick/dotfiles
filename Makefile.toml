@@ -8,6 +8,13 @@ script = [
   "git config --local core.hooksPath .githooks",
 ]
 
+[tasks.update]
+category = "Tools"
+script = [
+  "cd .zprezto && git fetch && git pull origin master --rebase",
+  "dprint config update --yes",
+]
+
 [tasks.format-check]
 category = "Tools"
 description = "Run formatters without changes"
