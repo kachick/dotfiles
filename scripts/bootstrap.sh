@@ -64,38 +64,6 @@ add_asdf_path() {
   source "$(brew --prefix asdf)/libexec/asdf.sh"
 }
 
-required_asdf_plugins() {
-  # java is needed in early stage when I added scala, kotlin, clojure
-  # Using rg for ensuring PCRE. Do not consider grep/ggrep...
-  rg --only-matching --no-line-number '^[^#]\S*' './.config/.tool-versions'
-}
-
-missing_asdf_plugins() {
-  # What is `comm`
-  # https://stackoverflow.com/a/2696111/1212807
-  # https://atmarkit.itmedia.co.jp/ait/articles/1703/31/news027.html
-  comm -23 <(required_asdf_plugins | sort) <(asdf plugin list | sort)
-}
-
-install_asdf_plugins() {
-  missing_asdf_plugins | while read -r plugin; do
-    if [ "$plugin" == 'dprint' ]; then
-      asdf plugin-add dprint https://github.com/asdf-community/asdf-dprint
-    else
-      asdf plugin add "$plugin"
-    fi
-  done
-}
-
-install_asdf_managed_tools() {
-  # When faced ruby with OpenSSL issues, look at https://github.com/kachick/times_kachick/issues/180
-  RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@3)" asdf install ruby latest
-  # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 3.0.4
-  # RUBY_CONFIGURE_OPTS=--with-openssl-dir="$(brew --prefix openssl@1.1)" asdf install ruby 2.7.6
-
-  asdf install
-}
-
 # I feel rust does not scope other installers as asdf :<s
 install_rust() {
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -121,6 +89,6 @@ install_tools_with_brew # Includes asdf
 # make_nushell_as_login_shell
 
 which asdf || add_asdf_path
-install_asdf_plugins
-install_asdf_managed_tools
+./scripts/install_asdf-plugins.bash
+./scripts/install_asdf_managed_tools.bash
 which rust || install_rust
