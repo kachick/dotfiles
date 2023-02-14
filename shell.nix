@@ -8,5 +8,6 @@ pkgs.mkShell {
     pkgs.nil
     pkgs.nixpkgs-fmt
     pkgs.pre-commit
+    pkgs.gitleaks
   ];
 }
