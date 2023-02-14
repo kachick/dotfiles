@@ -10,6 +10,10 @@
     {
       "matchPackageNames": ["node"],
       "allowedVersions": "/^v?18\\./"
+    },
+    {
+      "extends": ["schedule:weekly"],
+      "matchPackagePrefixes": ["dprint"]
     }
   ]
 }
