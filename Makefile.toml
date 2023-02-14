@@ -1,0 +1,41 @@
+[config]
+skip_core_tasks = true
+
+[tasks.setup]
+category = "Tools"
+description = "Install and configure dependencies (WIP)"
+script = [
+  "git config --local core.hooksPath .githooks",
+]
+
+[tasks.format-check]
+category = "Tools"
+description = "Run formatters without changes"
+script = [
+  "dprint check",
+]
+
+[tasks.format-apply]
+category = "Tools"
+description = "Run formatters with changes"
+script = [
+  "dprint fmt",
+]
+
+[tasks.prevent-secret]
+category = "Tools"
+script = [
+  "gitleaks",
+]
+
+[tasks.check]
+category = "Tools"
+description = 'Parallel runner for all tests and linters'
+run_task = { name = ["format-check", "prevent-secret"] }
+
+[tasks.help]
+category = "Tools"
+description = 'Might help you - (This one)'
+script = [
+  'makers --list-category-steps Tools',
+]
