@@ -8,6 +8,6 @@ pkgs.mkShell {
     pkgs.nil
     pkgs.nixpkgs-fmt
     pkgs.pre-commit
-    pkgs.gitleaks
+    pkgs.go_1_19 # https://github.com/zricethezav/gitleaks/blob/088f8b80742d5fc22f527a53f49cdeec42ece863/go.mod#L3
   ];
 }
