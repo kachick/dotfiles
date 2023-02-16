@@ -52,3 +52,4 @@ manpath=(
 # . "$HOME/.cargo/env"
 
 if [ -e /home/kachick/.nix-profile/etc/profile.d/nix.sh ]; then . /home/kachick/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
