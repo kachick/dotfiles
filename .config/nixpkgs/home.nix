@@ -19,4 +19,46 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  home.packages = [
+    pkgs.dprint
+    pkgs.deno
+    pkgs.gitleaks
+    pkgs.shellcheck
+    pkgs.shfmt
+    pkgs.nodejs
+    pkgs.gcc
+    pkgs.git
+    pkgs.coreutils
+    pkgs.tig
+    pkgs.tree
+    pkgs.curl
+    pkgs.wget
+    pkgs.zsh
+    pkgs.bash
+    pkgs.nushell
+    pkgs.starship
+    pkgs.jq
+    pkgs.gh
+    pkgs.sqlite
+    pkgs.postgresql
+    pkgs.direnv
+    pkgs.ripgrep
+    pkgs.fzf
+    pkgs.exa
+    pkgs.bat
+    pkgs.duf
+    pkgs.fd
+    pkgs.du-dust
+    pkgs.procs
+    pkgs.bottom
+    pkgs.tesseract
+    pkgs.tig
+    pkgs.home-manager
+    pkgs.imagemagick
+    pkgs.pngquant
+    pkgs.rustup
+    pkgs.crystal
+    pkgs.ruby_3_1
+  ];
 }
