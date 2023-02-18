@@ -7,4 +7,5 @@ shopt -s globstar
 dprint check
 shfmt --diff ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc
 shellcheck ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc
+nixfmt ./**/*.nix
 gitleaks detect
