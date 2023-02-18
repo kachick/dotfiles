@@ -63,5 +63,6 @@
     pkgs.nixpkgs-fmt
     pkgs.nil
     pkgs.cargo-make
+    pkgs.asdf
   ];
 }
