@@ -2,3 +2,4 @@
 
 # Don't include any history files! It might make an accident... :scream:
 *hist*
+*.zcompdump
