@@ -29,7 +29,6 @@
     pkgs.gitleaks
     pkgs.shellcheck
     pkgs.shfmt
-    pkgs.nodejs
     pkgs.gcc
     pkgs.git
     pkgs.coreutils
