@@ -2,8 +2,6 @@
 # Defines environment variables.
 #
 
-# See https://qiita.com/eumesy/items/3bb39fc783c8d4863c5f
-
 export PATH
 export MANPATH
 # -U: keep only the first occurrence of each duplicated value

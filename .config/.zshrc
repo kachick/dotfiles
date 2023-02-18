@@ -30,14 +30,6 @@ fpath=(${ASDF_DIR}/completions $fpath)
 autoload -Uz compinit
 compinit
 
-# This section will take few seconds... :<
-#
-# ref: https://qiita.com/joe-re/items/12987cdeee506dea3889
-# path=(
-#     `npm bin --global`
-#     ${path}
-# )
-
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # if (which zprof > /dev/null 2>&1) ;then
 #   zprof
