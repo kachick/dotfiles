@@ -18,6 +18,11 @@ if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Do NOT manage .zshenv(thisfile) in the dir.
+export ZDOTDIR="$HOME/.config/zsh"
+
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # zmodload zsh/zprof && zprof
 

@@ -6,6 +6,9 @@
   home.username = "kachick";
   home.homeDirectory = "/home/kachick";
   xdg.configHome = "/home/kachick/.config";
+  xdg.cacheHome = "/home/kachick/.cache";
+  xdg.stateHome = "/home/kachick/.local/state";
+  xdg.dataHome = "/home/kachick/.local/share";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
