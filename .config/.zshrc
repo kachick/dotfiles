@@ -22,9 +22,6 @@ SAVEHIST=4200000
 # https://asdf-vm.com/#/core-manage-asdf
 if [ -r "$HOME/.asdf/asdf.sh" ]; then
   . "$HOME/.asdf/asdf.sh"
-else
-  # brew command makes slow? Then considert to extarct to .zshrc.local
-  . "$(brew --prefix asdf)/libexec/asdf.sh"
 fi
 
 # append completions to fpath
@@ -46,48 +43,14 @@ compinit
 #   zprof
 # fi
 
-# Clean room of declaring variables
-() {
-  local brew_prefix
-
-  case ${OSTYPE} in
-    linux*)
-      brew_prefix='/home/linuxbrew/.linuxbrew'
-      ;;
-    darwin*)
-      brew_prefix='/opt/homebrew'
-      ;;
-  esac
-
-  export PATH="${brew_prefix}/bin:$PATH"
-}
-
 update_tools() {
   case ${OSTYPE} in
-    linux*)
-      sudo apt update && sudo apt upgrade
-      ;;
+  linux*)
+    sudo apt update && sudo apt upgrade
+    ;;
   esac
 
-  # Update brew itself. Included in upgrade option...?
-  brew update
-
-  # Docs say `Upgrade everything`
-  brew upgrade
-
-  asdf update
-  asdf plugin update --all
-
-  zprezto-update
-}
-
-# Might be needed around `corepack enable`.
-# https://github.com/asdf-vm/asdf-nodejs/issues/42#issuecomment-1136701667
-yarn() {
-  command yarn "$@"
-  if [ "$1" = global ]; then
-    asdf reshim nodejs
-  fi
+  nix-channel --update
 }
 
 # I would keep `not heavy` to lunch shell.
@@ -99,20 +62,22 @@ bench_zsh() {
 }
 
 case ${OSTYPE} in
-	darwin*)
-		test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-		;;
+darwin*)
+  test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+  ;;
 esac
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ -n "${commands[fzf - share]}" ]; then
+  source "$(fzf-share)/key-bindings.zsh"
+  source "$(fzf-share)/completion.zsh"
+fi
 
 eval "$(starship init zsh)"
 
 # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-function set_win_title(){
-    echo -ne "\033]0; $(basename "$PWD") \007"
+function set_win_title() {
+  echo -ne "\033]0; $(basename "$PWD") \007"
 }
 precmd_functions+=(set_win_title)
 
 eval "$(direnv hook zsh)"
-

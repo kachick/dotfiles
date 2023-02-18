@@ -28,8 +28,6 @@ if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; t
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
 
-# To use GNU `ls` in Mac OS X. Required to prepare with `brew install coreutils`
-# https://qiita.com/eumesy/items/3bb39fc783c8d4863c5f
 path=(
     /usr/local/opt/coreutils/libexec/gnubin(N-/) # coreutils
     # /usr/local/opt/ed/libexec/gnubin(N-/) # ed
@@ -52,3 +50,4 @@ manpath=(
 # . "$HOME/.cargo/env"
 
 if [ -e /home/kachick/.nix-profile/etc/profile.d/nix.sh ]; then . /home/kachick/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"

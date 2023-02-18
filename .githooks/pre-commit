@@ -5,6 +5,7 @@ set -euxo pipefail
 shopt -s globstar
 
 dprint check
-shfmt --diff ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc
-shellcheck ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc
+shfmt --diff ./**/*.bash
+shellcheck ./**/*.bash
+nixpkgs-fmt ./**/*.nix
 gitleaks detect

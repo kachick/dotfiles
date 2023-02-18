@@ -9,7 +9,8 @@
     "mvdan",
     "shfmt",
     "shopt",
-    "sorin-ionescu"
+    "sorin-ionescu",
+    "nixpkgs"
   ],
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"

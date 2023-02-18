@@ -17,7 +17,7 @@ jobs:
         uses: asdf-vm/actions/install@v1
         with:
           tool_versions: 'shellcheck 0.9.0'
-      - run: 'shopt -s globstar && shellcheck ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc'
+      - run: 'shopt -s globstar && shellcheck ./**/*.bash'
   dprint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -36,4 +36,4 @@ jobs:
         uses: asdf-vm/actions/install@v1
         with:
           tool_versions: 'shfmt 3.6.0'
-      - run: 'shopt -s globstar && shfmt --diff ./**/*.sh ./**/*.bash scripts/*.bash .config/.bashrc'
+      - run: 'shopt -s globstar && shfmt --diff ./**/*.bash'
