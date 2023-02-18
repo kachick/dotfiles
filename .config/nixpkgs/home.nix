@@ -60,7 +60,7 @@
     pkgs.crystal
     pkgs.ruby_3_1
     pkgs.zellij
-    pkgs.nixfmt
+    pkgs.nixpkgs-fmt
     pkgs.nil
   ];
 }
