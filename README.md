@@ -27,6 +27,7 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 ## Note
 
 - [About Nix](https://github.com/kachick/times_kachick/issues/204)
+- [Notes for login shell issues](https://github.com/kachick/public_dotfiles/wiki/Notes-for-login-shell-issues)
 - Do not manage [Rust](https://github.com/rust-lang/rust) with asdf. Prefer [official steps and rustup](https://www.rust-lang.org/ja/tools/install).
 - [Which shell? zsh? bash? fish? nushell?](https://github.com/kachick/times_kachick/issues/184)
 - [docker => singularity](https://github.com/kachick/times_kachick/issues/186)
