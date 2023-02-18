@@ -15,16 +15,6 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 1. Install [nix-community/home-manager](https://github.com/nix-community/home-manager)
 2. `cp ./.config/nixpkgs/home.nix ~/.config/nixpkgs && home-manager switch`
 
-### Deprecated steps
-
-[`bootstrap.sh`](scripts/bootstrap.sh)
-
-See [.zshrc](.config/.zshrc) for overview and create symlinks to my $HOME
-And do below
-
-1. `zprezto-update`
-1. Sync vscode config with cloud account
-
 ## Dependent tools
 
 - [Nix, the purely functional package manager](https://github.com/NixOS/nix)
