@@ -18,10 +18,15 @@ if [ -x /usr/libexec/path_helper ]; then
     eval `/usr/libexec/path_helper -s`
 fi
 
-export XDG_CONFIG_HOME="$HOME/.config"
-
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:=$HOME/.config}"
 # Do NOT manage .zshenv(thisfile) in the dir.
-export ZDOTDIR="$HOME/.config/zsh"
+export ZDOTDIR="${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
+
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+export HISTFILE="$XDG_STATE_HOME/zsh/history"
 
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # zmodload zsh/zprof && zprof
