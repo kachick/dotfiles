@@ -62,5 +62,6 @@
     pkgs.zellij
     pkgs.nixpkgs-fmt
     pkgs.nil
+    pkgs.cargo-make
   ];
 }
