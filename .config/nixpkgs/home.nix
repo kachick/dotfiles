@@ -59,5 +59,6 @@
     pkgs.rustup
     pkgs.crystal
     pkgs.ruby_3_1
+    pkgs.zellij
   ];
 }
