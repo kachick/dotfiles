@@ -38,7 +38,8 @@
     pkgs.curl
     pkgs.wget
     pkgs.zsh
-    pkgs.bash
+    # Don't include bash - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+    # pkgs.bash
     pkgs.nushell
     pkgs.starship
     pkgs.jq
