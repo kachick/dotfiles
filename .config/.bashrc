@@ -130,7 +130,10 @@ if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
   bind '"\e[B":history-substring-search-forward'
 fi
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+if command -v fzf-share >/dev/null; then
+  source "$(fzf-share)/key-bindings.bash"
+  source "$(fzf-share)/completion.bash"
+fi
 
 # # Delegate history search with "Up arrow key" to fzf
 # bind '"\C-\e[A":"\C-r"'
