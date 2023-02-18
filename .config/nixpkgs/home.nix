@@ -54,7 +54,6 @@
     pkgs.bottom
     pkgs.tesseract
     pkgs.tig
-    pkgs.home-manager
     pkgs.imagemagick
     pkgs.pngquant
     pkgs.rustup
