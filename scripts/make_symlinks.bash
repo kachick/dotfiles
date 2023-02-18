@@ -16,17 +16,9 @@ paths_to_root() {
 .asdfrc
 .default-gems
 .irbrc
-.zlogin
-.zpreztorc
 .zshenv
-starship.toml
 .aliases.sh
 .bashrc
-.gitconfig
-.tool-versions
-.zlogout
-.zprofile
-.zshrc
 EOD
 }
 
