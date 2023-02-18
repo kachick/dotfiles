@@ -5,7 +5,7 @@
     "github>kachick/renovate-config-dprint:plugins"
   ],
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix", "asdf", "regex"],
+  "enabledManagers": ["nix", "regex"],
   "nix": {
     "enabled": true
   },

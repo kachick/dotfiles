@@ -1,3 +1,0 @@
-# Do not manage Haskell and Rust with asdf.
-ruby 3.2.1
-dprint 0.34.5
