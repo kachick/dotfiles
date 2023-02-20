@@ -20,9 +20,6 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 - [Nix, the purely functional package manager](https://github.com/NixOS/nix)
 - [Nix Packages collection](https://github.com/NixOS/nixpkgs)
 - [nix-community/home-manager](https://github.com/nix-community/home-manager)
-- [zsh-users/zsh](https://github.com/zsh-users/zsh)
-- [zsh-users/zsh-history-substring-search](https://github.com/zsh-users/zsh-history-substring-search)
-- [sorin-ionescu/prezto](https://github.com/sorin-ionescu/prezto)
 
 ## Note
 

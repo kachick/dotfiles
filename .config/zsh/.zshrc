@@ -6,18 +6,29 @@
 # in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
 [ -r /etc/zshrc ] && . /etc/zshrc
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
+eval "$(sheldon source)"
+
+# zsh-history-substring-search
+typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
 
 . ~/.aliases.sh
 
-# Overriding the definition of `modules/history/init.sh`
+# History
 HISTSIZE=100000
 SAVEHIST=4200000
-
 HISTFILE="$XDG_STATE_HOME/zsh/history"
+setopt hist_ignore_dups
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt hist_no_store
+setopt EXTENDED_HISTORY
+setopt share_history
 
 # Don't use nvm. It is heavy.
 
@@ -45,6 +56,7 @@ update_tools() {
   esac
 
   nix-channel --update
+  sheldon lock --update
 }
 
 # I would keep `not heavy` to lunch shell.

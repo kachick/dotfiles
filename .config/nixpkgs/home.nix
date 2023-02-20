@@ -67,5 +67,6 @@
     pkgs.nil
     pkgs.cargo-make
     pkgs.asdf
+    pkgs.sheldon
   ];
 }
