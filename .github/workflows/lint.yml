@@ -32,6 +32,7 @@ jobs:
         run: |
           rtx install 'shellcheck@0.9.0'
           rtx install 'shfmt@3.6.0'
+          rtx install 'shfmt2222@3.6.0'
       - name: Run linters
         run: |
           shopt -s globstar
