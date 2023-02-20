@@ -34,13 +34,21 @@ bindkey '^S' history-incremental-pattern-search-forward
 
 # Don't use nvm. It is heavy.
 
-# https://asdf-vm.com/#/core-manage-asdf
-if [ -r "$HOME/.asdf/asdf.sh" ]; then
-  . "$HOME/.asdf/asdf.sh"
+export PATH="/home/kachick/.local/share/rtx/bin:$PATH"
+_rtx_hook() {
+  trap -- '' SIGINT;
+  eval "$("/home/kachick/.local/share/rtx/bin/rtx" hook-env -s zsh)";
+  trap - SIGINT;
+}
+typeset -ag precmd_functions;
+if [[ -z "${precmd_functions[(r)_rtx_hook]+1}" ]]; then
+  precmd_functions=( _rtx_hook ${precmd_functions[@]} )
+fi
+typeset -ag chpwd_functions;
+if [[ -z "${chpwd_functions[(r)_rtx_hook]+1}" ]]; then
+  chpwd_functions=( _rtx_hook ${chpwd_functions[@]} )
 fi
 
-# append completions to fpath
-fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
 autoload -Uz compinit
 compinit
