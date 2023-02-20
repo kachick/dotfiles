@@ -20,6 +20,9 @@ use = ['{{ name }}.zsh']
 
 [plugins.zsh-syntax-highlighting]
 github = 'zsh-users/zsh-syntax-highlighting'
+
+[plugins.zsh-history-substring-search]
+github = 'zsh-users/zsh-history-substring-search'
 # For example:
 #
 # [plugins.base16]
