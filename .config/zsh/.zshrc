@@ -29,6 +29,8 @@ setopt hist_save_no_dups
 setopt hist_no_store
 setopt EXTENDED_HISTORY
 setopt share_history
+bindkey '^R' history-incremental-pattern-search-backward
+bindkey '^S' history-incremental-pattern-search-forward
 
 # Don't use nvm. It is heavy.
 
