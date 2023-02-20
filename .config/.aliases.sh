@@ -7,4 +7,4 @@ alias git-remote-upsteram="git remote | grep -E '^upstream$'|| git remote | grep
 alias git-delete-merged-branches="git branch --merged | grep -vE '((^\*)|^ *(main|master|develop|development|trunk)$)' | xargs -I % git branch -d %"
 alias git-cleanup-branches='git-switch-default && git pull $(git-remote-upsteram) $(git-current-branch) && git fetch $(git-remote-upsteram) --tags --prune && git-delete-merged-branches'
 
-alias la='exa --long --tree'
+alias la='exa --long --all --group-directories-first'
