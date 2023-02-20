@@ -6,18 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  shellcheck:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v3
-        # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
-        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
-      - name: asdf_install
-        uses: asdf-vm/actions/install@v1
-        with:
-          tool_versions: 'shellcheck 0.9.0'
-      - run: 'shopt -s globstar && shellcheck ./**/*.bash'
   dprint:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -26,14 +14,24 @@ jobs:
       - uses: dprint/check@v2.2
         with:
           dprint-version: '0.34.1'
-  shfmt:
+  shellscript:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-        # https://github.com/asdf-vm/actions/blob/171cc3570019f3a69ba10ae269ab46990936fa9f/README.md?plain=1#L128-L165
-      - name: asdf_install
-        uses: asdf-vm/actions/install@v1
-        with:
-          tool_versions: 'shfmt 3.6.0'
-      - run: 'shopt -s globstar && shfmt --diff ./**/*.bash'
+      # Using nix is best, but it is slow even if installing tiny binary
+      - name: Install rtx
+        run: |
+          curl https://rtx.pub/install.sh | sh
+          /home/runner/.local/share/rtx/bin/rtx --version
+          rtx --version
+      # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
+      - name: Install dependencies
+        run: |
+          rtx install 'shellcheck@0.9.0'
+          rtx install 'shfmt@3.6.0'
+      - name: Run linters
+        run: |
+          shopt -s globstar
+          shellcheck ./**/*.bash
+          shfmt --diff ./**/*.bash
