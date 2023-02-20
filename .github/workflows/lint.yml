@@ -31,8 +31,9 @@ jobs:
       - name: Install dependencies
         run: |
           rtx install 'shellcheck@0.9.0'
+          rtx exec shellcheck@0.9.0 -- shellcheck
           rtx install 'shfmt@3.6.0'
-          rtx install 'shfmt2222@3.6.0'
+          rtx exec shfmt@3.6.0 -- shfmt --version
       - name: Run linters
         run: |
           shopt -s globstar
