@@ -13,7 +13,6 @@ make_symlink() {
 paths_to_root() {
   cat <<'EOD'
 .stack
-.asdfrc
 .default-gems
 .irbrc
 .zshenv

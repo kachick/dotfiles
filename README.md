@@ -14,6 +14,7 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 
 1. Install [nix-community/home-manager](https://github.com/nix-community/home-manager)
 2. `cp ./.config/nixpkgs/home.nix ~/.config/nixpkgs && home-manager switch`
+3. Install [jdxcode/rtx](https://github.com/jdxcode/rtx)
 
 ## Dependent tools
 
@@ -25,7 +26,6 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 
 - [About Nix](https://github.com/kachick/times_kachick/issues/204)
 - [Notes for login shell issues](https://github.com/kachick/dotfiles/wiki/Notes-for-login-shell-issues)
-- Do not manage [Rust](https://github.com/rust-lang/rust) with asdf. Prefer [official steps and rustup](https://www.rust-lang.org/ja/tools/install).
 - [Which shell? zsh? bash? fish? nushell?](https://github.com/kachick/times_kachick/issues/184)
 - [docker => singularity](https://github.com/kachick/times_kachick/issues/186)
 - [Note of Pop! OS](https://github.com/kachick/times_kachick/issues/174)

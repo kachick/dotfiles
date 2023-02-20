@@ -34,13 +34,9 @@ bindkey '^S' history-incremental-pattern-search-forward
 
 # Don't use nvm. It is heavy.
 
-# https://asdf-vm.com/#/core-manage-asdf
-if [ -r "$HOME/.asdf/asdf.sh" ]; then
-  . "$HOME/.asdf/asdf.sh"
-fi
+# Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
+eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
-# append completions to fpath
-fpath=(${ASDF_DIR}/completions $fpath)
 # initialise completions with ZSH's compinit
 autoload -Uz compinit
 compinit

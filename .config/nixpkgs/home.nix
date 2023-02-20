@@ -66,7 +66,14 @@
     pkgs.nixpkgs-fmt
     pkgs.nil
     pkgs.cargo-make
-    pkgs.asdf
     pkgs.sheldon
+
+    # Required in many asdf(rtx) plugins
+    pkgs.unzip
+
+    # Required to build ruby
+    pkgs.zlib
+    pkgs.libyaml
+    pkgs.openssl
   ];
 }
