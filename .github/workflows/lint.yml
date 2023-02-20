@@ -25,8 +25,8 @@ jobs:
           mkdir -p ~/.local/share/rtx/bin
           curl https://github.com/jdxcode/rtx/releases/download/v1.12.1/rtx-v1.12.1-linux-x64 > ~/.local/share/rtx/bin/rtx
           chmod +x ~/.local/share/rtx/bin/rtx
+          ~/.local/share/rtx/bin/rtx --version
           echo "$HOME/.local/share/rtx/bin/rtx" >> $GITHUB_PATH
-          rtx --version
       # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
       - name: Install dependencies
         run: |
@@ -35,5 +35,5 @@ jobs:
       - name: Run linters
         run: |
           shopt -s globstar
-          shellcheck ./**/*.bash
-          shfmt --diff ./**/*.bash
+          rtx exec shellcheck@0.9.0 -- shellcheck ./**/*.bash
+          rtx exec shfmt@3.6.0 -- shfmt --diff ./**/*.bash
