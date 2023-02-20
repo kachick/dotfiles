@@ -13,6 +13,13 @@
 shell = "zsh"
 
 [plugins]
+
+[plugins.zsh-autosuggestions]
+github = 'zsh-users/zsh-autosuggestions'
+use = ['{{ name }}.zsh']
+
+[plugins.zsh-syntax-highlighting]
+github = 'zsh-users/zsh-syntax-highlighting'
 # For example:
 #
 # [plugins.base16]
