@@ -52,14 +52,15 @@ zstyle ':prezto:load' pmodule \
   'utility' \
   'directory' \
   'syntax-highlighting' \
-  'history-substring-search'
+  'history-substring-search' \
+  'autosuggestions'
 
 #
 # Autosuggestions
 #
 
 # Set the query found color.
-#zstyle ':prezto:module:autosuggestions:color' found ''
+zstyle ':prezto:module:autosuggestions:color' found 'fg=8'
 
 #
 # Completions
