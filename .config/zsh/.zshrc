@@ -56,6 +56,7 @@ update_tools() {
   esac
 
   nix-channel --update
+  sheldon lock --update
 }
 
 # I would keep `not heavy` to lunch shell.
