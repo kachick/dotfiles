@@ -17,6 +17,8 @@ fi
 HISTSIZE=100000
 SAVEHIST=4200000
 
+HISTFILE="$XDG_STATE_HOME/zsh/history"
+
 # Don't use nvm. It is heavy.
 
 # https://asdf-vm.com/#/core-manage-asdf

@@ -18,7 +18,7 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
 
 mkdir -p "$XDG_STATE_HOME"/bash
-export HISTFILE="$XDG_STATE_HOME"/bash/history
+HISTFILE="$XDG_STATE_HOME"/bash/history
 
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options

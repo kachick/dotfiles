@@ -26,8 +26,6 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
 
-export HISTFILE="$XDG_STATE_HOME/zsh/history"
-
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # zmodload zsh/zprof && zprof
 
