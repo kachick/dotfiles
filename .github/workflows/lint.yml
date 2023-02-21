@@ -23,7 +23,7 @@ jobs:
         id: nix-cache
         with:
           path: /tmp/nixcache
-          key: ${{ runner.os }}-nix_${ steps.nixpkgs-version.outputs.nixpkgs_version }
+          key: ${{ runner.os }}-nix_${{ steps.nixpkgs-version.outputs.nixpkgs_version }}
       - name: 'Import Nix store cache'
         if: "steps.nix-cache.outputs.cache-hit == 'true'"
         run: 'nix-store --import < /tmp/nixcache'
