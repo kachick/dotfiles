@@ -15,7 +15,7 @@ unsetopt GLOBAL_RCS
 # copied from /etc/zprofile
 # system-wide environment settings for zsh(1)
 if [ -x /usr/libexec/path_helper ]; then
-    eval `/usr/libexec/path_helper -s`
+  eval $(/usr/libexec/path_helper -s)
 fi
 
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:=$HOME/.config}"
@@ -30,30 +30,9 @@ export XDG_DATA_HOME="$HOME/.local/share"
 # zmodload zsh/zprof && zprof
 
 # Ensure that a non-login, non-interactive shell has a defined environment.
-if [[ ( "$SHLVL" -eq 1 && ! -o LOGIN ) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
+if [[ ("$SHLVL" -eq 1 && ! -o LOGIN) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprofile"
 fi
-
-path=(
-    /usr/local/opt/coreutils/libexec/gnubin(N-/) # coreutils
-    # /usr/local/opt/ed/libexec/gnubin(N-/) # ed
-    # /usr/local/opt/findutils/libexec/gnubin(N-/) # findutils
-    # /usr/local/opt/gnu-sed/libexec/gnubin(N-/) # sed
-    # /usr/local/opt/gnu-tar/libexec/gnubin(N-/) # tar
-    # /usr/local/opt/grep/libexec/gnubin(N-/) # grep
-    /Users/kachick/bin(N-/)
-    ${path}
-)
-manpath=(
-    /usr/local/opt/coreutils/libexec/gnuman(N-/) # coreutils
-    # /usr/local/opt/ed/libexec/gnuman(N-/) # ed
-    # /usr/local/opt/findutils/libexec/gnuman(N-/) # findutils
-    # /usr/local/opt/gnu-sed/libexec/gnuman(N-/) # sed
-    # /usr/local/opt/gnu-tar/libexec/gnuman(N-/) # tar
-    # /usr/local/opt/grep/libexec/gnuman(N-/) # grep
-    ${manpath}
-)
-# . "$HOME/.cargo/env"
 
 if [ -e /home/kachick/.nix-profile/etc/profile.d/nix.sh ]; then . /home/kachick/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
