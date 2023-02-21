@@ -51,6 +51,10 @@ update_tools() {
   linux*)
     sudo apt update && sudo apt upgrade
     ;;
+  darwin*)
+    brew update
+    brew upgrade
+    ;;
   esac
 
   nix-channel --update
