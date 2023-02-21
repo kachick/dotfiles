@@ -20,10 +20,10 @@ jobs:
       - uses: cachix/install-nix-action@v19
         with:
           nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/8eabb500ebf5dcb9a40024c1150ef348cefa8320.tar.gz
-      - id: nixpkgs-version
-        name: Detect nixpkgs version
-        # FIXME: Specifying nix-path except `channel:nixos-unstable` will empty... :<
-        run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
+      # - id: nixpkgs-version
+      #   name: Detect nixpkgs version
+      #   # FIXME: Specifying nix-path except `channel:nixos-unstable` will empty or `23.05pre-git`, it can't be used... :<
+      #   run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
       # https://github.com/cachix/install-nix-action/issues/56#issuecomment-1240991760
       - name: 'Import Nix store cache'
         if: "steps.nix-cache.outputs.cache-hit == 'true'"
