@@ -19,23 +19,21 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      # Using nix is best, but it is slow even if installing tiny binary
-      - name: Install rtx
+      - uses: cachix/install-nix-action@v19
+      - id: detect_nixpkgs
+        name: Detect nixpkgs version
+        run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
+      - run: nix-build
+      - name: Print current versions
         run: |
-          mkdir -p ~/.local/share/rtx/bin
-          curl -L https://github.com/jdxcode/rtx/releases/download/v1.12.1/rtx-v1.12.1-linux-x64 > ~/.local/share/rtx/bin/rtx
-          chmod +x ~/.local/share/rtx/bin/rtx
-          ~/.local/share/rtx/bin/rtx version
-          echo "$HOME/.local/share/rtx/bin" >> $GITHUB_PATH
-      # ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
-      - name: Install dependencies
-        run: |
-          rtx install 'shellcheck@0.9.0'
-          rtx exec shellcheck@0.9.0 -- shellcheck --version
-          rtx install 'shfmt@3.6.0'
-          rtx exec shfmt@3.6.0 -- shfmt --version
+          nix-shell --run '
+            which dprint
+            dprint --version
+            which shellcheck
+            shellcheck --version
+            which shfmt
+            shfmt --version
+            '
       - name: Run linters
         run: |
-          shopt -s globstar
-          rtx exec shellcheck@0.9.0 -- shellcheck ./**/*.bash
-          rtx exec shfmt@3.6.0 -- shfmt --diff ./**/*.bash
+          ./.githooks/pre-commit
