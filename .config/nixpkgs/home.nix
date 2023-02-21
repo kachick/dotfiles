@@ -23,6 +23,15 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
+  # nix.package = pkgs.nix;
+  # nix.settings = {
+  #   experimental-features = "nix-command";
+  # };
+  # nix.extraOptions = ''
+  #   experimental-features = nix-command
+  # '';
+
   home.packages = [
     pkgs.dprint
     pkgs.deno
