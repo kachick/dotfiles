@@ -2,30 +2,12 @@
 
 set -euxo pipefail
 
-make_symlink() {
-  local create_in="$1"
-  local source_path="$2"
+# https://stackoverflow.com/a/24112741/1212807
+parent_path=$(
+  cd "$(dirname "${BASH_SOURCE[0]}")"
+  pwd -P
+)
 
-  # https://linuxjm.osdn.jp/info/GNU_coreutils/coreutils-ja_86.html
-  ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$create_in" "$source_path"
-}
-
-paths_to_root() {
-  cat <<'EOD'
-.stack
-.default-gems
-.zshenv
-.aliases.sh
-.bashrc
-EOD
-}
-
-make_symlinks() {
-  # Can't reuse shell functions in passing to xargs... :<
-  paths_to_root | xargs -I{} ln --symbolic --verbose --backup --relative --no-dereference --target-directory="$HOME/.config" "./.config/{}"
-
-  mkdir -p "$HOME/.stack"
-  make_symlink "$HOME/.stack" ./.config/.stack/config.yaml
-}
-
-make_symlinks
+fd --hidden --type file --max-depth 1 '.' ./home | xargs -I{} "$parent_path/make_symlink.bash" "$HOME" '{}'
+# TODO: Update in #142
+"$parent_path/make_symlink.bash" "$HOME/.stack" './home/.stack/config.yaml'
