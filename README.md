@@ -1,6 +1,7 @@
 # dotfiles
 
-[![Build Status](https://github.com/kachick/dotfiles/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/lint.yml?query=branch%3Amain+)
+[![Linter Status](https://github.com/kachick/dotfiles/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/lint.yml?query=branch%3Amain+)
+[![Development Environment Status](https://github.com/kachick/dotfiles/actions/workflows/ci-dev.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-dev.yml?query=branch%3Amain+)
 
 Personal dotfiles. :see_no_evil: Excluded sensitive information like command histories :yum:.
 
