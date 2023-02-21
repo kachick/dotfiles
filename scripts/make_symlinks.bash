@@ -14,7 +14,6 @@ paths_to_root() {
   cat <<'EOD'
 .stack
 .default-gems
-.irbrc
 .zshenv
 .aliases.sh
 .bashrc
