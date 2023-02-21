@@ -28,7 +28,7 @@ jobs:
       - name: 'Import Nix store cache'
         if: "steps.nix-cache.outputs.cache-hit == 'true'"
         run: 'nix-store --import < /tmp/nixcache'
-      - run: nix-build
+      - run: nix-build --print-build-logs
       - name: Print current versions
         run: |
           nix-shell --run '
