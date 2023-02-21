@@ -128,8 +128,6 @@ if ! shopt -oq posix; then
   fi
 fi
 
-. "$HOME/.cargo/env"
-
 . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
 
 # https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
