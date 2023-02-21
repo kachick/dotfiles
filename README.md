@@ -14,8 +14,9 @@ Personal dotfiles. :see_no_evil: Excluded sensitive information like command his
 ## Installation
 
 1. Install [nix-community/home-manager](https://github.com/nix-community/home-manager)
-2. `cp ./.config/nixpkgs/home.nix ~/.config/nixpkgs && home-manager switch`
-3. Install [jdxcode/rtx](https://github.com/jdxcode/rtx)
+2. `./scripts/make_symlinks.bash"`
+3. `home-manager switch`
+4. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx)
 
 ## Dependent tools
 
