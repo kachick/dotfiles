@@ -20,9 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v19
-      - id: detect_nixpkgs
-        name: Detect nixpkgs version
-        run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
+      - name: Print nixpkgs version
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - run: nix-build
       - name: Print current versions
         run: |
@@ -36,4 +35,4 @@ jobs:
             '
       - name: Run linters
         run: |
-          ./.githooks/pre-commit
+          nix-shell --run './.githooks/pre-commit'
