@@ -28,20 +28,21 @@ jobs:
       - name: 'Import Nix store cache'
         if: "steps.nix-cache.outputs.cache-hit == 'true'"
         run: 'nix-store --import < /tmp/nixcache'
-      - run: nix build --print-build-logs
+      - run: nix-build
+        if: "steps.nix-cache.outputs.cache-hit = 'true'"
       - name: Print current versions
         run: |
-          nix shell
-          which dprint
-          dprint --version
-          which shellcheck
-          shellcheck --version
-          which shfmt
-          shfmt --version
+          nix-shell --run '
+            which dprint
+            dprint --version
+            which shellcheck
+            shellcheck --version
+            which shfmt
+            shfmt --version
+            '
       - name: 'Export Nix store cache'
         if: "steps.nix-cache.outputs.cache-hit != 'true'"
         run: "nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache"
       - name: Run linters
         run: |
-          nix shell
-          ./.githooks/pre-commit
+          nix-shell --run './.githooks/pre-commit'
