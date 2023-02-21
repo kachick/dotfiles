@@ -5,7 +5,7 @@
 
 
   outputs = { self, nixpkgs }: with nixpkgs.legacyPackages.x86_64-linux; {
-    packages.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux;
+    packages.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.default;
 
     devShell.x86_64-linux = mkShell {
       buildInputs = [
