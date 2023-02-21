@@ -31,7 +31,7 @@ script = [
 [tasks.prevent-secret]
 category = "Tools"
 script = [
-  "gitleaks",
+  "gitleaks detect",
 ]
 
 [tasks.check]
