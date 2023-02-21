@@ -10,4 +10,7 @@ parent_path=$(
 
 fd --hidden --type file --max-depth 1 '.' ./home | xargs -I{} "$parent_path/make_symlink.bash" "$HOME" '{}'
 # TODO: Update in #142
+mkdir -p "$HOME/.stack"
 "$parent_path/make_symlink.bash" "$HOME/.stack" './home/.stack/config.yaml'
+
+fd --hidden --max-depth 1 '.' ./.config | xargs -I{} "$parent_path/make_symlink.bash" "$XDG_CONFIG_HOME" '{}'

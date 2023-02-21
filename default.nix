@@ -13,5 +13,7 @@ pkgs.mkShell {
     pkgs.nixpkgs-fmt
     pkgs.gitleaks
     pkgs.cargo-make
+    pkgs.coreutils
+    pkgs.fd
   ];
 }
