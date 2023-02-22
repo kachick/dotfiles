@@ -61,7 +61,7 @@ _compinit_with_interval() {
     compinit -d "$dump_path"
   else
     # if there are new functions can be omitted by giving the option -C.
-    compinit -C
+    compinit -C -d "$dump_path"
   fi
 }
 _compinit_with_interval
