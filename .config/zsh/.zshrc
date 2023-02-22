@@ -17,6 +17,8 @@ bindkey '^[[B' history-substring-search-down
 
 . ~/.aliases.sh
 
+setopt correct
+
 # History
 HISTSIZE=100000
 SAVEHIST=4200000
