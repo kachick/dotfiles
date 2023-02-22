@@ -29,6 +29,11 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
 
+# Actually not used?
+# https://wiki.archlinux.jp/index.php/XDG_Base_Directory
+# https://www.reddit.com/r/zsh/comments/tpwx9t/zcompcache_vs_zcompdump/
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
+
 export INPUTRC="$XDG_CONFIG_HOME"/readline/inputrc
 
 # Ensure that a non-login, non-interactive shell has a defined environment.
