@@ -44,8 +44,8 @@ bindkey '^S' history-incremental-pattern-search-forward
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
 # initialise completions with ZSH's compinit
-autoload -Uz compinit
-compinit
+# autoload -Uz compinit
+# compinit
 
 update_tools() {
   case ${OSTYPE} in
@@ -72,10 +72,10 @@ darwin*)
   ;;
 esac
 
-if [ -n "${commands[fzf - share]}" ]; then
-  source "$(fzf-share)/key-bindings.zsh"
-  source "$(fzf-share)/completion.zsh"
-fi
+# if [ -n "${commands[fzf - share]}" ]; then
+#   source "$(fzf-share)/key-bindings.zsh"
+#   source "$(fzf-share)/completion.zsh"
+# fi
 
 eval "$(starship init zsh)"
 
