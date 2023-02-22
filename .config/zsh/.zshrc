@@ -43,9 +43,28 @@ bindkey '^S' history-incremental-pattern-search-forward
 # Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
-# initialise completions with ZSH's compinit
-autoload -Uz compinit
-compinit
+# Hack to redump(?) for optimization
+# See below references
+# * https://github.com/kachick/dotfiles/issues/154
+# * https://gist.github.com/ctechols/ca1035271ad134841284
+# * https://memo.kkenya.com/zsh_speed_up/
+_compinit_with_interval() {
+  local -r dump_dir="$XDG_CACHE_HOME/zsh"
+  mkdir -p "$dump_dir"
+
+  local -r dump_path="$dump_dir/zcompdump-$ZSH_VERSION"
+  local -r threshold="$((60 * 60 * 12))"
+
+  autoload -Uz compinit
+
+  if [ ! -e "$dump_path" ] || [ "$(("$(date +"%s")" - "$(date -r "$dump_path" +"%s")"))" -gt "$threshold" ]; then
+    compinit -d "$dump_path"
+  else
+    # if there are new functions can be omitted by giving the option -C.
+    compinit -C -d "$dump_path"
+  fi
+}
+_compinit_with_interval
 
 update_tools() {
   case ${OSTYPE} in
@@ -62,6 +81,7 @@ update_tools() {
   sheldon lock --update
 }
 
+# Keep under 120ms...!
 bench_zsh() {
   hyperfine 'zsh -i -c exit'
 }
@@ -72,7 +92,7 @@ darwin*)
   ;;
 esac
 
-if [ -n "${commands[fzf - share]}" ]; then
+if command -v fzf-share >/dev/null; then
   source "$(fzf-share)/key-bindings.zsh"
   source "$(fzf-share)/completion.zsh"
 fi
