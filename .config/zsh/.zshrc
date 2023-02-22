@@ -61,12 +61,8 @@ update_tools() {
   sheldon lock --update
 }
 
-# I would keep `not heavy` to lunch shell.
-# So do not forget to measure. If any loading changes are added.
-# ~~ Keep sec <= 0.5 ~~
 bench_zsh() {
-  # Below useful benchmark script is taken from https://qiita.com/vintersnow/items/7343b9bf60ea468a4180. Thanks!
-  for i in $(seq 1 10); do time zsh -i -c exit; done
+  hyperfine 'zsh -i -c exit'
 }
 
 case ${OSTYPE} in
