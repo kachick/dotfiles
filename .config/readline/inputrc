@@ -1,0 +1,2 @@
+# https://unix.stackexchange.com/questions/73672/how-to-turn-off-the-beep-only-in-bash-tab-complete
+set bell-style none

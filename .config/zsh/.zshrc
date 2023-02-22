@@ -18,6 +18,10 @@ bindkey '^[[B' history-substring-search-down
 . ~/.aliases.sh
 
 setopt correct
+unsetopt BEEP
+# These pickup disanling does not work...
+# unsetopt LIST_BEEP
+# unsetopt HIST_BEEP
 
 # History
 HISTSIZE=100000
