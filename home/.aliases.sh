@@ -8,3 +8,5 @@ alias git-delete-merged-branches="git branch --merged | grep -vE '((^\*)|^ *(mai
 alias git-cleanup-branches='git-switch-default && git pull $(git-remote-upsteram) $(git-current-branch) && git fetch $(git-remote-upsteram) --tags --prune && git-delete-merged-branches'
 
 alias la='exa --long --all --group-directories-first'
+
+alias zj='zellij attach "$(basename "$PWD")" || zellij --session "$(basename "$PWD")"'
