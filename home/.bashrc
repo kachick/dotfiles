@@ -128,7 +128,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
 
 # https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
 if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then

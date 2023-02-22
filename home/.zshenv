@@ -35,4 +35,4 @@ if [[ ("$SHLVL" -eq 1 && ! -o LOGIN) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; the
 fi
 
 if [ -e /home/kachick/.nix-profile/etc/profile.d/nix.sh ]; then . /home/kachick/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
