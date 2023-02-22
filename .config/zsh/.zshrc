@@ -81,6 +81,7 @@ update_tools() {
   sheldon lock --update
 }
 
+# Keep under 120ms...!
 bench_zsh() {
   hyperfine 'zsh -i -c exit'
 }
