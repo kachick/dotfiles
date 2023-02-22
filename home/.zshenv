@@ -2,6 +2,9 @@
 # Defines environment variables.
 #
 
+# https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
+# zmodload zsh/zprof && zprof
+
 export PATH
 export MANPATH
 # -U: keep only the first occurrence of each duplicated value
@@ -25,9 +28,6 @@ export ZDOTDIR="${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_DATA_HOME="$HOME/.local/share"
-
-# https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
-# zmodload zsh/zprof && zprof
 
 # Ensure that a non-login, non-interactive shell has a defined environment.
 if [[ ("$SHLVL" -eq 1 && ! -o LOGIN) && -s "${ZDOTDIR:-$HOME}/.zprofile" ]]; then

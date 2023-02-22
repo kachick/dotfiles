@@ -41,11 +41,6 @@ eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 autoload -Uz compinit
 compinit
 
-# https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
-# if (which zprof > /dev/null 2>&1) ;then
-#   zprof
-# fi
-
 update_tools() {
   case ${OSTYPE} in
   linux*)
@@ -85,3 +80,8 @@ function set_win_title() {
 precmd_functions+=(set_win_title)
 
 eval "$(direnv hook zsh)"
+
+# https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
+# if (which zprof >/dev/null 2>&1); then
+#   zprof
+# fi
