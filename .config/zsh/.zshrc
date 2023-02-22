@@ -79,6 +79,9 @@ update_tools() {
 
   nix-channel --update
   sheldon lock --update
+  if command -v rtx; then
+    rtx self-update
+  fi
 }
 
 # Keep under 120ms...!
