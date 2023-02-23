@@ -59,6 +59,7 @@ _compinit_with_interval() {
 
   if [ ! -e "$dump_path" ] || [ "$(("$(date +"%s")" - "$(date -r "$dump_path" +"%s")"))" -gt "$threshold" ]; then
     compinit -d "$dump_path"
+    touch "$dump_path"
   else
     # if there are new functions can be omitted by giving the option -C.
     compinit -C -d "$dump_path"
