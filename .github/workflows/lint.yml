@@ -26,6 +26,8 @@ jobs:
           tool_versions: |
             shellcheck 0.9.0
             shfmt 3.6.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Logging dependency versions
         run: |
           shellcheck --version
