@@ -3,7 +3,10 @@
 [![Linter Status](https://github.com/kachick/dotfiles/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/lint.yml?query=branch%3Amain+)
 [![Development Environment Status](https://github.com/kachick/dotfiles/actions/workflows/ci-dev.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-dev.yml?query=branch%3Amain+)
 
-Personal dotfiles. :see_no_evil: Excluded sensitive information like command histories :yum:.
+Personal dotfiles that can be placed in the public repository
+
+Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳 :relaxed:\
+⬆️ Do these lines and emoji look right to you? If not, check the fonts!
 
 ## Development
 
