@@ -155,4 +155,6 @@ function set_win_title() {
 # shellcheck disable=SC2034
 starship_precmd_user_func="set_win_title"
 
+eval "$(zoxide init bash)"
+
 . ~/.aliases.sh

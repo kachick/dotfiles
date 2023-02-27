@@ -76,6 +76,7 @@
     pkgs.nil
     pkgs.cargo-make
     pkgs.hyperfine
+    pkgs.zoxide
 
     # TODO: not yet officially supported macos, but works.
     # https://github.com/NixOS/nixpkgs/pull/177024/files#diff-82935a120aeca7ac66b6d3b13c94ddffb8b33c87849105f732ac59b26e7812c5R58

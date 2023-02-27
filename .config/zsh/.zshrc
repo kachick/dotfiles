@@ -109,6 +109,8 @@ function set_win_title() {
 }
 precmd_functions+=(set_win_title)
 
+eval "$(zoxide init zsh)"
+
 eval "$(direnv hook zsh)"
 
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
