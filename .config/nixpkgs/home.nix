@@ -70,13 +70,13 @@
     pkgs.pngquant
     pkgs.rustup
     pkgs.crystal
-    pkgs.ruby_3_1
     pkgs.zellij
     pkgs.nixpkgs-fmt
     pkgs.nil
     pkgs.cargo-make
     pkgs.hyperfine
     pkgs.zoxide
+    pkgs.gnumake
     pkgs.elmPackages.elm
 
     # TODO: not yet officially supported macos, but works.
@@ -86,10 +86,12 @@
     # Required in many asdf(rtx) plugins
     pkgs.unzip
 
-    # Required to build ruby
-    pkgs.zlib
-    pkgs.libyaml
-    pkgs.openssl
-    pkgs.gnumake
+    # This section is just a note for my strggle
+    # Use https://github.com/bobvanderlinden/nixpkgs-ruby
+    # If needed official nixppkgs, specify `pkgs.ruby_3_1`
+    # Often failed to build ruby even if I enabled following dependencies
+    # pkgs.zlib
+    # pkgs.libyaml
+    # pkgs.openssl
   ];
 }
