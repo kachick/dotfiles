@@ -3,7 +3,7 @@
 	name = Kenichi Kamiya
 [core]
 	editor = code --wait
-  quotepath = false
+	quotepath = false
 [credential "https://github.com"]
 	helper =
 	helper = !gh auth git-credential
