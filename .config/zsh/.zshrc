@@ -26,6 +26,7 @@ unsetopt BEEP
 # History
 HISTSIZE=100000
 SAVEHIST=4200000
+mkdir -p "$XDG_STATE_HOME/zsh"
 HISTFILE="$XDG_STATE_HOME/zsh/history"
 setopt hist_ignore_dups
 setopt hist_ignore_all_dups
