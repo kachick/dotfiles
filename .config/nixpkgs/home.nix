@@ -90,5 +90,6 @@
     pkgs.zlib
     pkgs.libyaml
     pkgs.openssl
+    pkgs.gnumake
   ];
 }
