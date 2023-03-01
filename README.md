@@ -41,4 +41,5 @@ If you backed to 🚼 from some reasons, See [Wiki](https://github.com/kachick/d
 - [Which shell? zsh? bash? fish? nushell?](https://github.com/kachick/times_kachick/issues/184)
 - [docker => singularity](https://github.com/kachick/times_kachick/issues/186)
 - [Note of Pop! OS](https://github.com/kachick/times_kachick/issues/174)
+- [Disable noisy beep](https://github.com/kachick/times_kachick/issues/214)
 - [Colorize vscode](https://github.com/kachick/times_kachick/issues/93)
