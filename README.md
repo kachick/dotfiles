@@ -8,18 +8,25 @@ Personal dotfiles that can be placed in the public repository
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳 :relaxed:\
 ⬆️ Do these lines and emoji look right to you? If not, check the fonts!
 
+## I have just installed OS
+
+If you backed to 🚼 from some reasons, See [Wiki](https://github.com/kachick/dotfiles/wiki) at first
+
 ## Development
 
 1. Install [Nix](https://nixos.org/) package manager
-2. Run `nix-shell` or `nix-shell --command 'zsh'`
+2. Run `nix-shell`. (`nix-shell --command 'zsh'` might not work if you did not finish whole installation steps ever)
 3. `makers setup`
 
 ## Installation
 
+1. Do `Development` steps
 1. Install [nix-community/home-manager](https://github.com/nix-community/home-manager)
-2. `./scripts/make_symlinks.bash`
-3. `home-manager switch`
-4. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx) to manage subdivided versions
+1. Set `XDG_*` into current env. `. ./home/.bashrc`
+1. Make sure `$XDG_CONFIG_HOME/nixpkgs/home.nix` does not exists. If not, check the content and remove
+1. `./scripts/make_symlinks.bash`
+1. `home-manager switch`
+1. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx) to manage subdivided versions
 
 ## Dependent tools
 
