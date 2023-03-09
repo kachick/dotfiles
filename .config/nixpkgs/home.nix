@@ -66,8 +66,6 @@
     pkgs.bottom
     pkgs.tesseract
     pkgs.tig
-    pkgs.imagemagick
-    pkgs.pngquant
     pkgs.rustup
     pkgs.crystal
     pkgs.zellij
@@ -93,5 +91,11 @@
     # pkgs.zlib
     # pkgs.libyaml
     # pkgs.openssl
+
+    # As a boardgamer
+    pkgs.imagemagick
+    pkgs.pngquant
+    pkgs.img2pdf
+    pkgs.ocrmypdf
   ];
 }
