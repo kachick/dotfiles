@@ -1,6 +1,6 @@
 { pkgs ? import
     (fetchTarball
-      "https://github.com/NixOS/nixpkgs/archive/8eabb500ebf5dcb9a40024c1150ef348cefa8320.tar.gz")
+      "https://github.com/NixOS/nixpkgs/archive/25603863bc045c5a6762b4f69acc2cc7312b5d57.tar.gz")
     { }
 }:
 
