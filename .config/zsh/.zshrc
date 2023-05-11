@@ -80,6 +80,8 @@ update_tools() {
   esac
 
   nix-channel --update
+  home-manager switch
+
   sheldon lock --update
   if command -v rtx; then
     rtx self-update
