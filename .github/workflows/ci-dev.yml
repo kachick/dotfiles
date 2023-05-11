@@ -26,10 +26,10 @@ jobs:
       #   run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
       # https://github.com/cachix/install-nix-action/issues/56#issuecomment-1240991760
       - name: 'Import Nix store cache'
-        if: "steps.nix-cache.outputs.cache-hit == 'true'"
+        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
         run: 'nix-store --import < /tmp/nixcache'
       - run: nix-build
-        if: "steps.nix-cache.outputs.cache-hit != 'true'"
+        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
       - name: Print current versions
         run: |
           nix-shell --run '
@@ -43,7 +43,7 @@ jobs:
             shfmt --version
             '
       - name: 'Export Nix store cache'
-        if: "steps.nix-cache.outputs.cache-hit != 'true'"
+        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
         run: "nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache"
       - name: Run linters
         run: |
