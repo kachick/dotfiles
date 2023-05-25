@@ -17,7 +17,7 @@ jobs:
         with:
           path: /tmp/nixcache
           key: ${{ runner.os }}-nix_25603863bc045c5a6762b4f69acc2cc7312b5d57
-      - uses: cachix/install-nix-action@v20
+      - uses: cachix/install-nix-action@v21
         with:
           nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/25603863bc045c5a6762b4f69acc2cc7312b5d57.tar.gz
       # - id: nixpkgs-version
