@@ -116,6 +116,9 @@ eval "$(zoxide init zsh)"
 
 eval "$(direnv hook zsh)"
 
+# Do not save history if it was failed
+zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
+
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # if (which zprof >/dev/null 2>&1); then
 #   zprof
