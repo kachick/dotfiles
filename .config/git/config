@@ -21,3 +21,4 @@
 [alias]
 	fixup = commit --all --amend
 	empty = commit --allow-empty -m 'Add an empty commit'
+	current-branch = symbolic-ref --short HEAD
