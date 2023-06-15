@@ -671,6 +671,14 @@ def git-cleanup-branches [] {
   git-switch-default; git pull (git-upstream) (git current-branch); git fetch (git-upstream) --tags --prune; git-delete-merged-branches
 }
 
+def la [] {
+  ls --all | sort-by modified -r | sort-by type
+}
+
+def lxa [] {
+  exa --long --all --group-directories-first
+}
+
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
 source ~/.cache/starship/init.nu
 
