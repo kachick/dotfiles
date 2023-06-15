@@ -650,5 +650,26 @@ let-env config = {
   ]
 }
 
+def git-main-branch [] {
+  git branch | lines | str replace '^ *(?:\*\s+(.+))?' '$1' | where ($it == "main" or $it == "master") | take 1
+}
+
+def git-upstream [] {
+  git remote | lines | str trim | where ($it == "upstream" or $it == "origin") | reverse | take 1
+}
+
+# https://www.nushell.sh/cookbook/git.html#delete-git-merged-branches
+def git-delete-merged-branches [] {
+  git branch --merged | lines | where ($it != "* master" and $it != "* main") | each {|br| git branch -D ($br | str trim) } | str trim
+}
+
+def git-switch-default [] {
+  git switch (git-main-branch)
+}
+
+def git-cleanup-branches [] {
+  git-switch-default; git pull (git-upstream) (git current-branch); git fetch (git-upstream) --tags --prune; git-delete-merged-branches
+}
+
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
 source ~/.cache/starship/init.nu
