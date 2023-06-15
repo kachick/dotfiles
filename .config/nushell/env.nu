@@ -95,5 +95,10 @@ let-env NU_PLUGIN_DIRS = [
 ### Custom for starship
 
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
-mkdir ~/.cache/starship
-starship init nu | save -f ~/.cache/starship/init.nu
+mkdir $"($env.XDG_CACHE_HOME)/starship"
+starship init nu | save -f $"($env.XDG_CACHE_HOME)/starship/init.nu"
+
+# https://github.com/ajeetdsouza/zoxide/tree/6dedfcd74aef9c8484d6d921869b34a0d4395c38
+mkdir $"($env.XDG_CACHE_HOME)/zoxide"
+zoxide init nushell | save -f $"($env.XDG_CACHE_HOME)/zoxide/init.nu"
+

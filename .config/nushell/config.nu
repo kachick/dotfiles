@@ -673,3 +673,6 @@ def git-cleanup-branches [] {
 
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
 source ~/.cache/starship/init.nu
+
+# https://github.com/ajeetdsouza/zoxide/tree/6dedfcd74aef9c8484d6d921869b34a0d4395c38
+source ~/.cache/zoxide/init.nu
