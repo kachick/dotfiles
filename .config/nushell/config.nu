@@ -723,6 +723,11 @@ def lxa [] {
   exa --long --all --group-directories-first
 }
 
+def nhb [] {
+  # How to use env with fall back value? https://github.com/kachick/times_kachick/issues/222
+  ^$"($env.HOME)/go/bin/nix-headbump"
+}
+
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
 source ~/.cache/starship/init.nu
 
