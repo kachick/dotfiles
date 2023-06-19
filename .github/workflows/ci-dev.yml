@@ -30,7 +30,7 @@ jobs:
       - id: current
         run: |
           ref="$(./nix-headbump -current)"
-          echo "ref=${current}" | tee -a "$GITHUB_OUTPUT"
+          echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
   tasks:
     runs-on: ubuntu-latest
     timeout-minutes: 30
