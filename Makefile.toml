@@ -39,6 +39,20 @@ category = "Tools"
 description = 'Parallel runner for all tests and linters'
 run_task = { name = ["format-check", "prevent-secret"] }
 
+[tasks.versions]
+category = "Tools"
+description = 'Print dependency versions'
+script = [
+  "makers --version",
+  "dprint --version",
+  "shellcheck --version",
+  "shfmt --version",
+  # Returnes NON 0, why...? :<
+  # "nixpkgs-fmt --version",
+  "gitleaks version",
+  "fd --version",
+]
+
 [tasks.help]
 category = "Tools"
 description = 'Might help you - (This one)'

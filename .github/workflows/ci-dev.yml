@@ -5,55 +5,43 @@ on:
     paths:
       - '.github/workflows/ci-dev.yml'
       - '*.nix'
+      - 'Makefile.yml'
   pull_request:
     paths:
       - '.github/workflows/ci-dev.yml'
       - '*.nix'
+      - 'Makefile.yml'
   schedule:
     # About JST 8:00
     - cron: '0 17 * * *'
   workflow_dispatch:
 
 jobs:
-  make:
+  parse:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    outputs:
+      current: ${{ steps.current.outputs.ref }}
     steps:
       - uses: actions/checkout@v3
-      - name: 'Cache Nix store'
-        uses: actions/cache@v3
-        id: nix-cache
-        with:
-          path: /tmp/nixcache
-          key: ${{ runner.os }}-nix_25603863bc045c5a6762b4f69acc2cc7312b5d57
+      - name: Install nix parser
+        run: curl -L https://github.com/kachick/nix-headbump/releases/latest/download/nix-headbump_Linux_x86_64.tar.gz | tar xvz -C ./ nix-headbump
+      - run: ./nix-headbump --version
+      - id: current
+        run: |
+          ref="$(./nix-headbump -current)"
+          echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
+  tasks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [parse]
+    steps:
+      - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v22
         with:
-          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/25603863bc045c5a6762b4f69acc2cc7312b5d57.tar.gz
-      # - id: nixpkgs-version
-      #   name: Detect nixpkgs version
-      #   # FIXME: Specifying nix-path except `channel:nixos-unstable` will empty or `23.05pre-git`, it can't be used... :<
-      #   run: echo "nixpkgs_version=$(nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version' | tr -d '"')" | tee -a $GITHUB_OUTPUT
-      # https://github.com/cachix/install-nix-action/issues/56#issuecomment-1240991760
-      - name: 'Import Nix store cache'
-        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
-        run: 'nix-store --import < /tmp/nixcache'
+          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/${{ needs.parse.outputs.current }}.tar.gz
       - run: nix-build
-        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
-      - name: Print current versions
-        run: |
-          nix-shell --run '
-            which makers
-            makers --version
-            which dprint
-            dprint --version
-            which shellcheck
-            shellcheck --version
-            which shfmt
-            shfmt --version
-            '
-      - name: 'Export Nix store cache'
-        if: ${{ steps.nix-cache.outputs.cache-hit  == 'true' }}
-        run: "nix-store --export $(find /nix/store -maxdepth 1 -name '*-*') > /tmp/nixcache"
+      - name: Log current versions
+        run: nix-shell --run 'makers versions'
       - name: Run linters
-        run: |
-          nix-shell --run 'makers check'
+        run: nix-shell --run 'makers check'
