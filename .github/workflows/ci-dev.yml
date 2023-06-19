@@ -1,5 +1,14 @@
 name: CI - Development Environment
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-dev.yml'
+      - '*.nix'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-dev.yml'
+      - '*.nix'
   schedule:
     # About JST 8:00
     - cron: '0 17 * * *'
