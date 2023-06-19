@@ -5,12 +5,12 @@ on:
     paths:
       - '.github/workflows/ci-dev.yml'
       - '*.nix'
-      - 'Makefile.yml'
+      - 'Makefile.toml'
   pull_request:
     paths:
       - '.github/workflows/ci-dev.yml'
       - '*.nix'
-      - 'Makefile.yml'
+      - 'Makefile.toml'
   schedule:
     # About JST 8:00
     - cron: '0 17 * * *'
