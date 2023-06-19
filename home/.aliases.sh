@@ -9,5 +9,3 @@ alias git-cleanup-branches='git-switch-default && git pull $(git-upsteram) $(git
 alias la='exa --long --all --group-directories-first'
 
 alias zj='zellij attach "$(basename "$PWD")" || zellij --session "$(basename "$PWD")"'
-
-alias nhb='${GOPATH:-"$HOME/go"}/bin/nix-headbump'
