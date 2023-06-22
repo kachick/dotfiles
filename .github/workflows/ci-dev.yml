@@ -25,11 +25,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install nix parser
-        run: curl -L https://github.com/kachick/nix-headbump/releases/latest/download/nix-headbump_Linux_x86_64.tar.gz | tar xvz -C ./ nix-headbump
+        run: curl -L https://github.com/kachick/nix-headbump/releases/download/v0.2.0/nix-headbump_Linux_x86_64.tar.gz | tar xvz -C ./ nix-headbump
       - run: ./nix-headbump --version
       - id: current
         run: |
-          ref="$(./nix-headbump -current)"
+          ref="$(./nix-headbump detect --current)"
           echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
   tasks:
     runs-on: ubuntu-latest
