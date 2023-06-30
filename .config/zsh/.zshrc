@@ -85,6 +85,7 @@ update_tools() {
   sheldon lock --update
   if command -v rtx; then
     rtx self-update
+    rtx plugins update
   fi
 }
 
