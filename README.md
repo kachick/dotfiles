@@ -25,7 +25,7 @@ If you backed to 🚼 from some reasons, See [Wiki](https://github.com/kachick/d
 1. Set `XDG_*` into current env. `. ./home/.bashrc`
 1. Make sure `$XDG_CONFIG_HOME/home-manager/home.nix` does not exists. If not, check the content and remove
 1. `./scripts/make_symlinks.bash`
-1. `home-manager switch`
+1. `NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 home-manager switch`
 1. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx) to manage subdivided versions
 
 ## Dependent tools

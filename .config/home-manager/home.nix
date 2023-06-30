@@ -1,14 +1,15 @@
-{ config, pkgs, ... }:
+{ config, pkgs, isDarwin, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "kachick";
-  home.homeDirectory = "/home/kachick";
-  xdg.configHome = "/home/kachick/.config";
-  xdg.cacheHome = "/home/kachick/.cache";
-  xdg.stateHome = "/home/kachick/.local/state";
-  xdg.dataHome = "/home/kachick/.local/share";
+  # TODO: How to cover lima? The default is /home/kachick.local
+  home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  xdg.configHome = "${config.home.homeDirectory}/.config";
+  xdg.cacheHome = "${config.home.homeDirectory}/.cache";
+  xdg.stateHome = "${config.home.homeDirectory}/.local/state";
+  xdg.dataHome = "${config.home.homeDirectory}/.local/share";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -78,6 +79,7 @@
     pkgs.elmPackages.elm
 
     # TODO: not yet officially supported macos, but works.
+    # So you should `NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 home-manager switch` in macos
     # https://github.com/NixOS/nixpkgs/pull/177024/files#diff-82935a120aeca7ac66b6d3b13c94ddffb8b33c87849105f732ac59b26e7812c5R58
     pkgs.sheldon
 
@@ -85,12 +87,14 @@
     pkgs.unzip
 
     # This section is just a note for my strggle
-    # Use https://github.com/bobvanderlinden/nixpkgs-ruby
-    # If needed official nixppkgs, specify `pkgs.ruby_3_1`
     # Often failed to build ruby even if I enabled following dependencies
     # pkgs.zlib
     # pkgs.libyaml
     # pkgs.openssl
+    #
+    # Don't include nixpkgs ruby, because of installing into .nix-profile hides
+    # adhoc use of use of https://github.com/bobvanderlinden/nixpkgs-ruby
+    # pkgs.ruby
 
     # As a boardgamer
     pkgs.imagemagick
