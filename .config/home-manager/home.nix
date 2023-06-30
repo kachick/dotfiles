@@ -93,7 +93,7 @@
     # pkgs.openssl
     #
     # Don't include nixpkgs ruby, because of installing into .nix-profile hides
-    # adhoc use of use of https://github.com/bobvanderlinden/nixpkgs-ruby
+    # adhoc use of https://github.com/bobvanderlinden/nixpkgs-ruby
     # pkgs.ruby
 
     # As a boardgamer
