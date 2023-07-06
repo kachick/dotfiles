@@ -17,29 +17,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  parse:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    outputs:
-      current: ${{ steps.current.outputs.ref }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install nix parser
-        run: curl -L https://github.com/kachick/nix-headbump/releases/download/v0.2.0/nix-headbump_Linux_x86_64.tar.gz | tar xvz -C ./ nix-headbump
-      - run: ./nix-headbump --version
-      - id: current
-        run: |
-          ref="$(./nix-headbump detect --current)"
-          echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
   tasks:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [parse]
     steps:
       - uses: actions/checkout@v3
-      - uses: cachix/install-nix-action@v22
-        with:
-          nix_path: nixpkgs=https://github.com/NixOS/nixpkgs/archive/${{ needs.parse.outputs.current }}.tar.gz
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix-build
       - name: Log current versions
         run: nix-shell --run 'makers versions'
