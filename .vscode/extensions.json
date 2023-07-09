@@ -3,7 +3,7 @@
     "editorconfig.editorconfig",
     "dprint.dprint",
     "streetsidesoftware.code-spell-checker",
-    "redhat.vscode-yaml",
+    "github.vscode-github-actions",
     "timonwong.shellcheck",
     "foxundermoon.shell-format",
     "tamasfe.even-better-toml",
