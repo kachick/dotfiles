@@ -2,7 +2,7 @@
 	email = kachick1@gmail.com
 	name = Kenichi Kamiya
 [core]
-	editor = code --wait
+	editor = hx
 	quotepath = false
 [credential "https://github.com"]
 	helper =
