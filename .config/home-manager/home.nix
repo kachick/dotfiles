@@ -76,6 +76,7 @@
     pkgs.hyperfine
     pkgs.zoxide
     pkgs.helix
+    pkgs.delta
     pkgs.gnumake
     pkgs.elmPackages.elm
 
