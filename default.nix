@@ -15,5 +15,6 @@ pkgs.mkShell {
     pkgs.cargo-make
     pkgs.coreutils
     pkgs.fd
+    pkgs.typos
   ];
 }

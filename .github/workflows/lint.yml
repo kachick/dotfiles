@@ -14,6 +14,7 @@ jobs:
       - uses: dprint/check@v2.2
         with:
           dprint-version: '0.36.1'
+
   shellscript:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -37,3 +38,11 @@ jobs:
           shopt -s globstar
           shellcheck ./**/*.bash
           shfmt --diff ./**/*.bash
+
+  typos:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # Keep same version as *.nix
+      - uses: crate-ci/typos@v1.15.0
