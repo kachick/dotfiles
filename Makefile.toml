@@ -54,7 +54,7 @@ script = [
   "dprint --version",
   "shellcheck --version",
   "shfmt --version",
-  # Returnes NON 0, why...? :<
+  # Returns NON 0, why...? :<
   # "nixpkgs-fmt --version",
   "gitleaks version",
   "fd --version",
