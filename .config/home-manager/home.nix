@@ -72,6 +72,7 @@
     pkgs.zellij
     pkgs.nixpkgs-fmt
     pkgs.nil
+    pkgs.typos
     pkgs.cargo-make
     pkgs.hyperfine
     pkgs.zoxide

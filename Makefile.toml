@@ -28,6 +28,13 @@ script = [
   "dprint fmt",
 ]
 
+[tasks.typos-check]
+category = "Tools"
+description = "Run formatters without changes"
+script = [
+  "typos",
+]
+
 [tasks.prevent-secret]
 category = "Tools"
 script = [
@@ -37,7 +44,7 @@ script = [
 [tasks.check]
 category = "Tools"
 description = 'Parallel runner for all tests and linters'
-run_task = { name = ["format-check", "prevent-secret"] }
+run_task = { name = ["typos-check", "format-check", "prevent-secret"] }
 
 [tasks.versions]
 category = "Tools"
@@ -51,6 +58,7 @@ script = [
   # "nixpkgs-fmt --version",
   "gitleaks version",
   "fd --version",
+  "typos --version",
 ]
 
 [tasks.help]
