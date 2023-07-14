@@ -14,7 +14,10 @@ _install_latest_sheldon() {
   curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh | bash -s -- --repo rossmacarthur/sheldon --to "$XDG_DATA_HOME/sheldon/bin"
 }
 
-(( $+commands[sheldon] )) || _install_latest_sheldon
+# Do NOT use (( $+commands[sheldon] )) here. It made 1.5x slower zsh execution :<
+if ! type 'sheldon' > /dev/null; then
+  _install_latest_sheldon
+fi
 
 eval "$(sheldon source)"
 
