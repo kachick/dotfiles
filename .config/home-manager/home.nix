@@ -45,6 +45,10 @@
         end
       '';
 
+    shellAliases = {
+      la = "exa --long --all --group-directories-first";
+    };
+
     plugins = [{
       name = "foreign-env";
       src = pkgs.fetchFromGitHub {
