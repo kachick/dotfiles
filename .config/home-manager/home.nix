@@ -1,11 +1,11 @@
-{ config, pkgs, isDarwin, ... }:
+{ config, pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
   xdg.configHome = "${config.home.homeDirectory}/.config";
   xdg.cacheHome = "${config.home.homeDirectory}/.cache";
   xdg.stateHome = "${config.home.homeDirectory}/.local/state";
@@ -23,6 +23,46 @@
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
+
+  programs.fish = {
+    enable = true;
+
+    shellInit =
+      ''
+        # nix
+        if test -e "$HOME/.nix-profile/etc/profile.d/nix.sh"
+            fenv source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        end
+
+        # home-manager
+        if test -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+            fenv source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+        end
+
+        # starship
+        if status is-interactive
+            starship init fish | source
+        end
+      '';
+
+    shellAliases = {
+      la = "exa --long --all --group-directories-first";
+    };
+
+    plugins = [{
+      name = "foreign-env";
+      src = pkgs.fetchFromGitHub {
+        owner = "oh-my-fish";
+        repo = "plugin-foreign-env";
+        rev = "3ee95536106c11073d6ff466c1681cde31001383";
+        sha256 = "sha256-vyW/X2lLjsieMpP9Wi2bZPjReaZBkqUbkh15zOi8T4Y=";
+      };
+    }];
+  };
+
+  programs.direnv.enable = true;
+
+  programs.zoxide.enable = true;
 
   # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
   # nix.package = pkgs.nix;
@@ -49,6 +89,7 @@
     pkgs.zsh
     # Don't include bash - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
     # pkgs.bash
+    pkgs.fish
     pkgs.nushell
     pkgs.starship
     pkgs.jq

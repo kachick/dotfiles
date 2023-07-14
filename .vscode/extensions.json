@@ -8,6 +8,7 @@
     "foxundermoon.shell-format",
     "tamasfe.even-better-toml",
     "jnoortheen.nix-ide",
-    "thenuprojectcontributors.vscode-nushell-lang"
+    "thenuprojectcontributors.vscode-nushell-lang",
+    "bmalehorn.vscode-fish"
   ]
 }
