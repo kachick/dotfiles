@@ -1,3 +1,1 @@
-if status is-interactive
-    starship init fish | source
-end
+/nix/store/yaq9xp0xl609yxzfqyn1247qq6v3747b-home-manager-files/.config/fish/config.fish
