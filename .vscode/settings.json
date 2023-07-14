@@ -7,6 +7,9 @@
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
+  "[fish]": {
+    "editor.defaultFormatter": "bmalehorn.vscode-fish"
+  },
   "nix.serverPath": "nil",
   "nix.enableLanguageServer": true,
   "nix.serverSettings": {
