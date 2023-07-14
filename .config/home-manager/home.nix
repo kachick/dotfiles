@@ -56,6 +56,8 @@
     }];
   };
 
+  programs.direnv.enable = true;
+
   programs.zoxide.enable = true;
 
   # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
