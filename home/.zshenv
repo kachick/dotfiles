@@ -5,6 +5,17 @@
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # zmodload zsh/zprof && zprof
 
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:=$HOME/.config}"
+# Do NOT manage .zshenv(thisfile) in the dir.
+export ZDOTDIR="${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
+
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_DATA_HOME="$HOME/.local/share"
+
+# https://github.com/kachick/dotfiles/issues/149
+path+=("$XDG_DATA_HOME/sheldon/bin")
+
 export PATH
 export MANPATH
 # -U: keep only the first occurrence of each duplicated value
@@ -20,14 +31,6 @@ unsetopt GLOBAL_RCS
 if [ -x /usr/libexec/path_helper ]; then
   eval $(/usr/libexec/path_helper -s)
 fi
-
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:=$HOME/.config}"
-# Do NOT manage .zshenv(thisfile) in the dir.
-export ZDOTDIR="${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
-
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_STATE_HOME="$HOME/.local/state"
-export XDG_DATA_HOME="$HOME/.local/share"
 
 # Actually not used?
 # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
