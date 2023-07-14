@@ -14,7 +14,7 @@ _install_latest_sheldon() {
   curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh | bash -s -- --repo rossmacarthur/sheldon --to "$XDG_DATA_HOME/sheldon/bin"
 }
 
-sheldon --version || _install_latest_sheldon
+(( $+commands[sheldon] )) || _install_latest_sheldon
 
 eval "$(sheldon source)"
 
