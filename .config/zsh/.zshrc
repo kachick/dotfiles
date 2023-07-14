@@ -84,7 +84,7 @@ _compinit_with_interval
 update_tools() {
   case ${OSTYPE} in
   linux*)
-    sudo apt update && sudo apt upgrade
+    sudo apt update --yes && sudo apt upgrade --yes
     ;;
   darwin*)
     brew update
