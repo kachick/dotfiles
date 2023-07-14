@@ -1,11 +1,11 @@
-{ config, pkgs, isDarwin, ... }:
+{ config, pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home.username = "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
   xdg.configHome = "${config.home.homeDirectory}/.config";
   xdg.cacheHome = "${config.home.homeDirectory}/.cache";
   xdg.stateHome = "${config.home.homeDirectory}/.local/state";
