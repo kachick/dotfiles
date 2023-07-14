@@ -108,6 +108,13 @@ bench_zsh() {
   hyperfine 'zsh -i -c exit'
 }
 
+bench_shells() {
+  bench_zsh
+  # Really having same options as zsh...?
+  hyperfine 'bash -i -c exit'
+  hyperfine 'nu -i -c exit'
+}
+
 case ${OSTYPE} in
 darwin*)
   test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
