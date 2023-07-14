@@ -57,16 +57,20 @@ bindkey '^S' history-incremental-pattern-search-forward
 # Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
+_dumppath() {
+  local -r dump_dir="$XDG_CACHE_HOME/zsh"
+  mkdir -p "$dump_dir"
+
+  echo "$dump_dir/zcompdump-$ZSH_VERSION"
+}
+
 # Hack to redump(?) for optimization
 # See below references
 # * https://github.com/kachick/dotfiles/issues/154
 # * https://gist.github.com/ctechols/ca1035271ad134841284
 # * https://memo.kkenya.com/zsh_speed_up/
 _compinit_with_interval() {
-  local -r dump_dir="$XDG_CACHE_HOME/zsh"
-  mkdir -p "$dump_dir"
-
-  local -r dump_path="$dump_dir/zcompdump-$ZSH_VERSION"
+  local -r dump_path="$(_dumppath)"
   local -r threshold="$((60 * 60 * 12))"
 
   autoload -Uz compinit
