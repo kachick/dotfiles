@@ -1,14 +1,14 @@
-name: CI - Development Environment
+name: CI - Nix
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci-dev.yml'
+      - '.github/workflows/ci-nix.yml'
       - '*.nix'
       - 'Makefile.toml'
   pull_request:
     paths:
-      - '.github/workflows/ci-dev.yml'
+      - '.github/workflows/ci-nix.yml'
       - '*.nix'
       - 'Makefile.toml'
   schedule:
