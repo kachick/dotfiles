@@ -6,20 +6,10 @@
 # in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
 [ -r /etc/zshrc ] && . /etc/zshrc
 
-# https://github.com/kachick/dotfiles/issues/149
-_install_latest_sheldon() {
-  mkdir -p "$XDG_DATA_HOME/sheldon/bin"
-  # https://github.com/rossmacarthur/sheldon/blob/e989c2f1799988104ecf2dff4e5907d54fc1d693/README.md#pre-built-binaries
-  # Depending external resource without any hash ... :<
-  curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh | bash -s -- --repo rossmacarthur/sheldon --to "$XDG_DATA_HOME/sheldon/bin"
-}
-
 # Do NOT use (( $+commands[sheldon] )) here. It made 1.5x slower zsh execution :<
-if ! type 'sheldon' > /dev/null; then
-  _install_latest_sheldon
+if type 'sheldon' > /dev/null; then
+  eval "$(sheldon source)"
 fi
-
-eval "$(sheldon source)"
 
 # zsh-history-substring-search
 typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
@@ -99,8 +89,9 @@ update_tools() {
   nix-channel --update
   home-manager switch
 
-  _install_latest_sheldon
-  sheldon lock --update
+  if type 'sheldon' > /dev/null; then
+    sheldon lock --update
+  fi
   if command -v rtx; then
     rtx self-update
     rtx plugins update
