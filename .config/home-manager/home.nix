@@ -76,6 +76,10 @@
   home.packages = [
     pkgs.dprint
     pkgs.deno
+    # pkgs.rustup
+    pkgs.go
+    # pkgs.crystal
+    pkgs.elmPackages.elm
     pkgs.gitleaks
     pkgs.shellcheck
     pkgs.shfmt
@@ -108,8 +112,6 @@
     pkgs.bottom
     pkgs.tesseract
     pkgs.tig
-    pkgs.rustup
-    pkgs.crystal
     pkgs.zellij
     pkgs.nixpkgs-fmt
     pkgs.nil
@@ -120,7 +122,6 @@
     pkgs.helix
     pkgs.delta
     pkgs.gnumake
-    pkgs.elmPackages.elm
 
     # Do not manage sheldon with nix for unsupported Darwin https://github.com/kachick/dotfiles/issues/149
     # pkgs.sheldon
