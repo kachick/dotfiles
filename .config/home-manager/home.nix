@@ -6,10 +6,9 @@
   home.username = "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
-  xdg.configHome = "${config.home.homeDirectory}/.config";
-  xdg.cacheHome = "${config.home.homeDirectory}/.cache";
-  xdg.stateHome = "${config.home.homeDirectory}/.local/state";
-  xdg.dataHome = "${config.home.homeDirectory}/.local/share";
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
+  xdg.enable = true;
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

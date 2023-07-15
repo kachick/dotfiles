@@ -5,6 +5,7 @@
 # https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
 # zmodload zsh/zprof && zprof
 
+# Should have home.nix only...?
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:=$HOME/.config}"
 # Do NOT manage .zshenv(thisfile) in the dir.
 export ZDOTDIR="${ZDOTDIR:=$XDG_CONFIG_HOME/zsh}"
