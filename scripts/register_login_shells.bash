@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+# -x shows trace logs
+set -euo pipefail
 
 register_login_shells() {
   local -r zsh_path="$(which zsh)"
@@ -17,3 +18,9 @@ register_login_shells() {
 }
 
 register_login_shells
+
+cat <<'EOF'
+  Done! Set one of your favorite as below
+
+  chsh -s "$(which fish)" "$(whoami)"
+EOF
