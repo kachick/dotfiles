@@ -8,4 +8,6 @@ dprint check
 shfmt --diff ./**/*.bash
 shellcheck ./**/*.bash
 nixpkgs-fmt ./**/*.nix
+# https://github.com/crate-ci/typos/issues/779
+typos . .github
 gitleaks detect

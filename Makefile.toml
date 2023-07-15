@@ -1,56 +1,54 @@
 [config]
 skip_core_tasks = true
 
+[tasks.default]
+alias = "help"
+
+[tasks.help]
+script = [
+  'makers --list-all-steps',
+]
+
 [tasks.setup]
-category = "Tools"
-description = "Install and configure dependencies (WIP)"
 script = [
   "git config --local core.hooksPath .githooks",
 ]
 
 [tasks.update]
-category = "Tools"
 script = [
   "dprint config update --yes",
 ]
 
 [tasks.format-check]
-category = "Tools"
-description = "Run formatters without changes"
 script = [
   "dprint check",
 ]
 
 [tasks.format-apply]
-category = "Tools"
-description = "Run formatters with changes"
 script = [
   "dprint fmt",
 ]
 
+[tasks.fmt]
+alias = "format-apply"
+
 [tasks.typos-check]
-category = "Tools"
-description = "Run formatters without changes"
 script = [
   "typos",
 ]
 
 [tasks.prevent-secret]
-category = "Tools"
 script = [
   "gitleaks detect",
 ]
 
 [tasks.check]
-category = "Tools"
-description = 'Parallel runner for all tests and linters'
 run_task = { name = ["typos-check", "format-check", "prevent-secret"] }
 
-[tasks.versions]
-category = "Tools"
-description = 'Print dependency versions'
+[tasks.deps]
 script = [
   "makers --version",
+  "nix --version",
   "dprint --version",
   "shellcheck --version",
   "shfmt --version",
@@ -59,11 +57,4 @@ script = [
   "gitleaks version",
   "fd --version",
   "typos --version",
-]
-
-[tasks.help]
-category = "Tools"
-description = 'Might help you - (This one)'
-script = [
-  'makers --list-category-steps Tools',
 ]
