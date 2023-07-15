@@ -133,7 +133,6 @@
     pkgs.cargo-make
     pkgs.hyperfine
     pkgs.zoxide
-    pkgs.helix
     pkgs.delta
     pkgs.gnumake
 
