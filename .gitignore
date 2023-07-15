@@ -2,3 +2,7 @@
 
 # Don't include any history files! It might make an accident... :scream:
 *hist*
+
+# Managed by home-manager
+.config/fish/conf.d/
+.config/fish/config.fish
