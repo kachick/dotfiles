@@ -21,4 +21,11 @@
 [alias]
 	fixup = commit --all --amend
 	empty = commit --allow-empty -m 'Add an empty commit'
-	current-branch = symbolic-ref --short HEAD
+	current = symbolic-ref --short HEAD
+	# default = !git symbolic-ref refs/remotes/origin/HEAD | cut -f4 -d'/' # made error in dirty?
+	switch-default = !git checkout main 2>/dev/null || git checkout master 2>/dev/null
+	upstream = !git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'
+	duster = remote update origin --prune
+	refresh = !git switch-default && git pull "$(git upstream)" "$(git current)"
+	# Depending gh poi :)
+	all = !git refresh && gh poi
