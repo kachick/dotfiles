@@ -7,4 +7,5 @@ shopt -s globstar
 # fixing typo is a fmt ...?
 typos . .github .config .vscode --write-changes
 
+shfmt --write ./**/*.bash
 dprint fmt
