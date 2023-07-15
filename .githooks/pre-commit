@@ -4,8 +4,5 @@ set -euxo pipefail
 
 shopt -s globstar
 
-dprint check
-shfmt --diff ./**/*.bash
-shellcheck ./**/*.bash
-nixpkgs-fmt ./**/*.nix
-gitleaks detect
+./scripts/fmt.bash
+./scripts/lint.bash
