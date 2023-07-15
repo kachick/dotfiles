@@ -4,10 +4,5 @@ set -euxo pipefail
 
 shopt -s globstar
 
-dprint check
-shfmt --diff ./**/*.bash
-shellcheck ./**/*.bash
-nixpkgs-fmt ./**/*.nix
-# https://github.com/crate-ci/typos/issues/779
-typos . .github
-gitleaks detect
+./scripts/fmt.bash
+./scripts/lint.bash

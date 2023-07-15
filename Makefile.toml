@@ -19,42 +19,14 @@ script = [
   "dprint config update --yes",
 ]
 
-[tasks.format-check]
-script = [
-  "dprint check",
-]
-
-[tasks.format-apply]
-script = [
-  "dprint fmt",
-]
+[tasks.lint]
+command = './scripts/lint.bash'
 
 [tasks.fmt]
-alias = "format-apply"
-
-[tasks.typos-check]
-script = [
-  "typos",
-]
-
-[tasks.prevent-secret]
-script = [
-  "gitleaks detect",
-]
+command = './scripts/fmt.bash'
 
 [tasks.check]
-run_task = { name = ["typos-check", "format-check", "prevent-secret"] }
+alias = "lint"
 
 [tasks.deps]
-script = [
-  "makers --version",
-  "nix --version",
-  "dprint --version",
-  "shellcheck --version",
-  "shfmt --version",
-  # Returns NON 0, why...? :<
-  # "nixpkgs-fmt --version",
-  "gitleaks version",
-  "fd --version",
-  "typos --version",
-]
+command = './scripts/print-deps.bash'

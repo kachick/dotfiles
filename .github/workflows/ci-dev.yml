@@ -27,6 +27,6 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix-build
       - name: Log current versions
-        run: nix-shell --run 'makers versions'
+        run: nix-shell --run 'makers deps'
       - name: Run linters
         run: nix-shell --run 'makers check'
