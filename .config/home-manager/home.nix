@@ -78,6 +78,15 @@
     }];
   };
 
+  programs.readline = {
+    enable = true;
+    variables = {
+      # https://unix.stackexchange.com/questions/73672/how-to-turn-off-the-beep-only-in-bash-tab-complete
+      # https://github.com/nix-community/home-manager/blob/0841242b94638fcd010f7f64e56b7b1cad50c697/modules/programs/readline.nix
+      bell-style = "none";
+    };
+  };
+
   programs.direnv.enable = true;
 
   programs.zoxide.enable = true;
