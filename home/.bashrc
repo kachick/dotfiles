@@ -120,16 +120,17 @@ if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
 
+## Temporary disabled to avoid https://github.com/NixOS/nix/issues/6091
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
+# if ! shopt -oq posix; then
+#   if [ -f /usr/share/bash-completion/bash_completion ]; then
+#     . /usr/share/bash-completion/bash_completion
+#   elif [ -f /etc/bash_completion ]; then
+#     . /etc/bash_completion
+#   fi
+# fi
 
 if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
 
@@ -139,10 +140,11 @@ if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
   bind '"\e[B":history-substring-search-forward'
 fi
 
-if command -v fzf-share >/dev/null; then
-  source "$(fzf-share)/key-bindings.bash"
-  source "$(fzf-share)/completion.bash"
-fi
+## Temporary disabled to avoid https://github.com/NixOS/nix/issues/6091
+# if command -v fzf-share >/dev/null; then
+#   source "$(fzf-share)/key-bindings.bash"
+#   source "$(fzf-share)/completion.bash"
+# fi
 
 # # Delegate history search with "Up arrow key" to fzf
 # bind '"\C-\e[A":"\C-r"'
