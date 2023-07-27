@@ -34,6 +34,11 @@ shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=4200000
 
+# Avoid nix provided bash on nix-shell makes broken bind, complete, color_prompt: https://github.com/kachick/times_kachick/issues/237
+if [[ -n "$IN_NIX_SHELL" && "$(ps -o uid= $PPID)" -eq "$UID" ]]; then
+  in_nix_provided_bash="true"
+fi
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -71,21 +76,23 @@ if [ -n "$force_color_prompt" ]; then
   fi
 fi
 
-if [ "$color_prompt" = yes ]; then
+if [ "$color_prompt" = yes ] && [ -z "$in_nix_provided_bash" ]; then
   PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm* | rxvt*)
-  PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-  ;;
-*) ;;
+if [ -z "$in_nix_provided_bash" ]; then
+  # If this is an xterm set the title to user@host:dir
+  case "$TERM" in
+  xterm* | rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+  *) ;;
 
-esac
+  esac
+fi
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
@@ -120,17 +127,16 @@ if [ -f ~/.bash_aliases ]; then
   . ~/.bash_aliases
 fi
 
-## Temporary disabled to avoid https://github.com/NixOS/nix/issues/6091
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-# if ! shopt -oq posix; then
-#   if [ -f /usr/share/bash-completion/bash_completion ]; then
-#     . /usr/share/bash-completion/bash_completion
-#   elif [ -f /etc/bash_completion ]; then
-#     . /etc/bash_completion
-#   fi
-# fi
+if ! shopt -oq posix && [ -z "$in_nix_provided_bash" ]; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
 
 if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
 
@@ -140,16 +146,20 @@ if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
   bind '"\e[B":history-substring-search-forward'
 fi
 
-## Temporary disabled to avoid https://github.com/NixOS/nix/issues/6091
-# if command -v fzf-share >/dev/null; then
-#   source "$(fzf-share)/key-bindings.bash"
-#   source "$(fzf-share)/completion.bash"
-# fi
+if command -v fzf-share >/dev/null && [ -z "$in_nix_provided_bash" ]; then
+  source "$(fzf-share)/key-bindings.bash"
+  source "$(fzf-share)/completion.bash"
+fi
 
 # # Delegate history search with "Up arrow key" to fzf
 # bind '"\C-\e[A":"\C-r"'
 
-eval "$(starship init bash)"
+if [ -n "$in_nix_provided_bash" ]; then
+  # readlink - https://iww.hateblo.jp/entry/20131108/dash
+  PS1="${IN_NIX_SHELL} - $(readlink /proc/$$/exe)\n$PS1"
+else
+  eval "$(starship init bash)"
+fi
 
 # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
 function set_win_title() {
