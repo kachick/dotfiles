@@ -46,7 +46,7 @@ HISTFILESIZE=4200000
 #   nix develop # the executed nix-shell does NOT have problems, so you can wrap as starship
 #   bash # this nested bash HAS problems without following ps... condition.
 if [[ -n "$IN_NIX_SHELL" && "$(ps -o uid= $PPID)" -eq "$UID" ]]; then
-  in_nix_provided_bash="true"
+  in_nested_nix_bash="true"
 fi
 
 # check the window size after each command and, if necessary,
@@ -86,14 +86,14 @@ if [ -n "$force_color_prompt" ]; then
   fi
 fi
 
-if [ "$color_prompt" = yes ] && [ -z "$in_nix_provided_bash" ]; then
+if [ "$color_prompt" = yes ] && [ -z "$in_nested_nix_bash" ]; then
   PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 else
   PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
 unset color_prompt force_color_prompt
 
-if [ -z "$in_nix_provided_bash" ]; then
+if [ -z "$in_nested_nix_bash" ]; then
   # If this is an xterm set the title to user@host:dir
   case "$TERM" in
   xterm* | rxvt*)
@@ -140,7 +140,7 @@ fi
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if ! shopt -oq posix && [ -z "$in_nix_provided_bash" ]; then
+if ! shopt -oq posix && [ -z "$in_nested_nix_bash" ]; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
   elif [ -f /etc/bash_completion ]; then
@@ -156,7 +156,7 @@ if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
   bind '"\e[B":history-substring-search-forward'
 fi
 
-if command -v fzf-share >/dev/null && [ -z "$in_nix_provided_bash" ]; then
+if command -v fzf-share >/dev/null && [ -z "$in_nested_nix_bash" ]; then
   source "$(fzf-share)/key-bindings.bash"
   source "$(fzf-share)/completion.bash"
 fi
@@ -164,7 +164,7 @@ fi
 # # Delegate history search with "Up arrow key" to fzf
 # bind '"\C-\e[A":"\C-r"'
 
-if [ -n "$in_nix_provided_bash" ]; then
+if [ -n "$in_nested_nix_bash" ]; then
   # readlink - https://iww.hateblo.jp/entry/20131108/dash
   PS1="${IN_NIX_SHELL} - $(readlink /proc/$$/exe)\n$PS1"
 else
