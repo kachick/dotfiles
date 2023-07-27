@@ -146,6 +146,7 @@
     pkgs.cargo-make
     pkgs.hyperfine
     pkgs.zoxide
+    pkgs.difftastic
     pkgs.gnumake
 
     # Do not manage sheldon with nix for unsupported Darwin https://github.com/kachick/dotfiles/issues/149

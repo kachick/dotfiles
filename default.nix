@@ -16,6 +16,5 @@ pkgs.mkShell {
     pkgs.coreutils
     pkgs.fd
     pkgs.typos
-    pkgs.difftastic
   ];
 }
