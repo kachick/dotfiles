@@ -707,8 +707,6 @@ def nhb [] {
   ^$"($env.HOME)/go/bin/nix-headbump"
 }
 
-alias betterdiff = diff --side-by-side --color
-
 # https://github.com/starship/starship/tree/0cffd59b72adbc4c2c33d6bb14dbca170c775fc4#step-2-setup-your-shell-to-use-starship
 source ~/.cache/starship/init.nu
 
