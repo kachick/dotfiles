@@ -12,6 +12,7 @@ shfmt --version
 gitleaks version
 fd --version
 typos --version
+difft --version
 
 # Returns NON 0, why...? :<
 #  "nixpkgs-fmt --version",
