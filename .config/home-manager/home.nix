@@ -91,6 +91,8 @@
 
   programs.zoxide.enable = true;
 
+  xdg.configFile."irb/irbrc".source = ../irb/irbrc;
+
   # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
   # nix.package = pkgs.nix;
   # nix.settings = {
