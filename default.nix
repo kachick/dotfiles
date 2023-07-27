@@ -16,5 +16,6 @@ pkgs.mkShell {
     pkgs.coreutils
     pkgs.fd
     pkgs.typos
+    pkgs.go_1_20
   ];
 }
