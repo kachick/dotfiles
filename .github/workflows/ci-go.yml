@@ -9,12 +9,14 @@ on:
       - '**.go'
       - 'go.*'
       - 'testdata/**'
+      - 'Makefile.toml'
   pull_request:
     paths:
       - '.github/workflows/ci-go.yml'
       - '**.go'
       - 'go.*'
       - 'testdata/**'
+      - 'Makefile.toml'
 
 jobs:
   test:
