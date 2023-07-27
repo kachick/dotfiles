@@ -26,12 +26,14 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
-      - uses: davidB/rust-cargo-make@v1
+      # https://github.com/davidB/rust-cargo-make/pull/178 is the blocker, even if this action is recommended in cargo-make official docs
+      - uses: asdf-vm/actions/install@v2
         with:
           # Keep same version as used in *.nix
-          version: '0.36.10'
+          tool_versions: |
+            cargo-make 0.36.10
       # - run: go test
-      - run: cargo-make make test-race
+      - run: makers test-race
   lint:
     runs-on: ubuntu-latest
     steps:
