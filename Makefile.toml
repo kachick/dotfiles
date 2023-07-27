@@ -34,3 +34,14 @@ args = [
   'run',
   './cmd/print-deps',
 ]
+
+[tasks.test-race]
+command = 'go'
+args = [
+  'build',
+  '-v',
+  '-race',
+  '-o',
+  'dist/print-deps',
+  './...',
+]

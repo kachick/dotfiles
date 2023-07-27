@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ci-go.yml'
+      - '**.go'
+      - 'go.*'
+      - 'testdata/**'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-go.yml'
+      - '**.go'
+      - 'go.*'
+      - 'testdata/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: 'go.sum'
+      - uses: davidB/rust-cargo-make@v1
+        with:
+          # Keep same version as used in *.nix
+          version: '0.36.10'
+      # - run: go test
+      - run: makers test-race
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: 'go.sum'
+      - name: check format
+        run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
+      - run: go vet ./...

@@ -6,3 +6,5 @@
 # Managed by home-manager
 .config/fish/conf.d/
 .config/fish/config.fish
+
+dist/
