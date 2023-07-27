@@ -34,7 +34,17 @@ shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=4200000
 
-# Avoid nix provided bash on nix-shell makes broken bind, complete, color_prompt: https://github.com/kachick/times_kachick/issues/237
+# See https://github.com/kachick/times_kachick/issues/237
+#
+# Avoid nix provided bash on nix-shell makes broken bind, complete, color_prompt
+# Following part of ps... did referer to https://github.com/NixOS/nix/issues/3862#issuecomment-1611837272,
+# because non nested bash does not make this problem.
+# e.g
+#   cd ../
+#   rm ./the_repo/.envrc # Avoid direnv injection
+#   cd ./the_repo
+#   nix develop # the executed nix-shell does NOT have problems, so you can wrap as starship
+#   bash # this nested bash HAS problems without following ps... condition.
 if [[ -n "$IN_NIX_SHELL" && "$(ps -o uid= $PPID)" -eq "$UID" ]]; then
   in_nix_provided_bash="true"
 fi
