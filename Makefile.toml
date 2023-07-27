@@ -29,4 +29,19 @@ command = './scripts/fmt.bash'
 alias = "lint"
 
 [tasks.deps]
-command = './scripts/print-deps.bash'
+command = 'go'
+args = [
+  'run',
+  './cmd/print-deps',
+]
+
+[tasks.test-race]
+command = 'go'
+args = [
+  'build',
+  '-v',
+  '-race',
+  '-o',
+  'dist/print-deps',
+  './...',
+]

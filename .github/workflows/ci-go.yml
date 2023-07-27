@@ -1,0 +1,50 @@
+name: CI - Go
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ci-go.yml'
+      - '**.go'
+      - 'go.*'
+      - 'testdata/**'
+      - 'Makefile.toml'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-go.yml'
+      - '**.go'
+      - 'go.*'
+      - 'testdata/**'
+      - 'Makefile.toml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: 'go.sum'
+      # https://github.com/davidB/rust-cargo-make/pull/178 is the blocker, even if this action is recommended in cargo-make official docs
+      - uses: asdf-vm/actions/install@v2
+        with:
+          # Keep same version as used in *.nix
+          tool_versions: |
+            cargo-make 0.36.10
+      # - run: go test
+      - run: makers test-race
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: 'go.sum'
+      - name: check format
+        run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
+      - run: go vet ./...

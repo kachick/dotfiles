@@ -10,3 +10,4 @@ shellcheck ./**/*.bash
 nixpkgs-fmt --check ./**/*.nix
 typos . .github .config .vscode
 gitleaks detect
+go vet ./...

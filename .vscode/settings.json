@@ -10,6 +10,9 @@
   "[fish]": {
     "editor.defaultFormatter": "bmalehorn.vscode-fish"
   },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
   "nix.serverPath": "nil",
   "nix.enableLanguageServer": true,
   "nix.serverSettings": {

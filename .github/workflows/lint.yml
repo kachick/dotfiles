@@ -44,5 +44,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      # Keep same version as *.nix
+      # Keep same version as used in *.nix
       - uses: crate-ci/typos@v1.15.0
