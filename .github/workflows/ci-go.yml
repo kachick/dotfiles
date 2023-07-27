@@ -1,4 +1,4 @@
-name: CI
+name: CI - Go
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
           # Keep same version as used in *.nix
           version: '0.36.10'
       # - run: go test
-      - run: makers test-race
+      - run: cargo-make make test-race
   lint:
     runs-on: ubuntu-latest
     steps:
