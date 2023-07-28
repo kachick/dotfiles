@@ -119,6 +119,9 @@
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
 
+  # I call "homemade" for own created tools
+  xdg.configFile."homemade/.aliases.sh".source = ../homemade/.aliases.sh;
+
   # https://github.com/rbenv/rbenv-default-gems/issues/17
   home.file.".default-gems".text = ''
     irb-power_assert

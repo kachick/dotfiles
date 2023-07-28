@@ -180,4 +180,4 @@ starship_precmd_user_func="set_win_title"
 
 eval "$(zoxide init bash)"
 
-. ~/.aliases.sh
+. "$XDG_CONFIG_HOME/homemade/.aliases.sh"

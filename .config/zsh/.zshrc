@@ -18,7 +18,7 @@ typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 
-. ~/.aliases.sh
+. "$XDG_CONFIG_HOME/homemade/.aliases.sh"
 
 setopt correct
 unsetopt BEEP
