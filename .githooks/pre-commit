@@ -2,7 +2,5 @@
 
 set -euxo pipefail
 
-shopt -s globstar
-
-./scripts/fmt.bash
+makers fmt
 makers lint

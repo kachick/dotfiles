@@ -27,7 +27,11 @@ args = [
 ]
 
 [tasks.fmt]
-command = './scripts/fmt.bash'
+command = 'go'
+args = [
+  'run',
+  './cmd/fmt',
+]
 
 [tasks.check]
 alias = "lint"
