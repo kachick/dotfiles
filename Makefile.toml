@@ -16,6 +16,7 @@ script = [
 
 [tasks.update]
 script = [
+  "nix run github:kachick/nixpkgs-url -- bump",
   "dprint config update --yes",
 ]
 
