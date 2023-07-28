@@ -9,3 +9,5 @@ home/.config/fish/config.fish
 
 dist/
 tmp/
+
+.direnv
