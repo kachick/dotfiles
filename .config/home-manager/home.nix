@@ -109,6 +109,7 @@
   #   - Prefer XDG_*
   #   - If can't write the reason as a comment
 
+  xdg.configFile."home-manager/home.nix".source = ./home.nix;
   xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
   xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
