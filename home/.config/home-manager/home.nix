@@ -103,6 +103,9 @@
 
   programs.direnv.enable = true;
 
+  # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
+  programs.direnv.nix-direnv.enable = true;
+
   programs.zoxide.enable = true;
 
   # https://nixos.wiki/wiki/Home_Manager
