@@ -17,7 +17,6 @@ func main() {
 		{"dprint", []string{"--version"}},
 		{"shellcheck", []string{"--version"}},
 		{"shfmt", []string{"--version"}},
-		{"fd", []string{"--version"}},
 		{"typos", []string{"--version"}},
 		{"gitleaks", []string{"version"}},
 	}
