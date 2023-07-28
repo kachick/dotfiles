@@ -8,3 +8,7 @@ updates:
       timezone: 'Asia/Tokyo'
     ignore:
       - dependency-name: 'crate-ci/typos'
+  - package-ecosystem: 'gomod'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
