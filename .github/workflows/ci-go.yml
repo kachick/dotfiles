@@ -17,6 +17,7 @@ on:
       - 'go.*'
       - 'testdata/**'
       - 'Makefile.toml'
+  workflow_dispatch:
 
 jobs:
   test:
