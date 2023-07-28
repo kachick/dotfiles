@@ -5,18 +5,13 @@
 
 Personal dotfiles that can be placed in the public repository
 
-Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳 :relaxed:\
-⬆️ Do these lines and emoji look right to you? If not, check the fonts!
-
-## I have just installed OS
-
-If you backed to 🚼 from some reasons, See [Wiki](https://github.com/kachick/dotfiles/wiki) at first
+Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Development
 
 1. Install [Nix](https://nixos.org/) package manager
-2. Run `nix-shell`. (`nix-shell --command 'zsh'` might not work if you did not finish whole installation steps ever)
-3. `makers setup`
+1. Run `nix-shell`. (`nix-shell --command 'zsh'` and `direnv allow` may not work if you have not completed all the installation steps.)
+1. `makers setup`
 
 ## Installation
 
@@ -28,18 +23,6 @@ If you backed to 🚼 from some reasons, See [Wiki](https://github.com/kachick/d
 1. `home-manager switch`
 1. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx) to manage subdivided versions
 
-## Dependent tools
+## I don't know ??? - I have just installed OS, I am 🚼
 
-- [Nix, the purely functional package manager](https://github.com/NixOS/nix)
-- [Nix Packages collection](https://github.com/NixOS/nixpkgs)
-- [nix-community/home-manager](https://github.com/nix-community/home-manager)
-
-## Note
-
-- [About Nix](https://github.com/kachick/times_kachick/issues/204)
-- [Notes for login shell issues](https://github.com/kachick/dotfiles/wiki/Notes-for-login-shell-issues)
-- [Which shell? zsh? bash? fish? nushell?](https://github.com/kachick/times_kachick/issues/184)
-- [docker => singularity](https://github.com/kachick/times_kachick/issues/186)
-- [Note of Pop! OS](https://github.com/kachick/times_kachick/issues/174)
-- [Disable noisy beep](https://github.com/kachick/times_kachick/issues/214)
-- [Colorize vscode](https://github.com/kachick/times_kachick/issues/93)
+If you backed to 🚼 from some reasons, read [wiki](https://github.com/kachick/dotfiles/wiki)
