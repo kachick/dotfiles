@@ -15,13 +15,9 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Installation
 
-1. Finishes `Development` steps
+1. Finishes [Development](#development) steps
 1. Install [nix-community/home-manager](https://github.com/nix-community/home-manager)
-1. Set `XDG_*` into current env. `. ./home/.bashrc`
-1. Make sure `$XDG_CONFIG_HOME/home-manager/home.nix` does not exists. If not, check the content and remove
 1. `makers apply`
-1. Run `go run ./cmd/mksym --linker path-from --linked path-to` if needed
-1. (optional) Install [jdxcode/rtx](https://github.com/jdxcode/rtx) to manage subdivided versions
 
 ## I don't know ??? - I have just installed OS, I am 🚼
 
