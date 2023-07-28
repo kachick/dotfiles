@@ -40,7 +40,7 @@ alias = "lint"
 command = 'go'
 args = [
   'run',
-  './cmd/print-deps',
+  './cmd/deps',
 ]
 
 [tasks.prepare-build]
