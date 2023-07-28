@@ -34,7 +34,7 @@ jobs:
         with:
           # Keep same version as used in *.nix
           tool_versions: |
-            cargo-make 0.36.10
+            cargo-make 0.36.12
       # - run: go test
       - run: makers test-race
   lint:
