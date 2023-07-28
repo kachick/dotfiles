@@ -12,6 +12,7 @@ $crystal\
 $elm\
 $haskell\
 $rust\
+$golang\
 $ruby\
 $python\
 $deno\
