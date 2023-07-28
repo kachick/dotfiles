@@ -81,8 +81,7 @@ update_tools() {
     sudo apt update --yes && sudo apt upgrade --yes
     ;;
   darwin*)
-    brew update
-    brew upgrade
+    softwareupdate --install --recommended
     ;;
   esac
 
