@@ -106,7 +106,7 @@
   programs.zoxide.enable = true;
 
   # https://nixos.wiki/wiki/Home_Manager
-  #   - Prefer XDF_*
+  #   - Prefer XDG_*
   #   - If can't write the reason as a comment
 
   xdg.configFile."git/config".source = ../git/config;
