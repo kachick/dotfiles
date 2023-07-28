@@ -91,7 +91,15 @@
 
   programs.zoxide.enable = true;
 
+  xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
+  xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
+  xdg.configFile."nushell/config.nu".source = ../nushell/config.nu;
+  xdg.configFile."nushell/env.nu".source = ../nushell/env.nu;
+  xdg.configFile."sheldon/plugins.toml".source = ../sheldon/plugins.toml;
+
+  # Not under "starship/starship.toml"
+  xdg.configFile."starship.toml".source = ../starship.toml;
 
   # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
   # nix.package = pkgs.nix;
