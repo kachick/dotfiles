@@ -6,11 +6,6 @@
 # in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
 [ -r /etc/zshrc ] && . /etc/zshrc
 
-# Do NOT use (( $+commands[sheldon] )) here. It made 1.5x slower zsh execution :<
-if type 'sheldon' > /dev/null; then
-  eval "$(sheldon source)"
-fi
-
 # zsh-history-substring-search
 typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
 typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
@@ -88,9 +83,6 @@ update_tools() {
   nix-channel --update
   home-manager switch
 
-  if type 'sheldon' > /dev/null; then
-    sheldon lock --update
-  fi
   if command -v rtx; then
     rtx self-update
     rtx plugins update
