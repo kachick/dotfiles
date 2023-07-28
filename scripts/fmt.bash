@@ -9,3 +9,4 @@ typos . .github .config .vscode --write-changes
 
 shfmt --write ./**/*.bash
 dprint fmt
+go fmt ./...
