@@ -112,6 +112,8 @@
   xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
   xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
+  xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
+  xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
   xdg.configFile."nushell/config.nu".source = ../nushell/config.nu;
