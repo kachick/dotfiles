@@ -128,13 +128,13 @@
   xdg.configFile."homemade/.aliases.sh".source = ../homemade/.aliases.sh;
 
   # basic shell dotfiles should be put in ~/ except part of zsh files
-  home.file.".bashrc".source = ../../home/.bashrc;
-  home.file.".bash_logout".source = ../../home/.bash_logout;
-  home.file.".zshenv".source = ../../home/.zshenv;
+  home.file.".bashrc".source = ../../../home/.bashrc;
+  home.file.".bash_logout".source = ../../../home/.bash_logout;
+  home.file.".zshenv".source = ../../../home/.zshenv;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
-  home.file.".stack/config.yaml".source = ../../home/.stack/config.yaml;
+  home.file.".stack/config.yaml".source = ../../../home/.stack/config.yaml;
 
   # https://github.com/rbenv/rbenv-default-gems/issues/17
   home.file.".default-gems".text = ''

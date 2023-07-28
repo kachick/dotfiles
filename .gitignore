@@ -4,8 +4,8 @@
 *hist*
 
 # Managed by home-manager
-.config/fish/conf.d/
-.config/fish/config.fish
+home/.config/fish/conf.d/
+home/.config/fish/config.fish
 
 dist/
 tmp/

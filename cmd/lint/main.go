@@ -33,7 +33,7 @@ func main() {
 		{"shfmt", append([]string{"--diff"}, bashPaths...)},
 		{"shellcheck", bashPaths},
 		{"nixpkgs-fmt", append([]string{"--check"}, nixPaths...)},
-		{"typos", []string{".", ".github", ".config", ".vscode"}},
+		{"typos", []string{".", ".github", "home/.config", ".vscode"}},
 		{"gitleaks", []string{"detect"}},
 		{"go", []string{"vet", "./..."}},
 	}
