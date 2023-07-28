@@ -13,7 +13,6 @@ pkgs.mkShell {
     pkgs.nixpkgs-fmt
     pkgs.gitleaks
     pkgs.cargo-make
-    pkgs.coreutils
     pkgs.fd
     pkgs.typos
     pkgs.go_1_20
