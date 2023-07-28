@@ -147,45 +147,26 @@
     irb-power_assert
   '';
 
-  programs.zsh = {
-    enable = true;
+  #
+  # Q. How to get sha256  in pkgs.fetchFromGitHub?
+  # A. Replace with `lib.fakeSha256` and check the error messages
+  #    See https://www.reddit.com/r/NixOS/comments/10ueaev/how_do_i_get_the_sha256_for_a_package_to_use_in/
 
-    # https://nixos.wiki/wiki/Zsh
-    #
-    # Q. How to get sha256?
-    # A. Replace with `lib.fakeSha256` and check the error messages
-    #    See https://www.reddit.com/r/NixOS/comments/10ueaev/how_do_i_get_the_sha256_for_a_package_to_use_in/
-    plugins = [
-      {
-        name = "zsh-autosuggestions";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-autosuggestions";
-          rev = "v0.7.0";
-          sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
-        };
-      }
-      {
-        name = "zsh-syntax-highlighting";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-syntax-highlighting";
-          # only one does not have the prefix "v"
-          rev = "0.7.1";
-          sha256 = "sha256-gOG0NLlaJfotJfs+SUhGgLTNOnGLjoqnUp54V9aFJg8=";
-        };
-      }
-      {
-        name = "zsh-history-substring-search";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-history-substring-search";
-          rev = "v1.1.0";
-          sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
-        };
-      }
-    ];
-  };
+  # https://nixos.wiki/wiki/Zsh
+  programs.zsh =
+    {
+      enable = true;
+
+      # https://github.com/mattmc3/antidote
+      antidote = {
+        enable = true;
+        plugins = [
+          "zsh-users/zsh-autosuggestions"
+          "zsh-users/zsh-highlighting"
+          "zsh-users/zsh-substring-search"
+        ];
+      };
+    };
 
   home.packages = [
     pkgs.dprint
