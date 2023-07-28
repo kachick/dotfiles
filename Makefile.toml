@@ -69,3 +69,8 @@ args = [
   'dist',
   './...',
 ]
+
+[tasks.apply]
+script = [
+  "home-manager switch -f ./home/.config/home-manager/home.nix",
+]
