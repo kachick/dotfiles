@@ -101,10 +101,14 @@
     };
   };
 
-  programs.direnv.enable = true;
+  programs.direnv = {
+    enable = true;
 
-  # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
-  programs.direnv.nix-direnv.enable = true;
+    # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
+    nix-direnv = {
+      enable = true;
+    };
+  };
 
   programs.zoxide.enable = true;
 
