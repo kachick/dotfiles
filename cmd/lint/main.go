@@ -30,7 +30,7 @@ func main() {
 		args []string
 	}{
 		{"dprint", []string{"check"}},
-		{"shfmt", append([]string{"--diff"}, bashPaths...)},
+		{"shfmt", append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{"shellcheck", bashPaths},
 		{"nixpkgs-fmt", append([]string{"--check"}, nixPaths...)},
 		{"typos", []string{".", ".github", "home/.config", ".vscode"}},

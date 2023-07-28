@@ -30,7 +30,7 @@ func main() {
 		args []string
 	}{
 		{"dprint", []string{"fmt"}},
-		{"shfmt", append([]string{"--write"}, bashPaths...)},
+		{"shfmt", append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
 		{"nixpkgs-fmt", nixPaths},
 		{"typos", []string{".", ".github", "home/.config", ".vscode", "--write-changes"}},
 		{"go", []string{"fmt", "./..."}},
