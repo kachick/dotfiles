@@ -35,13 +35,18 @@ args = [
   './cmd/print-deps',
 ]
 
+[tasks.prepare-build]
+command = 'mkdir'
+args = ['-p', 'dist']
+
 [tasks.test-race]
+dependencies = ['prepare-build']
 command = 'go'
 args = [
   'build',
   '-v',
   '-race',
   '-o',
-  'dist/print-deps',
+  'dist',
   './...',
 ]
