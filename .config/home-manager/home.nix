@@ -110,6 +110,8 @@
   #   - If can't write the reason as a comment
 
   xdg.configFile."git/config".source = ../git/config;
+  xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
+  xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
   xdg.configFile."nushell/config.nu".source = ../nushell/config.nu;
@@ -121,6 +123,11 @@
 
   # I call "homemade" for own created tools
   xdg.configFile."homemade/.aliases.sh".source = ../homemade/.aliases.sh;
+
+  # basic shell dotfiles should be put in ~/ except part of zsh files
+  home.file.".bashrc".source = ../../home/.bashrc;
+  home.file.".bash_logout".source = ../../home/.bash_logout;
+  home.file.".zshenv".source = ../../home/.zshenv;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
