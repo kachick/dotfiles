@@ -105,6 +105,10 @@
 
   programs.zoxide.enable = true;
 
+  # https://nixos.wiki/wiki/Home_Manager
+  #   - Prefer XDF_*
+  #   - If can't write the reason as a comment
+
   xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
@@ -114,6 +118,11 @@
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
+
+  # https://github.com/rbenv/rbenv-default-gems/issues/17
+  home.file.".default-gems".text = ''
+    irb-power_assert
+  '';
 
   home.packages = [
     pkgs.dprint
