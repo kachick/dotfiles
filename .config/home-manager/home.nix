@@ -27,6 +27,20 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  nix = {
+    enable = true;
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+
+    # Without this makes following errors
+    #
+    #  error:
+    #  Failed assertions:
+    #  - A corresponding Nix package must be specified via `nix.package` for generating
+    package = pkgs.nix;
+  };
+
   programs.fish = {
     enable = true;
 
@@ -100,15 +114,6 @@
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
-
-  # TODO: Consider to manage nix.conf with home-manager. However it includes`trusted-public-keys`
-  # nix.package = pkgs.nix;
-  # nix.settings = {
-  #   experimental-features = "nix-command";
-  # };
-  # nix.extraOptions = ''
-  #   experimental-features = nix-command
-  # '';
 
   home.packages = [
     pkgs.dprint
