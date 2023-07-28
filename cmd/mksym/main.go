@@ -26,11 +26,15 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	_, err = os.Stat(linked)
+	fi, err := os.Lstat(linked)
 	if err != nil {
 		log.Fatalf("target does not exist, fix `linked` option - %v\n", err)
 	}
-	_, err = os.Stat(linker)
+	if fi.Mode()&os.ModeSymlink == os.ModeSymlink {
+		log.Fatalf("path for linked to is a symlink, you should be wrong how to use this command!")
+	}
+
+	_, err = os.Lstat(linker)
 	if err == nil || !os.IsNotExist(err) {
 		log.Fatalf("this script does not override existing symlinker files, fix `linker` option or manually remove the file - %v\n", err)
 	}
