@@ -13,3 +13,7 @@ trim_trailing_whitespace = false
 
 [home/.config/git/config]
 indent_style = tab
+
+[{Makefile,*.mk,*.go,.gitmodules,*.*sh,.*shrc,*shenv,.bash_*}]
+indent_style = tab
+indent_size = 4
