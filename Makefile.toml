@@ -20,7 +20,11 @@ script = [
 ]
 
 [tasks.lint]
-command = './scripts/lint.bash'
+command = 'go'
+args = [
+  'run',
+  './cmd/lint',
+]
 
 [tasks.fmt]
 command = './scripts/fmt.bash'

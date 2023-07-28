@@ -5,4 +5,4 @@ set -euxo pipefail
 shopt -s globstar
 
 ./scripts/fmt.bash
-./scripts/lint.bash
+makers lint
