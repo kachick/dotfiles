@@ -16,7 +16,7 @@ func main() {
 	}
 	fsys := os.DirFS(wd)
 
-	bashPaths, err := doublestar.Glob(fsys, "./**/*.bash")
+	bashPaths, err := doublestar.Glob(fsys, "./**/{*.bash,.bash*}")
 	if err != nil {
 		log.Fatalln(err)
 	}
