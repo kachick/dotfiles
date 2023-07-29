@@ -228,6 +228,3 @@
     pkgs.ocrmypdf
   ];
 }
-
-
-
