@@ -10,6 +10,7 @@ script = [
 ]
 
 [tasks.setup]
+dependencies = ['build']
 script = [
   "git config --local core.hooksPath .githooks",
 ]
@@ -21,28 +22,16 @@ script = [
 ]
 
 [tasks.lint]
-command = 'go'
-args = [
-  'run',
-  './cmd/lint',
-]
+command = 'dist/lint'
 
 [tasks.fmt]
-command = 'go'
-args = [
-  'run',
-  './cmd/fmt',
-]
+command = 'dist/fmt'
 
 [tasks.check]
 alias = "lint"
 
 [tasks.deps]
-command = 'go'
-args = [
-  'run',
-  './cmd/deps',
-]
+command = 'dist/deps'
 
 [tasks.prepare-build]
 command = 'mkdir'
