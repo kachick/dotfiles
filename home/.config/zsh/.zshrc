@@ -38,9 +38,6 @@ setopt share_history
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
-# Don't use nvm. It is heavy.
-
-# Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
 _dumppath() {
