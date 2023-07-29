@@ -148,6 +148,14 @@
     irb-power_assert
   '';
 
+  # - Tiny tools by me, they may be rewritten with another language.
+  # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
+  xdg.dataFile."homemade/bin/bench_shells".source = ../../../home/.local/share/homemade/bin/bench_shells.bash;
+  xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
+  home.sessionPath = [
+    "${config.xdg.dataHome}/homemade/bin"
+  ];
+
   home.packages = [
     pkgs.dprint
     pkgs.deno
@@ -220,4 +228,6 @@
     pkgs.ocrmypdf
   ];
 }
+
+
 
