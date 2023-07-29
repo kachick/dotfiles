@@ -2,10 +2,6 @@
 # Executes commands at the start of an interactive session.
 #
 
-# https://qiita.com/eumesy/items/3bb39fc783c8d4863c5f
-# in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
-[ -r /etc/zshrc ] && . /etc/zshrc
-
 # Do NOT use (( $+commands[sheldon] )) here. It made 1.5x slower zsh execution :<
 if type 'sheldon' > /dev/null; then
   eval "$(sheldon source)"
