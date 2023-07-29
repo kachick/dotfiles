@@ -42,65 +42,6 @@ bindkey '^S' history-incremental-pattern-search-forward
 # Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
-_dumppath() {
-  local -r dump_dir="$XDG_CACHE_HOME/zsh"
-  mkdir -p "$dump_dir"
-
-  echo "$dump_dir/zcompdump-$ZSH_VERSION"
-}
-
-# Hack to redump(?) for optimization
-# See below references
-# * https://github.com/kachick/dotfiles/issues/154
-# * https://gist.github.com/ctechols/ca1035271ad134841284
-# * https://memo.kkenya.com/zsh_speed_up/
-_compinit_with_interval() {
-  local -r dump_path="$(_dumppath)"
-  local -r threshold="$((60 * 60 * 12))"
-
-  autoload -Uz compinit
-
-  if [ ! -e "$dump_path" ] || [ "$(("$(date +"%s")" - "$(date -r "$dump_path" +"%s")"))" -gt "$threshold" ]; then
-    compinit -d "$dump_path"
-    touch "$dump_path"
-  else
-    # if there are new functions can be omitted by giving the option -C.
-    compinit -C -d "$dump_path"
-  fi
-}
-_compinit_with_interval
-
-update_tools() {
-  case ${OSTYPE} in
-  linux*)
-    sudo apt update --yes && sudo apt upgrade --yes
-    ;;
-  darwin*)
-    softwareupdate --install --recommended
-    ;;
-  esac
-
-  nix-channel --update
-  home-manager switch
-
-  if command -v rtx; then
-    rtx self-update
-    rtx plugins update
-  fi
-}
-
-# Keep under 120ms...!
-bench_zsh() {
-  hyperfine 'zsh -i -c exit'
-}
-
-bench_shells() {
-  bench_zsh
-  # Really having same options as zsh...?
-  hyperfine 'bash -i -c exit'
-  hyperfine 'nu -i -c exit'
-}
-
 case ${OSTYPE} in
 darwin*)
   test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -126,8 +67,3 @@ eval "$(direnv hook zsh)"
 
 # Do not save history if it was failed
 zshaddhistory() { whence ${${(z)1}[1]} >| /dev/null || return 1 }
-
-# https://qiita.com/vintersnow/items/7343b9bf60ea468a4180
-# if (which zprof >/dev/null 2>&1); then
-#   zprof
-# fi

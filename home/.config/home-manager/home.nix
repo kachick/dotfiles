@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
@@ -185,6 +185,8 @@
         };
       }
     ];
+
+    extraConfig = lib.splitString "\n" (lib.readFile ../zsh/.zshrc);
   };
 
   home.packages = [
