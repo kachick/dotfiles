@@ -64,3 +64,14 @@ args = [
 script = [
   "home-manager switch -f ./home/.config/home-manager/home.nix",
 ]
+
+[tasks.ci]
+dependencies = [
+  'default',
+  'setup',
+  'deps',
+  'build',
+  'test-race',
+  'fmt',
+  'check',
+]
