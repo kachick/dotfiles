@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	doublestar "github.com/bmatcuk/doublestar/v4"
 )
@@ -25,10 +26,12 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	cmds := []struct {
+	type command struct {
 		path string
 		args []string
-	}{
+	}
+
+	cmds := []command{
 		{"dprint", []string{"check"}},
 		{"shfmt", append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{"shellcheck", bashPaths},
@@ -38,11 +41,17 @@ func main() {
 		{"go", []string{"vet", "./..."}},
 	}
 
+	wg := &sync.WaitGroup{}
 	for _, cmd := range cmds {
-		output, err := exec.Command(cmd.path, cmd.args...).Output()
-		log.Printf("%s %s\n%s\n", cmd.path, strings.Join(cmd.args, " "), output)
-		if err != nil {
-			log.Fatalln(err)
-		}
+		wg.Add(1)
+		go func(cmd command) {
+			defer wg.Done()
+			output, err := exec.Command(cmd.path, cmd.args...).Output()
+			log.Printf("%s %s\n%s\n", cmd.path, strings.Join(cmd.args, " "), output)
+			if err != nil {
+				log.Fatalln(err)
+			}
+		}(cmd)
 	}
+	wg.Wait()
 }
