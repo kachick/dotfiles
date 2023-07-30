@@ -133,10 +133,14 @@
     };
 
     enableZshIntegration = true;
+    enableNushellIntegration = true;
   };
 
-  programs.zoxide.enable = true;
-  programs.zoxide.enableZshIntegration = true;
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    enableNushellIntegration = true;
+  };
 
   # https://nixos.wiki/wiki/Home_Manager
   #   - Prefer XDG_*
@@ -148,8 +152,6 @@
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
-  xdg.configFile."nushell/config.nu".source = ../nushell/config.nu;
-  xdg.configFile."nushell/env.nu".source = ../nushell/env.nu;
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
@@ -244,6 +246,10 @@
     '';
   };
 
+  programs.nushell = {
+    enable = true;
+  };
+
   programs.fzf = {
     enable = true;
 
@@ -252,16 +258,18 @@
     enableZshIntegration = true;
 
     # enableFishIntegration  = true;
+
+    # fzf manager does not have nushell integration yet.
+    # https://github.com/nushell/nushell/issues/1616#issuecomment-1386714173 may help you.
   };
 
   programs.starship = {
     enable = true;
 
     # enableShellIntegration = true;
-
     enableZshIntegration = true;
-
-    # enableFishIntegration  = true;
+    # enableFishIntegration = true;
+    enableNushellIntegration = true;
   };
 
   # - Tiny tools by me, they may be rewritten with another language.
