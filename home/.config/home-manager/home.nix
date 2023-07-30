@@ -23,6 +23,15 @@
   home = {
     sessionVariables = {
       INPUTRC = "${config.home.sessionVariables.XDG_CONFIG_HOME}/readline/inputrc";
+      EDITOR = "code -w";
+      VISUAL = "nano";
+      PAGER = "less";
+      LANG = "en_US.UTF-8";
+
+      # NOTE: Original comments in zsh
+      # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+      # Remove -X and -F (exit if the content fits on one screen) to enable it.
+      LESS = "-F -g -i -M -R -S -w -X -z-4";
     };
     sessionPath = [
       "${config.xdg.dataHome}/homemade/bin"
@@ -106,6 +115,8 @@
     };
   };
 
+  programs.lesspipe.enable = true;
+
   programs.direnv = {
     enable = true;
 
@@ -127,7 +138,7 @@
   xdg.configFile."home-manager/home.nix".source = ./home.nix;
   xdg.configFile."git/config".source = ../git/config;
   # xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
-  xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
+  # xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
   xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
@@ -219,6 +230,13 @@
       precmd_functions+=(set_win_title)
 
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+    '';
+
+    # TODO: May move to sessionVariables
+    profileExtra = ''
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export BROWSER='open'
+      fi
     '';
 
     #
