@@ -2,10 +2,6 @@
 # Executes commands at the start of an interactive session.
 #
 
-# https://qiita.com/eumesy/items/3bb39fc783c8d4863c5f
-# in ~/.zshenv, executed `unsetopt GLOBAL_RCS` and ignored /etc/zshrc
-[ -r /etc/zshrc ] && . /etc/zshrc
-
 # zsh-history-substring-search
 typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
 typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
@@ -37,9 +33,6 @@ setopt share_history
 bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^S' history-incremental-pattern-search-forward
 
-# Don't use nvm. It is heavy.
-
-# Didn't work? I'm okay to use as `rtx exec ruby@3.2.1 -- irb` for now.`
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
 case ${OSTYPE} in
