@@ -191,13 +191,13 @@
     enableAutosuggestions = true;
     enableCompletion = true;
 
+    # home-manager path will set in `programs.home-manager.enable = true`;
     envExtra = ''
       # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
       # https://www.reddit.com/r/zsh/comments/tpwx9t/zcompcache_vs_zcompdump/
       zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
 
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
-      if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
     '';
 
     initExtra = ''
