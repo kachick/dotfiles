@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-zellij attach "$(basename "$PWD")" || zellij --session "$(basename "$PWD")"
+name="$(basename "$PWD")"
+
+zellij attach "$name" || zellij --session "$name"
