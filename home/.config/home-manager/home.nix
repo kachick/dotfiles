@@ -186,7 +186,7 @@
       }
     ];
 
-    extraConfig = lib.splitString "\n" (lib.readFile ../zsh/.zshrc);
+    # extraConfig = lib.splitString "\n" (lib.readFile ../zsh/.zshrc);
   };
 
   # - Tiny tools by me, they may be rewritten with another language.
