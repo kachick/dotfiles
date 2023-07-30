@@ -65,6 +65,13 @@ script = [
   "home-manager switch -f ./home/.config/home-manager/home.nix",
 ]
 
+[tasks.enable_login_shells]
+command = 'sudo'
+args = [
+  '-E',
+  'dist/enable_nix_login_shells',
+]
+
 [tasks.ci]
 dependencies = [
   'default',
