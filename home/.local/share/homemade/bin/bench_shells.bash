@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euxo pipefail
+
 # ~ my feeling ~
 # 50ms : blazing fast!
 # 120ms : acceptable
