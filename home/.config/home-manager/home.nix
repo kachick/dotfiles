@@ -166,12 +166,13 @@
   # - https://github.com/kachick/dotfiles/issues/142
   home.file.".stack/config.yaml".source = ../../../home/.stack/config.yaml;
 
-  xdg.configFile."irb/irbrc".text = builtins.readFile ((pkgs.fetchFromGitHub {
-    owner = "kachick";
-    repo = "irb-power_assert";
-    rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-    sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-  }) + "/examples/.irbrc"
+  xdg.configFile."irb/irbrc".text = builtins.readFile ((pkgs.fetchFromGitHub
+    {
+      owner = "kachick";
+      repo = "irb-power_assert";
+      rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
+      sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
+    }) + "/examples/.irbrc"
   );
 
   # https://github.com/rbenv/rbenv-default-gems/issues/17
