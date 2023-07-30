@@ -33,6 +33,7 @@
       # Remove -X and -F (exit if the content fits on one screen) to enable it.
       LESS = "-F -g -i -M -R -S -w -X -z-4";
     };
+
     sessionPath = [
       "${config.xdg.dataHome}/homemade/bin"
     ];
@@ -137,8 +138,6 @@
 
   xdg.configFile."home-manager/home.nix".source = ./home.nix;
   xdg.configFile."git/config".source = ../git/config;
-  # xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
-  # xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
   xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
@@ -152,7 +151,6 @@
   # basic shell dotfiles should be put in ~/ except part of zsh files
   home.file.".bashrc".source = ../../../home/.bashrc;
   home.file.".bash_logout".source = ../../../home/.bash_logout;
-  # home.file.".zshenv".source = ../../../home/.zshenv;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
@@ -238,43 +236,6 @@
         export BROWSER='open'
       fi
     '';
-
-    #
-    # Q. How to get sha256?
-    # A. Replace with `lib.fakeSha256` and check the error messages
-    #    See https://www.reddit.com/r/NixOS/comments/10ueaev/how_do_i_get_the_sha256_for_a_package_to_use_in/
-    # plugins = [
-    #   {
-    #     name = "zsh-autosuggestions";
-    #     src = pkgs.fetchFromGitHub {
-    #       owner = "zsh-users";
-    #       repo = "zsh-autosuggestions";
-    #       rev = "v0.7.0";
-    #       sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
-    #     };
-    #   }
-    #   {
-    #     name = "zsh-syntax-highlighting";
-    #     src = pkgs.fetchFromGitHub {
-    #       owner = "zsh-users";
-    #       repo = "zsh-syntax-highlighting";
-    #       # only one does not have the prefix "v"
-    #       rev = "0.7.1";
-    #       sha256 = "sha256-gOG0NLlaJfotJfs+SUhGgLTNOnGLjoqnUp54V9aFJg8=";
-    #     };
-    #   }
-    #   {
-    #     name = "zsh-history-substring-search";
-    #     src = pkgs.fetchFromGitHub {
-    #       owner = "zsh-users";
-    #       repo = "zsh-history-substring-search";
-    #       rev = "v1.1.0";
-    #       sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
-    #     };
-    #   }
-    # ];
-
-    # extraConfig = lib.splitString "\n" (lib.readFile ../zsh/.zshrc);
   };
 
   programs.fzf = {
