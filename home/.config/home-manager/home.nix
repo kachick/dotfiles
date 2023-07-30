@@ -77,10 +77,6 @@
         end
       '';
 
-    shellAliases = {
-      la = "exa --long --all --group-directories-first";
-    };
-
     plugins = [{
       name = "foreign-env";
       src = pkgs.fetchFromGitHub {
@@ -129,9 +125,6 @@
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
-
-  # I call "homemade" for own created tools
-  xdg.configFile."homemade/.aliases.sh".source = ../homemade/.aliases.sh;
 
   # basic shell dotfiles should be put in ~/ except part of zsh files
   home.file.".bashrc".source = ../../../home/.bashrc;
@@ -193,6 +186,8 @@
   # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
   xdg.dataFile."homemade/bin/bench_shells".source = ../../../home/.local/share/homemade/bin/bench_shells.bash;
   xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
+  xdg.dataFile."homemade/bin/la".source = ../../../home/.local/share/homemade/bin/la.bash;
+  xdg.dataFile."homemade/bin/zj".source = ../../../home/.local/share/homemade/bin/zj.bash;
   home.sessionPath = [
     "${config.xdg.dataHome}/homemade/bin"
   ];
