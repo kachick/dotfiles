@@ -249,6 +249,9 @@
   programs.nushell = {
     enable = true;
 
+    # Do not set `shell_integration: true for now`
+    #   - window title requires `shell_integration: true` - https://github.com/nushell/nushell/issues/2527
+    #   - several terminal requires `shell_integration: false` - https://github.com/nushell/nushell/issues/6214
     extraConfig = ''
       let-env config = {
         show_banner: false
