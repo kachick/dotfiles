@@ -1,5 +1,8 @@
 { config, pkgs, ... }:
 
+# FAQ
+#   - How to get sha256? => assume by `lib.fakeSha256`
+
 {
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
@@ -150,7 +153,6 @@
   xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
-  xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
 
   # Not under "starship/starship.toml"
@@ -163,6 +165,17 @@
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
   home.file.".stack/config.yaml".source = ../../../home/.stack/config.yaml;
+
+  xdg.configFile."irb/irbrc".text = builtins.readFile (
+    pkgs.fetchFromGitHub
+      {
+        owner = "kachick";
+        repo = "irb-power_assert";
+        rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
+        sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
+      }
+    + "/examples/.irbrc"
+  );
 
   # https://github.com/rbenv/rbenv-default-gems/issues/17
   home.file.".default-gems".text = ''
