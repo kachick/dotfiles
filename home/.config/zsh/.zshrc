@@ -40,34 +40,6 @@ bindkey '^S' history-incremental-pattern-search-forward
 
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
-_dumppath() {
-  local -r dump_dir="$XDG_CACHE_HOME/zsh"
-  mkdir -p "$dump_dir"
-
-  echo "$dump_dir/zcompdump-$ZSH_VERSION"
-}
-
-# Hack to redump(?) for optimization
-# See below references
-# * https://github.com/kachick/dotfiles/issues/154
-# * https://gist.github.com/ctechols/ca1035271ad134841284
-# * https://memo.kkenya.com/zsh_speed_up/
-_compinit_with_interval() {
-  local -r dump_path="$(_dumppath)"
-  local -r threshold="$((60 * 60 * 12))"
-
-  autoload -Uz compinit
-
-  if [ ! -e "$dump_path" ] || [ "$(("$(date +"%s")" - "$(date -r "$dump_path" +"%s")"))" -gt "$threshold" ]; then
-    compinit -d "$dump_path"
-    touch "$dump_path"
-  else
-    # if there are new functions can be omitted by giving the option -C.
-    compinit -C -d "$dump_path"
-  fi
-}
-_compinit_with_interval
-
 case ${OSTYPE} in
 darwin*)
   test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
