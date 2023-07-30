@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-zellij attach "$(basename "$PWD")" || zellij --session "$(basename "$PWD")"
+set -euo pipefail
+
+name="$(basename "$PWD")"
+
+zellij attach "$name" || zellij --session "$name"

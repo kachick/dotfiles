@@ -61,8 +61,11 @@ args = [
 ]
 
 [tasks.apply]
-script = [
-  "home-manager switch -f ./home/.config/home-manager/home.nix",
+command = 'home-manager'
+args = [
+  'switch',
+  '-f',
+  './home/.config/home-manager/home.nix',
 ]
 
 [tasks.enable_login_shells]
