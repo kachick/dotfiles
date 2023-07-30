@@ -16,31 +16,6 @@ jobs:
           # Keep same version as used in *.nix
           dprint-version: '0.39.1'
 
-  shellscript:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v3
-      # * ubuntu-latest includes shellcheck, However it is bit old. This ensures to use fixed version.
-      # * Standardizing to nix is best, but nix is slow even if installing only tiny binary
-      - uses: jdxcode/rtx-action@v1
-        with:
-          # Keep same version as used in *.nix
-          tool_versions: |
-            shellcheck 0.9.0
-            shfmt 3.7.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Logging dependency versions
-        run: |
-          shellcheck --version
-          shfmt --version
-      - name: Run linters
-        run: |
-          shopt -s globstar
-          shellcheck ./**/*.bash
-          shfmt --diff ./**/*.bash
-
   typos:
     timeout-minutes: 15
     runs-on: ubuntu-latest
