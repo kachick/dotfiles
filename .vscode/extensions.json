@@ -9,7 +9,6 @@
     "tamasfe.even-better-toml",
     "jnoortheen.nix-ide",
     "golang.go",
-    "thenuprojectcontributors.vscode-nushell-lang",
     "bmalehorn.vscode-fish"
   ]
 }
