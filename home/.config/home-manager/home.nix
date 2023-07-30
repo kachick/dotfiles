@@ -20,6 +20,15 @@
   # changes in each release.
   home.stateVersion = "23.05";
 
+  home = {
+    sessionVariables = {
+      INPUTRC = "${config.home.sessionVariables.XDG_CONFIG_HOME}/readline/inputrc";
+    };
+    sessionPath = [
+      "${config.xdg.dataHome}/homemade/bin"
+    ];
+  };
+
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
   targets.genericLinux.enable = if pkgs.stdenv.hostPlatform.isDarwin then false else true;
@@ -132,7 +141,7 @@
   # basic shell dotfiles should be put in ~/ except part of zsh files
   home.file.".bashrc".source = ../../../home/.bashrc;
   home.file.".bash_logout".source = ../../../home/.bash_logout;
-  home.file.".zshenv".source = ../../../home/.zshenv;
+  # home.file.".zshenv".source = ../../../home/.zshenv;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
@@ -174,6 +183,10 @@
     enableCompletion = true;
 
     envExtra = ''
+      # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
+      # https://www.reddit.com/r/zsh/comments/tpwx9t/zcompcache_vs_zcompdump/
+      zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
+
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
       if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
     '';
@@ -272,9 +285,6 @@
   xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
   xdg.dataFile."homemade/bin/la".source = ../../../home/.local/share/homemade/bin/la.bash;
   xdg.dataFile."homemade/bin/zj".source = ../../../home/.local/share/homemade/bin/zj.bash;
-  home.sessionPath = [
-    "${config.xdg.dataHome}/homemade/bin"
-  ];
 
   home.packages = [
     pkgs.dprint
