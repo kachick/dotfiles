@@ -363,15 +363,9 @@
 
   home.packages = [
     pkgs.dprint
-    pkgs.deno
-    # pkgs.rustup
-    pkgs.go
-    # pkgs.crystal
-    pkgs.elmPackages.elm
     pkgs.gitleaks
     pkgs.shellcheck
     pkgs.shfmt
-    pkgs.gcc
     pkgs.git
     pkgs.coreutils
     pkgs.tig
@@ -386,8 +380,6 @@
     pkgs.starship
     pkgs.jq
     pkgs.gh
-    pkgs.sqlite
-    pkgs.postgresql
     pkgs.direnv
     pkgs.ripgrep
     pkgs.fzf
@@ -398,20 +390,29 @@
     pkgs.du-dust
     pkgs.procs
     pkgs.bottom
-    pkgs.tesseract
     pkgs.tig
     pkgs.zellij
     pkgs.nixpkgs-fmt
     pkgs.nil
     pkgs.typos
-    pkgs.cargo-make
     pkgs.hyperfine
     pkgs.zoxide
     pkgs.difftastic
-    pkgs.gnumake
 
     # Required in many asdf(rtx) plugins
     pkgs.unzip
+
+    # Includes follows in each repository if needed, not in global
+    # pkgs.deno
+    # pkgs.rustup
+    # pkgs.go
+    # pkgs.crystal
+    # pkgs.elmPackages.elm
+    # pkgs.gcc
+    # pkgs.sqlite
+    # pkgs.postgresql
+    # pkgs.gnumake
+    # pkgs.cargo-make
 
     # This section is just a note for my strggle
     # Often failed to build ruby even if I enabled following dependencies
@@ -424,10 +425,11 @@
     # pkgs.ruby
 
     # As a boardgamer
-    pkgs.imagemagick
-    pkgs.pngquant
-    pkgs.img2pdf
-    pkgs.ocrmypdf
+    # pkgs.tesseract
+    # pkgs.imagemagick
+    # pkgs.pngquant
+    # pkgs.img2pdf
+    # pkgs.ocrmypdf
   ] ++ (
     if pkgs.stdenv.hostPlatform.isDarwin then
       [ ]
