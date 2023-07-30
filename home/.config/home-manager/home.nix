@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
   # Home Manager needs a bit of information about you and the
@@ -104,9 +104,12 @@
     nix-direnv = {
       enable = true;
     };
+
+    enableZshIntegration = true;
   };
 
   programs.zoxide.enable = true;
+  programs.zoxide.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Home_Manager
   #   - Prefer XDG_*
@@ -114,7 +117,7 @@
 
   xdg.configFile."home-manager/home.nix".source = ./home.nix;
   xdg.configFile."git/config".source = ../git/config;
-  xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
+  # xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
   xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
   xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
@@ -145,6 +148,9 @@
   programs.zsh = {
     enable = true;
 
+    # How about to point `xdg.configFile`?
+    dotDir = ".config/zsh";
+
     history = {
       # in memory
       size = 100000;
@@ -160,42 +166,104 @@
       share = true;
     };
 
+    historySubstringSearch = {
+      enable = true;
+    };
+    enableSyntaxHighlighting = true;
+    enableAutosuggestions = true;
+    enableCompletion = true;
+
+    envExtra = ''
+      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
+      if [ -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"; fi
+    '';
+
+    initExtra = ''
+      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+
+      setopt correct
+      unsetopt BEEP
+
+      setopt hist_ignore_all_dups
+      setopt hist_reduce_blanks
+      setopt hist_save_no_dups
+      setopt hist_no_store
+
+      eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
+
+      case ''${OSTYPE} in
+      darwin*)
+        test -e "''${HOME}/.iterm2_shell_integration.zsh" && source "''${HOME}/.iterm2_shell_integration.zsh"
+        ;;
+      esac
+
+      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+      function set_win_title() {
+        echo -ne "\033]0; $(basename "$PWD") \007"
+      }
+      precmd_functions+=(set_win_title)
+
+      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+    '';
+
     #
     # Q. How to get sha256?
     # A. Replace with `lib.fakeSha256` and check the error messages
     #    See https://www.reddit.com/r/NixOS/comments/10ueaev/how_do_i_get_the_sha256_for_a_package_to_use_in/
-    plugins = [
-      {
-        name = "zsh-autosuggestions";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-autosuggestions";
-          rev = "v0.7.0";
-          sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
-        };
-      }
-      {
-        name = "zsh-syntax-highlighting";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-syntax-highlighting";
-          # only one does not have the prefix "v"
-          rev = "0.7.1";
-          sha256 = "sha256-gOG0NLlaJfotJfs+SUhGgLTNOnGLjoqnUp54V9aFJg8=";
-        };
-      }
-      {
-        name = "zsh-history-substring-search";
-        src = pkgs.fetchFromGitHub {
-          owner = "zsh-users";
-          repo = "zsh-history-substring-search";
-          rev = "v1.1.0";
-          sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
-        };
-      }
-    ];
+    # plugins = [
+    #   {
+    #     name = "zsh-autosuggestions";
+    #     src = pkgs.fetchFromGitHub {
+    #       owner = "zsh-users";
+    #       repo = "zsh-autosuggestions";
+    #       rev = "v0.7.0";
+    #       sha256 = "sha256-KLUYpUu4DHRumQZ3w59m9aTW6TBKMCXl2UcKi4uMd7w=";
+    #     };
+    #   }
+    #   {
+    #     name = "zsh-syntax-highlighting";
+    #     src = pkgs.fetchFromGitHub {
+    #       owner = "zsh-users";
+    #       repo = "zsh-syntax-highlighting";
+    #       # only one does not have the prefix "v"
+    #       rev = "0.7.1";
+    #       sha256 = "sha256-gOG0NLlaJfotJfs+SUhGgLTNOnGLjoqnUp54V9aFJg8=";
+    #     };
+    #   }
+    #   {
+    #     name = "zsh-history-substring-search";
+    #     src = pkgs.fetchFromGitHub {
+    #       owner = "zsh-users";
+    #       repo = "zsh-history-substring-search";
+    #       rev = "v1.1.0";
+    #       sha256 = "sha256-GSEvgvgWi1rrsgikTzDXokHTROoyPRlU0FVpAoEmXG4=";
+    #     };
+    #   }
+    # ];
 
     # extraConfig = lib.splitString "\n" (lib.readFile ../zsh/.zshrc);
+  };
+
+  programs.fzf = {
+    enable = true;
+
+    # enableShellIntegration = true;
+
+    enableZshIntegration = true;
+
+    # enableFishIntegration  = true;
+  };
+
+  programs.starship = {
+    enable = true;
+
+    # enableShellIntegration = true;
+
+    enableZshIntegration = true;
+
+    # enableFishIntegration  = true;
   };
 
   # - Tiny tools by me, they may be rewritten with another language.
