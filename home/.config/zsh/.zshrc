@@ -15,21 +15,12 @@ unsetopt BEEP
 # unsetopt LIST_BEEP
 # unsetopt HIST_BEEP
 
-# History
-HISTSIZE=100000
-SAVEHIST=4200000
-mkdir -p "$XDG_STATE_HOME/zsh"
-HISTFILE="$XDG_STATE_HOME/zsh/history"
-setopt hist_ignore_dups
-setopt hist_ignore_all_dups
-setopt hist_ignore_space
-setopt hist_reduce_blanks
-setopt hist_save_no_dups
-setopt hist_no_store
-setopt EXTENDED_HISTORY
-setopt share_history
-bindkey '^R' history-incremental-pattern-search-backward
-bindkey '^S' history-incremental-pattern-search-forward
+# setopt hist_ignore_all_dups
+# setopt hist_reduce_blanks
+# setopt hist_save_no_dups
+# setopt hist_no_store
+# bindkey '^R' history-incremental-pattern-search-backward
+# bindkey '^S' history-incremental-pattern-search-forward
 
 eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 

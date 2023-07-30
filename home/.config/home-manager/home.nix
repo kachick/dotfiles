@@ -140,10 +140,26 @@
     irb-power_assert
   '';
 
+  # https://nixos.wiki/wiki/Zsh
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
   programs.zsh = {
     enable = true;
 
-    # https://nixos.wiki/wiki/Zsh
+    history = {
+      # in memory
+      size = 100000;
+
+      # in file
+      save = 4200000;
+      path = "${config.xdg.stateHome}/zsh/history";
+
+      ignoreDups = true;
+      ignoreSpace = true;
+
+      extended = true;
+      share = true;
+    };
+
     #
     # Q. How to get sha256?
     # A. Replace with `lib.fakeSha256` and check the error messages
