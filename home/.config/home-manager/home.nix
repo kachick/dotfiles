@@ -26,12 +26,18 @@
       EDITOR = "code -w";
       VISUAL = "nano";
       PAGER = "less";
+
+      # - You can check the candidates in `locale -a`
+      # - pkgs.glibc installs many candidates
       LANG = "en_US.UTF-8";
 
       # NOTE: Original comments in zsh
       # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
       # Remove -X and -F (exit if the content fits on one screen) to enable it.
       LESS = "-F -g -i -M -R -S -w -X -z-4";
+
+      # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
+      LESSCHARSET = "utf-8";
     };
 
     sessionPath = [
@@ -278,6 +284,7 @@
     pkgs.gcc
     pkgs.git
     pkgs.coreutils
+    pkgs.glibc # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
     pkgs.tig
     pkgs.tree
     pkgs.curl
