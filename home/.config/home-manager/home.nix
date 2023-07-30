@@ -248,6 +248,59 @@
 
   programs.nushell = {
     enable = true;
+
+    extraConfig = ''
+      let-env config = {
+        show_banner: false
+
+        keybindings: [
+          # https://github.com/nushell/nushell/issues/1616#issuecomment-1386714173
+          {
+            name: fuzzy_history
+            modifier: control
+            keycode: char_r
+            mode: [emacs, vi_normal, vi_insert]
+            event: [
+              {
+                send: ExecuteHostCommand
+                cmd: "commandline (
+                  history
+                    | each { |it| $it.command }
+                    | uniq
+                    | reverse
+                    | str join (char -i 0)
+                    | fzf --read0 --layout=reverse --height=40% -q (commandline)
+                    | decode utf-8
+                    | str trim
+                )"
+              }
+            ]
+          }
+          # Same as above for Up Arrow
+          {
+            name: fuzzy_history
+            modifier: control
+            keycode: Up
+            mode: [emacs, vi_normal, vi_insert]
+            event: [
+              {
+                send: ExecuteHostCommand
+                cmd: "commandline (
+                  history
+                    | each { |it| $it.command }
+                    | uniq
+                    | reverse
+                    | str join (char -i 0)
+                    | fzf --read0 --layout=reverse --height=40% -q (commandline)
+                    | decode utf-8
+                    | str trim
+                )"
+              }
+            ]
+          }
+        ]
+      }
+    '';
   };
 
   programs.fzf = {
