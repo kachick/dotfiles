@@ -12,9 +12,6 @@ esac
 nix-channel --update
 home-manager switch
 
-if type 'sheldon' >/dev/null; then
-	sheldon lock --update
-fi
 if command -v rtx; then
 	rtx self-update
 	rtx plugins update

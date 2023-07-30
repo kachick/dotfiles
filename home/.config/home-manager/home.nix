@@ -20,6 +20,31 @@
   # changes in each release.
   home.stateVersion = "23.05";
 
+  home = {
+    sessionVariables = {
+      INPUTRC = "${config.home.sessionVariables.XDG_CONFIG_HOME}/readline/inputrc";
+      EDITOR = "code -w";
+      VISUAL = "nano";
+      PAGER = "less";
+
+      # - You can check the candidates in `locale -a`
+      # - pkgs.glibc installs many candidates, but it does not support darwin
+      LANG = "en_US.UTF-8";
+
+      # NOTE: Original comments in zsh
+      # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+      # Remove -X and -F (exit if the content fits on one screen) to enable it.
+      LESS = "-F -g -i -M -R -S -w -X -z-4";
+
+      # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
+      LESSCHARSET = "utf-8";
+    };
+
+    sessionPath = [
+      "${config.xdg.dataHome}/homemade/bin"
+    ];
+  };
+
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
   targets.genericLinux.enable = if pkgs.stdenv.hostPlatform.isDarwin then false else true;
@@ -97,6 +122,8 @@
     };
   };
 
+  programs.lesspipe.enable = true;
+
   programs.direnv = {
     enable = true;
 
@@ -104,9 +131,12 @@
     nix-direnv = {
       enable = true;
     };
+
+    enableZshIntegration = true;
   };
 
   programs.zoxide.enable = true;
+  programs.zoxide.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Home_Manager
   #   - Prefer XDG_*
@@ -114,15 +144,12 @@
 
   xdg.configFile."home-manager/home.nix".source = ./home.nix;
   xdg.configFile."git/config".source = ../git/config;
-  xdg.configFile."zsh/.zshrc".source = ../zsh/.zshrc;
-  xdg.configFile."zsh/.zprofile".source = ../zsh/.zprofile;
   xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
   xdg.configFile."irb/irbrc".source = ../irb/irbrc;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
   xdg.configFile."nushell/config.nu".source = ../nushell/config.nu;
   xdg.configFile."nushell/env.nu".source = ../nushell/env.nu;
-  xdg.configFile."sheldon/plugins.toml".source = ../sheldon/plugins.toml;
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../starship.toml;
@@ -130,7 +157,6 @@
   # basic shell dotfiles should be put in ~/ except part of zsh files
   home.file.".bashrc".source = ../../../home/.bashrc;
   home.file.".bash_logout".source = ../../../home/.bash_logout;
-  home.file.".zshenv".source = ../../../home/.zshenv;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
@@ -141,15 +167,109 @@
     irb-power_assert
   '';
 
+  # https://nixos.wiki/wiki/Zsh
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
+  programs.zsh = {
+    enable = true;
+
+    # How about to point `xdg.configFile`?
+    dotDir = ".config/zsh";
+
+    history = {
+      # in memory
+      size = 100000;
+
+      # in file
+      save = 4200000;
+      path = "${config.xdg.stateHome}/zsh/history";
+
+      ignoreDups = true;
+      ignoreSpace = true;
+
+      extended = true;
+      share = true;
+    };
+
+    historySubstringSearch = {
+      enable = true;
+    };
+    enableSyntaxHighlighting = true;
+    enableAutosuggestions = true;
+    enableCompletion = true;
+
+    # home-manager path will set in `programs.home-manager.enable = true`;
+    envExtra = ''
+      # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
+      # https://www.reddit.com/r/zsh/comments/tpwx9t/zcompcache_vs_zcompdump/
+      zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
+
+      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
+    '';
+
+    initExtra = ''
+      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+
+      setopt correct
+      unsetopt BEEP
+
+      setopt hist_ignore_all_dups
+      setopt hist_reduce_blanks
+      setopt hist_save_no_dups
+      setopt hist_no_store
+
+      eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
+
+      case ''${OSTYPE} in
+      darwin*)
+        test -e "''${HOME}/.iterm2_shell_integration.zsh" && source "''${HOME}/.iterm2_shell_integration.zsh"
+        ;;
+      esac
+
+      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+      function set_win_title() {
+        echo -ne "\033]0; $(basename "$PWD") \007"
+      }
+      precmd_functions+=(set_win_title)
+
+      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+    '';
+
+    # TODO: May move to sessionVariables
+    profileExtra = ''
+      if [[ "$OSTYPE" == darwin* ]]; then
+        export BROWSER='open'
+      fi
+    '';
+  };
+
+  programs.fzf = {
+    enable = true;
+
+    # enableShellIntegration = true;
+
+    enableZshIntegration = true;
+
+    # enableFishIntegration  = true;
+  };
+
+  programs.starship = {
+    enable = true;
+
+    # enableShellIntegration = true;
+
+    enableZshIntegration = true;
+
+    # enableFishIntegration  = true;
+  };
+
   # - Tiny tools by me, they may be rewritten with another language.
   # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
   xdg.dataFile."homemade/bin/bench_shells".source = ../../../home/.local/share/homemade/bin/bench_shells.bash;
   xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
   xdg.dataFile."homemade/bin/la".source = ../../../home/.local/share/homemade/bin/la.bash;
   xdg.dataFile."homemade/bin/zj".source = ../../../home/.local/share/homemade/bin/zj.bash;
-  home.sessionPath = [
-    "${config.xdg.dataHome}/homemade/bin"
-  ];
 
   home.packages = [
     pkgs.dprint
@@ -200,9 +320,6 @@
     pkgs.difftastic
     pkgs.gnumake
 
-    # Do not manage sheldon with nix for unsupported Darwin https://github.com/kachick/dotfiles/issues/149
-    # pkgs.sheldon
-
     # Required in many asdf(rtx) plugins
     pkgs.unzip
 
@@ -221,5 +338,13 @@
     pkgs.pngquant
     pkgs.img2pdf
     pkgs.ocrmypdf
-  ];
+  ] ++ (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      [ ]
+    else
+      [
+        # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
+        pkgs.glibc
+      ]
+  );
 }
