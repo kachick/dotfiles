@@ -28,7 +28,7 @@
       PAGER = "less";
 
       # - You can check the candidates in `locale -a`
-      # - pkgs.glibc installs many candidates
+      # - pkgs.glibc installs many candidates, but it does not support darwin
       LANG = "en_US.UTF-8";
 
       # NOTE: Original comments in zsh
@@ -284,7 +284,6 @@
     pkgs.gcc
     pkgs.git
     pkgs.coreutils
-    pkgs.glibc # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
     pkgs.tig
     pkgs.tree
     pkgs.curl
@@ -339,5 +338,13 @@
     pkgs.pngquant
     pkgs.img2pdf
     pkgs.ocrmypdf
-  ];
+  ] ++ (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      [ ]
+    else
+      [
+        # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
+        pkgs.glibc
+      ]
+  );
 }
