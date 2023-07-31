@@ -6,6 +6,7 @@
 {
   imports = [
     ./packages.nix
+    ./bash.nix
     ./zsh.nix
     ./fish.nix
     ./nushell.nix
