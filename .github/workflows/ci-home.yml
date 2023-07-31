@@ -30,10 +30,18 @@ jobs:
           - release-23.05
           - master # unstable nixpkgs
         include:
-          - home-dir: /home
-            os: ubuntu-22.04
-          - home-dir: /Users
-            os: macos-13
+          - os: ubuntu-22.04
+            cleanup-script: |
+              rm '/home/runner/.config/nix/nix.conf'
+              rm '/home/runner/.config/home-manager/home.nix'
+              rm '/home/runner/.bashrc'
+              rm '/home/runner/.bash_logout'
+          # Latest macOS sets default shell as zsh
+          - os: macos-13
+            cleanup-script: |
+              rm '/Users/runner/.config/nix/nix.conf'
+              rm '/Users/runner/.config/home-manager/home.nix'
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
@@ -46,10 +54,7 @@ jobs:
       - run: nix-shell '<home-manager>' -A install
       - name: Clean up conflict files with applying by home-manager
         run: |
-          rm '${{ matrix.home-dir }}/runner/.config/nix/nix.conf'
-          rm '${{ matrix.home-dir }}/runner/.config/home-manager/home.nix'
-          rm '${{ matrix.home-dir }}/runner/.bashrc'
-          rm '${{ matrix.home-dir }}/runner/.bash_logout'
+          ${{ matrix.cleanup-script }}
       - uses: actions/checkout@v3
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
       - run: nix-shell --run 'makers ci-home-apply'
