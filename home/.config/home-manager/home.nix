@@ -4,6 +4,13 @@
 #   - How to get sha256? => assume by `lib.fakeSha256`
 
 {
+  imports = [
+    ./packages.nix
+    ./zsh.nix
+    ./fish.nix
+    ./nushell.nix
+  ];
+
   home.username = lib.mkDefault "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
@@ -65,53 +72,6 @@
     #  Failed assertions:
     #  - A corresponding Nix package must be specified via `nix.package` for generating
     package = pkgs.nix;
-  };
-
-  programs.fish = {
-    enable = true;
-
-    shellInit =
-      ''
-        switch (uname -s)
-        case Linux
-            # Keep this comment
-        case Darwin
-          # nix
-          # https://github.com/NixOS/nix/issues/2280
-          if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-            fenv source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-          end
-        case FreeBSD NetBSD DragonFly
-            # Keep this comment
-        case '*'
-            # Keep this comment
-        end
-
-        # nix
-        if test -e "$HOME/.nix-profile/etc/profile.d/nix.sh"
-            fenv source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-        end
-
-        # home-manager
-        if test -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-            fenv source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-        end
-
-        # starship
-        if status is-interactive
-            starship init fish | source
-        end
-      '';
-
-    plugins = [{
-      name = "foreign-env";
-      src = pkgs.fetchFromGitHub {
-        owner = "oh-my-fish";
-        repo = "plugin-foreign-env";
-        rev = "3ee95536106c11073d6ff466c1681cde31001383";
-        sha256 = "sha256-vyW/X2lLjsieMpP9Wi2bZPjReaZBkqUbkh15zOi8T4Y=";
-      };
-    }];
   };
 
   programs.readline = {
@@ -192,143 +152,6 @@
   home.file.".default-gems".text = ''
     irb-power_assert
   '';
-
-  # https://nixos.wiki/wiki/Zsh
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
-  programs.zsh = {
-    enable = true;
-
-    # How about to point `xdg.configFile`?
-    dotDir = ".config/zsh";
-
-    history = {
-      # in memory
-      size = 100000;
-
-      # in file
-      save = 4200000;
-      path = "${config.xdg.stateHome}/zsh/history";
-
-      ignoreDups = true;
-      ignoreSpace = true;
-
-      extended = true;
-      share = true;
-    };
-
-    historySubstringSearch = {
-      enable = true;
-    };
-    enableSyntaxHighlighting = true;
-    enableAutosuggestions = true;
-    enableCompletion = true;
-
-    # home-manager path will set in `programs.home-manager.enable = true`;
-    envExtra = ''
-      # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
-      # https://www.reddit.com/r/zsh/comments/tpwx9t/zcompcache_vs_zcompdump/
-      zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
-
-      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
-    '';
-
-    initExtra = ''
-      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
-      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
-
-      setopt correct
-      unsetopt BEEP
-
-      setopt hist_ignore_all_dups
-      setopt hist_reduce_blanks
-      setopt hist_save_no_dups
-      setopt hist_no_store
-
-      eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
-
-      case ''${OSTYPE} in
-      darwin*)
-        test -e "''${HOME}/.iterm2_shell_integration.zsh" && source "''${HOME}/.iterm2_shell_integration.zsh"
-        ;;
-      esac
-
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-        echo -ne "\033]0; $(basename "$PWD") \007"
-      }
-      precmd_functions+=(set_win_title)
-
-      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
-    '';
-
-    # TODO: May move to sessionVariables
-    profileExtra = ''
-      if [[ "$OSTYPE" == darwin* ]]; then
-        export BROWSER='open'
-      fi
-    '';
-  };
-
-  programs.nushell = {
-    enable = true;
-
-    # Do not set `shell_integration: true for now`
-    #   - window title requires `shell_integration: true` - https://github.com/nushell/nushell/issues/2527
-    #   - several terminal requires `shell_integration: false` - https://github.com/nushell/nushell/issues/6214
-    extraConfig = ''
-      let-env config = {
-        show_banner: false
-
-        keybindings: [
-          # https://github.com/nushell/nushell/issues/1616#issuecomment-1386714173
-          {
-            name: fuzzy_history
-            modifier: control
-            keycode: char_r
-            mode: [emacs, vi_normal, vi_insert]
-            event: [
-              {
-                send: ExecuteHostCommand
-                cmd: "commandline (
-                  history
-                    | each { |it| $it.command }
-                    | uniq
-                    | reverse
-                    | str join (char -i 0)
-                    | fzf --read0 --layout=reverse --height=40% -q (commandline)
-                    | decode utf-8
-                    | str trim
-                )"
-              }
-            ]
-          }
-          # Same as above for Up Arrow
-          {
-            name: fuzzy_history
-            modifier: control
-            keycode: Up
-            mode: [emacs, vi_normal, vi_insert]
-            event: [
-              {
-                send: ExecuteHostCommand
-                cmd: "commandline (
-                  history
-                    | each { |it| $it.command }
-                    | uniq
-                    | reverse
-                    | str join (char -i 0)
-                    | fzf --read0 --layout=reverse --height=40% -q (commandline)
-                    | decode utf-8
-                    | str trim
-                )"
-              }
-            ]
-          }
-        ]
-      }
-    '';
-  };
 
   programs.fzf = {
     enable = true;
