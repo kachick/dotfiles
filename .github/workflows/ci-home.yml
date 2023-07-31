@@ -55,6 +55,8 @@ jobs:
           nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel-ref }}.tar.gz home-manager
           nix-channel --update
           nix-channel --list
+      - name: Print nixpkgs version after updating channels
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - run: nix-shell '<home-manager>' -A install
       - name: Clean up conflict files with applying by home-manager
         run: |
