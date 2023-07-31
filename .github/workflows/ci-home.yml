@@ -18,15 +18,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  tasks:
-    runs-on: ubuntu-22.04
-    timeout-minutes: 60
+  home-manager:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - macos-13
+        home-manager-channel:
+          - https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz
+          - https://github.com/nix-community/home-manager/archive/master.tar.gz # unstable
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - name: Register Nix Channels
         run: |
-          nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager
+          nix-channel --add ${{ matrix.home-manager-channel }} home-manager
           nix-channel --update
           nix-channel --list
       - run: nix-shell '<home-manager>' -A install
