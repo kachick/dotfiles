@@ -63,9 +63,8 @@ jobs:
         run: |
           which fish
           which zsh
-          which bash
+          which bash # Be non nix shell
       - name: Run customized dependencies
         run: |
           fish --command 'starship --version'
           zsh -c 'bench_shells'
-          bash -c 'la'
