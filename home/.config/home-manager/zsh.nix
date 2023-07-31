@@ -1,6 +1,11 @@
 { config, ... }:
 
 {
+  programs.starship.enableZshIntegration = true;
+  programs.direnv.enableZshIntegration = true;
+  programs.zoxide.enableZshIntegration = true;
+  programs.fzf.enableZshIntegration = true;
+
   # https://nixos.wiki/wiki/Zsh
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
   programs.zsh = {
