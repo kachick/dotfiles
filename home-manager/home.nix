@@ -166,4 +166,6 @@
   xdg.dataFile."homemade/bin/la".source = ../home/.local/share/homemade/bin/la.bash;
   xdg.dataFile."homemade/bin/zj".source = ../home/.local/share/homemade/bin/zj.bash;
   xdg.dataFile."homemade/bin/add_nix_channels".source = ../home/.local/share/homemade/bin/add_nix_channels.bash;
+  xdg.dataFile."homemade/bin/ruby".source = ../home/.local/share/homemade/bin/ruby.bash;
+  xdg.dataFile."homemade/bin/irb".source = ../home/.local/share/homemade/bin/irb.bash;
 }

@@ -75,9 +75,9 @@
     # pkgs.libyaml
     # pkgs.openssl
     #
-    # Don't include nixpkgs ruby, because of installing into .nix-profile hides
-    # adhoc use of https://github.com/bobvanderlinden/nixpkgs-ruby
-    # pkgs.ruby
+    # Don't include nixpkgs ruby for complex gems and other handlings
+    # Prefer adhoc use of https://github.com/bobvanderlinden/nixpkgs-ruby as follows
+    # `nix shell github:bobvanderlinden/nixpkgs-ruby#'"ruby-3.2"' --command irb`
 
     # As a boardgamer
     # pkgs.tesseract
