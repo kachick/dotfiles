@@ -1,5 +1,7 @@
 { pkgs, ... }:
 
+# If I need the some of edge dependencies, this is the how to point unstable
+#
 # let
 #   pkgsUnstable = import
 #     (fetchTarball
