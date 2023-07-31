@@ -26,8 +26,8 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-13
-        home-manager-channel:
-          - release-23.05
+        home-manager-channel-ref:
+          - 729ab77f9e998e0989fa30140ecc91e738bc0cb1 # Pinned for current use
           - master # unstable nixpkgs
         include:
           - os: ubuntu-22.04
@@ -45,11 +45,16 @@ jobs:
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Print nixpkgs version
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - name: Register Nix Channels
         run: |
-          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel }}.tar.gz home-manager
+          nix-channel --add https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz nixpkgs
+          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel-ref }}.tar.gz home-manager
           nix-channel --update
           nix-channel --list
+      - name: Print nixpkgs version after updating channels
+        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - run: nix-shell '<home-manager>' -A install
       - name: Clean up conflict files with applying by home-manager
         run: |

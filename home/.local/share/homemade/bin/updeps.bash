@@ -13,7 +13,4 @@ esac
 
 nix-channel --update
 
-if command -v rtx; then
-	rtx self-update
-	rtx plugins update
-fi
+rtx plugins update

@@ -1,5 +1,14 @@
 { pkgs, ... }:
 
+# If I need the some of edge dependencies, this is the how to point unstable
+#
+# let
+#   pkgsUnstable = import
+#     (fetchTarball
+#       "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz")
+#     { };
+# in
+
 {
   home.packages = [
     pkgs.dprint
@@ -39,7 +48,13 @@
     pkgs.zoxide
     pkgs.difftastic
 
-    # Required in many asdf(rtx) plugins
+    # asdf/rtx
+    #
+    # Using rtx now
+    # pkgs.asdf-vm
+    pkgs.rtx
+    #
+    # Required in many asdf plugins
     pkgs.unzip
 
     # Includes follows in each repository if needed, not in global
