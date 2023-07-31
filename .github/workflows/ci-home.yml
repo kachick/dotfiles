@@ -29,6 +29,7 @@ jobs:
           nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager
           nix-channel --update
           nix-channel --list
+      - run: nix-shell '<home-manager>' -A install
       - uses: actions/checkout@v3
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
       - run: nix-shell --run 'makers apply'
