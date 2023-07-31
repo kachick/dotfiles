@@ -8,7 +8,6 @@
     ./packages.nix
     ./zsh.nix
     ./fish.nix
-    ./nushell.nix
   ];
 
   home.username = lib.mkDefault "kachick";
