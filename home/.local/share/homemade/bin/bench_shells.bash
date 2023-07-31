@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -euxo pipefail
 
 # ~ my feeling ~
 # 50ms : blazing fast!
@@ -8,7 +8,7 @@ set -euo pipefail
 # 200ms : 1980s?
 # 300ms : slow!
 
-hyperfine 'zsh -i -c exit'
-# Really having same options as zsh...?
-hyperfine 'bash -i -c exit'
-hyperfine 'nu -i -c exit'
+hyperfine --warmup 1 'bash -i -c exit'
+hyperfine --warmup 1 'zsh --interactive -c exit'
+hyperfine --warmup 1 'fish --interactive --command exit'
+hyperfine --warmup 1 'nu --interactive --commands exit'
