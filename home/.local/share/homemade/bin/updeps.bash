@@ -12,6 +12,5 @@ darwin*)
 esac
 
 nix-channel --update
-home-manager switch
 
 rtx plugins update
