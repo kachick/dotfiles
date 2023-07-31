@@ -59,5 +59,13 @@ jobs:
       - uses: actions/checkout@v3
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
       - run: nix-shell --run 'makers ci-home-apply'
-      - run: |
+      - name: Print shell paths
+        run: |
+          which fish
+          which zsh
+          which bash
+      - name: Run customized dependencies
+        run: |
           fish --command 'starship --version'
+          zsh -c 'bench_shells'
+          bash -c 'la'
