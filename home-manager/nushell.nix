@@ -5,11 +5,11 @@
   programs.direnv.enableNushellIntegration = true;
   programs.zoxide.enableNushellIntegration = true;
 
+  # rtx and fzf manager does not have nushell integration yet.
+  # https://github.com/nushell/nushell/issues/1616#issuecomment-1386714173 may help you.
+
   programs.nushell = {
     enable = true;
-
-    # fzf manager does not have nushell integration yet.
-    # https://github.com/nushell/nushell/issues/1616#issuecomment-1386714173 may help you.
 
     # Do not set `shell_integration: true for now`
     #   - window title requires `shell_integration: true` - https://github.com/nushell/nushell/issues/2527

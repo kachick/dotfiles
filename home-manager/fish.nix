@@ -1,6 +1,9 @@
 { pkgs, ... }:
 
 {
+  programs.starship.enableFishIntegration = true;
+  programs.rtx.enableFishIntegration = true;
+
   xdg.configFile."fish/fish_variables".source = ../home/.config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../home/.config/fish/functions/fish_prompt.fish;
 
@@ -27,16 +30,6 @@
         # nix
         if test -e "$HOME/.nix-profile/etc/profile.d/nix.sh"
             fenv source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-        end
-
-        # home-manager
-        if test -e "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-            fenv source "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
-        end
-
-        # starship
-        if status is-interactive
-            starship init fish | source
         end
       '';
 

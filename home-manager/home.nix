@@ -151,10 +151,12 @@
     enable = true;
   };
 
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/rtx.nix
   programs.rtx.enable = true;
 
   # - Tiny tools by me, they may be rewritten with another language.
