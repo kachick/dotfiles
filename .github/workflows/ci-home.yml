@@ -19,7 +19,7 @@ on:
 
 jobs:
   tasks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
@@ -32,6 +32,6 @@ jobs:
       - run: nix-shell '<home-manager>' -A install
       - uses: actions/checkout@v3
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
-      - run: nix-shell --run 'makers apply'
+      - run: nix-shell --run 'makers ci-home-apply'
       - run: |
           fish --command 'starship --version'
