@@ -1,0 +1,69 @@
+name: CI - Home
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-home.yml'
+      - '**/home-manager/**.nix'
+      - 'Makefile.toml'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-home.yml'
+      - '**/home-manager/**.nix'
+      - 'Makefile.toml'
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  home-manager:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-22.04
+          - macos-13
+        home-manager-channel:
+          - release-23.05
+          - master # unstable nixpkgs
+        include:
+          - os: ubuntu-22.04
+            cleanup-script: |
+              rm '/home/runner/.config/nix/nix.conf'
+              rm '/home/runner/.config/home-manager/home.nix'
+              rm '/home/runner/.bashrc'
+              rm '/home/runner/.bash_logout'
+          - os: macos-13
+            # Latest macOS sets default shell as zsh, but having .bashrc except .bash_logout
+            cleanup-script: |
+              rm '/Users/runner/.config/nix/nix.conf'
+              rm '/Users/runner/.config/home-manager/home.nix'
+              rm '/Users/runner/.bashrc'
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Register Nix Channels
+        run: |
+          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel }}.tar.gz home-manager
+          nix-channel --update
+          nix-channel --list
+      - run: nix-shell '<home-manager>' -A install
+      - name: Clean up conflict files with applying by home-manager
+        run: |
+          ${{ matrix.cleanup-script }}
+      - uses: actions/checkout@v3
+      - run: home-manager switch -f ./home/.config/home-manager/user-github-actions.nix
+      - name: Print shell paths
+        run: |
+          which fish
+          which zsh
+          which bash # Be non nix shell
+      - name: Run customized dependencies
+        run: |
+          fish --command 'starship --version'
+          zsh -c 'bench_shells'

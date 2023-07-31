@@ -35,7 +35,7 @@ command = 'dist/deps'
 
 [tasks.prepare-build]
 command = 'mkdir'
-args = ['-p', 'dist']
+args = ['-p', 'dist/race']
 
 [tasks.build]
 dependencies = ['prepare-build']
@@ -56,8 +56,18 @@ args = [
   '-v',
   '-race',
   '-o',
-  'dist',
+  'dist/race',
   './...',
+]
+
+[tasks.test]
+dependencies = ['test-race']
+command = 'home-manager'
+args = [
+  'switch',
+  '-n', # dry-run
+  '-f',
+  './home/.config/home-manager/home.nix',
 ]
 
 [tasks.apply]
