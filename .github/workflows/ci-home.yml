@@ -67,13 +67,11 @@ jobs:
           which zsh
           which bash # Be non nix shell
       - name: Run customized dependencies
-        # Following script... hack does not stop these, so avoided interactive mode at here
         run: |
           fish --command 'starship --version'
           zsh -c 'which dprint'
-
       - name: Run homemade commands
-        run: bash -c 'bench_shells'
+        run: zsh --interactive -c 'la'
         # https://github.com/kachick/dotfiles/issues/224
         # https://github.com/actions/runner/issues/241#issuecomment-924327172
         shell: 'script --return --quiet --command "bash {0}"'
