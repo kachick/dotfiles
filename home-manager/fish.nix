@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 {
-  xdg.configFile."fish/fish_variables".source = ../fish/fish_variables;
-  xdg.configFile."fish/functions/fish_prompt.fish".source = ../fish/functions/fish_prompt.fish;
+  xdg.configFile."fish/fish_variables".source = ../home/.config/fish/fish_variables;
+  xdg.configFile."fish/functions/fish_prompt.fish".source = ../home/.config/fish/functions/fish_prompt.fish;
 
   programs.fish = {
     enable = true;
