@@ -78,14 +78,6 @@ args = [
   './home/.config/home-manager/home.nix',
 ]
 
-[tasks.ci-home-apply]
-command = 'home-manager'
-args = [
-  'switch',
-  '-f',
-  './home/.config/home-manager/user-github-actions.nix',
-]
-
 [tasks.enable_login_shells]
 command = 'sudo'
 args = [

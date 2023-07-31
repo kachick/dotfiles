@@ -57,8 +57,7 @@ jobs:
         run: |
           ${{ matrix.cleanup-script }}
       - uses: actions/checkout@v3
-      - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
-      - run: nix-shell --run 'makers ci-home-apply'
+      - run: home-manager switch -f ./home/.config/home-manager/user-github-actions.nix
       - name: Print shell paths
         run: |
           which fish
