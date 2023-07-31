@@ -30,6 +30,12 @@ jobs:
           nix-channel --update
           nix-channel --list
       - run: nix-shell '<home-manager>' -A install
+      - name: Clean up conflict files with applying by home-manager
+        run: |
+          rm '/home/runner/.config/nix/nix.conf'
+          rm '/home/runner/.config/home-manager/home.nix'
+          rm '/home/runner/.bashrc'
+          rm '/home/runner/.bash_logout'
       - uses: actions/checkout@v3
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
       - run: nix-shell --run 'makers ci-home-apply'
