@@ -36,11 +36,12 @@ jobs:
               rm '/home/runner/.config/home-manager/home.nix'
               rm '/home/runner/.bashrc'
               rm '/home/runner/.bash_logout'
-          # Latest macOS sets default shell as zsh
           - os: macos-13
+            # Latest macOS sets default shell as zsh, but having .bashrc except .bash_logout
             cleanup-script: |
               rm '/Users/runner/.config/nix/nix.conf'
               rm '/Users/runner/.config/home-manager/home.nix'
+              rm '/Users/runner/.bashrc'
 
     runs-on: ${{ matrix.os }}
     steps:
