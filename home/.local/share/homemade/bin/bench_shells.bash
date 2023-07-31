@@ -8,7 +8,7 @@ set -euo pipefail
 # 200ms : 1980s?
 # 300ms : slow!
 
-hyperfine 'zsh -i -c exit'
-# Really having same options as zsh...?
 hyperfine 'bash -i -c exit'
-hyperfine 'nu -i -c exit'
+hyperfine 'zsh --interactive -c exit'
+hyperfine 'fish --interactive --command exit'
+hyperfine 'nu --interactive --commands exit'
