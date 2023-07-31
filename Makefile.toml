@@ -67,7 +67,7 @@ args = [
   'switch',
   '-n', # dry-run
   '-f',
-  './home/.config/home-manager/home.nix',
+  './home-manager/home.nix',
 ]
 
 [tasks.apply]
@@ -75,7 +75,7 @@ command = 'home-manager'
 args = [
   'switch',
   '-f',
-  './home/.config/home-manager/home.nix',
+  './home-manager/home.nix',
 ]
 
 [tasks.enable_login_shells]

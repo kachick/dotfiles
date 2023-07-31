@@ -104,19 +104,19 @@
 
   # Do not alias home.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/home.nix`
-  xdg.configFile."git/config".source = ../git/config;
-  xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
+  xdg.configFile."git/config".source = ../home/.config/git/config;
+  xdg.configFile."alacritty/alacritty.yml".source = ../home/.config/alacritty/alacritty.yml;
 
   # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../starship.toml;
+  xdg.configFile."starship.toml".source = ../home/.config/starship.toml;
 
   # basic shell dotfiles should be put in ~/ except part of zsh files
-  home.file.".bashrc".source = ../../../home/.bashrc;
-  home.file.".bash_logout".source = ../../../home/.bash_logout;
+  home.file.".bashrc".source = ../home/.bashrc;
+  home.file.".bash_logout".source = ../home/.bash_logout;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
-  home.file.".stack/config.yaml".source = ../../../home/.stack/config.yaml;
+  home.file.".stack/config.yaml".source = ../home/.stack/config.yaml;
 
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
@@ -157,8 +157,8 @@
 
   # - Tiny tools by me, they may be rewritten with another language.
   # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
-  xdg.dataFile."homemade/bin/bench_shells".source = ../../../home/.local/share/homemade/bin/bench_shells.bash;
-  xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
-  xdg.dataFile."homemade/bin/la".source = ../../../home/.local/share/homemade/bin/la.bash;
-  xdg.dataFile."homemade/bin/zj".source = ../../../home/.local/share/homemade/bin/zj.bash;
+  xdg.dataFile."homemade/bin/bench_shells".source = ../home/.local/share/homemade/bin/bench_shells.bash;
+  xdg.dataFile."homemade/bin/updeps".source = ../home/.local/share/homemade/bin/updeps.bash;
+  xdg.dataFile."homemade/bin/la".source = ../home/.local/share/homemade/bin/la.bash;
+  xdg.dataFile."homemade/bin/zj".source = ../home/.local/share/homemade/bin/zj.bash;
 }
