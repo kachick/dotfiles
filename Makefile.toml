@@ -73,7 +73,7 @@ command = 'home-manager'
 args = [
   'switch',
   '-f',
-  './home/.config/home-manager/github-actions.nix',
+  './home/.config/home-manager/home-github-actions.nix',
 ]
 
 [tasks.enable_login_shells]
