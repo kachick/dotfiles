@@ -70,3 +70,7 @@ jobs:
         run: |
           fish --interactive --command 'starship --version'
           zsh --interactive -c 'bench_shells'
+        # https://github.com/kachick/dotfiles/issues/224
+        env:
+          TERM: xterm-256color
+        shell: 'script -q -e -c "bash {0}"'
