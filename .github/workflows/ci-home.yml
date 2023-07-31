@@ -71,8 +71,9 @@ jobs:
         run: |
           fish --command 'starship --version'
           zsh -c 'which dprint'
+
       - name: Run homemade commands
-        run: bench_shells
+        run: bash -c 'bench_shells'
         # https://github.com/kachick/dotfiles/issues/224
         # https://github.com/actions/runner/issues/241#issuecomment-924327172
         shell: 'script --return --quiet --command "bash {0}"'
