@@ -1,9 +1,10 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 # FAQ
 #   - How to get sha256? => assume by `lib.fakeSha256`
 
 {
+  home.username = lib.mkDefault "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
