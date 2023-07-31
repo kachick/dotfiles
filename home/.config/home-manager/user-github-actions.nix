@@ -1,6 +1,6 @@
 { ... }:
 
 {
-  imports = [ ./common.nix ];
+  imports = [ ./home.nix ];
   home.username = "runner";
 }
