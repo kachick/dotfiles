@@ -14,7 +14,4 @@ esac
 nix-channel --update
 home-manager switch
 
-if command -v rtx; then
-	rtx self-update
-	rtx plugins update
-fi
+rtx plugins update

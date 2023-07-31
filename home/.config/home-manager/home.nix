@@ -154,10 +154,13 @@
     enable = true;
   };
 
+  programs.rtx.enable = true;
+
   # - Tiny tools by me, they may be rewritten with another language.
   # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
   xdg.dataFile."homemade/bin/bench_shells".source = ../../../home/.local/share/homemade/bin/bench_shells.bash;
   xdg.dataFile."homemade/bin/updeps".source = ../../../home/.local/share/homemade/bin/updeps.bash;
   xdg.dataFile."homemade/bin/la".source = ../../../home/.local/share/homemade/bin/la.bash;
   xdg.dataFile."homemade/bin/zj".source = ../../../home/.local/share/homemade/bin/zj.bash;
+  xdg.dataFile."homemade/bin/add_nix_channels".source = ../../../home/.local/share/homemade/bin/add_nix_channels.bash;
 }

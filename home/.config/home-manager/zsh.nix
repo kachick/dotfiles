@@ -5,6 +5,7 @@
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
+  programs.rtx.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Zsh
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
@@ -32,7 +33,9 @@
     historySubstringSearch = {
       enable = true;
     };
-    enableSyntaxHighlighting = true;
+
+    syntaxHighlighting.enable = true;
+
     enableAutosuggestions = true;
     enableCompletion = true;
 
@@ -57,8 +60,6 @@
       setopt hist_reduce_blanks
       setopt hist_save_no_dups
       setopt hist_no_store
-
-      eval "$($XDG_DATA_HOME/rtx/bin/rtx activate -s zsh)"
 
       case ''${OSTYPE} in
       darwin*)
