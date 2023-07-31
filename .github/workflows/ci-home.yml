@@ -1,0 +1,36 @@
+name: CI - Home
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-home.yml'
+      - '**home.nix'
+      - 'Makefile.toml'
+  pull_request:
+    paths:
+      - '.github/workflows/ci-home.yml'
+      - '**home.nix'
+      - 'Makefile.toml'
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  tasks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: DeterminateSystems/nix-installer-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - name: Register Nix Channels
+        run: |
+          nix-channel --add https://github.com/nix-community/home-manager/archive/release-23.05.tar.gz home-manager
+          nix-channel --update
+          nix-channel --list
+      - uses: actions/checkout@v3
+      - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
+      - run: nix-shell --run 'makers apply'
+      - run: |
+          fish --command 'starship --version'
