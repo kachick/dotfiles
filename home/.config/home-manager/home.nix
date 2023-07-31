@@ -102,9 +102,8 @@
   #   - Prefer XDG_*
   #   - If can't write the reason as a comment
 
-  # Actually cannot use this dir and home.nix because of using many relative dirs
+  # Do not alias home.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/home.nix`
-  xdg.configFile."home-manager".source = ./.;
   xdg.configFile."git/config".source = ../git/config;
   xdg.configFile."alacritty/alacritty.yml".source = ../alacritty/alacritty.yml;
 
