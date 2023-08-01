@@ -9,7 +9,6 @@
     ./bash.nix
     ./zsh.nix
     ./fish.nix
-    ./nushell.nix
   ];
 
   home.username = lib.mkDefault "kachick";
@@ -90,6 +89,11 @@
     enable = true;
 
     # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
+    #
+    # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
+    # See following reference
+    #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
+    #   - https://github.com/kachick/ruby-ulid/pull/410
     nix-direnv = {
       enable = true;
     };

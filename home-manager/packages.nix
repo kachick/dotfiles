@@ -25,7 +25,6 @@
     # Don't include bash - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
     # pkgs.bash
     pkgs.fish
-    pkgs.nushell
     pkgs.starship
     pkgs.jq
     pkgs.gh
@@ -69,15 +68,14 @@
     # pkgs.gnumake
     # pkgs.cargo-make
 
-    # This section is just a note for my strggle
-    # Often failed to build ruby even if I enabled following dependencies
+
+    # https://github.com/NixOS/nixpkgs/pull/218114
+    pkgs.ruby_3_2
+    # If you need to build cruby from source, this section may remind the struggle
+    # Often failed to build cruby even if I enabled following dependencies
     # pkgs.zlib
     # pkgs.libyaml
     # pkgs.openssl
-    #
-    # Don't include nixpkgs ruby, because of installing into .nix-profile hides
-    # adhoc use of https://github.com/bobvanderlinden/nixpkgs-ruby
-    # pkgs.ruby
 
     # As a boardgamer
     # pkgs.tesseract
