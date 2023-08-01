@@ -51,7 +51,7 @@ jobs:
         run: |
           which fish
           which zsh
-          which bash # Be non nix shell
+          which bash
           which ruby
           which irb
       # Do not use interactive mode here.
