@@ -115,10 +115,6 @@
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../home/.config/starship.toml;
 
-  # basic shell dotfiles should be put in ~/ except part of zsh files
-  home.file.".bashrc".source = ../home/.bashrc;
-  home.file.".bash_logout".source = ../home/.bash_logout;
-
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
   home.file.".stack/config.yaml".source = ../home/.stack/config.yaml;
