@@ -4,21 +4,6 @@ if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
 	bind '"\e[B":history-substring-search-forward'
 fi
 
-# See https://github.com/kachick/times_kachick/issues/237
-#
-# Avoid nix provided bash on nix-shell makes broken bind, complete, color_prompt
-# Following part of ps... did referer to https://github.com/NixOS/nix/issues/3862#issuecomment-1611837272,
-# because non nested bash does not make this problem.
-# e.g
-#   cd ../
-#   rm ./the_repo/.envrc # Avoid direnv injection
-#   cd ./the_repo
-#   nix develop # the executed nix-shell does NOT have problems, so you can wrap as starship
-#   bash # this nested bash HAS problems without following ps... condition.
-if [[ -n "$IN_NIX_SHELL" && "$(ps -o uid= $PPID)" -eq "$UID" ]]; then
-	in_nested_nix_bash="true"
-fi
-
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
 	debian_chroot=$(cat /etc/debian_chroot)
@@ -45,23 +30,21 @@ if [ -n "$force_color_prompt" ]; then
 	fi
 fi
 
-if [ "$color_prompt" = yes ] && [ -z "$in_nested_nix_bash" ]; then
+if [ "$color_prompt" = yes ]; then
 	PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\[\033[01;34m\]\w\[\033[00m\]\$ '
 else
 	PS1='${debian_chroot:+($debian_chroot)}\w\$ '
 fi
 unset color_prompt force_color_prompt
 
-if [ -z "$in_nested_nix_bash" ]; then
-	# If this is an xterm set the title to user@host:dir
-	case "$TERM" in
-	xterm* | rxvt*)
-		PS1="\[\e]0;${debian_chroot:+($debian_chroot)} \w\a\]$PS1"
-		;;
-	*) ;;
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm* | rxvt*)
+	PS1="\[\e]0;${debian_chroot:+($debian_chroot)} \w\a\]$PS1"
+	;;
+*) ;;
 
-	esac
-fi
+esac
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
