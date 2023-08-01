@@ -66,6 +66,8 @@ command = 'home-manager'
 args = [
   'switch',
   '-n', # dry-run
+  '-b',
+  'backup',
   '-f',
   './home-manager/home.nix',
 ]
@@ -74,6 +76,8 @@ args = [
 command = 'home-manager'
 args = [
   'switch',
+  '-b',
+  'backup',
   '-f',
   './home-manager/home.nix',
 ]

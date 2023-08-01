@@ -20,7 +20,7 @@ func main() {
 		log.Fatalln("used by root looks weird. You should run `sudo -E ...` instead of `sudo ...`")
 	}
 
-	loginAbles := []string{"zsh", "fish"}
+	loginableShells := []string{"bash", "zsh", "fish"}
 
 	etcShellsBytes, err := os.ReadFile("/etc/shells")
 	if err != nil {
@@ -31,7 +31,7 @@ func main() {
 	dirty := strings.Clone(etcShells)
 	examplePath := ""
 
-	for _, sh := range loginAbles {
+	for _, sh := range loginableShells {
 		shellPath := homePath + "/.nix-profile/bin/" + sh
 		if strings.Contains(etcShells, shellPath) {
 			log.Printf("skip - %s is already registered in /etc/shells\n", shellPath)

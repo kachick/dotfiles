@@ -6,6 +6,7 @@
 {
   imports = [
     ./packages.nix
+    ./bash.nix
     ./zsh.nix
     ./fish.nix
   ];
@@ -29,7 +30,6 @@
 
   home = {
     sessionVariables = {
-      INPUTRC = "${config.home.sessionVariables.XDG_CONFIG_HOME}/readline/inputrc";
       EDITOR = "code -w";
       VISUAL = "nano";
       PAGER = "less";
@@ -73,15 +73,6 @@
     package = pkgs.nix;
   };
 
-  programs.readline = {
-    enable = true;
-    variables = {
-      # https://unix.stackexchange.com/questions/73672/how-to-turn-off-the-beep-only-in-bash-tab-complete
-      # https://github.com/nix-community/home-manager/blob/0841242b94638fcd010f7f64e56b7b1cad50c697/modules/programs/readline.nix
-      bell-style = "none";
-    };
-  };
-
   programs.lesspipe.enable = true;
 
   programs.direnv = {
@@ -113,10 +104,6 @@
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../home/.config/starship.toml;
-
-  # basic shell dotfiles should be put in ~/ except part of zsh files
-  home.file.".bashrc".source = ../home/.bashrc;
-  home.file.".bash_logout".source = ../home/.bash_logout;
 
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142

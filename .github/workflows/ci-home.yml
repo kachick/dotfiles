@@ -29,17 +29,6 @@ jobs:
         home-manager-channel-ref:
           - 729ab77f9e998e0989fa30140ecc91e738bc0cb1 # Pinned for current use
           - master # unstable nixpkgs
-        include:
-          - os: ubuntu-22.04
-            cleanup-script: |
-              rm '/home/runner/.config/nix/nix.conf'
-              rm '/home/runner/.bashrc'
-              rm '/home/runner/.bash_logout'
-          - os: macos-13
-            # Latest macOS sets default shell as zsh, but having .bashrc except .bash_logout
-            cleanup-script: |
-              rm '/Users/runner/.config/nix/nix.conf'
-              rm '/Users/runner/.bashrc'
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -56,16 +45,13 @@ jobs:
       - name: Print nixpkgs version after updating channels
         run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - run: nix-shell '<home-manager>' -A install
-      - name: Clean up conflict files with applying by home-manager
-        run: |
-          ${{ matrix.cleanup-script }}
       - uses: actions/checkout@v3
-      - run: home-manager switch -f ./home-manager/user-github-actions.nix
+      - run: home-manager switch -b backup -f ./home-manager/user-github-actions.nix
       - name: Print paths
         run: |
           which fish
           which zsh
-          which bash # Be non nix shell
+          which bash
           which ruby
           which irb
       # Do not use interactive mode here.

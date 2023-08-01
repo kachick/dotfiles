@@ -11,27 +11,43 @@
 
 {
   home.packages = [
-    pkgs.dprint
-    pkgs.gitleaks
-    pkgs.shellcheck
-    pkgs.shfmt
-    pkgs.git
-    pkgs.coreutils
-    pkgs.tig
-    pkgs.tree
-    pkgs.curl
-    pkgs.wget
-    pkgs.zsh
-    # Don't include bash - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+    # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
     # pkgs.bash
+    # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+    pkgs.bashInteractive
+    # pkgs.readline # needless and using it does not fix pkgs.bash problems
+    pkgs.zsh
     pkgs.fish
     pkgs.starship
-    pkgs.jq
-    pkgs.gh
     pkgs.direnv
-    pkgs.ripgrep
+    pkgs.zoxide
     pkgs.fzf
+
+    # asdf/rtx
+    #
+    # Prefer rtx now
+    # pkgs.asdf-vm
+    pkgs.rtx
+    #
+    # Required in many asdf plugins
+    pkgs.unzip
+
+    pkgs.git
+    pkgs.tig
+    pkgs.gh
+
+    pkgs.dprint
+    pkgs.shellcheck
+    pkgs.shfmt
+    pkgs.nixpkgs-fmt
+
+    pkgs.coreutils
+    pkgs.tree
     pkgs.exa
+    pkgs.curl
+    pkgs.wget
+    pkgs.jq
+    pkgs.ripgrep
     pkgs.bat
     pkgs.duf
     pkgs.fd
@@ -40,21 +56,9 @@
     pkgs.bottom
     pkgs.tig
     pkgs.zellij
-    pkgs.nixpkgs-fmt
-    pkgs.nil
     pkgs.typos
     pkgs.hyperfine
-    pkgs.zoxide
     pkgs.difftastic
-
-    # asdf/rtx
-    #
-    # Using rtx now
-    # pkgs.asdf-vm
-    pkgs.rtx
-    #
-    # Required in many asdf plugins
-    pkgs.unzip
 
     # Includes follows in each repository if needed, not in global
     # pkgs.deno
@@ -67,7 +71,8 @@
     # pkgs.postgresql
     # pkgs.gnumake
     # pkgs.cargo-make
-
+    # pkgs.gitleaks
+    # pkgs.nil
 
     # https://github.com/NixOS/nixpkgs/pull/218114
     pkgs.ruby_3_2
