@@ -66,11 +66,15 @@ jobs:
           which fish
           which zsh
           which bash # Be non nix shell
+          which ruby
+          which irb
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
           fish --command 'starship --version'
           zsh -c 'which dprint'
+          zsh -c 'ruby --version'
+          zsh -c 'irb --version'
       - name: Run homemade commands
         run: zsh -c 'la'
