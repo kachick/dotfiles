@@ -57,6 +57,7 @@ jobs:
         run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
       - run: nix-shell '<home-manager>' -A install
       - name: Clean up conflict files with applying by home-manager
+        # May use `home-manager switch -b backup` better?
         run: |
           ${{ matrix.cleanup-script }}
       - uses: actions/checkout@v3

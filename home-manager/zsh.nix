@@ -39,6 +39,11 @@
     enableAutosuggestions = true;
     enableCompletion = true;
 
+    # Setting bindkey
+    # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L28
+    # https://qiita.com/yoshikaw/items/fe4aca1110979e223f7e
+    defaultKeymap = "emacs";
+
     # home-manager path will set in `programs.home-manager.enable = true`;
     envExtra = ''
       # https://wiki.archlinux.jp/index.php/XDG_Base_Directory
@@ -60,6 +65,10 @@
       setopt hist_reduce_blanks
       setopt hist_save_no_dups
       setopt hist_no_store
+
+      # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
+      bindkey ";5C" forward-word
+      bindkey ";5D" backward-word
 
       case ''${OSTYPE} in
       darwin*)
