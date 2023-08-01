@@ -61,7 +61,7 @@ jobs:
           ${{ matrix.cleanup-script }}
       - uses: actions/checkout@v3
       - run: home-manager switch -f ./home-manager/user-github-actions.nix
-      - name: Print shell paths
+      - name: Print paths
         run: |
           which fish
           which zsh
