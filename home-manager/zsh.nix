@@ -65,8 +65,9 @@
           # -C omit to check new functions
           compinit -C -d "$dump_path"
         else
-          mkdir -p "$dump_dir"
+          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$dump_dir"
           compinit -d "$dump_path"
+          ${lib.getBin pkgs.coreutils}/bin/touch "$dump_path" # Ensure to update timestamp
         fi
       }
     '';
