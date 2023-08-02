@@ -67,6 +67,7 @@
         else
           mkdir -p "$dump_dir"
           compinit -d "$dump_path"
+          touch "$dump_path" # Ensure to update timestamp
         fi
       }
     '';
