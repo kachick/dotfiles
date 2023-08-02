@@ -12,7 +12,8 @@
   programs.zsh = {
     enable = true;
 
-    # How about to point `xdg.configFile`?
+    # zsh manager always append $HOME as the prefix, so you can NOT write as `"${config.xdg.configHome}/zsh"`
+    # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
 
     history = {
