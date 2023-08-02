@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 
 # condition branch as `if pkgs.stdenv.hostPlatform.isDarwin then` will not work, but having the config even in Linux okay for me.
 {
@@ -11,7 +11,7 @@
         owner = "mbadolato";
         repo = "iTerm2-Color-Schemes";
         rev = "3f8a0791ed9a99c10054026c1a8285459117e0f2";
-        sha256 = lib.fakeSha256;
+        sha256 = "sha256-ixryDwSNdVtD1H+V72V+hbFiL/JNLU4qpKXWflPQwrQ=";
       }
     + "/schemes/OneHalfDark.itermcolors"
   );
