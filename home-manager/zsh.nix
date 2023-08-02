@@ -45,9 +45,9 @@
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
     # The default is "autoload -U compinit && compinit", I can not accept the path and speed
     initExtraBeforeCompInit = ''
-      _elapsed_time_for() {
+      _elapsed_seconds_for() {
         local -r target_path="$1"
-        echo "$(("$(date +"%s")" - "$(stat --format='%Y' "$target_path")"))"
+        echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
       }
 
       # path - https://stackoverflow.com/a/48057649/1212807
@@ -59,7 +59,7 @@
         # seconds * minutes * hours
         local -r threshold="$((60 * 60 * 3))"
 
-        if [ -e "$dump_path" ] && [ "$(_elapsed_time_for "$dump_path")" -le "$threshold" ]; then
+        if [ -e "$dump_path" ] && [ "$(_elapsed_seconds_for "$dump_path")" -le "$threshold" ]; then
           # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
           # -C omit to check new functions
           compinit -C -d "$dump_path"

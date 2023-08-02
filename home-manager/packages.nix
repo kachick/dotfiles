@@ -23,6 +23,9 @@
     pkgs.zoxide
     pkgs.fzf
 
+    # Used in anywhere
+    pkgs.coreutils
+
     # asdf/rtx
     #
     # Prefer rtx now
@@ -42,7 +45,6 @@
     pkgs.shfmt
     pkgs.nixpkgs-fmt
 
-    pkgs.coreutils
     pkgs.tree
     pkgs.exa
     pkgs.curl
