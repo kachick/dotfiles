@@ -9,6 +9,7 @@
     ./bash.nix
     ./zsh.nix
     ./fish.nix
+    ./git.nix
   ];
 
   home.username = lib.mkDefault "kachick";
@@ -99,7 +100,6 @@
 
   # Do not alias home.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/home.nix`
-  xdg.configFile."git/config".source = ../home/.config/git/config;
   xdg.configFile."alacritty/alacritty.yml".source = ../home/.config/alacritty/alacritty.yml;
 
   # Not under "starship/starship.toml"

@@ -34,6 +34,7 @@
 
     pkgs.git
     pkgs.tig
+    pkgs.lazygit
     pkgs.gh
 
     pkgs.dprint
