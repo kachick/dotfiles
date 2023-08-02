@@ -4,8 +4,6 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-      time: '08:00'
-      timezone: 'Asia/Tokyo'
     ignore:
       - dependency-name: 'crate-ci/typos'
   - package-ecosystem: 'gomod'
