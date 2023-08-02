@@ -92,7 +92,7 @@
     # pkgs.img2pdf
     # pkgs.ocrmypdf
   ] ++ (
-    if pkgs.stdenv.hostPlatform.isDarwin then
+    if pkgs.stdenv.isDarwin then
       [ ]
     else
       [

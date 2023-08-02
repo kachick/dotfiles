@@ -12,12 +12,12 @@
     ./zsh.nix
     ./fish.nix
     ./git.nix
-    ./darwin.nix
+    ./darwin.nix # Omit needless parts for Linux in the file
   ];
 
   home.username = lib.mkDefault "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
   # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
   xdg.enable = true;
@@ -58,7 +58,7 @@
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-  targets.genericLinux.enable = if pkgs.stdenv.hostPlatform.isDarwin then false else true;
+  targets.genericLinux.enable = if pkgs.stdenv.isDarwin then false else true;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
