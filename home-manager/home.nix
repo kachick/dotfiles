@@ -1,7 +1,9 @@
 { config, pkgs, lib, ... }:
 
 # FAQ
-#   - How to get sha256? => assume by `lib.fakeSha256`
+#
+# A. How to get sha256?
+# Q. Assume by `lib.fakeSha256` at first, you can get the hash with an error message
 
 {
   imports = [
