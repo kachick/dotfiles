@@ -10,7 +10,12 @@
     ./zsh.nix
     ./fish.nix
     ./git.nix
-  ];
+  ] ++ (
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      [ ./darwin.nix ]
+    else
+      [ ]
+  );
 
   home.username = lib.mkDefault "kachick";
   # TODO: How to cover lima? The default is /home/kachick.local
