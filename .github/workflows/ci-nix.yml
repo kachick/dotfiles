@@ -26,4 +26,4 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
       - run: nix-shell --run 'echo This step should be done before any other "nix-shell" steps because of measuring Nix build time'
-      - run: nix-shell --run 'makers ci'
+      - run: nix-shell --run 'makers ci-dev'

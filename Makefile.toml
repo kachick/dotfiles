@@ -90,17 +90,21 @@ args = [
 ]
 
 [tasks.enable_login_shells]
+dependencies = ['build']
 command = 'sudo'
 args = [
   '-E',
   'dist/enable_nix_login_shells',
 ]
 
-[tasks.ci]
+[tasks.ci-dev]
 dependencies = [
   'default',
   'setup',
   'deps',
-  'check',
+  'build',
+  # 'test', # Needs home-manager, so needless in Nix-CI
+  'lint',
+  'test-go-race',
   'fmt',
 ]
