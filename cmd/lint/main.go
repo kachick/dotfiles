@@ -8,6 +8,8 @@ import (
 	"sync"
 
 	doublestar "github.com/bmatcuk/doublestar/v4"
+
+	"github.com/kachick/dotfiles"
 )
 
 func main() {
@@ -36,9 +38,7 @@ func main() {
 		{"shfmt", append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{"shellcheck", bashPaths},
 		{"nixpkgs-fmt", append([]string{"--check"}, nixPaths...)},
-		{"typos", []string{
-			".",
-			".github", ".vscode", "home/.config", "home/.local", "home/.stack"}},
+		{"typos", dotfiles.GetTyposTargetedRoots()},
 		{"gitleaks", []string{"detect"}},
 		{"go", []string{"vet", "./..."}},
 	}
