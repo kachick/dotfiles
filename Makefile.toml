@@ -22,15 +22,23 @@ script = [
 ]
 
 [tasks.lint]
+dependencies = ['build']
 command = 'dist/lint'
 
 [tasks.fmt]
+dependencies = ['build']
 command = 'dist/fmt'
 
 [tasks.check]
-alias = "lint"
+dependencies = [
+  'build',
+  'test',
+  'lint',
+  'test-go-race',
+]
 
 [tasks.deps]
+dependencies = ['build']
 command = 'dist/deps'
 
 [tasks.prepare-build]
@@ -48,7 +56,7 @@ args = [
   './...',
 ]
 
-[tasks.test-race]
+[tasks.test-go-race]
 dependencies = ['prepare-build']
 command = 'go'
 args = [
@@ -61,7 +69,6 @@ args = [
 ]
 
 [tasks.test]
-dependencies = ['test-race']
 command = 'home-manager'
 args = [
   'switch',
@@ -83,19 +90,21 @@ args = [
 ]
 
 [tasks.enable_login_shells]
+dependencies = ['build']
 command = 'sudo'
 args = [
   '-E',
   'dist/enable_nix_login_shells',
 ]
 
-[tasks.ci]
+[tasks.ci-dev]
 dependencies = [
   'default',
   'setup',
   'deps',
   'build',
-  'test-race',
+  # 'test', # Needs home-manager, so needless in Nix-CI
+  'lint',
+  'test-go-race',
   'fmt',
-  'check',
 ]
