@@ -29,3 +29,4 @@
 	refresh = !git switch-default && git pull "$(git upstream)" "$(git current)"
 	# Depending gh poi :)
 	all = !git refresh && gh poi
+	gui = !lazygit
