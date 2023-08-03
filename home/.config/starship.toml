@@ -28,8 +28,8 @@ $character"""
 style = "blue"
 
 [character]
-success_symbol = "[❯](purple)"
-error_symbol = "[❯](red)"
+success_symbol = "[>](bold green)"
+error_symbol = "[✗](bold red)"
 vimcmd_symbol = "[❮](green)"
 
 [git_commit]
