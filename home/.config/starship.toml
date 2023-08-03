@@ -17,8 +17,6 @@ $ruby\
 $python\
 $deno\
 $nodejs\
-$bun\
-$zig\
 $cmd_duration\
 $nix_shell\
 $shell\
