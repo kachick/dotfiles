@@ -10,94 +10,91 @@
 # in
 
 {
-  home.packages = [
+  home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
-    # pkgs.bash
+    # bash
     # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-    pkgs.bashInteractive
-    # pkgs.readline # needless and using it does not fix pkgs.bash problems
-    pkgs.zsh
-    pkgs.fish
-    pkgs.starship
-    pkgs.direnv
-    pkgs.zoxide
-    pkgs.fzf
+    bashInteractive
+    # readline # needless and using it does not fix bash problems
+    zsh
+    fish
+    starship
+    direnv
+    zoxide
+    fzf
 
     # Used in anywhere
-    pkgs.coreutils
+    coreutils
 
     # asdf/rtx
     #
     # Prefer rtx now
-    # pkgs.asdf-vm
-    pkgs.rtx
+    # asdf-vm
+    rtx
     #
     # Required in many asdf plugins
-    pkgs.unzip
+    unzip
 
-    pkgs.git
-    pkgs.tig
-    pkgs.lazygit
-    pkgs.gh
+    git
+    tig
+    lazygit
+    gh
 
-    pkgs.dprint
-    pkgs.shellcheck
-    pkgs.shfmt
-    pkgs.nixpkgs-fmt
+    dprint
+    shellcheck
+    shfmt
+    nixpkgs-fmt
 
-    pkgs.tree
-    pkgs.exa
-    pkgs.curl
-    pkgs.wget
-    pkgs.jq
-    pkgs.ripgrep
-    pkgs.bat
-    pkgs.duf
-    pkgs.fd
-    pkgs.du-dust
-    pkgs.procs
-    pkgs.bottom
-    pkgs.tig
-    pkgs.zellij
-    pkgs.typos
-    pkgs.hyperfine
-    pkgs.difftastic
+    tree
+    exa
+    curl
+    wget
+    jq
+    ripgrep
+    bat
+    duf
+    fd
+    du-dust
+    procs
+    bottom
+    tig
+    zellij
+    typos
+    hyperfine
+    difftastic
 
     # Includes follows in each repository if needed, not in global
-    # pkgs.deno
-    # pkgs.rustup
-    # pkgs.go
-    # pkgs.crystal
-    # pkgs.elmPackages.elm
-    # pkgs.gcc
-    # pkgs.sqlite
-    # pkgs.postgresql
-    # pkgs.gnumake
-    # pkgs.cargo-make
-    # pkgs.gitleaks
-    # pkgs.nil
+    # deno
+    # rustup
+    # go
+    # crystal
+    # elmPackages.elm
+    # gcc
+    # sqlite
+    # postgresql
+    # gnumake
+    # cargo-make
+    # gitleaks
+    # nil
 
     # https://github.com/NixOS/nixpkgs/pull/218114
-    pkgs.ruby_3_2
+    ruby_3_2
     # If you need to build cruby from source, this section may remind the struggle
     # Often failed to build cruby even if I enabled following dependencies
-    # pkgs.zlib
-    # pkgs.libyaml
-    # pkgs.openssl
+    # zlib
+    # libyaml
+    # openssl
 
     # As a boardgamer
-    # pkgs.tesseract
-    # pkgs.imagemagick
-    # pkgs.pngquant
-    # pkgs.img2pdf
-    # pkgs.ocrmypdf
-  ] ++ (
-    if pkgs.stdenv.isDarwin then
-      [ ]
-    else
-      [
-        # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
-        pkgs.glibc
-      ]
+    # tesseract
+    # imagemagick
+    # pngquant
+    # img2pdf
+    # ocrmypdf
+  ] ++ (lib.optionals stdenv.isLinux
+    [
+      # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
+      glibc
+    ]
   );
 }
