@@ -19,5 +19,9 @@ pkgs.mkShell {
       cargo-make
       typos
       go_1_20
+
+      # To get sha256 around pkgs.fetchFromGitHub in CLI
+      nix-prefetch-git
+      jq
     ];
 }

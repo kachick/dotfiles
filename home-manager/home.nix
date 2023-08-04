@@ -2,8 +2,8 @@
 
 # FAQ
 #
-# A. How to get sha256?
-# Q. Assume by `lib.fakeSha256` at first, you can get the hash with an error message
+# A. How to get sha256 without `lib.fakeSha256`?
+# Q. `nix-prefetch-git --url https://github.com/oh-my-fish/plugin-foreign-env.git --rev 3ee95536106c11073d6ff466c1681cde31001383 --quiet | jq .hash`
 
 {
   imports = [
