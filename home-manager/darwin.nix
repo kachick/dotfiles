@@ -11,6 +11,38 @@ lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
     xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
 
+    # # https://github.com/gnachman/iTerm2/tree/e7c4c4b1ba6b21a19a48be2dad67048099be176e/Resources/shell_integration
+    # xdg.configFile."iterm2/iterm2_shell_integration.bash".source =
+    #   pkgs.fetchFromGitHub
+    #     {
+    #       owner = "gnachman";
+    #       repo = "iTerm2";
+    #       rev = "e7c4c4b1ba6b21a19a48be2dad67048099be176e";
+    #       sha256 = "sha256-7F8l2QEnTMJlOCpT2WQ8f7iv8I96fMqDa5MM4oQAvYQ=";
+    #     }
+    #   + "/Resources/shell_integration/iterm2_shell_integration.bash"
+    # ;
+    # xdg.configFile."iterm2/iterm2_shell_integration.zsh".source =
+    #   pkgs.fetchFromGitHub
+    #     {
+    #       owner = "gnachman";
+    #       repo = "iTerm2";
+    #       rev = "e7c4c4b1ba6b21a19a48be2dad67048099be176e";
+    #       sha256 = "sha256-7F8l2QEnTMJlOCpT2WQ8f7iv8I96fMqDa5MM4oQAvYQ=";
+    #     }
+    #   + "/Resources/shell_integration/iterm2_shell_integration.zsh"
+    # ;
+    # xdg.configFile."iterm2/iterm2_shell_integration.fish".source =
+    #   pkgs.fetchFromGitHub
+    #     {
+    #       owner = "gnachman";
+    #       repo = "iTerm2";
+    #       rev = "e7c4c4b1ba6b21a19a48be2dad67048099be176e";
+    #       sha256 = "sha256-7F8l2QEnTMJlOCpT2WQ8f7iv8I96fMqDa5MM4oQAvYQ=";
+    #     }
+    #   + "/Resources/shell_integration/iterm2_shell_integration.fish"
+    # ;
+
     # Just putting the refererenced file to easy import, applying should be done via GUI and saving to plist
     xdg.configFile."iterm2/OneHalfDark.itermcolors".source =
       pkgs.fetchFromGitHub
