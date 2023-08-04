@@ -29,3 +29,13 @@ func (cmds Commands) ParallelRun() {
 	}
 	wg.Wait()
 }
+
+func (cmds Commands) SequentialRun() {
+	for _, cmd := range cmds {
+		output, err := exec.Command(cmd.Path, cmd.Args...).Output()
+		log.Printf("%s %s\n%s\n", cmd.Path, strings.Join(cmd.Args, " "), output)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}
+}

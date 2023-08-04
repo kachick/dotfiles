@@ -1,31 +1,20 @@
 package main
 
 import (
-	"log"
-	"os/exec"
-	"strings"
+	"github.com/kachick/dotfiles"
 )
 
 func main() {
-	cmds := []struct {
-		path string
-		args []string
-	}{
-		{"go", []string{"version"}},
-		{"makers", []string{"--version"}},
-		{"nix", []string{"--version"}},
-		{"dprint", []string{"--version"}},
-		{"shellcheck", []string{"--version"}},
-		{"shfmt", []string{"--version"}},
-		{"typos", []string{"--version"}},
-		{"gitleaks", []string{"version"}},
+	cmds := dotfiles.Commands{
+		{Path: "go", Args: []string{"version"}},
+		{Path: "makers", Args: []string{"--version"}},
+		{Path: "nix", Args: []string{"--version"}},
+		{Path: "dprint", Args: []string{"--version"}},
+		{Path: "shellcheck", Args: []string{"--version"}},
+		{Path: "shfmt", Args: []string{"--version"}},
+		{Path: "typos", Args: []string{"--version"}},
+		{Path: "gitleaks", Args: []string{"version"}},
 	}
 
-	for _, cmd := range cmds {
-		output, err := exec.Command(cmd.path, cmd.args...).Output()
-		log.Printf("%s %s\n%s\n", cmd.path, strings.Join(cmd.args, " "), output)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}
+	cmds.SequentialRun()
 }
