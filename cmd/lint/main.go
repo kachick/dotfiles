@@ -3,11 +3,6 @@ package main
 import (
 	"log"
 	"os"
-	"os/exec"
-	"strings"
-	"sync"
-
-	doublestar "github.com/bmatcuk/doublestar/v4"
 
 	"github.com/kachick/dotfiles"
 )
@@ -19,41 +14,18 @@ func main() {
 	}
 	fsys := os.DirFS(wd)
 
-	bashPaths, err := doublestar.Glob(fsys, "./**/{*.bash,.bash*}")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	nixPaths, err := doublestar.Glob(fsys, "./**/*.nix")
-	if err != nil {
-		log.Fatalln(err)
+	bashPaths := dotfiles.MustGetAllBash(fsys)
+	nixPaths := dotfiles.MustGetAllNix(fsys)
+
+	cmds := dotfiles.Commands{
+		{Path: "dprint", Args: []string{"check"}},
+		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
+		{Path: "shellcheck", Args: bashPaths},
+		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
+		{Path: "typos", Args: dotfiles.GetTyposTargetedRoots()},
+		{Path: "gitleaks", Args: []string{"detect"}},
+		{Path: "go", Args: []string{"vet", "./..."}},
 	}
 
-	type command struct {
-		path string
-		args []string
-	}
-
-	cmds := []command{
-		{"dprint", []string{"check"}},
-		{"shfmt", append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
-		{"shellcheck", bashPaths},
-		{"nixpkgs-fmt", append([]string{"--check"}, nixPaths...)},
-		{"typos", dotfiles.GetTyposTargetedRoots()},
-		{"gitleaks", []string{"detect"}},
-		{"go", []string{"vet", "./..."}},
-	}
-
-	wg := &sync.WaitGroup{}
-	for _, cmd := range cmds {
-		wg.Add(1)
-		go func(cmd command) {
-			defer wg.Done()
-			output, err := exec.Command(cmd.path, cmd.args...).Output()
-			log.Printf("%s %s\n%s\n", cmd.path, strings.Join(cmd.args, " "), output)
-			if err != nil {
-				log.Fatalln(err)
-			}
-		}(cmd)
-	}
-	wg.Wait()
+	cmds.ParallelRun()
 }
