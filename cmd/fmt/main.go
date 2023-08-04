@@ -4,8 +4,6 @@ import (
 	"log"
 	"os"
 
-	doublestar "github.com/bmatcuk/doublestar/v4"
-
 	"github.com/kachick/dotfiles"
 )
 
@@ -16,14 +14,8 @@ func main() {
 	}
 	fsys := os.DirFS(wd)
 
-	bashPaths, err := doublestar.Glob(fsys, "./**/{*.bash,.bash*}")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	nixPaths, err := doublestar.Glob(fsys, "./**/*.nix")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	bashPaths := dotfiles.MustGetAllBash(fsys)
+	nixPaths := dotfiles.MustGetAllNix(fsys)
 
 	// Do not cover the same files in another formatter for parallel processing
 	cmds := dotfiles.Commands{
