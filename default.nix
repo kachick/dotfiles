@@ -5,18 +5,19 @@
 }:
 
 pkgs.mkShell {
-  buildInputs = [
-    # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-    pkgs.bashInteractive
+  buildInputs = with pkgs;
+    [
+      # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+      bashInteractive
 
-    pkgs.dprint
-    pkgs.shellcheck
-    pkgs.shfmt
-    pkgs.nil
-    pkgs.nixpkgs-fmt
-    pkgs.gitleaks
-    pkgs.cargo-make
-    pkgs.typos
-    pkgs.go_1_20
-  ];
+      dprint
+      shellcheck
+      shfmt
+      nil
+      nixpkgs-fmt
+      gitleaks
+      cargo-make
+      typos
+      go_1_20
+    ];
 }
