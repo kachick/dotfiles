@@ -11,8 +11,8 @@
 
 # FAQ
 #
-# A. Hot to know and get the paths inside a pkg?
-# Q. `nix path-info` is a way, see iTerm2 example
+# A. How to know and get the paths inside a pkg?
+# Q. `nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
 
 
 {
