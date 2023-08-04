@@ -12,7 +12,7 @@ lib.mkMerge [
     xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
 
     # Just putting the refererenced file to easy import, applying should be done via GUI and saving to plist
-    xdg.configFile."iterm2/OneHalfDark.itermcolors".text = builtins.readFile (
+    xdg.configFile."iterm2/OneHalfDark.itermcolors".source =
       pkgs.fetchFromGitHub
         {
           owner = "mbadolato";
@@ -21,6 +21,6 @@ lib.mkMerge [
           sha256 = "sha256-ixryDwSNdVtD1H+V72V+hbFiL/JNLU4qpKXWflPQwrQ=";
         }
       + "/schemes/OneHalfDark.itermcolors"
-    );
+    ;
   })
 ]

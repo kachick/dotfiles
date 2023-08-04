@@ -114,7 +114,7 @@
 
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
-  home.file.".editorconfig".text = builtins.readFile (
+  home.file.".editorconfig".source =
     pkgs.fetchFromGitHub
       {
         owner = "kachick";
@@ -123,9 +123,9 @@
         sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
       }
     + "/.editorconfig"
-  );
+  ;
 
-  xdg.configFile."irb/irbrc".text = builtins.readFile (
+  xdg.configFile."irb/irbrc".source =
     pkgs.fetchFromGitHub
       {
         owner = "kachick";
@@ -134,7 +134,7 @@
         sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
       }
     + "/examples/.irbrc"
-  );
+  ;
 
   # https://github.com/rbenv/rbenv-default-gems/issues/17
   home.file.".default-gems".text = ''
