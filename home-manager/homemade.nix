@@ -15,7 +15,7 @@
     text = ''
       #!/usr/bin/env bash
 
-      set -euxo pipefail
+      set -euo pipefail
 
       # ~ my feeling ~
       # 50ms : blazing fast!
