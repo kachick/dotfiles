@@ -21,7 +21,7 @@ lib.mkMerge [
     xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
 
     # Do not use `programs.zsh.dotDir`, it does not refer xdg module
-    xdg.configHome."zsh/.zshrc.darwin".text = ''
+    xdg.configFile."zsh/.zshrc.darwin".text = ''
       source ${iterm2Repository + "/Resources/shell_integration/iterm2_shell_integration.zsh"}
     '';
 
