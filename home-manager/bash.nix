@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   programs.starship.enableBashIntegration = true;
@@ -65,7 +65,14 @@
     historyIgnore = [ "ls" "cd" "z" ];
 
     # Extracting because embedded here requires complex escape with nix multiline.
-    initExtra = builtins.readFile ./initExtra.bash;
+    initExtra = ''
+      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+      function set_win_title() {
+      	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+      }
+      # shellcheck disable=SC2034
+      starship_precmd_user_func="set_win_title"
+    '' + builtins.readFile ./initExtra.bash;
 
     logoutExtra = ''
       # when leaving the console clear the screen to increase privacy

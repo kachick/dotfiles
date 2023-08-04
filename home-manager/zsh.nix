@@ -114,7 +114,7 @@
 
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
-        echo -ne "\033]0; $(basename "$PWD") \007"
+        echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
       }
       precmd_functions+=(set_win_title)
 
