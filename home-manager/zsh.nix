@@ -1,15 +1,5 @@
 { config, lib, pkgs, ... }:
 
-let
-  iterm2ShellIntegration = pkgs.fetchFromGitHub
-    {
-      owner = "gnachman";
-      repo = "iTerm2";
-      rev = "e7c4c4b1ba6b21a19a48be2dad67048099be176e";
-      sha256 = "sha256-7F8l2QEnTMJlOCpT2WQ8f7iv8I96fMqDa5MM4oQAvYQ=";
-    }
-  + "/Resources/shell_integration/iterm2_shell_integration.zsh";
-in
 {
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
@@ -118,7 +108,7 @@ in
 
       case ''${OSTYPE} in
       darwin*)
-        source ${iterm2ShellIntegration}
+        source '${config.xdg.configHome}/zsh/.zshrc.darwin'
         ;;
       esac
 
