@@ -37,6 +37,11 @@
         end
       '';
 
+    interactiveShellInit = ''
+      # I define another la as a homemade scripts
+      functions --erase la
+    '';
+
     plugins = [{
       name = "foreign-env";
       src = pkgs.fetchFromGitHub {
