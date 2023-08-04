@@ -108,7 +108,7 @@
 
       case ''${OSTYPE} in
       darwin*)
-        test -e "''${HOME}/.iterm2_shell_integration.zsh" && source "''${HOME}/.iterm2_shell_integration.zsh"
+        source '${config.xdg.configHome}/zsh/.zshrc.darwin'
         ;;
       esac
 
