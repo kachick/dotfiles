@@ -1,21 +1,12 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/kachick/dotfiles"
 )
 
 func main() {
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fsys := os.DirFS(wd)
-
-	bashPaths := dotfiles.MustGetAllBash(fsys)
-	nixPaths := dotfiles.MustGetAllNix(fsys)
+	bashPaths := dotfiles.MustGetAllBash()
+	nixPaths := dotfiles.MustGetAllNix()
 
 	cmds := dotfiles.Commands{
 		{Path: "dprint", Args: []string{"check"}},
