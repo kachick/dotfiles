@@ -1,7 +1,7 @@
 # Development
 
 1. Install [Nix](https://nixos.org/) package manager
-1. `nix-shell --command 'makers setup'`
+1. `nix develop --command makers setup`
    - `direnv allow` may not work if you have not completed all the installation steps
 
 ## Note

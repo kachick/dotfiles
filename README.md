@@ -12,7 +12,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 1. Install [Nix](https://nixos.org/) package manager
 1. Install [home-manager](https://github.com/nix-community/home-manager)
-1. `nix-shell --command 'makers apply'`
+1. `nix develop --command makers apply`
 
 ## I don't know ??? - I have just installed OS, I am 🚼
 
