@@ -25,7 +25,7 @@ func checkIgnoreDir(d fs.DirEntry) error {
 	return nil
 }
 
-func MustGetAllBash() []string {
+func GetAllBash() []string {
 	bashPaths := []string{}
 	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
 		if err := checkIgnoreDir(d); err != nil {
@@ -40,7 +40,7 @@ func MustGetAllBash() []string {
 	return bashPaths
 }
 
-func MustGetAllNix() []string {
+func GetAllNix() []string {
 	nixPaths := []string{}
 
 	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {

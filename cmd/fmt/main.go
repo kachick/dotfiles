@@ -5,8 +5,8 @@ import (
 )
 
 func main() {
-	bashPaths := dotfiles.MustGetAllBash()
-	nixPaths := dotfiles.MustGetAllNix()
+	bashPaths := dotfiles.GetAllBash()
+	nixPaths := dotfiles.GetAllNix()
 
 	// Do not cover the same files in another formatter for parallel processing
 	cmds := dotfiles.Commands{
