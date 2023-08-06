@@ -7,9 +7,14 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
+    home-manager = {
+      url = "github:nix-community/home-manager/release-23.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, home-manager, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -35,6 +40,22 @@
               nix-prefetch-git
               jq
             ];
+          };
+
+        homeConfigurations =
+          {
+            kachick = home-manager.lib.homeManagerConfiguration {
+              # inherit system pkgs;
+
+              pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+              modules = [
+                ./home-manager/home.nix
+              ];
+
+              # pkgs = nixpkgs.legacyPackages.${system};
+              # pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            };
           };
       }
     );
