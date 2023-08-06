@@ -18,7 +18,6 @@ script = [
 [tasks.update]
 script = [
   "nix flake update --commit-lock-file",
-  "dprint config update --yes",
 ]
 
 [tasks.lint]
