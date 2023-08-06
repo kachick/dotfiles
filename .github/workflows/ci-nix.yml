@@ -5,11 +5,13 @@ on:
     paths:
       - '.github/workflows/ci-nix.yml'
       - '*.nix'
+      - 'flake.*'
       - 'Makefile.toml'
   pull_request:
     paths:
       - '.github/workflows/ci-nix.yml'
       - '*.nix'
+      - 'flake.*'
       - 'Makefile.toml'
   schedule:
     # Every 10:42 JST
