@@ -5,8 +5,10 @@ import (
 )
 
 func main() {
-	bashPaths := dotfiles.GetAllBash()
-	nixPaths := dotfiles.GetAllNix()
+	walker := dotfiles.GetWalker()
+
+	bashPaths := walker.GetAllBash()
+	nixPaths := walker.GetAllNix()
 
 	cmds := dotfiles.Commands{
 		{Path: "dprint", Args: []string{"check"}},

@@ -5,8 +5,10 @@ import (
 )
 
 func main() {
-	bashPaths := dotfiles.GetAllBash()
-	nixPaths := dotfiles.GetAllNix()
+	walker := dotfiles.GetWalker()
+
+	bashPaths := walker.GetAllBash()
+	nixPaths := walker.GetAllNix()
 
 	// Do not cover the same files in another formatter for parallel processing
 	cmds := dotfiles.Commands{

@@ -16,42 +16,63 @@ func GetTyposTargetedRoots() []string {
 	}
 }
 
-func checkIgnoreDir(d fs.DirEntry) error {
-	if d.IsDir() {
-		if slices.Contains([]string{".git", ".direnv", "dist"}, d.Name()) {
-			return fs.SkipDir
+type WalkedReport struct {
+	Path string
+	Dir  fs.DirEntry
+}
+
+type Walker struct {
+	ignoredDirectories []string
+	reports            []WalkedReport
+}
+
+func GetWalker() Walker {
+	w := Walker{
+		ignoredDirectories: []string{".git", ".direnv", "dist"},
+	}
+	w.reports = w.GetReports()
+
+	return w
+}
+
+func (w Walker) GetReports() []WalkedReport {
+	paths := []WalkedReport{}
+	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
+			if slices.Contains(w.ignoredDirectories, d.Name()) {
+				return fs.SkipDir
+			}
+		}
+		paths = append(paths, WalkedReport{
+			Path: path,
+			Dir:  d,
+		})
+		return nil
+	})
+	return paths
+}
+
+func (w Walker) GetAllBash() []string {
+	paths := []string{}
+
+	for _, r := range w.reports {
+		if strings.HasSuffix(r.Dir.Name(), ".bash") ||
+			(strings.HasPrefix(r.Dir.Name(), "bash") && !strings.HasSuffix(r.Dir.Name(), ".nix")) {
+			paths = append(paths, r.Path)
 		}
 	}
-	return nil
+
+	return paths
 }
 
-func GetAllBash() []string {
-	bashPaths := []string{}
-	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
-		if err := checkIgnoreDir(d); err != nil {
-			return err
-		}
-		if strings.HasSuffix(d.Name(), ".bash") {
-			bashPaths = append(bashPaths, path)
-		}
-		return nil
-	})
+func (w Walker) GetAllNix() []string {
+	paths := []string{}
 
-	return bashPaths
-}
-
-func GetAllNix() []string {
-	nixPaths := []string{}
-
-	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
-		if err := checkIgnoreDir(d); err != nil {
-			return err
+	for _, r := range w.reports {
+		if strings.HasSuffix(r.Dir.Name(), ".nix") {
+			paths = append(paths, r.Path)
 		}
-		if strings.HasSuffix(d.Name(), ".nix") {
-			nixPaths = append(nixPaths, path)
-		}
-		return nil
-	})
+	}
 
-	return nixPaths
+	return paths
 }
