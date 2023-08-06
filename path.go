@@ -2,9 +2,10 @@ package dotfiles
 
 import (
 	"io/fs"
-	"log"
+	"path/filepath"
+	"strings"
 
-	"github.com/bmatcuk/doublestar/v4"
+	"golang.org/x/exp/slices"
 )
 
 func GetTyposTargetedRoots() []string {
@@ -15,18 +16,42 @@ func GetTyposTargetedRoots() []string {
 	}
 }
 
-func MustGetAllBash(fsys fs.FS) []string {
-	bashPaths, err := doublestar.Glob(fsys, "./**/{*.bash,.bash*}")
-	if err != nil {
-		log.Fatalln(err)
+func checkIgnoreDir(d fs.DirEntry) error {
+	if d.IsDir() {
+		if slices.Contains([]string{".git", ".direnv", "dist"}, d.Name()) {
+			return fs.SkipDir
+		}
 	}
+	return nil
+}
+
+func MustGetAllBash() []string {
+	bashPaths := []string{}
+	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if err := checkIgnoreDir(d); err != nil {
+			return err
+		}
+		if strings.HasSuffix(d.Name(), ".bash") {
+			bashPaths = append(bashPaths, path)
+		}
+		return nil
+	})
+
 	return bashPaths
 }
 
-func MustGetAllNix(fsys fs.FS) []string {
-	nixPaths, err := doublestar.Glob(fsys, "./**/*.nix")
-	if err != nil {
-		log.Fatalln(err)
-	}
+func MustGetAllNix() []string {
+	nixPaths := []string{}
+
+	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if err := checkIgnoreDir(d); err != nil {
+			return err
+		}
+		if strings.HasSuffix(d.Name(), ".nix") {
+			nixPaths = append(nixPaths, path)
+		}
+		return nil
+	})
+
 	return nixPaths
 }
