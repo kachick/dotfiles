@@ -9,7 +9,6 @@
     "printWidth": 120,
     "singleQuote": true
   },
-  "includes": ["**/*.{json,md,yml,toml}"],
   "excludes": [
     ".git",
     "**/*-lock.json"

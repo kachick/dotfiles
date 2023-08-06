@@ -8,11 +8,10 @@
 # See https://docs.haskellstack.org/en/stable/yaml_configuration/#templates
 templates:
   params:
-   author-name: Kenichi Kamiya
-   author-email: kachick1@gmail.com
-   copyright: 'Copyright (c) 2023 Kenichi Kamiya'
-   github-username: kachick
-
+    author-name: Kenichi Kamiya
+    author-email: kachick1@gmail.com
+    copyright: 'Copyright (c) 2023 Kenichi Kamiya'
+    github-username: kachick
 # The following parameter specifies stack's output styles; STYLES is a
 # colon-delimited sequence of key=value, where 'key' is a style name and
 # 'value' is a semicolon-delimited list of 'ANSI' SGR (Select Graphic
