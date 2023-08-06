@@ -2,9 +2,10 @@ package dotfiles
 
 import (
 	"io/fs"
-	"log"
+	"path/filepath"
+	"strings"
 
-	"github.com/bmatcuk/doublestar/v4"
+	"golang.org/x/exp/slices"
 )
 
 func GetTyposTargetedRoots() []string {
@@ -15,18 +16,63 @@ func GetTyposTargetedRoots() []string {
 	}
 }
 
-func MustGetAllBash(fsys fs.FS) []string {
-	bashPaths, err := doublestar.Glob(fsys, "./**/{*.bash,.bash*}")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	return bashPaths
+type WalkedReport struct {
+	Path string
+	Dir  fs.DirEntry
 }
 
-func MustGetAllNix(fsys fs.FS) []string {
-	nixPaths, err := doublestar.Glob(fsys, "./**/*.nix")
-	if err != nil {
-		log.Fatalln(err)
+type Walker struct {
+	ignoredDirectories []string
+	reports            []WalkedReport
+}
+
+func GetWalker() Walker {
+	w := Walker{
+		ignoredDirectories: []string{".git", ".direnv", "dist"},
 	}
-	return nixPaths
+	w.reports = w.GetReports()
+
+	return w
+}
+
+func (w Walker) GetReports() []WalkedReport {
+	paths := []WalkedReport{}
+	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if d.IsDir() {
+			if slices.Contains(w.ignoredDirectories, d.Name()) {
+				return fs.SkipDir
+			}
+		}
+		paths = append(paths, WalkedReport{
+			Path: path,
+			Dir:  d,
+		})
+		return nil
+	})
+	return paths
+}
+
+func (w Walker) GetAllBash() []string {
+	paths := []string{}
+
+	for _, r := range w.reports {
+		if strings.HasSuffix(r.Dir.Name(), ".bash") ||
+			(strings.HasPrefix(r.Dir.Name(), "bash") && !strings.HasSuffix(r.Dir.Name(), ".nix")) {
+			paths = append(paths, r.Path)
+		}
+	}
+
+	return paths
+}
+
+func (w Walker) GetAllNix() []string {
+	paths := []string{}
+
+	for _, r := range w.reports {
+		if strings.HasSuffix(r.Dir.Name(), ".nix") {
+			paths = append(paths, r.Path)
+		}
+	}
+
+	return paths
 }

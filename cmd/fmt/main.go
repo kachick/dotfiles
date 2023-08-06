@@ -1,21 +1,14 @@
 package main
 
 import (
-	"log"
-	"os"
-
 	"github.com/kachick/dotfiles"
 )
 
 func main() {
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fsys := os.DirFS(wd)
+	walker := dotfiles.GetWalker()
 
-	bashPaths := dotfiles.MustGetAllBash(fsys)
-	nixPaths := dotfiles.MustGetAllNix(fsys)
+	bashPaths := walker.GetAllBash()
+	nixPaths := walker.GetAllNix()
 
 	// Do not cover the same files in another formatter for parallel processing
 	cmds := dotfiles.Commands{
