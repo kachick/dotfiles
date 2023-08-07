@@ -42,7 +42,7 @@
       # See https://stackoverflow.com/a/36700734/1212807 for using `--erase`
       functions --erase la
 
-      ${lib.getBin pkgs.dprint}/bin/dprint completions fish | source
+      source "${../dependencies/dprint/completions.fish}"
     '';
 
     plugins = [{
