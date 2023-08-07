@@ -72,6 +72,8 @@
       }
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
+
+      eval "$(${lib.getBin pkgs.dprint}/bin/dprint completions bash)"
     '' + builtins.readFile ./initExtra.bash;
 
     logoutExtra = ''
