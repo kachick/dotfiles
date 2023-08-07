@@ -118,6 +118,8 @@
       }
       precmd_functions+=(set_win_title)
 
+      source "${../dependencies/dprint/completions.zsh}"
+
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
     '';
 

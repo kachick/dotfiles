@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   programs.starship.enableFishIntegration = true;
@@ -41,6 +41,8 @@
       # I define another la as a homemade scripts
       # See https://stackoverflow.com/a/36700734/1212807 for using `--erase`
       functions --erase la
+
+      source "${../dependencies/dprint/completions.fish}"
     '';
 
     plugins = [{

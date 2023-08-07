@@ -28,7 +28,7 @@ type Walker struct {
 
 func GetWalker() Walker {
 	w := Walker{
-		ignoredDirectories: []string{".git", ".direnv", "dist"},
+		ignoredDirectories: []string{".git", ".direnv", "dist", "dependencies"},
 	}
 	w.reports = w.GetReports()
 
