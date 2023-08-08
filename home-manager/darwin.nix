@@ -13,6 +13,11 @@ lib.mkMerge [
 
     # Do not use `programs.zsh.dotDir`, it does not refer xdg module
     xdg.configFile."zsh/.zshrc.darwin".text = ''
+      # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+
       source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
     '';
 
