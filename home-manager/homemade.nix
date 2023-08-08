@@ -25,10 +25,10 @@
       # 300ms : much slow!
 
       # zsh should be first, because it often makes much slower with the completion
-      ${lib.getExe pkgs.hyperfine} --warmup 1 '${lib.getExe pkgs.zsh} --interactive -c exit'
-
-      ${lib.getExe pkgs.hyperfine} --warmup 1 '${lib.getExe pkgs.bashInteractive} -i -c exit'
-      ${lib.getExe pkgs.hyperfine} --warmup 1 '${lib.getExe pkgs.fish} --interactive --command exit'
+      ${lib.getExe pkgs.hyperfine} --warmup 1 --runs 5 \
+        '${lib.getExe pkgs.zsh} --interactive -c exit' \
+        '${lib.getExe pkgs.bashInteractive} -i -c exit' \
+        '${lib.getExe pkgs.fish} --interactive --command exit'
     '';
   };
 
