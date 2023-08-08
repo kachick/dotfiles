@@ -32,6 +32,13 @@
     # Used in anywhere
     coreutils
 
+    # Use same tools even in macOS
+    findutils
+    diffutils
+    gnugrep
+    gnused
+    gawk
+
     # asdf/rtx
     #
     # Prefer rtx now
