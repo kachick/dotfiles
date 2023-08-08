@@ -1,10 +1,5 @@
 { config, pkgs, lib, ... }:
 
-# FAQ
-#
-# A. How to get sha256 without `lib.fakeSha256`?
-# Q. `nix-prefetch-git --url https://github.com/oh-my-fish/plugin-foreign-env.git --rev 3ee95536106c11073d6ff466c1681cde31001383 --quiet | jq .hash`
-
 {
   imports = [
     ./packages.nix

@@ -1,20 +1,5 @@
 { pkgs, ... }:
 
-# If I need the some of edge dependencies, this is the how to point unstable
-#
-# let
-#   pkgsUnstable = import
-#     (fetchTarball
-#       "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz")
-#     { };
-# in
-
-# FAQ
-#
-# A. How to know and get the paths inside a pkg?
-# Q. `nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
-
-
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730

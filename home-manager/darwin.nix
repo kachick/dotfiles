@@ -1,11 +1,5 @@
 { pkgs, lib, ... }:
 
-# FAQ
-#
-# A. can not found dot files in macOS finder
-# Q. https://apple.stackexchange.com/a/250646, consider to use nix-darwin
-#      https://github.com/LnL7/nix-darwin/blob/16c07487ac9bc59f58b121d13160c67befa3342e/modules/system/defaults/finder.nix#L8-L14
-
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {

@@ -1,10 +1,5 @@
 { pkgs, lib, ... }:
 
-# FAQ
-#
-# A. How to make executable? .text= makes syms, that links to non executable file
-# Q. https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d65b202659e4988066b/modules/xsession.nix#L195C1-L197
-
 # - Tiny tools by me, they may be rewritten with another language.
 {
   # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
