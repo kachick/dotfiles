@@ -33,6 +33,7 @@
     # Required in many asdf plugins
     unzip
 
+    openssh
     git
     tig
     lazygit
