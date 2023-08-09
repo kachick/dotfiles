@@ -11,6 +11,10 @@ let
   # - id_*.pub: I CAN register them for different services.
 in
 {
+  # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
+  services.ssh-agent.enable = true;
+
+
   # These hosts are taken from the public resources of each provider.
   #   - https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
   #   - https://docs.gitlab.com/ee/user/gitlab_com/#ssh-known_hosts-entries
