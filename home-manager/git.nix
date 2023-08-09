@@ -23,6 +23,7 @@
 
     extraConfig = {
       user = {
+        # https://stackoverflow.com/questions/48065535/should-i-keep-gitconfigs-signingkey-private
         # TODO: Share code to get the path with ./ssh.nix
         signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
       };
@@ -34,6 +35,11 @@
 
       gpg = {
         format = "ssh";
+      };
+
+      commit = {
+        # https://stackoverflow.com/questions/10161198/is-there-a-way-to-autosign-commits-in-git-with-a-gpg-key
+        gpgsign = true;
       };
 
       init = {
