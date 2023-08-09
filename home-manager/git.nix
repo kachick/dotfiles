@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/git.nix
@@ -6,10 +6,23 @@
   programs.git = {
     enable = true;
 
+    userEmail = "kachick1@gmail.com";
+    userName = "Kenichi Kamiya";
+
+    aliases = {
+      fixup = "commit --all --amend";
+      empty = "commit --allow-empty -m 'Add an empty commit'";
+      current = "symbolic-ref --short HEAD";
+      switch-default = "!git checkout main 2>/dev/null || git checkout master 2>/dev/null";
+      upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
+      duster = "remote update origin --prune";
+      refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
+      all = "!git refresh && gh poi";
+      gui = "!lazygit";
+    };
+
     extraConfig = {
       user = {
-        email = "kachick1@gmail.com";
-        name = "Kenichi Kamiya";
         # TODO: Share code to get the path with ./ssh.nix
         signingkey = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
       };
@@ -18,37 +31,30 @@
         editor = "vim";
         quotepath = false;
       };
-      init = {
-        defaultBranch = "main";
-      };
-      color = {
-        ui = true;
-      };
-      grep = {
-        lineNumber = true;
-      };
-      pull = {
-        ff = "only";
-      };
-      alias = {
-        fixup = "commit --all --amend";
-        empty = "commit --allow-empty -m 'Add an empty commit'";
-        current = "symbolic-ref --short HEAD";
-        "switch-default" = "!git checkout main 2>/dev/null || git checkout master 2>/dev/null";
-        upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        duster = "remote update origin --prune";
-        refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
-        all = "!git refresh && gh poi";
-        gui = "!lazygit";
-      };
+
       gpg = {
         format = "ssh";
       };
-      "credential \"https-github.com\"" = {
-        helper = "!gh auth git-credential";
+
+      init = {
+        defaultBranch = "main";
       };
-      "credential \"https-gist.github.com\"" = {
-        helper = "!gh auth git-credential";
+
+      color = {
+        ui = true;
+      };
+
+      grep = {
+        lineNumber = true;
+      };
+
+      pull = {
+        ff = "only";
+      };
+
+      credential = {
+        "https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
+        "https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
       };
     };
   };
