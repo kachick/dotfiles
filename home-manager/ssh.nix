@@ -53,10 +53,13 @@ in
     extraConfig = ''
       AddKeysToAgent yes
 
+      PasswordAuthentication no
+
       # default: "ask" - I'm disabling it for now
       StrictHostKeyChecking yes
-      PasswordAuthentication no
-      CheckHostIP yes
+
+      # https://serverfault.com/a/1109184/112217
+      CheckHostIP no
     '' + (
       if pkgs.stdenv.isDarwin then
         ''
