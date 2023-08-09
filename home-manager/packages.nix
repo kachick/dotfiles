@@ -33,6 +33,10 @@
     # Required in many asdf plugins
     unzip
 
+    # In macOS, starting ssh-agent is still /usr/bin/ssh-agent even added the nixpkgs
+    # So avoiding to add it for now
+    # openssh
+
     git
     tig
     lazygit

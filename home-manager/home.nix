@@ -6,6 +6,7 @@
     ./bash.nix
     ./zsh.nix
     ./fish.nix
+    ./ssh.nix
     ./git.nix
     ./darwin.nix # Omit needless parts for Linux in the file
     ./homemade.nix

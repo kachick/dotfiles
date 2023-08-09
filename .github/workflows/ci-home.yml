@@ -45,13 +45,14 @@ jobs:
       - run: nix-shell '<home-manager>' -A install
       - uses: actions/checkout@v3
       - run: home-manager switch -b backup -f ./home-manager/user-github-actions.nix
-      - name: Print paths
+      - name: Print some paths and versions
         run: |
           which fish
           which zsh
           which bash
           which ruby
           which irb
+          which ssh
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
@@ -60,5 +61,6 @@ jobs:
           zsh -c 'which dprint'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
+          zsh -c 'ssh -V'
       - name: Run homemade commands
         run: zsh -c 'la'
