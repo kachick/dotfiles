@@ -33,9 +33,6 @@
     # Required in many asdf plugins
     unzip
 
-    # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
-    openssh
-
     git
     tig
     lazygit
@@ -96,6 +93,9 @@
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc
+
+      # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+      openssh
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [

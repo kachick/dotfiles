@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 let
   # SSH files cannot use XDG Base Directory.
@@ -12,8 +12,7 @@ let
 in
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
-  services.ssh-agent.enable = true;
-
+  services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # These hosts are taken from the public resources of each provider.
   #   - https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
