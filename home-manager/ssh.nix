@@ -60,14 +60,11 @@ in
 
       # https://serverfault.com/a/1109184/112217
       CheckHostIP no
-    '' + (
-      if pkgs.stdenv.isDarwin then
-        ''
-          # In Linux, this config makes error as "Bad configuration option: usekeychain"
-          UseKeychain yes
-        ''
-      else ""
-    );
+
+      # `UseKeychain` only provided by darwin ssh agent, in Linux and pkgs.openssh, it isn't
+      IgnoreUnknown UseKeychain
+      UseKeychain yes
+    '';
 
     # No problem to register the same *.pub in different services
     matchBlocks = {
