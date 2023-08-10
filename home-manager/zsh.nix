@@ -6,7 +6,6 @@
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
   programs.rtx.enableZshIntegration = true;
-  programs.keychain.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Zsh
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix

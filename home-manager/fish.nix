@@ -7,7 +7,6 @@
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
   programs.rtx.enableFishIntegration = true;
-  programs.keychain.enableFishIntegration = true;
 
   xdg.configFile."fish/fish_variables".source = ../home/.config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../home/.config/fish/functions/fish_prompt.fish;
