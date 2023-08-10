@@ -67,6 +67,7 @@
     actionlint
 
     # Includes follows in each repository if needed, not in global
+    # gcc
     # rustup
     # go
     # crystal
