@@ -20,7 +20,7 @@
       # 300ms : much slow!
 
       # zsh should be first, because it often makes much slower with the completion
-      ${lib.getExe pkgs.hyperfine} --warmup 1 --runs 5 \
+      ${lib.getBin pkgs.hyperfine}/bin/hyperfine --warmup 1 --runs 5 \
         '${lib.getExe pkgs.zsh} --interactive -c exit' \
         '${lib.getExe pkgs.bashInteractive} -i -c exit' \
         '${lib.getExe pkgs.fish} --interactive --command exit'
@@ -69,7 +69,7 @@
 
       name="$(${lib.getBin pkgs.coreutils}/bin/basename "$PWD")"
 
-      ${lib.getExe pkgs.zellij} attach "$name" || ${lib.getExe pkgs.zellij} --session "$name"
+      ${lib.getBin pkgs.zellij}/bin/zellij attach "$name" || ${lib.getBin pkgs.zellij}/bin/zellij --session "$name"
     '';
   };
 }
