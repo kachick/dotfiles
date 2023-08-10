@@ -16,6 +16,8 @@
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
+  systemd.user.startServices = "sd-switch";
+
   # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
   xdg.enable = true;
 
