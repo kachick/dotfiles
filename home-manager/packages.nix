@@ -42,6 +42,7 @@
     shellcheck
     shfmt
     nixpkgs-fmt
+    nil
 
     tree
     exa
@@ -60,20 +61,20 @@
     typos
     hyperfine
     difftastic
+    gnumake
+    gitleaks
+    deno
+    actionlint
 
     # Includes follows in each repository if needed, not in global
-    # deno
     # rustup
     # go
     # crystal
     # elmPackages.elm
-    # gcc
+
     # sqlite
     # postgresql
-    # gnumake
     # cargo-make
-    # gitleaks
-    # nil
 
     # https://github.com/NixOS/nixpkgs/pull/218114
     ruby_3_2
