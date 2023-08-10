@@ -65,6 +65,8 @@
     gitleaks
     deno
     actionlint
+    # https://github.com/NixOS/nixpkgs/pull/218114
+    ruby_3_2
 
     # Includes follows in each repository if needed, not in global
     # gcc
@@ -72,25 +74,16 @@
     # go
     # crystal
     # elmPackages.elm
-
     # sqlite
     # postgresql
     # cargo-make
 
-    # https://github.com/NixOS/nixpkgs/pull/218114
-    ruby_3_2
     # If you need to build cruby from source, this section may remind the struggle
     # Often failed to build cruby even if I enabled following dependencies
     # zlib
     # libyaml
     # openssl
 
-    # As a boardgamer
-    # tesseract
-    # imagemagick
-    # pngquant
-    # img2pdf
-    # ocrmypdf
   ] ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
