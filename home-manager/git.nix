@@ -19,6 +19,7 @@
       refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && gh poi";
       gui = "!lazygit";
+      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
     extraConfig = {
