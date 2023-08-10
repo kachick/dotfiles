@@ -155,6 +155,11 @@
   programs.atuin = {
     enable = true;
 
+    flags = [
+      # https://github.com/atuinsh/atuin/issues/51
+      "--disable-up-arrow"
+    ];
+
     settings = {
       sync_address = "https://127.0.0.1";
     };
