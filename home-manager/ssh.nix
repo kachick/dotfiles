@@ -14,11 +14,18 @@ in
   # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/services/gnome-keyring.nix
-  services.gnome-keyring = {
-    enable = if pkgs.stdenv.isLinux then true else false;
+  # # https://github.com/nix-community/home-manager/blob/master/modules/services/gnome-keyring.nix
+  # services.gnome-keyring = {
+  #   enable = if pkgs.stdenv.isLinux then true else false;
 
-    components = [ "ssh" "secrets" "pkcs11" ];
+  #   components = [ "ssh" "secrets" "pkcs11" ];
+  # };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/keychain.nix
+  programs.keychain = {
+    enable = true;
+    # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/programs/keychain.nix#L35
+    keys = [ "id_ed25519" ];
   };
 
   # These hosts are taken from the public resources of each provider.

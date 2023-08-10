@@ -97,7 +97,9 @@
       # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
       openssh
 
-      gnome3.gnome-keyring
+      # gnome3.gnome-keyring
+
+      keychain
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [
