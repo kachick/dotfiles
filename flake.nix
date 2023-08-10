@@ -14,7 +14,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
       in
-      {
+      rec {
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
@@ -36,6 +36,23 @@
               jq
             ];
           };
+
+        # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
+        packages.json2nix = pkgs.writeScriptBin "json2nix" ''
+          ${pkgs.python3}/bin/python ${pkgs.fetchurl {
+            url = "https://gist.githubusercontent.com/Scoder12/0538252ed4b82d65e59115075369d34d/raw/e86d1d64d1373a497118beb1259dab149cea951d/json2nix.py";
+            hash = "sha256-ROUIrOrY9Mp1F3m+bVaT+m8ASh2Bgz8VrPyyrQf9UNQ=";
+          }} $@
+        '';
+
+        apps = {
+          # nix run .#json2nix
+          json2nix = {
+            type = "app";
+            program = "${packages.json2nix}/bin/json2nix";
+          };
+        };
       }
     );
 }
+

@@ -33,10 +33,6 @@
     # Required in many asdf plugins
     unzip
 
-    # In macOS, starting ssh-agent is still /usr/bin/ssh-agent even added the nixpkgs
-    # So avoiding to add it for now
-    # openssh
-
     git
     tig
     lazygit
@@ -97,6 +93,9 @@
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc
+
+      # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+      openssh
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [
