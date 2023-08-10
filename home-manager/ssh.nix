@@ -15,7 +15,11 @@ in
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # https://github.com/nix-community/home-manager/blob/master/modules/services/gnome-keyring.nix
-  services.gnome-keyring.enable = if pkgs.stdenv.isLinux then true else false;
+  services.gnome-keyring = {
+    enable = if pkgs.stdenv.isLinux then true else false;
+
+    components = [ "ssh" "secrets" "pkcs11" ];
+  };
 
   # These hosts are taken from the public resources of each provider.
   #   - https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
