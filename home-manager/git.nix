@@ -58,12 +58,26 @@
       pull = {
         ff = "only";
       };
-
-      credential = {
-        "https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
-        "https://gist.github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
-      };
     };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/gh.nix
+  programs.gh = {
+    enable = true;
+
+    gitCredentialHelper = {
+      enable = true;
+
+      hosts = [
+        "https://github.com"
+        "https://gist.github.com"
+      ];
+    };
+
+    # poi is not yet registered to nixpkgs
+    # extensions = [
+    #   pkgs.gh-poi
+    # ];
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/lazygit.nix
