@@ -13,6 +13,7 @@
     direnv
     zoxide
     fzf
+    atuin
 
     # Used in anywhere
     coreutils

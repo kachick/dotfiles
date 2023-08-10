@@ -6,6 +6,7 @@
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = true;
   programs.rtx.enableBashIntegration = true;
+  programs.atuin.enableBashIntegration = true;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/readline.nix
