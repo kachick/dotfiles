@@ -48,8 +48,7 @@ func main() {
 			log.Fatalf("failed - could you correctly run this with sudo? - %v\n", err)
 		}
 
-		fmt.Printf(`
-Done! Set one of your favorite shell as follows
+		fmt.Printf(`Done! Set one of your favorite shell as follows
 
 chsh -s %s "$(whoami)"
 `, examplePath)

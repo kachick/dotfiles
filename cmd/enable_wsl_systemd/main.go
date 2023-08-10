@@ -59,8 +59,7 @@ systemd=true`
 			log.Fatalf("failed - could you correctly run this with sudo? - %v\n", err)
 		}
 
-		fmt.Printf(`
-Done! Restart wsl.exe as follows in your Windows PowerShell
+		fmt.Printf(`Done! Restart wsl.exe as follows in your Windows PowerShell
 
 wsl.exe --shutdown
 
