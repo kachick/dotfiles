@@ -5,7 +5,8 @@ import (
 	"log"
 	"os"
 	"strings"
-	"syscall"
+
+	"golang.org/x/sys/unix"
 )
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
@@ -15,8 +16,8 @@ import (
 func main() {
 	// wsl.exe returns non English even in called on the VM https://github.com/microsoft/WSL/issues/9242
 	// And always having non ASCII, annoy to depend with the output :<
-	uname := syscall.Utsname{}
-	err := syscall.Uname(&uname)
+	uname := unix.Utsname{}
+	err := unix.Uname(&uname)
 	if err != nil {
 		log.Fatalf("cannot get uname: %+v\n", err)
 	}
