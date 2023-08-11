@@ -14,7 +14,7 @@ import (
 )
 
 func freeze(f *os.File) error {
-	return unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, 0x00000010)
+	return unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, unix.STATX_ATTR_IMMUTABLE)
 }
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
