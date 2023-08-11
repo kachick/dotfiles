@@ -11,9 +11,11 @@ import (
 	"strings"
 
 	"golang.org/x/sys/unix"
-
-	"github.com/foxboron/sbctl"
 )
+
+func freeze(f *os.File) error {
+	return unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, 0x00000010)
+}
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
 func mustActivateSystemDOnWSL() {
@@ -81,7 +83,7 @@ func mustPersistDockerZshCompletions() {
 		log.Panicf("%+v\n", err)
 	}
 
-	err = sbctl.SetAttr(target, sbctl.FS_IMMUTABLE_FL)
+	err = freeze(target)
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}
