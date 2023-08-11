@@ -15,6 +15,7 @@ import (
 )
 
 func freeze(path string) error {
+	// Using IoctlSetPointerInt changed as immutable, but it returns "operation not supported" error. I don't know the detail
 	_, err := exec.Command("chattr", "+i", path).Output()
 	return err
 }
