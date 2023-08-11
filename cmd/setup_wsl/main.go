@@ -8,21 +8,15 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"golang.org/x/sys/unix"
 )
 
-func freeze(f *os.File) error {
-	flags, err := unix.IoctlGetInt(int(f.Fd()), unix.FS_IOC_GETFLAGS)
-	if err != nil {
-		return &os.PathError{Op: "ioctl", Path: f.Name(), Err: err}
-	}
-	err = unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, flags&unix.STATX_ATTR_IMMUTABLE)
-	if err != nil {
-		return &os.PathError{Op: "ioctl", Path: f.Name(), Err: err}
-	}
-	return nil
+func freeze(path string) error {
+	_, err := exec.Command("chattr", "+i", path).Output()
+	return err
 }
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
@@ -91,7 +85,7 @@ func mustPersistDockerZshCompletions() {
 		log.Panicf("%+v\n", err)
 	}
 
-	err = freeze(target)
+	err = freeze(completionLoadablePath)
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}
