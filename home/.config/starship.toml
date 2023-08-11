@@ -22,24 +22,15 @@ $nix_shell\
 $shell\
 $line_break\
 $time\
-$status\
 $character"""
 
 [directory]
 style = "blue"
 
 [character]
-disabled = true
 success_symbol = "[>](bold green)"
 error_symbol = "[✗](bold red)"
 vimcmd_symbol = "[❮](green)"
-
-[status]
-disabled = false
-map_symbol = true
-success_symbol = "[>](bold green)"
-symbol = "[!](bold red)"
-format = "[$symbol]($style) "
 
 [git_commit]
 only_detached = false
