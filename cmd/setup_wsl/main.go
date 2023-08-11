@@ -68,7 +68,7 @@ func mustPersistDockerZshCompletions() {
 	err := os.Remove(completionLoadablePath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			log.Printf("info - zsh completions files for docker not found, docker-desktop may not be executed: %+v\n", err)
+			log.Println("info - zsh completions files for docker not found, docker-desktop may not be executed")
 		} else {
 			log.Panicf("%+v\n", err)
 		}
