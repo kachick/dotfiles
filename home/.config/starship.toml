@@ -29,7 +29,7 @@ style = "blue"
 
 [character]
 success_symbol = "[>](bold green)"
-error_symbol = "[✗](bold red)"
+error_symbol = "[!](italic purple)"
 vimcmd_symbol = "[❮](green)"
 
 [git_commit]
