@@ -30,5 +30,4 @@ jobs:
             .github
             .vscode
             home/.config
-            home/.local
             home/.stack

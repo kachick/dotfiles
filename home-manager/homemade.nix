@@ -2,9 +2,6 @@
 
 # - Tiny tools by me, they may be rewritten with another language.
 {
-  # - Keep *.bash in shellscript naming in this repo for maintainability, the extname should be trimmed in the symlinks
-  xdg.dataFile."homemade/bin/add_nix_channels".source = ../home/.local/share/homemade/bin/add_nix_channels.bash;
-
   xdg.dataFile."homemade/bin/bench_shells" = {
     executable = true;
     text = ''

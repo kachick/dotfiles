@@ -12,7 +12,7 @@ func GetTyposTargetedRoots() []string {
 	return []string{
 		".",
 		".github", ".vscode",
-		"home/.config", "home/.local", "home/.stack",
+		"home/.config", "home/.stack",
 	}
 }
 
