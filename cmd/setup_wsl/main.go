@@ -14,7 +14,15 @@ import (
 )
 
 func freeze(f *os.File) error {
-	return unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, unix.STATX_ATTR_IMMUTABLE)
+	flags, err := unix.IoctlGetInt(int(f.Fd()), unix.FS_IOC_GETFLAGS)
+	if err != nil {
+		return &os.PathError{Op: "ioctl", Path: f.Name(), Err: err}
+	}
+	err = unix.IoctlSetPointerInt(int(f.Fd()), unix.FS_IOC_SETFLAGS, flags&unix.STATX_ATTR_IMMUTABLE)
+	if err != nil {
+		return &os.PathError{Op: "ioctl", Path: f.Name(), Err: err}
+	}
+	return nil
 }
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
