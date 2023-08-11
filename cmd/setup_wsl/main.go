@@ -67,7 +67,11 @@ func mustPersistDockerZshCompletions() {
 	const completionLoadablePath = "/usr/share/zsh/vendor-completions/_docker"
 	err := os.Remove(completionLoadablePath)
 	if err != nil {
-		log.Printf("Skip - No zsh completions for docker found, docker-desktop may not be executed: %+v\n", err)
+		if os.IsNotExist(err) {
+			log.Printf("info - zsh completions files for docker not found, docker-desktop may not be executed: %+v\n", err)
+		} else {
+			log.Panicf("%+v\n", err)
+		}
 	}
 	// Can't make immutable symlink, so copy and make immutable here
 	// https://unix.stackexchange.com/questions/586430/how-to-make-a-symlink-read-only-chattr-i-location-symlink
@@ -90,6 +94,8 @@ func mustPersistDockerZshCompletions() {
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}
+
+	fmt.Printf("Done! docker comletions for zsh %s has been replaced to immutable file", completionLoadablePath)
 }
 
 // This script requires sudo execution
