@@ -13,6 +13,9 @@
 					"PackageIdentifier" : "Canonical.Ubuntu.2204"
 				},
 				{
+					"PackageIdentifier" : "Docker.DockerDesktop"
+				},
+				{
 					"PackageIdentifier" : "Dropbox.Dropbox"
 				},
 				{
