@@ -90,8 +90,22 @@ MachinePolicy       Undefined
 After completed tasks, disable it as follows
 
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
+
+## History in PowerShell does not work...
+
+If PowerShell in WindowsTerminal displaying as below,
+
+```plaintext
+PowerShell 7.3.6
+Cannot load PSReadline module.  Console is running without PSReadline.
+```
+
+I have faced this problem when called `Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser`.\
+Try to set the permission as `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+https://github.com/microsoft/terminal/issues/7257#issuecomment-1107700978
 
 ## Some PowerShell scripts did not change windows behaviors
 
