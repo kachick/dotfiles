@@ -21,6 +21,8 @@ wsl.exe --install
 winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\winget-$(Get-Date -UFormat '%F').json"
 ```
 
+It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
+
 ## Which programs excluded winget-pkgs are needed?
 
 - https://github.com/karakaram/alt-ime-ahk
