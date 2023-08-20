@@ -98,3 +98,15 @@ Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser
 https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752
 
 After registry editing, needs to restart windows or the process
+
+## Why are you still using Google Japanese Input? Why don't you prefer Microsoft IME?
+
+Pros for Microsoft IME
+
+- Preinstalled by Windows
+- It is having cloud translations now (Called as "予測変換")
+
+Cons for Microsoft IME
+
+- Needed to tab, not in space to get date as "きょう"
+- No way to get date with ISO 8601 format
