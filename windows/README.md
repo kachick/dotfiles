@@ -60,3 +60,41 @@ https://account.microsoft.com/devices/recoverykey may help
 - https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines
 - https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md
 - https://github.com/kachick/learn_PowerShell
+
+## How to run PowerShell scripts in this repo?
+
+If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
+
+```plaintext
+.\windows\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+```
+
+Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+```
+
+```console
+> Get-ExecutionPolicy -List
+
+        Scope ExecutionPolicy
+        ----- ---------------
+MachinePolicy       Undefined
+   UserPolicy       Undefined
+      Process       Undefined
+  CurrentUser    Unrestricted
+ LocalMachine       Undefined
+```
+
+After completed tasks, disable it as follows
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser
+```
+
+## Some PowerShell scripts did not change windows behaviors
+
+https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752
+
+After registry editing, needs to restart windows or the process
