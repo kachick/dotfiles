@@ -11,8 +11,6 @@ import (
 
 // This script requires sudo execution, if it is a reasonable way, including in home.nix may be better
 
-var homePath string
-
 func getShellPath(homePath string, shellName string) string {
 	return homePath + "/.nix-profile/bin/" + shellName
 }
