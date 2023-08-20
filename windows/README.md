@@ -124,3 +124,11 @@ Cons for Microsoft IME
 
 - Needed to tab, not in space to get date as "きょう"
 - No way to get date with ISO 8601 format
+
+## How to remove Windows Widget?
+
+Remove the noisy news widget as below!
+
+```powershell
+winget uninstall --id 9MSSGKG348SP
+```
