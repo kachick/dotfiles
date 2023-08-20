@@ -11,6 +11,12 @@ import (
 
 // This script requires sudo execution, if it is a reasonable way, including in home.nix may be better
 
+var homePath string
+
+func getShellPath(homePath string, shellName string) string {
+	return homePath + "/.nix-profile/bin/" + shellName
+}
+
 func main() {
 	homePath, ok := os.LookupEnv("HOME")
 	if !ok {
@@ -20,7 +26,8 @@ func main() {
 		log.Fatalln("used by root looks weird. You should run `sudo -E ...` instead of `sudo ...`")
 	}
 
-	loginableShells := []string{"bash", "zsh", "fish"}
+	const primaryShell = "zsh"
+	loginableShells := []string{primaryShell, "bash", "fish"}
 
 	etcShellsBytes, err := os.ReadFile("/etc/shells")
 	if err != nil {
@@ -29,15 +36,13 @@ func main() {
 
 	etcShells := string(etcShellsBytes)
 	dirty := strings.Clone(etcShells)
-	examplePath := ""
 
 	for _, sh := range loginableShells {
-		shellPath := homePath + "/.nix-profile/bin/" + sh
+		shellPath := getShellPath(homePath, sh)
 		if strings.Contains(etcShells, shellPath) {
 			log.Printf("skip - %s is already registered in /etc/shells\n", shellPath)
 		} else {
 			log.Printf("insert - %s will be registered in /etc/shells\n", shellPath)
-			examplePath = shellPath
 			dirty += fmt.Sprintln(shellPath)
 		}
 	}
@@ -47,10 +52,11 @@ func main() {
 		if err != nil {
 			log.Fatalf("failed - could you correctly run this with sudo? - %v\n", err)
 		}
+	}
 
-		fmt.Printf(`Done! Set one of your favorite shell as follows
+	fmt.Printf(`Done! Set one of your favorite shell as follows
 
 chsh -s %s "$(whoami)"
-`, examplePath)
-	}
+`, getShellPath(homePath, primaryShell))
+
 }
