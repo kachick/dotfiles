@@ -28,9 +28,6 @@
 					"PackageIdentifier" : "Microsoft.OneDrive"
 				},
 				{
-					"PackageIdentifier" : "Valve.Steam"
-				},
-				{
 					"PackageIdentifier" : "Twilio.Authy"
 				},
 				{

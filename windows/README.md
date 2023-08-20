@@ -18,7 +18,7 @@ wsl.exe --install
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\winget-$(Get-Date -UFormat '%F').json"
+winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\winget-$(Get-Date -UFormat '%F')-core.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
