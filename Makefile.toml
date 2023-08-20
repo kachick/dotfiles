@@ -13,6 +13,7 @@ script = [
 dependencies = ['build']
 script = [
   "git config --local core.hooksPath .githooks",
+  "git config --local core.whitespace cr-at-eol",
 ]
 
 [tasks.update]

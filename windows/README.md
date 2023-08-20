@@ -54,3 +54,9 @@ z "$(wslpath 'G:\GoogleDrive')"
 ## I forgot to backup Bitlocker restore key 😋
 
 https://account.microsoft.com/devices/recoverykey may help
+
+## How to write PowerShell scripts?
+
+- https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines
+- https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md
+- https://github.com/kachick/learn_PowerShell
