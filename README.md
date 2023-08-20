@@ -10,10 +10,5 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Installation
 
-1. Install [Nix](https://nixos.org/) package manager
-1. Install [home-manager](https://github.com/nix-community/home-manager)
-1. `nix develop --command makers apply`
-
-## I don't know ??? - I have just installed OS, I am 🚼
-
-If you backed to 🚼 from some reasons, read [wiki](https://github.com/kachick/dotfiles/wiki)
+- To reactivate, you only need to run `makers apply`.
+- For the first installation of your operating system, it may require more steps. Check the [wiki](https://github.com/kachick/dotfiles/wiki/Installation) for more details.
