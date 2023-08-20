@@ -42,6 +42,8 @@
       # See https://stackoverflow.com/a/36700734/1212807 for using `--erase`
       functions --erase la
 
+      set -g fish_greeting
+
       source "${../dependencies/dprint/completions.fish}"
     '';
 
