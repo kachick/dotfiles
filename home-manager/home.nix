@@ -150,4 +150,18 @@
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/rtx.nix
   programs.rtx.enable = true;
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/atuin.nix
+  programs.atuin = {
+    enable = true;
+
+    flags = [
+      # https://github.com/atuinsh/atuin/issues/51
+      "--disable-up-arrow"
+    ];
+
+    settings = {
+      sync_address = "https://127.0.0.1";
+    };
+  };
 }
