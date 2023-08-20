@@ -10,16 +10,10 @@
 					"PackageIdentifier" : "7zip.7zip"
 				},
 				{
-					"PackageIdentifier" : "Amazon.Music"
-				},
-				{
 					"PackageIdentifier" : "Canonical.Ubuntu.2204"
 				},
 				{
 					"PackageIdentifier" : "Dropbox.Dropbox"
-				},
-				{
-					"PackageIdentifier" : "Mozilla.Firefox.DeveloperEdition"
 				},
 				{
 					"PackageIdentifier" : "Microsoft.Edge"
