@@ -5,3 +5,7 @@ Set-PSReadLineOption -EditMode Emacs
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 Invoke-Expression (&starship init powershell)
+
+function la {
+    Get-ChildItem -Force
+}
