@@ -8,9 +8,11 @@
 1. On powershell
    ```powershell
    mkdir -p  ~/.config
+   mkdir -p ~/.config/alacritty
    mkdir -p "$($env:APPDATA)/alacritty"
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/starship.toml" -Destination ~/.config
-   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty.yml" -Destination  "$($env:APPDATA)/alacritty/alacritty.yml"
+   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty-common.yml" -Destination  ~/.config/alacritty
+   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty-windows.yml" -Destination  "$($env:APPDATA)/alacritty/alacritty.yml"
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\Microsoft.PowerShell_profile.ps1" -Destination "$PROFILE"
    ```
 1. Enable Bitlocker and backup the restore key
