@@ -201,30 +201,61 @@ window:
 
 # Colors (One Half Dark)
 # https://github.com/sonph/onehalf/tree/75eb2e97acd74660779fed8380989ee7891eec56/alacritty
+# colors:
+#   primary:
+#     background: '0x282c34'
+#     foreground: '0xdcdfe4'
+
+#   normal:
+#     black: '0x282c34'
+#     red: '0xe06c75'
+#     green: '0x98c379'
+#     yellow: '0xe5c07b'
+#     blue: '0x61afef'
+#     magenta: '0xc678dd'
+#     cyan: '0x56b6c2'
+#     white: '0xdcdfe4'
+
+#   bright:
+#     black: '0x282c34'
+#     red: '0xe06c75'
+#     green: '0x98c379'
+#     yellow: '0xe5c07b'
+#     blue: '0x61afef'
+#     magenta: '0xc678dd'
+#     cyan: '0x56b6c2'
+#     white: '0xdcdfe4'
+
+# Iceberg (Unofficial)
+# https://github.com/seahal/iceberg_theme_for_alacritty/blob/e6d23b5f2b2fafa8d835efb8d597f913d838b049/iceberg.yml
 colors:
   primary:
-    background: '0x282c34'
-    foreground: '0xdcdfe4'
+    background: '0x16171E'
+    foreground: '0xD1D2D3'
+
+  cursor:
+    text: '0xFEFFFF'
+    cursor: '0xc7c7c7'
 
   normal:
-    black: '0x282c34'
-    red: '0xe06c75'
-    green: '0x98c379'
-    yellow: '0xe5c07b'
-    blue: '0x61afef'
-    magenta: '0xc678dd'
-    cyan: '0x56b6c2'
-    white: '0xdcdfe4'
+    black: '0x000000'
+    red: '0xE68E8E'
+    green: '0x83AC8E'
+    yellow: '0xF5B78A'
+    blue: '0x9BB8DC'
+    magenta: '0xBAACE2'
+    cyan: '0x00C5C7'
+    white: '0xC7C7C7'
 
   bright:
-    black: '0x282c34'
-    red: '0xe06c75'
-    green: '0x98c379'
-    yellow: '0xe5c07b'
-    blue: '0x61afef'
-    magenta: '0xc678dd'
-    cyan: '0x56b6c2'
-    white: '0xdcdfe4'
+    black: '0x676767'
+    red: '0xFF6D67'
+    green: '0x5FF967'
+    yellow: '0xFEFB67'
+    blue: '0x6871FF'
+    magenta: '0xFF76FF'
+    cyan: '0x5FFDFF'
+    white: '0xFEFFFF'
 # Cursor colors
 #
 # Colors which should be used to draw the terminal cursor.
