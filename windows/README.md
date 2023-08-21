@@ -10,7 +10,7 @@
    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
    \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\bootstrap.ps1 -DotfilesPath "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles"
    ```
-1. Exclude the `$PROFILE\Microsoft.PowerShell_profile.ps1` from Anti Virus detection as Microsoft Defender
+1. Exclude the `$PROFILE\Profile.ps1` from Anti Virus detection as Microsoft Defender
 1. Enable Bitlocker and backup the restore key
 
 ## How to install WSL2?
