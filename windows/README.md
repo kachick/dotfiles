@@ -8,7 +8,9 @@
 1. On powershell
    ```powershell
    mkdir -p  ~/.config
+   mkdir -p "$($env:APPDATA)/alacritty"
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/starship.toml" -Destination ~/.config
+   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty.yml" -Destination  "$($env:APPDATA)/alacritty/alacritty.yml"
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\Microsoft.PowerShell_profile.ps1" -Destination "$PROFILE"
    ```
 1. Enable Bitlocker and backup the restore key
@@ -138,3 +140,7 @@ Remove the noisy news widget as below!
 ```powershell
 winget uninstall --id 9MSSGKG348SP
 ```
+
+## How to copy and paste in alacritty?
+
+[Add shift for basic keybinds, not just the ctrl+c, ctrl+v](https://github.com/alacritty/alacritty/issues/2383)
