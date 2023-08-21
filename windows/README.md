@@ -7,13 +7,8 @@
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. On powershell
    ```powershell
-   mkdir -p  ~/.config
-   mkdir -p ~/.config/alacritty
-   mkdir -p "$($env:APPDATA)/alacritty"
-   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/starship.toml" -Destination ~/.config
-   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty-common.yml" -Destination  ~/.config/alacritty
-   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty-windows.yml" -Destination  "$($env:APPDATA)/alacritty/alacritty.yml"
-   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\Microsoft.PowerShell_profile.ps1" -Destination "$PROFILE"
+   Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+   \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\bootstrap.ps1 -DotfilesPath "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles"
    ```
 1. Exclude the `$PROFILE\Microsoft.PowerShell_profile.ps1` from Anti Virus detection as Microsoft Defender
 1. Enable Bitlocker and backup the restore key
@@ -40,7 +35,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\winget-list-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-list-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
@@ -83,12 +78,22 @@ https://account.microsoft.com/devices/recoverykey may help
 - https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md
 - https://github.com/kachick/learn_PowerShell
 
+## How to get helps for PowerShell commands as `cmd --help` in Unix?
+
+`Get-Help -Name New-Item`
+
+Or visit to <https://learn.microsoft.com/ja-jp/powershell/module/microsoft.powershell.management/>
+
+## How to realize `mkdir -p` in PowerShell?
+
+No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/powershell-how-can-i-suppress-the-error-if-file-alreadys-exists-for-mkdir-com>
+
 ## How to run PowerShell scripts in this repo?
 
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
