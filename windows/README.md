@@ -15,6 +15,7 @@
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/alacritty/alacritty-windows.yml" -Destination  "$($env:APPDATA)/alacritty/alacritty.yml"
    Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\Microsoft.PowerShell_profile.ps1" -Destination "$PROFILE"
    ```
+1. Exclude the `$PROFILE\Microsoft.PowerShell_profile.ps1` from Anti Virus detection as Microsoft Defender
 1. Enable Bitlocker and backup the restore key
 
 ## How to install WSL2?
@@ -24,6 +25,17 @@ winget does not support it, run as follows
 ```powershell
 wsl.exe --install
 ```
+
+## How to exclude PowerShell_profile? Why needed?
+
+Reason: Avoid to slow executions of PowerShell, ngen.exe cannot compile latest pwsh
+
+- Official: https://github.com/PowerShell/PowerShell/issues/14374#issuecomment-1416688062
+- Better: https://superuser.com/a/1411591/120469
+- Didn't: https://stackoverflow.com/questions/59341482/powershell-steps-to-fix-slow-startup
+- How: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
+
+One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NET\Framework" as "C:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe"
 
 ## How to export winget list?
 
