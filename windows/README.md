@@ -5,6 +5,12 @@
 1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.
    \
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
+1. On powershell
+   ```powershell
+   mkdir -p  ~/.config
+   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\home\.config/starship.toml" -Destination ~/.config
+   Copy-Item "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\Microsoft.PowerShell_profile.ps1" -Destination "$PROFILE"
+   ```
 1. Enable Bitlocker and backup the restore key
 
 ## How to install WSL2?

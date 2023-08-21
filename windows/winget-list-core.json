@@ -58,6 +58,9 @@
 					"PackageIdentifier" : "Google.GoogleDrive"
 				},
 				{
+					"PackageIdentifier" : "Starship.Starship"
+				},
+				{
 					"PackageIdentifier" : "Microsoft.VisualStudioCode"
 				},
 				{
