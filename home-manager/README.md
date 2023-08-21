@@ -34,3 +34,10 @@ in
 ## I cannot find dot files in the macOS Finder
 
 <https://apple.stackexchange.com/a/250646>, consider to use [nix-darwin](https://github.com/LnL7/nix-darwin/blob/16c07487ac9bc59f58b121d13160c67befa3342e/modules/system/defaults/finder.nix#L8-L14)
+
+## How to resolve collisions?
+
+It maybe occurred with home-manager module and manually specified `pkgs.*`, try to remove the added package.
+
+- <https://github.com/kachick/dotfiles/issues/280>
+- <https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2>

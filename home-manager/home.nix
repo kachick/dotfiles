@@ -151,4 +151,18 @@
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/rtx.nix
   programs.rtx.enable = true;
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
+  # https://nixos.wiki/wiki/Vim
+  programs.vim = {
+    enable = true;
+    # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
+    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+
+    settings = { background = "dark"; };
+    extraConfig = ''
+      colorscheme iceberg
+      set termguicolors
+    '';
+  };
 }

@@ -69,6 +69,11 @@
     # https://github.com/NixOS/nixpkgs/pull/218114
     ruby_3_2
 
+    # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
+    # See following issues
+    # - https://github.com/kachick/dotfiles/issues/280
+    # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
+
     # Includes follows in each repository if needed, not in global
     # gcc
     # rustup
