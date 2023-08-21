@@ -58,6 +58,7 @@
     bottom
     tig
     zellij
+    alacritty
     typos
     hyperfine
     difftastic
