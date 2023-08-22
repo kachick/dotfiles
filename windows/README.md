@@ -35,7 +35,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-list-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
