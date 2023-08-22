@@ -19,5 +19,8 @@
     "nil": {
       "formatting": { "command": ["nixpkgs-fmt"] }
     }
+  },
+  "gopls": {
+    "build.buildFlags": ["-tags=linux,windows,darwin"]
   }
 }

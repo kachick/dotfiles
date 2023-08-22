@@ -13,6 +13,20 @@
 1. Exclude the `$PROFILE\Profile.ps1` from Anti Virus detection as Microsoft Defender
 1. Enable Bitlocker and backup the restore key
 
+## How to run go scripts in this repo?
+
+After installed golang with winget
+
+```console
+Administrator in ~ psh
+> go run github.com/kachick/dotfiles/cmd/disable_windows_beeps@0ed52e4341624d7216d0b97a9b9bbab3719a8377
+2023/08/22 15:34:18 Completed to disable beeps, you need to restart Windows to activate settings
+> go run github.com/kachick/dotfiles/cmd/disable_windows_beeps@0ed52e4341624d7216d0b97a9b9bbab3719a8377
+2023/08/22 15:40:42 Skipped to create registry key, because it is already exists
+```
+
+Specifying with branch name with the @ref may use cache, then specify commit ref
+
 ## How to install WSL2?
 
 winget does not support it, run as follows
