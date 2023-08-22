@@ -19,6 +19,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to update registry: %+v", err)
 	}
+	defer newKey.Close()
 	if isExists {
 		log.Println("Skipped to create registry key, because it is already exists")
 		return

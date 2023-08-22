@@ -11,16 +11,14 @@
 					"Version" : "13.0.0"
 				},
 				{
-					"PackageIdentifier" : "Canonical.Ubuntu.2204",
-					"Version" : "2204.2.33.0"
+					"PackageIdentifier" : "Canonical.Ubuntu.2204"
 				},
 				{
 					"PackageIdentifier" : "Docker.DockerDesktop",
 					"Version" : "4.22.0"
 				},
 				{
-					"PackageIdentifier" : "Microsoft.WindowsTerminal",
-					"Version" : "1.17.11461.0"
+					"PackageIdentifier" : "Microsoft.WindowsTerminal"
 				},
 				{
 					"PackageIdentifier" : "GoLang.Go",
