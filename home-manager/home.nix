@@ -8,6 +8,7 @@
     ./fish.nix
     ./ssh.nix
     ./git.nix
+    ./zellij.nix
     ./darwin.nix # Omit needless parts for Linux in the file
     ./homemade.nix
   ];
