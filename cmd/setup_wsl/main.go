@@ -1,16 +1,15 @@
 //go:build linux
-// +build linux
 
 package main
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
 
+	"github.com/kachick/dotfiles"
 	"golang.org/x/sys/unix"
 )
 
@@ -75,17 +74,7 @@ func mustPersistDockerZshCompletions() {
 	}
 	// Can't make immutable symlink, so copy and make immutable here
 	// https://unix.stackexchange.com/questions/586430/how-to-make-a-symlink-read-only-chattr-i-location-symlink
-	target, err := os.Create(completionLoadablePath)
-	if err != nil {
-		log.Panicf("%+v\n", err)
-	}
-	defer target.Close()
-	integration, err := os.Open("dependencies/docker/zsh-vendor-completions.zsh")
-	if err != nil {
-		log.Panicf("%+v\n", err)
-	}
-	defer integration.Close()
-	_, err = io.Copy(target, integration)
+	err = dotfiles.Copy{Src: "dependencies/docker/zsh-vendor-completions.zsh", Dst: completionLoadablePath}.Run()
 	if err != nil {
 		log.Panicf("%+v\n", err)
 	}

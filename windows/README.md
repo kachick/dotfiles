@@ -1,17 +1,33 @@
 # FAQ
 
-## Configuration steps after installation packages
+## Installation
 
+1. ```powershell
+   winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
+   ```
+1. New session of pwsh
+   ```powershell
+   go run github.com/kachick/dotfiles/cmd/setup_windows_terminals -dotfiles_path "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
+   go run github.com/kachick/dotfiles/cmd/disable_windows_beeps
+   go run github.com/kachick/dotfiles/cmd/enable_windows_verbose_context_menu
+   ```
 1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.
    \
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
-1. On powershell
-   ```powershell
-   Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
-   \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\bootstrap.ps1 -DotfilesPath "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles"
-   ```
-1. Exclude the `$PROFILE\Profile.ps1` from Anti Virus detection as Microsoft Defender
 1. Enable Bitlocker and backup the restore key
+
+## How to run go scripts in this repo?
+
+After installed golang with winget, you can run github hosting files
+
+```console
+Administrator in ~ psh
+> go run github.com/kachick/dotfiles/cmd/disable_windows_beeps@39ac6dc
+2023/08/22 15:34:18 Completed to disable beeps, you need to restart Windows to activate settings
+```
+
+Specifying with branch name with the @ref may use cache, then specify commit ref
 
 ## How to install WSL2?
 
@@ -35,7 +51,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-list-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
