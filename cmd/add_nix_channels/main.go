@@ -3,7 +3,7 @@
 package main
 
 import (
-	"dotfiles/internal/runner"
+	"github.com/kachick/dotfiles/internal/runner"
 )
 
 // List of official resources:

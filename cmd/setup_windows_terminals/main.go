@@ -9,7 +9,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"dotfiles/internal/fileutils"
+	"github.com/kachick/dotfiles/internal/fileutils"
 )
 
 func main() {

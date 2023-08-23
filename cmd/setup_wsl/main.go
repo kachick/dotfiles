@@ -9,7 +9,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"dotfiles/internal/fileutils"
+	"github.com/kachick/dotfiles/internal/fileutils"
 
 	"golang.org/x/sys/unix"
 )

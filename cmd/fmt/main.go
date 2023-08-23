@@ -3,9 +3,9 @@
 package main
 
 import (
-	"dotfiles/internal/constants"
-	"dotfiles/internal/fileutils"
-	"dotfiles/internal/runner"
+	"github.com/kachick/dotfiles/internal/constants"
+	"github.com/kachick/dotfiles/internal/fileutils"
+	"github.com/kachick/dotfiles/internal/runner"
 )
 
 func main() {
