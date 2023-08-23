@@ -3,21 +3,22 @@
 package main
 
 import (
-	"github.com/kachick/dotfiles"
+	"dotfiles/internal/fileutils"
+	"dotfiles/internal/runner"
 )
 
 func main() {
-	walker := dotfiles.GetWalker()
+	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
 	nixPaths := walker.GetAllNix()
 
-	cmds := dotfiles.Commands{
+	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"check"}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
-		{Path: "typos", Args: dotfiles.GetTyposTargetedRoots()},
+		{Path: "typos", Args: fileutils.GetTyposTargetedRoots()},
 		{Path: "gitleaks", Args: []string{"detect"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 	}

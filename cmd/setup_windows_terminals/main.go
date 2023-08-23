@@ -9,7 +9,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/kachick/dotfiles"
+	"dotfiles/internal/fileutils"
 )
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 		log.Fatalf("Failed to create path that will have alacritty.yml: %+v", err)
 	}
 
-	copies := []dotfiles.Copy{
+	copies := []fileutils.Copy{
 		{Src: filepath.Join(dotsPath, "home", ".config", "starship.toml"), Dst: filepath.Join(homePath, ".config", "starship.toml")},
 		{Src: filepath.Join(dotsPath, "home", ".config", "alacritty", "alacritty-common.yml"), Dst: filepath.Join(homePath, ".config", "alacritty", "alacritty-common.yml")},
 		{Src: filepath.Join(dotsPath, "home", ".config", "alacritty", "alacritty-windows.yml"), Dst: filepath.Join(homePath, ".config", "alacritty", "alacritty.yml")},

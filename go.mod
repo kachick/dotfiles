@@ -1,4 +1,4 @@
-module github.com/kachick/dotfiles
+module dotfiles
 
 go 1.20
 
