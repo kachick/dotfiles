@@ -1,4 +1,4 @@
-package dotfiles
+package fileutils
 
 import (
 	"io/fs"
@@ -7,14 +7,6 @@ import (
 
 	"golang.org/x/exp/slices"
 )
-
-func GetTyposTargetedRoots() []string {
-	return []string{
-		".",
-		".github", ".vscode",
-		"home/.config", "home/.stack",
-	}
-}
 
 type WalkedReport struct {
 	Path string

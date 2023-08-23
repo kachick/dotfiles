@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/kachick/dotfiles"
+	"github.com/kachick/dotfiles/internal/runner"
 )
 
 // List of official resources:
@@ -16,7 +16,7 @@ import (
 
 func main() {
 
-	cmds := dotfiles.Commands{
+	cmds := runner.Commands{
 		{Path: "nix-channel", Args: []string{"--add", "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre511546.844ffa82bbe2/nixexprs.tar.xz", "nixpkgs"}},
 		{Path: "nix-channel", Args: []string{"--add", "https://github.com/nix-community/home-manager/archive/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04.tar.gz", "home-manager"}},
 		{Path: "nix-channel", Args: []string{"--update"}},
