@@ -3,8 +3,6 @@
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
-    xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
-
     # Do not use `programs.zsh.dotDir`, it does not refer xdg module
 
     xdg.configFile."zsh/.zshenv.darwin".text = ''
@@ -18,6 +16,8 @@ lib.mkMerge [
     xdg.configFile."zsh/.zshrc.darwin".text = ''
       source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
     '';
+
+    # Do not make plist symlinks, the update should be done iterm2 itself, so just keeping the backups
 
     # Just putting the refererenced file to easy import, applying should be done via GUI and saving to plist
     # You can find color schemes at schemes/ directory
