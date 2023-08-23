@@ -8,14 +8,6 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func GetTyposTargetedRoots() []string {
-	return []string{
-		".",
-		".github", ".vscode",
-		"home/.config", "home/.stack",
-	}
-}
-
 type WalkedReport struct {
 	Path string
 	Dir  fs.DirEntry

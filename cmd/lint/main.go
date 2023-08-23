@@ -3,6 +3,7 @@
 package main
 
 import (
+	"dotfiles/internal/constants"
 	"dotfiles/internal/fileutils"
 	"dotfiles/internal/runner"
 )
@@ -18,7 +19,7 @@ func main() {
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
-		{Path: "typos", Args: fileutils.GetTyposTargetedRoots()},
+		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
 		{Path: "gitleaks", Args: []string{"detect"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 	}
