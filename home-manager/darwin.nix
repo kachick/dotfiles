@@ -16,15 +16,15 @@ lib.mkMerge [
     '';
 
     # Just putting the refererenced file to easy import, applying should be done via GUI and saving to plist
-    xdg.configFile."iterm2/OneHalfDark.itermcolors".source =
+    # You can find color schemes at schemes/ directory
+    xdg.configFile."iterm2/iTerm2-Color-Schemes".source =
       pkgs.fetchFromGitHub
         {
           owner = "mbadolato";
           repo = "iTerm2-Color-Schemes";
-          rev = "3f8a0791ed9a99c10054026c1a8285459117e0f2";
-          sha256 = "sha256-ixryDwSNdVtD1H+V72V+hbFiL/JNLU4qpKXWflPQwrQ=";
+          rev = "64184d90e6377dd5dc3902057aff867ad8750bed";
+          sha256 = "sha256-FJITWlw3iVCdrurlS0Vv/s3Sc8ZKth7qmyIdcpPrDn4";
         }
-      + "/schemes/OneHalfDark.itermcolors"
     ;
   })
 ]
