@@ -6,12 +6,16 @@ lib.mkMerge [
     xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
 
     # Do not use `programs.zsh.dotDir`, it does not refer xdg module
-    xdg.configFile."zsh/.zshrc.darwin".text = ''
+
+    xdg.configFile."zsh/.zshenv.darwin".text = ''
       # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
+      # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi
+    '';
 
+    xdg.configFile."zsh/.zshrc.darwin".text = ''
       source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
     '';
 
