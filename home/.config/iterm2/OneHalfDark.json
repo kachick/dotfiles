@@ -46,7 +46,7 @@
   },
   "Horizontal Spacing" : 1,
   "Right Option Key Sends" : 0,
-  "Rows" : 25,
+  "Rows" : 60,
   "Default Bookmark" : "No",
   "Blend" : 0.50089996780174373,
   "Cursor Guide Color" : {
@@ -103,7 +103,7 @@
     "Alpha Component" : 1,
     "Green Component" : 0.30588235294100002
   },
-  "Columns" : 80,
+  "Columns" : 140,
   "Idle Code" : 0,
   "Background Image Mode" : 0,
   "Ansi 13 Color" : {
