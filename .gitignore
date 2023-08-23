@@ -14,3 +14,4 @@ tmp/
 
 # macOS
 **/AppSupport
+.DS_Store
