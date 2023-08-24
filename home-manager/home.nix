@@ -1,17 +1,14 @@
 { config, pkgs, lib, ... }:
 
-# FAQ
-#
-# A. How to get sha256 without `lib.fakeSha256`?
-# Q. `nix-prefetch-git --url https://github.com/oh-my-fish/plugin-foreign-env.git --rev 3ee95536106c11073d6ff466c1681cde31001383 --quiet | jq .hash`
-
 {
   imports = [
     ./packages.nix
     ./bash.nix
     ./zsh.nix
     ./fish.nix
+    ./ssh.nix
     ./git.nix
+    ./zellij.nix
     ./darwin.nix # Omit needless parts for Linux in the file
     ./homemade.nix
   ];
@@ -105,7 +102,8 @@
 
   # Do not alias home.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/home.nix`
-  xdg.configFile."alacritty/alacritty.yml".source = ../home/.config/alacritty/alacritty.yml;
+  xdg.configFile."alacritty/alacritty-common.yml".source = ../home/.config/alacritty/alacritty-common.yml;
+  xdg.configFile."alacritty/alacritty.yml".source = ../home/.config/alacritty/alacritty-unix.yml;
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../home/.config/starship.toml;
@@ -154,4 +152,28 @@
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/rtx.nix
   programs.rtx.enable = true;
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
+  # https://nixos.wiki/wiki/Vim
+  programs.vim = {
+    enable = true;
+    # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
+    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+
+    settings = { background = "dark"; };
+    extraConfig = ''
+      colorscheme iceberg
+      set termguicolors
+    '';
+  };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/bat.nix
+  programs.bat = {
+    enable = true;
+
+    config = {
+      # Candidates: bat --list-themes
+      theme = "Nord";
+    };
+  };
 }

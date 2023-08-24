@@ -1,31 +1,34 @@
 { pkgs, lib, ... }:
 
-# FAQ
-#
-# A. can not found dot files in macOS finder
-# Q. https://apple.stackexchange.com/a/250646, consider to use nix-darwin
-#      https://github.com/LnL7/nix-darwin/blob/16c07487ac9bc59f58b121d13160c67befa3342e/modules/system/defaults/finder.nix#L8-L14
-
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
-    xdg.configFile."iterm2/com.googlecode.iterm2.plist".source = ../home/.config/iterm2/com.googlecode.iterm2.plist;
-
     # Do not use `programs.zsh.dotDir`, it does not refer xdg module
+
+    xdg.configFile."zsh/.zshenv.darwin".text = ''
+      # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
+      # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
+
     xdg.configFile."zsh/.zshrc.darwin".text = ''
       source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
     '';
 
+    # Do not make plist symlinks, the update should be done iterm2 itself, so just keeping the backups
+
     # Just putting the refererenced file to easy import, applying should be done via GUI and saving to plist
-    xdg.configFile."iterm2/OneHalfDark.itermcolors".source =
+    # You can find color schemes at schemes/ directory
+    xdg.configFile."iterm2/iTerm2-Color-Schemes".source =
       pkgs.fetchFromGitHub
         {
           owner = "mbadolato";
           repo = "iTerm2-Color-Schemes";
-          rev = "3f8a0791ed9a99c10054026c1a8285459117e0f2";
-          sha256 = "sha256-ixryDwSNdVtD1H+V72V+hbFiL/JNLU4qpKXWflPQwrQ=";
+          rev = "64184d90e6377dd5dc3902057aff867ad8750bed";
+          sha256 = "sha256-FJITWlw3iVCdrurlS0Vv/s3Sc8ZKth7qmyIdcpPrDn4";
         }
-      + "/schemes/OneHalfDark.itermcolors"
     ;
   })
 ]

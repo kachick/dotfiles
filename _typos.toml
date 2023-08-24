@@ -5,4 +5,5 @@ iterm = "iterm"
 [files]
 extend-exclude = [
   "go.mod",
+  "*.terminal",
 ]

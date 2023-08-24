@@ -1,20 +1,5 @@
 { pkgs, ... }:
 
-# If I need the some of edge dependencies, this is the how to point unstable
-#
-# let
-#   pkgsUnstable = import
-#     (fetchTarball
-#       "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz")
-#     { };
-# in
-
-# FAQ
-#
-# A. How to know and get the paths inside a pkg?
-# Q. `nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
-
-
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -31,6 +16,13 @@
 
     # Used in anywhere
     coreutils
+
+    # Use same tools even in macOS
+    findutils
+    diffutils
+    gnugrep
+    gnused
+    gawk
 
     # asdf/rtx
     #
@@ -50,6 +42,7 @@
     shellcheck
     shfmt
     nixpkgs-fmt
+    nil
 
     tree
     exa
@@ -65,42 +58,45 @@
     bottom
     tig
     zellij
+    alacritty
     typos
     hyperfine
     difftastic
+    gnumake
+    gitleaks
+    deno
+    actionlint
+    # https://github.com/NixOS/nixpkgs/pull/218114
+    ruby_3_2
+
+    # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
+    # See following issues
+    # - https://github.com/kachick/dotfiles/issues/280
+    # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
     # Includes follows in each repository if needed, not in global
-    # deno
+    # gcc
     # rustup
     # go
     # crystal
     # elmPackages.elm
-    # gcc
     # sqlite
     # postgresql
-    # gnumake
     # cargo-make
-    # gitleaks
-    # nil
 
-    # https://github.com/NixOS/nixpkgs/pull/218114
-    ruby_3_2
     # If you need to build cruby from source, this section may remind the struggle
     # Often failed to build cruby even if I enabled following dependencies
     # zlib
     # libyaml
     # openssl
 
-    # As a boardgamer
-    # tesseract
-    # imagemagick
-    # pngquant
-    # img2pdf
-    # ocrmypdf
   ] ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc
+
+      # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+      openssh
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [

@@ -1,11 +1,13 @@
+//go:build linux || darwin
+
 package main
 
 import (
-	"github.com/kachick/dotfiles"
+	"github.com/kachick/dotfiles/internal/runner"
 )
 
 func main() {
-	cmds := dotfiles.Commands{
+	cmds := runner.Commands{
 		{Path: "go", Args: []string{"version"}},
 		{Path: "makers", Args: []string{"--version"}},
 		{Path: "nix", Args: []string{"--version"}},

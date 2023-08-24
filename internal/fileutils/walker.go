@@ -1,4 +1,4 @@
-package dotfiles
+package fileutils
 
 import (
 	"io/fs"
@@ -7,14 +7,6 @@ import (
 
 	"golang.org/x/exp/slices"
 )
-
-func GetTyposTargetedRoots() []string {
-	return []string{
-		".",
-		".github", ".vscode",
-		"home/.config", "home/.local", "home/.stack",
-	}
-}
 
 type WalkedReport struct {
 	Path string
@@ -28,7 +20,7 @@ type Walker struct {
 
 func GetWalker() Walker {
 	w := Walker{
-		ignoredDirectories: []string{".git", ".direnv", "dist"},
+		ignoredDirectories: []string{".git", ".direnv", "dist", "dependencies"},
 	}
 	w.reports = w.GetReports()
 

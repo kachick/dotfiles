@@ -28,7 +28,7 @@ func main() {
 
 	fi, err := os.Lstat(linked)
 	if err != nil {
-		log.Fatalf("target does not exist, fix `linked` option - %v\n", err)
+		log.Fatalf("target does not exist, fix `linked` option - %+v", err)
 	}
 	if fi.Mode()&os.ModeSymlink == os.ModeSymlink {
 		log.Fatalf("path for linked to is a symlink, you should be wrong how to use this command!")
@@ -42,11 +42,11 @@ func main() {
 	parent := filepath.Dir(linker)
 	err = os.MkdirAll(parent, 0755)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("failed in creating directory structure - %+v", err)
 	}
 
 	err = os.Symlink(linked, linker)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("failed in symlink creation - %+v", err)
 	}
 }

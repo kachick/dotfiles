@@ -7,6 +7,7 @@
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
   programs.rtx.enableFishIntegration = true;
+  programs.zellij.enableFishIntegration = true;
 
   xdg.configFile."fish/fish_variables".source = ../home/.config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../home/.config/fish/functions/fish_prompt.fish;
@@ -41,6 +42,10 @@
       # I define another la as a homemade scripts
       # See https://stackoverflow.com/a/36700734/1212807 for using `--erase`
       functions --erase la
+
+      set -g fish_greeting
+
+      source "${../dependencies/dprint/completions.fish}"
     '';
 
     plugins = [{

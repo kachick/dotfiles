@@ -1,4 +1,4 @@
-package dotfiles
+package runner
 
 import (
 	"log"

@@ -6,6 +6,7 @@
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
   programs.rtx.enableZshIntegration = true;
+  programs.zellij.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Zsh
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
@@ -83,6 +84,12 @@
 
     # home-manager path will set in `programs.home-manager.enable = true`;
     envExtra = ''
+      case ''${OSTYPE} in
+      darwin*)
+        source '${config.xdg.configHome}/zsh/.zshenv.darwin'
+        ;;
+      esac
+
       # https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=3401477#gistcomment-3401477
       skip_global_compinit=1
 
@@ -117,6 +124,8 @@
         echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
       }
       precmd_functions+=(set_win_title)
+
+      source "${../dependencies/dprint/completions.zsh}"
 
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
     '';

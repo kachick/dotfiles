@@ -6,6 +6,8 @@
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = true;
   programs.rtx.enableBashIntegration = true;
+  # Intentionally disabled for keeping stable bash
+  programs.zellij.enableBashIntegration = false;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/readline.nix
@@ -72,6 +74,8 @@
       }
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
+
+      source "${../dependencies/dprint/completions.bash}"
     '' + builtins.readFile ./initExtra.bash;
 
     logoutExtra = ''
