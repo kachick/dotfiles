@@ -114,6 +114,7 @@
       setopt hist_reduce_blanks
       setopt hist_save_no_dups
       setopt hist_no_store
+      setopt HIST_NO_FUNCTIONS
 
       # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
       bindkey ";5C" forward-word
