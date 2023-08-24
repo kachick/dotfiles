@@ -56,7 +56,10 @@
               inherit pkgs;
               modules = [
                 ./home-manager/home.nix
-                { home.username = "runner"; }
+                {
+                  home.username = "runner";
+                  home.homeDirectory = if (nixpkgs.lib.hasSuffix "darwin" system) then "/Users/runner" else "/home/runner";
+                }
               ];
             };
           };
