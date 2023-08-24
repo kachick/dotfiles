@@ -9,7 +9,8 @@
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.05";
+      # url = "github:nix-community/home-manager/release-23.05";
+      url = "github:nix-community/home-manager/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -18,6 +19,8 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        # pkgs = (import <nixpkgs> { }).callPackage (import ./home-manager/packages.nix) { };
+        # pkgs = import <> ./home-manager/packages.nix nixpkgs system;
       in
       rec {
         devShells.default = with pkgs;
@@ -42,21 +45,26 @@
             ];
           };
 
-        homeConfigurations =
+        packages.homeConfigurations =
           {
             kachick = home-manager.lib.homeManagerConfiguration {
-              # inherit system pkgs;
-
-              pkgs = nixpkgs.legacyPackages.x86_64-linux;
-
+              inherit pkgs;
               modules = [
+                # ({ config, pkgs, ... }: { })
                 ./home-manager/home.nix
+                # {
+                #   home.sessionVariables = {
+                #     NIX_PATH = "nixpkgs=${nixpkgs}";
+                #   };
+                # }
               ];
+              # extraSpecialArgs = inputs;
 
-              # pkgs = nixpkgs.legacyPackages.${system};
-              # pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
             };
           };
+        # packages.${system} = homeConfigurations;
+        # packages.homeConfigurations = homeConfigurations;
         # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
         packages.json2nix = pkgs.writeScriptBin "json2nix" ''
           ${pkgs.python3}/bin/python ${pkgs.fetchurl {
