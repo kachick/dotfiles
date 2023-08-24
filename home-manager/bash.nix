@@ -64,7 +64,8 @@
     historyFile = "${config.xdg.stateHome}/bash/history";
     historyFileSize = 4200000;
     historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
-    historyIgnore = [ "ls" "cd" "z" ];
+    # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
+    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" ];
 
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra = ''
