@@ -9,6 +9,7 @@
   programs.zellij.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Zsh
+  # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
   programs.zsh = {
     enable = true;
@@ -18,17 +19,20 @@
     dotDir = ".config/zsh";
 
     history = {
+
+
       # in memory
-      size = 100000;
+      size = 84000;
 
       # in file
-      save = 4200000;
+      save = 42000;
       path = "${config.xdg.stateHome}/zsh/history";
 
       ignoreDups = true;
       ignoreAllDups = true;
       ignoreSpace = true;
 
+      # Hist memory size should be grater than saving file size if enabled
       expireDuplicatesFirst = true;
 
       extended = true;
