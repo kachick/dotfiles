@@ -34,17 +34,8 @@ jobs:
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
-      - name: Register Nix Channels
-        run: |
-          nix-channel --add https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre511546.844ffa82bbe2/nixexprs.tar.xz nixpkgs
-          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel-ref }}.tar.gz home-manager
-          nix-channel --update
-          nix-channel --list
-      - name: Print nixpkgs version after updating channels
-        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
-      - run: nix-shell '<home-manager>' -A install
       - uses: actions/checkout@v3
-      - run: home-manager switch -b backup -f ./home-manager/user-github-actions.nix
+      - run: nix run home-manager/${{ matrix.home-manager-channel-ref }} -- switch --flake .#github-actions
       - name: Print some paths and versions
         run: |
           which fish

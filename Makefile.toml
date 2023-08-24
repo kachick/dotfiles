@@ -75,8 +75,8 @@ args = [
   '-n', # dry-run
   '-b',
   'backup',
-  '-f',
-  './home-manager/home.nix',
+  '--flake',
+  '.#kachick',
 ]
 
 [tasks.apply]
@@ -85,8 +85,8 @@ args = [
   'switch',
   '-b',
   'backup',
-  '-f',
-  './home-manager/home.nix',
+  '--flake',
+  '.#kachick',
 ]
 
 [tasks.enable_login_shells]
