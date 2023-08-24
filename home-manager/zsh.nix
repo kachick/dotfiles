@@ -26,7 +26,10 @@
       path = "${config.xdg.stateHome}/zsh/history";
 
       ignoreDups = true;
+      ignoreAllDups = true;
       ignoreSpace = true;
+
+      expireDuplicatesFirst = true;
 
       extended = true;
       share = true;
@@ -104,7 +107,6 @@
       setopt correct
       unsetopt BEEP
 
-      setopt hist_ignore_all_dups
       setopt hist_reduce_blanks
       setopt hist_save_no_dups
       setopt hist_no_store
