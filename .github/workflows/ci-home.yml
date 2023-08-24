@@ -26,9 +26,6 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-13
-        home-manager-channel-ref:
-          - a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04 # Pinned for current use
-          - master # unstable nixpkgs
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -37,7 +34,7 @@ jobs:
       - uses: actions/checkout@v3
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
-      - run: nix run home-manager/${{ matrix.home-manager-channel-ref }} -- switch -b backup --flake .#github-actions
+      - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Print some paths and versions
         run: |
           which fish

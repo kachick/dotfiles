@@ -73,6 +73,11 @@
         '';
 
         apps = {
+          # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+          home-manager = flake-utils.lib.mkApp {
+            drv = home-manager.defaultPackage.${system};
+          };
+
           # nix run .#json2nix
           json2nix = {
             type = "app";
