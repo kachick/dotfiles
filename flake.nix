@@ -10,7 +10,7 @@
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
       # candidates: "github:nix-community/home-manager/release-23.05";
-      url = "github:nix-community/home-manager/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
