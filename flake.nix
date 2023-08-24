@@ -7,9 +7,15 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
+    home-manager = {
+      # candidates: "github:nix-community/home-manager/release-23.05";
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, home-manager, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
@@ -37,6 +43,26 @@
             ];
           };
 
+        packages.homeConfigurations =
+          {
+            kachick = home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                ./home-manager/home.nix
+              ];
+            };
+
+            github-actions = home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                ./home-manager/home.nix
+                {
+                  home.username = "runner";
+                }
+              ];
+            };
+          };
+
         # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
         packages.json2nix = pkgs.writeScriptBin "json2nix" ''
           ${pkgs.python3}/bin/python ${pkgs.fetchurl {
@@ -46,7 +72,13 @@
         '';
 
         apps = {
-          # nix run .#json2nix
+          # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
+          # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+          home-manager = flake-utils.lib.mkApp {
+            drv = home-manager.defaultPackage.${system};
+          };
+
+          # example: `nix run .#json2nix gitconfig.json`
           json2nix = {
             type = "app";
             program = "${packages.json2nix}/bin/json2nix";

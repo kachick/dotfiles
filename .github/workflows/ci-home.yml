@@ -26,25 +26,15 @@ jobs:
         os:
           - ubuntu-22.04
           - macos-13
-        home-manager-channel-ref:
-          - a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04 # Pinned for current use
-          - master # unstable nixpkgs
 
     runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v4
       - uses: DeterminateSystems/magic-nix-cache-action@v2
-      - name: Register Nix Channels
-        run: |
-          nix-channel --add https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre511546.844ffa82bbe2/nixexprs.tar.xz nixpkgs
-          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel-ref }}.tar.gz home-manager
-          nix-channel --update
-          nix-channel --list
-      - name: Print nixpkgs version after updating channels
-        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
-      - run: nix-shell '<home-manager>' -A install
       - uses: actions/checkout@v3
-      - run: home-manager switch -b backup -f ./home-manager/user-github-actions.nix
+      # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
+      - run: mkdir -p ~/.local/state/nix/profiles
+      - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Print some paths and versions
         run: |
           which fish
