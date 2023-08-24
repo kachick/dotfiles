@@ -9,7 +9,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
-      # url = "github:nix-community/home-manager/release-23.05";
+      # candidates: "github:nix-community/home-manager/release-23.05";
       url = "github:nix-community/home-manager/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -72,12 +72,13 @@
         '';
 
         apps = {
+          # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
           # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
           home-manager = flake-utils.lib.mkApp {
             drv = home-manager.defaultPackage.${system};
           };
 
-          # nix run .#json2nix
+          # example: `nix run .#json2nix gitconfig.json`
           json2nix = {
             type = "app";
             program = "${packages.json2nix}/bin/json2nix";
