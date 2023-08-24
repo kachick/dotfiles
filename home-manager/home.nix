@@ -32,8 +32,9 @@
 
   home = {
     sessionVariables = {
-      EDITOR = "code -w";
-      VISUAL = "nano";
+      # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
+      EDITOR = "vim";
+      VISUAL = "code -w";
       PAGER = "less";
 
       # - You can check the candidates in `locale -a`
