@@ -69,8 +69,11 @@ args = [
 ]
 
 [tasks.test]
-command = 'home-manager'
+command = 'nix'
 args = [
+  'run',
+  '.#home-manager',
+  '--',
   'switch',
   '-n', # dry-run
   '-b',
@@ -80,8 +83,11 @@ args = [
 ]
 
 [tasks.apply]
-command = 'home-manager'
+command = 'nix'
 args = [
+  'run',
+  '.#home-manager',
+  '--',
   'switch',
   '-b',
   'backup',
