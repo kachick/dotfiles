@@ -71,18 +71,23 @@ in
 
     # No problem to register the same *.pub in different services
     matchBlocks = {
+      # ANYONE can access the registered public key at https://github.com/kachick.keys
       "github.com" = {
         identityFile = "${sshDir}/id_ed25519";
         identitiesOnly = true;
         user = "git";
       };
 
+      # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
       "gitlab.com" = {
         identityFile = "${sshDir}/id_ed25519";
         identitiesOnly = true;
         user = "git";
       };
 
+      # Need authentication to get the public keys
+      #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
+      #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
       "bitbucket.org" = {
         identityFile = "${sshDir}/id_ed25519";
         identitiesOnly = true;
