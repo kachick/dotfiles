@@ -4,19 +4,31 @@
 [![Nix Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml?query=branch%3Amain+)
 [![CI - Go Status](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 
-Personal dotfiles that can be placed in the public repository
-
+Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
-## Installation
+## Installation - Linux, Darwin
 
-1. If you are installing a Unix-like operating system, install the [Nix](https://nixos.org/) package manager first.
+1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
+   ```bash
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   ```
+1. Make sure there is a nix directory that is used in the home-manager.
    \
-   Typically, this should be done in **one of** the following ways.
-   - `sh <(curl -L https://nixos.org/nix/install) --daemon`
-   - `curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install`
-1. This repository is a flake, that includes installation steps of [home-manager](https://github.com/nix-community/home-manager) and dotfiles, you can run as follows
-   - `nix run github:kachick/dotfiles#home-manager -- switch -b backup --flake github:kachick/dotfiles#kachick`
-1. If you experience any problems with the installation, See https://github.com/kachick/dotfiles/wiki/Installation for more details.
-1. If you are on the development of this repository, the simple reactivation just needs to run as follows.
-   - `makers apply`
+   This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
+   ```bash
+   mkdir -p ~/.local/state/nix/profiles
+   ```
+1. Install [home-manager](https://github.com/nix-community/home-manager) and dotfiles
+   ```bash
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
+   ```
+1. If you have any problems with the installation steps, check both the [CI](.github/workflows/ci-home.yml) and the [wiki](https://github.com/kachick/dotfiles/wiki) and update them.
+1. If you are developing this repository, the simple reactivation is as follows.
+   ```bash
+   makers apply
+   ```
+
+## Installation - Windows
+
+Read [windows steps and tips](windows/README.md)
