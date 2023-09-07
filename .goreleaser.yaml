@@ -8,19 +8,19 @@ before:
     - go generate ./...
 # https://github.com/orgs/goreleaser/discussions/1531
 builds:
-  - id: disable_windows_beeps
+  - binary: disable_windows_beeps
     env:
       - CGO_ENABLED=0
     main: ./cmd/disable_windows_beeps
     goos:
       - windows
-  - id: enable_windows_verbose_context_menu
+  - binary: enable_windows_verbose_context_menu
     env:
       - CGO_ENABLED=0
     main: ./cmd/enable_windows_verbose_context_menu
     goos:
       - windows
-  - id: setup_windows_terminals
+  - binary: setup_windows_terminals
     env:
       - CGO_ENABLED=0
     main: ./cmd/setup_windows_terminals
