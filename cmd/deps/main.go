@@ -16,6 +16,7 @@ func main() {
 		{Path: "shfmt", Args: []string{"--version"}},
 		{Path: "typos", Args: []string{"--version"}},
 		{Path: "gitleaks", Args: []string{"version"}},
+		{Path: "goreleaser", Args: []string{"--version"}},
 	}
 
 	cmds.SequentialRun()
