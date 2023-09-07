@@ -23,6 +23,10 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
    ```
+1. Make shells installed by nix into a login shell
+   ```bash
+   nix run 'github:kachick/dotfiles#sudo_enable_nix_login_shells'
+   ```
 1. If you have any problems with the installation steps, check both the [CI](.github/workflows/ci-home.yml) and the [wiki](https://github.com/kachick/dotfiles/wiki) and update them.
 1. If you are developing this repository, the simple reactivation is as follows.
    ```bash
