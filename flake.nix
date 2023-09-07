@@ -64,6 +64,28 @@
             };
           };
 
+        packages.enable_nix_login_shells = pkgs.stdenv.mkDerivation
+          {
+            name = "enable_nix_login_shells";
+            src = self;
+            buildInputs = with pkgs; [
+              go_1_21
+            ];
+            buildPhase = ''
+              # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
+              export HOME=$(pwd)
+              go build -o dist/enable_nix_login_shells ./cmd/enable_nix_login_shells
+            '';
+            installPhase = ''
+              mkdir -p $out/bin
+              install -t $out/bin dist/enable_nix_login_shells
+            '';
+          };
+
+        packages.sudo_enable_nix_login_shells = pkgs.writeScriptBin "sudo_enable_nix_login_shells" ''
+          sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells
+        '';
+
         # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
         packages.json2nix = pkgs.writeScriptBin "json2nix" ''
           ${pkgs.python3}/bin/python ${pkgs.fetchurl {
@@ -77,6 +99,11 @@
           # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
           home-manager = flake-utils.lib.mkApp {
             drv = home-manager.defaultPackage.${system};
+          };
+
+          sudo_enable_nix_login_shells = {
+            type = "app";
+            program = "${packages.sudo_enable_nix_login_shells}/bin/sudo_enable_nix_login_shells";
           };
 
           # example: `nix run .#json2nix gitconfig.json`
