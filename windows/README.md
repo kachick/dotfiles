@@ -6,11 +6,12 @@
    winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
    winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
    ```
+1. Download the windows helper binaries from github releases or uploaded artifacts in each workflow
 1. New session of pwsh
    ```powershell
-   go run github.com/kachick/dotfiles/cmd/setup_windows_terminals -dotfiles_path "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
-   go run github.com/kachick/dotfiles/cmd/disable_windows_beeps
-   go run github.com/kachick/dotfiles/cmd/enable_windows_verbose_context_menu
+   ./setup_windows_terminals.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
+   ./disable_windows_beeps.exe
+   ./enable_windows_verbose_context_menu.exe
    ```
 1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.
    \
