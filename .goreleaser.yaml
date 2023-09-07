@@ -15,6 +15,8 @@ builds:
     main: ./cmd/disable_windows_beeps
     goos:
       - windows
+    goarch:
+      - amd64
   - id: enable_windows_verbose_context_menu
     binary: enable_windows_verbose_context_menu
     env:
@@ -22,6 +24,8 @@ builds:
     main: ./cmd/enable_windows_verbose_context_menu
     goos:
       - windows
+    goarch:
+      - amd64
   - id: setup_windows_terminals
     binary: setup_windows_terminals
     env:
@@ -29,6 +33,8 @@ builds:
     main: ./cmd/setup_windows_terminals
     goos:
       - windows
+    goarch:
+      - amd64
 
 archives:
   - format: tar.gz
