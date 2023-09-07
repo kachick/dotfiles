@@ -53,7 +53,7 @@
 
       set -euo pipefail
 
-      ${lib.getExe pkgs.exa} --long --all --group-directories-first "$@"
+      ${lib.getExe pkgs.eza} --long --all --group-directories-first "$@"
     '';
   };
 
