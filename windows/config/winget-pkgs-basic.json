@@ -10,16 +10,10 @@
 					"PackageIdentifier" : "7zip.7zip"
 				},
 				{
-					"PackageIdentifier" : "Dropbox.Dropbox"
-				},
-				{
 					"PackageIdentifier" : "Microsoft.Edge"
 				},
 				{
 					"PackageIdentifier" : "Microsoft.EdgeWebView2Runtime"
-				},
-				{
-					"PackageIdentifier" : "Microsoft.OneDrive"
 				},
 				{
 					"PackageIdentifier" : "Twilio.Authy"
@@ -37,9 +31,6 @@
 					"PackageIdentifier" : "Microsoft.VCRedist.2015+.x64"
 				},
 				{
-					"PackageIdentifier" : "Google.GoogleDrive"
-				},
-				{
 					"PackageIdentifier" : "Google.Chrome"
 				},
 				{
@@ -47,6 +38,10 @@
 				},
 				{
 					"PackageIdentifier" : "Google.VPNByGoogleOne"
+				},
+				{
+					"PackageIdentifier" : "BurntSushi.ripgrep.MSVC",
+					"Version" : "13.0.0"
 				},
 				{
 					"PackageIdentifier" : "sharkdp.hexyl"

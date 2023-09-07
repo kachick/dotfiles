@@ -7,10 +7,6 @@
 			"Packages" : 
 			[
 				{
-					"PackageIdentifier" : "BurntSushi.ripgrep.MSVC",
-					"Version" : "13.0.0"
-				},
-				{
 					"PackageIdentifier" : "Canonical.Ubuntu.2204"
 				},
 				{

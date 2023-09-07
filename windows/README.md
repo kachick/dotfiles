@@ -25,6 +25,7 @@ Basically following codes will be done in PowerShell
    ```powershell
    winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
    winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-storage.json"
    ```
 1. Remove needless pre-installed tools
    ```powershell
