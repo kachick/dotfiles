@@ -47,6 +47,9 @@
 				},
 				{
 					"PackageIdentifier" : "Google.VPNByGoogleOne"
+				},
+				{
+					"PackageIdentifier" : "sharkdp.hexyl"
 				}
 			],
 			"SourceDetails" : 

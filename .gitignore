@@ -15,3 +15,5 @@ tmp/
 # macOS
 **/AppSupport
 .DS_Store
+
+winget-pkgs-*-raw.json

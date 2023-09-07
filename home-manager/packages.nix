@@ -51,6 +51,7 @@
     jq
     ripgrep
     bat
+    hexyl
     duf
     fd
     du-dust
