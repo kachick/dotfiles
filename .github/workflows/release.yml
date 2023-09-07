@@ -60,4 +60,4 @@ jobs:
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         with:
           name: tools
-          path: dist/*
+          path: dist/**/*.exe
