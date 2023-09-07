@@ -21,10 +21,6 @@
 					"PackageIdentifier" : "Microsoft.WindowsTerminal"
 				},
 				{
-					"PackageIdentifier" : "GoLang.Go",
-					"Version" : "1.21.0"
-				},
-				{
 					"PackageIdentifier" : "Lapce.Lapce",
 					"Version" : "0.2.8"
 				},

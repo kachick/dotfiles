@@ -36,6 +36,7 @@
               cargo-make
               typos
               go_1_21
+              goreleaser
 
               # To get sha256 around pkgs.fetchFromGitHub in CLI
               nix-prefetch-git
