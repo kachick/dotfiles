@@ -37,8 +37,6 @@ Basically following codes will be done in PowerShell
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
 
-Specifying with branch name with the @ref may use cache, then specify commit ref
-
 ## How to install WSL2?
 
 winget does not support it, run as follows
