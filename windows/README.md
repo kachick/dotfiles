@@ -2,7 +2,7 @@
 
 ## Installation
 
-Bascically following codes will be done in PowerShell
+Basically following codes will be done in PowerShell
 
 1. Install WSL2
    ```powershell
