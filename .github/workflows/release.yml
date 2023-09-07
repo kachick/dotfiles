@@ -53,4 +53,11 @@ jobs:
           distribution: goreleaser
           # Keep same version as used in *.nix
           version: v1.19.2
-          args: build --snapshot --single-target --clean
+          args: build --snapshot --clean
+      # https://github.com/goreleaser/goreleaser-action/tree/5fdedb94abba051217030cc86d4523cf3f02243d#upload-artifacts
+      - name: Upload assets
+        uses: actions/upload-artifact@v3
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        with:
+          name: tools
+          path: dist/*
