@@ -45,7 +45,7 @@
     nil
 
     tree
-    exa
+    eza
     curl
     wget
     jq
