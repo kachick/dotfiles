@@ -2,31 +2,39 @@
 
 ## Installation
 
-1. ```powershell
-   winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
-   winget import --import-file "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
+Bascically following codes will be done in PowerShell
+
+1. Install WSL2
+   ```powershell
+   wsl.exe --install --distribution "Ubuntu-22.04"
    ```
-1. Download the windows helper binaries from github releases or uploaded artifacts in each workflow
+1. On WSL2, download this repository. HTTPS may work even if ssh is not yet configured
+   ```bash
+   mkdir -p ~/repos
+   cd ~/repos
+   git clone https://github.com/kachick/dotfiles.git
+   ```
+1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/release.yml) summary
 1. New session of pwsh
    ```powershell
    ./setup_windows_terminals.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
    ./disable_windows_beeps.exe
    ./enable_windows_verbose_context_menu.exe
    ```
+1. Install some tools
+   ```powershell
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
+   ```
+1. Remove needless pre-installed tools
+   ```powershell
+   # 9MSSGKG348SP is the Windows Widget(Windows Web Experience Pack)
+   winget uninstall --id 9MSSGKG348SP
+   ```
 1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.
    \
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
-
-## How to run go scripts in this repo?
-
-After installed golang with winget, you can run github hosting files
-
-```console
-Administrator in ~ psh
-> go run github.com/kachick/dotfiles/cmd/disable_windows_beeps@39ac6dc
-2023/08/22 15:34:18 Completed to disable beeps, you need to restart Windows to activate settings
-```
 
 Specifying with branch name with the @ref may use cache, then specify commit ref
 
@@ -52,7 +60,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\config\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
@@ -110,7 +118,7 @@ No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/p
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
@@ -168,14 +176,6 @@ Cons for Microsoft IME
 
 - Needed to tab, not in space to get date as "きょう"
 - No way to get date with ISO 8601 format
-
-## How to remove Windows Widget?
-
-Remove the noisy news widget as below!
-
-```powershell
-winget uninstall --id 9MSSGKG348SP
-```
 
 ## How to copy and paste in alacritty?
 
