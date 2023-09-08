@@ -5,11 +5,15 @@ on:
     paths:
       - '.github/workflows/ci-home.yml'
       - '**/home-manager/**.nix'
+      - '*.nix'
+      - 'flake.*'
       - 'Makefile.toml'
   pull_request:
     paths:
       - '.github/workflows/ci-home.yml'
       - '**/home-manager/**.nix'
+      - '*.nix'
+      - 'flake.*'
       - 'Makefile.toml'
   schedule:
     # Every 10:42 JST
