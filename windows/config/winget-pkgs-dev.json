@@ -17,10 +17,6 @@
 					"PackageIdentifier" : "Microsoft.WindowsTerminal"
 				},
 				{
-					"PackageIdentifier" : "Lapce.Lapce",
-					"Version" : "0.2.8"
-				},
-				{
 					"PackageIdentifier" : "Microsoft.PowerShell",
 					"Version" : "7.3.6.0"
 				},
