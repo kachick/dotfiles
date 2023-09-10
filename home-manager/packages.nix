@@ -38,6 +38,8 @@
     lazygit
     gh
 
+    gnupg
+
     dprint
     shellcheck
     shfmt
