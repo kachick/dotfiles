@@ -11,7 +11,7 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
-[home/.config/git/config]
+[config/git/config]
 indent_style = tab
 
 [{Makefile,*.mk,*.go,.gitmodules,*.*sh,.*shrc,*shenv,.bash_*}]
