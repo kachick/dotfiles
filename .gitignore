@@ -3,10 +3,6 @@
 # Don't include any history files! It might make an accident... :scream:
 *hist*
 
-# Managed by home-manager
-home/.config/fish/conf.d/
-home/.config/fish/config.fish
-
 dist/
 tmp/
 
