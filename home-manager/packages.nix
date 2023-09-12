@@ -38,6 +38,7 @@
     lazygit
     gh
 
+    # GPG
     gnupg
 
     dprint
