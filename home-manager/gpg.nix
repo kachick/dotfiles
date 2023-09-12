@@ -24,6 +24,8 @@
   services.gpg-agent = {
     enable = if pkgs.stdenv.isDarwin then false else true;
 
+    # Update [darwin.nix](darwin.nix) if changed this section
+    #
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
