@@ -1,6 +1,7 @@
 { pkgs, ... }:
 
 {
+  services.gpg-agent.enableFishIntegration = true;
   programs.starship.enableFishIntegration = true;
   # Settled by default and readonly https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/direnv.nix#L65-L68
   # programs.direnv.enableFishIntegration = true;

@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
+  services.gpg-agent.enableBashIntegration = true;
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;

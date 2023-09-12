@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
+  services.gpg-agent.enableZshIntegration = true;
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
