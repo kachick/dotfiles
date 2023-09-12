@@ -32,6 +32,8 @@
       };
 
       gpg = {
+        # I prefer GPG sign rather than SSH key to consider revocation and expiration usecase.
+        # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
       };
 
