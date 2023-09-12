@@ -6,6 +6,7 @@
     ./bash.nix
     ./zsh.nix
     ./fish.nix
+    ./gpg.nix
     ./ssh.nix
     ./git.nix
     ./zellij.nix
