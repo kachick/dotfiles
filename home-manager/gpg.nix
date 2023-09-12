@@ -17,10 +17,11 @@
       #   - https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/programs/gpg.nix#L192
       homedir = "${config.xdg.dataHome}/gnupg";
 
-      # Ed448 in GitHub is not yet supported - https://github.com/orgs/community/discussions/45937
+      # - How to read `--list-keys` - https://unix.stackexchange.com/questions/613839/help-understanding-gpg-list-keys-output
+      # - Ed448 in GitHub is not yet supported - https://github.com/orgs/community/discussions/45937
       settings = {
         # https://unix.stackexchange.com/questions/339077/set-default-key-in-gpg-for-signing
-        default-key = "EF6E574D040AE2A5";
+        default-key = "C386ED38C00461C9";
 
         personal-digest-preferences = "SHA512";
       };
