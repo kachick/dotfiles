@@ -27,6 +27,8 @@
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
+
+    pinentryFlavor = "tty";
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
