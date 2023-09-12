@@ -9,7 +9,7 @@
     enable = true;
 
     # How to backup the private key?
-    # `gpg --export-secret-keys --armor`
+    # `gpg --export-secret-keys --armor > gpg-private.keys.bak`
 
     # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples
     #   - https://wiki.archlinux.org/title/XDG_Base_Directory
