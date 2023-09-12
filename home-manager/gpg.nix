@@ -15,8 +15,10 @@
 #   - 3. `revkey`
 #   - 4. `save`
 #   - 5. Replace uploaded pubkey with new one, see https://github.com/kachick/dotfiles/pull/311#issuecomment-1715812324 for detail
+# - How to get pubkey to upload?
+#   - `gpg --armor --export PUBKEY | clip.exe`
 # - How to backup private key?
-#   `gpg --export-secret-keys --armor > gpg-private.keys.bak`
+#   - `gpg --export-secret-keys --armor > gpg-private.keys.bak`
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/gpg-agent.nix
   services.gpg-agent.enable = if pkgs.stdenv.isDarwin then false else true;
