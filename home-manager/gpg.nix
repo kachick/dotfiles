@@ -1,11 +1,11 @@
-{ config, lib, pkgs, ... }:
+{ config, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/gpg-agent.nix
   services.gpg-agent.enable = true;
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
-  programs.gpg = (lib.mkMerge [
+  programs.gpg =
     {
       enable = true;
 
@@ -24,17 +24,5 @@
 
         personal-digest-preferences = "SHA512";
       };
-    }
-
-    (
-      # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598
-      # https://github.com/midchildan/dotfiles/blob/fae87a3ef327c23031d8081333678f9472e4c0ed/nix/home/modules/gnupg/default.nix#L38
-      lib.mkIf pkgs.stdenv.isDarwin {
-        xdg.dataFile."gnupg/gpg-agent.conf".text = ''
-          grab
-          pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
-        '';
-      }
-    )
-  ]);
+    };
 }
