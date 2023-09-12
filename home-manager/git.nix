@@ -26,7 +26,7 @@
       user = {
         # https://stackoverflow.com/questions/48065535/should-i-keep-gitconfigs-signingkey-private
         # - Append `!` suffix for subkeys
-        signingkey = "C386ED38C00461C9!";
+        signingkey = "9BE4016A38165CCB!";
       };
 
       gpg = {
