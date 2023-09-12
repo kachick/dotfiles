@@ -9,8 +9,8 @@
   programs.rtx.enableFishIntegration = true;
   programs.zellij.enableFishIntegration = true;
 
-  xdg.configFile."fish/fish_variables".source = ../home/.config/fish/fish_variables;
-  xdg.configFile."fish/functions/fish_prompt.fish".source = ../home/.config/fish/functions/fish_prompt.fish;
+  xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;
+  xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
 
   programs.fish = {
     enable = true;

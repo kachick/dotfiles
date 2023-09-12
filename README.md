@@ -35,4 +35,4 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Installation - Windows
 
-Read [windows steps and tips](windows/README.md)
+Read [windows steps and tips](windows.md)
