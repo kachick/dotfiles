@@ -1,8 +1,8 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/gpg-agent.nix
-  services.gpg-agent.enable = true;
+  services.gpg-agent.enable = if pkgs.stdenv.isDarwin then false else true;
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
   programs.gpg =
