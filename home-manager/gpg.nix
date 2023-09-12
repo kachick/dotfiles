@@ -33,20 +33,21 @@
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
 
-  programs.gpg.enable = true;
+  programs.gpg = {
+    enable = true;
 
-  # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples
-  #   - https://wiki.archlinux.org/title/XDG_Base_Directory
-  #   - https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/programs/gpg.nix#L192
-  programs.gpg.homedir = "${config.xdg.dataHome}/gnupg";
+    # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples
+    #   - https://wiki.archlinux.org/title/XDG_Base_Directory
+    #   - https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/programs/gpg.nix#L192
+    homedir = "${config.xdg.dataHome}/gnupg";
 
-  # - How to read `--list-keys` - https://unix.stackexchange.com/questions/613839/help-understanding-gpg-list-keys-output
-  # - Ed448 in GitHub is not yet supported - https://github.com/orgs/community/discussions/45937
-  programs.gpg.settings = {
-    # https://unix.stackexchange.com/questions/339077/set-default-key-in-gpg-for-signing
-    default-key = "9BE4016A38165CCB";
+    # - How to read `--list-keys` - https://unix.stackexchange.com/questions/613839/help-understanding-gpg-list-keys-output
+    # - Ed448 in GitHub is not yet supported - https://github.com/orgs/community/discussions/45937
+    settings = {
+      # https://unix.stackexchange.com/questions/339077/set-default-key-in-gpg-for-signing
+      default-key = "9BE4016A38165CCB";
 
-    personal-digest-preferences = "SHA512";
+      personal-digest-preferences = "SHA512";
+    };
   };
-
 }
