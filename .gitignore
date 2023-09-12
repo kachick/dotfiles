@@ -13,3 +13,5 @@ tmp/
 .DS_Store
 
 winget-pkgs-*-raw.json
+
+*.bak
