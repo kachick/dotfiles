@@ -43,8 +43,8 @@ jobs:
       - run: nix flake update --commit-lock-file
       - name: Update related CI dependencies
         run: |
-          nix develop --command nix run github:kachick/selfup -- --prefix='# selfup ' --skip-by='nix run' .github/workflows/*.yml
-          git diff-index --quiet HEAD || git commit -m 'Update CI dependencies with sync to nixpkgs' .github
+          nix develop --command nix run github:kachick/selfup/v0.0.2 -- run --prefix='# selfup ' --skip-by='nix run' .github/workflows/*.yml
+          git diff-index --quiet HEAD || git commit -m 'Update CI dependencies with adjusting to nixpkgs' .github
       - run: git push origin "${PR_BRANCH}"
         if: github.event_name != 'pull_request'
       - name: Create PR
