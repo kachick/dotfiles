@@ -1,0 +1,20 @@
+name: Update nixpkgs and CI dependencies
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/update-nixpkgs-and-versions-in-ci.yml'
+  schedule:
+    # Every 10:17 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-nixpkgs:
+    uses: kachick/anylang-template/.github/workflows/reusable-update-nixpkgs-and-versions-in-ci.yml@main
+    if: (github.event.sender.login == 'kachick') || (github.event_name != 'pull_request')
+    with:
+      dry-run: ${{ github.event_name == 'pull_request' }}
+    secrets:
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
