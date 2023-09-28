@@ -8,7 +8,6 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '17 1 * * *'
   workflow_dispatch:
-  # https://docs.github.com/ja/actions/using-workflows/reusing-workflows
 
 jobs:
   update-nixpkgs:
