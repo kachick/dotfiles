@@ -22,6 +22,10 @@
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
+    hooks = {
+      commit-msg = ../config/git/hooks/commit-msg.bash;
+    };
+
     extraConfig = {
       user = {
         # - Visibility
