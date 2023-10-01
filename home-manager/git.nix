@@ -22,6 +22,12 @@
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
+    # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
+    # - Remember to add executable permission for hooks files
+    hooks = {
+      commit-msg = ../config/git/hooks/commit-msg.bash;
+    };
+
     extraConfig = {
       user = {
         # - Visibility
