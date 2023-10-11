@@ -35,6 +35,9 @@
           "PackageIdentifier": "Google.VPNByGoogleOne"
         },
         {
+          "PackageIdentifier": "Cloudflare.Warp"
+        },
+        {
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
