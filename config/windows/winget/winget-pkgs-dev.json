@@ -1,46 +1,43 @@
 {
-	"$schema" : "https://aka.ms/winget-packages.schema.2.0.json",
-	"CreationDate" : "2023-08-22T11:50:00.783-00:00",
-	"Sources" : 
-	[
-		{
-			"Packages" : 
-			[
-				{
-					"PackageIdentifier" : "Canonical.Ubuntu.2204"
-				},
-				{
-					"PackageIdentifier" : "Docker.DockerDesktop",
-					"Version" : "4.22.0"
-				},
-				{
-					"PackageIdentifier" : "Microsoft.WindowsTerminal"
-				},
-				{
-					"PackageIdentifier" : "Microsoft.PowerShell",
-					"Version" : "7.3.6.0"
-				},
-				{
-					"PackageIdentifier" : "Alacritty.Alacritty",
-					"Version" : "0.12.2"
-				},
-				{
-					"PackageIdentifier" : "Starship.Starship",
-					"Version" : "1.16.0"
-				},
-				{
-					"PackageIdentifier" : "Microsoft.VisualStudioCode",
-					"Version" : "1.81.1"
-				}
-			],
-			"SourceDetails" : 
-			{
-				"Argument" : "https://cdn.winget.microsoft.com/cache",
-				"Identifier" : "Microsoft.Winget.Source_8wekyb3d8bbwe",
-				"Name" : "winget",
-				"Type" : "Microsoft.PreIndexed.Package"
-			}
-		}
-	],
-	"WinGetVersion" : "1.5.2201"
+  "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+  "CreationDate": "2023-08-22T11:50:00.783-00:00",
+  "Sources": [
+    {
+      "Packages": [
+        {
+          "PackageIdentifier": "Canonical.Ubuntu.2204"
+        },
+        {
+          "PackageIdentifier": "Docker.DockerDesktop",
+          "Version": "4.22.0"
+        },
+        {
+          "PackageIdentifier": "Microsoft.WindowsTerminal"
+        },
+        {
+          "PackageIdentifier": "Microsoft.PowerShell",
+          "Version": "7.3.6.0"
+        },
+        {
+          "PackageIdentifier": "Alacritty.Alacritty",
+          "Version": "0.12.2"
+        },
+        {
+          "PackageIdentifier": "Starship.Starship",
+          "Version": "1.16.0"
+        },
+        {
+          "PackageIdentifier": "Microsoft.VisualStudioCode",
+          "Version": "1.81.1"
+        }
+      ],
+      "SourceDetails": {
+        "Argument": "https://cdn.winget.microsoft.com/cache",
+        "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+        "Name": "winget",
+        "Type": "Microsoft.PreIndexed.Package"
+      }
+    }
+  ],
+  "WinGetVersion": "1.5.2201"
 }
