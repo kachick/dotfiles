@@ -42,6 +42,9 @@
         },
         {
           "PackageIdentifier": "sharkdp.hexyl"
+        },
+        {
+          "PackageIdentifier": "sharkdp.bat"
         }
       ],
       "SourceDetails": {
