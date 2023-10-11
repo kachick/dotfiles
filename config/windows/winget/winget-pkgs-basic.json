@@ -35,8 +35,7 @@
           "PackageIdentifier": "Google.VPNByGoogleOne"
         },
         {
-          "PackageIdentifier": "BurntSushi.ripgrep.MSVC",
-          "Version": "13.0.0"
+          "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
           "PackageIdentifier": "sharkdp.hexyl"

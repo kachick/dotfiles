@@ -8,27 +8,22 @@
           "PackageIdentifier": "Canonical.Ubuntu.2204"
         },
         {
-          "PackageIdentifier": "Docker.DockerDesktop",
-          "Version": "4.22.0"
+          "PackageIdentifier": "Docker.DockerDesktop"
         },
         {
           "PackageIdentifier": "Microsoft.WindowsTerminal"
         },
         {
-          "PackageIdentifier": "Microsoft.PowerShell",
-          "Version": "7.3.6.0"
+          "PackageIdentifier": "Microsoft.PowerShell"
         },
         {
-          "PackageIdentifier": "Alacritty.Alacritty",
-          "Version": "0.12.2"
+          "PackageIdentifier": "Alacritty.Alacritty"
         },
         {
-          "PackageIdentifier": "Starship.Starship",
-          "Version": "1.16.0"
+          "PackageIdentifier": "Starship.Starship"
         },
         {
-          "PackageIdentifier": "Microsoft.VisualStudioCode",
-          "Version": "1.81.1"
+          "PackageIdentifier": "Microsoft.VisualStudioCode"
         }
       ],
       "SourceDetails": {
