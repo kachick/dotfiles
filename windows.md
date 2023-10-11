@@ -32,8 +32,7 @@ Basically following codes will be done in PowerShell
    # 9MSSGKG348SP is the Windows Widget(Windows Web Experience Pack)
    winget uninstall --id 9MSSGKG348SP
    ```
-1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.
-   \
+1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.\
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
 
