@@ -9,6 +9,9 @@
         },
         {
           "PackageIdentifier": "Valve.Steam"
+        },
+        {
+          "PackageIdentifier": "TrackerSoftware.PDF-XChangeEditor"
         }
       ],
       "SourceDetails": {
