@@ -45,6 +45,9 @@
         },
         {
           "PackageIdentifier": "sharkdp.bat"
+        },
+        {
+          "PackageIdentifier": "Balena.Etcher"
         }
       ],
       "SourceDetails": {
