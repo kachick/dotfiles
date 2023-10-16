@@ -73,7 +73,7 @@
     historyFileSize = 4200000;
     historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
     # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
-    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" ];
+    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" "gsc" ];
 
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra = ''
