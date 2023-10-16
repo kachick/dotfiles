@@ -19,7 +19,7 @@
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
 
-    #  `alias` will show current aliases
+    # `alias` will show current aliases
     shellAliases = {
       # git alias cannot get the interactive feature, so aliasing in shell layer
       # https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873

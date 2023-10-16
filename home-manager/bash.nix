@@ -61,6 +61,13 @@
 
     enableCompletion = true;
 
+    # `alias` will show current aliases
+    shellAliases = {
+      # git alias cannot get the interactive feature, so aliasing in shell layer
+      # https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873
+      gsc = "git commit -a -m \"\\`$(fc -ln -1)\\`\"";
+    };
+
     historySize = 100000;
     historyFile = "${config.xdg.stateHome}/bash/history";
     historyFileSize = 4200000;
