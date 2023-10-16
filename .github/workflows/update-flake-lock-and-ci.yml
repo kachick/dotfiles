@@ -1,12 +1,14 @@
-name: Update nixpkgs and CI dependencies
+name: Update flake.lock and CI dependencies
 on:
   pull_request:
     paths:
-      - '.github/workflows/update-nixpkgs-and-versions-in-ci.yml'
+      - '.github/workflows/update-flake-lock-and-ci.yml'
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every 10:17 JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '17 1 * * *'
+    # Every Monday 9:17 JST
+    - cron: '17 0 * * 1'
+    # Every Thursday 9:17 JST
+    - cron: '17 0 * * 4'
   workflow_dispatch:
 
 jobs:
