@@ -9,10 +9,16 @@
     userEmail = "kachick1@gmail.com";
     userName = "Kenichi Kamiya";
 
+    # `git config --get-regexp ^alias` will show current aliases
     aliases = {
       fixup = "commit --all --amend";
       empty = "commit --allow-empty";
       start = "empty -m 'Start project from empty'";
+      # - `fc` works in bash and zsh. Reasonable way for now
+      #   - https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873
+      # - `!!` works in all bash, zsh and fish. But it runs the history
+      # - `!:p` works only in intereactive mode, and fish can't run
+      save = "!git commit -a -m \"\\`$(fc -ln -1)\\`\"";
       current = "symbolic-ref --short HEAD";
       switch-default = "!git checkout main 2>/dev/null || git checkout master 2>/dev/null";
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
