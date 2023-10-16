@@ -40,3 +40,4 @@ test
 test
 test
 test in fish
+test in fish
