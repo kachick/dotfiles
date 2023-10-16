@@ -13,6 +13,7 @@
   xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
 
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fish.nix
   programs.fish = {
     enable = true;
 
@@ -48,6 +49,11 @@
 
       source "${../dependencies/dprint/completions.fish}"
     '';
+
+    # `alias` will show current aliases
+    shellAliases = {
+      gsc = "git commit -a -m \"\\`$(history --max 1)\\`\"";
+    };
 
     plugins = [{
       name = "foreign-env";
