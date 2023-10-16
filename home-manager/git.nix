@@ -11,7 +11,8 @@
 
     aliases = {
       fixup = "commit --all --amend";
-      empty = "commit --allow-empty -m 'Add an empty commit'";
+      empty = "commit --allow-empty";
+      start = "empty -m 'Start project from empty'";
       current = "symbolic-ref --short HEAD";
       switch-default = "!git checkout main 2>/dev/null || git checkout master 2>/dev/null";
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
