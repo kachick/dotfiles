@@ -9,6 +9,7 @@
     userEmail = "kachick1@gmail.com";
     userName = "Kenichi Kamiya";
 
+    # `git config --get-regexp ^alias` will show current aliases
     aliases = {
       fixup = "commit --all --amend";
       empty = "commit --allow-empty";
