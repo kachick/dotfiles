@@ -52,7 +52,7 @@
 
     # `alias` will show current aliases
     shellAliases = {
-      gsc = "git commit -a -m \"`$(history --max 1)`\"";
+      glc = "git commit -a -m \"`$(history --max 1)`\"";
     };
 
     plugins = [{

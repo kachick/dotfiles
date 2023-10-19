@@ -65,7 +65,7 @@
     shellAliases = {
       # git alias cannot get the interactive feature, so aliasing in shell layer
       # https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873
-      gsc = "git commit -a -m \"\\`$(fc -ln -1 | grep -Po '(\\S.*)')\\`\"";
+      glc = "git commit -a -m \"\\`$(fc -ln -1 | grep -Po '(\\S.*)')\\`\"";
     };
 
     historySize = 100000;
@@ -73,7 +73,7 @@
     historyFileSize = 4200000;
     historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
     # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
-    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" "gsc" ];
+    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" "glc" ];
 
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra = ''
