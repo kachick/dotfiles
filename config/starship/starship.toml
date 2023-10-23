@@ -3,6 +3,7 @@
 format = """
 $username\
 $hostname\
+$shlvl\
 $directory\
 $git_branch\
 $git_commit\
@@ -23,6 +24,10 @@ $shell\
 $line_break\
 $time\
 $character"""
+
+# https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
+[shlvl]
+disabled = false
 
 [directory]
 style = "blue"
