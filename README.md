@@ -18,6 +18,10 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    mkdir -p ~/.local/state/nix/profiles
    ```
+1. Restart current shell to load Nix as a PATH
+   ```bash
+   bash
+   ```
 1. Install [home-manager](https://github.com/nix-community/home-manager) and dotfiles
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
