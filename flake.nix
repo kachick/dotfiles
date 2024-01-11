@@ -5,7 +5,8 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
@@ -15,11 +16,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, flake-utils }:
     flake-utils.lib.eachDefaultSystem
       (system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          unstable-packages = nixpkgs-unstable.legacyPackages.${system};
         in
         rec {
           devShells.default = with pkgs;
@@ -28,15 +30,15 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
 
-                dprint
+                unstable-packages.dprint
                 shellcheck
                 shfmt
                 nil
                 nixpkgs-fmt
                 gitleaks
                 cargo-make
-                typos
-                go_1_21
+                unstable-packages.typos
+                unstable-packages.go_1_21
                 goreleaser
 
                 # To get sha256 around pkgs.fetchFromGitHub in CLI

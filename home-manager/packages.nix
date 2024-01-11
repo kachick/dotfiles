@@ -1,16 +1,4 @@
 { pkgs, ... }:
-
-let
-  # If I need some edge dependencies, enable this section
-  # https://discourse.nixos.org/t/difference-between-channels/579
-  unstable = import
-    (
-      fetchTarball
-        "https://github.com/NixOS/nixpkgs/archive/nixos-unstable-small.tar.gz"
-    )
-    { };
-in
-
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
