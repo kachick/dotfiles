@@ -1,5 +1,10 @@
 { pkgs, ... }:
 
+# If I need some edge dependencies, enable this section
+let
+  pkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+in
+
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -70,7 +75,7 @@
     gitleaks
     deno
     actionlint
-    ruby_3_3
+    pkgsUnstable.ruby_3_3
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues
