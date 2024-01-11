@@ -2,7 +2,7 @@
 
 # If I need some edge dependencies, enable this section
 let
-  pkgsUnstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  pkgsUnstable.url = "github:NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6";
 in
 
 {
