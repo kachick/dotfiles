@@ -5,7 +5,7 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-23.11";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
@@ -16,103 +16,104 @@
   };
 
   outputs = { self, nixpkgs, home-manager, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in
-      rec {
-        devShells.default = with pkgs;
-          mkShell {
-            buildInputs = [
-              # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-              bashInteractive
+    flake-utils.lib.eachDefaultSystem
+      (system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        rec {
+          devShells.default = with pkgs;
+            mkShell {
+              buildInputs = [
+                # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+                bashInteractive
 
-              dprint
-              shellcheck
-              shfmt
-              nil
-              nixpkgs-fmt
-              gitleaks
-              cargo-make
-              typos
-              go_1_21
-              goreleaser
+                dprint
+                shellcheck
+                shfmt
+                nil
+                nixpkgs-fmt
+                gitleaks
+                cargo-make
+                typos
+                go_1_21
+                goreleaser
 
-              # To get sha256 around pkgs.fetchFromGitHub in CLI
-              nix-prefetch-git
-              jq
-            ];
-          };
-
-        packages.homeConfigurations =
-          {
-            kachick = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./home-manager/home.nix
+                # To get sha256 around pkgs.fetchFromGitHub in CLI
+                nix-prefetch-git
+                jq
               ];
             };
 
-            github-actions = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./home-manager/home.nix
-                {
-                  home.username = "runner";
-                }
+          packages.homeConfigurations =
+            {
+              kachick = home-manager.lib.homeManagerConfiguration {
+                inherit pkgs;
+                modules = [
+                  ./home-manager/home.nix
+                ];
+              };
+
+              github-actions = home-manager.lib.homeManagerConfiguration {
+                inherit pkgs;
+                modules = [
+                  ./home-manager/home.nix
+                  {
+                    home.username = "runner";
+                  }
+                ];
+              };
+            };
+
+          packages.enable_nix_login_shells = pkgs.stdenv.mkDerivation
+            {
+              name = "enable_nix_login_shells";
+              src = self;
+              buildInputs = with pkgs; [
+                go_1_21
               ];
+              buildPhase = ''
+                # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
+                export HOME=$(pwd)
+                go build -o dist/enable_nix_login_shells ./cmd/enable_nix_login_shells
+              '';
+              installPhase = ''
+                mkdir -p $out/bin
+                install -t $out/bin dist/enable_nix_login_shells
+              '';
+            };
+
+          packages.sudo_enable_nix_login_shells = pkgs.writeScriptBin "sudo_enable_nix_login_shells" ''
+            sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells
+          '';
+
+          # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
+          packages.json2nix = pkgs.writeScriptBin "json2nix" ''
+            ${pkgs.python3}/bin/python ${pkgs.fetchurl {
+              url = "https://gist.githubusercontent.com/Scoder12/0538252ed4b82d65e59115075369d34d/raw/e86d1d64d1373a497118beb1259dab149cea951d/json2nix.py";
+              hash = "sha256-ROUIrOrY9Mp1F3m+bVaT+m8ASh2Bgz8VrPyyrQf9UNQ=";
+            }} $@
+          '';
+
+          apps = {
+            # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
+            # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+            home-manager = flake-utils.lib.mkApp {
+              drv = home-manager.defaultPackage.${system};
+            };
+
+            sudo_enable_nix_login_shells = {
+              type = "app";
+              program = "${packages.sudo_enable_nix_login_shells}/bin/sudo_enable_nix_login_shells";
+            };
+
+            # example: `nix run .#json2nix gitconfig.json`
+            json2nix = {
+              type = "app";
+              program = "${packages.json2nix}/bin/json2nix";
             };
           };
-
-        packages.enable_nix_login_shells = pkgs.stdenv.mkDerivation
-          {
-            name = "enable_nix_login_shells";
-            src = self;
-            buildInputs = with pkgs; [
-              go_1_21
-            ];
-            buildPhase = ''
-              # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
-              export HOME=$(pwd)
-              go build -o dist/enable_nix_login_shells ./cmd/enable_nix_login_shells
-            '';
-            installPhase = ''
-              mkdir -p $out/bin
-              install -t $out/bin dist/enable_nix_login_shells
-            '';
-          };
-
-        packages.sudo_enable_nix_login_shells = pkgs.writeScriptBin "sudo_enable_nix_login_shells" ''
-          sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells
-        '';
-
-        # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
-        packages.json2nix = pkgs.writeScriptBin "json2nix" ''
-          ${pkgs.python3}/bin/python ${pkgs.fetchurl {
-            url = "https://gist.githubusercontent.com/Scoder12/0538252ed4b82d65e59115075369d34d/raw/e86d1d64d1373a497118beb1259dab149cea951d/json2nix.py";
-            hash = "sha256-ROUIrOrY9Mp1F3m+bVaT+m8ASh2Bgz8VrPyyrQf9UNQ=";
-          }} $@
-        '';
-
-        apps = {
-          # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
-          # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-          home-manager = flake-utils.lib.mkApp {
-            drv = home-manager.defaultPackage.${system};
-          };
-
-          sudo_enable_nix_login_shells = {
-            type = "app";
-            program = "${packages.sudo_enable_nix_login_shells}/bin/sudo_enable_nix_login_shells";
-          };
-
-          # example: `nix run .#json2nix gitconfig.json`
-          json2nix = {
-            type = "app";
-            program = "${packages.json2nix}/bin/json2nix";
-          };
-        };
-      }
-    );
+        }
+      );
 }
 

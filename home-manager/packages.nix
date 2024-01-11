@@ -1,13 +1,9 @@
-{ pkgs
-, # If I need some edge dependencies, enable this section
-  pkgsUnstable ? import
-    (fetchTarball
-      "https://github.com/NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6.tar.gz")
-    { }
-, ...
-}:
+{ pkgs, ... }:
 
-
+let
+  # If I need some edge dependencies, enable this section
+  unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+in
 
 {
   home.packages = with pkgs; [
@@ -79,7 +75,7 @@
     gitleaks
     deno
     actionlint
-    pkgsUnstable.ruby_3_3
+    unstable.ruby_3_3
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues
