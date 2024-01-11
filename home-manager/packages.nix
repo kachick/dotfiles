@@ -1,9 +1,13 @@
-{ pkgs, ... }:
+{ pkgs
+, # If I need some edge dependencies, enable this section
+  pkgsUnstable ? import
+    (fetchTarball
+      "https://github.com/NixOS/nixpkgs/bd645e8668ec6612439a9ee7e71f7eac4099d4f6.tar.gz")
+    { }
+, ...
+}:
 
-# If I need some edge dependencies, enable this section
-let
-  pkgsUnstable = import <nixpkgs-edge> { };
-in
+
 
 {
   home.packages = with pkgs; [
