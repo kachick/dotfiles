@@ -2,7 +2,8 @@
 
 let
   # If I need some edge dependencies, enable this section
-  unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+  # https://discourse.nixos.org/t/difference-between-channels/579
+  unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
 in
 
 {
