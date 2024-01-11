@@ -16,14 +16,17 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, flake-utils }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, flake-utils } @ inputs:
     flake-utils.lib.eachDefaultSystem
       (system:
         let
+          # inherit (self) outputs;
           pkgs = nixpkgs.legacyPackages.${system};
           unstable-packages = nixpkgs-unstable.legacyPackages.${system};
         in
         rec {
+          overlays = import ./overlays { inherit inputs; };
+
           devShells.default = with pkgs;
             mkShell {
               buildInputs = [
