@@ -3,7 +3,12 @@
 let
   # If I need some edge dependencies, enable this section
   # https://discourse.nixos.org/t/difference-between-channels/579
-  unstable.url = "github:nixos/nixpkgs/nixos-unstable-small";
+  unstable = import
+    (
+      fetchTarball
+        "https://github.com/NixOS/nixpkgs/archive/nixos-unstable-small.tar.gz"
+    )
+    { };
 in
 
 {
