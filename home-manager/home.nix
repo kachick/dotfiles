@@ -18,13 +18,6 @@
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # Workaround for "unable to download 'https://git.sr.ht/~rycee": https://github.com/nix-community/home-manager/issues/4879#issuecomment-1884851745
-  manual = {
-    html.enable = false;
-    manpages.enable = false;
-    json.enable = false;
-  };
-
   # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
   xdg.enable = true;
 
