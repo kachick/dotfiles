@@ -1,4 +1,5 @@
 { pkgs, ... }:
+
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -69,7 +70,8 @@
     gitleaks
     deno
     actionlint
-    unstable.ruby_3_3
+    # https://github.com/NixOS/nixpkgs/pull/218114
+    ruby_3_2
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues
