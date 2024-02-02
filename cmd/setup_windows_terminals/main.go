@@ -50,8 +50,8 @@ func main() {
 
 	copies := []fileutils.Copy{
 		{Src: filepath.Join(dotsPath, "config", "starship", "starship.toml"), Dst: filepath.Join(homePath, ".config", "starship.toml")},
-		{Src: filepath.Join(dotsPath, "config", "alacritty", "common.yml"), Dst: filepath.Join(homePath, ".config", "alacritty", "common.yml")},
-		{Src: filepath.Join(dotsPath, "config", "alacritty", "windows.yml"), Dst: filepath.Join(homePath, ".config", "alacritty", "alacritty.yml")},
+		{Src: filepath.Join(dotsPath, "config", "alacritty", "common.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "common.toml")},
+		{Src: filepath.Join(dotsPath, "config", "alacritty", "windows.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "alacritty.toml")},
 		{Src: filepath.Join(dotsPath, "config", "windows", "powershell", "Profile.ps1"), Dst: pwshProfilePath},
 	}
 

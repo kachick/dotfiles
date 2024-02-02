@@ -1,0 +1,8 @@
+import = ["/home/kachick/.config/alacritty/common.toml"]
+
+[shell]
+program = "foo"
+args = [
+  "-WorkingDirectory",
+  "~/",
+]
