@@ -42,7 +42,7 @@
 
       nix-channel --update
 
-      ${lib.getExe pkgs.rtx} plugins update
+      ${lib.getExe pkgs.mise} plugins update
     '';
   };
 

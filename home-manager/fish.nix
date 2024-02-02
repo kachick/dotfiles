@@ -7,7 +7,7 @@
   # programs.direnv.enableFishIntegration = true;
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
-  programs.rtx.enableFishIntegration = true;
+  programs.mise.enableFishIntegration = true;
   programs.zellij.enableFishIntegration = true;
 
   xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;

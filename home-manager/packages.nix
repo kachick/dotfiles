@@ -24,11 +24,11 @@
     gnused
     gawk
 
-    # asdf/rtx
+    # asdf/mise
     #
-    # Prefer rtx now
+    # Prefer mise now
     # asdf-vm
-    rtx
+    mise
     #
     # Required in many asdf plugins
     unzip

@@ -6,7 +6,7 @@
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
-  programs.rtx.enableZshIntegration = true;
+  programs.mise.enableZshIntegration = true;
   programs.zellij.enableZshIntegration = true;
 
   # https://nixos.wiki/wiki/Zsh
