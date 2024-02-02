@@ -152,8 +152,8 @@
     enable = true;
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/rtx.nix
-  programs.rtx.enable = true;
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
+  programs.mise.enable = true;
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
