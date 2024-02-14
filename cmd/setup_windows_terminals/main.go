@@ -41,7 +41,7 @@ func main() {
 	}
 	err = os.MkdirAll(path.Join(appdataPath, "alacritty"), 0750)
 	if err != nil {
-		log.Fatalf("Failed to create path that will have alacritty.yml: %+v", err)
+		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
 	}
 	err = os.MkdirAll(path.Dir(pwshProfilePath), 0750)
 	if err != nil {
