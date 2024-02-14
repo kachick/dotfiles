@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
-	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty"), 0750)
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), 0750)
 	if err != nil {
 		log.Fatalf("Failed to create dotfiles directory: %+v", err)
 	}
@@ -51,6 +51,8 @@ func main() {
 	copies := []fileutils.Copy{
 		{Src: filepath.Join(dotsPath, "config", "starship", "starship.toml"), Dst: filepath.Join(homePath, ".config", "starship.toml")},
 		{Src: filepath.Join(dotsPath, "config", "alacritty", "common.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "common.toml")},
+		// TODO: Copy all TOMLs under themes
+		{Src: filepath.Join(dotsPath, "config", "alacritty", "themes", "iceberg-dark.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "themes", "iceberg-dark.toml")},
 		{Src: filepath.Join(dotsPath, "config", "alacritty", "windows.toml"), Dst: filepath.Join(appdataPath, ".config", "alacritty", "alacritty.toml")},
 		{Src: filepath.Join(dotsPath, "config", "windows", "powershell", "Profile.ps1"), Dst: pwshProfilePath},
 	}
