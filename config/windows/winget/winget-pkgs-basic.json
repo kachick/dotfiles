@@ -38,6 +38,9 @@
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
+          "PackageIdentifier": "GnuPG.Gpg4win"
+        },
+        {
           "PackageIdentifier": "sharkdp.hexyl"
         },
         {
