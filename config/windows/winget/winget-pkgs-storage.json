@@ -5,6 +5,12 @@
     {
       "Packages": [
         {
+          "PackageIdentifier": "Rclone.Rclone"
+        },
+        {
+          "PackageIdentifier": "Cryptomator.Cryptomator"
+        },
+        {
           "PackageIdentifier": "Dropbox.Dropbox"
         },
         {
@@ -12,6 +18,9 @@
         },
         {
           "PackageIdentifier": "Google.GoogleDrive"
+        },
+        {
+          "PackageIdentifier": "FilenCloud.FilenSync"
         }
       ],
       "SourceDetails": {
