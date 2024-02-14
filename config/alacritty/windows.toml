@@ -1,4 +1,4 @@
-import = ["/home/kachick/.config/alacritty/common.toml"]
+import = ["~/.config/alacritty/common.toml"]
 
 [shell]
 program = "pwsh"
