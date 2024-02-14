@@ -23,9 +23,9 @@ Basically following codes will be done in PowerShell
    ```
 1. Install some tools
    ```powershell
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-basic.json"
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-dev.json"
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-storage.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-basic.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-dev.json"
+   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-storage.json"
    ```
 1. Remove needless pre-installed tools
    ```powershell
@@ -58,7 +58,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```powershell
-winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\config\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
