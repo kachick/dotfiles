@@ -14,9 +14,6 @@
           "PackageIdentifier": "Microsoft.EdgeWebView2Runtime"
         },
         {
-          "PackageIdentifier": "Twilio.Authy"
-        },
-        {
           "PackageIdentifier": "Kensington.KensingtonWorks"
         },
         {
