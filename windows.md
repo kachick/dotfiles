@@ -178,7 +178,3 @@ Cons for Microsoft IME
 ## How to completely disable Microsoft IME after installed Google Japanese Input?
 
 [#300](https://github.com/kachick/dotfiles/issues/300) is the steps.
-
-## How to copy and paste in alacritty?
-
-[Add shift for basic keybinds, not just the ctrl+c, ctrl+v](https://github.com/alacritty/alacritty/issues/2383)
