@@ -69,7 +69,7 @@
             name = "enable_nix_login_shells";
             src = self;
             buildInputs = with pkgs; [
-              go_1_21
+              go_1_22
             ];
             buildPhase = ''
               # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
