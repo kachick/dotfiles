@@ -6,7 +6,6 @@ Set-PSReadLineOption –HistoryNoDuplicates:$True
 Set-PSReadlineOption -AddToHistoryHandler {
     param ($command)
     switch -regex ($command) {
-        "winget install" {return $false}
         "^[a-z]$" {return $false}
         "exit" {return $false}
     }
