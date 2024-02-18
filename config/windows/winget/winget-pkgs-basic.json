@@ -41,6 +41,9 @@
           "PackageIdentifier": "GnuPG.Gpg4win"
         },
         {
+          "PackageIdentifier": "junegunn.fzf"
+        },
+        {
           "PackageIdentifier": "sharkdp.hexyl"
         },
         {
