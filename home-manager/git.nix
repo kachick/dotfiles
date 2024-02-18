@@ -19,6 +19,7 @@
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       duster = "remote update origin --prune";
       refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
+      r = "refresh"; # all is slow, refresh is long for type. So provide faster daily alias
       all = "!git refresh && gh poi";
       gui = "!lazygit";
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
