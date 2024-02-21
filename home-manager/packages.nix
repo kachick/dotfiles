@@ -49,7 +49,7 @@
     ripgrep # cli is `rg`
     bat # alt cat
     hexyl # hex viewer
-    duf # alt df
+    dysk # alt df
     fd # alt find
     du-dust # cli is `dust`, alt du
     procs
