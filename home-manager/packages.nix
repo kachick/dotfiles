@@ -23,6 +23,8 @@
     gnugrep
     gnused
     gawk
+    iputils # `ping` etc
+    netcat # `nc`
 
     mise # alt asdf
     unzip # Required in many asdf plugins
