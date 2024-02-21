@@ -65,6 +65,7 @@
     gitleaks
     deno
     actionlint
+    gitleaks
     ruby_3_3
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
