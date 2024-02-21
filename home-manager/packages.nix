@@ -11,7 +11,7 @@
     fish
     starship
     direnv
-    zoxide
+    zoxide # alt cd
     fzf
 
     # Used in anywhere
@@ -24,14 +24,8 @@
     gnused
     gawk
 
-    # asdf/mise
-    #
-    # Prefer mise now
-    # asdf-vm
-    mise
-    #
-    # Required in many asdf plugins
-    unzip
+    mise # alt asdf
+    unzip # Required in many asdf plugins
 
     git
     tig
@@ -48,18 +42,18 @@
     nil
 
     tree
-    eza
+    eza # alt ls
     curl
     wget
     jq
-    ripgrep
-    bat
-    hexyl
-    duf
-    fd
-    du-dust
+    ripgrep # cli is `rg`
+    bat # alt cat
+    hexyl # hex viewer
+    duf # alt df
+    fd # alt find
+    du-dust # cli is `dust`, alt du
     procs
-    bottom
+    bottom # cli is `btm`, alt top
     tig
     zellij
     alacritty
