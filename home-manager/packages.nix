@@ -11,7 +11,7 @@
     fish
     starship
     direnv
-    zoxide # alt cd
+    zoxide # Used in alias `z`, alt cd
     fzf
 
     # Used in anywhere
@@ -48,14 +48,14 @@
     curl
     wget
     jq
-    ripgrep # cli is `rg`
+    ripgrep # `rg`
     bat # alt cat
     hexyl # hex viewer
     dysk # alt df
     fd # alt find
-    du-dust # cli is `dust`, alt du
+    du-dust # `dust`, alt du
     procs
-    bottom # cli is `btm`, alt top
+    bottom # `btm`, alt top
     zellij
     alacritty
     typos
