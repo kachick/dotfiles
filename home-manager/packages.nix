@@ -54,7 +54,6 @@
     du-dust # cli is `dust`, alt du
     procs
     bottom # cli is `btm`, alt top
-    tig
     zellij
     alacritty
     typos
