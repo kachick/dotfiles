@@ -11,7 +11,7 @@
     fish
     starship
     direnv
-    zoxide
+    zoxide # Used in alias `z`, alt cd
     fzf
 
     # Used in anywhere
@@ -23,15 +23,10 @@
     gnugrep
     gnused
     gawk
+    netcat # `nc`
 
-    # asdf/mise
-    #
-    # Prefer mise now
-    # asdf-vm
-    mise
-    #
-    # Required in many asdf plugins
-    unzip
+    mise # alt asdf
+    unzip # Required in many asdf plugins
 
     git
     tig
@@ -48,19 +43,19 @@
     nil
 
     tree
-    eza
+    eza # alt ls
     curl
     wget
     jq
-    ripgrep
-    bat
-    hexyl
-    duf
-    fd
-    du-dust
+    ripgrep # `rg`
+    bat # alt cat
+    hexyl # hex viewer
+    dysk # alt df
+    fd # alt find
+    du-dust # `dust`, alt du
     procs
-    bottom
-    tig
+    bottom # `btm`, alt top
+    xh # alt HTTPie
     zellij
     alacritty
     typos
@@ -100,6 +95,8 @@
 
       # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
       openssh
+
+      iputils # `ping` etc
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [
