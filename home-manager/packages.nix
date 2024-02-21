@@ -23,7 +23,6 @@
     gnugrep
     gnused
     gawk
-    iputils # `ping` etc
     netcat # `nc`
 
     mise # alt asdf
@@ -96,6 +95,8 @@
 
       # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
       openssh
+
+      iputils # `ping` etc
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [
