@@ -56,6 +56,7 @@
     du-dust # `dust`, alt du
     procs
     bottom # `btm`, alt top
+    xh # alt HTTPie
     zellij
     alacritty
     typos
