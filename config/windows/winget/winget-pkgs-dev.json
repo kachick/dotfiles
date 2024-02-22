@@ -8,7 +8,10 @@
           "PackageIdentifier": "Canonical.Ubuntu.2204"
         },
         {
-          "PackageIdentifier": "Docker.DockerDesktop"
+          "PackageIdentifier": "RedHat.Podman"
+        },
+        {
+          "PackageIdentifier": "RedHat.Podman-Desktop"
         },
         {
           "PackageIdentifier": "Microsoft.WindowsTerminal"
