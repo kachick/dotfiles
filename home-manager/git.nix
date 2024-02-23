@@ -30,8 +30,6 @@
     # - I don't have confident for executable permissions are reqiored or not for them, removing it worked. :<
     hooks = {
       commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
-        #!/usr/bin/env bash
-
         set -euo pipefail
 
         ${lib.getBin pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
