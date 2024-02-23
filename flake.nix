@@ -54,8 +54,6 @@
                   home.username = "kachick";
 
                   programs.git = {
-                    enable = true;
-
                     userEmail = "kachick1@gmail.com";
                     userName = "Kenichi Kamiya";
 
