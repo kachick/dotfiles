@@ -34,7 +34,7 @@
 
         set -euo pipefail
 
-        ${lib.getExe pkgs.typos} --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+        ${lib.getBin pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
       '';
     };
 
