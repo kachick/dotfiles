@@ -8,19 +8,10 @@
           "PackageIdentifier": "7zip.7zip"
         },
         {
-          "PackageIdentifier": "Microsoft.Edge"
-        },
-        {
-          "PackageIdentifier": "Microsoft.EdgeWebView2Runtime"
-        },
-        {
           "PackageIdentifier": "Kensington.KensingtonWorks"
         },
         {
           "PackageIdentifier": "Google.JapaneseIME"
-        },
-        {
-          "PackageIdentifier": "Microsoft.VCRedist.2015+.x64"
         },
         {
           "PackageIdentifier": "Google.Chrome"
