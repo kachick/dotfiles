@@ -2,7 +2,7 @@
 
 # - Tiny tools by me, they may be rewritten with another language.
 {
-  xdg.dataFile."homemade/bin/bench_shells" = pkgs.writeShellScript "bench_shells.bash" ''
+  xdg.dataFile."homemade/bin/bench_shells".source = pkgs.writeShellScript "bench_shells.bash" ''
     set -euo pipefail
 
     # ~ my feeling ~
@@ -19,7 +19,7 @@
       '${lib.getExe pkgs.fish} --interactive --command exit'
   '';
 
-  xdg.dataFile."homemade/bin/updeps" = pkgs.writeShellScript "updeps.bash" ''
+  xdg.dataFile."homemade/bin/updeps".source = pkgs.writeShellScript "updeps.bash" ''
     set -euo pipefail
 
     case ''${OSTYPE} in
@@ -36,13 +36,13 @@
     ${lib.getExe pkgs.mise} plugins update
   '';
 
-  xdg.dataFile."homemade/bin/la" = pkgs.writeShellScript "la.bash" ''
+  xdg.dataFile."homemade/bin/la".source = pkgs.writeShellScript "la.bash" ''
     set -euo pipefail
 
     ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first "$@"
   '';
 
-  xdg.dataFile."homemade/bin/zj" = pkgs.writeShellScript "zj.bash" ''
+  xdg.dataFile."homemade/bin/zj".source = pkgs.writeShellScript "zj.bash" ''
     set -euo pipefail
 
     name="$(${lib.getBin pkgs.coreutils}/bin/basename "$PWD")"
