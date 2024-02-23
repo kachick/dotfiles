@@ -143,6 +143,13 @@
     irb-power_assert
   '';
 
+  # typos does not have feature global config, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
+  xdg.configFile."typos/_typos.toml".text = ''
+    [default.extend-words]
+    # https://github.com/crate-ci/typos/issues/415
+    ba = "ba"
+  '';
+
   programs.fzf = {
     enable = true;
   };
