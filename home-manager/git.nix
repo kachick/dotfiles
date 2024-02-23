@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, lib, config, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/git.nix
@@ -26,9 +26,16 @@
     };
 
     # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
-    # - Remember to add executable permission for hooks files
+    #   If I want it, https://github.com/timokau/dotfiles/blob/dfee6670a42896cfb5a94fdedf96c9ed2fa1c9d2/home/git.nix#L3-L11 may be a good example
+    # - I don't have confident for executable permissions are reqiored or not for them, removing it worked. :<
     hooks = {
-      commit-msg = ../config/git/hooks/commit-msg.bash;
+      commit-msg = pkgs.writeShellScriptBin "prevent_typo.bash" ''
+        #!/usr/bin/env bash
+
+        set -euo pipefail
+
+        ${lib.getExe pkgs.typos} --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+      '';
     };
 
     extraConfig = {
