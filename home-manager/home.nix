@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -14,7 +14,7 @@
     ./homemade.nix
   ];
 
-  home.username = lib.mkDefault "kachick";
+  # home.username = "<UPDATE_ME_IN_FLAKE>";
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
