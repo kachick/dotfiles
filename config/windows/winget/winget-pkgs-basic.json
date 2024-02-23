@@ -8,19 +8,10 @@
           "PackageIdentifier": "7zip.7zip"
         },
         {
-          "PackageIdentifier": "Microsoft.Edge"
-        },
-        {
-          "PackageIdentifier": "Microsoft.EdgeWebView2Runtime"
-        },
-        {
           "PackageIdentifier": "Kensington.KensingtonWorks"
         },
         {
           "PackageIdentifier": "Google.JapaneseIME"
-        },
-        {
-          "PackageIdentifier": "Microsoft.VCRedist.2015+.x64"
         },
         {
           "PackageIdentifier": "Google.Chrome"
@@ -51,6 +42,30 @@
         },
         {
           "PackageIdentifier": "Balena.Etcher"
+        },
+        {
+          "PackageIdentifier": "Canonical.Ubuntu.2204"
+        },
+        {
+          "PackageIdentifier": "RedHat.Podman"
+        },
+        {
+          "PackageIdentifier": "RedHat.Podman-Desktop"
+        },
+        {
+          "PackageIdentifier": "Microsoft.WindowsTerminal"
+        },
+        {
+          "PackageIdentifier": "Microsoft.PowerShell"
+        },
+        {
+          "PackageIdentifier": "Alacritty.Alacritty"
+        },
+        {
+          "PackageIdentifier": "Starship.Starship"
+        },
+        {
+          "PackageIdentifier": "Microsoft.VisualStudioCode"
         }
       ],
       "SourceDetails": {
