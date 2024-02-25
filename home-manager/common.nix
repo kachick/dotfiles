@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, ... }:
 
 {
   imports = [
@@ -14,7 +14,7 @@
     ./homemade.nix
   ];
 
-  home.username = lib.mkDefault "kachick";
+  # home.username = "<UPDATE_ME_IN_FLAKE>";
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
@@ -102,8 +102,8 @@
   #   - Prefer XDG_*
   #   - If can't write the reason as a comment
 
-  # Do not alias home.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
-  # So you should call `home-manager switch` with `-f ~/repos/dotfiles/home.nix`
+  # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
+  # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/unix.toml;
 

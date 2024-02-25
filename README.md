@@ -36,6 +36,19 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    makers apply
    ```
 
+### I'm a visitor to this repository. How can I try this dotfiles?
+
+This repository is for my personal use.\
+I don't care and make no guarantees for your trouble. But I'm using the following steps for another login.
+
+1. [flake.nix](flake.nix): Custom `user = home-manager.lib.homeManagerConfiguration {...};` section
+1. Replace one of above steps, home-manager section as below
+
+```diff
+-nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
++nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
+```
+
 ## Installation - Windows
 
 Read [the tips](config/windows/README.md)

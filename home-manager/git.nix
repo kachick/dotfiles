@@ -6,8 +6,8 @@
   programs.git = {
     enable = true;
 
-    userEmail = "kachick1@gmail.com";
-    userName = "Kenichi Kamiya";
+    # userEmail = "<UPDATE_ME_IN_FLAKE>";
+    # userName = "<UPDATE_ME_IN_FLAKE>";
 
     # `git config --get-regexp ^alias` will show current aliases
     aliases = {
@@ -42,7 +42,7 @@
         #   - https://stackoverflow.com/questions/48065535/should-i-keep-gitconfigs-signingkey-private
         #   - ANYONE can access the registered public key at https://github.com/kachick.gpg
         # - Append `!` suffix for subkeys
-        signingkey = "9BE4016A38165CCB!";
+        # signingkey = "<UPDATE_ME_IN_FLAKE>!";
       };
 
       gpg = {

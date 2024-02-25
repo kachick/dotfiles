@@ -47,7 +47,7 @@
     # - Ed448 in GitHub is not yet supported - https://github.com/orgs/community/discussions/45937
     settings = {
       # https://unix.stackexchange.com/questions/339077/set-default-key-in-gpg-for-signing
-      default-key = "9BE4016A38165CCB";
+      # default-key = "<UPDATE_ME_IN_FLAKE>";
 
       personal-digest-preferences = "SHA512";
     };
