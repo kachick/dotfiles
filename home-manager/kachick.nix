@@ -1,11 +1,11 @@
-{ ... }:
+{ lib, ... }:
 
 {
   imports = [
     ./common.nix
   ];
 
-  home.username = "kachick";
+  home.username = lib.mkDefault "kachick";
 
   programs.git = {
     userEmail = "kachick1@gmail.com";
