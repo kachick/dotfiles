@@ -11,7 +11,7 @@ import (
 
 // Called should be `sudo -E ...`, See https://stackoverflow.com/a/40438345/1212807
 
-// This script requires sudo execution, if it is a reasonable way, including in home.nix may be better
+// This script requires sudo execution, if it is a reasonable way, including in *.nix may be better
 
 func getShellPath(homePath string, shellName string) string {
 	return homePath + "/.nix-profile/bin/" + shellName
