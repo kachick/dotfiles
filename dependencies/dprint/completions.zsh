@@ -18,7 +18,9 @@ _dprint() {
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
@@ -37,40 +39,53 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
 ;;
 (fmt)
 _arguments "${_arguments_options[@]}" \
-'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
+'--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
+'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
+'--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
 '--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--diff[Outputs a check-like diff of every formatted file.]' \
+'--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--skip-stable-format[Whether to skip formatting a file multiple times until the output is stable]' \
-'--verbose[Prints additional diagnostic information.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This overrides what is specified in the config file.:' \
+'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
 && ret=0
 ;;
 (check)
 _arguments "${_arguments_options[@]}" \
-'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
+'--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
+'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
+'--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
-'--verbose[Prints additional diagnostic information.]' \
+'--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
+'--list-different[Only outputs file paths that aren'\''t formatted and doesn'\''t output diffs.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This overrides what is specified in the config file.:' \
+'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
 && ret=0
 ;;
 (config)
@@ -78,7 +93,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 ":: :_dprint__config_commands" \
@@ -96,7 +113,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -106,9 +125,11 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
 '-y[Upgrade process plugins without prompting to confirm checksums.]' \
 '--yes[Upgrade process plugins without prompting to confirm checksums.]' \
-'--verbose[Prints additional diagnostic information.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -118,7 +139,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '::url-or-plugin-name:' \
@@ -162,15 +185,19 @@ esac
 ;;
 (output-file-paths)
 _arguments "${_arguments_options[@]}" \
-'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
+'--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
+'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
+'--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
-'--verbose[Prints additional diagnostic information.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This overrides what is specified in the config file.:' \
+'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
 && ret=0
 ;;
 (output-resolved-config)
@@ -178,22 +205,29 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
 ;;
 (output-format-times)
 _arguments "${_arguments_options[@]}" \
-'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
+'--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
+'--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
+'--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
-'--verbose[Prints additional diagnostic information.]' \
+'--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This overrides what is specified in the config file.:' \
+'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
 && ret=0
 ;;
 (clear-cache)
@@ -201,7 +235,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -211,7 +247,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -221,7 +259,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 ':shell:(bash elvish fish powershell zsh)' \
@@ -232,7 +272,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -242,7 +284,9 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -253,7 +297,21 @@ _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
-'--verbose[Prints additional diagnostic information.]' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(lsp)
+_arguments "${_arguments_options[@]}" \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
@@ -346,6 +404,10 @@ _arguments "${_arguments_options[@]}" \
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
+(lsp)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" \
 && ret=0
@@ -375,6 +437,7 @@ _dprint_commands() {
 'license:Outputs the software license.' \
 'editor-info:' \
 'editor-service:' \
+'lsp:Starts up a language server for formatting files.' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'dprint commands' commands "$@"
@@ -504,6 +567,7 @@ _dprint__help_commands() {
 'license:Outputs the software license.' \
 'editor-info:' \
 'editor-service:' \
+'lsp:Starts up a language server for formatting files.' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'dprint help commands' commands "$@"
@@ -547,6 +611,16 @@ _dprint__help__license_commands() {
 _dprint__license_commands() {
     local commands; commands=()
     _describe -t commands 'dprint license commands' commands "$@"
+}
+(( $+functions[_dprint__help__lsp_commands] )) ||
+_dprint__help__lsp_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint help lsp commands' commands "$@"
+}
+(( $+functions[_dprint__lsp_commands] )) ||
+_dprint__lsp_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint lsp commands' commands "$@"
 }
 (( $+functions[_dprint__help__output-file-paths_commands] )) ||
 _dprint__help__output-file-paths_commands() {

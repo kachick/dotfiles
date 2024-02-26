@@ -49,16 +49,27 @@
             kachick = home-manager.lib.homeManagerConfiguration {
               inherit pkgs;
               modules = [
-                ./home-manager/home.nix
+                ./home-manager/kachick.nix
               ];
             };
 
             github-actions = home-manager.lib.homeManagerConfiguration {
               inherit pkgs;
               modules = [
-                ./home-manager/home.nix
+                # Prefer "kachick" over "common" only here.
+                # Using values as much as possible as actual values to create a robust CI
+                ./home-manager/kachick.nix
+                { home.username = "runner"; }
+              ];
+            };
+
+            user = home-manager.lib.homeManagerConfiguration {
+              inherit pkgs;
+              modules = [
+                ./home-manager/common.nix
                 {
-                  home.username = "runner";
+                  # "user" is default in podman-machine-default
+                  home.username = "user";
                 }
               ];
             };
