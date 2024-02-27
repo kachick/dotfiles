@@ -192,3 +192,10 @@ Cons for Microsoft IME
 ## How to completely disable Microsoft IME after installed Google Japanese Input?
 
 [#300](https://github.com/kachick/dotfiles/issues/300) is the steps.
+
+## Containers?
+
+I now prefer podman over docker and singularity.\
+It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
+Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
+This repository aliases podman command to mise installed binary.
