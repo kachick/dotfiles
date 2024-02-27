@@ -14,7 +14,7 @@
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
 
   # https://fishshell.com/docs/current/completions.html
-  # home-manage doesn't accept the special attrset
+  # home-manager doesn't accept the special attrset: https://github.com/nix-community/home-manager/blob/1d085ea4444d26aa52297758b333b449b2aa6fca/modules/programs/fish.nix
   # If added here, check the result of `bench_shells`: https://github.com/kachick/dotfiles/pull/423/files#r1503804605
   xdg.dataFile."fish/vendor_completions.d/podman.fish".source = ../dependencies/podman/completions.fish;
   xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
