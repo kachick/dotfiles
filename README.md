@@ -7,8 +7,13 @@
 Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
-## Installation - Linux, Darwin
+## Installation - Linux(Ubuntu), Darwin
 
+1. Install some dependencies without nix
+   ```bash
+   # "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
+   sudo apt-get install uidmap
+   ```
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
@@ -30,7 +35,6 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    nix run 'github:kachick/dotfiles#sudo_enable_nix_login_shells'
    ```
-1. If you have any problems with the installation steps, check both the [CI](.github/workflows/ci-home.yml) and the [wiki](https://github.com/kachick/dotfiles/wiki) and update them.
 1. If you are developing this repository, the simple reactivation is as follows.
    ```bash
    makers apply
@@ -52,3 +56,7 @@ I don't care and make no guarantees for your trouble. But I'm using the followin
 ## Installation - Windows
 
 Read [the tips](config/windows/README.md)
+
+## If you encounter errors
+
+Check both the [CI](.github/workflows/ci-home.yml) and the [wiki](https://github.com/kachick/dotfiles/wiki) and update them.

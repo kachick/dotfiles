@@ -6,19 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
-
-	"github.com/kachick/dotfiles/internal/fileutils"
 
 	"golang.org/x/sys/unix"
 )
-
-func freeze(path string) error {
-	// Using IoctlSetPointerInt changed as immutable, but it returns "operation not supported" error. I don't know the detail
-	_, err := exec.Command("chattr", "+i", path).Output()
-	return err
-}
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
 func mustActivateSystemDOnWSL() {
@@ -62,32 +53,6 @@ See https://learn.microsoft.com/ja-jp/windows/wsl/systemd for further detail
 	}
 }
 
-// https://github.com/docker/for-win/issues/8336#issuecomment-718369597
-func mustPersistDockerZshCompletions() {
-	const completionLoadablePath = "/usr/share/zsh/vendor-completions/_docker"
-	err := os.Remove(completionLoadablePath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			log.Println("info - zsh completions files for docker not found, docker-desktop may not be executed")
-		} else {
-			log.Panicf("%+v\n", err)
-		}
-	}
-	// Can't make immutable symlink, so copy and make immutable here
-	// https://unix.stackexchange.com/questions/586430/how-to-make-a-symlink-read-only-chattr-i-location-symlink
-	err = fileutils.Copy{Src: "dependencies/docker/zsh-vendor-completions.zsh", Dst: completionLoadablePath}.Run()
-	if err != nil {
-		log.Panicf("%+v\n", err)
-	}
-
-	err = freeze(completionLoadablePath)
-	if err != nil {
-		log.Panicf("%+v\n", err)
-	}
-
-	fmt.Printf("Done! docker comletions for zsh %s has been replaced to immutable file", completionLoadablePath)
-}
-
 // This script requires sudo execution
 func main() {
 	// wsl.exe returns non English even in called on the VM https://github.com/microsoft/WSL/issues/9242
@@ -107,5 +72,4 @@ func main() {
 	}
 
 	mustActivateSystemDOnWSL()
-	mustPersistDockerZshCompletions()
 }
