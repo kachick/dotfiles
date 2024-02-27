@@ -18,9 +18,7 @@ jobs:
     with:
       dry-run: ${{ github.event_name == 'pull_request' }}
       optional-run: |
-        nix develop --command bash -c 'dprint completions bash' > ./dependencies/dprint/completions.bash
-        nix develop --command bash -c 'dprint completions zsh' > ./dependencies/dprint/completions.zsh
-        nix develop --command bash -c 'dprint completions fish' > ./dependencies/dprint/completions.fish
+        nix run .#bump_completions
         git add ./dependencies
         # https://stackoverflow.com/q/34807971
         git update-index -q --really-refresh

@@ -142,6 +142,7 @@
       }
       precmd_functions+=(set_win_title)
 
+      source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
 
       # https://superuser.com/a/902508/120469
