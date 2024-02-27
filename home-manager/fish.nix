@@ -47,6 +47,7 @@
 
       set -g fish_greeting
 
+      source "${../dependencies/podman/completions.fish}"
       source "${../dependencies/dprint/completions.fish}"
     '';
 

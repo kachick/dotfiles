@@ -97,6 +97,18 @@
           sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells
         '';
 
+        packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
+          set -euo pipefail
+
+          ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
+          ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
+          ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+
+          ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
+          ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
+          ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
+        '';
+
         # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
         packages.json2nix = pkgs.writeScriptBin "json2nix" ''
           ${pkgs.python3}/bin/python ${pkgs.fetchurl {
@@ -115,6 +127,11 @@
           sudo_enable_nix_login_shells = {
             type = "app";
             program = "${packages.sudo_enable_nix_login_shells}/bin/sudo_enable_nix_login_shells";
+          };
+
+          bump_completions = {
+            type = "app";
+            program = "${packages.bump_completions}/bin/bump_completions";
           };
 
           # example: `nix run .#json2nix gitconfig.json`
