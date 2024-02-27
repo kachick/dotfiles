@@ -13,6 +13,12 @@
   xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
 
+  # https://fishshell.com/docs/current/completions.html
+  # home-manage doesn't accept the special attrset
+  # If added here, check the result of `bench_shells`: https://github.com/kachick/dotfiles/pull/423/files#r1503804605
+  xdg.dataFile."fish/vendor_completions.d/podman.fish".source = ../dependencies/podman/completions.fish;
+  xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
+
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/fish.nix
   programs.fish = {
     enable = true;
@@ -46,9 +52,6 @@
       functions --erase la
 
       set -g fish_greeting
-
-      source "${../dependencies/podman/completions.fish}"
-      source "${../dependencies/dprint/completions.fish}"
     '';
 
     # `alias` will show current aliases
