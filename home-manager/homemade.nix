@@ -63,6 +63,7 @@
   xdg.dataFile."homemade/bin/p".source = pkgs.writeShellScript "p.bash" ''
     set -euo pipefail
 
+    # Needless to trim the default command, nix-shell only runs last command if given multiple.
     nix-shell --command "$SHELL" --packages "$@"
   '';
 }
