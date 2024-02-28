@@ -1,6 +1,7 @@
 { pkgs, lib, ... }:
 
 # - Tiny tools by me, they may be rewritten with another language.
+# - Aliases across multiple shells
 {
   xdg.dataFile."homemade/bin/bench_shells".source = pkgs.writeShellScript "bench_shells.bash" ''
     set -euo pipefail
@@ -57,5 +58,11 @@
     name="$(${lib.getBin pkgs.coreutils}/bin/basename "$PWD")"
 
     ${lib.getBin pkgs.zellij}/bin/zellij attach "$name" || ${lib.getBin pkgs.zellij}/bin/zellij --session "$name"
+  '';
+
+  xdg.dataFile."homemade/bin/p".source = pkgs.writeShellScript "p.bash" ''
+    set -euo pipefail
+
+    nix-shell --command "$SHELL" --packages "$@"
   '';
 }
