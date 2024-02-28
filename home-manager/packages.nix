@@ -16,6 +16,7 @@
 
     # Used in anywhere
     coreutils
+    less # container base image doesn't have less even for ubuntu official
 
     # Use same tools even in macOS
     findutils
