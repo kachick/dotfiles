@@ -7,14 +7,14 @@ ENV USER=user
 
 WORKDIR /home/user
 
-COPY ./ /home/user/dotfiles/
+COPY ./ /tmp/dotfiles/
 
 RUN mkdir -p ~/.local/state/nix/profiles \
-  && nix-shell --packages git --command 'git config --global --add safe.directory /home/user/dotfiles' \
-  && nix run '/home/user/dotfiles#home-manager' -- switch -b backup --flake '/home/user/dotfiles/#user' \
-  && nix run '/home/user/dotfiles#sudo_enable_nix_login_shells' -- --dry_run=false \
+  && nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles' \
+  && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
+  && nix run '/tmp/dotfiles#sudo_enable_nix_login_shells' -- --dry_run=false \
   && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
-  && rm -rf /home/user/dotfiles \
+  && sudo rm -rf /tmp/dotfiles \
   && nix store gc
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
