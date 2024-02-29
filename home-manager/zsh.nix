@@ -7,7 +7,8 @@
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
   programs.mise.enableZshIntegration = true;
-  programs.zellij.enableZshIntegration = true;
+  # Avoid nested zellij in host and remote login as container
+  programs.zellij.enableZshIntegration = false;
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html

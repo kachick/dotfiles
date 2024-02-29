@@ -62,3 +62,5 @@ jobs:
         run: |
           zsh -c 'la'
           zsh -c "p cowsay hello --command 'cowsay \$(hello)'"
+      - name: Make Nix provided shells can be a login shell
+        run: nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false

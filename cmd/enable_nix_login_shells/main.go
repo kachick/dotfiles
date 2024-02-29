@@ -3,6 +3,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -18,12 +19,19 @@ func getShellPath(homePath string, shellName string) string {
 }
 
 func main() {
+	dryRunFlag := flag.Bool("dry_run", true, "no side effect if true")
+	flag.Parse()
+
+	if *dryRunFlag {
+		log.Println("Running in dry run mode. Will not make actual changes even if DONE is shown. Specify --dry_run flag to change it")
+	}
+
 	homePath, ok := os.LookupEnv("HOME")
 	if !ok {
 		log.Fatalln("$HOME is not found")
 	}
 	if homePath == "/root" {
-		log.Fatalln("used by root looks weird. You should run `sudo -E ...` instead of `sudo ...`")
+		log.Fatalln("used by root looks wrong. You should run `sudo -E ...` instead of `sudo ...`")
 	}
 
 	const primaryShell = "zsh"
@@ -47,14 +55,14 @@ func main() {
 		}
 	}
 
-	if dirty != etcShells {
+	if (dirty != etcShells) && !*dryRunFlag {
 		err = os.WriteFile("/etc/shells", []byte(dirty), os.ModePerm)
 		if err != nil {
 			log.Fatalf("failed - could you correctly run this with sudo? - %v\n", err)
 		}
 	}
 
-	fmt.Printf(`Done! Set one of your favorite shell as follows
+	log.Printf(`Done! Set one of your favorite shell as follows
 
 chsh -s %s "$(whoami)"
 `, getShellPath(homePath, primaryShell))

@@ -22,6 +22,7 @@ func main() {
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
 		{Path: "gitleaks", Args: []string{"detect"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
+		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 	}
 
 	cmds.ParallelRun()

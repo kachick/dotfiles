@@ -95,14 +95,6 @@ args = [
   '.#kachick',
 ]
 
-[tasks.enable_login_shells]
-dependencies = ['build']
-command = 'sudo'
-args = [
-  '-E',
-  'dist/enable_nix_login_shells',
-]
-
 [tasks.ci-dev]
 dependencies = [
   'default',
