@@ -37,6 +37,7 @@
               typos
               go_1_22
               goreleaser
+              trivy
 
               # To get sha256 around pkgs.fetchFromGitHub in CLI
               nix-prefetch-git
