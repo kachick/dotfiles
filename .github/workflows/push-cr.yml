@@ -15,7 +15,7 @@ on:
 
 jobs:
   ghcr:
-    runs-on: ubuntu-20.04 # redhat recommends 20.04, they dind't update to 22.04 era yet
+    runs-on: ubuntu-20.04 # Redhat recommends 20.04, they do not update to 22.04 yet
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
