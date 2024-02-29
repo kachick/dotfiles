@@ -8,7 +8,8 @@
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
   programs.mise.enableFishIntegration = true;
-  programs.zellij.enableFishIntegration = true;
+  # Avoid nested zellij in host and remote login as container
+  programs.zellij.enableFishIntegration = false;
 
   xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;
   xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
