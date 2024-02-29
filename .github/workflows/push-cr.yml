@@ -4,8 +4,13 @@ on:
     branches: [main]
     paths:
       - '**Containerfile'
-      - '.containerignore'
-      - '.github/workflows/push-cr.yml'
+      # Do not enable these triggers, use workflow_dispatch if needed to run
+      # - '.containerignore'
+      # - '.github/workflows/push-cr.yml'
+  schedule:
+    # Every 13:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 4 * * *'
   workflow_dispatch:
 
 jobs:
