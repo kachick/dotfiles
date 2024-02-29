@@ -7,9 +7,14 @@ ENV USER=user
 
 RUN mkdir -p ~/.local/state/nix/profiles
 
-RUN nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
+COPY ./ /dotfiles/
+WORKDIR /dotfiles
 
-# TODO: Fix `Exec format error`
-# RUN nix run 'github:kachick/dotfiles#enable_nix_login_shells' -- --dry_run=false
+RUN nix-shell --packages git --command 'git config --global --add safe.directory /dotfiles'
+
+RUN nix run '.#home-manager' -- switch -b backup --flake '.#user'
+RUN nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false
+WORKDIR /home/user
+RUN rm -rf /dotfiles
 
 CMD [ "/bin/bash" ]
