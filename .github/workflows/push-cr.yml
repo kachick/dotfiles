@@ -11,9 +11,19 @@ on:
 jobs:
   ghcr:
     runs-on: ubuntu-20.04 # redhat recommends 20.04, they dind't update to 22.04 era yet
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Wait other jobs
+        uses: kachick/wait-other-jobs@v2
+        timeout-minutes: 30
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "release.yml"
+              }
+            ]
       - name: Build Image
         id: build-image
         uses: redhat-actions/buildah-build@v2

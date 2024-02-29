@@ -35,6 +35,13 @@ jobs:
         uses: kachick/wait-other-jobs@v2
         if: startsWith(github.ref, 'refs/tags/')
         timeout-minutes: 30
+        with:
+          skip-list: |
+            [
+              {
+                "workflowFile": "push-cr.yml"
+              }
+            ]
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         if: startsWith(github.ref, 'refs/tags/')
