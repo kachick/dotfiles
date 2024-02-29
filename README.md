@@ -3,6 +3,7 @@
 [![Home Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml?query=branch%3Amain+)
 [![Nix Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml?query=branch%3Amain+)
 [![CI - Go Status](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
+[![Push CR Status](https://github.com/kachick/dotfiles/actions/workflows/push-cr.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/push-cr.yml?query=branch%3Amain+)
 
 Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
@@ -53,7 +54,11 @@ I don't care and make no guarantees for your trouble. But I'm using the followin
 +nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
 ```
 
-I have plan to upload container image for myself. You can check the definition in [Containerfile](Containerfile).
+You can test the [container](Containerfile) with your podman/docker/nerdctl as follows.
+
+```bash
+podman run -it ghcr.io/kachick/home:latest
+```
 
 ## Installation - Windows
 

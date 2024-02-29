@@ -1,0 +1,36 @@
+name: Push image
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**Containerfile'
+      - '.containerignore'
+      - '.github/workflows/push-cr.yml'
+  workflow_dispatch:
+
+jobs:
+  ghcr:
+    runs-on: ubuntu-20.04 # redhat recommends 20.04, they dind't update to 22.04 era yet
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: home
+          tags: latest ${{ github.sha }}
+          containerfiles: |
+            Containerfile
+          oci: true
+      - name: Push To ghcr.io
+        id: push-to-ghcr
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-image.outputs.image }}
+          tags: ${{ steps.build-image.outputs.tags }}
+          registry: ghcr.io/${{ github.repository_owner }}
+          username: kachick
+          password: ${{ github.token }}
+      - name: Log outputs
+        run: echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"

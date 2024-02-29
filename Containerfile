@@ -1,4 +1,9 @@
-FROM kachick/sandbox-ubuntu-nix:sudoer-e6a4f3d
+# https://github.com/kachick/containers
+FROM ghcr.io/kachick/ubuntu-nix-sudoer:6a2983f2568ac3394fd175b696504fa5aafb82b6
+
+LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
+LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
+LABEL org.opencontainers.image.licenses=MIT
 
 USER user
 # Docker/Podman doesn't set $USER in USER instruction, and it makes failure in home-manager activation
