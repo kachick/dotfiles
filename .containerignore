@@ -1,0 +1,3 @@
+# To avoid changing containerfile or no logic changes needs to recache
+Containerfile
+*.md

@@ -14,7 +14,8 @@ RUN nix-shell --packages git --command 'git config --global --add safe.directory
 
 RUN nix run '.#home-manager' -- switch -b backup --flake '.#user'
 RUN nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false
+RUN sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
 WORKDIR /home/user
-RUN rm -rf /dotfiles
+RUN sudo rm -rf /dotfiles
 
-CMD [ "/bin/bash" ]
+CMD [ "/home/user/.nix-profile/bin/zsh" ]
