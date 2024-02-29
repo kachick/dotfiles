@@ -2,4 +2,8 @@
 Containerfile
 *.md
 .git
+.dist
+.direnv
+.vscode
+.github
 .containerignore
