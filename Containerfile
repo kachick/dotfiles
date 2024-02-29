@@ -9,8 +9,6 @@ WORKDIR /home/user
 
 COPY ./ /tmp/dotfiles/
 
-# Keep cleaning tmp files after nix store gc
-# to avoid "removing stale link from..."
 RUN mkdir -p ~/.local/state/nix/profiles \
   && nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles' \
   && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
