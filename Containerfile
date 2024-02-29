@@ -12,9 +12,10 @@ RUN mkdir -p ~/.local/state/nix/profiles \
   && nix-shell --packages git --command 'git config --global --add safe.directory /dotfiles' \
   && nix run '.#home-manager' -- switch -b backup --flake '.#user' \
   && nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false \
-  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
+  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
+  && nix store gc
 
 WORKDIR /home/user
-RUN sudo rm -rf /dotfiles && nix store gc
+RUN sudo rm -rf /dotfiles
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
