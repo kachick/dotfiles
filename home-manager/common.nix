@@ -138,11 +138,6 @@
     + "/examples/.irbrc"
   ;
 
-  # https://github.com/rbenv/rbenv-default-gems/issues/17
-  home.file.".default-gems".text = ''
-    irb-power_assert
-  '';
-
   # typos does not have feature global config, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".text = ''
     [default.extend-words]
