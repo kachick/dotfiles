@@ -17,6 +17,4 @@ RUN mkdir -p ~/.local/state/nix/profiles \
   && nix store gc \
   && sudo rm -rf /tmp/dotfiles
 
-# Add comment
-
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
