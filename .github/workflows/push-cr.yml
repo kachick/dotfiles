@@ -1,12 +1,9 @@
 name: Push image
 on:
+  # Do not enable default branch and path in push triggers, use workflow_dispatch for heavy run
   push:
-    branches: [main]
-    paths:
-      - '**Containerfile'
-      # Do not enable these triggers, use workflow_dispatch if needed to run
-      # - '.containerignore'
-      # - '.github/workflows/push-cr.yml'
+    tags:
+      - 'v*'
   schedule:
     # Every 13:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
@@ -21,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v2
-        timeout-minutes: 30
+        timeout-minutes: 10
         with:
           skip-list: |
             [
