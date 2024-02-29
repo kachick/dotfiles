@@ -5,17 +5,16 @@ USER user
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 
-RUN mkdir -p ~/.local/state/nix/profiles
-
-COPY ./ /dotfiles/
-WORKDIR /dotfiles
-
-RUN nix-shell --packages git --command 'git config --global --add safe.directory /dotfiles'
-
-RUN nix run '.#home-manager' -- switch -b backup --flake '.#user'
-RUN nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false
-RUN sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
 WORKDIR /home/user
-RUN sudo rm -rf /dotfiles
+
+COPY ./ /tmp/dotfiles/
+
+RUN mkdir -p ~/.local/state/nix/profiles \
+  && nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles' \
+  && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
+  && nix run '/tmp/dotfiles#sudo_enable_nix_login_shells' -- --dry_run=false \
+  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
+  && nix store gc \
+  && sudo rm -rf /tmp/dotfiles
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
