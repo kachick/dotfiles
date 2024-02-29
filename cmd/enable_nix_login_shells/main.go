@@ -31,7 +31,7 @@ func main() {
 		log.Fatalln("$HOME is not found")
 	}
 	if homePath == "/root" {
-		log.Fatalln("used by root looks weird. You should run `sudo -E ...` instead of `sudo ...`")
+		log.Fatalln("used by root looks wrong. You should run `sudo -E ...` instead of `sudo ...`")
 	}
 
 	const primaryShell = "zsh"

@@ -10,6 +10,6 @@ RUN mkdir -p ~/.local/state/nix/profiles
 RUN nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
 
 # TODO: Fix `Exec format error`
-# RUN nix run 'github:kachick/dotfiles#sudo_enable_nix_login_shells'
+# RUN nix run 'github:kachick/dotfiles#enable_nix_login_shells' -- --dry_run=false
 
 CMD [ "/bin/bash" ]

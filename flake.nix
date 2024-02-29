@@ -93,8 +93,11 @@
             '';
           };
 
-        packages.sudo_enable_nix_login_shells = pkgs.writeScriptBin "sudo_enable_nix_login_shells" ''
-          sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells
+        packages.sudo_enable_nix_login_shells = pkgs.writeShellScriptBin "sudo_enable_nix_login_shells" ''
+          set -euo pipefail
+
+          # Don't use nixpkgs provided sudo here to avoid "sudo must be owned by uid 0 and have the setuid bit set"
+          sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells "$@"
         '';
 
         packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''

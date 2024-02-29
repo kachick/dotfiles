@@ -33,7 +33,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```
 1. Make shells installed by nix into a login shell
    ```bash
-   nix run 'github:kachick/dotfiles#sudo_enable_nix_login_shells'
+   nix run 'github:kachick/dotfiles#sudo_enable_nix_login_shells' -- --dry_run=false
    ```
 1. If you are developing this repository, the simple reactivation is as follows.
    ```bash
