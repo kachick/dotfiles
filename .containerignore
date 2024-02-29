@@ -2,7 +2,7 @@
 Containerfile
 *.md
 .git
-.dist
+dist
 .direnv
 .vscode
 .github
