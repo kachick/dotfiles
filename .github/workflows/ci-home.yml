@@ -65,4 +65,5 @@ jobs:
       - name: Make Nix provided shells can be a login shell
         run: nix run '.#sudo_enable_nix_login_shells' -- --dry_run=false
       - name: Set login shells by Nix provided zsh
-        run: chsh -s "/${HOME}/.nix-profile/bin/zsh" "$(whoami)"
+        # https://github.com/ohmyzsh/ohmyzsh/issues/1224#issuecomment-31623113
+        run: sudo chsh "$USER" -s "/${HOME}/.nix-profile/bin/zsh" "$(whoami)"
