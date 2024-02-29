@@ -53,6 +53,8 @@ I don't care and make no guarantees for your trouble. But I'm using the followin
 +nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
 ```
 
+I have plan to upload container image for myself. You can check the definition in [Containerfile](Containerfile).
+
 ## Installation - Windows
 
 Read [the tips](config/windows/README.md)
