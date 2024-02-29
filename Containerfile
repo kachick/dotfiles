@@ -1,7 +1,7 @@
 FROM kachick/sandbox-ubuntu-nix:sudoer-e6a4f3d
 
 USER user
-# Docker doesn't set $USER in USER instruction, and it makes failure in home-manager activation
+# Docker/Podman doesn't set $USER in USER instruction, and it makes failure in home-manager activation
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 
