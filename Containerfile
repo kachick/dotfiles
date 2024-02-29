@@ -5,6 +5,7 @@ USER user
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 
+# Keep this for after login, even we don't need in build. Removing this step does not affect the image size.
 WORKDIR /home/user
 
 COPY ./ /tmp/dotfiles/
