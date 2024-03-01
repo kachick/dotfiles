@@ -81,18 +81,10 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 - https://www.realforce.co.jp/support/download/
 - https://www.kioxia.com/ja-jp/personal/software/ssd-utility.html
 
-## Better history experience in PowerShell
+## History substring search in major shells for Windows
 
-PowerShell does not have option for history substring search\
-So fzf will be a better option
-
-```powershell
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-Install-Module -Name PSFzf -RequiredVersion 2.5.22
-Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' -PSReadlineChordReverseHistory 'Ctrl+r'
-```
-
-Another idea is using nushell, but [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
+- PowerShell: #291, Written in [Profile.ps1](powershell/Profile.ps1) and commented out because it makes starting up much slow!
+- nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
 
 ## Why avoiding winget to install Firefox Developer Edition?
 
