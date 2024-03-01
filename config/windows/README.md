@@ -45,9 +45,19 @@ winget does not support it, run as follows
 wsl.exe --install
 ```
 
-## How to exclude PowerShell_profile? Why needed?
+## PowerShell startup is too slow
 
-Reason: Avoid to slow executions of PowerShell, ngen.exe cannot compile latest pwsh
+```
+Loading personal and system profiles took 897ms.
+```
+
+Look at #430
+
+1. Make sure `pwsh -NoProfile` is fast
+1. Restart the pwsh, if it is fast, cache maybe generated. The slow may happen when updated windows and/or the runtimes. (I guess)
+1. Do NOT consider about `ngen.exe` solution as Googling say. It looks old for me.
+
+Reason: ngen.exe cannot compile latest pwsh
 
 - Official: https://github.com/PowerShell/PowerShell/issues/14374#issuecomment-1416688062
 - Better: https://superuser.com/a/1411591/120469
