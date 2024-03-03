@@ -61,6 +61,11 @@
         quotepath = false;
       };
 
+      # Affect in rebase -i
+      sequence = {
+        editor = "code --wait --disable-extensions";
+      };
+
       init = {
         defaultBranch = "main";
       };
