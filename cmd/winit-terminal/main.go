@@ -99,7 +99,7 @@ func main() {
 		newProvisioner([]string{"alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
-		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, ".config", "alacritty", "alacritty.toml"}),
+		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
 		newProvisioner([]string{"windows", "powershell", "Profile.ps1"}, []string{pwshProfilePath}),
 	}
 
