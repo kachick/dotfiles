@@ -34,7 +34,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```
 1. Make shells installed by nix into a login shell
    ```bash
-   sudo "$(where nix)" run 'github:kachick/dotfiles#uinit' -- --user="$(whoami)" --dry_run=false
+   sudo "$(which nix)" run 'github:kachick/dotfiles#uinit' -- --user="$(whoami)" --dry_run=false
    ```
 1. If you are developing this repository, the simple reactivation is as follows.
    ```bash

@@ -63,4 +63,4 @@ jobs:
           zsh -c 'la'
           zsh -c "p cowsay hello --command 'cowsay \$(hello)'"
       - name: Make Nix provided shells can be a login shell
-        run: sudo "$(where nix)" run '.#uinit' -- --user="$(whoami)" --dry_run=false
+        run: sudo "$(which nix)" run '.#uinit' -- --user="$(whoami)" --dry_run=false
