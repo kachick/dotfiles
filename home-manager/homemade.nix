@@ -53,7 +53,7 @@
   '';
 
   xdg.dataFile."homemade/bin/zj".source = pkgs.writeShellScript "zj.bash" ''
-    set -euxo pipefail
+    set -euo pipefail
 
     name="$(${lib.getBin pkgs.coreutils}/bin/basename "$PWD")"
 
@@ -68,12 +68,10 @@
   '';
 
   xdg.dataFile."homemade/bin/git-delete-merged-branches".source = pkgs.writeShellScript "git-delete-merged-branches.bash" ''
-    set -euxo pipefail
+    set -euo pipefail
 
-    # https://unix.stackexchange.com/questions/172481/how-to-quote-arguments-with-xargs
-
-    ${lib.getBin pkgs.git}/bin/git branch --merged |
-    ${lib.getBin pkgs.gnugrep}/bin/grep --invert-match --perl-regexp '((^\*)|^ *(main|master|develop|development|trunk)$)' |
-    ${lib.getBin pkgs.findutils}/bin/xargs --replace={} ${lib.getBin pkgs.git}/bin/git branch --delete {}
+    ${lib.getBin pkgs.git}/bin/git branch --sort=refname --list main master trunk develop development |
+    ${lib.getBin pkgs.coreutils}/bin/comm --check-order -13 - <(${lib.getBin pkgs.git}/bin/git branch --sort=refname --merged) |
+    ${lib.getBin pkgs.findutils}/bin/xargs --no-run-if-empty --max-lines=1 ${lib.getBin pkgs.git}/bin/git branch --delete
   '';
 }
