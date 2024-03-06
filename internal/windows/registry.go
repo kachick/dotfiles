@@ -8,6 +8,22 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
+// HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem
+func EnableLongPath() {
+	key, err := registry.OpenKey(registry.LOCAL_MACHINE, `SYSTEM\CurrentControlSet\Control\FileSystem`, registry.SET_VALUE)
+	if err != nil {
+		log.Fatalf("Failed to open registry key: %+v", err)
+	}
+	defer key.Close()
+
+	err = key.SetDWordValue("LongPathsEnabled", 1)
+	if err != nil {
+		log.Fatalf("Failed to update registry: %+v", err)
+	}
+
+	log.Println("Completed to enable long path")
+}
+
 // # https://github.com/kachick/times_kachick/issues/214
 func DisableBeeps() {
 	key, err := registry.OpenKey(registry.CURRENT_USER, `Control Panel\Sound`, registry.SET_VALUE)

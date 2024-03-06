@@ -18,7 +18,6 @@ Windows initialization to modify default settings
 
 $ winit-rebel list
 $ winit-rebel run --action disable_beeps
-$ winit-rebel run --action regain_verbose_context_menu
 $ winit-rebel run --all
 `
 }
@@ -28,6 +27,7 @@ func printActions() {
 
 - disable_beeps
 - regain_verbose_context_menu
+- enable_long_path
 `)
 }
 
@@ -53,6 +53,7 @@ func main() {
 				log.Fatalln("Specify either --all or one --action, not both together")
 			}
 
+			windows.EnableLongPath()
 			windows.DisableBeeps()
 			windows.RegainVerboseContextMenu()
 
@@ -60,6 +61,10 @@ func main() {
 		}
 
 		switch *actionFlag {
+		case "enable_long_path":
+			{
+				windows.EnableLongPath()
+			}
 		case "disable_beeps":
 			{
 				windows.DisableBeeps()
