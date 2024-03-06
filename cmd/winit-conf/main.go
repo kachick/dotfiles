@@ -116,7 +116,7 @@ func main() {
 	}
 
 	for _, p := range provisioners(pwshProfilePath) {
-		log.Printf("%s => %s,\n", p.EmbedPath(), p.DstPath())
+		log.Printf("%s => %s\n", p.EmbedPath(), p.DstPath())
 		err := p.Copy()
 		if err != nil {
 			log.Fatalf("Failed to copy file: %+v %+v", p, err)
