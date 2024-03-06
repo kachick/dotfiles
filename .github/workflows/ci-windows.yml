@@ -33,7 +33,7 @@ jobs:
         run: |
           go run ./cmd/winit-beep
           go run ./cmd/winit-menu
-      # - name: Setup basic tools
-      #   run: |
-      #     go run ./cmd/winit-terminal
-      #     go run ./cmd/winit-wsl
+      # Do not write depending winget and WSL2 logcs for now
+      # https://github.com/microsoft/winget-cli/issues/3872
+      # https://github.com/actions/runner-images/issues/910
+      # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
