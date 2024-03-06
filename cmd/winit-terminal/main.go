@@ -1,16 +1,57 @@
-//go:build windows
-
 package main
 
 import (
+	"embed"
 	"flag"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 
-	"github.com/kachick/dotfiles/internal/fileutils"
+	"github.com/kachick/dotfiles/config"
 )
+
+const configFilePermission = 0600
+
+type provisioner struct {
+	FS  embed.FS
+	Src []string
+	Dst []string
+}
+
+func newProvisioner(src []string, dst []string) provisioner {
+	return provisioner{
+		FS:  config.WindowsAssets,
+		Src: src,
+		Dst: dst,
+	}
+}
+
+func (p provisioner) SrcPath() string {
+	return filepath.Join(p.Src...)
+}
+
+func (p provisioner) DstPath() string {
+	return filepath.Join(p.Dst...)
+}
+
+func (p provisioner) Copy() error {
+	body, err := p.FS.ReadFile(p.SrcPath())
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(p.DstPath(), body, configFilePermission)
+	if err != nil {
+		return err
+	}
+	// Make sure the permission even for umask problem
+	err = os.Chmod(p.DstPath(), configFilePermission)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func main() {
 	dotsPathFlag := flag.String("dotfiles_path", "", "Specify dotfiles repository path in your local")
@@ -48,19 +89,20 @@ func main() {
 		log.Fatalf("Failed to create path that will have PowerShell profiles: %+v", err)
 	}
 
-	copies := []fileutils.Copy{
-		{Src: filepath.Join(dotsPath, "config", "starship", "starship.toml"), Dst: filepath.Join(homePath, ".config", "starship.toml")},
-		{Src: filepath.Join(dotsPath, "config", "alacritty", "common.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "common.toml")},
+	provisioners := []provisioner{
+		newProvisioner([]string{"starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
+		newProvisioner([]string{"alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		// TODO: Copy all TOMLs under themes
-		{Src: filepath.Join(dotsPath, "config", "alacritty", "themes", "iceberg-dark.toml"), Dst: filepath.Join(homePath, ".config", "alacritty", "themes", "iceberg-dark.toml")},
-		{Src: filepath.Join(dotsPath, "config", "alacritty", "windows.toml"), Dst: filepath.Join(appdataPath, ".config", "alacritty", "alacritty.toml")},
-		{Src: filepath.Join(dotsPath, "config", "windows", "powershell", "Profile.ps1"), Dst: pwshProfilePath},
+		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
+		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, ".config", "alacritty", "alacritty.toml"}),
+		newProvisioner([]string{"windows", "powershell", "Profile.ps1"}, []string{pwshProfilePath}),
 	}
 
-	for _, copy := range copies {
-		err := copy.Run()
+	for _, p := range provisioners {
+		log.Printf("%s => %s,\n", p.SrcPath(), p.DstPath())
+		err := p.Copy()
 		if err != nil {
-			log.Fatalf("Failed to copy file: %+v %+v", copy, err)
+			log.Fatalf("Failed to copy file: %+v %+v", p, err)
 		}
 	}
 
