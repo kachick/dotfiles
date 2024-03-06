@@ -50,7 +50,7 @@ func main() {
 				log.Fatalln("Specify either --all or one --action, not both together")
 			}
 
-			windows.DisableBeep()
+			windows.DisableBeeps()
 			windows.RegainVerboseContextMenu()
 
 			return
@@ -59,7 +59,7 @@ func main() {
 		switch *actionFlag {
 		case "disable_beeps":
 			{
-				windows.DisableBeep()
+				windows.DisableBeeps()
 			}
 		case "regain_verbose_context_menu":
 			{

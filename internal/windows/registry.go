@@ -9,7 +9,7 @@ import (
 )
 
 // # https://github.com/kachick/times_kachick/issues/214
-func DisableBeep() {
+func DisableBeeps() {
 	key, err := registry.OpenKey(registry.CURRENT_USER, `Control Panel\Sound`, registry.SET_VALUE)
 	if err != nil {
 		log.Fatalf("Failed to open registry key: %+v", err)
