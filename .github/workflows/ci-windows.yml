@@ -47,8 +47,8 @@ jobs:
       # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Rebel against unacceptable default
         run: |
-          .\dist\winit-rebel.exe list
-          .\dist\winit-rebel.exe run --all
+          .\dist\winit-reg.exe list
+          .\dist\winit-reg.exe run --all
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |

@@ -8,8 +8,8 @@ Basically following codes will be done in PowerShell
 1. New session of pwsh
    ```powershell
    ./winit-conf.exe -pwsh_profile_path "$PROFILE"
-   ./winit-rebel.exe list
-   ./winit-rebel.exe run --all
+   ./winit-reg.exe list
+   ./winit-reg.exe run --all
    ```
 1. Install some tools
    ```powershell

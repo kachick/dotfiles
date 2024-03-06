@@ -12,13 +12,13 @@ import (
 )
 
 func usage() string {
-	return `Usage: winit-rebel [SUB] [OPTIONS]
+	return `Usage: winit-reg [SUB] [OPTIONS]
 
 Windows initialization to modify default settings
 
-$ winit-rebel list
-$ winit-rebel run --action disable_beeps
-$ winit-rebel run --all
+$ winit-reg list
+$ winit-reg run --action disable_beeps
+$ winit-reg run --all
 `
 }
 
