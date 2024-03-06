@@ -34,7 +34,7 @@ dependencies = [
   'build',
   'test',
   'lint',
-  'test-go-race',
+  'build-go-race-as-the-race-test',
 ]
 
 [tasks.deps]
@@ -56,7 +56,7 @@ args = [
   './...',
 ]
 
-[tasks.test-go-race]
+[tasks.build-go-race-as-the-race-test]
 dependencies = ['prepare-build']
 command = 'go'
 args = [
@@ -68,7 +68,17 @@ args = [
   './...',
 ]
 
+[tasks.test-go]
+command = 'go'
+args = [
+  'test',
+  './...',
+]
+
 [tasks.test]
+dependencies = [
+  'test-go',
+]
 command = 'nix'
 args = [
   'run',
@@ -103,6 +113,7 @@ dependencies = [
   'build',
   # 'test', # Needs home-manager, so needless in Nix-CI
   'lint',
-  'test-go-race',
+  'test-go',
+  'build-go-race-as-the-race-test',
   'fmt',
 ]

@@ -29,11 +29,30 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
-      - name: Rebel against unacceptable default
+      - name: Make sure there are what files before build
+        run: Get-ChildItem
+      - name: Build winit-* # Avoiding run to measure which step taking minutes
         run: |
-          go run ./cmd/winit-rebel list
-          go run ./cmd/winit-rebel run --all
+          # go build does not automatically create the directory
+          New-Item -Force -ItemType "Directory" -Path dist
+          # Need -o to keep product in multiple packages
+          go build -o dist -v .\...
+      - name: Make sure there are what files after build
+        run: |
+          Get-ChildItem
+          Get-ChildItem .\dist
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
       # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
+      - name: Rebel against unacceptable default
+        run: |
+          .\dist\winit-reg.exe list
+          .\dist\winit-reg.exe run --all
+      # This logics can be finished even if tools are not installed
+      - name: Put config files around terminals
+        run: |
+          .\dist\winit-conf.exe -pwsh_profile_path "$PROFILE"
+      - name: Make sure correctly copied
+        run: |
+          Get-Content "$PROFILE"

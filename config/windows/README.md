@@ -4,29 +4,24 @@
 
 Basically following codes will be done in PowerShell
 
-1. Install WSL2
-   ```powershell
-   wsl.exe --install --distribution "Ubuntu-22.04"
-   ```
-1. On WSL2, download this repository. HTTPS may work even if ssh is not yet configured
-   ```bash
-   mkdir -p ~/repos
-   cd ~/repos
-   git clone https://github.com/kachick/dotfiles.git
-   ```
 1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/release.yml) summary
 1. New session of pwsh
    ```powershell
-   ./winit-terminal.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
-   ./winit-rebel.exe list
-   ./winit-rebel.exe run --all
+   ./winit-conf.exe -pwsh_profile_path "$PROFILE"
+   ./winit-reg.exe list
+   ./winit-reg.exe run --all
    ```
 1. Install some tools
    ```powershell
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-basic.json"
+   # Basically this may be same output of above `winit-conf.exe` log
+   # Pick-up the winget-*.json outputs
+   $env:TMP
+   # => C:\Users\YOU\AppData\Local\Temp
+
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM1\winget-pkgs-basic.json"
    # Optional
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-storage.json"
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-entertainment.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM2\winget-pkgs-storage.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
 1. Remove needless pre-installed tools
    ```powershell
@@ -37,19 +32,37 @@ Basically following codes will be done in PowerShell
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
 
+## How to print windows ENV?
+
+AFAIK, %ENVNAME% can be replaced in PowerShell as follows
+
+```console
+~ psh
+> $env:APPDATA
+C:\Users\YOU\AppData\Roaming
+
+~ psh
+> $env:TMP
+C:\Users\YOU\AppData\Local\Temp
+```
+
+[And golang source code is much helpful](https://github.com/golang/go/blob/f0d1195e13e06acdf8999188decc63306f9903f5/src/os/file.go#L500-L509)
+
 ## How to install WSL2?
 
 winget does not support it, run as follows
 
 ```powershell
-wsl.exe --install
+wsl.exe --install --distribution "Ubuntu-22.04"
 ```
 
 ## PowerShell startup is too slow
 
-```
+```plaintext
 Loading personal and system profiles took 897ms.
 ```
+
+TODO: Integrate https://github.com/kachick/PSFzfHistory here
 
 Look at #430
 
@@ -82,6 +95,8 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 - https://www.kioxia.com/ja-jp/personal/software/ssd-utility.html
 
 ## History substring search in major shells for Windows
+
+TODO: Integrate https://github.com/kachick/PSFzfHistory here
 
 - PowerShell: #291, Written in [Profile.ps1](powershell/Profile.ps1) and commented out because it makes starting up much slow!
 - nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)

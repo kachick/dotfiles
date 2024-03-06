@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"golang.org/x/sys/unix"
@@ -13,7 +14,7 @@ import (
 
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
 func mustActivateSystemDOnWSL() {
-	const path = "/etc/wsl.conf"
+	path := filepath.Join("etc", "wsl.conf")
 
 	const systemdEnablingEntry = `[boot]
 systemd=true`

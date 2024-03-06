@@ -8,20 +8,20 @@ before:
     - go generate ./...
 # https://github.com/orgs/goreleaser/discussions/1531
 builds:
-  - id: winit-rebel
-    binary: winit-rebel
+  - id: winit-reg
+    binary: winit-reg
     env:
       - CGO_ENABLED=0
-    main: ./cmd/winit-rebel
+    main: ./cmd/winit-reg
     goos:
       - windows
     goarch:
       - amd64
-  - id: winit-terminal
-    binary: winit-terminal
+  - id: winit-conf
+    binary: winit-conf
     env:
       - CGO_ENABLED=0
-    main: ./cmd/winit-terminal
+    main: ./cmd/winit-conf
     goos:
       - windows
     goarch:
