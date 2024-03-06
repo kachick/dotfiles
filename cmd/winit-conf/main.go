@@ -82,7 +82,7 @@ func main() {
 	}
 
 	// Do NOT delete this tmpdir after finished, the winget files will be manually used
-	tmpdirPath, err := os.MkdirTemp("winit", "tmp")
+	tmpdirPath, err := os.MkdirTemp("", "winit")
 	if err != nil {
 		log.Fatalln("Cannot create temp dir")
 	}

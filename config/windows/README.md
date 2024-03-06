@@ -18,10 +18,10 @@ Basically following codes will be done in PowerShell
    $env:TMP
    # => C:\Users\YOU\AppData\Local\Temp
 
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM1\winget-pkgs-basic.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM1\winget-pkgs-basic.json"
    # Optional
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM2\winget-pkgs-storage.json"
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM3\winget-pkgs-entertainment.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM2\winget-pkgs-storage.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
 1. Remove needless pre-installed tools
    ```powershell
