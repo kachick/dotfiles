@@ -18,7 +18,7 @@ COPY ./ /tmp/dotfiles/
 RUN mkdir -p ~/.local/state/nix/profiles \
   && nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles' \
   && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
-  && nix run '/tmp/dotfiles#sudo_enable_nix_login_shells' -- --dry_run=false \
+  && nix run '/tmp/dotfiles#sudo_uinit' -- --dry_run=false \
   && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
   && nix store gc \
   && sudo rm -rf /tmp/dotfiles

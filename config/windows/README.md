@@ -17,9 +17,9 @@ Basically following codes will be done in PowerShell
 1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/release.yml) summary
 1. New session of pwsh
    ```powershell
-   ./setup_windows_terminals.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
-   ./disable_windows_beeps.exe
-   ./enable_windows_verbose_context_menu.exe
+   ./winit-terminal.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
+   ./winit-beep.exe
+   ./winit-menu.exe
    ```
 1. Install some tools
    ```powershell
