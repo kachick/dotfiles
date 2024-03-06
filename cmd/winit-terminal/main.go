@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"flag"
 	"log"
 	"os"
 	"path"
@@ -54,25 +53,19 @@ func (p provisioner) Copy() error {
 }
 
 func main() {
-	dotsPathFlag := flag.String("dotfiles_path", "", "Specify dotfiles repository path in your local")
-	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
-	flag.Parse()
-	dotsPath := filepath.Clean(*dotsPathFlag)
-	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
-
-	if dotsPath == "" || pwshProfilePath == "" || len(os.Args) < 2 {
-		flag.Usage()
-		log.Fatalf("called with wrong arguments")
-	}
-
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Failed to get home directory: %+v", err)
 	}
 
+	pwshProfilePath, ok := os.LookupEnv("PROFILE")
+	if !ok {
+		log.Fatalln("ENV $PROFILE is not found")
+	}
+
 	appdataPath, ok := os.LookupEnv("APPDATA")
 	if !ok {
-		log.Fatalln("ENV APPDATA is not found")
+		log.Fatalln("ENV $APPDATA is not found")
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
