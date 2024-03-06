@@ -8,20 +8,11 @@ before:
     - go generate ./...
 # https://github.com/orgs/goreleaser/discussions/1531
 builds:
-  - id: winit-beep
-    binary: winit-beep
+  - id: winit-rebel
+    binary: winit-rebel
     env:
       - CGO_ENABLED=0
-    main: ./cmd/winit-beep
-    goos:
-      - windows
-    goarch:
-      - amd64
-  - id: winit-menu
-    binary: winit-menu
-    env:
-      - CGO_ENABLED=0
-    main: ./cmd/winit-menu
+    main: ./cmd/winit-rebel
     goos:
       - windows
     goarch:
