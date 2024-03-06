@@ -27,7 +27,6 @@ jobs:
         os:
           - ubuntu-latest
           - macos-14 # M1 - https://github.blog/changelog/2024-01-30-github-actions-introducing-the-new-m1-macos-runner-available-to-open-source/
-          - macos-13 # Intel(Maybe)
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
