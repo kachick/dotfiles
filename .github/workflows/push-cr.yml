@@ -12,7 +12,7 @@ on:
 
 jobs:
   ghcr:
-    runs-on: ubuntu-20.04 # Redhat recommends 20.04, they do not update to 22.04 yet
+    runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +28,7 @@ jobs:
             ]
       - name: Build Image
         id: build-image
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v2.13
         with:
           image: home
           tags: latest ${{ github.sha }}
@@ -37,7 +37,7 @@ jobs:
           oci: true
       - name: Push To ghcr.io
         id: push-to-ghcr
-        uses: redhat-actions/push-to-registry@v2
+        uses: redhat-actions/push-to-registry@v2.7.1
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
