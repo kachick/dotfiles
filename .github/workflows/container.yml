@@ -1,9 +1,14 @@
-name: Push image
+name: Container
 on:
   # Do not enable default branch and path in push triggers, use workflow_dispatch for heavy run
   push:
     tags:
       - 'v*'
+  pull_request:
+    paths:
+      - '.github/workflows/container.yml'
+      - 'Containerfile'
+      - 'flake.nix'
   schedule:
     # Every 13:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
@@ -11,7 +16,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ghcr:
+  build_and_push:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
@@ -37,6 +42,7 @@ jobs:
           oci: true
       - name: Push To ghcr.io
         id: push-to-ghcr
+        if: ${{ github.event_name != 'pull_request' }}
         uses: redhat-actions/push-to-registry@v2.7.1
         with:
           image: ${{ steps.build-image.outputs.image }}
@@ -44,5 +50,5 @@ jobs:
           registry: ghcr.io/${{ github.repository_owner }}
           username: kachick
           password: ${{ github.token }}
-      - name: Log outputs
+      - name: Log pushed outputs
         run: echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"

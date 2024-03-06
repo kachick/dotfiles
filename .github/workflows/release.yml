@@ -39,7 +39,7 @@ jobs:
           skip-list: |
             [
               {
-                "workflowFile": "push-cr.yml"
+                "workflowFile": "container.yml"
               }
             ]
       - name: Run GoReleaser
