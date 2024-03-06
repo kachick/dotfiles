@@ -17,11 +17,11 @@ builds:
       - windows
     goarch:
       - amd64
-  - id: winit-terminal
-    binary: winit-terminal
+  - id: winit-conf
+    binary: winit-conf
     env:
       - CGO_ENABLED=0
-    main: ./cmd/winit-terminal
+    main: ./cmd/winit-conf
     goos:
       - windows
     goarch:

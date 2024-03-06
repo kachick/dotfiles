@@ -81,6 +81,12 @@ func main() {
 		log.Fatalln("UserConfigDir(basically APPDATA) is not found")
 	}
 
+	// Do NOT delete this tmpdir after finished, the winget files will be manually used
+	tmpdirPath, err := os.MkdirTemp("winit", "tmp")
+	if err != nil {
+		log.Fatalln("Cannot create temp dir")
+	}
+
 	// As I understand it, unix like permission masks will work even in windows...
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), 0750)
 	if err != nil {
@@ -102,6 +108,9 @@ func main() {
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
 		newProvisioner([]string{"windows", "powershell", "Profile.ps1"}, []string{pwshProfilePath}),
+		newProvisioner([]string{"winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
+		newProvisioner([]string{"winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
+		newProvisioner([]string{"winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
 	}
 
 	for _, p := range provisioners {

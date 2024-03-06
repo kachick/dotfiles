@@ -4,29 +4,24 @@
 
 Basically following codes will be done in PowerShell
 
-1. Install WSL2
-   ```powershell
-   wsl.exe --install --distribution "Ubuntu-22.04"
-   ```
-1. On WSL2, download this repository. HTTPS may work even if ssh is not yet configured
-   ```bash
-   mkdir -p ~/repos
-   cd ~/repos
-   git clone https://github.com/kachick/dotfiles.git
-   ```
 1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/release.yml) summary
 1. New session of pwsh
    ```powershell
-   ./winit-terminal.exe -pwsh_profile_path "$PROFILE"
+   ./winit-conf.exe -pwsh_profile_path "$PROFILE"
    ./winit-rebel.exe list
    ./winit-rebel.exe run --all
    ```
 1. Install some tools
    ```powershell
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-basic.json"
+   # Basically this may be same output of above `winit-conf.exe` log
+   # Pick-up the winget-*.json outputs
+   $env:TMP
+   # => C:\Users\YOU\AppData\Local\Temp
+
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM1\winget-pkgs-basic.json"
    # Optional
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-storage.json"
-   winget import --import-file "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-entertainment.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM2\winget-pkgs-storage.json"
+   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winit\tmpRANDOM3\winget-pkgs-entertainment.json"
    ```
 1. Remove needless pre-installed tools
    ```powershell
@@ -58,12 +53,12 @@ C:\Users\YOU\AppData\Local\Temp
 winget does not support it, run as follows
 
 ```powershell
-wsl.exe --install
+wsl.exe --install --distribution "Ubuntu-22.04"
 ```
 
 ## PowerShell startup is too slow
 
-```
+```plaintext
 Loading personal and system profiles took 897ms.
 ```
 
