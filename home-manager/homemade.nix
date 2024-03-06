@@ -66,4 +66,14 @@
     # Needless to trim the default command, nix-shell only runs last command if given multiple.
     nix-shell --command "$SHELL" --packages "$@"
   '';
+
+  xdg.dataFile."homemade/bin/git-delete-merged-branches".source = pkgs.writeShellScript "git-delete-merged-branches.bash" ''
+    set -euo pipefail
+
+    # https://unix.stackexchange.com/questions/172481/how-to-quote-arguments-with-xargs
+
+    ${lib.getBin pkgs.git}/bin/git branch --merged |
+    ${lib.getBin pkgs.gnugrep}/bin/grep --invert-match --perl-regexp '((^\*)|^ *(main|master|develop|development|trunk)$)' |
+    ${lib.getBin pkgs.findutils}/bin/xargs --replace={} ${lib.getBin pkgs.git}/bin/git branch --delete {}
+  '';
 }

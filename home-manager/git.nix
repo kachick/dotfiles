@@ -19,8 +19,8 @@
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       duster = "remote update origin --prune";
       refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
-      r = "refresh"; # all is slow, refresh is long for type. So provide faster daily alias
-      all = "!git refresh && gh poi";
+      r = "refresh"; # refresh is long for typing
+      all = "!git refresh && git-delete-merged-branches";
       gui = "!lazygit";
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
@@ -96,11 +96,6 @@
         "https://gist.github.com"
       ];
     };
-
-    # poi is not yet registered to nixpkgs
-    # extensions = [
-    #   pkgs.gh-poi
-    # ];
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/lazygit.nix
