@@ -76,9 +76,9 @@
             };
           };
 
-        packages.enable_nix_login_shells = pkgs.stdenv.mkDerivation
+        packages.uinit = pkgs.stdenv.mkDerivation
           {
-            name = "enable_nix_login_shells";
+            name = "uinit";
             src = self;
             buildInputs = with pkgs; [
               go_1_22
@@ -86,19 +86,19 @@
             buildPhase = ''
               # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
               export HOME=$(pwd)
-              go build -o dist/enable_nix_login_shells ./cmd/enable_nix_login_shells
+              go build -o dist/uinit ./cmd/uinit
             '';
             installPhase = ''
               mkdir -p $out/bin
-              install -t $out/bin dist/enable_nix_login_shells
+              install -t $out/bin dist/uinit
             '';
           };
 
-        packages.sudo_enable_nix_login_shells = pkgs.writeShellScriptBin "sudo_enable_nix_login_shells" ''
+        packages.sudo_uinit = pkgs.writeShellScriptBin "sudo_uinit" ''
           set -euo pipefail
 
           # Don't use nixpkgs provided sudo here to avoid "sudo must be owned by uid 0 and have the setuid bit set"
-          sudo -E ${packages.enable_nix_login_shells}/bin/enable_nix_login_shells "$@"
+          sudo -E ${packages.uinit}/bin/uinit "$@"
         '';
 
         packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
@@ -128,9 +128,9 @@
             drv = home-manager.defaultPackage.${system};
           };
 
-          sudo_enable_nix_login_shells = {
+          sudo_uinit = {
             type = "app";
-            program = "${packages.sudo_enable_nix_login_shells}/bin/sudo_enable_nix_login_shells";
+            program = "${packages.sudo_uinit}/bin/sudo_uinit";
           };
 
           bump_completions = {
