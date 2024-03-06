@@ -18,17 +18,22 @@ Windows initialization to modify default settings
 
 $ winit-rebel list
 $ winit-rebel run --action disable_beeps
-$ winit-rebel run --action regain_verbose_context_menu
 $ winit-rebel run --all
 `
 }
 
-func printActions() {
-	fmt.Println(`Supported actions:
+var funcByAction = map[string]func(){
+	"enable_long_path":            windows.EnableLongPath,
+	"regain_verbose_context_menu": windows.RegainVerboseContextMenu,
+	"disable_beeps":               windows.DisableBeeps,
+}
 
-- disable_beeps
-- regain_verbose_context_menu
-`)
+func printActions() {
+	fmt.Println(`Supported actions:`)
+
+	for action, _ := range funcByAction {
+		fmt.Printf("  - %s\n", action)
+	}
 }
 
 // # https://github.com/kachick/times_kachick/issues/214
@@ -53,26 +58,20 @@ func main() {
 				log.Fatalln("Specify either --all or one --action, not both together")
 			}
 
-			windows.DisableBeeps()
-			windows.RegainVerboseContextMenu()
+			for action, f := range funcByAction {
+				log.Println(action)
+				f()
+			}
 
 			return
 		}
 
-		switch *actionFlag {
-		case "disable_beeps":
-			{
-				windows.DisableBeeps()
-			}
-		case "regain_verbose_context_menu":
-			{
-				windows.RegainVerboseContextMenu()
-			}
-		default:
+		f, known := funcByAction[*actionFlag]
+		if !known {
 			printActions()
-
 			os.Exit(1)
 		}
+		f()
 	default:
 		flag.Usage()
 
