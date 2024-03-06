@@ -4,7 +4,7 @@
 # - Aliases across multiple shells
 {
   xdg.dataFile."homemade/bin/bench_shells".source = pkgs.writeShellScript "bench_shells.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     # ~ my feeling ~
     # 50ms : blazing fast!
@@ -21,7 +21,7 @@
   '';
 
   xdg.dataFile."homemade/bin/updeps".source = pkgs.writeShellScript "updeps.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     case ''${OSTYPE} in
     linux*)
@@ -47,13 +47,13 @@
   #   nixpkgs provide 4.9.3 is not including podman-remote.
   #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
   xdg.dataFile."homemade/bin/podman".source = pkgs.writeShellScript "podman.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     ${lib.getBin pkgs.mise}/bin/mise exec podman@latest -- podman "$@"
   '';
 
   xdg.dataFile."homemade/bin/zj".source = pkgs.writeShellScript "zj.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     name="$(${lib.getBin pkgs.coreutils}/bin/basename "$PWD")"
 
@@ -61,14 +61,14 @@
   '';
 
   xdg.dataFile."homemade/bin/p".source = pkgs.writeShellScript "p.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     # Needless to trim the default command, nix-shell only runs last command if given multiple.
     nix-shell --command "$SHELL" --packages "$@"
   '';
 
   xdg.dataFile."homemade/bin/git-delete-merged-branches".source = pkgs.writeShellScript "git-delete-merged-branches.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     # https://unix.stackexchange.com/questions/172481/how-to-quote-arguments-with-xargs
 
