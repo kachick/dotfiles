@@ -22,13 +22,20 @@ $ winit-rebel run --all
 `
 }
 
+var funcByAction = map[string]func(){
+	"enable_long_path":            windows.EnableLongPath,
+	"regain_verbose_context_menu": windows.RegainVerboseContextMenu,
+	"disable_beeps":               windows.DisableBeeps,
+}
+
 func printActions() {
 	fmt.Println(`Supported actions:
 
-- disable_beeps
-- regain_verbose_context_menu
-- enable_long_path
 `)
+
+	for action, _ := range funcByAction {
+		fmt.Printf("- %s\n", action)
+	}
 }
 
 // # https://github.com/kachick/times_kachick/issues/214
@@ -53,31 +60,20 @@ func main() {
 				log.Fatalln("Specify either --all or one --action, not both together")
 			}
 
-			windows.EnableLongPath()
-			windows.DisableBeeps()
-			windows.RegainVerboseContextMenu()
+			for action, f := range funcByAction {
+				log.Println(action)
+				f()
+			}
 
 			return
 		}
 
-		switch *actionFlag {
-		case "enable_long_path":
-			{
-				windows.EnableLongPath()
-			}
-		case "disable_beeps":
-			{
-				windows.DisableBeeps()
-			}
-		case "regain_verbose_context_menu":
-			{
-				windows.RegainVerboseContextMenu()
-			}
-		default:
+		f, known := funcByAction[*actionFlag]
+		if !known {
 			printActions()
-
 			os.Exit(1)
 		}
+		f()
 	default:
 		flag.Usage()
 
