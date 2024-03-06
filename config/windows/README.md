@@ -37,6 +37,22 @@ Basically following codes will be done in PowerShell
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
 
+## How to print windows ENV?
+
+AFAIK, %ENVNAME% can be replaced in PowerShell as follows
+
+```console
+~ psh
+> $env:APPDATA
+C:\Users\YOU\AppData\Roaming
+
+~ psh
+> $env:TMP
+C:\Users\YOU\AppData\Local\Temp
+```
+
+[And golang source code is much helpful](https://github.com/golang/go/blob/f0d1195e13e06acdf8999188decc63306f9903f5/src/os/file.go#L500-L509)
+
 ## How to install WSL2?
 
 winget does not support it, run as follows
