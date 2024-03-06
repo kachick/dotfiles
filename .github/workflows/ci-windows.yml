@@ -31,14 +31,16 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: Build winit # Avoiding run to measure which step taking minutes
         run: go build -v ./...
+      - name: Make sure there are what files after build
+        run: Get-ChildItem
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
       # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Rebel against unacceptable default
         run: |
-          winit-rebel.exe list
-          winit-rebel.exe run --all
+          .\winit-rebel.exe list
+          .\winit-rebel.exe run --all
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
-        run: winit-terminal.exe
+        run: .\winit-terminal.exe
