@@ -66,4 +66,17 @@
     # Needless to trim the default command, nix-shell only runs last command if given multiple.
     nix-shell --command "$SHELL" --packages "$@"
   '';
+
+  xdg.dataFile."homemade/bin/git-delete-merged-branches".source = pkgs.writeShellScript "git-delete-merged-branches.bash" ''
+    set -euo pipefail
+
+    # Care these traps if you change this code
+    #   - Prefer git built-in features to filter as possible, handling correct regex is often hard for human
+    #   - grep returns false if empty, it does not fit for pipefail use. --no-run-if-empty as xargs does not exists in the grep options
+    #   - Always specify --sort to ensure it can be used in comm command. AFAIK, refname is most fit key here.
+
+    ${lib.getBin pkgs.git}/bin/git branch --sort=refname --list main master trunk develop development |
+    ${lib.getBin pkgs.coreutils}/bin/comm --check-order -13 - <(${lib.getBin pkgs.git}/bin/git branch --sort=refname --merged) |
+    ${lib.getBin pkgs.findutils}/bin/xargs --no-run-if-empty --max-lines=1 ${lib.getBin pkgs.git}/bin/git branch --delete
+  '';
 }
