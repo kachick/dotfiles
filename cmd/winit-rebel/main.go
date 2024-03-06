@@ -29,12 +29,10 @@ var funcByAction = map[string]func(){
 }
 
 func printActions() {
-	fmt.Println(`Supported actions:
-
-`)
+	fmt.Println(`Supported actions:`)
 
 	for action, _ := range funcByAction {
-		fmt.Printf("- %s\n", action)
+		fmt.Printf("  - %s\n", action)
 	}
 }
 
