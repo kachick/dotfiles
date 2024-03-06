@@ -75,9 +75,10 @@ func main() {
 		log.Fatalf("Failed to get home directory: %+v", err)
 	}
 
-	appdataPath, ok := os.LookupEnv("APPDATA")
-	if !ok {
-		log.Fatalln("ENV APPDATA is not found")
+	// https://github.com/golang/go/blob/f0d1195e13e06acdf8999188decc63306f9903f5/src/os/file.go#L500-L509
+	appdataPath, err := os.UserConfigDir()
+	if err != nil {
+		log.Fatalln("UserConfigDir(basically APPDATA) is not found")
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
