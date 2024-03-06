@@ -14,29 +14,34 @@ import (
 const configFilePermission = 0600
 
 type provisioner struct {
-	FS  embed.FS
-	Src []string
-	Dst []string
+	FS        embed.FS
+	EmbedTree []string
+	DstTree   []string
 }
 
-func newProvisioner(src []string, dst []string) provisioner {
+func newProvisioner(embedTree []string, dstTree []string) provisioner {
 	return provisioner{
-		FS:  config.WindowsAssets,
-		Src: src,
-		Dst: dst,
+		FS:        config.WindowsAssets,
+		EmbedTree: embedTree,
+		DstTree:   dstTree,
 	}
 }
 
-func (p provisioner) SrcPath() string {
-	return filepath.Join(p.Src...)
+func (p provisioner) EmbedPath() string {
+	// Should use "path", not "filepath" for embed
+	// https://github.com/golang/go/issues/44305#issuecomment-780111748
+	// https://github.com/golang/go/blob/f048829d706df6c1ca4d6fd22de9bd2609d3ed7c/src/io/fs/fs.go#L49
+	return path.Join(p.EmbedTree...)
 }
 
 func (p provisioner) DstPath() string {
-	return filepath.Join(p.Dst...)
+	// Should use "filepath" as other place
+	// https://mattn.kaoriya.net/software/lang/go/20171024130616.htm
+	return filepath.Join(p.DstTree...)
 }
 
 func (p provisioner) Copy() error {
-	body, err := p.FS.ReadFile(p.SrcPath())
+	body, err := p.FS.ReadFile(p.EmbedPath())
 	if err != nil {
 		return err
 	}
@@ -80,11 +85,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create dotfiles directory: %+v", err)
 	}
-	err = os.MkdirAll(path.Join(appdataPath, "alacritty"), 0750)
+	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), 0750)
 	if err != nil {
 		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
 	}
-	err = os.MkdirAll(path.Dir(pwshProfilePath), 0750)
+	err = os.MkdirAll(filepath.Dir(pwshProfilePath), 0750)
 	if err != nil {
 		log.Fatalf("Failed to create path that will have PowerShell profiles: %+v", err)
 	}
@@ -99,7 +104,7 @@ func main() {
 	}
 
 	for _, p := range provisioners {
-		log.Printf("%s => %s,\n", p.SrcPath(), p.DstPath())
+		log.Printf("%s => %s,\n", p.EmbedPath(), p.DstPath())
 		err := p.Copy()
 		if err != nil {
 			log.Fatalf("Failed to copy file: %+v %+v", p, err)
