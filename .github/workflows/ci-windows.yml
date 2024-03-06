@@ -51,4 +51,8 @@ jobs:
           .\dist\winit-rebel.exe run --all
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
-        run: .\dist\winit-terminal.exe
+        run: |
+          .\dist\winit-terminal.exe -pwsh_profile_path "$PROFILE"
+      - name: Make sure correctly copied
+        run: |
+          Get-Content "$PROFILE"

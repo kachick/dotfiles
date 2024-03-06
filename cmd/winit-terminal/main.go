@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"log"
 	"os"
 	"path"
@@ -53,19 +54,25 @@ func (p provisioner) Copy() error {
 }
 
 func main() {
+	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
+	flag.Parse()
+	// $PROFILE is an "Automatic Variables", not ENV
+	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
+
+	if pwshProfilePath == "" {
+		flag.Usage()
+		log.Fatalf("called with wrong arguments")
+	}
+
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Failed to get home directory: %+v", err)
 	}
 
-	pwshProfilePath, ok := os.LookupEnv("PROFILE")
-	if !ok {
-		log.Fatalln("ENV $PROFILE is not found")
-	}
-
 	appdataPath, ok := os.LookupEnv("APPDATA")
 	if !ok {
-		log.Fatalln("ENV $APPDATA is not found")
+		log.Fatalln("ENV APPDATA is not found")
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
