@@ -36,7 +36,7 @@ jobs:
           # go build does not automatically create the directory
           New-Item -Force -ItemType "Directory" -Path dist
           # Need -o to keep product in multiple packages
-          go build -o dist -v .\..
+          go build -o dist -v .\...
       - name: Make sure there are what files after build
         run: |
           Get-ChildItem
