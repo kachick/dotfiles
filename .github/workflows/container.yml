@@ -21,6 +21,15 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Build Image
+        id: build-image
+        uses: redhat-actions/buildah-build@v2.13
+        with:
+          image: home
+          tags: latest ${{ github.sha }}
+          containerfiles: |
+            Containerfile
+          oci: true
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v2
         timeout-minutes: 10
@@ -31,15 +40,6 @@ jobs:
                 "workflowFile": "release.yml"
               }
             ]
-      - name: Build Image
-        id: build-image
-        uses: redhat-actions/buildah-build@v2.13
-        with:
-          image: home
-          tags: latest ${{ github.sha }}
-          containerfiles: |
-            Containerfile
-          oci: true
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.event_name != 'pull_request' }}

@@ -94,13 +94,6 @@
             '';
           };
 
-        packages.sudo_uinit = pkgs.writeShellScriptBin "sudo_uinit" ''
-          set -euo pipefail
-
-          # Don't use nixpkgs provided sudo here to avoid "sudo must be owned by uid 0 and have the setuid bit set"
-          sudo -E ${packages.uinit}/bin/uinit "$@"
-        '';
-
         packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
           set -euo pipefail
 
@@ -126,11 +119,6 @@
           # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
           home-manager = flake-utils.lib.mkApp {
             drv = home-manager.defaultPackage.${system};
-          };
-
-          sudo_uinit = {
-            type = "app";
-            program = "${packages.sudo_uinit}/bin/sudo_uinit";
           };
 
           bump_completions = {
