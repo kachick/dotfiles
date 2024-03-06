@@ -4,6 +4,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -23,9 +24,11 @@ $ winit-rebel run --all
 }
 
 func printActions() {
-	log.Println("supported actions:")
-	log.Println("disable_beeps")
-	log.Println("regain_verbose_context_menu")
+	fmt.Println(`Supported actions:
+
+- disable_beeps
+- regain_verbose_context_menu
+`)
 }
 
 // # https://github.com/kachick/times_kachick/issues/214
