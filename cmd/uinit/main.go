@@ -7,31 +7,52 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/user"
 	"strings"
 )
 
-// Called should be `sudo -E ...`, See https://stackoverflow.com/a/40438345/1212807
+func usage() string {
+	return `Usage: uinit [OPTIONS]
 
-// This script requires sudo execution, if it is a reasonable way, including in *.nix may be better
+Linux and macOS initialization
+
+- Require root privileges as sudo
+- Specify one of non root user for the target
+
+$ sudo uinit --user=runner # dry_run by default
+$ sudo uinit --user="$(whoami)" --dry_run=false
+`
+}
 
 func getShellPath(homePath string, shellName string) string {
 	return homePath + "/.nix-profile/bin/" + shellName
 }
 
 func main() {
+	userFlag := flag.String("user", "", "affect for the given user")
 	dryRunFlag := flag.Bool("dry_run", true, "no side effect if true")
+	flag.Usage = func() {
+		// https://github.com/golang/go/issues/57059#issuecomment-1336036866
+		fmt.Printf("%s", usage()+"\n\n")
+		fmt.Println("Usage of command:")
+		flag.PrintDefaults()
+		fmt.Println("")
+	}
 	flag.Parse()
 
-	if *dryRunFlag {
-		log.Println("Running in dry run mode. Will not make actual changes even if DONE is shown. Specify --dry_run flag to change it")
+	username := *userFlag
+	if username == "" || username == "root" {
+		flag.Usage()
+		os.Exit(1)
 	}
 
-	homePath, ok := os.LookupEnv("HOME")
-	if !ok {
-		log.Fatalln("$HOME is not found")
+	target, err := user.Lookup(username)
+	if err != nil {
+		log.Fatalf("Given user %s is not found: %v", username, err)
 	}
-	if homePath == "/root" {
-		log.Fatalln("used by root looks wrong. You should run `sudo -E ...` instead of `sudo ...`")
+
+	if *dryRunFlag {
+		log.Println("Running in DRY RUN mode. You can toggle by --dry_run flag")
 	}
 
 	const primaryShell = "zsh"
@@ -46,7 +67,7 @@ func main() {
 	dirty := strings.Clone(etcShells)
 
 	for _, sh := range loginableShells {
-		shellPath := getShellPath(homePath, sh)
+		shellPath := getShellPath(target.HomeDir, sh)
 		if strings.Contains(etcShells, shellPath) {
 			log.Printf("skip - %s is already registered in /etc/shells\n", shellPath)
 		} else {
@@ -55,16 +76,19 @@ func main() {
 		}
 	}
 
-	if (dirty != etcShells) && !*dryRunFlag {
-		err = os.WriteFile("/etc/shells", []byte(dirty), os.ModePerm)
-		if err != nil {
-			log.Fatalf("failed - could you correctly run this with sudo? - %v\n", err)
+	if dirty == etcShells {
+		log.Printf("No changes have been made")
+	} else {
+		if !*dryRunFlag {
+			err = os.WriteFile("/etc/shells", []byte(dirty), os.ModePerm)
+			if err != nil {
+				log.Fatalf("You should run this command with root privileges as sudo - %v\n", err)
+			}
 		}
-	}
 
-	log.Printf(`Done! Set one of your favorite shell as follows
+		log.Printf(`Done! Set one of your favorite shell as follows
 
 chsh -s %s "$(whoami)"
-`, getShellPath(homePath, primaryShell))
-
+`, getShellPath(target.HomeDir, primaryShell))
+	}
 }
