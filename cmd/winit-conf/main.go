@@ -40,36 +40,7 @@ func (p provisioner) DstPath() string {
 	return filepath.Join(p.DstTree...)
 }
 
-func (p provisioner) Copy() error {
-	body, err := p.FS.ReadFile(p.EmbedPath())
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(p.DstPath(), body, configFilePermission)
-	if err != nil {
-		return err
-	}
-	// Make sure the permission even for umask problem
-	err = os.Chmod(p.DstPath(), configFilePermission)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func main() {
-	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
-	flag.Parse()
-	// $PROFILE is an "Automatic Variables", not ENV
-	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
-
-	if pwshProfilePath == "" {
-		flag.Usage()
-		log.Fatalf("called with wrong arguments")
-	}
-
+func provisioners(pwshProfilePath string) []provisioner {
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Failed to get home directory: %+v", err)
@@ -101,19 +72,50 @@ func main() {
 		log.Fatalf("Failed to create path that will have PowerShell profiles: %+v", err)
 	}
 
-	provisioners := []provisioner{
+	return []provisioner{
 		newProvisioner([]string{"starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
 		newProvisioner([]string{"alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
 		newProvisioner([]string{"windows", "powershell", "Profile.ps1"}, []string{pwshProfilePath}),
-		newProvisioner([]string{"winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
-		newProvisioner([]string{"winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
-		newProvisioner([]string{"winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
+		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
+		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
+		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
+	}
+}
+
+func (p provisioner) Copy() error {
+	body, err := p.FS.ReadFile(p.EmbedPath())
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(p.DstPath(), body, configFilePermission)
+	if err != nil {
+		return err
+	}
+	// Make sure the permission even for umask problem
+	err = os.Chmod(p.DstPath(), configFilePermission)
+	if err != nil {
+		return err
 	}
 
-	for _, p := range provisioners {
+	return nil
+}
+
+func main() {
+	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
+	flag.Parse()
+	// $PROFILE is an "Automatic Variables", not ENV
+	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
+
+	if pwshProfilePath == "" {
+		flag.Usage()
+		log.Fatalf("called with wrong arguments")
+	}
+
+	for _, p := range provisioners(pwshProfilePath) {
 		log.Printf("%s => %s,\n", p.EmbedPath(), p.DstPath())
 		err := p.Copy()
 		if err != nil {
