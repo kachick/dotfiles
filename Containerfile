@@ -22,7 +22,7 @@ RUN mkdir -p ~/.local/state/nix/profiles \
 RUN sudo $(which nix) run '/tmp/dotfiles#uinit' -- --user=user --dry_run=false \
   && sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
 
-RUN nix store gc \
+RUN sudo $(which nix) store gc \
   && sudo rm -rf /tmp/dotfiles
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
