@@ -31,11 +31,16 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: Make sure there are what files before build
         run: Get-ChildItem
-      - name: Build winit # Avoiding run to measure which step taking minutes
-        # Need -o to keep product in multiple packages
-        run: go build -o dist -v ./...
+      - name: Build winit-* # Avoiding run to measure which step taking minutes
+        run: |
+          # go build does not automatically create the directory
+          New-Item -Force -ItemType "Directory" -Path dist
+          # Need -o to keep product in multiple packages
+          go build -o dist -v .\..
       - name: Make sure there are what files after build
-        run: Get-ChildItem
+        run: |
+          Get-ChildItem
+          Get-ChildItem .\dist
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
