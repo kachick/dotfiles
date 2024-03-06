@@ -17,10 +17,12 @@ COPY ./ /tmp/dotfiles/
 
 RUN mkdir -p ~/.local/state/nix/profiles \
   && nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles' \
-  && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
-  && sudo $(which nix) run '/tmp/dotfiles#uinit' -- --user=user --dry_run=false \
-  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
-  && nix store gc \
+  && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user'
+
+RUN sudo $(which nix) run '/tmp/dotfiles#uinit' -- --user=user --dry_run=false \
+  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
+
+RUN nix store gc \
   && sudo rm -rf /tmp/dotfiles
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
