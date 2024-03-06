@@ -62,6 +62,8 @@ wsl.exe --install --distribution "Ubuntu-22.04"
 Loading personal and system profiles took 897ms.
 ```
 
+TODO: Integrate https://github.com/kachick/PSFzfHistory here
+
 Look at #430
 
 1. Make sure `pwsh -NoProfile` is fast
@@ -93,6 +95,8 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 - https://www.kioxia.com/ja-jp/personal/software/ssd-utility.html
 
 ## History substring search in major shells for Windows
+
+TODO: Integrate https://github.com/kachick/PSFzfHistory here
 
 - PowerShell: #291, Written in [Profile.ps1](powershell/Profile.ps1) and commented out because it makes starting up much slow!
 - nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
