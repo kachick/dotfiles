@@ -31,8 +31,8 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: Rebel against unacceptable default
         run: |
-          go run ./cmd/winit-beep
-          go run ./cmd/winit-menu
+          go run ./cmd/winit-rebel list
+          go run ./cmd/winit-rebel run --all
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910

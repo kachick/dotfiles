@@ -18,8 +18,8 @@ Basically following codes will be done in PowerShell
 1. New session of pwsh
    ```powershell
    ./winit-terminal.exe -dotfiles_path "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles" -pwsh_profile_path "$PROFILE"
-   ./winit-beep.exe
-   ./winit-menu.exe
+   ./winit-rebel.exe list
+   ./winit-rebel.exe run --all
    ```
 1. Install some tools
    ```powershell
