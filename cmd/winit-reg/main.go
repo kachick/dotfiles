@@ -16,9 +16,9 @@ func usage() string {
 
 Windows initialization to modify default settings
 
-$ winit-reg list
-$ winit-reg run --action disable_beeps
-$ winit-reg run --all
+$ winit-reg.exe list
+$ winit-reg.exe run --action disable_beeps
+$ winit-reg.exe run --all
 `
 }
 
@@ -41,9 +41,16 @@ func main() {
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
 	actionFlag := runCmd.String("action", "", "which action you want to do")
 	allFlag := runCmd.Bool("all", false, "do ALL if you trust me")
+
+	flag.Usage = func() {
+		// https://github.com/golang/go/issues/57059#issuecomment-1336036866
+		fmt.Printf("%s", usage()+"\n\n")
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 
-	if len(os.Args) < 1 {
+	if len(os.Args) < 2 {
 		flag.Usage()
 
 		os.Exit(1)
