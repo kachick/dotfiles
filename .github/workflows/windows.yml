@@ -40,7 +40,8 @@ jobs:
         run: |
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           # Remove cache: https://news.mynavi.jp/article/win10tips-410/
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
+          # But comment out to inspect, this may never enable again...
+          # & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
 
           # Enable cloud-based protection
           Set-MpPreference -MAPSReporting Advanced
@@ -51,6 +52,9 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           # Stop CI if no dynamic signatures are enabled
+
+          Get-MpComputerStatus
+
           if (!((& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:")) {
             Exit 42
           }
@@ -90,6 +94,9 @@ jobs:
         run: |
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\distributed-artifact.zip"
+          Start-MpScan -ScanPath "$pwd"
+          Get-MpThreat
+          Get-MpThreatDetection
       - name: Collect Defender log
         run: |
           New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
