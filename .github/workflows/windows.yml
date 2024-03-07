@@ -72,8 +72,8 @@ jobs:
         run: |
           Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
           Set-Service -Name wuauserv -StartupType Manual -Status Running
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\distributed-artifact.zip"
       - name: Collect Defender log
