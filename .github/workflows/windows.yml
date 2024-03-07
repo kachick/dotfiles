@@ -41,6 +41,12 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           # Remove cache: https://news.mynavi.jp/article/win10tips-410/
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
+
+          # Enable cloud-based protection
+          Set-MpPreference -MAPSReporting Advanced
+          # Enable automatic sample submission
+          Set-MpPreference -SubmitSamplesConsent SendSafeSamplesAutomatically
+
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
