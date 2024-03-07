@@ -32,8 +32,9 @@ defaults:
     shell: pwsh
 
 jobs:
-  # Not Terraform :)
-  terraform:
+  # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
+  # See #443 for detail.
+  terraform: # Not Terraform :)
     runs-on: windows-2022
     steps:
       - name: Prepare Windows Defender
@@ -53,8 +54,7 @@ jobs:
           # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
 
           # Remove cache: https://news.mynavi.jp/article/win10tips-410/
-          # But comment out to inspect, this may never enable again...
-          # & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
 
           # Enable cloud-based protection
           Set-MpPreference -MAPSReporting Advanced
@@ -74,6 +74,7 @@ jobs:
         run: |
           Get-MpComputerStatus
 
+          # Remove this to raise error if you REALIZED to enable Dynamic Signature scans
           # if (!((& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:")) {
           #   Exit 42
           # }
@@ -89,11 +90,11 @@ jobs:
         with:
           install-only: true
           version: 'v1.24.0' # selfup { "regex": "\\d[^']+", "script": "goreleaser --version | grep 'GitVersion:' | tr -s ' ' | cut -d ' ' -f 2" }
-      - name: Make sure there are what files before build
+      - name: List files - before build
         run: Get-ChildItem
       - name: Build winit-*
         run: goreleaser build --snapshot --clean
-      - name: Make sure there are what files after build
+      - name: List files - after build
         run: |
           Get-ChildItem
           Get-ChildItem -Recurse .\dist
@@ -121,16 +122,19 @@ jobs:
         run: |
           New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -GetFiles -SupportLogLocation "$(pwd)\MpCmdRun-logs"
-      - name: Upload artifact
-        id: upload-defender-log
-        uses: actions/upload-artifact@v4
-        with:
-          name: MpCmdRun-logs
-          path: MpCmdRun-logs/**
-      # Do not write depending winget and WSL2 logcs for now
-      # https://github.com/microsoft/winget-cli/issues/3872
-      # https://github.com/actions/runner-images/issues/910
-      # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
+      # Enable this section when you want to update logics and check it
+      # - name: Upload artifact
+      #   id: upload-defender-log
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: MpCmdRun-logs
+      #     path: MpCmdRun-logs/**
+      #
+      # Do not write depending winget logcs for now
+      # - windows-2025 definitely enable it by default
+      # - windows-2022 may realize with the action: https://github.com/microsoft/winget-cli/issues/3872
+      # - proposal: https://github.com/actions/runner-images/issues/910
+      # - note: https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Rebel against unacceptable default
         run: |
           .\dist\winit-reg_windows_amd64_v1\winit-reg.exe list
