@@ -53,7 +53,7 @@ jobs:
       - name: Make sure there are what files after build
         run: |
           Get-ChildItem
-          Get-ChildItem .\dist
+          Get-ChildItem -Recurse .\dist
       # https://github.com/goreleaser/goreleaser-action/tree/5fdedb94abba051217030cc86d4523cf3f02243d#upload-artifacts
       - name: Upload assets
         uses: actions/upload-artifact@v4
@@ -63,20 +63,20 @@ jobs:
       - name: Check Windows Defender does not false positive detect the product
         run: |
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-conf.exe"
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-reg.exe"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-conf_windows_amd64_v1\winit-conf.exe"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-reg_windows_amd64_v1\winit-reg.exe"
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
       # https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Rebel against unacceptable default
         run: |
-          .\dist\winit-reg.exe list
-          .\dist\winit-reg.exe run --all
+          .\dist\winit-reg_windows_amd64_v1\winit-reg.exe list
+          .\dist\winit-reg_windows_amd64_v1\winit-reg.exe run --all
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
-          .\dist\winit-conf.exe -pwsh_profile_path "$PROFILE"
+          .\dist\winit-conf_windows_amd64_v1\winit-conf.exe -pwsh_profile_path "$PROFILE"
       - name: Make sure it correctly copied some config files
         run: |
           Get-Content "$PROFILE"
