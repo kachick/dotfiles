@@ -43,6 +43,7 @@ jobs:
 
           # https://github.com/actions/runner-images/blob/61df9288f9be9f6aeaaaa4ad52a7332432913fc3/images/windows/scripts/build/Configure-WindowsDefender.ps1#L38-L44
           Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Advanced Threat Protection' -Name 'ForceDefenderPassiveMode' -Value '0' -Type 'DWORD'
+          Start-Service -DisplayName *Defend* -WhatIf
           Start-Service -Name WinDefend
 
           # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender"
@@ -59,12 +60,12 @@ jobs:
           Set-MpPreference -MAPSReporting Advanced
           # Enable automatic sample submission
           Set-MpPreference -SubmitSamplesConsent SendSafeSamples
-          Restart-Service -Name WinDefend
+          # Restart-Service -Name WinDefend
 
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           Update-MpSignature
-          Restart-Service -Name WinDefend
+          # Restart-Service -Name WinDefend
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
       - name: Make sure dynamic signatures are enabled
         run: |
