@@ -65,7 +65,6 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-conf.exe"
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-reg.exe"
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-wsl.exe"
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910

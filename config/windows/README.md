@@ -10,7 +10,6 @@ Basically following codes will be done in PowerShell
    ./winit-conf.exe -pwsh_profile_path "$PROFILE"
    ./winit-reg.exe list
    ./winit-reg.exe run --all
-   ./winit-wsl.exe
    ```
 1. Install some tools
    ```powershell
