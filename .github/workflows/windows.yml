@@ -70,6 +70,9 @@ jobs:
       - name: Prepare Windows Defender
         # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
         run: |
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+          # Remove cache: https://news.mynavi.jp/article/win10tips-410/
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
