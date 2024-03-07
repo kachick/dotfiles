@@ -106,14 +106,13 @@ func (p provisioner) Copy() error {
 func main() {
 	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
 	flag.Parse()
-	// $PROFILE is an "Automatic Variables", not ENV
-	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
-
-	if pwshProfilePath == "" {
+	if *pwshProfilePathFlag == "" {
 		flag.Usage()
 		log.Fatalf("called with wrong arguments")
 	}
+	// $PROFILE is an "Automatic Variables", not ENV
+	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
 
 	for _, p := range provisioners(pwshProfilePath) {
 		log.Printf("%s => %s\n", p.EmbedPath(), p.DstPath())

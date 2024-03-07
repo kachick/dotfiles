@@ -41,6 +41,13 @@ func main() {
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
 	actionFlag := runCmd.String("action", "", "which action you want to do")
 	allFlag := runCmd.Bool("all", false, "do ALL if you trust me")
+	flag.Parse()
+
+	if len(os.Args) < 1 {
+		flag.Usage()
+
+		os.Exit(1)
+	}
 
 	switch os.Args[1] {
 	case "list":
