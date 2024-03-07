@@ -32,7 +32,7 @@ defaults:
     shell: pwsh
 
 jobs:
-  setup:
+  terraforming:
     runs-on: windows-2022
     steps:
       - name: Prepare Windows Defender
