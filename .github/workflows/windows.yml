@@ -80,6 +80,10 @@ jobs:
           # }
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
       - uses: actions/checkout@v4
+        with:
+          # KEEP fetch-depth for goreleaser
+          # https://github.com/goreleaser/goreleaser-action/blob/696b757ee8f3742e68b261173b9eeeb96306a57f/README.md?plain=1#L77
+          fetch-depth: 0
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
