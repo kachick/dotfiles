@@ -44,11 +44,11 @@ jobs:
           # https://github.com/actions/runner-images/blob/61df9288f9be9f6aeaaaa4ad52a7332432913fc3/images/windows/scripts/build/Configure-WindowsDefender.ps1#L38-L44
           Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Advanced Threat Protection' -Name 'ForceDefenderPassiveMode' -Value '0' -Type 'DWORD'
 
-          Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender"
-          Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender"
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
           # I can't find any resource of this key in web also GitHub, but Copilot said... So testing in action runner may be interest :)
-          Set-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name JoinMicrosoftSpyNet -Value 1
-          Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
+          # Set-ItemProperty -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name JoinMicrosoftSpyNet -Value 1
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
 
           # Remove cache: https://news.mynavi.jp/article/win10tips-410/
           # But comment out to inspect, this may never enable again...
