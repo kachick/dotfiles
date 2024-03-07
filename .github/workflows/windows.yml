@@ -119,13 +119,18 @@ jobs:
         run: |
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\distributed-artifact.zip"
-          Start-MpScan -ScanPath "$pwd"
+
+          # Do not enable this as possible, too slow ... Scanning all folders with this option? :<
+          # Start-MpScan -ScanPath "$pwd"
+
           Get-MpThreat
           Get-MpThreatDetection
-      - name: Collect Defender log
-        run: |
-          New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -GetFiles -SupportLogLocation "$(pwd)\MpCmdRun-logs"
+      # Skipping because of bit slow...
+      # - name: Collect Defender log
+      #   run: |
+      #     New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
+      #     & "C:\Program Files\Windows Defender\MpCmdRun.exe" -GetFiles -SupportLogLocation "$(pwd)\MpCmdRun-logs"
+      #
       # Enable this section when you want to update logics and check it
       # - name: Upload artifact
       #   id: upload-defender-log
