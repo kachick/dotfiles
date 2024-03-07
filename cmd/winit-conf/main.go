@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -103,28 +104,73 @@ func (p provisioner) Copy() error {
 	return nil
 }
 
+func usage() string {
+	return `Usage: winit-conf [SUB] [OPTIONS]
+
+Windows initialization to apply my settings for some apps
+
+$ winit-conf.exe list
+$ winit-conf.exe generate
+$ winit-conf.exe run -pwsh_profile_path "$PROFILE"
+`
+}
+
 func main() {
-	pwshProfilePathFlag := flag.String("pwsh_profile_path", "", "Specify PowerShell profile path")
+	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
+	pwshProfilePathFlag := runCmd.String("pwsh_profile_path", "", "Specify PowerShell profile path")
+	flag.Usage = func() {
+		// https://github.com/golang/go/issues/57059#issuecomment-1336036866
+		fmt.Printf("%s", usage()+"\n\n")
+		flag.PrintDefaults()
+	}
 	flag.Parse()
-	// $PROFILE is an "Automatic Variables", not ENV
-	// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-	pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
 
-	if pwshProfilePath == "" {
+	if len(os.Args) < 2 {
 		flag.Usage()
-		log.Fatalf("called with wrong arguments")
+
+		os.Exit(1)
 	}
 
-	for _, p := range provisioners(pwshProfilePath) {
-		log.Printf("%s => %s\n", p.EmbedPath(), p.DstPath())
-		err := p.Copy()
-		if err != nil {
-			log.Fatalf("Failed to copy file: %+v %+v", p, err)
+	switch os.Args[1] {
+	case "list":
+		for _, p := range provisioners("dummy_path") {
+			fmt.Println(p.EmbedPath())
 		}
-	}
+	case "generate":
+		for _, p := range provisioners("dummy_path") {
+			body, err := config.WindowsAssets.ReadFile(p.EmbedPath())
+			if err != nil {
+				log.Fatalf("Failed to copy file: %+v %+v", p, err)
+			}
+			fmt.Println(p.EmbedPath())
+			fmt.Println("--------------------------------------------------")
+			fmt.Println(string(body))
+		}
+	case "run":
+		runCmd.Parse(os.Args[2:])
+		if *pwshProfilePathFlag == "" {
+			flag.Usage()
+			log.Fatalf("called with wrong arguments")
+		}
+		// $PROFILE is an "Automatic Variables", not ENV
+		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+		pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
 
-	log.Printf(`Completed, you need to restart terminals
+		for _, p := range provisioners(pwshProfilePath) {
+			log.Printf("%s => %s\n", p.EmbedPath(), p.DstPath())
+			err := p.Copy()
+			if err != nil {
+				log.Fatalf("Failed to copy file: %+v %+v", p, err)
+			}
+		}
+
+		log.Printf(`Completed, you need to restart terminals
 
 If you faced slow execution of PowerShell after this script, exclude %s from Anti Virus as Microsoft Defender
 `, pwshProfilePath)
+	default:
+		flag.Usage()
+
+		os.Exit(1)
+	}
 }

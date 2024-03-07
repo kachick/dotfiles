@@ -52,7 +52,9 @@ jobs:
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
-          .\dist\winit-conf.exe -pwsh_profile_path "$PROFILE"
+          Write-Host "$PROFILE"
+          .\dist\winit-conf.exe run --pwsh_profile_path="$PROFILE"
       - name: Make sure correctly copied
         run: |
+          Test-Path "$PROFILE"
           Get-Content "$PROFILE"
