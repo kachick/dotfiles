@@ -32,6 +32,7 @@ defaults:
     shell: pwsh
 
 jobs:
+  # Not Terraform :)
   terraform:
     runs-on: windows-2022
     steps:
