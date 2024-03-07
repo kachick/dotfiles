@@ -65,6 +65,9 @@
           "PackageIdentifier": "Starship.Starship"
         },
         {
+          "PackageIdentifier": "GoLang.Go"
+        },
+        {
           "PackageIdentifier": "Microsoft.VisualStudioCode"
         }
       ],
