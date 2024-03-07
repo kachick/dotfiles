@@ -67,6 +67,9 @@ jobs:
           Update-MpSignature
           # Restart-Service -Name WinDefend
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+
+          # Disable to skip(=Enable). When I removed, `Scanning D:\a\dotfiles\dotfiles\distributed-artifact.zip was skipped.` logged
+          Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
       - name: Make sure dynamic signatures are enabled ... or not
         run: |
           Get-MpComputerStatus
