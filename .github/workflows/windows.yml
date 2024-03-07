@@ -55,11 +55,16 @@ jobs:
           Get-ChildItem
           Get-ChildItem -Recurse .\dist
       # https://github.com/goreleaser/goreleaser-action/tree/5fdedb94abba051217030cc86d4523cf3f02243d#upload-artifacts
-      - name: Upload assets
+      - name: Upload artifact
+        id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: winit
           path: dist/**/*.exe
+      - name: Download assets to make sure we can actually use it
+        run: |
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+          /repos/kachick/dotfiles/actions/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}/zip > distributed-artifact.zip
       - name: Check Windows Defender does not false positive detect the product
         # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
         run: |
@@ -68,6 +73,7 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-conf_windows_amd64_v1\winit-conf.exe"
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-reg_windows_amd64_v1\winit-reg.exe"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\distributed-artifact.zip"
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
