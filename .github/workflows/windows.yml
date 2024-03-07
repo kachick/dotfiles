@@ -32,7 +32,7 @@ defaults:
     shell: pwsh
 
 jobs:
-  terraforming:
+  terraform:
     runs-on: windows-2022
     steps:
       - name: Prepare Windows Defender
@@ -50,6 +50,7 @@ jobs:
 
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
+          Update-MpSignature
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           # Stop CI if no dynamic signatures are enabled
 
