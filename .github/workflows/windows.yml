@@ -72,10 +72,20 @@ jobs:
         run: |
           Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
           Set-Service -Name wuauserv -StartupType Manual -Status Running
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-conf_windows_amd64_v1\winit-conf.exe"
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\dist\winit-reg_windows_amd64_v1\winit-reg.exe"
-          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -File "$(pwd)\distributed-artifact.zip"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\distributed-artifact.zip"
+      - name: Collect Defender log
+        run: |
+          New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -GetFiles -SupportLogLocation "$(pwd)\MpCmdRun-logs"
+      - name: Upload artifact
+        id: upload-defender-log
+        uses: actions/upload-artifact@v4
+        with:
+          name: MpCmdRun-logs
+          path: MpCmdRun-logs/**
       # Do not write depending winget and WSL2 logcs for now
       # https://github.com/microsoft/winget-cli/issues/3872
       # https://github.com/actions/runner-images/issues/910
