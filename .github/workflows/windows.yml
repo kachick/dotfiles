@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" \
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" `
             repos/${{ github.repository }}/actions/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}/zip > distributed-artifact.zip
       - name: Check Windows Defender does not false positive detect the product
         # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
