@@ -30,16 +30,6 @@ jobs:
           containerfiles: |
             Containerfile
           oci: true
-      - name: Wait other jobs
-        uses: kachick/wait-other-jobs@v2
-        timeout-minutes: 10
-        with:
-          skip-list: |
-            [
-              {
-                "workflowFile": "release.yml"
-              }
-            ]
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.event_name != 'pull_request' }}

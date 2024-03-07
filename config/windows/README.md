@@ -4,7 +4,7 @@
 
 Basically following codes will be done in PowerShell
 
-1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/release.yml) summary
+1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/windows.yml) summary
 1. New session of pwsh
    ```powershell
    ./winit-conf.exe -pwsh_profile_path "$PROFILE"
