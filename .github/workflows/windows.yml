@@ -44,6 +44,8 @@ jobs:
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+          # Stop CI if no dynamic signatures are enabled
+          (& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:"
       - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
