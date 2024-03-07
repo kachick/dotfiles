@@ -45,7 +45,7 @@ jobs:
           # Enable cloud-based protection
           Set-MpPreference -MAPSReporting Advanced
           # Enable automatic sample submission
-          Set-MpPreference -SubmitSamplesConsent SendSafeSamplesAutomatically
+          Set-MpPreference -SubmitSamplesConsent SendSafeSamples
 
           Set-Service -Name wuauserv -StartupType Manual -Status Running
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
