@@ -63,8 +63,8 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           Update-MpSignature
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
-          # Stop CI if no dynamic signatures are enabled
-
+      - name: Make sure dynamic signatures are enabled
+        run: |
           Get-MpComputerStatus
 
           if (!((& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:")) {
