@@ -135,9 +135,11 @@ jobs:
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
-          .\dist\winit-conf_windows_amd64_v1\winit-conf.exe -pwsh_profile_path "$PROFILE"
+          Write-Host "$PROFILE"
+          .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run -pwsh_profile_path "$PROFILE"
       - name: Make sure it correctly copied some config files
         run: |
+          Test-Path "$PROFILE"
           Get-Content "$PROFILE"
       - name: Release the product
         if: startsWith(github.ref, 'refs/tags/')
