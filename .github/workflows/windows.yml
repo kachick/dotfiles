@@ -45,7 +45,9 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
           # Stop CI if no dynamic signatures are enabled
-          (& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:"
+          if (!((& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:")) {
+            Exit 42
+          }
       - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
