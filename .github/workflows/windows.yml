@@ -61,7 +61,7 @@ jobs:
         with:
           name: winit
           path: dist/**/*.exe
-      - name: Download assets to make sure we can actually use it
+      - name: Download the artifact to make sure we can actually use it
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
