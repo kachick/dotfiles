@@ -39,9 +39,30 @@ jobs:
         run: podman version
       - name: Base setup
         run: |
-          sudo apt-get update
-          sudo apt-get -y install podman
+          # sudo apt-get update
+          # sudo apt-get -y install podman
+          # podman version
+          #
+          # Update crun: https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
+          # TODO: Integrate selfup here
+          CRUN_VER='1.14.4'
+          mkdir -p "${HOME}/.local/bin"
+          curl -L "https://github.com/containers/crun/releases/download/${CRUN_VER}/crun-${CRUN_VER}-linux-amd64" -o "${HOME}/.local/bin/crun"
+          chmod +x "${HOME}/.local/bin/crun"
+      - name: Update crun in podman
+        run: |
+          mkdir -p "${HOME}/.config/containers"
+          cat << EOF > "${HOME}/.config/containers/containers.conf"
+          [engine.runtimes]
+          crun = [
+            "${HOME}/.local/bin/crun",
+            "/usr/bin/crun"
+          ]
+          EOF
+      - name: Logging dependency versions
+        run: |
           podman version
+          crun --version
       - uses: actions/checkout@v4
       - name: Build Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
