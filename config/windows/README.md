@@ -216,3 +216,7 @@ I now prefer podman over docker and singularity.\
 It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.
+
+## Why aren't these packages in winget list?
+
+- [micro](https://github.com/zyedidia/micro/issues/2339)

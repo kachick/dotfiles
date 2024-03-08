@@ -43,6 +43,13 @@
     ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first "$@"
   '';
 
+  xdg.dataFile."homemade/bin/walk".source = pkgs.writeShellScript "walk.bash" ''
+    set -euo pipefail
+
+    # TODO: Add --preview after mixpkgs include https://github.com/antonmedv/walk/pull/129
+    ${lib.getBin pkgs.walk}/bin/walk --icons "$@"
+  '';
+
   # Why need the wrapper?
   #   nixpkgs provide 4.9.3 is not including podman-remote.
   #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
