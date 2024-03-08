@@ -33,10 +33,6 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
    ```
-1. Make shells installed by nix into a login shell
-   ```bash
-   nix shell 'github:kachick/dotfiles#uinit' --command bash -c 'sudo "$(which uinit)" --user="$(whoami)" --dry_run=false'
-   ```
 1. If you are developing this repository, the simple reactivation is as follows.
    ```bash
    makers apply

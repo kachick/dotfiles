@@ -76,24 +76,6 @@
             };
           };
 
-        packages.uinit = pkgs.stdenv.mkDerivation
-          {
-            name = "uinit";
-            src = self;
-            buildInputs = with pkgs; [
-              go_1_22
-            ];
-            buildPhase = ''
-              # https://github.com/NixOS/nix/issues/670#issuecomment-1211700127
-              export HOME=$(pwd)
-              go build -o dist/uinit ./cmd/uinit
-            '';
-            installPhase = ''
-              mkdir -p $out/bin
-              install -t $out/bin dist/uinit
-            '';
-          };
-
         packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
           set -euo pipefail
 
