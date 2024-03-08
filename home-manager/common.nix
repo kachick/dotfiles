@@ -34,7 +34,7 @@
   home = {
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "micro";
+      EDITOR = "micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
       VISUAL = "code -w";
       PAGER = "less";
 
@@ -172,14 +172,15 @@
   programs.micro = {
     enable = true;
 
+    # `micro -options` shows candidates and we can temporally change some options by giving "-OPTION_NAME VALUE"
     settings = {
       autosu = true;
       cursorline = true;
       backup = true;
-      autosave = 0; # Means false at here
+      autosave = 0; # Means false
       basename = false;
       clipboard = "external";
-      colorcolumn = 72; # Limit of convention of git message body
+      colorcolumn = 0; # Means false
       diffgutter = true;
       ignorecase = true;
       incsearch = true;
@@ -192,7 +193,7 @@
       multiopen = "tab";
       reload = "prompt";
       rmtrailingws = false;
-      relativeruler = true;
+      relativeruler = false;
       savecursor = true;
       savehistory = true;
       saveundo = true;
@@ -205,7 +206,8 @@
         tabsize = 2;
       };
 
-      colorscheme = "default";
+      # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
+      colorscheme = "twilight"; # "default" is NFM, prefer solarized for dark blue
     };
   };
 

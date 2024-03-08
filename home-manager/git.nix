@@ -57,13 +57,16 @@
       };
 
       core = {
-        editor = "vim";
+        # For git commit message 50/72 convention
+        editor = "micro -colorcolumn 72";
         quotepath = false;
       };
 
       # Affect in rebase -i
       sequence = {
-        editor = "micro";
+        # - For git commit message 50/72 convention
+        # - Consider prefixed 5 + 1 + 7 + 1 chars as "pick c290ca9 "
+        editor = "micro -colorcolumn 64";
       };
 
       init = {
