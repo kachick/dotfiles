@@ -1,18 +1,21 @@
 name: Container
 on:
-  # Do not enable default branch and path in push triggers, use workflow_dispatch for heavy run
   push:
     tags:
       - 'v*'
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.vscode/**'
+      - '.git**'
+      - '!.github/workflows/container.yml'
   pull_request:
-    paths:
-      - '.github/workflows/container.yml'
-      - 'Containerfile'
-      - 'flake.nix'
-  schedule:
-    # Every 13:42 JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 4 * * *'
+    paths-ignore:
+      - '**.md'
+      - '.vscode/**'
+      - '.git**'
+      - '!.github/workflows/container.yml'
   workflow_dispatch:
 
 jobs:
@@ -35,7 +38,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Image
         id: build-image
-        uses: redhat-actions/buildah-build@v2.13
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
         with:
           image: home
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
@@ -45,7 +48,7 @@ jobs:
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.event_name != 'pull_request' }}
-        uses: redhat-actions/push-to-registry@v2.7.1
+        uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
           image: ${{ steps.build-image.outputs.image }}
           tags: ${{ steps.build-image.outputs.tags }}
@@ -53,4 +56,5 @@ jobs:
           username: kachick
           password: ${{ github.token }}
       - name: Log pushed outputs
+        if: ${{ github.event_name != 'pull_request' }}
         run: echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"
