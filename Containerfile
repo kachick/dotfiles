@@ -20,10 +20,6 @@ RUN mkdir -p ~/.local/state/nix/profiles \
   && nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user' \
   && nix store gc
 
-RUN nix shell '/tmp/dotfiles#uinit' --command bash -c 'sudo "$(which uinit)" --user=user --dry_run=false' \
-  && sudo chsh user -s "$HOME/.nix-profile/bin/zsh" \
-  && nix store gc
-
 RUN sudo rm -rf /tmp/dotfiles
 
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
