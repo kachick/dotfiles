@@ -16,7 +16,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-meta:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      started_at: ${{ steps.timestamp.outputs.started_at }}
+    steps:
+      - name: Get started timestamp
+        id: timestamp
+        run: |
+          # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
+          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" >> "$GITHUB_OUTPUT"
   build_and_push:
+    needs: [get-meta]
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
@@ -26,7 +38,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2.13
         with:
           image: home
-          tags: latest ${{ github.sha }}
+          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
             Containerfile
           oci: true
