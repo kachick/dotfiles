@@ -80,6 +80,7 @@ jobs:
           container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
           [ -n "$container_name" ] # May be fail with bg timing
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
+          podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
           podman commit "$container_name" ran-nix-commands-by-user
           podman kill "$container_name"
       - name: Finalize the image
