@@ -34,7 +34,7 @@
   home = {
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "vim";
+      EDITOR = "micro";
       VISUAL = "code -w";
       PAGER = "less";
 
@@ -166,6 +166,49 @@
       };
     };
   };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/micro.nix
+  # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
+  programs.micro = {
+    enable = true;
+
+    settings = {
+      autosu = true;
+      cursorline = true;
+      backup = true;
+      autosave = 0; # Means false at here
+      basename = false;
+      clipboard = "external";
+      colorcolumn = 72; # Limit of convention of git message body
+      diffgutter = true;
+      ignorecase = true;
+      incsearch = true;
+      hlsearch = true;
+      infobar = true;
+      keepautoindent = false;
+      mouse = true;
+      mkparents = false;
+      matchbrace = true;
+      multiopen = "tab";
+      reload = "prompt";
+      rmtrailingws = false;
+      relativeruler = true;
+      savecursor = true;
+      savehistory = true;
+      saveundo = true;
+      softwrap = true;
+      splitbottom = true;
+      splitright = true;
+      statusline = true;
+      syntax = true;
+      "ft:ruby" = {
+        tabsize = 2;
+      };
+
+      colorscheme = "default";
+    };
+  };
+
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim

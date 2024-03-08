@@ -37,6 +37,13 @@
     # GPG
     gnupg
 
+    # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
+    # See following issues
+    # - https://github.com/kachick/dotfiles/issues/280
+    # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
+
+    micro # alt nano
+
     dprint
     shellcheck
     shfmt
@@ -68,11 +75,6 @@
     actionlint
     gitleaks
     ruby_3_3
-
-    # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
-    # See following issues
-    # - https://github.com/kachick/dotfiles/issues/280
-    # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
     # Includes follows in each repository if needed, not in global
     # gcc

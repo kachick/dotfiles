@@ -63,7 +63,7 @@
 
       # Affect in rebase -i
       sequence = {
-        editor = "code --wait --disable-extensions";
+        editor = "micro";
       };
 
       init = {
