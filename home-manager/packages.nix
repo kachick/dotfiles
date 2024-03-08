@@ -13,6 +13,7 @@
     direnv
     zoxide # Used in alias `z`, alt cd
     fzf
+    walk # cd + ls + cat(--preview)
 
     # Used in anywhere
     coreutils
