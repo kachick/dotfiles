@@ -5,9 +5,6 @@
     {
       "Packages": [
         {
-          "PackageIdentifier": "Amazon.Music"
-        },
-        {
           "PackageIdentifier": "Valve.Steam"
         },
         {
