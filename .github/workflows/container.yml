@@ -74,6 +74,7 @@ jobs:
           oci: true
       - name: Run and commit Nix operations by the user while running the systemd
         run: |
+          set -euxo pipefail
           podman run --rm systemd &
           container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
