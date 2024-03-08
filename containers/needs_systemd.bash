@@ -7,7 +7,6 @@ nix run '/provisioner/dotfiles#home-manager' -- switch -b backup --flake '/provi
 
 # shellcheck disable=SC2016
 nix shell '/provisioner/dotfiles#uinit' --command bash -c 'sudo "$(which uinit)" --user=user --dry_run=false'
-# sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
 
 rm -rf /provisioner/dotfiles
 nix store gc
