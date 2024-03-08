@@ -18,9 +18,6 @@
         },
         {
           "PackageIdentifier": "Google.GoogleDrive"
-        },
-        {
-          "PackageIdentifier": "FilenCloud.FilenSync"
         }
       ],
       "SourceDetails": {
