@@ -12,8 +12,9 @@ ENV USER=user
 
 RUN mkdir -p ~/.local/state/nix/profiles
 
-COPY ./ /tmp/dotfiles/
-COPY ./containers/needs_systemd.bash /tmp/needs_systemd.bash
+# Don't use /tmp, it removes in first run
+COPY ./ /provisioner/dotfiles/
+COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
 
 # Should back to original of kachick/ubuntu-nix-systemd, we need to run systemd fist
 USER root

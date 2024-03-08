@@ -2,12 +2,12 @@
 
 set -euxo pipefail
 
-nix-shell --packages git --command 'git config --global --add safe.directory /tmp/dotfiles'
-nix run '/tmp/dotfiles#home-manager' -- switch -b backup --flake '/tmp/dotfiles/#user'
+nix-shell --packages git --command 'git config --global --add safe.directory /provisioner/dotfiles'
+nix run '/provisioner/dotfiles#home-manager' -- switch -b backup --flake '/provisioner/dotfiles/#user'
 
 # shellcheck disable=SC2016
-nix shell '/tmp/dotfiles#uinit' --command bash -c 'sudo "$(which uinit)" --user=user --dry_run=false'
-sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
+nix shell '/provisioner/dotfiles#uinit' --command bash -c 'sudo "$(which uinit)" --user=user --dry_run=false'
+# sudo chsh user -s "$HOME/.nix-profile/bin/zsh"
 
-sudo rm -rf /tmp/dotfiles
+rm -rf /provisioner/dotfiles
 nix store gc
