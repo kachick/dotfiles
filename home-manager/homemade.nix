@@ -46,7 +46,7 @@
   xdg.dataFile."homemade/bin/walk".source = pkgs.writeShellScript "walk.bash" ''
     set -euo pipefail
 
-    # TODO: Add --preview after mixpkgs include https://github.com/antonmedv/walk/pull/129
+    # TODO: Add --preview after nixpkgs include https://github.com/antonmedv/walk/pull/129
     ${lib.getBin pkgs.walk}/bin/walk --icons "$@"
   '';
 
