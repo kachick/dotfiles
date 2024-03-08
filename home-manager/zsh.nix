@@ -151,8 +151,11 @@
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
     '';
 
-    # TODO: May move to sessionVariables
+    # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''
+      # TODO: Switch to pkgs.zsh from current zsh in darwin
+
+      # TODO: May move to sessionVariables
       if [[ "$OSTYPE" == darwin* ]]; then
         export BROWSER='open'
       fi

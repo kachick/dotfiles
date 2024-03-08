@@ -75,6 +75,17 @@
     # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
     historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" "glc" ];
 
+    # Switch to another shell when bash used as a login shell
+    profileExtra = ''
+      # Used same method as switching to fish
+      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
+      then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+      fi
+    '';
+
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra = ''
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
