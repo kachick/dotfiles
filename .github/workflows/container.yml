@@ -7,8 +7,8 @@ on:
   pull_request:
     paths:
       - '.github/workflows/container.yml'
-      - 'Containerfile'
-      - 'flake.nix'
+      - '**Containerfile'
+      - 'flake.*'
   schedule:
     # Every 13:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
@@ -40,7 +40,7 @@ jobs:
           image: home
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
-            Containerfile
+            containers/Containerfile
           oci: true
       - name: Push To ghcr.io
         id: push-to-ghcr

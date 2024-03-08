@@ -5,6 +5,9 @@ AVD-DS-0026
 # Inline ignoring in Dockerfile RUN inspection don't work.
 # https://github.com/aquasecurity/trivy/discussions/4573
 
+# As far as I know, starting systemd should be called by root
+AVD-DS-0002
+
 # sudo is required for non systemd with nix
 # I want to narrow this scope, but trivy does not have feature and inline comments didn't work.
 AVD-DS-0010

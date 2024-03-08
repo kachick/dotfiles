@@ -55,10 +55,18 @@ I don't care and make no guarantees for your trouble. But I'm using the followin
 +nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
 ```
 
-You can test the [container](Containerfile) with your podman/docker/nerdctl as follows.
+You can test the [container](containers/Containerfile) with your podman/docker/nerdctl as follows.
 
 ```bash
-podman run -it ghcr.io/kachick/home:latest
+# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
+export export CR_PAT=YOUR_GHCR_TOKEN
+echo $CR_PAT | ppodman login ghcr.io -u YOUR_USERNAME --password-stdin
+
+podman run --rm ghcr.io/kachick/home:latest &
+container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
+podman exec --user=user -it "$container_name" zsh
+
+podman kill "$container_name"
 ```
 
 ## Installation - Windows
