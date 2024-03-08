@@ -22,4 +22,5 @@ RUN mkdir -p ~/.local/state/nix/profiles \
 
 RUN sudo rm -rf /tmp/dotfiles
 
+# Keep this even if you add a shell switcher as #452
 CMD [ "/home/user/.nix-profile/bin/zsh" ]
