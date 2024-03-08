@@ -67,7 +67,7 @@ jobs:
       - name: Build Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
         with:
-          image: systemd
+          image: systemd-prepared
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
             containers/Containerfile
@@ -75,11 +75,10 @@ jobs:
       - name: Run and commit Nix operations by the user while running the systemd
         run: |
           set -euxo pipefail
-          podman run --rm systemd &
-          container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
-          podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
-          podman commit "$container_name" ran-nix-commands-by-user
-          podman kill "$container_name"
+          podman run --name running-systemd --rm systemd-prepared &
+          podman exec --user=user -it running-systemd /provisioner/needs_systemd.bash
+          podman commit running-systemd ran-nix-commands-by-user
+          podman kill running-systemd
       - name: Finalize the image
         id: build-image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
