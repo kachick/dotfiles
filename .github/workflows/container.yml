@@ -82,6 +82,14 @@ jobs:
           podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
           podman commit "$container_name" ran-nix-commands-by-user
           podman kill "$container_name"
+      - name: Test output image
+        run: |
+          podman run --rm ran-nix-commands-by-user &
+          sleep 1
+          container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
+          [ -n "$container_name" ]
+          podman exec --user=user --workdir='/home/user' -it "$container_name" la
+          podman kill "$container_name"
       - name: Finalize the image
         id: build-image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
@@ -90,6 +98,14 @@ jobs:
           base-image: ran-nix-commands-by-user
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           oci: true
+      - name: Test output image
+        run: |
+          podman run --rm ${{ steps.build-image.outputs.image }} &
+          sleep 1
+          container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
+          [ -n "$container_name" ]
+          podman exec --user=user --workdir='/home/user' -it "$container_name" la
+          podman kill "$container_name"
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.event_name != 'pull_request' }}
