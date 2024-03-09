@@ -50,7 +50,7 @@ makers apply
 If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
 
 ```
-curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash | bash
+curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash | bash -euxo
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
