@@ -80,12 +80,12 @@ jobs:
           [ -n "$container_name" ] # May be fail with bg timing
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
-          podman commit "$container_name" ran-nix-commands-by-user
+          podman commit "$container_name" home
           podman kill "$container_name"
       - name: Test output image
         run: |
           set -euxo pipefail
-          podman run --rm ran-nix-commands-by-user &
+          podman run --rm home &
           sleep 1
           container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
           [ -n "$container_name" ]
@@ -96,7 +96,7 @@ jobs:
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
-          image: ran-nix-commands-by-user
+          image: home
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.repository_owner }}
