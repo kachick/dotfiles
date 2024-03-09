@@ -63,4 +63,4 @@ jobs:
       - name: Run homemade commands
         run: |
           zsh -c 'la'
-          zsh -c "p cowsay hello --command 'cowsay \$(hello)'"
+          zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
