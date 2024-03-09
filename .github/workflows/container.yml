@@ -76,7 +76,7 @@ jobs:
           set -euxo pipefail
           podman run --rm systemd-prepared &
           sleep 1
-          container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
+          container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
           [ -n "$container_name" ] # May be fail with bg timing
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash

@@ -11,7 +11,8 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Installation - Linux(Ubuntu), Darwin
 
-1. Install some dependencies without nix
+1. Install some dependencies without Nix\
+   example: Ubuntu
    ```bash
    # "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
    sudo apt-get install uidmap
@@ -33,42 +34,23 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
    ```
-1. If you are developing this repository, the simple reactivation is as follows.
-   ```bash
-   makers apply
-   ```
-
-### I'm a visitor to this repository. How can I try this dotfiles?
-
-This repository is for my personal use.\
-I don't care and make no guarantees for your trouble. But I'm using the following steps for another login.
-
-1. [flake.nix](flake.nix): Custom `user = home-manager.lib.homeManagerConfiguration {...};` section
-1. Replace one of above steps, home-manager section as below
-
-```diff
--nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
-+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
-```
-
-You can test the [container-image](containers) as follows.
-
-```bash
-# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
-export export CR_PAT=YOUR_GHCR_TOKEN
-echo $CR_PAT | podman login ghcr.io -u YOUR_USERNAME --password-stdin
-
-podman run --rm ghcr.io/kachick/home:latest &
-sleep 1
-container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
-podman exec --user=user --workdir='/home/user' -it "$container_name" /home/user/.nix-profile/bin/zsh
-podman kill "$container_name"
-```
 
 ## Installation - Windows
 
-Read [the tips](config/windows/README.md)
+Read [the tips](config/windows/README.md) and CI
 
-## If you encounter errors
+## Note
 
-Check both the [CI](.github/workflows/ci-home.yml) and the [wiki](https://github.com/kachick/dotfiles/wiki) and update them.
+If you are developing this repository, the simple reactivation is as follows.
+
+```bash
+makers apply
+```
+
+If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
+
+```
+curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash | bash
+```
+
+If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
