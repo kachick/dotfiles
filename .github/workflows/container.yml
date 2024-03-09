@@ -82,9 +82,9 @@ jobs:
           podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
           podman commit "$container_name" home
           podman kill "$container_name"
-          podman tag home:latest
-          podman tag home:${{ github.sha }}
-          podman tag home:${{ needs.get-meta.outputs.started_at }}
+          podman tag home latest
+          podman tag home ${{ github.sha }}
+          podman tag home ${{ needs.get-meta.outputs.started_at }}
       - name: Test output image
         run: |
           set -euxo pipefail
