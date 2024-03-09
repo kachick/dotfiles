@@ -11,12 +11,6 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Installation - Linux(Ubuntu), Darwin
 
-1. Install some dependencies without Nix\
-   example: Ubuntu
-   ```bash
-   # "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
-   sudo apt-get install uidmap
-   ```
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
@@ -51,6 +45,13 @@ If you are using the [podman](https://podman.io/), You can test the pre-built [c
 
 ```
 curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash | bash -euxo
+```
+
+Using podmain may require to install some dependencies without Nix
+
+```bash
+# "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
+sudo apt-get install uidmap
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
