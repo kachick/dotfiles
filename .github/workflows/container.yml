@@ -84,11 +84,12 @@ jobs:
           podman kill "$container_name"
       - name: Test output image
         run: |
+          set -euxo pipefail
           podman run --rm ran-nix-commands-by-user &
           sleep 1
           container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
           [ -n "$container_name" ]
-          podman exec --user=user --workdir='/home/user' -it "$container_name" la
+          podman exec --user=user --workdir='/home/user' -it "$container_name" '/home/user/.nix-profile/bin/zsh' -c la
           podman kill "$container_name"
       - name: Finalize the image
         id: build-image
@@ -100,11 +101,12 @@ jobs:
           oci: true
       - name: Test output image
         run: |
+          set -euxo pipefail
           podman run --rm ${{ steps.build-image.outputs.image }} &
           sleep 1
           container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
           [ -n "$container_name" ]
-          podman exec --user=user --workdir='/home/user' -it "$container_name" la
+          podman exec --user=user --workdir='/home/user' -it "$container_name" '/home/user/.nix-profile/bin/zsh' -c la
           podman kill "$container_name"
       - name: Push To ghcr.io
         id: push-to-ghcr
