@@ -96,9 +96,8 @@ jobs:
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
-          image: home
-          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
-          registry: ghcr.io/${{ github.repository_owner }}
+          # Keep 1 line with space delimiter with the action spec
+          tags: ghcr.io/${{ github.repository_owner }}/home:latest ghcr.io/${{ github.repository_owner }}/home:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/home:${{ needs.get-meta.outputs.started_at }}
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
       - name: Log pushed outputs
