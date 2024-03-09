@@ -90,6 +90,11 @@
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
         sort = "-committerdate";
       };
+
+      # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
+      ghq = {
+        root = "~/repos";
+      };
     };
   };
 
