@@ -19,6 +19,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # podman can handle lowercase. So normalize the outputs
   get-meta:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
@@ -29,7 +30,7 @@ jobs:
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
-          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" >> "$GITHUB_OUTPUT"
+          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
   build_and_push:
     needs: [get-meta]
     runs-on: ubuntu-22.04
