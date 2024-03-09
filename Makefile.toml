@@ -117,3 +117,12 @@ dependencies = [
   'build-go-race-as-the-race-test',
   'fmt',
 ]
+
+[tasks.build-container]
+command = './containers/build.bash'
+
+[tasks.sandbox]
+command = './containers/sandbox.bash'
+
+[tasks.sandbox-cr]
+command = './containers/sandbox-with-ghcr.bash'
