@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -euxo pipefail
 
 cat <<'EOF'
 ============
@@ -13,6 +13,8 @@ echo $CR_PAT | podman login ghcr.io -u YOUR_USERNAME --password-stdin
 EOF
 
 sandbox() {
+	# Separe pull and run to keep minimum sleep timer
+	podman pull ghcr.io/kachick/home:latest
 	podman run --rm ghcr.io/kachick/home:latest &
 	sleep 1
 	container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
