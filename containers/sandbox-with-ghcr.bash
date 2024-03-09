@@ -13,7 +13,7 @@ echo $CR_PAT | podman login ghcr.io -u YOUR_USERNAME --password-stdin
 EOF
 
 sandbox() {
-	# Separe pull and run to keep minimum sleep timer
+	# Extrcat pull step from run to keep minimum sleep timer
 	podman pull ghcr.io/kachick/home:latest
 	podman run --rm ghcr.io/kachick/home:latest &
 	sleep 1
