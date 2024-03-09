@@ -81,11 +81,11 @@ jobs:
           [ -n "$container_name" ] # May be fail with bg timing
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
-          podman commit "$container_name" home
+          podman commit "$container_name" provisioned-with-systemd
           podman kill "$container_name"
-          podman tag home latest
-          podman tag home ${{ github.sha }}
-          podman tag home ${{ needs.get-meta.outputs.started_at }}
+          podman tag provisioned-with-systemd home:latest
+          podman tag provisioned-with-systemd home:${{ github.sha }}
+          podman tag provisioned-with-systemd home:${{ needs.get-meta.outputs.started_at }}
       - name: Test output image
         run: |
           set -euxo pipefail
