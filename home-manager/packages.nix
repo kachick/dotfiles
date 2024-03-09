@@ -11,7 +11,7 @@
     fish
     starship
     direnv
-    zoxide # Used in alias `z`, alt cd
+    zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
     fzf
     walk # cd + ls + cat(--preview)
 
