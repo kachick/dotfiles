@@ -35,20 +35,19 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
-      - name: Logging initial podman version
-        run: podman version
+      - name: Logging initial dependency versions
+        run: |
+          podman version
+          crun --version
       - name: Base setup
         run: |
-          # sudo apt-get update
-          # sudo apt-get -y install podman
-          # podman version
-          #
           # Update crun: https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
           # TODO: Integrate selfup here
           CRUN_VER='1.14.4'
           mkdir -p "${HOME}/.local/bin"
           curl -L "https://github.com/containers/crun/releases/download/${CRUN_VER}/crun-${CRUN_VER}-linux-amd64" -o "${HOME}/.local/bin/crun"
           chmod +x "${HOME}/.local/bin/crun"
+      # We can remove this since ubuntu-24.04, but keeping maybe better
       - name: Update crun in podman
         run: |
           mkdir -p "${HOME}/.config/containers"
@@ -67,7 +66,7 @@ jobs:
       - name: Build Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
         with:
-          image: systemd
+          image: systemd-prepared
           tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
             containers/Containerfile
@@ -75,8 +74,8 @@ jobs:
       - name: Run and commit Nix operations by the user while running the systemd
         run: |
           set -euxo pipefail
-          podman run --name 'systemd' --rm systemd &
-          sleep 3
+          podman run --rm systemd-prepared &
+          sleep 1
           container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
           [ -n "$container_name" ] # May be fail with bg timing
           podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash

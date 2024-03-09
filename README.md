@@ -51,17 +51,16 @@ I don't care and make no guarantees for your trouble. But I'm using the followin
 +nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user'
 ```
 
-You can test the [container](containers/Containerfile) with your podman/docker/nerdctl as follows.
+You can test the [container-image](containers) as follows.
 
 ```bash
 # https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry
 export export CR_PAT=YOUR_GHCR_TOKEN
-echo $CR_PAT | ppodman login ghcr.io -u YOUR_USERNAME --password-stdin
+echo $CR_PAT | podman login ghcr.io -u YOUR_USERNAME --password-stdin
 
 podman run --rm ghcr.io/kachick/home:latest &
+sleep 1
 container_name="$(podman ps --sort=created --format {{.Names}} | tail -1)"
-podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
-podman commit "$container_name" localhost/kachick/home:latest
 podman exec --user=user -it "$container_name" /home/user/.nix-profile/bin/zsh
 podman kill "$container_name"
 ```
