@@ -37,6 +37,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v9
+      - name: Print some dotfiles overviews
+        run: |
+          cat /etc/nix/nix.conf
+          ls -alh ~
       - uses: DeterminateSystems/magic-nix-cache-action@v3
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
@@ -44,6 +48,7 @@ jobs:
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Print some paths and versions
         run: |
+          # homemade scripts are not available in this bash
           which fish
           which zsh
           which bash
@@ -55,12 +60,12 @@ jobs:
       - name: Run customized dependencies
         run: |
           fish --command 'starship --version'
-          zsh -c 'which dprint'
+          zsh -c zsh -c 'which la; which p'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
           zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
       - name: Run homemade commands
         run: |
-          zsh -c 'la'
+          zsh -c 'la ~; la --tree ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"

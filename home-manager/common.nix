@@ -59,42 +59,14 @@
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-  targets.genericLinux.enable = if pkgs.stdenv.isDarwin then false else true;
+  targets.genericLinux.enable = pkgs.stdenv.isLinux;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  ## Needless the nix config here, because it is already configured by DeterminateSystems/nix-installer
   # https://github.com/nix-community/home-manager/blob/36f873dfc8e2b6b89936ff3e2b74803d50447e0a/modules/misc/nix.nix#L5
-  nix = {
-    enable = true;
-
-    checkConfig = true;
-
-    # Outputs in $XDG_CONFIG_HOME/nix/nix.conf, so always use string even if boolean
-    # https://github.com/DeterminateSystems/nix-installer/blob/41dc9fecdef78a3a9af46dcf2b414c75766547c0/README.md#L433-L446
-    settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-        "repl-flake"
-      ];
-
-      extra-nix-path = "nixpkgs=flake:nixpkgs";
-
-      max-jobs = "auto";
-
-      auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
-
-      bash-prompt-prefix = "(nix:$name)\\040";
-    };
-
-    # Without this makes following errors
-    #
-    #  error:
-    #  Failed assertions:
-    #  - A corresponding Nix package must be specified via `nix.package` for generating
-    package = pkgs.nix;
-  };
+  # nix
 
   programs.lesspipe.enable = true;
 

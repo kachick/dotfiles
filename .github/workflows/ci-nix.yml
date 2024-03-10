@@ -32,6 +32,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v9
+      - name: Print some dotfiles overviews
+        run: |
+          cat /etc/nix/nix.conf
+          ls -alh ~
       - uses: DeterminateSystems/magic-nix-cache-action@v3
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix develop --command makers ci-dev

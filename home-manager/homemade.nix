@@ -34,7 +34,7 @@
       ;;
     esac
 
-    sudo "$(which nix)" upgrade-nix
+    sudo -i nix upgrade-nix
 
     ${lib.getExe pkgs.mise} plugins update
   '';
