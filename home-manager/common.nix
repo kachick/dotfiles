@@ -110,6 +110,8 @@
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
+  home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
+
   # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
   # - https://github.com/kachick/dotfiles/issues/142
   home.file.".stack/config.yaml".source = ../config/stack/config.yaml;
