@@ -86,6 +86,8 @@
       auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
 
       bash-prompt-prefix = "(nix:$name)\\040";
+
+      use-xdg-base-directories = "true";
     };
 
     # Without this makes following errors
