@@ -85,7 +85,7 @@
 
       auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
 
-      bash-prompt-prefix = "(nix:$name)\040";
+      bash-prompt-prefix = "(nix:$name)\\040";
     };
 
     # Without this makes following errors
