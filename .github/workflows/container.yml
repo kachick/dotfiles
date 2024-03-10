@@ -89,8 +89,8 @@ jobs:
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c la
           podman kill "$container_id"
       - name: Push To ghcr.io
-        if: ${{ github.event_name != 'pull_request' }}
         id: push-to-ghcr
+        if: ${{ github.event_name != 'pull_request' }}
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
           image: home
