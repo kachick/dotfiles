@@ -21,7 +21,7 @@
   '';
 
   xdg.dataFile."homemade/bin/updeps".source = pkgs.writeShellScript "updeps.bash" ''
-    set -euo pipefail
+    set -euxo pipefail
 
     case ''${OSTYPE} in
     linux*)
@@ -32,7 +32,7 @@
       ;;
     esac
 
-    nix-channel --update
+    sudo "$(which nix)" upgrade-nix
 
     ${lib.getExe pkgs.mise} plugins update
   '';
