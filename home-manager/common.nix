@@ -86,9 +86,6 @@
       auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
 
       bash-prompt-prefix = "(nix:$name)\040";
-
-      # Official-installer's default: https://github.com/NixOS/nixpkgs/raw/master/nixos/modules/installer/tools/nix-fallback-paths.nix
-      upgrade-nix-store-path-url = "https://install.determinate.systems/nix-upgrade/stable/universal";
     };
 
     # Without this makes following errors
