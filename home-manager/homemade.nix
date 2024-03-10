@@ -23,6 +23,8 @@
   xdg.dataFile."homemade/bin/updeps".source = pkgs.writeShellScript "updeps.bash" ''
     set -euxo pipefail
 
+    echo 'this updater assume you have the privilege and sudo command'
+
     case ''${OSTYPE} in
     linux*)
       sudo apt update --yes && sudo apt upgrade --yes
