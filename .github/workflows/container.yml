@@ -19,6 +19,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # podman can handle lowercase. So normalize the outputs
   get-meta:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
@@ -29,7 +30,7 @@ jobs:
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
-          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" >> "$GITHUB_OUTPUT"
+          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
   build_and_push:
     needs: [get-meta]
     runs-on: ubuntu-22.04
@@ -67,36 +68,33 @@ jobs:
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
         with:
           image: systemd-prepared
-          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
             containers/Containerfile
           oci: true
       - name: Run and commit Nix operations by the user while running the systemd
         run: |
           set -euxo pipefail
-          podman run --rm systemd-prepared &
-          sleep 1
-          container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
-          [ -n "$container_name" ] # May be fail with bg timing
-          podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
-          podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
-          podman commit "$container_name" ran-nix-commands-by-user
-          podman kill "$container_name"
-      - name: Finalize the image
-        id: build-image
-        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
-        with:
-          image: home
-          base-image: ran-nix-commands-by-user
-          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
-          oci: true
+          container_id="$(podman run --detach --rm systemd-prepared)"
+          podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
+          podman exec --user=root -it "$container_id" rm -rf /provisioner/cleanup.bash
+          podman commit "$container_id" home
+          podman kill "$container_id"
+          podman tag home home:latest
+          podman tag home home:${{ github.sha }}
+          podman tag home home:${{ needs.get-meta.outputs.started_at }}
+      - name: Test output image
+        run: |
+          set -euxo pipefail
+          container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
+          podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c la
+          podman kill "$container_id"
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.event_name != 'pull_request' }}
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
-          image: ${{ steps.build-image.outputs.image }}
-          tags: ${{ steps.build-image.outputs.tags }}
+          image: home
+          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
