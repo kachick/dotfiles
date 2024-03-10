@@ -4,14 +4,11 @@ set -euxo pipefail
 
 build() {
 	podman build --tag nix-systemd --file containers/Containerfile .
-	podman run --rm localhost/nix-systemd:latest &
-	sleep 1
-	local -r container_name="$(podman ps --sort=created --format '{{.Names}}' | tail -1)"
-	[ -n "$container_name" ]
-	podman exec --user=user -it "$container_name" /provisioner/needs_systemd.bash
-	podman exec --user=root -it "$container_name" rm -rf /provisioner/cleanup.bash
-	podman commit "$container_name" provisioned-systemd-home
-	podman kill "$container_name"
+	local -r container_id=$(podman run --detach --rm localhost/nix-systemd:latest)
+	podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
+	podman exec --user=root -it "$container_id" rm -rf /provisioner/cleanup.bash
+	podman commit "$container_id" provisioned-systemd-home
+	podman kill "$container_id"
 }
 
 build
