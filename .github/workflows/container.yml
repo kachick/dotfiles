@@ -86,6 +86,7 @@ jobs:
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
+          podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; la --tree ~/.config'
           podman kill "$container_id"
       - name: Push To ghcr.io
