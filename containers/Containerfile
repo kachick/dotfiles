@@ -11,6 +11,7 @@ USER user
 ENV USER=user
 
 # TODO: Install with NIX_INSTALLER_EXTRA_CONF in kachick/ubuntu-nix-systemd
+RUN mkdir -p ${XDG_STATE_HOME-$HOME/.local/state}/nix
 
 RUN mkdir -p ~/.local/state/nix/profiles
 
