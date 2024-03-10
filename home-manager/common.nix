@@ -59,7 +59,7 @@
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-  targets.genericLinux.enable = if pkgs.stdenv.isDarwin then false else true;
+  targets.genericLinux.enable = pkgs.stdenv.isLinux;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -70,7 +70,7 @@
 
     checkConfig = true;
 
-    # Outputs in $XDG_CONFIG_HOME/nix/nix.conf, so always use string even if boolean
+    # Outputs in $XDG_CONFIG_HOME/nix/nix.conf
     # https://github.com/DeterminateSystems/nix-installer/blob/41dc9fecdef78a3a9af46dcf2b414c75766547c0/README.md#L433-L446
     settings = {
       experimental-features = [
@@ -83,11 +83,11 @@
 
       max-jobs = "auto";
 
-      auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
+      auto-optimise-store = pkgs.stdenv.isLinux;
 
       bash-prompt-prefix = "(nix:$name)\\040";
 
-      use-xdg-base-directories = "true";
+      use-xdg-base-directories = true;
     };
 
     # Without this makes following errors
