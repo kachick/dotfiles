@@ -13,6 +13,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
    ```bash
+   export NIX_INSTALLER_EXTRA_CONF='use-xdg-base-directories = true'
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 1. Make sure there is a nix directory that is used in the home-manager.\
