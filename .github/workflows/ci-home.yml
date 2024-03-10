@@ -39,10 +39,10 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v9
         with:
           extra-conf: 'use-xdg-base-directories = true'
-      - name: Preparation for enabled use-xdg-base-directories
-        run: 'mkdir -p ${XDG_STATE_HOME-$HOME/.local/state}/nix'
       - name: Print generated nix.conf
         run: 'cat /etc/nix/nix.conf'
+      - name: Preparation for enabled use-xdg-base-directories
+        run: 'mkdir -p ${XDG_STATE_HOME-$HOME/.local/state}/nix'
       - uses: DeterminateSystems/magic-nix-cache-action@v3
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
