@@ -45,7 +45,10 @@ jobs:
         run: |
           nix_state_home=${XDG_STATE_HOME-$HOME/.local/state}/nix
           mkdir -p "$nix_state_home"
-          mv "${HOME}/.nix-*" "${nix_state_home}/"
+          ls -alh "${HOME}"
+          mv "${HOME}/.nix-profile" "${nix_state_home}/profile"
+          mv "${HOME}/.nix-defexpr" "${nix_state_home}/defexpr"
+          mv "${HOME}/.nix-channels" "${nix_state_home}/channels"
       - uses: DeterminateSystems/magic-nix-cache-action@v3
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
