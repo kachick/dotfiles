@@ -21,5 +21,5 @@ podman exec --user=user --workdir='/home/user' -it "$container_id" /home/user/.n
 # drwxr-xr-x - user  9 Mar 00:31 .config
 # drwxr-xr-x - user  9 Mar 00:31 ├── alacritty
 
-podman kill "$container_name"
+podman kill "$container_id"
 ```
