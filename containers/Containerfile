@@ -10,9 +10,6 @@ USER user
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 
-# TODO: Install with NIX_INSTALLER_EXTRA_CONF in kachick/ubuntu-nix-systemd
-RUN mkdir -p ${XDG_STATE_HOME-$HOME/.local/state}/nix
-
 RUN mkdir -p ~/.local/state/nix/profiles
 
 # Don't use /tmp, it removes in first run
