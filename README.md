@@ -44,10 +44,7 @@ makers apply
 If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash | bash -euxo
-
-## for developer
-makers sandbox-cr
+bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash)
 ```
 
 Using podmain may require to install some dependencies without Nix
