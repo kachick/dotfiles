@@ -68,7 +68,6 @@ jobs:
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 #v2.13
         with:
           image: systemd-prepared
-          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
           containerfiles: |
             containers/Containerfile
           oci: true
@@ -78,15 +77,15 @@ jobs:
           container_id="$(podman run --detach --rm systemd-prepared)
           podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_id" rm -rf /provisioner/cleanup.bash
-          podman commit "$container_id" provisioned-with-systemd
+          podman commit "$container_id" home
           podman kill "$container_id"
-          podman tag provisioned-with-systemd home:latest
-          podman tag provisioned-with-systemd home:${{ github.sha }}
-          podman tag provisioned-with-systemd home:${{ needs.get-meta.outputs.started_at }}
+          podman tag home home:latest
+          podman tag home home:${{ github.sha }}
+          podman tag home home:${{ needs.get-meta.outputs.started_at }}
       - name: Test output image
         run: |
           set -euxo pipefail
-          container_id="$(podman run --detach --rm home)
+          container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c la
           podman kill "$container_id"
       - name: Push To ghcr.io
@@ -94,8 +93,9 @@ jobs:
         id: push-to-ghcr
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c #v2.8
         with:
-          # Keep 1 line with space delimiter with the action spec
-          tags: ghcr.io/${{ github.repository_owner }}/home:latest ghcr.io/${{ github.repository_owner }}/home:${{ github.sha }} ghcr.io/${{ github.repository_owner }}/home:${{ needs.get-meta.outputs.started_at }}
+          image: home
+          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
+          registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
       - name: Log pushed outputs
