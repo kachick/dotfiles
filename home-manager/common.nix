@@ -64,10 +64,28 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # https://github.com/nix-community/home-manager/blob/36f873dfc8e2b6b89936ff3e2b74803d50447e0a/modules/misc/nix.nix#L5
   nix = {
     enable = true;
+
+    checkConfig = true;
+
+    # Outputs in $XDG_CONFIG_HOME/nix/nix.conf, so always use string even if boolean
+    # https://github.com/DeterminateSystems/nix-installer/blob/41dc9fecdef78a3a9af46dcf2b414c75766547c0/README.md#L433-L446
     settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+        "repl-flake"
+      ];
+
+      extra-nix-path = "nixpkgs=flake:nixpkgs";
+
+      max-jobs = "auto";
+
+      auto-optimise-store = if pkgs.stdenv.isLinux then "true" else "false";
+
+      bash-prompt-prefix = "(nix:$name)\040";
     };
 
     # Without this makes following errors
