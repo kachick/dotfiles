@@ -50,6 +50,8 @@ jobs:
           which ruby
           which irb
           which ssh
+          which la
+          which p
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
@@ -62,5 +64,5 @@ jobs:
           zsh -c 'ssh -V'
       - name: Run homemade commands
         run: |
-          zsh -c 'la'
+          zsh -c 'la; la --tree ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
