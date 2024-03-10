@@ -153,7 +153,17 @@
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''
-      # TODO: Switch to pkgs.zsh from current zsh in darwin
+      # Used same method as switching to fish, but this delegates built-in zsh to nixpkg.zsh
+      # Make better experience and compatibility. In darwin, default is zsh.
+      # The built-in bash in darwin is too old even if just reading simple .profile
+      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
+      # https://askubuntu.com/questions/153976/how-do-i-get-the-parent-process-id-of-a-given-child-process
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$(${pkgs.procps}/bin/ps -o ppid= $$) --format=comm) != "zsh" ]]
+      then
+        # translated bash's solution `shopt -q login_shell`. See https://unix.stackexchange.com/a/122743
+        [[ -o login ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+      fi
 
       # TODO: May move to sessionVariables
       if [[ "$OSTYPE" == darwin* ]]; then
