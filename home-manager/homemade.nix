@@ -2,6 +2,13 @@
 
 # - Tiny tools by me, they may be rewritten with another language.
 # - Aliases across multiple shells
+let
+  la = pkgs.writeShellScript "la.bash" ''
+    set -euo pipefail
+
+    ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first "$@"
+  '';
+in
 {
   xdg.dataFile."homemade/bin/bench_shells".source = pkgs.writeShellScript "bench_shells.bash" ''
     set -euo pipefail
@@ -39,10 +46,11 @@
     ${lib.getExe pkgs.mise} plugins update
   '';
 
-  xdg.dataFile."homemade/bin/la".source = pkgs.writeShellScript "la.bash" ''
+  xdg.dataFile."homemade/bin/la".source = la;
+  xdg.dataFile."homemade/bin/lat".source = pkgs.writeShellScript "lat.bash" ''
     set -euo pipefail
 
-    ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first "$@"
+    ${la} --tree "$@"
   '';
 
   xdg.dataFile."homemade/bin/walk".source = pkgs.writeShellScript "walk.bash" ''

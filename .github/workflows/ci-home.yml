@@ -67,5 +67,5 @@ jobs:
           zsh -c 'ssh -V'
       - name: Run homemade commands
         run: |
-          zsh -c 'la ~; la --tree ~/.config'
+          zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
