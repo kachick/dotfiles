@@ -14,6 +14,7 @@ EOF
 
 sandbox() {
 	local -r container_id="$(podman run --detach --rm ghcr.io/kachick/home:latest)"
+	sleep 1 # Wait for the systemd to be ready
 	podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh'
 	podman kill "$container_id"
 }

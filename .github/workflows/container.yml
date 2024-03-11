@@ -75,6 +75,7 @@ jobs:
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm systemd-prepared)"
+          sleep 2 # Wait for the systemd to be ready
           podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_id" rm -rf /provisioner/cleanup.bash
           podman commit "$container_id" home
@@ -86,6 +87,7 @@ jobs:
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
+          sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
           podman kill "$container_id"
