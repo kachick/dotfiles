@@ -78,6 +78,18 @@
     gitleaks
     ruby_3_3
 
+    # How to get the installed font names
+    # linux: fc-list
+    # darwin: system_profiler SPFontsDataType
+    # filter to find by eyes: system_profiler SPFontsDataType | grep -v 'Propo' | sort | rg --pcre2 '(?<=Full Name: ).+(?=Nerd Font)'
+    (pkgs.nerdfonts.override {
+      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/data/fonts/nerdfonts/shas.nix
+      fonts = [
+        "SourceCodePro"
+        "Inconsolata"
+      ];
+    })
+
     # Includes follows in each repository if needed, not in global
     # gcc
     # rustup
