@@ -86,7 +86,7 @@
         ;;
       darwin*)
         # https://stackoverflow.com/questions/22727107/how-to-find-the-last-field-using-cut
-        parent_command="$(ps -p "$PPID" -o 'comm=' | rev | ${pkgs.coreutils}/bin/cut -d'/' -f 1 | rev)"
+        parent_command="$(ps -p "$PPID" -o 'comm=' | "${pkgs.ruby_3_3}/bin/ruby" --disable=gems -e 'puts STDIN.gets.slice(/[a-z]+$/)')"
         ;;
       esac
 
