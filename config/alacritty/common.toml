@@ -5,4 +5,4 @@ import = ["~/.config/alacritty/themes/iceberg-dark.toml"]
 family = "PlemolJP Console NF"
 
 [window]
-opacity = 0.98
+opacity = 0.85
