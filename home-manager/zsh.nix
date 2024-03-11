@@ -126,6 +126,8 @@
       setopt hist_save_no_dups
       setopt hist_no_store
       setopt HIST_NO_FUNCTIONS
+      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+      setopt interactivecomments
 
       # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
       bindkey ";5C" forward-word
