@@ -19,6 +19,7 @@
     coreutils
     less # container base image doesn't have less even for ubuntu official
 
+    # https://apple.stackexchange.com/questions/187783/can-i-use-gnu-ps-on-os-x
     # Linux: procps-ng, macOS: procps
     # https://github.com/NixOS/nixpkgs/blob/432b72a4c9c41c4898a0deff7413588f84631499/pkgs/os-specific/linux/procps-ng/default.nix#L13-L16
     # https://github.com/NixOS/nixpkgs/blob/432b72a4c9c41c4898a0deff7413588f84631499/pkgs/top-level/unixtools.nix#L165-L170
@@ -26,7 +27,7 @@
     # For an example, --no-header isn't in darwin: https://stackoverflow.com/questions/11532188/how-to-get-rid-of-the-headers-in-a-ps-command-in-mac-os-x
     # And related: https://apple.stackexchange.com/questions/300864/how-to-get-the-basic-linux-ps-functionality-in-mac
     procps # `ps`
-    # Can't use same options in Linux and Darwin, comm = FileName isn't only in darwin
+    # Can't use same options in Linux and Darwin even in this rust tool, "comm = FileName" kind isn't in darwin
     # https://github.com/dalance/procs/blob/6ca4eaa5c56e6154fa305efb506bea1235ee9a59/README.md#L438
     procs # alt ps
 

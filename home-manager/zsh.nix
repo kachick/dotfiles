@@ -161,7 +161,8 @@
         parent_command="$(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm)"
         ;;
       darwin*)
-        parent_command="$(ps -p "$PPID" -o 'comm=')"
+        # https://stackoverflow.com/questions/22727107/how-to-find-the-last-field-using-cut
+        parent_command="$(ps -p "$PPID" -o 'comm=' | rev | ${pkgs.coreutils}/bin/cut -d'/' -f 1 | rev)"
         ;;
       esac
 
@@ -174,7 +175,7 @@
       then
         # translated bash's solution `shopt -q login_shell`. See https://unix.stackexchange.com/a/122743
         [[ -o login ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+        exec "${pkgs.zsh}/bin/zsh" $LOGIN_OPTION
       fi
 
       # TODO: May move to sessionVariables

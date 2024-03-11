@@ -85,7 +85,8 @@
         parent_command="$(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm)"
         ;;
       darwin*)
-        parent_command="$(ps -p "$PPID" -o 'comm=')"
+        # https://stackoverflow.com/questions/22727107/how-to-find-the-last-field-using-cut
+        parent_command="$(ps -p "$PPID" -o 'comm=' | rev | ${pkgs.coreutils}/bin/cut -d'/' -f 1 | rev)"
         ;;
       esac
 
@@ -94,7 +95,7 @@
       if [[ "$parent_command" != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+        exec "${pkgs.zsh}/bin/zsh" $LOGIN_OPTION
       fi
     '';
 
