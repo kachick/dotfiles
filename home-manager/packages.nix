@@ -1,5 +1,6 @@
 { pkgs, ... }:
 
+let homemades = import ./homemade.nix; in
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -106,7 +107,7 @@
     # libyaml
     # openssl
 
-  ] ++ (lib.optionals stdenv.isLinux
+  ] ++ homemades ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc

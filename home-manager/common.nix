@@ -11,7 +11,6 @@
     ./git.nix
     ./zellij.nix
     ./darwin.nix # Omit needless parts for Linux in the file
-    ./homemade.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -52,8 +51,8 @@
     };
 
     sessionPath = [
-      # See ./homemade.nix for detail
-      "${config.xdg.dataHome}/homemade/bin"
+      # Put executable for temporary use
+      "${config.xdg.dataHome}/tmpbin"
     ];
   };
 
@@ -106,6 +105,8 @@
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
+
+  xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
