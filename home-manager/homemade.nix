@@ -6,7 +6,7 @@ let
   la = pkgs.writeShellScript "la.bash" ''
     set -euo pipefail
 
-    ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first --color=always "$@" | ${lib.getBin pkgs.less}/bin/less
+    ${lib.getBin pkgs.eza}/bin/eza --long --all --group-directories-first --color=always "$@"
   '';
 in
 {
