@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, ppid, ... }:
 
 {
   services.gpg-agent.enableZshIntegration = true;
@@ -153,12 +153,24 @@
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''
+      # Don't extract an alias or command. Write in each shells
+      # Read package.nix why using different ps command in Linux and Darwin
+      parent_command=""
+      case ''${OSTYPE} in
+      linux*)
+        parent_command="$(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm)"
+        ;;
+      darwin*)
+        parent_command="$(ps -p "$PPID" -o 'comm=')"
+        ;;
+      esac
+
       # Used same method as switching to fish, but this delegates built-in zsh to nixpkg.zsh
       # Make better experience and compatibility. In darwin, default is zsh.
       # The built-in bash in darwin is too old even if just reading simple .profile
       # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
       # https://askubuntu.com/questions/153976/how-do-i-get-the-parent-process-id-of-a-given-child-process
-      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$(${pkgs.procps}/bin/ps -o ppid= $$) --format=comm) != "zsh" ]]
+      if [[ "$parent_command" != "zsh" ]]
       then
         # translated bash's solution `shopt -q login_shell`. See https://unix.stackexchange.com/a/122743
         [[ -o login ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=""

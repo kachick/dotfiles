@@ -77,9 +77,21 @@
 
     # Switch to another shell when bash used as a login shell
     profileExtra = ''
+      # Don't extract an alias or command. Write in each shells
+      # Read package.nix why using different ps command in Linux and Darwin
+      parent_command=""
+      case ''${OSTYPE} in
+      linux*)
+        parent_command="$(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm)"
+        ;;
+      darwin*)
+        parent_command="$(ps -p "$PPID" -o 'comm=')"
+        ;;
+      esac
+
       # Used same method as switching to fish
       # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
+      if [[ "$parent_command" != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
         exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
