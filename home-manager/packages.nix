@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -106,7 +106,7 @@
     # libyaml
     # openssl
 
-  ] ++ (lib.optionals stdenv.isLinux
+  ] ++ (import ./homemade.nix { inherit pkgs; }) ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc

@@ -48,7 +48,6 @@ jobs:
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Print some paths and versions
         run: |
-          # homemade scripts are not available in this bash
           which fish
           which zsh
           which bash
