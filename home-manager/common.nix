@@ -96,6 +96,10 @@
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/unix.toml;
+  xdg.configFile."alacritty/themes" = {
+    source = ../config/alacritty/themes;
+    recursive = true;
+  };
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
