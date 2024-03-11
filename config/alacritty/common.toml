@@ -1,8 +1,18 @@
 # You can find major themes in https://github.com/alacritty/alacritty-theme
 import = ["~/.config/alacritty/themes/iceberg-dark.toml"]
 
-[font.normal]
-family = "PlemolJP Console NF"
+[selection]
+save_to_clipboard = true
+
+[font]
+size = 12
+normal.family = "SauceCodePro NFM"
 
 [window]
 opacity = 0.85
+
+dimensions.columns = 180
+dimensions.lines = 50
+
+position.x = 10
+position.y = 10
