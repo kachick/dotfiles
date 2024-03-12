@@ -1,7 +1,7 @@
-name: gitleaks
+name: 💧
 on: [pull_request, push, workflow_dispatch]
 jobs:
-  scan:
+  gitleaks:
     timeout-minutes: 15
     name: gitleaks
     runs-on: ubuntu-latest

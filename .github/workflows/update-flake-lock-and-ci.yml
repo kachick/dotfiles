@@ -1,4 +1,4 @@
-name: Update flake.lock and CI dependencies
+name: 🤖🆙❄️
 on:
   pull_request:
     paths:

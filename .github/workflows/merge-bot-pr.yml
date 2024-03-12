@@ -1,4 +1,4 @@
-name: Merge bot PR after CI
+name: 🤖👌
 on: pull_request
 
 permissions:
