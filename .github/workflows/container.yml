@@ -86,7 +86,9 @@ jobs:
           podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
       - name: Check no personal name in that config
         run: |
-          ! podman exec --user=user --workdir=/home/user  '${{ steps.start-systemd.outputs.container_id }}' /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          cat <<'EOF' | podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash
+            ! /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          EOF
       - name: Persist the container to image
         run: |
           podman commit '${{ steps.start-systemd.outputs.container_id }}' home
