@@ -23,7 +23,8 @@ $nix_shell\
 $shell\
 $line_break\
 $time\
-$character"""
+$character\
+$status"""
 
 # https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
 [shlvl]
@@ -35,7 +36,9 @@ style = "blue"
 [character]
 success_symbol = "[>](bold green)"
 error_symbol = "[!](italic purple)"
-vimcmd_symbol = "[❮](green)"
+
+[status]
+disabled = false
 
 [git_commit]
 only_detached = false
