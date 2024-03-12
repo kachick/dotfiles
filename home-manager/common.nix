@@ -48,8 +48,6 @@
 
       # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
       LESSCHARSET = "utf-8";
-
-      STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
     };
 
     sessionPath = [
@@ -111,6 +109,10 @@
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
+
+  # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
+  # - https://github.com/kachick/dotfiles/issues/142
+  home.file.".stack/config.yaml".source = ../config/stack/config.yaml;
 
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix

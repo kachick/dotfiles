@@ -30,10 +30,4 @@
       default-key = "9BE4016A38165CCB";
     };
   };
-
-  # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
-  xdg.configFile."stack" = {
-    source = ../config/stack;
-    recursive = true;
-  };
 }
