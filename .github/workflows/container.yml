@@ -71,19 +71,47 @@ jobs:
           containerfiles: |
             containers/Containerfile
           oci: true
-      - name: Run and commit Nix operations by the user while running the systemd
+      - name: Start systemd
+        id: start-systemd
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm systemd-prepared)"
-          sleep 2 # Wait for the systemd to be ready
-          podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
-          podman exec --user=root -it "$container_id" rm -rf /provisioner
-          podman commit "$container_id" home
-          podman kill "$container_id"
+          echo container_id="$container_id" | tee -a "$GITHUB_OUTPUT"
+      - name: Wait for the systemd to be ready
+        run: 'sleep 2'
+      - name: Run Nix commands and cleanup provisioners
+        run: |
+          set -euxo pipefail
+          podman exec --user=user -it '${{ steps.start-systemd.outputs.container_id }}' /provisioner/needs_systemd.bash
+          podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
+      - name: Check no personal name in that config
+        run: |
+          # https://unix.stackexchange.com/a/340729
+          assign_stdin_to_global_command_variable() {
+            command="$(cat)"
+          }
+
+          assign_stdin_to_global_command_variable <<'EOF'
+          set -uxo
+          # https://unix.stackexchange.com/questions/311090/how-to-disable-set-x
+          set +e
+          /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          # Need to check the exit code if we want to make sure "not found" in grep family
+          # https://github.com/BurntSushi/ripgrep/issues/1290#issuecomment-761170095
+
+          ripgrep_exit_code="$?" # Do not directly use the $? to prevent inseting another command as a human error
+          [[ "$ripgrep_exit_code" -eq 1 ]]
+          EOF
+
+          podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash -c "$command"
+      - name: Persist the container to image
+        run: |
+          podman commit '${{ steps.start-systemd.outputs.container_id }}' home
+          podman kill '${{ steps.start-systemd.outputs.container_id }}'
           podman tag home home:latest
           podman tag home home:${{ github.sha }}
           podman tag home home:${{ needs.get-meta.outputs.started_at }}
-      - name: Test output image
+      - name: Test the created image
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
