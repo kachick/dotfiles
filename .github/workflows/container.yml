@@ -86,9 +86,21 @@ jobs:
           podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
       - name: Check no personal name in that config
         run: |
-          cat <<'EOF' | podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash
-            ! /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          assign_stdin_to_global_command_variable() {
+            command="$(cat)"
+          }
+
+          assign_stdin_to_global_command_variable <<'EOF'
+          set -euxo
+
+          /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          # Need to check the exit code if we want to make sure "not found" in grep family
+          # https://github.com/BurntSushi/ripgrep/issues/1290#issuecomment-761170095
+          ripgrep_exit_code="$?" # Do not directly use the $? to prevent inseting another command as a human error
+          [[ "$ripgrep_exit_code" -eq 1 ]]
           EOF
+
+          podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash -c "$command"
       - name: Persist the container to image
         run: |
           podman commit '${{ steps.start-systemd.outputs.container_id }}' home
