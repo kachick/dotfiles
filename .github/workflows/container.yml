@@ -78,6 +78,8 @@ jobs:
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
           podman exec --user=root -it "$container_id" rm -rf /provisioner
+          # Make sure personal name is not written to the config
+          (podman exec --user=user --workdir=/home/user "$container_id" /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }}) && false
           podman commit "$container_id" home
           podman kill "$container_id"
           podman tag home home:latest
