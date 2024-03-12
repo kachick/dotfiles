@@ -48,7 +48,7 @@ jobs:
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Check personal name in that config
         run: |
-          zsh -c 'rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }} "$HOME"' && false
+          rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }} "$HOME" && false
       - name: Print some paths and versions
         run: |
           which fish
