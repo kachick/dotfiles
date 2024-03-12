@@ -1,4 +1,4 @@
-name: CI - Home
+name: 🏠
 on:
   push:
     branches: [main]
