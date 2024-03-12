@@ -1,4 +1,4 @@
-name: 👋 🦭🗑️
+name: 👋 ⬢🗑️
 on:
   workflow_dispatch:
     inputs:

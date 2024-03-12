@@ -20,6 +20,7 @@ $python\
 $deno\
 $nodejs\
 $cmd_duration\
+$container\
 $nix_shell\
 $shell\
 $line_break\
@@ -83,3 +84,6 @@ style = "bright-black"
 [shell]
 disabled = false
 bash_indicator = 'bash'
+
+[container]
+disabled = false
