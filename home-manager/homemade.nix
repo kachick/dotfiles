@@ -36,11 +36,11 @@ in
   (pkgs.writeShellApplication
     {
       name = "updeps";
-      runtimeInputs = with pkgs; [ mise ];
+      runtimeInputs = with pkgs; [ nix mise ];
       text = ''
-        set -euxo pipefail
-
         echo 'this updater assume you have the privilege and sudo command'
+
+        set -x
 
         case ''${OSTYPE} in
         linux*)
