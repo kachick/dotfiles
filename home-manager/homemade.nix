@@ -130,8 +130,8 @@ in
         #   - Always specify --sort to ensure it can be used in comm command. AFAIK, refname is most fit key here.
         #     Make sure, this result should not be changed even if you changed in global git config with git.nix
         #     Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
-        git branch --sort=refname --list main master trunk develop development |
-          comm --check-order -13 - <(git branch --sort=refname --merged) |
+        git branch --sort=refname --format='%(refname:short)' --list main master trunk develop development |
+          comm --check-order -13 - <(git branch --sort=refname --format='%(refname:short)' --merged) |
           xargs --no-run-if-empty --max-lines=1 git branch --delete
       '';
     }
