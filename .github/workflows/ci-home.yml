@@ -46,7 +46,7 @@ jobs:
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
-      - name: Prevent to write personal name in that config
+      - name: Check personal name in that config
         run: |
           zsh -c 'rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }} "$HOME"' && false
       - name: Print some paths and versions

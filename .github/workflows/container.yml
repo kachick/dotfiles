@@ -71,21 +71,30 @@ jobs:
           containerfiles: |
             containers/Containerfile
           oci: true
-      - name: Run and commit Nix operations by the user while running the systemd
+      - name: Start systemd
+        id: start-systemd
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm systemd-prepared)"
-          sleep 2 # Wait for the systemd to be ready
-          podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
-          podman exec --user=root -it "$container_id" rm -rf /provisioner
-          # Make sure personal name is not written to the config
-          (podman exec --user=user --workdir=/home/user "$container_id" /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }}) && false
-          podman commit "$container_id" home
-          podman kill "$container_id"
+          echo container_id="$container_id" | tee -a "$GITHUB_OUTPUT"
+      - name: Wait for the systemd to be ready
+        run: 'sleep 2'
+      - name: Run Nix commands and cleanup provisioners
+        run: |
+          set -euxo pipefail
+          podman exec --user=user -it '${{ steps.start-systemd.outputs.container_id }}' /provisioner/needs_systemd.bash
+          podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
+      - name: Check no personal name in that config
+        run: |
+          (podman exec --user=user --workdir=/home/user  '${{ steps.start-systemd.outputs.container_id }}' /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e ${{ github.repository_owner }}) && false
+      - name: Persist the container to image
+        run: |
+          podman commit '${{ steps.start-systemd.outputs.container_id }}' home
+          podman kill '${{ steps.start-systemd.outputs.container_id }}'
           podman tag home home:latest
           podman tag home home:${{ github.sha }}
           podman tag home home:${{ needs.get-meta.outputs.started_at }}
-      - name: Test output image
+      - name: Test the created image
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
