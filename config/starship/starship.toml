@@ -23,6 +23,7 @@ $nix_shell\
 $shell\
 $line_break\
 $time\
+$status\
 $character"""
 
 # https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
@@ -35,7 +36,12 @@ style = "blue"
 [character]
 success_symbol = "[>](bold green)"
 error_symbol = "[!](italic purple)"
-vimcmd_symbol = "[❮](green)"
+
+[status]
+disabled = false
+# Displays as a part of character module
+style = "italic purple"
+format = "[$status]($style)"
 
 [git_commit]
 only_detached = false
