@@ -47,8 +47,8 @@ jobs:
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Check personal name in that config
-        working-directory: '/home/runner'
         run: |
+          cd "$HOME"
           rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' -e '${{ github.repository_owner }}' && false
       - name: Print some paths and versions
         run: |
