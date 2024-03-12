@@ -54,7 +54,14 @@
       enable = true;
     };
 
-    syntaxHighlighting.enable = true;
+    syntaxHighlighting = {
+      enable = true;
+      # Candidates: https://wiki.archlinux.org/title/zsh#Colors
+      # 0-7, 7 words(starship "purple" is "magenta" here), or #COLORCODE style.
+      styles = {
+        unknown-token = "fg=magenta";
+      };
+    };
 
     enableAutosuggestions = true;
 
