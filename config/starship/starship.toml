@@ -9,6 +9,7 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
+$direnv\
 $crystal\
 $elm\
 $haskell\
@@ -32,6 +33,10 @@ disabled = false
 
 [directory]
 style = "blue"
+
+[direnv]
+# Do not enable until https://github.com/starship/starship/pull/5657 is released
+disabled = true
 
 [character]
 success_symbol = "[>](bold green)"
