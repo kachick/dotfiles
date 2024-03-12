@@ -36,7 +36,8 @@ in
   (pkgs.writeShellApplication
     {
       name = "updeps";
-      runtimeInputs = with pkgs; [ nix mise ];
+      # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
+      runtimeInputs = with pkgs; [ mise ];
       text = ''
         echo 'this updater assume you have the privilege and sudo command'
 
