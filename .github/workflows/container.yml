@@ -25,12 +25,29 @@ jobs:
     timeout-minutes: 5
     outputs:
       started_at: ${{ steps.timestamp.outputs.started_at }}
+      tags: ${{ steps.tags.outputs.tags }}
     steps:
+      - name: Install gh-action-escape
+        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - name: Get started timestamp
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
-          echo "started_at=$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
+          date --utc '+%Y%m%d-%H%M%S-%Z' | ruby -pe '$_.downcase!' | gh-action-escape -name=started_at | tee -a "$GITHUB_OUTPUT"
+      - name: Generate tags for the image
+        id: tags
+        # https://github.com/orgs/community/discussions/26557#discussioncomment-3252327
+        run: |
+          always='${{ github.sha }} ${{ steps.timestamp.outputs.started_at }}'
+          special=''
+          if [ '${{ github.event_name }}' = 'pull_request' ]; then
+            special='pr-${{ github.event.number }}'
+          elif [ '${{ github.event_name }}' = 'push'  ] && [ '${{ github.ref_name }}' = '${{ github.event.repository.default_branch }}' ]; then
+            special='latest'
+          else
+            :
+          fi
+          echo "${special} ${always}" | gh-action-escape -name=tags | tee -a "$GITHUB_OUTPUT"
   build_and_push:
     needs: [get-meta]
     runs-on: ubuntu-22.04
@@ -121,14 +138,20 @@ jobs:
           podman kill "$container_id"
       - name: Push To ghcr.io
         id: push-to-ghcr
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.actor == github.repository_owner }}
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         with:
           image: home
-          tags: latest ${{ github.sha }} ${{ needs.get-meta.outputs.started_at }}
+          tags: ${{ needs.get-meta.outputs.tags }}
           registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
       - name: Log pushed outputs
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.actor == github.repository_owner }}
         run: echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"
+      - name: Post comments
+        if: ${{ (github.actor == github.repository_owner) && (github.event_name == 'pull_request') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.number }} --body='UPDATE ME'
