@@ -155,12 +155,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euxo pipefail
+
           echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"
 
-          gh api --paginate \ -H "Accept: application/vnd.github+json" \
+          gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /users/${{ github.repository_owner }}/packages/container/home/versions \
-            --jq '.[] | select(.name == "${{ steps.push-to-ghcr.outputs.digest }}")' | gh-action-escape -name=json | tee -a "$GITHUB_OUTPUT"
+            --jq '.[] | select(.name == "${{ steps.push-to-ghcr.outputs.digest }}")' | \
+              gh-action-escape -name=json | tee -a "$GITHUB_OUTPUT"
 
       - name: Post comments
         if: ${{ (github.actor == github.repository_owner) && (github.event_name == 'pull_request') }}
