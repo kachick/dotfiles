@@ -154,4 +154,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr comment ${{ github.event.number }} --body='UPDATE ME'
+          (
+          cat <<'EOF'
+          ⬢🦭 Staging container-image has been deployed\
+          You can test the interactive shell as follows
+
+          ```bash
+          bash - '${{ github.ref_name }}' <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.ref_name }}/containers/sandbox-with-ghcr.bash')
+          ```
+
+          TODO: This image will be automatically removed from ghcr.io 🗑️ if you merged/closed this PR
+          EOF
+          ) | gh pr comment ${{ github.event.number }} --body-file -
