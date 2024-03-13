@@ -186,6 +186,6 @@ jobs:
           ${{ steps.inspect-package.outputs.json }}
           ```
 
-          TODO: This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
+          This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
           EOF
           ) | gh pr comment ${{ github.event.number }} --body-file -
