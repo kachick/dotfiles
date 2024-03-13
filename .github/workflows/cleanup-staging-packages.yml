@@ -10,8 +10,8 @@ jobs:
     if: github.event.pull_request.merged == true
     timeout-minutes: 15
     steps:
-      - id: inspect-package
-        name: Inspect package published in the PR
+      - name: Inspect the PR published package
+        id: inspect-package
         run: |
           gh api --paginate \
             -H "Accept: application/vnd.github+json" \
@@ -27,4 +27,4 @@ jobs:
           package-name: 'home'
           package-type: 'container'
           token: ${{ github.token }}
-          package-version-ids: ${{ steps.inspect-package.outputs.id }}
+          package-version-ids: ${{ steps.inspect-package.outputs.package-version-id }}
