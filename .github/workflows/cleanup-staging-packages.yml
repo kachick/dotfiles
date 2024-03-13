@@ -4,6 +4,11 @@ on:
     types:
       - closed
 
+defaults:
+  run:
+    # https://pubs.opengroup.org/onlinepubs/009695399/utilities/set.html
+    shell: bash -Ceuxo pipefail {0}
+
 jobs:
   ghcr:
     runs-on: ubuntu-22.04
