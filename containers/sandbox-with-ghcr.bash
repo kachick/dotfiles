@@ -1,5 +1,12 @@
 #!/bin/bash
 
+## Use Process Substitution for this script
+# - https://www.gnu.org/software/bash/manual/html_node/Process-Substitution.html
+# - https://qiita.com/takei-yuya@github/items/7afcb92cfe7e678b7f6d
+#
+# bad: cmd | bash -s - arg
+# good: bash <(cmd) arg
+
 set -euxo pipefail
 
 cat <<'EOF'

@@ -177,7 +177,7 @@ jobs:
           You can test the interactive shell 🐚 as follows.
 
           ```bash
-          curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.sha }}/containers/sandbox-with-ghcr.bash' | bash -s - '${{ github.sha }}'
+          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.sha }}/containers/sandbox-with-ghcr.bash') '${{ github.sha }}'
           ```
 
           The package detail
