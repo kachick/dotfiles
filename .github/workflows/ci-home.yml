@@ -36,7 +36,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v9
+      - uses: DeterminateSystems/nix-installer-action@v10
       - name: Print some dotfiles overviews
         run: |
           cat /etc/nix/nix.conf
