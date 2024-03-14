@@ -50,3 +50,16 @@ jobs:
           package-type: 'container'
           token: ${{ github.token }}
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
+      - name: Post comments to the PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          (
+          cat <<'EOF'
+          🤖 removed 🗑️ staging ⬢ from ghcr.io
+
+          ```plaintext
+          ${{ steps.inspect-package.outputs.package-version-ids }}
+          ```
+          EOF
+          ) | gh pr comment '${{ steps.get-meta.outputs.pr_number }}' --body-file -
