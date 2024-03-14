@@ -50,6 +50,8 @@ jobs:
           package-type: 'container'
           token: ${{ github.token }}
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
+      - name: Prepare git to run gh commands
+        uses: actions/checkout@v4
       - name: Post comments to the PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
