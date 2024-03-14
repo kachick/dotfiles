@@ -136,4 +136,17 @@ in
       '';
     }
   )
+
+  (pkgs.writeShellApplication
+    {
+      name = "burl";
+      runtimeInputs = with pkgs; [ gh ];
+      text = ''
+        gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧'
+      '';
+      meta = {
+        description = "https://www.collinsdictionary.com/dictionary/english/burl";
+      };
+    }
+  )
 ]
