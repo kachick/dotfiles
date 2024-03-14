@@ -27,9 +27,9 @@ jobs:
         id: get-meta
         run: |
           if [ github.event_name == 'pull_request' ]; then
-            echo '${{ github.event.pull_request.number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+            echo -n '${{ github.event.pull_request.number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
           else
-            echo '${{ inputs.pr-number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+            echo -n '${{ inputs.pr-number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
           fi
       - name: Inspect the PR published package
         id: inspect-package
