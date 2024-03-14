@@ -20,16 +20,9 @@ Read <https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d6
 
 `nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
 
-## How to use edge dependencies only in some packages?
+## How to mix _-unstable and release-_ for different packages?
 
-```nix
-let
-  pkgsUnstable = import
-    (fetchTarball
-      "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz")
-    { };
-in
-```
+See <https://github.com/nix-community/home-manager/issues/1538#issuecomment-1265293260>
 
 ## I cannot find dot files in the macOS Finder
 

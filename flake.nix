@@ -6,6 +6,7 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
@@ -15,10 +16,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils }:
+  outputs = { self, nixpkgs, home-manager, flake-utils, edge-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        edge-pkgs = edge-nixpkgs.legacyPackages.${system};
       in
       rec {
         devShells.default = with pkgs;
@@ -52,6 +54,9 @@
               modules = [
                 ./home-manager/kachick.nix
               ];
+              extraSpecialArgs = {
+                inherit edge-pkgs;
+              };
             };
 
             github-actions = home-manager.lib.homeManagerConfiguration {
@@ -62,6 +67,9 @@
                 ./home-manager/kachick.nix
                 { home.username = "runner"; }
               ];
+              extraSpecialArgs = {
+                inherit edge-pkgs;
+              };
             };
 
             user = home-manager.lib.homeManagerConfiguration {
@@ -73,6 +81,9 @@
                   home.username = "user";
                 }
               ];
+              extraSpecialArgs = {
+                inherit edge-pkgs;
+              };
             };
           };
 
