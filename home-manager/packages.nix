@@ -29,7 +29,6 @@
     netcat # `nc`
 
     mise # alt asdf
-    unzip # Required in many asdf plugins
 
     git
     tig
@@ -77,6 +76,8 @@
     actionlint
     gitleaks
     ruby_3_3
+    unzip # Required in many asdf plugins
+    _7zz # `7zz` 7zip, not
 
     # How to get the installed font names
     # linux: fc-list
