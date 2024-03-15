@@ -78,6 +78,7 @@
     ruby_3_3
     unzip # Required in many asdf plugins
     _7zz # `7zz` 7zip, not
+    tlrc # `tldr` rust client, tealdeer is another candidate
 
     # How to get the installed font names
     # linux: fc-list
