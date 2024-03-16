@@ -149,4 +149,17 @@ in
       };
     }
   )
+
+  (pkgs.writeShellApplication
+    {
+      name = "todo";
+      runtimeInputs = with pkgs; [ ripgrep ];
+      text = ''
+        rg '\b(?:TODO|FIXME|BUG)\b'
+      '';
+      meta = {
+        description = "List todo family";
+      };
+    }
+  )
 ]
