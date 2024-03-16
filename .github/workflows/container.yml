@@ -121,7 +121,7 @@ jobs:
           set -uxo
           # https://unix.stackexchange.com/questions/311090/how-to-disable-set-x
           set +e
-          /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' --pcre2 --regexp '${{ github.repository_owner }}(?!/dotfiles)'
+          /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' 'kachick1'
           # Need to check the exit code if we want to make sure "not found" in grep family
           # https://github.com/BurntSushi/ripgrep/issues/1290#issuecomment-761170095
 
