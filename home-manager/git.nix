@@ -97,6 +97,26 @@
   programs.gh = {
     enable = true;
 
+    settings = {
+      aliases = {
+        # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
+        setup = ''!gh repo edit --enable-auto-merge && \
+          gh api --method PUT --verbose \
+          --header 'Accept: application/vnd.github+json' \
+          --header 'X-GitHub-Api-Version: 2022-11-28' \
+          '/repos/{owner}/{repo}/actions/permissions/workflow' \
+          --field 'can_approve_pull_request_reviews=true' \
+          --raw-field 'default_workflow_permissions=write'
+        '';
+
+        # "https://www.collinsdictionary.com/dictionary/english/burl"
+        burl = ''!gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
+          cd "$1" && \
+          gh setup
+        '';
+      };
+    };
+
     gitCredentialHelper = {
       enable = true;
 
