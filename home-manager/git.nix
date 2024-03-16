@@ -115,7 +115,8 @@
         burl = ''!cd ~/repos && \
           gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
-          gh setup
+          gh setup && \
+          ${pkgs.neo-cowsay}/bin/cowsay --rainbow '`cd ~/repos/$1`'
         '';
       };
     };
