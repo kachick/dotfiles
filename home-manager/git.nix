@@ -1,6 +1,8 @@
 { pkgs, lib, config, ... }:
 
 {
+  home.file."repos/.keep".text = "Put repositories here";
+
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
@@ -110,7 +112,8 @@
         '';
 
         # "https://www.collinsdictionary.com/dictionary/english/burl"
-        burl = ''!gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
+        burl = ''!cd '${config.home.file.repos}' && \
+          gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
           gh setup
         '';
