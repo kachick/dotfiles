@@ -112,7 +112,7 @@
         '';
 
         # "https://www.collinsdictionary.com/dictionary/english/burl"
-        burl = ''!cd '${config.home.file.repos}' && \
+        burl = ''!cd ~/repos && \
           gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
           gh setup
