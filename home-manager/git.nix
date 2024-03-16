@@ -111,7 +111,7 @@
           --raw-field 'default_workflow_permissions=write'
         '';
 
-        # "https://www.collinsdictionary.com/dictionary/english/burl"
+        # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''!cd ~/repos && \
           gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
