@@ -64,7 +64,12 @@ jobs:
         run: |
           podman version
           crun --version
-      - name: Base setup
+      - name: Update podman
+        # https://podman.io/docs/installation#ubuntu
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install podman
+      - name: Update crun
         run: |
           # Update crun: https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
           # TODO: Integrate selfup here
