@@ -146,7 +146,8 @@ jobs:
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
-          trap 'podman kill "$container_id"' EXIT ERR
+          # shellcheck disable=SC2064
+          trap "podman kill '$container_id'" EXIT ERR
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
