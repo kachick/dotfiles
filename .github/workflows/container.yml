@@ -134,7 +134,7 @@ jobs:
           podman tag home home:${{ needs.get-meta.outputs.ref_tag}}
           podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
       - name: Inspect the created image
-        run: 'podman inspec'
+        run: 'podman inspect'
       - name: Test the created image
         run: |
           set -euxo pipefail
