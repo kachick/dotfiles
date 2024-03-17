@@ -132,9 +132,6 @@ jobs:
         run: |
           podman commit \
             --author 'https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}' \
-            --change 'LABEL org.opencontainers.image.source=https://github.com/${{github.repository}}' \
-            --change 'LABEL org.opencontainers.image.description="Example by ${{github.repository}}"' \
-            --change 'LABEL org.opencontainers.image.licenses=MIT' \
             '${{ steps.start-systemd.outputs.container_id }}' home
           podman kill '${{ steps.start-systemd.outputs.container_id }}'
           podman tag home home:${{ needs.get-meta.outputs.special_tag }}
