@@ -64,7 +64,11 @@ jobs:
         run: |
           podman version
           crun --version
-      - name: Update podman
+      - name: |
+          Update podman with kubic to avoid following issues
+            * https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
+            * https://github.com/containers/buildah/issues/4632
+            * https://github.com/containers/podman/issues/14065
         # https://podman.io/docs/installation#ubuntu
         run: |
           # https://github.com/containers/podman/issues/14302#issuecomment-1564806361
@@ -73,25 +77,6 @@ jobs:
           curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
           sudo apt-get update
           sudo apt-get -y install podman
-      - name: Update crun
-        run: |
-          # Update crun: https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
-          # TODO: Integrate selfup here
-          CRUN_VER='1.14.4'
-          mkdir -p "${HOME}/.local/bin"
-          curl -L "https://github.com/containers/crun/releases/download/${CRUN_VER}/crun-${CRUN_VER}-linux-amd64" -o "${HOME}/.local/bin/crun"
-          chmod +x "${HOME}/.local/bin/crun"
-      # We can remove this since ubuntu-24.04, but keeping maybe better
-      - name: Update crun in podman
-        run: |
-          mkdir -p "${HOME}/.config/containers"
-          cat << EOF > "${HOME}/.config/containers/containers.conf"
-          [engine.runtimes]
-          crun = [
-            "${HOME}/.local/bin/crun",
-            "/usr/bin/crun"
-          ]
-          EOF
       - name: Logging dependency versions
         run: |
           podman version
