@@ -86,13 +86,15 @@ jobs:
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
-      - name: Build Image
+      - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           image: systemd-prepared
           containerfiles: |
             containers/Containerfile
           oci: true
+      - name: Inspect the created image
+        run: 'podman inspect systemd-prepared'
       - name: Start systemd
         id: start-systemd
         run: |
@@ -128,13 +130,18 @@ jobs:
           podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash -c "$command"
       - name: Persist the container to image
         run: |
-          podman commit '${{ steps.start-systemd.outputs.container_id }}' home
+          podman commit \
+            --author 'https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}' \
+            --change 'LABEL org.opencontainers.image.source=https://github.com/${{github.repository}}' \
+            --change 'LABEL org.opencontainers.image.description="Example by ${{github.repository}}"' \
+            --change 'LABEL org.opencontainers.image.licenses=MIT' \
+            '${{ steps.start-systemd.outputs.container_id }}' home
           podman kill '${{ steps.start-systemd.outputs.container_id }}'
           podman tag home home:${{ needs.get-meta.outputs.special_tag }}
           podman tag home home:${{ needs.get-meta.outputs.ref_tag}}
           podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
       - name: Inspect the created image
-        run: 'podman inspect'
+        run: 'podman inspect home'
       - name: Test the created image
         run: |
           set -euxo pipefail

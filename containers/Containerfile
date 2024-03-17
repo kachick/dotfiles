@@ -1,9 +1,7 @@
 # https://github.com/kachick/containers
 FROM ghcr.io/kachick/ubuntu-nix-systemd:20240316-150921-utc
 
-LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
-LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
-LABEL org.opencontainers.image.licenses=MIT
+# Add LABEL in just before push in workflow
 
 USER user
 # Docker/Podman doesn't set $USER in USER instruction, and it makes failure in home-manager activation
