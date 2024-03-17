@@ -64,8 +64,9 @@ jobs:
         run: |
           podman version
           crun --version
+          buildah version
       - name: |
-          Update podman with kubic to avoid following issues
+          Update podman and buildah with kubic to avoid and prevent following issues
             * https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
             * https://github.com/containers/buildah/issues/4632
             * https://github.com/containers/podman/issues/14065
@@ -76,11 +77,12 @@ jobs:
           echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
           curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
           sudo apt-get update
-          sudo apt-get -y install podman
+          sudo apt-get -y install podman buildah
       - name: Logging dependency versions
         run: |
           podman version
           crun --version
+          buildah version
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
@@ -131,6 +133,8 @@ jobs:
           podman tag home home:${{ needs.get-meta.outputs.special_tag }}
           podman tag home home:${{ needs.get-meta.outputs.ref_tag}}
           podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
+      - name: Inspect the created image
+        run: 'podman inspec'
       - name: Test the created image
         run: |
           set -euxo pipefail
