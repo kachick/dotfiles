@@ -151,6 +151,11 @@ jobs:
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.actor == github.repository_owner }}
+        # Using this method makes ghcr.io warning
+        # `No description provided`
+        # `To provide a description, add the following line to your Dockerfile:`
+        # But you have not to care this noise for now, it is happened even in redhat official
+        # https://github.com/kachick/dotfiles/issues/471#issuecomment-2002565514
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         with:
           image: home
