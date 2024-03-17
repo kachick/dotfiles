@@ -64,9 +64,11 @@ jobs:
         run: |
           podman version
           crun --version
+          buildah version
       - name: |
-          Update podman with kubic to avoid and prevent following issues
+          Update podman and buildah with kubic to avoid and prevent following issues
             * https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
+            * https://github.com/containers/buildah/issues/4632
             * https://github.com/containers/podman/issues/14065
         # https://podman.io/docs/installation#ubuntu
         run: |
@@ -75,19 +77,22 @@ jobs:
           echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
           curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
           sudo apt-get update
-          sudo apt-get -y install podman
+          sudo apt-get -y install podman buildah
       - name: Logging dependency versions
         run: |
           podman version
           crun --version
+          buildah version
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
-      # Do not use buildah and redhat-actions/buildah-buil here. Needless and it looks like handling as multi-architecture even if not specified platform, etc
-      - name: Build base image with podman
-        # TODO: Use build.bash here
-        run: |
-          podman build --tag systemd-prepared --format oci --file ./containers/Containerfile .
+      - name: Build base Image
+        uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
+        with:
+          image: systemd-prepared
+          containerfiles: |
+            containers/Containerfile
+          oci: true
       - name: Inspect the created image
         run: 'podman inspect systemd-prepared'
       - name: Start systemd
