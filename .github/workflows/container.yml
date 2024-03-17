@@ -64,39 +64,37 @@ jobs:
         run: |
           podman version
           crun --version
-      - name: Base setup
+          buildah version
+      - name: |
+          Update podman and buildah with kubic to avoid and prevent following issues
+            * https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
+            * https://github.com/containers/buildah/issues/4632
+            * https://github.com/containers/podman/issues/14065
+        # https://podman.io/docs/installation#ubuntu
         run: |
-          # Update crun: https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
-          # TODO: Integrate selfup here
-          CRUN_VER='1.14.4'
-          mkdir -p "${HOME}/.local/bin"
-          curl -L "https://github.com/containers/crun/releases/download/${CRUN_VER}/crun-${CRUN_VER}-linux-amd64" -o "${HOME}/.local/bin/crun"
-          chmod +x "${HOME}/.local/bin/crun"
-      # We can remove this since ubuntu-24.04, but keeping maybe better
-      - name: Update crun in podman
-        run: |
-          mkdir -p "${HOME}/.config/containers"
-          cat << EOF > "${HOME}/.config/containers/containers.conf"
-          [engine.runtimes]
-          crun = [
-            "${HOME}/.local/bin/crun",
-            "/usr/bin/crun"
-          ]
-          EOF
+          # https://github.com/containers/podman/issues/14302#issuecomment-1564806361
+          # https://software.opensuse.org//download.html?project=devel%3Akubic%3Alibcontainers%3Aunstable&package=podman
+          echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
+          sudo apt-get update
+          sudo apt-get -y install podman buildah
       - name: Logging dependency versions
         run: |
           podman version
           crun --version
+          buildah version
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
-      - name: Build Image
+      - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           image: systemd-prepared
           containerfiles: |
             containers/Containerfile
           oci: true
+      - name: Inspect the created image
+        run: 'podman inspect systemd-prepared'
       - name: Start systemd
         id: start-systemd
         run: |
@@ -132,22 +130,32 @@ jobs:
           podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash -c "$command"
       - name: Persist the container to image
         run: |
-          podman commit '${{ steps.start-systemd.outputs.container_id }}' home
+          podman commit \
+            --author 'https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}' \
+            '${{ steps.start-systemd.outputs.container_id }}' home
           podman kill '${{ steps.start-systemd.outputs.container_id }}'
           podman tag home home:${{ needs.get-meta.outputs.special_tag }}
           podman tag home home:${{ needs.get-meta.outputs.ref_tag}}
           podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
+      - name: Inspect the created image
+        run: 'podman inspect home'
       - name: Test the created image
         run: |
           set -euxo pipefail
           container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
+          # shellcheck disable=SC2064
+          trap "podman kill '$container_id'" EXIT ERR
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
-          podman kill "$container_id"
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.actor == github.repository_owner }}
+        # Using this method makes ghcr.io warning
+        # `No description provided`
+        # `To provide a description, add the following line to your Dockerfile:`
+        # But you have not to care this noise for now, it is happened even in redhat official
+        # https://github.com/kachick/dotfiles/issues/471#issuecomment-2002565514
         uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
         with:
           image: home

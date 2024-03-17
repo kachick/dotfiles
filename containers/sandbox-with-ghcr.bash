@@ -21,10 +21,12 @@ EOF
 
 sandbox() {
 	local -r tag="$1"
-	local -r container_id="$(podman run --detach --rm "ghcr.io/kachick/home:${tag}")"
+	local -r full_image_id="$(podman pull "ghcr.io/kachick/home:${tag}")"
+	local -r container_id="$(podman run --detach --rm "$full_image_id")"
+	# shellcheck disable=SC2064
+	trap "podman kill '$container_id'" EXIT ERR
 	sleep 1 # Wait for the systemd to be ready
 	podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh'
-	podman kill "$container_id"
 }
 
 sandbox "$1"
