@@ -61,9 +61,24 @@
       styles = {
         unknown-token = "fg=magenta";
       };
+
+      # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
+      highlighters = [
+        "brackets"
+        "pattern" # Not pattern"s"!
+        "root"
+      ];
+
+      # This will work if you enabled "pattern" highlighter
+      patterns = {
+        # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
+        "rm -rf *" = "fg=white,bold,bg=red";
+      };
     };
 
-    enableAutosuggestions = true;
+    autosuggestion = {
+      enable = true;
+    };
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
