@@ -149,6 +149,13 @@
       setopt hist_no_store
       setopt HIST_NO_FUNCTIONS
 
+      function _walk() {
+          walk
+          zle reset-prompt
+      }
+      zle -N walk _walk
+      bindkey '^W' walk
+
       # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
       bindkey ";5C" forward-word
       bindkey ";5D" backward-word
