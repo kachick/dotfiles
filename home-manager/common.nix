@@ -100,13 +100,18 @@
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/unix.toml;
+
+  # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
+  # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
+  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
+
+  # Not under "starship/starship.toml"
+  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
+
   xdg.configFile."alacritty/themes" = {
     source = ../config/alacritty/themes;
     recursive = true;
   };
-
-  # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
