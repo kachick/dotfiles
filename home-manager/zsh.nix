@@ -62,6 +62,13 @@
         unknown-token = "fg=magenta";
       };
 
+      # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
+      highlighters = [
+        "brackets"
+        "patterns"
+        "root"
+      ];
+
       patterns = {
         # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
         "rm -rf *" = "fg=white,bold,bg=red";
