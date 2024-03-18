@@ -41,6 +41,9 @@
           "PackageIdentifier": "sharkdp.bat"
         },
         {
+          "PackageIdentifier": "zyedidia.micro"
+        },
+        {
           "PackageIdentifier": "Balena.Etcher"
         },
         {
