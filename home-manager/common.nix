@@ -145,12 +145,16 @@
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
-  programs.fzf = {
+  programs.fzf = rec {
     enable = true;
 
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
     defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
 
+    # CTRL+T
+    fileWidgetCommand = defaultCommand;
+
+    # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
   };
 
