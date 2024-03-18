@@ -33,7 +33,7 @@
   home = {
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
+      EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
       VISUAL = "code -w";
       PAGER = "less";
 
@@ -143,8 +143,26 @@
     ba = "ba"
   '';
 
-  programs.fzf = {
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
+  # https://github.com/junegunn/fzf/blob/master/README.md
+  programs.fzf = rec {
     enable = true;
+
+    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
+    defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+
+    # CTRL+T
+    fileWidgetCommand = defaultCommand;
+    fileWidgetOptions = [
+      "--preview '${pkgs.bat}/bin/bat --color=always {}'"
+      "--preview-window '~3'"
+    ];
+
+    # ALT-C
+    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
+    changeDirWidgetOptions = [
+      "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'"
+    ];
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix

@@ -18,9 +18,6 @@
     # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
     fzf-git-sh # CTRL-G CTRL-{} keybinds for git
 
-    # TODO: Consider to replace with fzf 0.48+ walker and preview
-    walk # cd + ls + cat(--preview)
-
     # Used in anywhere
     coreutils
     less # container base image doesn't have less even for ubuntu official
