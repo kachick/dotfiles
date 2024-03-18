@@ -141,11 +141,26 @@ in
     {
       name = "todo";
       runtimeInputs = with pkgs; [ ripgrep ];
+      # TODO: Integrate with fzf
       text = ''
         rg '\b(?:TODO|FIXME|BUG)\b'
       '';
       meta = {
         description = "List todo family";
+      };
+    }
+  )
+
+  (pkgs.writeShellApplication
+    {
+      name = "fe";
+      runtimeInputs = with pkgs; [ fzf ];
+      # Example: `todo | fe`
+      text = ''
+        fzf | eval "$EDITOR"
+      '';
+      meta = {
+        description = "Fzf and Editor";
       };
     }
   )
