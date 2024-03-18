@@ -161,7 +161,7 @@
     # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
     changeDirWidgetOptions = [
-      "--preview '${pkgs.eza}/bin/eza --tree {} | head -200'"
+      "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'"
     ];
   };
 
