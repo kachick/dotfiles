@@ -77,7 +77,7 @@ in
       runtimeInputs = with pkgs; [ fzf bat micro ];
       text = ''
         # TODO: Apply walker-* options since https://github.com/NixOS/nixpkgs/pull/295978 is useable
-        micro "$(fzf --preview 'bat --color=always {}' --preview-window '~3')"
+        eval "$EDITOR" "$(fzf --preview 'bat --color=always {}' --preview-window '~3')"
       '';
     }
   )
@@ -154,10 +154,10 @@ in
   (pkgs.writeShellApplication
     {
       name = "fe";
-      runtimeInputs = with pkgs; [ fzf ];
+      runtimeInputs = with pkgs; [ fzf findutils ];
       # Example: `todo | fe`
       text = ''
-        fzf | eval "$EDITOR"
+        fzf | xargs --no-run-if-empty --max-lines=1 "$EDITOR"
       '';
       meta = {
         description = "Fzf and Editor";
