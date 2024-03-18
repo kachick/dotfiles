@@ -95,6 +95,8 @@
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
 
+      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+
       source "${../dependencies/podman/completions.bash}"
       source "${../dependencies/dprint/completions.bash}"
     '' + builtins.readFile ./initExtra.bash;

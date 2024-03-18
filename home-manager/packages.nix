@@ -12,7 +12,13 @@
     starship
     direnv
     zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
-    fzf
+
+    fzf # History: CTRL+R, Walker: CTRL+T
+    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
+    # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
+    fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+
+    # TODO: Consider to replace with fzf 0.48+ walker and preview
     walk # cd + ls + cat(--preview)
 
     # Used in anywhere
