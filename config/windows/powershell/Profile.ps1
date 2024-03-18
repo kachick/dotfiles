@@ -8,6 +8,7 @@ Set-PSReadlineOption -AddToHistoryHandler {
     switch -regex ($command) {
         "^[a-z]$" {return $false}
         "exit" {return $false}
+        "^function" {return $false}
     }
     return $true
 }
@@ -23,4 +24,5 @@ if (Get-Command -ErrorAction SilentlyContinue starship) {
     $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 }
 
-# TODO: Integrate https://github.com/kachick/PSFzfHistory here
+# https://github.com/kachick/PSFzfHistory
+Set-FzfHistoryKeybind -Chord Ctrl+r
