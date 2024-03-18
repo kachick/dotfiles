@@ -112,7 +112,6 @@
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
 
-
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
