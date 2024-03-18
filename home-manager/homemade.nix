@@ -73,11 +73,11 @@ in
 
   (pkgs.writeShellApplication
     {
-      name = "wa";
-      runtimeInputs = with pkgs; [ walk ];
+      name = "walk";
+      runtimeInputs = with pkgs; [ fzf bat micro ];
       text = ''
-        # TODO: Add --preview after nixpkgs include https://github.com/antonmedv/walk/pull/129
-        walk --icons "$@"
+        # TODO: Apply walker-* options since https://github.com/NixOS/nixpkgs/pull/295978 is useable
+        micro "$(fzf --preview 'bat --color=always {}' --preview-window '~3')"
       '';
     }
   )
