@@ -143,8 +143,15 @@
     ba = "ba"
   '';
 
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
+  # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = {
     enable = true;
+
+    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
+    defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+
+    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
