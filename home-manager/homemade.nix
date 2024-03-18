@@ -150,18 +150,4 @@ in
       };
     }
   )
-
-  (pkgs.writeShellApplication
-    {
-      name = "fe";
-      runtimeInputs = with pkgs; [ fzf findutils ];
-      # Example: `todo | fe`
-      text = ''
-        fzf | xargs --no-run-if-empty --max-lines=1 "$EDITOR"
-      '';
-      meta = {
-        description = "Fzf and Editor";
-      };
-    }
-  )
 ]
