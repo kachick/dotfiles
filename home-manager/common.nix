@@ -153,9 +153,16 @@
 
     # CTRL+T
     fileWidgetCommand = defaultCommand;
+    fileWidgetOptions = [
+      "--preview '${pkgs.bat}/bin/bat --color=always {}'"
+      "--preview-window '~3'"
+    ];
 
     # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
+    changeDirWidgetOptions = [
+      "--preview '${pkgs.exa}/bin/exa --tree {} | head -200'"
+    ];
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
