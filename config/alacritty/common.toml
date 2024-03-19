@@ -9,6 +9,9 @@ size = 12
 normal.family = "SauceCodePro NFM"
 
 [window]
+# https://github.com/alacritty/alacritty/issues/93
+option_as_alt = "Both"
+
 opacity = 0.85
 
 dimensions.columns = 180
