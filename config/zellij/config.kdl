@@ -1,26 +1,20 @@
 // candidates: https://github.com/zellij-org/zellij/tree/v0.39.2/zellij-utils/assets/themes
 theme "nord"
 
+default_mode "locked"
+
 // candidates: https://github.com/zellij-org/zellij/blob/v0.39.2/zellij-utils/assets/config/default.kdl
 keybinds {
     shared_except "locked" {
-        bind "Ctrl b g" { SwitchToMode "Locked"; }
-        unbind "Ctrl g"
-        bind "Ctrl b q" { Quit; }
+        bind "Alt q" { Quit; }
         unbind "Ctrl q" //  conflict micro
     }
 
-    shared_except "resize" "locked" {
-        bind "Ctrl b r" { SwitchToMode "Resize"; }
-        unbind "Ctrl n" //  conflict why n = resize
-    }
+    // shared_except "resize" "locked" {
+    //     // unbind "Ctrl n" //  conflict why n = resize
+    // }
 
-    shared_except "tab" "locked" {
-        bind "Ctrl b t" { SwitchToMode "Tab"; }
-        unbind "Ctrl t" // conflict fzf
-    }
-
-    shared_except "tmux" "locked" {
-        unbind "Ctrl b" // didn't use tmux, so use b for base prefix
-    }
+    // shared_except "tab" "locked" {
+    //     // unbind "Ctrl t" // conflict fzf
+    // }
 }
