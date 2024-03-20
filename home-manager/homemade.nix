@@ -140,10 +140,10 @@ in
   (pkgs.writeShellApplication
     {
       name = "todo";
-      runtimeInputs = with pkgs; [ ripgrep ];
-      # TODO: Integrate with fzf
+      runtimeInputs = with pkgs; [ git fzf micro ];
       text = ''
-        rg '\b(?:TODO|FIXME|BUG)\b'
+        git grep --perl-regexp --line-number --column '\b(?<=TODO|FIXME|BUG)\b\S+' | \
+          fzf --delimiter : --nth 4.. --bind 'enter:become(micro -parsecursor=true {1}:{2}:{3})'
       '';
       meta = {
         description = "List todo family";

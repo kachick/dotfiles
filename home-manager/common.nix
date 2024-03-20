@@ -212,6 +212,7 @@
       mkparents = false;
       matchbrace = true;
       multiopen = "tab";
+      parsecursor = true;
       reload = "prompt";
       rmtrailingws = false;
       relativeruler = false;
