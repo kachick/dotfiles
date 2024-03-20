@@ -18,7 +18,7 @@ const usage = `Usage: winit-conf [SUB] [OPTIONS]
 Windows initialization to apply my settings for some apps
 
 $ winit-conf.exe generate -list-path
-$ winit-conf.exe generate -path="powershell/Profile.ps" > "$PROFILE"
+$ winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
 $ winit-conf.exe run
 `
 
