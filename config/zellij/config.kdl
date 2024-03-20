@@ -1,0 +1,21 @@
+// candidates: https://github.com/zellij-org/zellij/tree/v0.39.2/zellij-utils/assets/themes
+theme "nord"
+
+default_mode "locked"
+
+// candidates: https://github.com/zellij-org/zellij/blob/v0.39.2/zellij-utils/assets/config/default.kdl
+keybinds {
+    shared_except "locked" {
+        bind "Alt q" { Quit; }
+        unbind "Ctrl q" //  conflict micro
+    }
+
+    // shared_except "resize" "locked" {
+    //     // unbind "Ctrl n" //  conflict why n = resize
+    // }
+
+    shared_except "tab" "locked" {
+        bind "Alt t" { SwitchToMode "Tab"; }
+        unbind "Ctrl t" // conflict fzf
+    }
+}

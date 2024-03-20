@@ -9,6 +9,7 @@
     "tamasfe.even-better-toml",
     "jnoortheen.nix-ide",
     "golang.go",
-    "bmalehorn.vscode-fish"
+    "bmalehorn.vscode-fish",
+    "kdl-org.kdl"
   ]
 }

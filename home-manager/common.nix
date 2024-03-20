@@ -9,7 +9,6 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./zellij.nix
     ./darwin.nix # Omit needless parts for Linux in the file
   ];
 
@@ -256,5 +255,16 @@
       # Candidates: bat --list-themes
       theme = "Nord";
     };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zellij.nix
+  programs.zellij = {
+    enable = true;
+
+    # Don't use settings, nix and KDL is much unfit: https://github.com/NixOS/nixpkgs/issues/198655#issuecomment-1453525659
+  };
+  xdg.configFile."zellij" = {
+    source = ../config/zellij;
+    recursive = true;
   };
 }
