@@ -153,7 +153,7 @@ jobs:
         run: |
           Write-Host "$PROFILE"
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
-          Install-Module -Name PSFzfHistory
+          Install-Module -Force -Name PSFzfHistory
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
       - name: Make sure it correctly copied some config files
         run: |
