@@ -49,12 +49,6 @@
 
     micro # alt nano
 
-    dprint
-    shellcheck
-    shfmt
-    nixpkgs-fmt
-    nil
-
     tree
     eza # alt ls
     curl
@@ -77,7 +71,6 @@
     gnumake
     gitleaks
     deno
-    actionlint
     gitleaks
     ruby_3_3
     unzip # Required in many asdf plugins
