@@ -7,8 +7,13 @@ Basically following codes will be done in PowerShell
 1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/windows.yml) summary
 1. New session of pwsh
    ```pwsh
+   ./winit-conf.exe run
+
    Install-Module -Name PSFzfHistory
-   ./winit-conf.exe run -pwsh_profile_path "$PROFILE"
+   # $PROFILE is an "Automatic Variables", not ENV
+   # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+   ./winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
+
    ./winit-reg.exe list
    ./winit-reg.exe run --all
    ```

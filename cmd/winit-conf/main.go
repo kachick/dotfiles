@@ -4,6 +4,7 @@ import (
 	"embed"
 	"flag"
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path"
@@ -11,6 +12,15 @@ import (
 
 	"github.com/kachick/dotfiles/config"
 )
+
+const usage = `Usage: winit-conf [SUB] [OPTIONS]
+
+Windows initialization to apply my settings for some apps
+
+$ winit-conf.exe generate -list-path
+$ winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
+$ winit-conf.exe run
+`
 
 const configFilePermission = 0600
 
@@ -41,7 +51,7 @@ func (p provisioner) DstPath() string {
 	return filepath.Join(p.DstTree...)
 }
 
-func provisioners(pwshProfilePath string) []provisioner {
+func provisioners() []provisioner {
 	homePath, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("Failed to get home directory: %+v", err)
@@ -68,10 +78,6 @@ func provisioners(pwshProfilePath string) []provisioner {
 	if err != nil {
 		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
 	}
-	err = os.MkdirAll(filepath.Dir(pwshProfilePath), 0750)
-	if err != nil {
-		log.Fatalf("Failed to create path that will have PowerShell profiles: %+v", err)
-	}
 
 	return []provisioner{
 		newProvisioner([]string{"starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
@@ -79,7 +85,6 @@ func provisioners(pwshProfilePath string) []provisioner {
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
-		newProvisioner([]string{"powershell", "Profile.ps1"}, []string{pwshProfilePath}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
@@ -104,70 +109,70 @@ func (p provisioner) Copy() error {
 	return nil
 }
 
-func usage() string {
-	return `Usage: winit-conf [SUB] [OPTIONS]
-
-Windows initialization to apply my settings for some apps
-
-$ winit-conf.exe list
-$ winit-conf.exe generate
-$ winit-conf.exe run -pwsh_profile_path "$PROFILE"
-`
-}
-
 func main() {
 	runCmd := flag.NewFlagSet("run", flag.ExitOnError)
-	pwshProfilePathFlag := runCmd.String("pwsh_profile_path", "", "Specify PowerShell profile path")
+	generateCmd := flag.NewFlagSet("generate", flag.ExitOnError)
+	listPathFlag := generateCmd.Bool("list-path", false, "List all config paths included in this binary")
+	pathFlag := generateCmd.String("path", "", "Specify a path to show the config text")
 	flag.Usage = func() {
 		// https://github.com/golang/go/issues/57059#issuecomment-1336036866
-		fmt.Printf("%s", usage()+"\n\n")
+		fmt.Printf("%s", usage+"\n\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
 
 	if len(os.Args) < 2 {
 		flag.Usage()
-
 		os.Exit(1)
 	}
 
 	switch os.Args[1] {
-	case "list":
-		for _, p := range provisioners("dummy_path") {
-			fmt.Println(p.EmbedPath())
-		}
 	case "generate":
-		for _, p := range provisioners("dummy_path") {
-			body, err := config.WindowsAssets.ReadFile(p.EmbedPath())
+		err := generateCmd.Parse(os.Args[2:])
+		if err != nil {
+			log.Fatalf("Unexpected parser error in given arguments: %+v", err)
+		}
+
+		path := *pathFlag
+		if (*listPathFlag && path != "") || (!*listPathFlag && path == "") {
+			fmt.Printf("Specify one of -list-path or -path flag, not both: list-path: %+v path: %s\n", *listPathFlag, path)
+			flag.Usage()
+			os.Exit(1)
+		}
+
+		if *listPathFlag {
+			err := fs.WalkDir(config.WindowsAssets, ".", func(path string, d fs.DirEntry, err error) error {
+				if d.IsDir() {
+					return nil
+				}
+				fmt.Println(path)
+				return nil
+			})
 			if err != nil {
-				log.Fatalf("Failed to copy file: %+v %+v", p, err)
+				log.Fatalf("Failed to open file: %+v", err)
 			}
-			fmt.Println(p.EmbedPath())
-			fmt.Println("--------------------------------------------------")
+		}
+
+		if path != "" {
+			body, err := config.WindowsAssets.ReadFile(path)
+			if err != nil {
+				log.Fatalf("Failed to open file: %s %+v", path, err)
+			}
 			fmt.Println(string(body))
 		}
 	case "run":
-		runCmd.Parse(os.Args[2:])
-		if *pwshProfilePathFlag == "" {
-			flag.Usage()
-			log.Fatalf("called with wrong arguments")
+		err := runCmd.Parse(os.Args[2:])
+		if err != nil {
+			log.Fatalf("Unexpected parser error in given arguments: %+v", err)
 		}
-		// $PROFILE is an "Automatic Variables", not ENV
-		// https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-		pwshProfilePath := filepath.Clean(*pwshProfilePathFlag)
 
-		for _, p := range provisioners(pwshProfilePath) {
+		for _, p := range provisioners() {
 			log.Printf("%s => %s\n", p.EmbedPath(), p.DstPath())
 			err := p.Copy()
 			if err != nil {
 				log.Fatalf("Failed to copy file: %+v %+v", p, err)
 			}
 		}
-
-		log.Printf(`Completed, you need to restart terminals
-
-If you faced slow execution of PowerShell after this script, exclude %s from Anti Virus as Microsoft Defender
-`, pwshProfilePath)
 	default:
 		flag.Usage()
 
