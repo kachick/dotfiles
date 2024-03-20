@@ -263,8 +263,8 @@
 
     # Don't use settings, nix and KDL is much unfit: https://github.com/NixOS/nixpkgs/issues/198655#issuecomment-1453525659
   };
-  xdg.configFile."zelliji" = {
-    source = ../config/zelliji;
+  xdg.configFile."zellij" = {
+    source = ../config/zellij;
     recursive = true;
   };
 }
