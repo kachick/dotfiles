@@ -14,7 +14,8 @@ keybinds {
     //     // unbind "Ctrl n" //  conflict why n = resize
     // }
 
-    // shared_except "tab" "locked" {
-    //     // unbind "Ctrl t" // conflict fzf
-    // }
+    shared_except "tab" "locked" {
+        bind "Alt t" { SwitchToMode "Tab"; }
+        unbind "Ctrl t" // conflict fzf
+    }
 }
