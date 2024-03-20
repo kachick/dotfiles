@@ -79,7 +79,7 @@ func provisioners(pwshProfilePath string) []provisioner {
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
-		newProvisioner([]string{"windows", "powershell", "Profile.ps1"}, []string{pwshProfilePath}),
+		newProvisioner([]string{"powershell", "Profile.ps1"}, []string{pwshProfilePath}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
