@@ -129,7 +129,8 @@
       case ''${OSTYPE} in
       darwin*)
         # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
-        # Even after this option, /etc/zshenv will be loaded
+        # - Even after this option, /etc/zshenv will be loaded
+        # - Some crucial PATH will be hidden they are installed by non nix layer. For example: vscode
         setopt no_global_rcs
 
         # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
@@ -195,9 +196,14 @@
     profileExtra = ''
       # TODO: Switch to pkgs.zsh from current zsh in darwin
 
-      # TODO: May move to sessionVariables
       if [[ "$OSTYPE" == darwin* ]]; then
+        # TODO: May move to sessionVariables
         export BROWSER='open'
+
+        # Microsoft recommends this will be written in ~/.zprofile,
+        if [ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]; then
+          export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+        fi
       fi
     '';
   };
