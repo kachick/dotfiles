@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ppid, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   services.gpg-agent.enableZshIntegration = true;
@@ -166,8 +166,6 @@
       setopt hist_save_no_dups
       setopt hist_no_store
       setopt HIST_NO_FUNCTIONS
-      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
-      setopt interactivecomments
 
       # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
       bindkey ";5C" forward-word
@@ -196,31 +194,6 @@
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''
-      # Don't extract an alias or command. Write in each shells
-      # Read package.nix why using different ps command in Linux and Darwin
-      parent_command=""
-      case ''${OSTYPE} in
-      linux*)
-        parent_command="$(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm)"
-        ;;
-      darwin*)
-        # https://stackoverflow.com/questions/22727107/how-to-find-the-last-field-using-cut
-        parent_command="$(ps -p "$PPID" -o 'comm=' | "${pkgs.ruby_3_3}/bin/ruby" --disable=gems -e 'puts STDIN.gets.slice(/[a-z]+$/)')"
-        ;;
-      esac
-
-      # Used same method as switching to fish, but this delegates built-in zsh to nixpkg.zsh
-      # Make better experience and compatibility. In darwin, default is zsh.
-      # The built-in bash in darwin is too old even if just reading simple .profile
-      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-      # https://askubuntu.com/questions/153976/how-do-i-get-the-parent-process-id-of-a-given-child-process
-      if [[ "$parent_command" != "zsh" ]]
-      then
-        # translated bash's solution `shopt -q login_shell`. See https://unix.stackexchange.com/a/122743
-        [[ -o login ]] && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec "${pkgs.zsh}/bin/zsh" $LOGIN_OPTION
-      fi
-
       if [[ "$OSTYPE" == darwin* ]]; then
         # TODO: May move to sessionVariables
         export BROWSER='open'
@@ -228,6 +201,13 @@
         # Microsoft recommends this will be written in ~/.zprofile,
         if [ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]; then
           export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+        fi
+
+        # Used same method as switching from bash to zsh/fish, but this code aims to delegate from built-in zsh to nixpkgs.zsh
+        # To make better experience and compatibility for darwin.
+        if [[ -o login ]] && [ "$SHELL" != "${pkgs.zsh}/bin/zsh" ] && [[ "$SHELL" != "$HOME/.nix-profile/bin/zsh" ]]
+        then
+          exec "${pkgs.zsh}/bin/zsh" --login
         fi
       fi
     '';
