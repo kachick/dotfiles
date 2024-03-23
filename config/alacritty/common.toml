@@ -1,5 +1,9 @@
+# Later loaded definition wins for existing fields.
+# So higher priority import should be written in ${os}.toml
 # You can find major themes in https://github.com/alacritty/alacritty-theme
-import = ["~/.config/alacritty/themes/iceberg-dark.toml"]
+import = [
+  "~/.config/alacritty/themes/iceberg-dark.toml",
+]
 
 [selection]
 save_to_clipboard = true

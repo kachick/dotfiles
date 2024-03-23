@@ -24,3 +24,5 @@ Specify the arguments in CLI.
 alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"IosevkaTerm NFM"'
 alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"SauceCodePro NFM"' window.dimensions.columns=180 window.dimensions.lines=50 window.position.x=10 window.position.y=10
 ```
+
+And you can test with actual toml in the `$HOME/.config/alacritty/local.toml`
