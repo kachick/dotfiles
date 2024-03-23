@@ -37,6 +37,10 @@
   programs.bash = {
     enable = true;
 
+    # In macOS, default login shell is zsh now.
+    # Keep the default as possible, but if you change the bash is the default even in macOS, you should care the path_helper problems
+    # #503 and https://superuser.com/a/583502 may help you.
+
     sessionVariables = {
       # Cannot dynamically get from program.readline and cannot use XDG style in home-manager
       # https://github.com/nix-community/home-manager/blob/0841242b94638fcd010f7f64e56b7b1cad50c697/modules/programs/readline.nix#L72
@@ -107,6 +111,8 @@
       }
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
+
+      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.bash}"
       source "${../dependencies/dprint/completions.bash}"

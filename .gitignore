@@ -2,6 +2,8 @@
 
 # Don't include any history files! It might make an accident... :scream:
 *hist*
+# `local` files may have similar problems: https://github.com/github/gitignore/pull/3651
+*local*
 
 dist/
 tmp/

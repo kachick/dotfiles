@@ -1,4 +1,4 @@
-name: Merge bot PR after CI
+name: 🤖👌🤖
 on: pull_request
 
 permissions:
@@ -8,20 +8,35 @@ permissions:
   # actions: read # For private repositories
 
 jobs:
+  judge-dependabot:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    outputs:
+      merge: ${{ steps.conclusion.outputs.merge }}
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Dependabot metadata
+        id: dependabot
+        uses: dependabot/fetch-metadata@v1.6.0
+      - name: Judge
+        id: conclusion
+        if: >-
+          steps.dependabot.outputs.update-type != 'version-update:semver-major' ||
+          contains(steps.dependabot.outputs.dependency-names, 'DeterminateSystems')
+        run: echo -n 'merge=true' | tee -a "$GITHUB_OUTPUT"
   dependabot:
+    needs: [judge-dependabot]
+    if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
     timeout-minutes: 30
     runs-on: ubuntu-latest
-    if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v1.6.0
       - name: Wait other jobs
-        if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         uses: kachick/wait-other-jobs@v2
         timeout-minutes: 10
       - name: Approve and merge
-        if: ${{steps.metadata.outputs.update-type != 'version-update:semver-major'}}
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}

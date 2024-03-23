@@ -1,4 +1,5 @@
-name: CI - Go
+# https://github.com/golang/go/issues/59968
+name: ʕ◔ϖ◔ʔ
 
 on:
   push:
