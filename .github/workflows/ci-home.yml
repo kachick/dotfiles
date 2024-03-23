@@ -54,6 +54,11 @@ jobs:
           which ruby
           which irb
           which ssh
+      - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
+        run: |
+          [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(fish -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies

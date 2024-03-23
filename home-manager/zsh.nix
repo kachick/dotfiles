@@ -13,6 +13,7 @@
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
+  # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;
 
@@ -126,6 +127,9 @@
     envExtra = ''
       case ''${OSTYPE} in
       darwin*)
+        # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
+        # Even after this option, /etc/zshenv will be loaded
+        setopt no_global_rcs
         source '${config.xdg.configHome}/zsh/.zshenv.darwin'
         ;;
       esac
