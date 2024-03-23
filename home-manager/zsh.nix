@@ -170,12 +170,6 @@
       bindkey ";5C" forward-word
       bindkey ";5D" backward-word
 
-      case ''${OSTYPE} in
-      darwin*)
-        source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
-        ;;
-      esac
-
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
         echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
