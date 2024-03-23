@@ -205,7 +205,7 @@
 
         # Used same method as switching from bash to zsh/fish, but this code aims to delegate from built-in zsh to nixpkgs.zsh
         # To make better experience and compatibility for darwin.
-        if [[ -o login ]] && [ "$SHELL" == "/bin/zsh" ]
+        if [[ -o login ]] && [[ "$SHELL" == "/bin/zsh" ]]
         then
           exec "$HOME/.nix-profile/bin/zsh" --login
         fi
