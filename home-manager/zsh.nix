@@ -186,7 +186,9 @@
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
 
       # Same as .zshenv.local
-      source '${config.xdg.configHome}/zsh/.zshrc.local'
+      if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+        source '${config.xdg.configHome}/zsh/.zshenv.local'
+      fi
     '';
 
     # Use one of profileExtra or loginExtra. Not both
