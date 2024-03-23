@@ -17,6 +17,7 @@
   programs.zsh = {
     enable = true;
 
+    # BE CAREFUL WHEN REFACTOR: Why can't I use let ~ in or rec for this dotDir and ${config.xdg.configHome}?
     # zsh manager always append $HOME as the prefix, so you can NOT write as `"${config.xdg.configHome}/zsh"`
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
@@ -130,7 +131,13 @@
         # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
         # Even after this option, /etc/zshenv will be loaded
         setopt no_global_rcs
-        source '${config.xdg.configHome}/zsh/.zshenv.darwin'
+
+        # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
+        # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+        fi
+
         ;;
       esac
 
@@ -138,6 +145,12 @@
       skip_global_compinit=1
 
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
+
+      # Put the special config in each machine if you want to avoid symlinks by Nix
+      # https://github.com/nix-community/home-manager/issues/3090#issue-1303753447
+      if [ -e '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
+        source '${config.xdg.configHome}/zsh/.zshenv.local'
+      fi
     '';
 
     initExtra = ''
@@ -159,7 +172,7 @@
 
       case ''${OSTYPE} in
       darwin*)
-        source '${config.xdg.configHome}/zsh/.zshrc.darwin'
+        source ${pkgs.iterm2 + "/Applications/iTerm2.app/Contents/Resources/iterm2_shell_integration.zsh"}
         ;;
       esac
 
@@ -177,6 +190,9 @@
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # Same as .zshenv.local
+      source '${config.xdg.configHome}/zsh/.zshrc.local'
     '';
 
     # Use one of profileExtra or loginExtra. Not both
