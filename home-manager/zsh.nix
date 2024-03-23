@@ -187,7 +187,7 @@
 
       # Same as .zshenv.local
       if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
-        source '${config.xdg.configHome}/zsh/.zshenv.local'
+        source '${config.xdg.configHome}/zsh/.zshrc.local'
       fi
     '';
 
