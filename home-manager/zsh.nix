@@ -155,6 +155,9 @@
 
       case ''${OSTYPE} in
       darwin*)
+        # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
+        # Even after this option, /etc/zshenv will be loaded
+        setopt no_global_rcs
         source '${config.xdg.configHome}/zsh/.zshrc.darwin'
         ;;
       esac
