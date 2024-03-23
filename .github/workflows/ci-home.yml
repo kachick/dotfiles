@@ -54,6 +54,7 @@ jobs:
           which ruby
           which irb
           which ssh
+          zsh -c 'echo "$PATH"'
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
