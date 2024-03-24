@@ -27,10 +27,6 @@ style = "Bold"
 family = "PlemolJP Console NF"
 style = "Bold Italic"
 
-[window]
-# https://github.com/alacritty/alacritty/issues/93
-option_as_alt = "Both"
-
 opacity = 0.85
 
 dimensions.columns = 180

@@ -1,0 +1,12 @@
+# https://wiki.archlinux.org/title/Alacritty
+
+import = [
+  "~/.config/alacritty/common.toml",
+  "~/.config/alacritty/unix.toml",
+  # No file will be skipped: https://github.com/alacritty/alacritty/pull/4332/files#diff-06572a96a58dc510037d5efa622f9bec8519bc1beab13c9f251e97e657a9d4edR12
+  "~/.config/alacritty/local.toml",
+]
+
+[window]
+# https://github.com/alacritty/alacritty/issues/93
+option_as_alt = "Both"

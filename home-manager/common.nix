@@ -97,12 +97,11 @@
 
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
-  xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
-  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/unix.toml;
-  xdg.configFile."alacritty/themes" = {
-    source = ../config/alacritty/themes;
+  xdg.configFile."alacritty" = {
+    source = ../config/alacritty;
     recursive = true;
   };
+  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../config/starship/starship.toml;

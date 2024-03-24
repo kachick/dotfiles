@@ -82,9 +82,10 @@ func provisioners() []provisioner {
 	return []provisioner{
 		newProvisioner([]string{"starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
 		newProvisioner([]string{"alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
+		newProvisioner([]string{"alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
-		newProvisioner([]string{"alacritty", "windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
+		newProvisioner([]string{"alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
