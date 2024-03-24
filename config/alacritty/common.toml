@@ -15,6 +15,18 @@ size = 12
 family = "PlemolJP Console NF"
 style = "Regular"
 
+[font.bold]
+family = "PlemolJP Console NF"
+style = "Italic"
+
+[font.italic]
+family = "PlemolJP Console NF"
+style = "Bold"
+
+[font.bold_italic]
+family = "PlemolJP Console NF"
+style = "Bold Italic"
+
 [window]
 # https://github.com/alacritty/alacritty/issues/93
 option_as_alt = "Both"
