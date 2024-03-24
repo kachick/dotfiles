@@ -1,5 +1,18 @@
 { pkgs, my-pkgs, lib, ... }:
 
+let
+  # https://github.com/NixOS/nixpkgs/blob/2e1b779e0a0e67fb4e4f3333606cc1b8a287afae/pkgs/shells/fzf-git-sh/default.nix#L22-L27
+  patched-fzf-git-sh = pkgs.fzf-git-sh.overrideAttrs (prev: {
+    version = "git";
+    # https://github.com/kachick/fzf-git.sh/pull/1
+    src = pkgs.fetchFromGitHub {
+      owner = "kachick";
+      repo = "fzf-git.sh";
+      rev = "cfbc4b1ef75352d57a64284d0a998c1c6b45af67";
+      sha256 = "sha256-tY6dkBZVspo5lmBcjyg5VgWVgwRlO2GD9muizEf+kWo=";
+    };
+  });
+in
 {
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -17,7 +30,7 @@
     fzf # History: CTRL+R, Walker: CTRL+T
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
     # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-    fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+    patched-fzf-git-sh # CTRL-G CTRL-{} keybinds for git
 
     # Used in anywhere
     coreutils
