@@ -1,5 +1,3 @@
-# https://wiki.archlinux.org/title/Alacritty
-
 import = [
   "~/.config/alacritty/common.toml",
   "~/.config/alacritty/unix.toml",
