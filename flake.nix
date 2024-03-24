@@ -6,7 +6,7 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
@@ -16,11 +16,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils, edge-nixpkgs }:
+  outputs = { self, nixpkgs, home-manager, flake-utils, my-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        my-pkgs = my-nixpkgs.legacyPackages.${system};
       in
       rec {
         devShells.default = with pkgs;
@@ -55,7 +55,7 @@
                 ./home-manager/kachick.nix
               ];
               extraSpecialArgs = {
-                inherit edge-pkgs;
+                inherit my-pkgs;
               };
             };
 
@@ -68,7 +68,7 @@
                 { home.username = "runner"; }
               ];
               extraSpecialArgs = {
-                inherit edge-pkgs;
+                inherit my-pkgs;
               };
             };
 
@@ -82,7 +82,7 @@
                 }
               ];
               extraSpecialArgs = {
-                inherit edge-pkgs;
+                inherit my-pkgs;
               };
             };
           };

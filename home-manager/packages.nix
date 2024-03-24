@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, my-pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -77,10 +77,11 @@
     _7zz # `7zz` 7zip, not
     tlrc # `tldr` rust client, tealdeer is another candidate
 
+    fontconfig # `fc-list`, `fc-cache`
+
     # How to get the installed font names
-    # linux: fc-list
+    # fontconfig by nix: fc-list : family style
     # darwin: system_profiler SPFontsDataType
-    # filter to find by eyes: system_profiler SPFontsDataType | grep -v 'Propo' | sort | rg --pcre2 '(?<=Full Name: ).+(?=Nerd Font)'
     (pkgs.nerdfonts.override {
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/data/fonts/nerdfonts/shas.nix
       fonts = [
@@ -88,6 +89,8 @@
         "Inconsolata"
       ];
     })
+
+    my-pkgs.plemoljp-nf
 
     # Includes follows in each repository if needed, not in global
     # gcc

@@ -1,21 +1,5 @@
 {
   "nodes": {
-    "edge-nixpkgs": {
-      "locked": {
-        "lastModified": 1710889954,
-        "narHash": "sha256-Pr6F5Pmd7JnNEMHHmspZ0qVqIBVxyZ13ik1pJtm2QXk=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "7872526e9c5332274ea5932a0c3270d6e4724f3b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -41,11 +25,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1710974515,
-        "narHash": "sha256-jZpdsypecYTOO9l12Vy77otGmh9uz8tGzcguifA30Vs=",
+        "lastModified": 1711133180,
+        "narHash": "sha256-WJOahf+6115+GMl3wUfURu8fszuNeJLv9qAWFQl3Vmo=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "1c2acec99933f9835cc7ad47e35303de92d923a4",
+        "rev": "1c2c5e4cabba4c43504ef0f8cc3f3dfa284e2dbb",
         "type": "github"
       },
       "original": {
@@ -55,13 +39,29 @@
         "type": "github"
       }
     },
+    "my-nixpkgs": {
+      "locked": {
+        "lastModified": 1711267103,
+        "narHash": "sha256-TM7tAvQBPbfBXUTpGOG4HmyUfMW3qsVCJmjxl1pMgg4=",
+        "owner": "kachick",
+        "repo": "nixpkgs",
+        "rev": "10fdf47377beb102988d907e34a487dd42ad2079",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kachick",
+        "ref": "init-plemoljp-font",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1710806803,
-        "narHash": "sha256-qrxvLS888pNJFwJdK+hf1wpRCSQcqA6W5+Ox202NDa0=",
+        "lastModified": 1711163522,
+        "narHash": "sha256-YN/Ciidm+A0fmJPWlHBGvVkcarYWSC+s3NTPk/P+q3c=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b06025f1533a1e07b6db3e75151caa155d1c7eb3",
+        "rev": "44d0940ea560dee511026a53f0e2e2cde489b4d4",
         "type": "github"
       },
       "original": {
@@ -73,9 +73,9 @@
     },
     "root": {
       "inputs": {
-        "edge-nixpkgs": "edge-nixpkgs",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
+        "my-nixpkgs": "my-nixpkgs",
         "nixpkgs": "nixpkgs"
       }
     },

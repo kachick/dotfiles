@@ -10,7 +10,22 @@ save_to_clipboard = true
 
 [font]
 size = 12
-normal.family = "SauceCodePro NFM"
+
+[font.normal]
+family = "PlemolJP Console NF"
+style = "Regular"
+
+[font.bold]
+family = "PlemolJP Console NF"
+style = "Italic"
+
+[font.italic]
+family = "PlemolJP Console NF"
+style = "Bold"
+
+[font.bold_italic]
+family = "PlemolJP Console NF"
+style = "Bold Italic"
 
 [window]
 # https://github.com/alacritty/alacritty/issues/93
