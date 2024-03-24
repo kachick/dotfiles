@@ -218,6 +218,30 @@ It needs special WSL distribution. How to run it from standard WSL ubuntu is wri
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.
 
+## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
+
+```
+Error: Command execution failed with exit code 125 Command execution failed with exit code 125 Error: unable to load machine config file: "json: cannot unmarshal string into Go struct field MachineConfig.ImagePath of type define.VMFile"
+```
+
+It relates to [podman#22144](https://github.com/containers/podman/issues/22144).\
+And might be happen in future major updating and the schema changes. So this snippet may help you.
+
+Abandon current VM, images, containers. Then following steps are the how to fix
+
+```pwsh
+winget uninstall --exact --id RedHat.Podman-Desktop
+winget uninstall --exact --id RedHat.Podman
+wsl --list
+wsl --unregister podman-machine-default
+cd ${Env:USERPROFILE}\.config\containers\podman\machine\wsl\
+Remove-Item .\podman-machine-*
+winget install --exact --id RedHat.Podman
+winget install --exact --id RedHat.Podman-Desktop
+```
+
+And create the new podman-machine-default
+
 ## Why aren't these packages in winget list?
 
 - [micro](https://github.com/zyedidia/micro/issues/2339)
