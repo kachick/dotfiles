@@ -10,7 +10,10 @@ save_to_clipboard = true
 
 [font]
 size = 12
-normal.family = "PlemolJP Console NF Regular"
+
+[font.normal]
+family = "PlemolJP Console NF"
+style = "Regular"
 
 [window]
 # https://github.com/alacritty/alacritty/issues/93

@@ -80,9 +80,8 @@
     fontconfig # `fc-list`, `fc-cache`
 
     # How to get the installed font names
-    # linux: fc-list -b | rg 'fullname.+PlemolJP Console NF'
+    # fontconfig by nix: fc-list : family style
     # darwin: system_profiler SPFontsDataType
-    # filter to find by eyes: system_profiler SPFontsDataType | grep -v 'Propo' | sort | rg --pcre2 '(?<=Full Name: ).+(?=Nerd Font)'
     (pkgs.nerdfonts.override {
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/data/fonts/nerdfonts/shas.nix
       fonts = [
@@ -91,9 +90,7 @@
       ];
     })
 
-    my-pkgs.plemoljp-font
     my-pkgs.plemoljp-nf-font
-    my-pkgs.plemoljp-hs-font
 
     # Includes follows in each repository if needed, not in global
     # gcc
