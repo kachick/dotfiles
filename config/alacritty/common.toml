@@ -27,6 +27,7 @@ style = "Bold"
 family = "PlemolJP Console NF"
 style = "Bold Italic"
 
+[window]
 opacity = 0.85
 
 dimensions.columns = 180
