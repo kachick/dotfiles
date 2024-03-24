@@ -30,8 +30,6 @@
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
 
-    # https://github.com/NixOS/nixpkgs/pull/294937
-    # https://github.com/nix-community/home-manager/pull/4895
     pinentryPackage = pkgs.pinentry-tty;
   };
 
