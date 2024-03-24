@@ -1,3 +1,18 @@
+let
+  # https://github.com/NixOS/nixpkgs/blob/2e1b779e0a0e67fb4e4f3333606cc1b8a287afae/pkgs/shells/fzf-git-sh/default.nix#L22-L27
+  fzf-git-sh-overlay = final: prev: {
+    fzf-git-sh = prev.fzf-git-sh.override {
+      version = "git";
+      # https://github.com/kachick/fzf-git.sh/pull/1
+      src = prev.fetchFromGitHub {
+        owner = "kachick";
+        repo = "fzf-git.sh";
+        rev = "cfbc4b1ef75352d57a64284d0a998c1c6b45af67";
+        sha256 = "sha256-tY6dkBZVspo5lmBcjyg5VgWVgwRlO2GD9muizEf+kWo=";
+      };
+    };
+  };
+in
 {
   inputs = {
     # Candidate channels
@@ -19,7 +34,10 @@
   outputs = { self, nixpkgs, home-manager, flake-utils, my-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [ fzf-git-sh-overlay ];
+        };
         my-pkgs = my-nixpkgs.legacyPackages.${system};
       in
       rec {
