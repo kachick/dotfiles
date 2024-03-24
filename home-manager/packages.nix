@@ -80,7 +80,7 @@
     fontconfig # `fc-list`, `fc-cache`
 
     # How to get the installed font names
-    # linux: fc-list
+    # linux: fc-list -b | rg 'fullname.+PlemolJP Console NF'
     # darwin: system_profiler SPFontsDataType
     # filter to find by eyes: system_profiler SPFontsDataType | grep -v 'Propo' | sort | rg --pcre2 '(?<=Full Name: ).+(?=Nerd Font)'
     (pkgs.nerdfonts.override {
