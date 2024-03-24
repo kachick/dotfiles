@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, my-pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -88,6 +88,8 @@
         "Inconsolata"
       ];
     })
+
+    my-pkgs.plemoljp-nf-font
 
     # Includes follows in each repository if needed, not in global
     # gcc

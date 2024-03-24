@@ -1,4 +1,4 @@
-{ config, pkgs, edge-pkgs, ... }:
+{ config, pkgs, ... }:
 
 
 # ## FAQ - GPG
@@ -32,7 +32,7 @@
 
     # https://github.com/NixOS/nixpkgs/pull/294937
     # https://github.com/nix-community/home-manager/pull/4895
-    pinentryPackage = edge-pkgs.pinentry-tty;
+    pinentryPackage = pkgs.pinentry-tty;
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
