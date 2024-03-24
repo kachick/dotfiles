@@ -123,6 +123,12 @@ explorer.exe .
 z "$(wslpath 'G:\GoogleDrive')"
 ```
 
+## Login shell has been broken in WSL2
+
+```pwsh
+wsl --user root
+```
+
 ## I forgot to backup Bitlocker restore key 😋
 
 https://account.microsoft.com/devices/recoverykey may help
