@@ -77,6 +77,8 @@
     _7zz # `7zz` 7zip, not
     tlrc # `tldr` rust client, tealdeer is another candidate
 
+    fontconfig # `fc-list`, `fc-cache`
+
     # How to get the installed font names
     # linux: fc-list
     # darwin: system_profiler SPFontsDataType
