@@ -89,7 +89,9 @@
       ];
     })
 
+    my-pkgs.plemoljp-font
     my-pkgs.plemoljp-nf-font
+    my-pkgs.plemoljp-hs-font
 
     # Includes follows in each repository if needed, not in global
     # gcc
