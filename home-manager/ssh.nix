@@ -9,8 +9,7 @@ let
 
   # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
   # - id_*.pub: I CAN register them for different services.
-in
-{
+in {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
@@ -49,9 +48,7 @@ in
     addKeysToAgent = "yes";
 
     # Enable custom or temporary config without `home-manager switch`
-    includes = [
-      "${sshDir}/config.local"
-    ];
+    includes = [ "${sshDir}/config.local" ];
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads

@@ -17,14 +17,18 @@
       empty = "commit --allow-empty";
       start = "empty -m 'Start project from empty'";
       current = "symbolic-ref --short HEAD";
-      switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
-      upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
+      switch-default =
+        "!git switch main 2>/dev/null || git switch master 2>/dev/null";
+      upstream =
+        "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       duster = "remote update origin --prune";
-      refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
+      refresh =
+        ''!git switch-default && git pull "$(git upstream)" "$(git current)"'';
       r = "refresh"; # refresh is long for typing
       all = "!git refresh && git-delete-merged-branches";
       gui = "!lazygit";
-      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
+      pp =
+        "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
     # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
@@ -34,7 +38,9 @@
       commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
         set -euo pipefail
 
-        ${lib.getBin pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+        ${
+          lib.getBin pkgs.typos
+        }/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
       '';
     };
 
@@ -71,21 +77,13 @@
         editor = "micro -colorcolumn 64";
       };
 
-      init = {
-        defaultBranch = "main";
-      };
+      init = { defaultBranch = "main"; };
 
-      color = {
-        ui = true;
-      };
+      color = { ui = true; };
 
-      grep = {
-        lineNumber = true;
-      };
+      grep = { lineNumber = true; };
 
-      pull = {
-        ff = "only";
-      };
+      pull = { ff = "only"; };
 
       branch = {
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
@@ -102,22 +100,24 @@
     settings = {
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
-        setup = ''!gh repo edit --enable-auto-merge && \
-          gh api --method PUT --verbose \
-          --header 'Accept: application/vnd.github+json' \
-          --header 'X-GitHub-Api-Version: 2022-11-28' \
-          '/repos/{owner}/{repo}/actions/permissions/workflow' \
-          --field 'can_approve_pull_request_reviews=true' \
-          --raw-field 'default_workflow_permissions=write'
+        setup = ''
+          !gh repo edit --enable-auto-merge && \
+                    gh api --method PUT --verbose \
+                    --header 'Accept: application/vnd.github+json' \
+                    --header 'X-GitHub-Api-Version: 2022-11-28' \
+                    '/repos/{owner}/{repo}/actions/permissions/workflow' \
+                    --field 'can_approve_pull_request_reviews=true' \
+                    --raw-field 'default_workflow_permissions=write'
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd ~/repos && \
-          gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
-          cd "$1" && \
-          gh setup && \
-          ${pkgs.direnv}/bin/direnv allow && \
-          ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cd ~/repos/$1"
+        burl = ''
+          !cd ~/repos && \
+                    gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
+                    cd "$1" && \
+                    gh setup && \
+                    ${pkgs.direnv}/bin/direnv allow && \
+                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cd ~/repos/$1"
         '';
       };
     };
@@ -125,10 +125,7 @@
     gitCredentialHelper = {
       enable = true;
 
-      hosts = [
-        "https://github.com"
-        "https://gist.github.com"
-      ];
+      hosts = [ "https://github.com" "https://gist.github.com" ];
     };
   };
 
@@ -141,9 +138,7 @@
       gui = {
         language = "ja";
         showIcons = true;
-        theme = {
-          lightTheme = true;
-        };
+        theme = { lightTheme = true; };
       };
     };
   };

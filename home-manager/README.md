@@ -13,7 +13,7 @@ nix-prefetch-git --url https://github.com/oh-my-fish/plugin-foreign-env.git --re
 See [this comment](https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4999658#gistcomment-4999658)
 
 ```bash
-nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./test.json)'
+nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./dprint.json)' | nixfmt
 ```
 
 ## How to make executable? `.text =` makes a sym, that links to non executable file

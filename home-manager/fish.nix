@@ -12,40 +12,42 @@
   programs.zellij.enableFishIntegration = false;
 
   xdg.configFile."fish/fish_variables".source = ../config/fish/fish_variables;
-  xdg.configFile."fish/functions/fish_prompt.fish".source = ../config/fish/functions/fish_prompt.fish;
+  xdg.configFile."fish/functions/fish_prompt.fish".source =
+    ../config/fish/functions/fish_prompt.fish;
 
   # https://fishshell.com/docs/current/completions.html
   # home-manager doesn't accept the special attrset: https://github.com/nix-community/home-manager/blob/1d085ea4444d26aa52297758b333b449b2aa6fca/modules/programs/fish.nix
   # If added here, check the result of `bench_shells`: https://github.com/kachick/dotfiles/pull/423/files#r1503804605
-  xdg.dataFile."fish/vendor_completions.d/podman.fish".source = ../dependencies/podman/completions.fish;
-  xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
+  xdg.dataFile."fish/vendor_completions.d/podman.fish".source =
+    ../dependencies/podman/completions.fish;
+  xdg.dataFile."fish/vendor_completions.d/dprint.fish".source =
+    ../dependencies/dprint/completions.fish;
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/fish.nix
   programs.fish = {
     enable = true;
 
-    shellInit =
-      ''
-        switch (uname -s)
-        case Linux
-            # Keep this comment
-        case Darwin
-          # nix
-          # https://github.com/NixOS/nix/issues/2280
-          if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-            fenv source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-          end
-        case FreeBSD NetBSD DragonFly
-            # Keep this comment
-        case '*'
-            # Keep this comment
-        end
-
+    shellInit = ''
+      switch (uname -s)
+      case Linux
+          # Keep this comment
+      case Darwin
         # nix
-        if test -e "$HOME/.nix-profile/etc/profile.d/nix.sh"
-            fenv source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        # https://github.com/NixOS/nix/issues/2280
+        if test -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+          fenv source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
         end
-      '';
+      case FreeBSD NetBSD DragonFly
+          # Keep this comment
+      case '*'
+          # Keep this comment
+      end
+
+      # nix
+      if test -e "$HOME/.nix-profile/etc/profile.d/nix.sh"
+          fenv source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+      end
+    '';
 
     interactiveShellInit = ''
       # I define another la as a homemade scripts
@@ -56,9 +58,7 @@
     '';
 
     # `alias` will show current aliases
-    shellAliases = {
-      glc = "git commit -a -m \"`$(history --max 1)`\"";
-    };
+    shellAliases = { glc = ''git commit -a -m "`$(history --max 1)`"''; };
 
     plugins = [{
       name = "foreign-env";

@@ -26,7 +26,7 @@
     shellAliases = {
       # git alias cannot get the interactive feature, so aliasing in shell layer
       # https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873
-      glc = "git commit -a -m \"\\`$(fc -ln -1)\\`\"";
+      glc = ''git commit -a -m "\`$(fc -ln -1)\`"'';
     };
 
     history = {
@@ -43,7 +43,19 @@
 
       # https://askubuntu.com/questions/999923/syntax-in-history-ignore
       # https://github.com/zsh-users/zsh/blob/aa8e4a02904b3a1c4b3064eb7502d887f7de958b/Src/hist.c#L3006-L3015
-      ignorePatterns = [ "cd *" "pushd *" "popd *" "z *" "ls *" "ll *" "la *" "rm *" "rmdir *" "git show *" "exit" ];
+      ignorePatterns = [
+        "cd *"
+        "pushd *"
+        "popd *"
+        "z *"
+        "ls *"
+        "ll *"
+        "la *"
+        "rm *"
+        "rmdir *"
+        "git show *"
+        "exit"
+      ];
 
       # Hist memory size should be grater than saving file size if enabled
       expireDuplicatesFirst = true;
@@ -52,17 +64,13 @@
       share = true;
     };
 
-    historySubstringSearch = {
-      enable = true;
-    };
+    historySubstringSearch = { enable = true; };
 
     syntaxHighlighting = {
       enable = true;
       # Candidates: https://wiki.archlinux.org/title/zsh#Colors
       # 0-7, 7 words(starship "purple" is "magenta" here), or #COLORCODE style.
-      styles = {
-        unknown-token = "fg=magenta";
-      };
+      styles = { unknown-token = "fg=magenta"; };
 
       # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
       highlighters = [
@@ -78,9 +86,7 @@
       };
     };
 
-    autosuggestion = {
-      enable = true;
-    };
+    autosuggestion = { enable = true; };
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
@@ -91,7 +97,9 @@
     initExtraBeforeCompInit = ''
       _elapsed_seconds_for() {
         local -r target_path="$1"
-        echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
+        echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${
+          lib.getBin pkgs.coreutils
+        }/bin/stat --format='%Y' "$target_path")"))"
       }
 
       # path - https://stackoverflow.com/a/48057649/1212807
@@ -110,7 +118,9 @@
         else
           ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$dump_dir"
           compinit -d "$dump_path"
-          ${lib.getBin pkgs.coreutils}/bin/touch "$dump_path" # Ensure to update timestamp
+          ${
+            lib.getBin pkgs.coreutils
+          }/bin/touch "$dump_path" # Ensure to update timestamp
         fi
       }
     '';
@@ -175,7 +185,9 @@
 
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
-        echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+        echo -ne "\033]0; $(${
+          lib.getBin pkgs.coreutils
+        }/bin/basename "$PWD") \007"
       }
       precmd_functions+=(set_win_title)
 

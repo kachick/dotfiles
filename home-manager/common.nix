@@ -14,7 +14,10 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory = if pkgs.stdenv.isDarwin then
+    "/Users/${config.home.username}"
+  else
+    "/home/${config.home.username}";
 
   # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
   xdg.enable = true;
@@ -32,7 +35,8 @@
   home = {
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
+      EDITOR =
+        "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
       VISUAL = "code -w";
       PAGER = "less";
 
@@ -48,7 +52,8 @@
       # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
       LESSCHARSET = "utf-8";
 
-      STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
+      STACK_XDG =
+        "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
     };
 
     sessionPath = [
@@ -82,14 +87,10 @@
     # See following reference
     #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
     #   - https://github.com/kachick/ruby-ulid/pull/410
-    nix-direnv = {
-      enable = true;
-    };
+    nix-direnv = { enable = true; };
   };
 
-  programs.zoxide = {
-    enable = true;
-  };
+  programs.zoxide = { enable = true; };
 
   # https://nixos.wiki/wiki/Home_Manager
   #   - Prefer XDG_*
@@ -98,9 +99,11 @@
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
 
-  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
+  xdg.configFile."alacritty/alacritty.toml".source =
+    ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source = ../config/alacritty/unix.toml;
-  xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
+  xdg.configFile."alacritty/common.toml".source =
+    ../config/alacritty/common.toml;
   xdg.configFile."alacritty/themes" = {
     source = ../config/alacritty/themes;
     recursive = true;
@@ -111,35 +114,29 @@
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
-  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
+  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
+    ../config/powershell/Profile.ps1;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
-  home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
+  home.file.".hushlogin".text =
+    "This file disables daily login message. Not depend on this text.";
 
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
-  home.file.".editorconfig".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "anylang-template";
-        rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
-        sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
-      }
-    + "/.editorconfig"
-  ;
+  home.file.".editorconfig".source = pkgs.fetchFromGitHub {
+    owner = "kachick";
+    repo = "anylang-template";
+    rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
+    sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
+  } + "/.editorconfig";
 
-  xdg.configFile."irb/irbrc".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "irb-power_assert";
-        rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-        sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-      }
-    + "/examples/.irbrc"
-  ;
+  xdg.configFile."irb/irbrc".source = pkgs.fetchFromGitHub {
+    owner = "kachick";
+    repo = "irb-power_assert";
+    rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
+    sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
+  } + "/examples/.irbrc";
 
   # typos does not have feature global config, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".text = ''
@@ -154,7 +151,8 @@
     enable = true;
 
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
-    defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+    defaultCommand =
+      "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
 
     # CTRL+T
     fileWidgetCommand = defaultCommand;
@@ -171,9 +169,7 @@
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
-  programs.starship = {
-    enable = true;
-  };
+  programs.starship = { enable = true; };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
   programs.mise = {
@@ -183,7 +179,8 @@
       plugins = {
         # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
         # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
+        podman =
+          "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
       };
     };
   };
@@ -225,15 +222,13 @@
       splitright = true;
       statusline = true;
       syntax = true;
-      "ft:ruby" = {
-        tabsize = 2;
-      };
+      "ft:ruby" = { tabsize = 2; };
 
       # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
-      colorscheme = "twilight"; # "default" is NFM, prefer solarized for dark blue
+      colorscheme =
+        "twilight"; # "default" is NFM, prefer solarized for dark blue
     };
   };
-
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim

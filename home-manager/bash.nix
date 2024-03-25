@@ -69,7 +69,7 @@
     shellAliases = {
       # git alias cannot get the interactive feature, so aliasing in shell layer
       # https://unix.stackexchange.com/questions/212872/how-to-get-last-n-commands-from-history#comment1125605_212873
-      glc = "git commit -a -m \"\\`$(fc -ln -1 | grep -Po '(\\S.*)')\\`\"";
+      glc = ''git commit -a -m "\`$(fc -ln -1 | grep -Po '(\S.*)')\`"'';
     };
 
     historySize = 100000;
@@ -77,7 +77,20 @@
     historyFileSize = 4200000;
     historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
     # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
-    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" "glc" ];
+    historyIgnore = [
+      "cd"
+      "pushd"
+      "popd"
+      "z"
+      "ls"
+      "ll"
+      "la"
+      "rm"
+      "rmdir"
+      "git show"
+      "exit"
+      "glc"
+    ];
 
     # Switch to another shell when bash used as a login shell
     profileExtra = ''
@@ -94,7 +107,9 @@
     initExtra = ''
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
-      	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+      	echo -ne "\033]0; $(${
+         lib.getBin pkgs.coreutils
+       }/bin/basename "$PWD") \007"
       }
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"

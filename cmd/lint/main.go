@@ -18,7 +18,8 @@ func main() {
 		{Path: "dprint", Args: []string{"check"}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{Path: "shellcheck", Args: bashPaths},
-		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
+		//  nix fmt doesn't have check option: https://github.com/NixOS/nix/issues/6918
+		{Path: "nixfmt", Args: append([]string{"--check"}, nixPaths...)},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
 		{Path: "gitleaks", Args: []string{"detect"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
