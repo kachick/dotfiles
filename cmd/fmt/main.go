@@ -18,7 +18,8 @@ func main() {
 	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"fmt"}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
-		{Path: "nixpkgs-fmt", Args: nixPaths},
+		// nix fmt doesn't respect .gitignore, without paths, .direnv included: https://github.com/NixOS/nixfmt/issues/151
+		{Path: "nix", Args: append([]string{"fmt"}, nixPaths...)},
 		{Path: "typos", Args: append(constants.GetTyposTargetedRoots(), "--write-changes")},
 		{Path: "go", Args: []string{"fmt", "./..."}},
 	}
