@@ -103,11 +103,6 @@
             "https://github.com/"
           ];
         };
-        "git://github.com/" = {
-          insteadOf = [
-            "https://github.com/"
-          ];
-        };
       };
 
       # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
