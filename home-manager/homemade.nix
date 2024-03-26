@@ -150,4 +150,24 @@ in
       };
     }
   )
+
+  (pkgs.writeShellApplication
+    {
+      name = "cdg";
+      runtimeInputs = with pkgs; [ ghq fzf la ];
+      # TODO: Reduce to call the `ghq list --full-path --exact` twice
+      text = ''
+        cd "$(
+          ghq list --full-path --exact "$(
+            ghq list "$1" | fzf --delimiter / --nth 2.. --preview 'la "$(
+              ghq list --full-path --exact {}
+            )"' --preview-window '~3'
+          )"
+        )"
+      '';
+      meta = {
+        description = "cd to ghq + fzf result";
+      };
+    }
+  )
 ]
