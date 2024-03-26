@@ -93,6 +93,23 @@
         sort = "-committerdate";
       };
 
+      url = {
+        # Why?
+        # - ghq default is https, this omit -p option for the ssh push
+        # - https://blog.n-z.jp/blog/2013-11-28-git-insteadof.html
+        "git@github.com:" = {
+          pushInsteadOf = [
+            "git://github.com/"
+            "https://github.com/"
+          ];
+        };
+        "git://github.com/" = {
+          insteadOf = [
+            "https://github.com/"
+          ];
+        };
+      };
+
       # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
       ghq = {
         root = "~/repos";
