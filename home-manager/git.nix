@@ -129,7 +129,7 @@
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd "$(ghq root)/github.com" && \
+        burl = ''!cd "$(${pkgs.ghq}/bin/ghq root)/github.com" && \
           gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
           gh setup && \
