@@ -15,7 +15,6 @@ RUN mkdir -p ~/.local/state/nix/profiles
 # Don't use /tmp, it removes in first run
 COPY ./ /provisioner/dotfiles/
 COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
-COPY ./containers/cleanup.bash /provisioner/cleanup.bash
 
 # Should back to original of kachick/ubuntu-nix-systemd, we need to run systemd first
 USER root

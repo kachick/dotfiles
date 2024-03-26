@@ -1,4 +1,4 @@
-name: CI - Home
+name: 🏠
 on:
   push:
     branches: [main]
@@ -36,8 +36,12 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v9
-      - uses: DeterminateSystems/magic-nix-cache-action@v3
+      - uses: DeterminateSystems/nix-installer-action@v10
+      - name: Print some dotfiles overviews
+        run: |
+          cat /etc/nix/nix.conf
+          ls -alh ~
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
@@ -50,17 +54,22 @@ jobs:
           which ruby
           which irb
           which ssh
+      - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
+        run: |
+          [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(fish -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
           fish --command 'starship --version'
-          zsh -c 'which dprint'
+          zsh -c zsh -c 'which la; which p'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
           zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
       - name: Run homemade commands
         run: |
-          zsh -c 'la'
+          zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"

@@ -22,7 +22,7 @@
 {
   # https://github.com/nix-community/home-manager/blob/master/modules/services/gpg-agent.nix
   services.gpg-agent = {
-    enable = if pkgs.stdenv.isDarwin then false else true;
+    enable = pkgs.stdenv.isLinux;
 
     # Update [darwin.nix](darwin.nix) if changed this section
     #
@@ -30,7 +30,7 @@
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
 
-    pinentryFlavor = "tty";
+    pinentryPackage = pkgs.pinentry-tty;
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix

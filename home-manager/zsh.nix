@@ -13,9 +13,11 @@
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
+  # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;
 
+    # BE CAREFUL WHEN REFACTOR: Why can't I use let ~ in or rec for this dotDir and ${config.xdg.configHome}?
     # zsh manager always append $HOME as the prefix, so you can NOT write as `"${config.xdg.configHome}/zsh"`
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
@@ -54,9 +56,31 @@
       enable = true;
     };
 
-    syntaxHighlighting.enable = true;
+    syntaxHighlighting = {
+      enable = true;
+      # Candidates: https://wiki.archlinux.org/title/zsh#Colors
+      # 0-7, 7 words(starship "purple" is "magenta" here), or #COLORCODE style.
+      styles = {
+        unknown-token = "fg=magenta";
+      };
 
-    enableAutosuggestions = true;
+      # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
+      highlighters = [
+        "brackets"
+        "pattern" # Not pattern"s"!
+        "root"
+      ];
+
+      # This will work if you enabled "pattern" highlighter
+      patterns = {
+        # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
+        "rm -rf *" = "fg=white,bold,bg=red";
+      };
+    };
+
+    autosuggestion = {
+      enable = true;
+    };
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
@@ -104,7 +128,17 @@
     envExtra = ''
       case ''${OSTYPE} in
       darwin*)
-        source '${config.xdg.configHome}/zsh/.zshenv.darwin'
+        # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
+        # - Even after this option, /etc/zshenv will be loaded
+        # - Some crucial PATH will be hidden they are installed by non nix layer. For example: vscode
+        setopt no_global_rcs
+
+        # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
+        # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
+        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+        fi
+
         ;;
       esac
 
@@ -112,6 +146,12 @@
       skip_global_compinit=1
 
       if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
+
+      # Put the special config in each machine if you want to avoid symlinks by Nix
+      # https://github.com/nix-community/home-manager/issues/3090#issue-1303753447
+      if [ -e '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
+        source '${config.xdg.configHome}/zsh/.zshenv.local'
+      fi
     '';
 
     initExtra = ''
@@ -126,16 +166,12 @@
       setopt hist_save_no_dups
       setopt hist_no_store
       setopt HIST_NO_FUNCTIONS
+      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+      setopt interactivecomments
 
       # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
       bindkey ";5C" forward-word
       bindkey ";5D" backward-word
-
-      case ''${OSTYPE} in
-      darwin*)
-        source '${config.xdg.configHome}/zsh/.zshrc.darwin'
-        ;;
-      esac
 
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
@@ -143,21 +179,33 @@
       }
       precmd_functions+=(set_win_title)
 
+      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
 
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # Same as .zshenv.local
+      if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+        source '${config.xdg.configHome}/zsh/.zshrc.local'
+      fi
     '';
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''
       # TODO: Switch to pkgs.zsh from current zsh in darwin
 
-      # TODO: May move to sessionVariables
       if [[ "$OSTYPE" == darwin* ]]; then
+        # TODO: May move to sessionVariables
         export BROWSER='open'
+
+        # Microsoft recommends this will be written in ~/.zprofile,
+        if [ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]; then
+          export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+        fi
       fi
     '';
   };

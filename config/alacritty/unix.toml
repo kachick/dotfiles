@@ -1,1 +1,5 @@
-import = ["~/.config/alacritty/common.toml"]
+# https://wiki.archlinux.org/title/Alacritty
+
+[window]
+# https://github.com/alacritty/alacritty/issues/93
+option_as_alt = "Both"

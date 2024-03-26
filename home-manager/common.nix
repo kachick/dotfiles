@@ -9,9 +9,7 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./zellij.nix
     ./darwin.nix # Omit needless parts for Linux in the file
-    ./homemade.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -34,7 +32,7 @@
   home = {
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
+      EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
       VISUAL = "code -w";
       PAGER = "less";
 
@@ -49,34 +47,29 @@
 
       # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
       LESSCHARSET = "utf-8";
+
+      STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
     };
 
     sessionPath = [
-      # See ./homemade.nix for detail
-      "${config.xdg.dataHome}/homemade/bin"
+      # Put executable for temporary use
+      "${config.xdg.dataHome}/tmpbin"
     ];
   };
 
+  # https://github.com/nix-community/home-manager/issues/605
+  fonts.fontconfig.enable = true;
+
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-  targets.genericLinux.enable = if pkgs.stdenv.isDarwin then false else true;
+  targets.genericLinux.enable = pkgs.stdenv.isLinux;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  nix = {
-    enable = true;
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-    };
-
-    # Without this makes following errors
-    #
-    #  error:
-    #  Failed assertions:
-    #  - A corresponding Nix package must be specified via `nix.package` for generating
-    package = pkgs.nix;
-  };
+  ## Needless the nix config here, because it is already configured by DeterminateSystems/nix-installer
+  # https://github.com/nix-community/home-manager/blob/36f873dfc8e2b6b89936ff3e2b74803d50447e0a/modules/misc/nix.nix#L5
+  # nix
 
   programs.lesspipe.enable = true;
 
@@ -104,17 +97,25 @@
 
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
+
+  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
+  xdg.configFile."alacritty/unix.toml".source = ../config/alacritty/unix.toml;
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
-  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/unix.toml;
+  xdg.configFile."alacritty/themes" = {
+    source = ../config/alacritty/themes;
+    recursive = true;
+  };
 
   # Not under "starship/starship.toml"
   xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
-  home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
+  # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
+  # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
+  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
 
-  # - stack manager can not found in https://github.com/nix-community/home-manager/tree/8d243f7da13d6ee32f722a3f1afeced150b6d4da/modules/programs
-  # - https://github.com/kachick/dotfiles/issues/142
-  home.file.".stack/config.yaml".source = ../config/stack/config.yaml;
+  xdg.dataFile."tmpbin/.keep".text = "";
+
+  home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
@@ -147,8 +148,26 @@
     ba = "ba"
   '';
 
-  programs.fzf = {
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
+  # https://github.com/junegunn/fzf/blob/master/README.md
+  programs.fzf = rec {
     enable = true;
+
+    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
+    defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+
+    # CTRL+T
+    fileWidgetCommand = defaultCommand;
+    fileWidgetOptions = [
+      "--preview '${pkgs.bat}/bin/bat --color=always {}'"
+      "--preview-window '~3'"
+    ];
+
+    # ALT-C
+    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
+    changeDirWidgetOptions = [
+      "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'"
+    ];
   };
 
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
@@ -169,6 +188,7 @@
     };
   };
 
+  # TODO: Consider to extract from nix managed, because of now also using in windows
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/micro.nix
   # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
   programs.micro = {
@@ -193,6 +213,7 @@
       mkparents = false;
       matchbrace = true;
       multiopen = "tab";
+      parsecursor = true;
       reload = "prompt";
       rmtrailingws = false;
       relativeruler = false;
@@ -236,5 +257,16 @@
       # Candidates: bat --list-themes
       theme = "Nord";
     };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zellij.nix
+  programs.zellij = {
+    enable = true;
+
+    # Don't use settings, nix and KDL is much unfit: https://github.com/NixOS/nixpkgs/issues/198655#issuecomment-1453525659
+  };
+  xdg.configFile."zellij" = {
+    source = ../config/zellij;
+    recursive = true;
   };
 }

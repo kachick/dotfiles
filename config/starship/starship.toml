@@ -9,6 +9,7 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
+$direnv\
 $crystal\
 $elm\
 $haskell\
@@ -19,10 +20,12 @@ $python\
 $deno\
 $nodejs\
 $cmd_duration\
+$container\
 $nix_shell\
 $shell\
 $line_break\
 $time\
+$status\
 $character"""
 
 # https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
@@ -32,10 +35,19 @@ disabled = false
 [directory]
 style = "blue"
 
+[direnv]
+# Do not enable until https://github.com/starship/starship/pull/5657 is released
+disabled = true
+
 [character]
 success_symbol = "[>](bold green)"
 error_symbol = "[!](italic purple)"
-vimcmd_symbol = "[❮](green)"
+
+[status]
+disabled = false
+# Displays as a part of character module
+style = "italic purple"
+format = "[$status]($style)"
 
 [git_commit]
 only_detached = false
@@ -72,3 +84,6 @@ style = "bright-black"
 [shell]
 disabled = false
 bash_indicator = 'bash'
+
+[container]
+disabled = false

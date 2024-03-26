@@ -6,13 +6,19 @@ Basically following codes will be done in PowerShell
 
 1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/windows.yml) summary
 1. New session of pwsh
-   ```powershell
-   ./winit-conf.exe run -pwsh_profile_path "$PROFILE"
+   ```pwsh
+   ./winit-conf.exe run
+
+   Install-Module -Name PSFzfHistory
+   # $PROFILE is an "Automatic Variables", not ENV
+   # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+   ./winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
+
    ./winit-reg.exe list
    ./winit-reg.exe run --all
    ```
 1. Install some tools
-   ```powershell
+   ```pwsh
    # Basically this may be same output of above `winit-conf.exe` log
    # Pick-up the winget-*.json outputs
    $env:TMP
@@ -24,7 +30,7 @@ Basically following codes will be done in PowerShell
    winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
 1. Remove needless pre-installed tools
-   ```powershell
+   ```pwsh
    # 9MSSGKG348SP is the Windows Widget(Windows Web Experience Pack)
    winget uninstall --id 9MSSGKG348SP
    ```
@@ -52,7 +58,7 @@ C:\Users\YOU\AppData\Local\Temp
 
 winget does not support it, run as follows
 
-```powershell
+```pwsh
 wsl.exe --install --distribution "Ubuntu-22.04"
 ```
 
@@ -62,10 +68,7 @@ wsl.exe --install --distribution "Ubuntu-22.04"
 Loading personal and system profiles took 897ms.
 ```
 
-TODO: Integrate https://github.com/kachick/PSFzfHistory here
-
-Look at #430
-
+1. Make sure you are using PSFzfHistory, not PSFzf
 1. Make sure `pwsh -NoProfile` is fast
 1. Restart the pwsh, if it is fast, cache maybe generated. The slow may happen when updated windows and/or the runtimes. (I guess)
 1. Do NOT consider about `ngen.exe` solution as Googling say. It looks old for me.
@@ -81,7 +84,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 
 ## How to export winget list?
 
-```powershell
+```pwsh
 winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
@@ -96,9 +99,7 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 
 ## History substring search in major shells for Windows
 
-TODO: Integrate https://github.com/kachick/PSFzfHistory here
-
-- PowerShell: #291, Written in [Profile.ps1](powershell/Profile.ps1) and commented out because it makes starting up much slow!
+- PowerShell: Using https://github.com/kelleyma49/PSFzf made much slow, prefer https://github.com/kachick/PSFzfHistory
 - nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
 
 ## Why avoiding winget to install Firefox Developer Edition?
@@ -120,6 +121,12 @@ explorer.exe .
 
 ```bash
 z "$(wslpath 'G:\GoogleDrive')"
+```
+
+## Login shell has been broken in WSL2
+
+```pwsh
+wsl --user root
 ```
 
 ## I forgot to backup Bitlocker restore key 😋
@@ -152,7 +159,7 @@ If you faced following error, needed to enable the permission from Administrator
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
 
-```powershell
+```pwsh
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
 ```
 
@@ -170,7 +177,7 @@ MachinePolicy       Undefined
 
 After completed tasks, disable it as follows
 
-```powershell
+```pwsh
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
@@ -216,6 +223,30 @@ I now prefer podman over docker and singularity.\
 It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.
+
+## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
+
+```
+Error: Command execution failed with exit code 125 Command execution failed with exit code 125 Error: unable to load machine config file: "json: cannot unmarshal string into Go struct field MachineConfig.ImagePath of type define.VMFile"
+```
+
+It relates to [podman#22144](https://github.com/containers/podman/issues/22144).\
+And might be happen in future major updating and the schema changes. So this snippet may help you.
+
+Abandon current VM, images, containers. Then following steps are the how to fix
+
+```pwsh
+winget uninstall --exact --id RedHat.Podman-Desktop
+winget uninstall --exact --id RedHat.Podman
+wsl --list
+wsl --unregister podman-machine-default
+cd ${Env:USERPROFILE}\.config\containers\podman\machine\wsl\
+Remove-Item .\podman-machine-*
+winget install --exact --id RedHat.Podman
+winget install --exact --id RedHat.Podman-Desktop
+```
+
+And create the new podman-machine-default
 
 ## Why aren't these packages in winget list?
 

@@ -14,3 +14,15 @@ There are 2 points
 ## How to copy and paste in alacritty?
 
 [Add shift for basic keybinds, not just the ctrl+c, ctrl+v](https://github.com/alacritty/alacritty/issues/2383)
+
+## How to test look and feel?
+
+If you feel the config is not applied or you want to try another value.\
+Specify the arguments in CLI.
+
+```bash
+alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"IosevkaTerm NFM"'
+alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"SauceCodePro NFM"' window.dimensions.columns=180 window.dimensions.lines=50 window.position.x=10 window.position.y=10
+```
+
+And you can test with actual toml in the `$HOME/.config/alacritty/local.toml`

@@ -8,6 +8,14 @@ Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
 nix-prefetch-git --url https://github.com/oh-my-fish/plugin-foreign-env.git --rev 3ee95536106c11073d6ff466c1681cde31001383 --quiet | jq .hash
 ```
 
+## How to convert JSON to Nix?
+
+See [this comment](https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4999658#gistcomment-4999658)
+
+```bash
+nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./dprint.json)' | nixfmt
+```
+
 ## How to make executable? `.text =` makes a sym, that links to non executable file
 
 ```nix
@@ -20,16 +28,9 @@ Read <https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d6
 
 `nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
 
-## How to use edge dependencies only in some packages?
+## How to mix _-unstable and release-_ for different packages?
 
-```nix
-let
-  pkgsUnstable = import
-    (fetchTarball
-      "https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre509044.3acb5c4264c4/nixexprs.tar.xz")
-    { };
-in
-```
+See <https://github.com/nix-community/home-manager/issues/1538#issuecomment-1265293260>
 
 ## I cannot find dot files in the macOS Finder
 

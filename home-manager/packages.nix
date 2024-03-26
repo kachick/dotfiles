@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, my-pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -9,11 +9,15 @@
     # readline # needless and using it does not fix bash problems
     zsh
     fish
+    powershell
     starship
     direnv
     zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
-    fzf
-    walk # cd + ls + cat(--preview)
+
+    fzf # History: CTRL+R, Walker: CTRL+T
+    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
+    # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
+    fzf-git-sh # CTRL-G CTRL-{} keybinds for git
 
     # Used in anywhere
     coreutils
@@ -29,7 +33,6 @@
     netcat # `nc`
 
     mise # alt asdf
-    unzip # Required in many asdf plugins
 
     git
     tig
@@ -46,12 +49,6 @@
     # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
     micro # alt nano
-
-    dprint
-    shellcheck
-    shfmt
-    nixpkgs-fmt
-    nil
 
     tree
     eza # alt ls
@@ -75,9 +72,26 @@
     gnumake
     gitleaks
     deno
-    actionlint
     gitleaks
     ruby_3_3
+    unzip # Required in many asdf plugins
+    _7zz # `7zz` 7zip, not
+    tlrc # `tldr` rust client, tealdeer is another candidate
+
+    fontconfig # `fc-list`, `fc-cache`
+
+    # How to get the installed font names
+    # fontconfig by nix: fc-list : family style
+    # darwin: system_profiler SPFontsDataType
+    (pkgs.nerdfonts.override {
+      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/data/fonts/nerdfonts/shas.nix
+      fonts = [
+        "SourceCodePro"
+        "Inconsolata"
+      ];
+    })
+
+    my-pkgs.plemoljp-nf
 
     # Includes follows in each repository if needed, not in global
     # gcc
@@ -95,7 +109,7 @@
     # libyaml
     # openssl
 
-  ] ++ (lib.optionals stdenv.isLinux
+  ] ++ (import ./homemade.nix { inherit pkgs; }) ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc

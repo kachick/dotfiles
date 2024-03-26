@@ -1,0 +1,67 @@
+name: 👋 staging ⬢🗑️
+on:
+  pull_request:
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'Target PR number'
+        required: true
+        type: number
+
+defaults:
+  run:
+    # https://pubs.opengroup.org/onlinepubs/009695399/utilities/set.html
+    shell: bash -Ceuxo pipefail {0}
+
+jobs:
+  ghcr:
+    runs-on: ubuntu-22.04
+    if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
+    timeout-minutes: 15
+    steps:
+      - name: Install gh-action-escape
+        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
+      - name: Get metadata
+        id: get-meta
+        run: |
+          if [ '${{ github.event_name }}' == 'pull_request' ]; then
+            echo -n '${{ github.event.pull_request.number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+          else
+            echo -n '${{ inputs.pr-number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+          fi
+      - name: Inspect the PR published package
+        id: inspect-package
+        run: |
+          gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /users/kachick/packages/container/home/versions \
+            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ steps.get-meta.outputs.pr_number }}-")).id' | \
+              ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
+              gh-action-escape -name=package-version-ids | tee -a "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
+        with:
+          owner: ${{ github.repository_owner }}
+          package-name: 'home'
+          package-type: 'container'
+          token: ${{ github.token }}
+          package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
+      - name: Prepare git to run gh commands
+        uses: actions/checkout@v4
+      - name: Post comments to the PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          (
+          cat <<'EOF'
+          🤖 removed 🗑️ staging ⬢ from ghcr.io
+
+          ```plaintext
+          ${{ steps.inspect-package.outputs.package-version-ids }}
+          ```
+          EOF
+          ) | gh pr comment '${{ steps.get-meta.outputs.pr_number }}' --body-file -

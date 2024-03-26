@@ -6,6 +6,7 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
     home-manager = {
@@ -15,23 +16,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils }:
+  outputs = { self, nixpkgs, home-manager, flake-utils, my-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        my-pkgs = my-nixpkgs.legacyPackages.${system};
       in
       rec {
+        # Q. Why nixpkgs-fmt? Not nixfmt? and alejandra?
+        # A. nixfmt will be official, but too opinionated and non stable now
+        # - https://github.com/NixOS/nixfmt/issues/153
+        # - https://github.com/NixOS/nixfmt/issues/129
+        # - https://github.com/NixOS/rfcs/pull/166
+        # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
+        formatter = pkgs.nixpkgs-fmt;
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
+              nixpkgs-fmt
+              nixfmt # Using a sub formatter
+              nil
 
               dprint
               shellcheck
               shfmt
-              nil
-              nixpkgs-fmt
               gitleaks
               cargo-make
               typos
@@ -45,56 +55,49 @@
             ];
           };
 
-        packages.homeConfigurations =
-          {
-            kachick = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./home-manager/kachick.nix
-              ];
-            };
-
-            github-actions = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                # Prefer "kachick" over "common" only here.
-                # Using values as much as possible as actual values to create a robust CI
-                ./home-manager/kachick.nix
-                { home.username = "runner"; }
-              ];
-            };
-
-            user = home-manager.lib.homeManagerConfiguration {
-              inherit pkgs;
-              modules = [
-                ./home-manager/common.nix
-                {
-                  # "user" is default in podman-machine-default
-                  home.username = "user";
-                }
-              ];
-            };
+        packages.homeConfigurations = {
+          kachick = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [ ./home-manager/kachick.nix ];
+            extraSpecialArgs = { inherit my-pkgs; };
           };
 
-        packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
-          set -euo pipefail
+          github-actions = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              # Prefer "kachick" over "common" only here.
+              # Using values as much as possible as actual values to create a robust CI
+              ./home-manager/kachick.nix
+              { home.username = "runner"; }
+            ];
+            extraSpecialArgs = { inherit my-pkgs; };
+          };
 
-          ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-          ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-          ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+          user = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              ./home-manager/common.nix
+              {
+                # "user" is default in podman-machine-default
+                home.username = "user";
+              }
+            ];
+            extraSpecialArgs = { inherit my-pkgs; };
+          };
+        };
 
-          ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-          ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-          ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
-        '';
+        packages.bump_completions =
+          pkgs.writeShellScriptBin "bump_completions" ''
+            set -euo pipefail
 
-        # https://gist.github.com/Scoder12/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4650816#gistcomment-4650816
-        packages.json2nix = pkgs.writeScriptBin "json2nix" ''
-          ${pkgs.python3}/bin/python ${pkgs.fetchurl {
-            url = "https://gist.githubusercontent.com/Scoder12/0538252ed4b82d65e59115075369d34d/raw/e86d1d64d1373a497118beb1259dab149cea951d/json2nix.py";
-            hash = "sha256-ROUIrOrY9Mp1F3m+bVaT+m8ASh2Bgz8VrPyyrQf9UNQ=";
-          }} $@
-        '';
+            ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
+            ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
+            ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+
+            ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
+            ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
+            ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
+          '';
 
         apps = {
           # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
@@ -107,14 +110,7 @@
             type = "app";
             program = "${packages.bump_completions}/bin/bump_completions";
           };
-
-          # example: `nix run .#json2nix gitconfig.json`
-          json2nix = {
-            type = "app";
-            program = "${packages.json2nix}/bin/json2nix";
-          };
         };
-      }
-    );
+      });
 }
 
