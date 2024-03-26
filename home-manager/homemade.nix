@@ -157,10 +157,16 @@ in
       runtimeInputs = with pkgs; [ ghq fzf la ];
       # TODO: Reduce to call the `ghq list --full-path --exact` twice
       text = ''
+        if [ $# -ge 1 ]; then
+          query="$1"
+        else
+          query=""
+        fi
+
         cd "$(
           ghq list --full-path --exact "$(
             # shellcheck disable=SC2016
-            ghq list | fzf --query "$1" --delimiter / --nth 3.. --preview 'la "$(
+            ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview 'la "$(
               ghq list --full-path --exact {}
             )"' --preview-window '~3'
           )"
