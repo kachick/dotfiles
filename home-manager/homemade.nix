@@ -139,6 +139,31 @@ in
 
   (pkgs.writeShellApplication
     {
+      name = "fzf-bind-posix-shell-history-to-git-commit-message";
+      runtimeInputs = with pkgs; [ git fzf ruby_3_3 ];
+      text = ''
+        # Avoiding nested single quote use
+        bind="$(
+        cat<<'EOF'
+        enter:become(echo '`{}`' | git commit -a -F -)
+        EOF
+        )"
+
+        # Why ruby?
+        # - bash keeps whitespace prefix even specified -n option for fc -l
+        # - lstrip is not enough for some history
+        # shellcheck disable=SC2016 disable=SC2086
+        ruby -pe '$_.strip!' | \
+          fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind "$bind"
+      '';
+      meta = {
+        description = "Used in git alias";
+      };
+    }
+  )
+
+  (pkgs.writeShellApplication
+    {
       name = "todo";
       runtimeInputs = with pkgs; [ git fzf micro ];
       text = ''
