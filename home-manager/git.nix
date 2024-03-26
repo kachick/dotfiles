@@ -92,6 +92,23 @@
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
         sort = "-committerdate";
       };
+
+      url = {
+        # Why?
+        # - ghq default is https, this omit -p option for the ssh push
+        # - https://blog.n-z.jp/blog/2013-11-28-git-insteadof.html
+        "git@github.com:" = {
+          pushInsteadOf = [
+            "git://github.com/"
+            "https://github.com/"
+          ];
+        };
+      };
+
+      # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
+      ghq = {
+        root = "~/repos";
+      };
     };
   };
 
@@ -112,12 +129,12 @@
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd ~/repos && \
-          gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
+        burl = ''!cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
+          gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
           gh setup && \
           ${pkgs.direnv}/bin/direnv allow && \
-          ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cd ~/repos/$1"
+          ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
         '';
       };
     };

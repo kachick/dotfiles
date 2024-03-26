@@ -184,6 +184,14 @@
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
 
+      # https://unix.stackexchange.com/a/3449
+      source_sh () {
+        emulate -LR sh
+        . "$@"
+      }
+
+      source_sh "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }

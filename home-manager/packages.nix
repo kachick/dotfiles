@@ -38,6 +38,7 @@
     tig
     lazygit
     gh
+    ghq
 
     # GPG
     gnupg

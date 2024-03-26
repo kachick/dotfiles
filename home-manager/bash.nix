@@ -103,6 +103,8 @@
 
       source "${../dependencies/podman/completions.bash}"
       source "${../dependencies/dprint/completions.bash}"
+
+      source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
     '' + builtins.readFile ./initExtra.bash;
 
     logoutExtra = ''

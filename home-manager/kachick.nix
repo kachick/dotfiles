@@ -19,6 +19,8 @@
         # - Append `!` suffix for subkeys
         signingkey = "9BE4016A38165CCB!";
       };
+
+      ghq.user = "kachick";
     };
   };
 

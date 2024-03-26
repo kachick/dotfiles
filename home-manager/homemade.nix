@@ -150,4 +150,26 @@ in
       };
     }
   )
+
+  (pkgs.writeShellApplication
+    {
+      name = "ghqf";
+      runtimeInputs = with pkgs; [ ghq fzf la ];
+      text = ''
+        if [ $# -ge 1 ]; then
+          query="$1"
+        else
+          query=""
+        fi
+
+        # shellcheck disable=SC2016
+        ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview 'la "$(
+          ghq list --full-path --exact {}
+        )"' --preview-window '~3'
+      '';
+      meta = {
+        description = "ghq + fzf result";
+      };
+    }
+  )
 ]
