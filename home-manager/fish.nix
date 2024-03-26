@@ -55,11 +55,6 @@
       set -g fish_greeting
     '';
 
-    # `alias` will show current aliases
-    shellAliases = {
-      glc = "git commit -a -m \"`$(history --max 1)`\"";
-    };
-
     plugins = [{
       name = "foreign-env";
       src = pkgs.fetchFromGitHub {
