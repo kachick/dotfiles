@@ -95,7 +95,7 @@
 
       # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
       ghq = {
-        root = "~/repos";
+        root = config.home.file."repos";
       };
     };
   };
@@ -117,7 +117,7 @@
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd ~/repos && \
+        burl = ''!cd ${config.home.file."repos"} && \
           gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
           cd "$1" && \
           gh setup && \
