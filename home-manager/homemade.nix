@@ -139,7 +139,7 @@ in
 
   (pkgs.writeShellApplication
     {
-      name = "fzt-bind-posix-shell-history-to-git-commit-message";
+      name = "fzf-bind-posix-shell-history-to-git-commit-message";
       runtimeInputs = with pkgs; [ git fzf ruby_3_3 ];
       text = ''
         # Avoiding nested single quote use

@@ -117,7 +117,7 @@
     }
 
     git-commit-message-from-history() {
-      fc -nrl 1 | fzt-bind-posix-shell-history-to-git-commit-message
+      fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
     }
   '';
 
