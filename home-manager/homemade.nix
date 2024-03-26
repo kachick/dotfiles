@@ -153,9 +153,8 @@ in
 
   (pkgs.writeShellApplication
     {
-      name = "cdg";
+      name = "ghqf";
       runtimeInputs = with pkgs; [ ghq fzf la ];
-      # TODO: Reduce to call the `ghq list --full-path --exact` twice
       text = ''
         if [ $# -ge 1 ]; then
           query="$1"
@@ -163,17 +162,13 @@ in
           query=""
         fi
 
-        cd "$(
-          ghq list --full-path --exact "$(
-            # shellcheck disable=SC2016
-            ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview 'la "$(
-              ghq list --full-path --exact {}
-            )"' --preview-window '~3'
-          )"
-        )"
+        # shellcheck disable=SC2016
+        ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview 'la "$(
+          ghq list --full-path --exact {}
+        )"' --preview-window '~3'
       '';
       meta = {
-        description = "cd to ghq + fzf result";
+        description = "ghq + fzf result";
       };
     }
   )

@@ -98,6 +98,25 @@
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
 
+  # https://unix.stackexchange.com/a/3449
+  # Use shared aliases in both bash and zsh with sourcing
+  #
+  # - We CAN use `local` if omit ksh
+  # - Keep minimum
+  # - aliases around `cd` is the typical use, because they should be alias or sourced shell function
+  # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
+  # - Do not add shebang and options
+  #
+  # TODO: Use absolute path for ghqf
+  xdg.configFile."posix_shells/shared_functions.sh".text = ''
+    cdg() {
+      local dest="$(ghqf "$@")"
+      if [ -n "$dest" ]; then
+        cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$dest")"
+      fi
+    }
+  '';
+
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source = ../config/alacritty/unix.toml;
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
