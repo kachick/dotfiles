@@ -139,6 +139,27 @@ in
 
   (pkgs.writeShellApplication
     {
+      name = "git-commit-message-from-history";
+      runtimeInputs = with pkgs; [ git coreutils findutils ];
+      text = ''
+        command="$(
+        cat<<'EOF'
+        git commit -a -m '`{}`'
+        EOF
+        )"
+
+        # bash keeps whitespace prefix even specified -n option for fc -l
+        ruby -pe '$_.lstrip!' | \
+          fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind "enter:become(''${command})"
+      '';
+      meta = {
+        description = "Used in git alias";
+      };
+    }
+  )
+
+  (pkgs.writeShellApplication
+    {
       name = "todo";
       runtimeInputs = with pkgs; [ git fzf micro ];
       text = ''
