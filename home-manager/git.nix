@@ -130,8 +130,9 @@
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''!cd ~/repos/github.com && \
-          gh repo create "$1" --public --clone --template='kachick/anylang-template' --description='🚧' && \
-          cd "$1" && \
+          gh repo create "$1" --public --template='kachick/anylang-template' --description='🚧' && \
+          ${pkgs.ghq}/bin/ghq get "$1" \
+          cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$1")" \
           gh setup && \
           ${pkgs.direnv}/bin/direnv allow && \
           ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
