@@ -23,8 +23,6 @@
       refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
       r = "refresh"; # refresh is long for typing
       all = "!git refresh && git-delete-merged-branches";
-      # fish does not have `fc`
-      commit-history = ''!fc -nrl 1 | git-commit-message-from-history'';
       gui = "!lazygit";
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
