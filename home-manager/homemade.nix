@@ -160,7 +160,7 @@ in
         cd "$(
           ghq list --full-path --exact "$(
             # shellcheck disable=SC2016
-            ghq list | fzf --query "$1" --delimiter / --nth 2.. --preview 'la "$(
+            ghq list | fzf --query $@ --delimiter / --nth 3.. --preview 'la "$(
               ghq list --full-path --exact {}
             )"' --preview-window '~3'
           )"
