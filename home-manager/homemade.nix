@@ -121,6 +121,16 @@ in
 
   (pkgs.writeShellApplication
     {
+      name = "g";
+      runtimeInputs = with pkgs; [ git ];
+      text = ''
+        git "$@"
+      '';
+    }
+  )
+
+  (pkgs.writeShellApplication
+    {
       name = "git-delete-merged-branches";
       runtimeInputs = with pkgs; [ git coreutils findutils ];
       text = ''
