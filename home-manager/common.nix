@@ -122,7 +122,7 @@
   '';
 
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
-  xdg.configFile."alacritty/unix.toml".source = ../config/alacritty/unix.toml;
+  xdg.configFile."alacritty/unix.toml".source = if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/themes" = {
     source = ../config/alacritty/themes;
