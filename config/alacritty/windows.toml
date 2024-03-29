@@ -1,6 +1,13 @@
 [shell]
-program = "pwsh"
+program = "wsl"
 args = [
-  "-WorkingDirectory",
-  "~/",
+  "--cd",
+  "~",
 ]
+# windows default is in my experimental state. Note pwsh pattern as follows
+#
+# program = "pwsh" # Not "powershell", that is default, but too old
+# args = [
+#   "-WorkingDirectory",
+#   "~/",
+# ]
