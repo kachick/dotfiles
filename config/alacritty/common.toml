@@ -8,6 +8,9 @@ import = [
 [selection]
 save_to_clipboard = true
 
+[cursor]
+style.shape = "Beam"
+
 [font]
 size = 12
 
