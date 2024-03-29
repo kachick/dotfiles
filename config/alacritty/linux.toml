@@ -1,0 +1,7 @@
+# https://wiki.archlinux.org/title/Alacritty
+
+[shell]
+# - bash with "login mode" will delegate to zsh, so needed the specifying here for GNOME etc
+# - zsh maybe not installed in plain distro
+program = "bash"
+args = ["--login"]
