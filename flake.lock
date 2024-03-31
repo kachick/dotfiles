@@ -37,7 +37,7 @@
     "home-manager": {
       "inputs": {
         "nixpkgs": [
-          "nixpkgs"
+          "edge-nixpkgs"
         ]
       },
       "locked": {
