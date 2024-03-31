@@ -30,7 +30,7 @@
         # - https://github.com/NixOS/nixfmt/issues/129
         # - https://github.com/NixOS/rfcs/pull/166
         # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-        formatter = pkgs.nixpkgs-fmt;
+        formatter = edge-pkgs.nixpkgs-fmt;
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
