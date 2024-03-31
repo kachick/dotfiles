@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, edge-pkgs, ... }:
 
 {
   services.gpg-agent.enableZshIntegration = true;
@@ -172,7 +172,7 @@
       }
       precmd_functions+=(set_win_title)
 
-      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"

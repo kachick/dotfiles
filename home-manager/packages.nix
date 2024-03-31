@@ -1,4 +1,4 @@
-{ pkgs, my-pkgs, lib, ... }:
+{ pkgs, edge-pkgs, my-pkgs, lib, ... }:
 
 {
   home.packages = with pkgs; [
@@ -9,15 +9,15 @@
     # readline # needless and using it does not fix bash problems
     zsh
     fish
-    powershell
-    starship
+    powershell # Keep to stable nixpkgs, because this is one of the depending to xz. See #530
+    edge-pkgs.starship
     direnv
     zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
-    fzf # History: CTRL+R, Walker: CTRL+T
+    edge-pkgs.fzf # History: CTRL+R, Walker: CTRL+T
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
     # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-    fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+    edge-pkgs.fzf-git-sh # CTRL-G CTRL-{} keybinds for git
 
     # Used in anywhere
     coreutils
@@ -32,16 +32,17 @@
     gawk
     netcat # `nc`
 
-    mise # alt asdf
+    edge-pkgs.mise # alt asdf
 
     git
     tig
     lazygit
-    gh
+    edge-pkgs.gh
     ghq
 
     # GPG
-    gnupg
+    # TODO: Use stable pkgs since 24.05
+    edge-pkgs.gnupg
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues
@@ -65,15 +66,15 @@
     bottom # `btm`, alt top
     xh # alt HTTPie
     zellij
-    alacritty
-    typos
+    edge-pkgs.alacritty
+    edge-pkgs.typos
     hyperfine
     difftastic
     gnumake
     gitleaks
     deno
     gitleaks
-    ruby_3_3
+    edge-pkgs.ruby_3_3
     unzip # Required in many asdf plugins
     _7zz # `7zz` 7zip, not
     tlrc # `tldr` rust client, tealdeer is another candidate

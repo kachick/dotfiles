@@ -5,7 +5,8 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
@@ -16,10 +17,11 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils, my-nixpkgs }:
+  outputs = { self, nixpkgs, edge-nixpkgs, home-manager, flake-utils, my-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         my-pkgs = my-nixpkgs.legacyPackages.${system};
       in
       rec {
@@ -35,17 +37,17 @@
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
-              nixpkgs-fmt
-              nixfmt # Using a sub formatter
-              nil
+              edge-pkgs.nixpkgs-fmt
+              edge-pkgs.nixfmt # Using a sub formatter
+              edge-pkgs.nil
 
-              dprint
+              edge-pkgs.dprint
               shellcheck
               shfmt
               gitleaks
               cargo-make
-              typos
-              go_1_22
+              edge-pkgs.typos
+              edge-pkgs.go_1_22
               goreleaser
               trivy
 
@@ -59,7 +61,10 @@
           kachick = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [ ./home-manager/kachick.nix ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
 
           github-actions = home-manager.lib.homeManagerConfiguration {
@@ -70,7 +75,10 @@
               ./home-manager/kachick.nix
               { home.username = "runner"; }
             ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
 
           user = home-manager.lib.homeManagerConfiguration {
@@ -82,7 +90,10 @@
                 home.username = "user";
               }
             ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
         };
 
@@ -90,13 +101,13 @@
           pkgs.writeShellScriptBin "bump_completions" ''
             set -euo pipefail
 
-            ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-            ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-            ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+            ${edge-pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
+            ${edge-pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
+            ${edge-pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
 
-            ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-            ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-            ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
+            ${edge-pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
+            ${edge-pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
+            ${edge-pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
           '';
 
         apps = {
