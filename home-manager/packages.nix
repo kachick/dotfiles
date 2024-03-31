@@ -110,7 +110,7 @@
     # libyaml
     # openssl
 
-  ] ++ (import ./homemade.nix { inherit pkgs; }) ++ (lib.optionals stdenv.isLinux
+  ] ++ (import ./homemade.nix { inherit pkgs; inherit edge-pkgs; }) ++ (lib.optionals stdenv.isLinux
     [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc
