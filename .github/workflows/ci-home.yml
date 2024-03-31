@@ -80,3 +80,11 @@ jobs:
         run: |
           zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
+      - name: Backup generated config
+        run: |
+          zsh -c 'archive-home-files home-manager-generation-home-files'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'home-files-${{ github.sha }}-${{ runner.os }}'
+          path: home-manager-generation-home-files.tar.gz
