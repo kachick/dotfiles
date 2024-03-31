@@ -12,8 +12,7 @@
   },
   "excludes": [
     ".git",
-    "**/*-lock.json",
-    "iterm2"
+    "**/*-lock.json"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.2.wasm",

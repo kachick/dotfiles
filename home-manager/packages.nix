@@ -126,9 +126,6 @@
     ]
   ) ++ (lib.optionals stdenv.isDarwin
     [
-      # https://github.com/NixOS/nixpkgs/commit/3ea22dab7d906f400cc5983874dbadeb8127c662#diff-32e42fa095503d211e9c2894de26c22166cafb875d0a366701922aa23976c53fL21-L33
-      iterm2
-
       # https://github.com/NixOS/nixpkgs/issues/240819
       pinentry_mac
     ]
