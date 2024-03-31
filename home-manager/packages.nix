@@ -1,6 +1,7 @@
 { pkgs, edge-pkgs, my-pkgs, lib, ... }:
 
 {
+  # Prefer stable pkgs as possible, if you want to use edge pkgs, Keep zero or tiny config in home-manager layer
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
     # bash
@@ -10,10 +11,12 @@
     zsh
     fish
     powershell # Keep to stable nixpkgs, because this is one of the depending to xz. See #530
-    edge-pkgs.starship
+    starship
     direnv
     zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
+    # Using in stable home-manager integration, but using edge fzf here.
+    # Because strongly want to use the new features. Consider to translate Nix -> native config style
     edge-pkgs.fzf # History: CTRL+R, Walker: CTRL+T
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
     # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
@@ -37,7 +40,7 @@
     git
     tig
     lazygit
-    edge-pkgs.gh
+    gh
     ghq
 
     # GPG
@@ -71,8 +74,8 @@
     difftastic
     gnumake
     gitleaks
-    deno
     gitleaks
+    edge-pkgs.deno
     edge-pkgs.ruby_3_3
     unzip # Required in many asdf plugins
     _7zz # `7zz` 7zip, not
