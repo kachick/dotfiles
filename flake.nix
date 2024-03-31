@@ -104,7 +104,12 @@
             name = "check_no_dirty_xz_in_nix_store";
             runtimeInputs = with pkgs; [ fd ];
             text = ''
-              fd '^\w+-xz-5\.6\.[01]\.drv' --search-path "$NIX_STORE" --has-results && exit 1
+              if [ -n "$NIX_STORE" ]; then
+                nix_store_path="$NIX_STORE"
+              else
+                nix_store_path=/nix/store
+              fi
+              fd '^\w+-xz-5\.6\.[01]\.drv' --search-path "$nix_store_path" --has-results && exit 1
             '';
             meta = {
               description = "Prevent #530 (around CVE-2024-3094)";

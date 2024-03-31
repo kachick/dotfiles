@@ -47,9 +47,7 @@ jobs:
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Make sure no possibilities in nix store and CVE-2024-3094
-        # Using Nix environment in the script, so need to call in the script
-        run: |
-          "$HOME/.nix-profile/bin/bash" -c 'nix run .#check_no_dirty_xz_in_nix_store'
+        run: nix run .#check_no_dirty_xz_in_nix_store
       - name: Print some paths and versions
         run: |
           which fish
