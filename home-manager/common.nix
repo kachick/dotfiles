@@ -19,17 +19,18 @@
   # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
   xdg.enable = true;
 
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "23.11";
-
   home = {
+    # This value determines the Home Manager release that your
+    # configuration is compatible with. This helps avoid breakage
+    # when a new Home Manager release introduces backwards
+    # incompatible changes.
+    #
+    # You can update Home Manager without changing this value. See
+    # the Home Manager release notes for a list of state version
+    # changes in each release.
+    stateVersion = "23.11";
+    enableNixpkgsReleaseCheck = true;
+
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
       EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
