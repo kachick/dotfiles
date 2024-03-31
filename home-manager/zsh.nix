@@ -14,7 +14,7 @@
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
-  # @TODO: Re-apply some patches since release-24.05: #497
+  # TODO: Re-apply some patches since release-24.05: #497
   programs.zsh = {
     enable = true;
 
@@ -58,18 +58,20 @@
         unknown-token = "fg=magenta";
       };
 
+      # TODO: Enable since release-24.05
+      #
       # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
-      highlighters = [
-        "brackets"
-        "pattern" # Not pattern"s"!
-        "root"
-      ];
-
-      # This will work if you enabled "pattern" highlighter
-      patterns = {
-        # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
-        "rm -rf *" = "fg=white,bold,bg=red";
-      };
+      # highlighters = [
+      #   "brackets"
+      #   "pattern" # Not pattern"s"!
+      #   "root"
+      # ];
+      #
+      # # This will work if you enabled "pattern" highlighter
+      # patterns = {
+      #   # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
+      #   "rm -rf *" = "fg=white,bold,bg=red";
+      # };
     };
 
     enableAutosuggestions = true;
@@ -189,6 +191,11 @@
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # TODO: Replace this section with home-manager module since release-24.05
+      ZSH_HIGHLIGHT_HIGHLIGHTERS+=('brackets' 'pattern' 'root')
+      ZSH_HIGHLIGHT_STYLES+=('unknown-token' 'fg=magenta')
+      ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
       # Same as .zshenv.local
       if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then

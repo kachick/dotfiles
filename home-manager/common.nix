@@ -199,7 +199,7 @@
     enable = true;
   };
 
-  # @TODO: Enable since release-24.05
+  # TODO: Enable since release-24.05
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
   # Current shell integrations should be refer
   #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109

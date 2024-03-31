@@ -53,7 +53,7 @@ in
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
-    # @TODO: Update AddKeysToAgent since release-24.05. See #394
+    # TODO: Update AddKeysToAgent since release-24.05. See #394
     extraConfig = ''
       AddKeysToAgent yes
 
