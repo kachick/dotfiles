@@ -1,8 +1,6 @@
 [default.extend-words]
 # https://github.com/crate-ci/typos/issues/415
 ba = "ba"
-# https://github.com/crate-ci/typos/issues/536#issuecomment-1216549808
-iterm = "iterm"
 
 [files]
 extend-exclude = [
