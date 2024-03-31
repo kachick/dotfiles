@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, edge-pkgs, ... }:
 
 {
   services.gpg-agent.enableFishIntegration = true;
@@ -7,7 +7,7 @@
   # programs.direnv.enableFishIntegration = true;
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
-  programs.mise.enableFishIntegration = true;
+  # programs.mise.enableFishIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableFishIntegration = false;
 
@@ -20,7 +20,7 @@
   xdg.dataFile."fish/vendor_completions.d/podman.fish".source = ../dependencies/podman/completions.fish;
   xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fish.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fish.nix
   programs.fish = {
     enable = true;
 
@@ -53,6 +53,8 @@
       functions --erase la
 
       set -g fish_greeting
+
+      eval "$(${lib.getExe edge-pkgs.mise} activate zsh)"
     '';
 
     plugins = [{

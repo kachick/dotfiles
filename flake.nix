@@ -9,10 +9,9 @@
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
     flake-utils.url = "github:numtide/flake-utils";
-    # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
+    # https://github.com/nix-community/home-manager/blob/release-23.11/docs/manual/nix-flakes.md
     home-manager = {
-      # candidates: "github:nix-community/home-manager/release-23.05";
-      url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

@@ -41,8 +41,7 @@
     ghq
 
     # GPG
-    # TODO: Use stable pkgs since 24.05
-    edge-pkgs.gnupg
+    gnupg
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues

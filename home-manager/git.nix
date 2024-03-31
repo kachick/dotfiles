@@ -3,7 +3,7 @@
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -112,7 +112,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 
@@ -149,7 +149,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/lazygit.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/lazygit.nix
   programs.lazygit = {
     enable = true;
 

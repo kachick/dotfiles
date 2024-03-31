@@ -16,7 +16,7 @@
   # TODO: How to cover lima? The default is /home/kachick.local
   home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -172,7 +172,7 @@
     ba = "ba"
   '';
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;
@@ -194,26 +194,29 @@
     ];
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
+  # @TODO: Enable since release-24.05
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
-  programs.mise = {
-    enable = true;
-
-    globalConfig = {
-      plugins = {
-        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-      };
-    };
-  };
+  # Current shell integrations should be refer
+  #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109
+  # programs.mise = {
+  #   enable = true;
+  #   globalConfig = {
+  #     plugins = {
+  #       # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
+  #       # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
+  #       podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
+  #     };
+  #   };
+  # };
+  xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
 
   # TODO: Consider to extract from nix managed, because of now also using in windows
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/micro.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/micro.nix
   # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
   programs.micro = {
     enable = true;
@@ -259,7 +262,7 @@
   };
 
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
     enable = true;
@@ -273,7 +276,7 @@
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -283,7 +286,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

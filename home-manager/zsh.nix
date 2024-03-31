@@ -6,13 +6,13 @@
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
-  programs.mise.enableZshIntegration = true;
+  # programs.mise.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;
@@ -171,6 +171,8 @@
         echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
       }
       precmd_functions+=(set_win_title)
+
+      eval "$(${lib.getExe edge-pkgs.mise} activate zsh)"
 
       source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 

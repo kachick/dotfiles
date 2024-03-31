@@ -11,7 +11,7 @@ let
   # - id_*.pub: I CAN register them for different services.
 in
 {
-  # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # These hosts are taken from the public resources of each provider.
@@ -30,7 +30,7 @@ in
     bitbucket.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIazEu89wgQZ4bqs3d63QSMzYVa0MuJ2e2gKTKqu+UUO
   '';
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 
