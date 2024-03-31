@@ -39,20 +39,20 @@
               edge-pkgs.nixpkgs-fmt
               edge-pkgs.nixfmt # Using a sub formatter
               edge-pkgs.nil
+              # To get sha256 around pkgs.fetchFromGitHub in CLI
+              nix-prefetch-git
+              jq
 
-              edge-pkgs.dprint
               shellcheck
               shfmt
               gitleaks
               cargo-make
+
+              edge-pkgs.dprint
               edge-pkgs.typos
               edge-pkgs.go_1_22
-              goreleaser
-              trivy
-
-              # To get sha256 around pkgs.fetchFromGitHub in CLI
-              nix-prefetch-git
-              jq
+              edge-pkgs.goreleaser
+              edge-pkgs.trivy
             ];
           };
 
