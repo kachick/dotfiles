@@ -1,7 +1,9 @@
 { pkgs, edge-pkgs, my-pkgs, lib, ... }:
 
 {
-  # Prefer stable pkgs as possible, if you want to use edge pkgs, Keep zero or tiny config in home-manager layer
+  # Prefer stable pkgs as possible, if you want to use edge pkgs
+  #   - Keep zero or tiny config in home-manager layer
+  #   - Set `mod-name.package = edge-pkgs.the-one;`
   home.packages = with pkgs; [
     # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
     # bash
