@@ -88,7 +88,7 @@ in
   (pkgs.writeShellApplication
     {
       name = "podman";
-      runtimeInputs = with pkgs; [ mise ];
+      runtimeInputs = [ edge-pkgs.mise ];
       text = ''
         mise exec podman@latest -- podman "$@"
       '';
