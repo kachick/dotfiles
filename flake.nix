@@ -99,6 +99,18 @@
             ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
           '';
 
+        packages.check_no_dirty_xz_in_nix_store =
+          pkgs.writeShellApplication {
+            name = "check_no_dirty_xz_in_nix_store";
+            runtimeInputs = with pkgs; [ fd ];
+            text = ''
+              fd '^\w+-xz-5\.6\.[01]\.drv' --search-path "$NIX_STORE" --has-results && exit 1
+            '';
+            meta = {
+              description = "Prevent #530 (around CVE-2024-3094)";
+            };
+          };
+
         apps = {
           # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
           # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
@@ -109,6 +121,11 @@
           bump_completions = {
             type = "app";
             program = "${packages.bump_completions}/bin/bump_completions";
+          };
+
+          check_no_dirty_xz_in_nix_store = {
+            type = "app";
+            program = "${packages.check_no_dirty_xz_in_nix_store}/bin/check_no_dirty_xz_in_nix_store";
           };
         };
       });
