@@ -45,11 +45,6 @@ jobs:
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
-      - name: Make sure no possibilities in nix store and CVE-2024-3094
-        run: |
-          which xz
-          nix-store --query --referrers "$(which xz)"
-          nix run .#check_no_dirty_xz_in_nix_store
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
       - name: Make sure no possibilities in nix store and CVE-2024-3094
         run: |
