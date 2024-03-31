@@ -14,6 +14,7 @@
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
+  # @TODO: Re-apply some patches since release-24.05: #497
   programs.zsh = {
     enable = true;
 
@@ -71,9 +72,7 @@
       };
     };
 
-    autosuggestion = {
-      enable = true;
-    };
+    enableAutosuggestions = true;
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
