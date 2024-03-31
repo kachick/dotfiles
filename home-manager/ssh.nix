@@ -46,8 +46,6 @@ in
     controlMaster = "auto";
     controlPersist = "10m";
 
-    addKeysToAgent = "yes";
-
     # Enable custom or temporary config without `home-manager switch`
     includes = [
       "${sshDir}/config.local"
@@ -56,6 +54,8 @@ in
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
     extraConfig = ''
+      AddKeysToAgent yes
+
       PasswordAuthentication no
 
       # default: "ask" - I'm disabling it for now
