@@ -11,7 +11,7 @@ let
   # - id_*.pub: I CAN register them for different services.
 in
 {
-  # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # These hosts are taken from the public resources of each provider.
@@ -30,7 +30,7 @@ in
     bitbucket.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIazEu89wgQZ4bqs3d63QSMzYVa0MuJ2e2gKTKqu+UUO
   '';
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 
@@ -46,8 +46,6 @@ in
     controlMaster = "auto";
     controlPersist = "10m";
 
-    addKeysToAgent = "yes";
-
     # Enable custom or temporary config without `home-manager switch`
     includes = [
       "${sshDir}/config.local"
@@ -55,7 +53,10 @@ in
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
+    # TODO: Update AddKeysToAgent since release-24.05. See #394
     extraConfig = ''
+      AddKeysToAgent yes
+
       PasswordAuthentication no
 
       # default: "ask" - I'm disabling it for now

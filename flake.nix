@@ -5,21 +5,22 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
     flake-utils.url = "github:numtide/flake-utils";
-    # https://github.com/nix-community/home-manager/blob/master/docs/nix-flakes.adoc
+    # https://github.com/nix-community/home-manager/blob/release-23.11/docs/manual/nix-flakes.md
     home-manager = {
-      # candidates: "github:nix-community/home-manager/release-23.05";
-      url = "github:nix-community/home-manager/master";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, flake-utils, my-nixpkgs }:
+  outputs = { self, nixpkgs, edge-nixpkgs, home-manager, flake-utils, my-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         my-pkgs = my-nixpkgs.legacyPackages.${system};
       in
       rec {
@@ -29,29 +30,29 @@
         # - https://github.com/NixOS/nixfmt/issues/129
         # - https://github.com/NixOS/rfcs/pull/166
         # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-        formatter = pkgs.nixpkgs-fmt;
+        formatter = edge-pkgs.nixpkgs-fmt;
         devShells.default = with pkgs;
           mkShell {
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
-              nixpkgs-fmt
-              nixfmt # Using a sub formatter
-              nil
+              edge-pkgs.nixpkgs-fmt
+              edge-pkgs.nixfmt # Using a sub formatter
+              edge-pkgs.nil
+              # To get sha256 around pkgs.fetchFromGitHub in CLI
+              nix-prefetch-git
+              jq
 
-              dprint
               shellcheck
               shfmt
               gitleaks
               cargo-make
-              typos
-              go_1_22
-              goreleaser
-              trivy
 
-              # To get sha256 around pkgs.fetchFromGitHub in CLI
-              nix-prefetch-git
-              jq
+              edge-pkgs.dprint
+              edge-pkgs.typos
+              edge-pkgs.go_1_22
+              edge-pkgs.goreleaser
+              edge-pkgs.trivy
             ];
           };
 
@@ -59,7 +60,10 @@
           kachick = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [ ./home-manager/kachick.nix ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
 
           github-actions = home-manager.lib.homeManagerConfiguration {
@@ -70,7 +74,10 @@
               ./home-manager/kachick.nix
               { home.username = "runner"; }
             ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
 
           user = home-manager.lib.homeManagerConfiguration {
@@ -82,7 +89,10 @@
                 home.username = "user";
               }
             ];
-            extraSpecialArgs = { inherit my-pkgs; };
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+              inherit my-pkgs;
+            };
           };
         };
 
@@ -90,14 +100,28 @@
           pkgs.writeShellScriptBin "bump_completions" ''
             set -euo pipefail
 
-            ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-            ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-            ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+            ${edge-pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
+            ${edge-pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
+            ${edge-pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
 
-            ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-            ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-            ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
+            ${edge-pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
+            ${edge-pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
+            ${edge-pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
           '';
+
+        packages.check_no_dirty_xz_in_nix_store =
+          pkgs.writeShellApplication {
+            name = "check_no_dirty_xz_in_nix_store";
+            runtimeInputs = with pkgs; [ fd ];
+            text = ''
+              # nix store should have xz: https://github.com/NixOS/nixpkgs/blob/b96bc828b81140dd3fb096b4e66a6446d6d5c9dc/doc/stdenv/stdenv.chapter.md?plain=1#L177
+              fd '^\w+-xz-[0-9\.]+\.drv' --search-path /nix/store --has-results || exit 1
+              fd '^\w+-xz-5\.6\.[01]\.drv' --search-path /nix/store --max-results=1 && exit 1
+            '';
+            meta = {
+              description = "Prevent #530 (around CVE-2024-3094)";
+            };
+          };
 
         apps = {
           # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
@@ -109,6 +133,11 @@
           bump_completions = {
             type = "app";
             program = "${packages.bump_completions}/bin/bump_completions";
+          };
+
+          check_no_dirty_xz_in_nix_store = {
+            type = "app";
+            program = "${packages.check_no_dirty_xz_in_nix_store}/bin/check_no_dirty_xz_in_nix_store";
           };
         };
       });

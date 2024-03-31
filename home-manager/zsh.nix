@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, edge-pkgs, ... }:
 
 {
   services.gpg-agent.enableZshIntegration = true;
@@ -6,14 +6,15 @@
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
-  programs.mise.enableZshIntegration = true;
+  # programs.mise.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zsh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
+  # TODO: Re-apply some patches since release-24.05: #497
   programs.zsh = {
     enable = true;
 
@@ -57,23 +58,23 @@
         unknown-token = "fg=magenta";
       };
 
+      # TODO: Enable since release-24.05
+      #
       # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
-      highlighters = [
-        "brackets"
-        "pattern" # Not pattern"s"!
-        "root"
-      ];
-
-      # This will work if you enabled "pattern" highlighter
-      patterns = {
-        # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
-        "rm -rf *" = "fg=white,bold,bg=red";
-      };
+      # highlighters = [
+      #   "brackets"
+      #   "pattern" # Not pattern"s"!
+      #   "root"
+      # ];
+      #
+      # # This will work if you enabled "pattern" highlighter
+      # patterns = {
+      #   # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
+      #   "rm -rf *" = "fg=white,bold,bg=red";
+      # };
     };
 
-    autosuggestion = {
-      enable = true;
-    };
+    enableAutosuggestions = true;
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
@@ -172,7 +173,9 @@
       }
       precmd_functions+=(set_win_title)
 
-      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      eval "$(${lib.getExe edge-pkgs.mise} activate zsh)"
+
+      source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
@@ -188,6 +191,11 @@
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # TODO: Replace this section with home-manager module since release-24.05
+      ZSH_HIGHLIGHT_HIGHLIGHTERS+=('brackets' 'pattern' 'root')
+      ZSH_HIGHLIGHT_STYLES+=('unknown-token' 'fg=magenta')
+      ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
       # Same as .zshenv.local
       if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then

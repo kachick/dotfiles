@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, edge-pkgs, ... }:
 
 {
   services.gpg-agent.enableBashIntegration = true;
@@ -6,12 +6,12 @@
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = true;
-  programs.mise.enableBashIntegration = true;
+  # programs.mise.enableBashIntegration = true;
   # Intentionally disabled for keeping stable bash
   programs.zellij.enableBashIntegration = false;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/readline.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/readline.nix
   programs.readline = {
     enable = true;
     variables = {
@@ -33,7 +33,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/bash.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bash.nix
   programs.bash = {
     enable = true;
 
@@ -92,7 +92,9 @@
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
 
-      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      eval "$(${lib.getExe edge-pkgs.mise} activate bash)"
+
+      source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.bash}"
       source "${../dependencies/dprint/completions.bash}"
