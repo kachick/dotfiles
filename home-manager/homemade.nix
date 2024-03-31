@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, edge-pkgs, ... }:
 
 # - Tiny tools by me, they may be rewritten with another language.
 # - Aliases across multiple shells
@@ -37,7 +37,7 @@ in
     {
       name = "updeps";
       # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
-      runtimeInputs = with pkgs; [ mise ];
+      runtimeInputs = [ edge-pkgs.mise ];
       text = ''
         echo 'this updater assume you have the privilege and sudo command'
 
@@ -74,7 +74,7 @@ in
   (pkgs.writeShellApplication
     {
       name = "walk";
-      runtimeInputs = with pkgs; [ fzf bat micro ];
+      runtimeInputs = with pkgs; [ edge-pkgs.fzf bat micro ];
       text = ''
         # TODO: Apply walker-* options since https://github.com/NixOS/nixpkgs/pull/295978 is useable
         eval "$EDITOR" "$(fzf --preview 'bat --color=always {}' --preview-window '~3')"
@@ -150,7 +150,7 @@ in
   (pkgs.writeShellApplication
     {
       name = "fzf-bind-posix-shell-history-to-git-commit-message";
-      runtimeInputs = with pkgs; [ git fzf ruby_3_3 ];
+      runtimeInputs = with pkgs; [ git edge-pkgs.fzf edge-pkgs.ruby_3_3 ];
       text = ''
         # Avoiding nested single quote use
         bind="$(
@@ -175,7 +175,7 @@ in
   (pkgs.writeShellApplication
     {
       name = "todo";
-      runtimeInputs = with pkgs; [ git fzf micro ];
+      runtimeInputs = with pkgs; [ git edge-pkgs.fzf micro ];
       text = ''
         git grep --perl-regexp --line-number --column '\b(?<=TODO|FIXME|BUG)\b\S+' | \
           fzf --delimiter : --nth 4.. --bind 'enter:become(micro -parsecursor=true {1}:{2}:{3})'
@@ -189,7 +189,7 @@ in
   (pkgs.writeShellApplication
     {
       name = "ghqf";
-      runtimeInputs = with pkgs; [ ghq fzf la ];
+      runtimeInputs = with pkgs; [ ghq edge-pkgs.fzf la ];
       text = ''
         if [ $# -ge 1 ]; then
           query="$1"

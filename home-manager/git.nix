@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, edge-pkgs, lib, config, ... }:
 
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -34,7 +34,7 @@
       commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
         set -euo pipefail
 
-        ${lib.getBin pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+        ${lib.getBin edge-pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
       '';
     };
 
