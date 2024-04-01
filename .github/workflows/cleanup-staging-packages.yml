@@ -50,11 +50,11 @@ jobs:
             /users/kachick/packages/container/home/versions \
             --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ needs.get-meta.outputs.pr-number }}-")).id' | \
               ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
-              xargs --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
+              xargs --no-run-if-empty --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
-        if: ${{ steps.inspect-package.outputs.package-version-ids }} != ""
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         with:
           owner: ${{ github.repository_owner }}
           package-name: 'home'
@@ -62,10 +62,10 @@ jobs:
           token: ${{ github.token }}
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
       - name: Prepare git to run gh commands
-        if: ${{ steps.inspect-package.outputs.package-version-ids }} != ""
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         uses: actions/checkout@v4
       - name: Post comments to the PR
-        if: ${{ steps.inspect-package.outputs.package-version-ids }} != ""
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
