@@ -16,25 +16,33 @@ defaults:
     shell: bash -Ceuxo pipefail {0}
 
 jobs:
+  get-meta:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    outputs:
+      pr-number: ${{ steps.get-meta.outputs.pr_number }}
+    steps:
+      - name: Get metadata
+        id: get-meta
+        run: |
+          if [ '${{ github.event_name }}' == 'pull_request' ]; then
+            echo '${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
+          else
+            echo '${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
+          fi
   minimize-old-comments:
+    needs: [get-meta]
     uses: ./.github/workflows/minimize-staging-deploy-comments.yml
     with:
-      pr-number: ${{ inputs.pr-number }}
+      pr-number: ${{ needs.get-meta.outputs.pr-number }}
   ghcr:
+    needs: [get-meta]
     runs-on: ubuntu-22.04
     if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
     timeout-minutes: 15
     steps:
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
-      - name: Get metadata
-        id: get-meta
-        run: |
-          if [ '${{ github.event_name }}' == 'pull_request' ]; then
-            echo -n '${{ github.event.pull_request.number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
-          else
-            echo -n '${{ inputs.pr-number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
-          fi
       - name: Inspect the PR published package
         id: inspect-package
         run: |
@@ -42,7 +50,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /users/kachick/packages/container/home/versions \
-            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ steps.get-meta.outputs.pr_number }}-")).id' | \
+            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ needs.get-meta.outputs.pr-number }}-")).id' | \
               ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
               gh-action-escape -name=package-version-ids | tee -a "$GITHUB_OUTPUT"
         env:
@@ -68,4 +76,4 @@ jobs:
           ${{ steps.inspect-package.outputs.package-version-ids }}
           ```
           EOF
-          ) | gh pr comment '${{ steps.get-meta.outputs.pr_number }}' --body-file -
+          ) | gh pr comment '${{ needs.get-meta.outputs.pr-number }}' --body-file -
