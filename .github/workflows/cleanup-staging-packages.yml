@@ -16,6 +16,10 @@ defaults:
     shell: bash -Ceuxo pipefail {0}
 
 jobs:
+  minimize-old-comments:
+    uses: ./.github/workflows/minimize-staging-deploy-comments.yml
+    with:
+      pr-number: ${{ inputs.pr-number }}
   ghcr:
     runs-on: ubuntu-22.04
     if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
