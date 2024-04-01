@@ -20,15 +20,15 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     outputs:
-      pr-number: ${{ steps.get-meta.outputs.pr_number }}
+      pr-number: ${{ steps.get-meta.outputs.pr-number }}
     steps:
       - name: Get metadata
         id: get-meta
         run: |
           if [ '${{ github.event_name }}' == 'pull_request' ]; then
-            echo '${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
+            echo 'pr-number=${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
           else
-            echo '${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
+            echo -n 'pr-number=${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
           fi
   minimize-old-comments:
     needs: [get-meta]
