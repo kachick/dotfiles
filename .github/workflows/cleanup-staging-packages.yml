@@ -28,7 +28,7 @@ jobs:
           if [ '${{ github.event_name }}' == 'pull_request' ]; then
             echo 'pr-number=${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
           else
-            echo -n 'pr-number=${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
+            echo 'pr-number=${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
           fi
   minimize-old-comments:
     needs: [get-meta]
