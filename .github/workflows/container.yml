@@ -18,6 +18,10 @@ on:
       - '!.github/workflows/container.yml'
   workflow_dispatch:
 
+concurrency:
+  group: 'deploy-container-${{ github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
@@ -28,12 +32,18 @@ jobs:
       ref_tag: ${{ steps.tags.outputs.ref }}
       special_tag: ${{ steps.tags.outputs.special }}
       timestamp_tag: ${{ steps.tags.outputs.timestamp }}
+      require_comments: ${{ steps.comments.outputs.require }}
     steps:
       - name: Get started timestamp
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
           echo started_at="$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
+      - name: Judge to post comments or not
+        id: comments
+        if: >-
+          (github.actor == github.repository_owner) && (github.event_name == 'pull_request')
+        run: echo -n 'require=true' | tee -a "$GITHUB_OUTPUT"
       - name: Generate tags for the image
         id: tags
         # https://github.com/orgs/community/discussions/26557#discussioncomment-3252327
@@ -148,6 +158,30 @@ jobs:
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
+      - name: Hide old deploy comments
+        if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Applied reason will be different caused on GitHub bug, See https://github.com/orgs/community/discussions/19865
+        run: |
+          gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            'repos/{owner}/{repo}/issues/${{ github.event.number }}/comments' --paginate | \
+              jq '.[] |
+                select(.user.login == "github-actions[bot]" and (.body | contains("sandbox-with-ghcr.bash"))) |
+                .node_id' | \
+                  xargs --no-run-if-empty --replace='{node_id}' \
+                    gh api graphql --raw-field subjectId="{node_id}" \
+                      --raw-field query='mutation($subjectId:ID!) {
+                        minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
+                          clientMutationId
+                          minimizedComment {
+                            isMinimized
+                            minimizedReason
+                            viewerCanMinimize
+                          }
+                        }
+                      }'
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.actor == github.repository_owner }}
@@ -181,7 +215,7 @@ jobs:
               jq | gh-action-escape -name=json | tee -a "$GITHUB_OUTPUT"
 
       - name: Post comments
-        if: ${{ (github.actor == github.repository_owner) && (github.event_name == 'pull_request') }}
+        if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
