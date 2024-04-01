@@ -18,6 +18,10 @@ on:
       - '!.github/workflows/container.yml'
   workflow_dispatch:
 
+concurrency:
+  group: 'deploy-container-${{ github.ref }}'
+  cancel-in-progress: true
+
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
