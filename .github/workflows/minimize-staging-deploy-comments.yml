@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
+      # Need checkout before using gh and repo placeholders
+      - uses: actions/checkout@v4
       - name: Minimize old deploy comments
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
