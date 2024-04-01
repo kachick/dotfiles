@@ -41,8 +41,6 @@ jobs:
     if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
     timeout-minutes: 15
     steps:
-      - name: Install gh-action-escape
-        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - name: Inspect the PR published package
         id: inspect-package
         run: |
@@ -52,7 +50,7 @@ jobs:
             /users/kachick/packages/container/home/versions \
             --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ needs.get-meta.outputs.pr-number }}-")).id' | \
               ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
-              gh-action-escape -name=package-version-ids | tee -a "$GITHUB_OUTPUT"
+              xargs --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
