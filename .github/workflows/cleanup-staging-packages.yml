@@ -34,7 +34,7 @@ jobs:
     needs: [get-meta]
     uses: ./.github/workflows/minimize-staging-deploy-comments.yml
     with:
-      pr-number: ${{ needs.get-meta.outputs.pr-number }}
+      pr-number: '${{ needs.get-meta.outputs.pr-number }}'
   ghcr:
     needs: [get-meta]
     runs-on: ubuntu-22.04
