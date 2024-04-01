@@ -35,7 +35,7 @@ jobs:
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
           echo started_at="$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
-      - name: Generate tags for the image
+      - name: Judge to post comments or not
         id: comments
         if: >-
           (github.actor == github.repository_owner) && (github.event_name == 'pull_request')
