@@ -58,14 +58,14 @@
         unknown-token = "fg=magenta";
       };
 
-      # TODO: Enable since release-24.05
-      #
       # Candidates: https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters.md
-      # highlighters = [
-      #   "brackets"
-      #   "pattern" # Not pattern"s"!
-      #   "root"
-      # ];
+      highlighters = [
+        "brackets"
+        "pattern" # Not pattern"s"!
+        "root"
+      ];
+
+      # TODO: Enable since release-24.05
       #
       # # This will work if you enabled "pattern" highlighter
       # patterns = {
@@ -192,9 +192,7 @@
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
 
-      # TODO: Replace this section with home-manager module since release-24.05
-      ZSH_HIGHLIGHT_HIGHLIGHTERS+=('brackets' 'pattern' 'root')
-      ZSH_HIGHLIGHT_STYLES+=('unknown-token' 'fg=magenta')
+      # TODO: Replace this section with home-manager module `patterns` since release-24.05
       ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
       # Same as .zshenv.local
