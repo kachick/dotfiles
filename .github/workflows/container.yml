@@ -28,12 +28,18 @@ jobs:
       ref_tag: ${{ steps.tags.outputs.ref }}
       special_tag: ${{ steps.tags.outputs.special }}
       timestamp_tag: ${{ steps.tags.outputs.timestamp }}
+      require_comments: ${{ steps.comments.outputs.require }}
     steps:
       - name: Get started timestamp
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
           echo started_at="$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
+      - name: Generate tags for the image
+        id: comments
+        if: >-
+          (github.actor == github.repository_owner) && (github.event_name == 'pull_request')
+        run: echo -n 'require=true' | tee -a "$GITHUB_OUTPUT"
       - name: Generate tags for the image
         id: tags
         # https://github.com/orgs/community/discussions/26557#discussioncomment-3252327
@@ -149,7 +155,7 @@ jobs:
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
       - name: Hide old deploy comments
-        if: ${{ (github.actor == github.repository_owner) && (github.event_name == 'pull_request') }}
+        if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # Applied reason will be different caused on GitHub bug, See https://github.com/orgs/community/discussions/19865
@@ -205,7 +211,7 @@ jobs:
               jq | gh-action-escape -name=json | tee -a "$GITHUB_OUTPUT"
 
       - name: Post comments
-        if: ${{ (github.actor == github.repository_owner) && (github.event_name == 'pull_request') }}
+        if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
