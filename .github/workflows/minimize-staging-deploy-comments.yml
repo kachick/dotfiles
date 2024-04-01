@@ -1,0 +1,41 @@
+name: 'Minimize staging deploy comments'
+on:
+  workflow_call:
+    # https://docs.github.com/ja/actions/using-workflows/sharing-workflows-secrets-and-runners-with-your-organization
+    # https://docs.github.com/ja/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_callinputs
+    inputs:
+      pr-number:
+        description: 'Target PR number'
+        required: true
+        type: number
+
+jobs:
+  minimize:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      # Need checkout before using gh and repo placeholders
+      - uses: actions/checkout@v4
+      - name: Minimize old deploy comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Applied reason will be different caused on GitHub bug, See https://github.com/orgs/community/discussions/19865
+        run: |
+          gh api -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            'repos/{owner}/{repo}/issues/${{ inputs.pr-number }}/comments' --paginate | \
+              jq '.[] |
+                select(.user.login == "github-actions[bot]" and (.body | contains("sandbox-with-ghcr.bash"))) |
+                .node_id' | \
+                  xargs --no-run-if-empty --replace='{node_id}' \
+                    gh api graphql --raw-field subjectId="{node_id}" \
+                      --raw-field query='mutation($subjectId:ID!) {
+                        minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
+                          clientMutationId
+                          minimizedComment {
+                            isMinimized
+                            minimizedReason
+                            viewerCanMinimize
+                          }
+                        }
+                      }'
