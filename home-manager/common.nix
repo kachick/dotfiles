@@ -165,12 +165,8 @@
     + "/examples/.irbrc"
   ;
 
-  # typos does not have feature global config, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
-  xdg.configFile."typos/_typos.toml".text = ''
-    [default.extend-words]
-    # https://github.com/crate-ci/typos/issues/415
-    ba = "ba"
-  '';
+  # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
+  xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
