@@ -1,7 +1,7 @@
 [default]
 # https://github.com/crate-ci/typos/blob/v1.19.0/docs/reference.md
 # Be careful to handle extend-ignore-* variants
-# - extend-ignore-words-re: macthed symbol
+# - extend-ignore-words-re: matched symbol
 # - extend-ignore-identifiers-re: suggesting symbol
 # - extend-ignore-re: matching target string
 extend-ignore-words-re = [
