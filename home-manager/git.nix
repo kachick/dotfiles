@@ -21,7 +21,6 @@
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       duster = "remote update origin --prune";
       refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
-      r = "refresh"; # refresh is long for typing
       all = "!git refresh && git-delete-merged-branches";
       gui = "!lazygit";
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
