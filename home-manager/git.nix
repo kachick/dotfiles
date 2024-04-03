@@ -27,9 +27,7 @@
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
-    # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
-    #   If I want it, https://github.com/timokau/dotfiles/blob/dfee6670a42896cfb5a94fdedf96c9ed2fa1c9d2/home/git.nix#L3-L11 may be a good example
-    # - I don't have confident for executable permissions are required or not for them, removing it worked. :<
+    # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
       commit-msg = lib.getExe (pkgs.writeShellApplication {
         name = "prevent_typos_in_commit_mssage.bash";
