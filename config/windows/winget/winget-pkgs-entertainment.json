@@ -9,6 +9,9 @@
         },
         {
           "PackageIdentifier": "TrackerSoftware.PDF-XChangeEditor"
+        },
+        {
+          "PackageIdentifier": "OpenWhisperSystems.Signal"
         }
       ],
       "SourceDetails": {

@@ -98,6 +98,9 @@
 
     my-pkgs.plemoljp-nf
 
+    # TODO: Consider to install only in GUI desktops
+    signal-desktop
+
     # Includes follows in each repository if needed, not in global
     # gcc
     # rustup
