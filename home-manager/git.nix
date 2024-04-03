@@ -43,15 +43,12 @@
         runtimeInputs = with pkgs; [ git edge-pkgs.typos ];
         # What arguments: https://git-scm.com/docs/githooks#_post_checkout
         text = ''
-          set -x
-
-          new_head="$2"
           is_file_checkout="$3" # 0: file, 1: branch
           if [[ "$is_file_checkout" -eq 0 ]]; then
             exit 0
           fi
 
-          branch_name="$(git rev-parse --abbrev-ref "$new_head")"
+          branch_name="$(git rev-parse --abbrev-ref 'HEAD')"
 
           # Checkout to no branch and no tag
           if [[ "$branch_name" = 'HEAD' ]]; then
