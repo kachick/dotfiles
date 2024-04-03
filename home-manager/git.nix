@@ -54,7 +54,7 @@
           branch_name="$(git rev-parse --abbrev-ref "$new_head")"
 
           # Checkout to no branch and no tag
-          if [[ "branch" = HEAD ]]; then
+          if [[ "branch" = 'HEAD' ]]; then
             exit 0
           fi
 
