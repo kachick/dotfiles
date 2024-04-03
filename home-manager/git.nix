@@ -26,15 +26,38 @@
       pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
     };
 
-    # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
-    #   If I want it, https://github.com/timokau/dotfiles/blob/dfee6670a42896cfb5a94fdedf96c9ed2fa1c9d2/home/git.nix#L3-L11 may be a good example
-    # - I don't have confident for executable permissions are reqiored or not for them, removing it worked. :<
+    # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
-      commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
-        set -euo pipefail
+      commit-msg = lib.getExe (pkgs.writeShellApplication {
+        name = "prevent_typos_in_commit_mssage.bash";
+        meta.description = "#325";
+        runtimeInputs = [ edge-pkgs.typos ];
+        text = ''
+          typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+        '';
+      });
 
-        ${lib.getBin edge-pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
-      '';
+      post-checkout = lib.getExe (pkgs.writeShellApplication {
+        name = "alert_typos_in_branch_name.bash";
+        meta.description = "#540";
+        runtimeInputs = with pkgs; [ git edge-pkgs.typos ];
+        # What arguments: https://git-scm.com/docs/githooks#_post_checkout
+        text = ''
+          is_file_checkout="$3" # 0: file, 1: branch
+          if [[ "$is_file_checkout" -eq 0 ]]; then
+            exit 0
+          fi
+
+          branch_name="$(git rev-parse --abbrev-ref 'HEAD')"
+
+          # Checkout to no branch and no tag
+          if [[ "$branch_name" = 'HEAD' ]]; then
+            exit 0
+          fi
+
+          (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
+        '';
+      });
     };
 
     extraConfig = {
