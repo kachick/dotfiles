@@ -31,11 +31,36 @@
     #   If I want it, https://github.com/timokau/dotfiles/blob/dfee6670a42896cfb5a94fdedf96c9ed2fa1c9d2/home/git.nix#L3-L11 may be a good example
     # - I don't have confident for executable permissions are reqiored or not for them, removing it worked. :<
     hooks = {
-      commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
+      commit-msg = pkgs.writeShellScript "prevent_typos_in_commit_mssage.bash" ''
         set -euo pipefail
 
         ${lib.getBin edge-pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
       '';
+
+      post-checkout = lib.getExe (pkgs.writeShellApplication {
+        name = "alert_typos_in_branch_name";
+        meta.description = "#540";
+        runtimeInputs = with pkgs; [ git edge-pkgs.typos ];
+        # What arguments: https://git-scm.com/docs/githooks#_post_checkout
+        text = ''
+          set -o pipefail
+
+          new_head="$2"
+          is_file_checkout="$3" # 0: file, 1: branch
+          if [[ "$is_file_checkout" -eq 0 ]]; then
+            exit 0
+          fi
+
+          branch_name="$(git rev-parse --abbrev-ref "$new_head")"
+
+          # Checkout to no branch and no tag
+          if [[ "branch" = 'HEAD' ]]; then
+            exit 0
+          fi
+
+          (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
+        '';
+      });
     };
 
     extraConfig = {
