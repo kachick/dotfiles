@@ -43,6 +43,8 @@
         runtimeInputs = with pkgs; [ git edge-pkgs.typos ];
         # What arguments: https://git-scm.com/docs/githooks#_post_checkout
         text = ''
+          set -x
+
           new_head="$2"
           is_file_checkout="$3" # 0: file, 1: branch
           if [[ "$is_file_checkout" -eq 0 ]]; then
