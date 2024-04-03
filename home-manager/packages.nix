@@ -60,6 +60,7 @@
     curl
     wget
     jq
+    edge-pkgs.jnv # interactive jq
     ripgrep # `rg`
     bat # alt cat
     hexyl # hex viewer
