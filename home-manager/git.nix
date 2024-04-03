@@ -20,7 +20,7 @@
       switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       duster = "remote update origin --prune";
-      refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
+      refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       r = "refresh"; # refresh is long for typing
       all = "!git refresh && git-delete-merged-branches";
       gui = "!lazygit";
