@@ -84,20 +84,25 @@
     _7zz # `7zz` 7zip, not
     tlrc # `tldr` rust client, tealdeer is another candidate
 
+    # How to get the installed font names
+    # fontconfig by nix: `fc-list : family style`
+    # darwin: system_profiler SPFontsDataType
     fontconfig # `fc-list`, `fc-cache`
 
-    # How to get the installed font names
-    # fontconfig by nix: fc-list : family style
-    # darwin: system_profiler SPFontsDataType
-    (pkgs.nerdfonts.override {
-      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/data/fonts/nerdfonts/shas.nix
-      fonts = [
-        "SourceCodePro"
-        "Inconsolata"
-      ];
-    })
+    # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
+    # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
+    #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
+    # - Keep fewer nerd fonts to reduce disk space
 
+    # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
+    # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
     edge-fonts-pkgs.plemoljp-nf
+    pkgs.ibm-plex # For sans-serif, use plemoljp for developing
+
+    pkgs.source-han-code-jp # Includes many definitions, useful for fallback
+    pkgs.inconsolata
+    pkgs.mplus-outline-fonts-github # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
+    # pkgs.sarasa-gothic # Large filesize
 
     # Includes follows in each repository if needed, not in global
     # gcc
