@@ -52,7 +52,7 @@ jobs:
           which xz
           # Can be used when the xz is using /nix/store one
           # nix-store --query --referrers "$(which xz)"
-          # nix run .#check_no_dirty_xz_in_nix_store
+          nix run .#check_no_dirty_xz_in_nix_store
       - name: Print some paths and versions
         run: |
           which fish
