@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, my-pkgs, lib, ... }:
+{ pkgs, edge-pkgs, edge-fonts-pkgs, lib, ... }:
 
 {
   # Prefer stable pkgs as possible, if you want to use edge pkgs
@@ -97,7 +97,7 @@
       ];
     })
 
-    my-pkgs.plemoljp-nf
+    edge-fonts-pkgs.plemoljp-nf
 
     # Includes follows in each repository if needed, not in global
     # gcc
