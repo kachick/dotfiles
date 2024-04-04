@@ -121,8 +121,9 @@
               # Why toggling errexit and return code here: https://github.com/kachick/times_kachick/issues/278
               set +o errexit
               fd '^\w+-xz-5\.6\.[01]\.drv' --search-path /nix/store --has-results
+              fd_return_code="$?" # Do not directly use the $? to prevent feature broken if inserting another command before check
               set -o errexit
-              [[ "$?" -eq 1 ]]
+              [[ "$fd_return_code" -eq 1 ]]
             '';
             meta = {
               description = "Prevent #530 (around CVE-2024-3094)";
