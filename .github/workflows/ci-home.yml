@@ -36,6 +36,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v4
       - name: Cache Nix Store
         uses: actions/cache@v4
         with:
@@ -47,7 +48,6 @@ jobs:
           cat /etc/nix/nix.conf
           ls -alh ~
       - uses: DeterminateSystems/magic-nix-cache-action@v4
-      - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
