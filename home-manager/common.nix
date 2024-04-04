@@ -59,6 +59,7 @@
   };
 
   # https://github.com/nix-community/home-manager/issues/605
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/fontconfig.nix
   fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux

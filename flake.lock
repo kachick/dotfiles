@@ -55,22 +55,6 @@
         "type": "github"
       }
     },
-    "my-nixpkgs": {
-      "locked": {
-        "lastModified": 1711267103,
-        "narHash": "sha256-TM7tAvQBPbfBXUTpGOG4HmyUfMW3qsVCJmjxl1pMgg4=",
-        "owner": "kachick",
-        "repo": "nixpkgs",
-        "rev": "10fdf47377beb102988d907e34a487dd42ad2079",
-        "type": "github"
-      },
-      "original": {
-        "owner": "kachick",
-        "ref": "init-plemoljp-font",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1711668574,
@@ -87,13 +71,29 @@
         "type": "github"
       }
     },
+    "plemoljp-nixpkgs": {
+      "locked": {
+        "lastModified": 1712180235,
+        "narHash": "sha256-SoVHji39cMcAsH872HFPppzOgRnCVVS/vloXSWOnvk4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fe6c0ea25c89b9efe12d1fcd236c8b1432b36967",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "fe6c0ea25c89b9efe12d1fcd236c8b1432b36967",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "edge-nixpkgs": "edge-nixpkgs",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
-        "my-nixpkgs": "my-nixpkgs",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "plemoljp-nixpkgs": "plemoljp-nixpkgs"
       }
     },
     "systems": {

@@ -7,7 +7,7 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    my-nixpkgs.url = "github:kachick/nixpkgs/init-plemoljp-font";
+    plemoljp-nixpkgs.url = "github:NixOS/nixpkgs/fe6c0ea25c89b9efe12d1fcd236c8b1432b36967";
     flake-utils.url = "github:numtide/flake-utils";
     # https://github.com/nix-community/home-manager/blob/release-23.11/docs/manual/nix-flakes.md
     home-manager = {
@@ -16,12 +16,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, edge-nixpkgs, home-manager, flake-utils, my-nixpkgs }:
+  outputs = { self, nixpkgs, edge-nixpkgs, home-manager, flake-utils, plemoljp-nixpkgs }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        my-pkgs = my-nixpkgs.legacyPackages.${system};
+        edge-fonts-pkgs = plemoljp-nixpkgs.legacyPackages.${system};
       in
       rec {
         # Q. Why nixpkgs-fmt? Not nixfmt? and alejandra?
@@ -62,7 +62,7 @@
             modules = [ ./home-manager/kachick.nix ];
             extraSpecialArgs = {
               inherit edge-pkgs;
-              inherit my-pkgs;
+              inherit edge-fonts-pkgs;
             };
           };
 
@@ -76,7 +76,7 @@
             ];
             extraSpecialArgs = {
               inherit edge-pkgs;
-              inherit my-pkgs;
+              inherit edge-fonts-pkgs;
             };
           };
 
@@ -91,7 +91,7 @@
             ];
             extraSpecialArgs = {
               inherit edge-pkgs;
-              inherit my-pkgs;
+              inherit edge-fonts-pkgs;
             };
           };
         };
