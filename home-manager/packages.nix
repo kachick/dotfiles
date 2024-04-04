@@ -101,7 +101,7 @@
 
     pkgs.source-han-code-jp # Includes many definitions, useful for fallback
     pkgs.inconsolata
-    pkgs.mplus-outline-fonts-github # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
+    pkgs.mplus-outline-fonts.githubRelease # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
     # pkgs.sarasa-gothic # Large filesize
 
     # Includes follows in each repository if needed, not in global
