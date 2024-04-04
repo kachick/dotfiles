@@ -13,6 +13,9 @@ extend-ignore-words-re = [
   #
   # So I guess skipping all these detections makes reasonable behaviors for now and for the future.
   "\\A[a-zA-Z]{1,3}\\z",
+  # Workaround for https://github.com/crate-ci/typos/pull/973
+  # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/301147 is merged into nixos-unstable
+  "\\Aguid\\z",
 ]
 
 [files]
