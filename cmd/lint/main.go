@@ -12,14 +12,12 @@ func main() {
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
-	nixPaths := walker.GetAllNix()
 
 	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"check"}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{Path: "shellcheck", Args: bashPaths},
-		// nix fmt doesn't have check option: https://github.com/NixOS/nix/issues/6918
-		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
+		// nix fmt doesn't have check option: https://github.com/NixOS/nix/issues/6918, so do not include here
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
 		{Path: "gitleaks", Args: []string{"detect"}},
 		{Path: "go", Args: []string{"vet", "./..."}},

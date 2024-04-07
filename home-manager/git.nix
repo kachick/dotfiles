@@ -1,4 +1,10 @@
-{ pkgs, edge-pkgs, lib, config, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -28,36 +34,43 @@
 
     # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
-      commit-msg = lib.getExe (pkgs.writeShellApplication {
-        name = "prevent_typos_in_commit_mssage.bash";
-        meta.description = "#325";
-        runtimeInputs = [ edge-pkgs.typos ];
-        text = ''
-          typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
-        '';
-      });
+      commit-msg = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "prevent_typos_in_commit_mssage.bash";
+          meta.description = "#325";
+          runtimeInputs = [ edge-pkgs.typos ];
+          text = ''
+            typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+          '';
+        }
+      );
 
-      post-checkout = lib.getExe (pkgs.writeShellApplication {
-        name = "alert_typos_in_branch_name.bash";
-        meta.description = "#540";
-        runtimeInputs = with pkgs; [ git edge-pkgs.typos ];
-        # What arguments: https://git-scm.com/docs/githooks#_post_checkout
-        text = ''
-          is_file_checkout="$3" # 0: file, 1: branch
-          if [[ "$is_file_checkout" -eq 0 ]]; then
-            exit 0
-          fi
+      post-checkout = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "alert_typos_in_branch_name.bash";
+          meta.description = "#540";
+          runtimeInputs = with pkgs; [
+            git
+            edge-pkgs.typos
+          ];
+          # What arguments: https://git-scm.com/docs/githooks#_post_checkout
+          text = ''
+            is_file_checkout="$3" # 0: file, 1: branch
+            if [[ "$is_file_checkout" -eq 0 ]]; then
+              exit 0
+            fi
 
-          branch_name="$(git rev-parse --abbrev-ref 'HEAD')"
+            branch_name="$(git rev-parse --abbrev-ref 'HEAD')"
 
-          # Checkout to no branch and no tag
-          if [[ "$branch_name" = 'HEAD' ]]; then
-            exit 0
-          fi
+            # Checkout to no branch and no tag
+            if [[ "$branch_name" = 'HEAD' ]]; then
+              exit 0
+            fi
 
-          (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
-        '';
-      });
+            (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
+          '';
+        }
+      );
     };
 
     extraConfig = {
@@ -141,22 +154,24 @@
     settings = {
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
-        setup = ''!gh repo edit --enable-auto-merge && \
-          gh api --method PUT --verbose \
-          --header 'Accept: application/vnd.github+json' \
-          --header 'X-GitHub-Api-Version: 2022-11-28' \
-          '/repos/{owner}/{repo}/actions/permissions/workflow' \
-          --field 'can_approve_pull_request_reviews=true' \
-          --raw-field 'default_workflow_permissions=write'
+        setup = ''
+          !gh repo edit --enable-auto-merge && \
+                    gh api --method PUT --verbose \
+                    --header 'Accept: application/vnd.github+json' \
+                    --header 'X-GitHub-Api-Version: 2022-11-28' \
+                    '/repos/{owner}/{repo}/actions/permissions/workflow' \
+                    --field 'can_approve_pull_request_reviews=true' \
+                    --raw-field 'default_workflow_permissions=write'
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
-          gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
-          cd "$1" && \
-          gh setup && \
-          ${pkgs.direnv}/bin/direnv allow && \
-          ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
+        burl = ''
+          !cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
+                    gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
+                    cd "$1" && \
+                    gh setup && \
+                    ${pkgs.direnv}/bin/direnv allow && \
+                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
         '';
       };
     };

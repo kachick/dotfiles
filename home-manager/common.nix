@@ -1,4 +1,9 @@
-{ config, pkgs, edge-pkgs, ... }:
+{
+  config,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -14,7 +19,8 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory =
+    if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
   xdg.enable = true;
@@ -124,7 +130,8 @@
   '';
 
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
-  xdg.configFile."alacritty/unix.toml".source = if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
+  xdg.configFile."alacritty/unix.toml".source =
+    if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/themes" = {
     source = ../config/alacritty/themes;
@@ -145,26 +152,22 @@
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
   home.file.".editorconfig".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "anylang-template";
-        rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
-        sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
-      }
-    + "/.editorconfig"
-  ;
+    pkgs.fetchFromGitHub {
+      owner = "kachick";
+      repo = "anylang-template";
+      rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
+      sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
+    }
+    + "/.editorconfig";
 
   xdg.configFile."irb/irbrc".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "irb-power_assert";
-        rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-        sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-      }
-    + "/examples/.irbrc"
-  ;
+    pkgs.fetchFromGitHub {
+      owner = "kachick";
+      repo = "irb-power_assert";
+      rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
+      sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
+    }
+    + "/examples/.irbrc";
 
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
@@ -188,9 +191,7 @@
 
     # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
-    changeDirWidgetOptions = [
-      "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'"
-    ];
+    changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
   };
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
@@ -260,7 +261,6 @@
     };
   };
 
-
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
@@ -268,7 +268,9 @@
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins = [ pkgs.vimPlugins.iceberg-vim ];
 
-    settings = { background = "dark"; };
+    settings = {
+      background = "dark";
+    };
     extraConfig = ''
       colorscheme iceberg
       set termguicolors

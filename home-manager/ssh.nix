@@ -6,10 +6,9 @@ let
   #   - https://wiki.archlinux.jp/index.php/XDG_Base_Directory
   #   - https://superuser.com/a/1606519/120469
   sshDir = "${config.home.homeDirectory}/.ssh";
-
-  # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
-  # - id_*.pub: I CAN register them for different services.
 in
+# - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
+# - id_*.pub: I CAN register them for different services.
 {
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
@@ -47,9 +46,7 @@ in
     controlPersist = "10m";
 
     # Enable custom or temporary config without `home-manager switch`
-    includes = [
-      "${sshDir}/config.local"
-    ];
+    includes = [ "${sshDir}/config.local" ];
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
