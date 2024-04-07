@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, edge-fonts-pkgs, lib, ... }:
+{ pkgs, edge-pkgs, lib, ... }:
 
 {
   # Prefer stable pkgs as possible, if you want to use edge pkgs
@@ -96,7 +96,7 @@
 
     # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
     # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-    edge-fonts-pkgs.plemoljp-nf
+    edge-pkgs.plemoljp-nf
     pkgs.ibm-plex # For sans-serif, use plemoljp for developing
 
     pkgs.source-han-code-jp # Includes many definitions, useful for fallback
