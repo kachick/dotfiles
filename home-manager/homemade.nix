@@ -111,10 +111,12 @@ in
   (pkgs.writeShellApplication
     {
       name = "p";
-      runtimeInputs = with pkgs; [ nix ];
+      runtimeInputs = with pkgs; [ nix zsh ];
       text = ''
+        set -x
+
         # Needless to trim the default command, nix-shell only runs last command if given multiple.
-        nix-shell --command "$SHELL" --packages "$@"
+        nix-shell --command 'zsh' -I 'nixpkgs=https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz' --packages "$@"
       '';
     }
   )
