@@ -1,6 +1,5 @@
 { config, pkgs, ... }:
 
-
 # ## FAQ - GPG
 #
 # - How to list keys?

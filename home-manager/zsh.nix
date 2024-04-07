@@ -1,4 +1,10 @@
-{ config, lib, pkgs, edge-pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   services.gpg-agent.enableZshIntegration = true;
@@ -37,7 +43,19 @@
 
       # https://askubuntu.com/questions/999923/syntax-in-history-ignore
       # https://github.com/zsh-users/zsh/blob/aa8e4a02904b3a1c4b3064eb7502d887f7de958b/Src/hist.c#L3006-L3015
-      ignorePatterns = [ "cd *" "pushd *" "popd *" "z *" "ls *" "ll *" "la *" "rm *" "rmdir *" "git show *" "exit" ];
+      ignorePatterns = [
+        "cd *"
+        "pushd *"
+        "popd *"
+        "z *"
+        "ls *"
+        "ll *"
+        "la *"
+        "rm *"
+        "rmdir *"
+        "git show *"
+        "exit"
+      ];
 
       # Hist memory size should be grater than saving file size if enabled
       expireDuplicatesFirst = true;

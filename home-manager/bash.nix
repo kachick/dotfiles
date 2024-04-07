@@ -1,4 +1,10 @@
-{ config, lib, pkgs, edge-pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   services.gpg-agent.enableBashIntegration = true;
@@ -68,9 +74,25 @@
     historySize = 100000;
     historyFile = "${config.xdg.stateHome}/bash/history";
     historyFileSize = 4200000;
-    historyControl = [ "erasedups" "ignoredups" "ignorespace" ];
+    historyControl = [
+      "erasedups"
+      "ignoredups"
+      "ignorespace"
+    ];
     # NOTE: I didn't check it should have different globs as zsh or not, at least the sepelator is not same.
-    historyIgnore = [ "cd" "pushd" "popd" "z" "ls" "ll" "la" "rm" "rmdir" "git show" "exit" ];
+    historyIgnore = [
+      "cd"
+      "pushd"
+      "popd"
+      "z"
+      "ls"
+      "ll"
+      "la"
+      "rm"
+      "rmdir"
+      "git show"
+      "exit"
+    ];
 
     # Switch to another shell when bash used as a login shell
     profileExtra = ''
@@ -84,23 +106,25 @@
     '';
 
     # Extracting because embedded here requires complex escape with nix multiline.
-    initExtra = ''
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-      	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
-      }
-      # shellcheck disable=SC2034
-      starship_precmd_user_func="set_win_title"
+    initExtra =
+      ''
+        # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+        function set_win_title() {
+        	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+        }
+        # shellcheck disable=SC2034
+        starship_precmd_user_func="set_win_title"
 
-      eval "$(${lib.getExe edge-pkgs.mise} activate bash)"
+        eval "$(${lib.getExe edge-pkgs.mise} activate bash)"
 
-      source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
-      source "${../dependencies/podman/completions.bash}"
-      source "${../dependencies/dprint/completions.bash}"
+        source "${../dependencies/podman/completions.bash}"
+        source "${../dependencies/dprint/completions.bash}"
 
-      source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
-    '' + builtins.readFile ./initExtra.bash;
+        source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+      ''
+      + builtins.readFile ./initExtra.bash;
 
     logoutExtra = ''
       # when leaving the console clear the screen to increase privacy

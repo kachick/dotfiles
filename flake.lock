@@ -71,29 +71,12 @@
         "type": "github"
       }
     },
-    "plemoljp-nixpkgs": {
-      "locked": {
-        "lastModified": 1712180235,
-        "narHash": "sha256-SoVHji39cMcAsH872HFPppzOgRnCVVS/vloXSWOnvk4=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "fe6c0ea25c89b9efe12d1fcd236c8b1432b36967",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "fe6c0ea25c89b9efe12d1fcd236c8b1432b36967",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "edge-nixpkgs": "edge-nixpkgs",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs",
-        "plemoljp-nixpkgs": "plemoljp-nixpkgs"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {
