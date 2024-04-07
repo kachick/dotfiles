@@ -35,7 +35,7 @@
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
               edge-pkgs.nixpkgs-fmt
-              edge-pkgs.nixfmt # Using a sub formatter
+              edge-pkgs.nixfmt-rfc-style # Using as a sub formatter for now, the command is still `nixfmt`
               edge-pkgs.nil
               # To get sha256 around pkgs.fetchFromGitHub in CLI
               nix-prefetch-git
