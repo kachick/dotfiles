@@ -31,7 +31,11 @@ let
       }
 
       _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
-        --preview 'echo {} | cut --delimiter " " --fields 2 --only-delimited | ansi2txt | xargs --no-run-if-empty --max-lines=1 git show' \
+        --preview 'echo {} | \
+          cut --delimiter " " --fields 2 --only-delimited | \
+          ansi2txt | \
+          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
+          bat --language=gitlog --color=always --style=plain --wrap=character' \
         --bind 'enter:become(gh repo view --branch {2} --web)'
     '';
   };
