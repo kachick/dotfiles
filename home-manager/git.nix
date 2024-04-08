@@ -128,6 +128,10 @@
         sort = "-committerdate";
       };
 
+      log = {
+        date = "iso-local";
+      };
+
       url = {
         # Why?
         # - ghq default is https, this omit -p option for the ssh push
