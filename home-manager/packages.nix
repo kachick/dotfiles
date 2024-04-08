@@ -47,7 +47,6 @@
       edge-pkgs.mise # alt asdf
 
       git
-      tig
       gh
       ghq
 
