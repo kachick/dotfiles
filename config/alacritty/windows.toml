@@ -11,3 +11,9 @@ args = [
 #   "-WorkingDirectory",
 #   "~/",
 # ]
+
+[[keyboard.bindings]]
+action = "Paste"
+# Trade-off, I prefer windows conversation. But keep in mind, ctrl + v is preserved in bash https://news.mynavi.jp/techplus/article/techp5555/
+mods = "Control"
+key = "V"
