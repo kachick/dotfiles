@@ -28,8 +28,8 @@
       duster = "remote update origin --prune";
       refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
-      gui = "!lazygit";
-      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
+      # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
+      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --tags HEAD";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
@@ -183,22 +183,6 @@
         "https://github.com"
         "https://gist.github.com"
       ];
-    };
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/lazygit.nix
-  programs.lazygit = {
-    enable = true;
-
-    # https://dev.classmethod.jp/articles/eetann-lazygit-config-new-option/
-    settings = {
-      gui = {
-        language = "ja";
-        showIcons = true;
-        theme = {
-          lightTheme = true;
-        };
-      };
     };
   };
 }

@@ -48,7 +48,6 @@
 
       git
       tig
-      lazygit
       gh
       ghq
 
