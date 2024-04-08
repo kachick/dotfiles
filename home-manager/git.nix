@@ -63,7 +63,7 @@ in
       refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
-      pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %x09 %C(auto)%d' --date=short --color=always";
+      pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
       lf = "!git pp | ${lib.getExe git-log-fzf}";
     };
 
