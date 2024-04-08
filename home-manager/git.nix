@@ -6,6 +6,31 @@
   ...
 }:
 
+let
+  git-log-fzf = pkgs.writeShellApplication {
+    name = "git-log-pp-fzf";
+    runtimeInputs = with pkgs; [
+      fzf
+      coreutils
+      gh
+    ];
+    text = ''
+      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
+      _fzf_git_fzf() {
+        fzf-tmux -p80%,60% -- \
+          --layout=reverse --multi --height=50% --min-height=20 --border \
+          --border-label-pos=2 \
+          --color='header:italic:underline,label:blue' \
+          --preview-window='right,50%,border-left' \
+          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
+      }
+
+      _fzf_git_fzf --ansi --nth 3..,.. --no-sort --border-label '🪵 Logs' \
+        --preview 'echo "{}" | cut -d " " -f 2 | xargs --no-run-if-empty --max-lines=1 git show --color=always' \
+        --bind 'enter:become(gh repo view --branch {2} --web)'
+    '';
+  };
+in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
@@ -30,6 +55,7 @@
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
       pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %x09 %C(auto)%d' --date=short --color=always";
+      lf = "!git pp | ${lib.getExe git-log-fzf}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
