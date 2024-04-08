@@ -29,7 +29,7 @@
       refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
-      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --tags HEAD";
+      pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %x09 %C(auto)%d' --date=short --color=always";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
