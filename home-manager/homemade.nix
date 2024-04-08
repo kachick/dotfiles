@@ -180,8 +180,8 @@ in
       micro
     ];
     text = ''
-      git grep --perl-regexp --line-number --column '\b(?<=TODO|FIXME|BUG)\b\S+' | \
-        fzf --delimiter : --nth 4.. --bind 'enter:become(micro -parsecursor=true {1}:{2}:{3})'
+      git grep --perl-regexp --line-number --column --color=always '\b(?<=TODO|FIXME|BUG)\b\S+' | \
+        fzf --ansi --delimiter : --nth 4.. --bind 'enter:become(micro -parsecursor=true {1}:{2}:{3})'
     '';
     meta = {
       description = "List todo family";
