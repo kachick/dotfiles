@@ -6,6 +6,10 @@
   ...
 }:
 
+# tig
+#
+# tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
+
 let
   git-log-fzf = pkgs.writeShellApplication {
     name = "git-log-pp-fzf";
@@ -14,7 +18,6 @@ let
       coreutils
       gh
       colorized-logs
-      tig
     ];
     text = ''
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
@@ -28,7 +31,7 @@ let
       }
 
       _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
-        --preview 'echo {} | cut --delimiter " " --fields 2 --only-delimited | ansi2txt | tig show --stdin' \
+        --preview 'echo {} | cut --delimiter " " --fields 2 --only-delimited | ansi2txt | xargs --no-run-if-empty --max-lines=1 git show' \
         --bind 'enter:become(gh repo view --branch {2} --web)'
     '';
   };
