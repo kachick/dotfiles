@@ -6,6 +6,40 @@
   ...
 }:
 
+# tig
+#
+# tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
+
+let
+  git-log-fzf = pkgs.writeShellApplication {
+    name = "git-log-pp-fzf";
+    runtimeInputs = with pkgs; [
+      edge-pkgs.fzf
+      coreutils
+      gh
+      colorized-logs
+    ];
+    text = ''
+      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
+      _fzf_git_fzf() {
+        fzf-tmux -p80%,60% -- \
+          --layout=reverse --multi --height=50% --min-height=20 --border \
+          --border-label-pos=2 \
+          --color='header:italic:underline,label:blue' \
+          --preview-window='right,50%,border-left' \
+          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
+      }
+
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
+        --preview 'echo {} | \
+          cut --delimiter " " --fields 2 --only-delimited | \
+          ansi2txt | \
+          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
+          bat --language=gitlog --color=always --style=plain --wrap=character' \
+        --bind 'enter:become(gh repo view --branch {2} --web)'
+    '';
+  };
+in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
@@ -29,7 +63,8 @@
       refresh = "!git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
-      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --tags HEAD";
+      pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
+      lf = "!git pp | ${lib.getExe git-log-fzf}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
@@ -126,6 +161,10 @@
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
         sort = "-committerdate";
+      };
+
+      log = {
+        date = "iso-local";
       };
 
       url = {
