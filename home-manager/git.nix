@@ -54,8 +54,6 @@ in
     # `git config --get-regexp ^alias` will show current aliases
     aliases = {
       fixup = "commit --all --amend";
-      empty = "commit --allow-empty";
-      start = "empty -m 'Start project from empty'";
       current = "symbolic-ref --short HEAD";
       switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
