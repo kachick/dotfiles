@@ -13,6 +13,8 @@ let
       edge-pkgs.fzf
       coreutils
       gh
+      colorized-logs
+      tig
     ];
     text = ''
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
@@ -26,7 +28,7 @@ let
       }
 
       _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
-        --preview 'echo {} | cut -d " " -f 2 | xargs --no-run-if-empty --max-lines=1 git show --color=always' \
+        --preview 'echo {} | cut --delimiter " " --fields 2 --only-delimited | ansi2txt | tig show --stdin' \
         --bind 'enter:become(gh repo view --branch {2} --web)'
     '';
   };
