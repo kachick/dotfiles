@@ -82,7 +82,6 @@
       difftastic
       gnumake
       gitleaks
-      gitleaks
       edge-pkgs.deno
       edge-pkgs.ruby_3_3
       unzip # Required in many asdf plugins
