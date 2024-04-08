@@ -88,7 +88,7 @@ in
     text = ''
       # TODO: Apply walker-* options since https://github.com/NixOS/nixpkgs/pull/295978 is useable
       # shellcheck disable=SC2016
-      fzf --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(eval "$EDITOR" {})'
+      fzf --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
     '';
   })
 
