@@ -25,7 +25,7 @@ let
           --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
       }
 
-      _fzf_git_fzf --ansi --nth 3..,.. --no-sort --border-label '🪵 Logs' \
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
         --preview 'echo {} | cut -d " " -f 2 | xargs --no-run-if-empty --max-lines=1 git show --color=always' \
         --bind 'enter:become(gh repo view --branch {2} --web)'
     '';
