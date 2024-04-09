@@ -194,7 +194,7 @@
     changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
 
     colors = {
-      # See #295 for the background
+      # See #295 for the detail
       "bg+" = "#005f5f";
     };
   };

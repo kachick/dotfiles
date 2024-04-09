@@ -5,7 +5,7 @@ themes {
     // Modified from original nord theme.
     nord-contrast {
         fg 216 222 233 // #D8DEE9
-        // See #295 for the background
+        // See #295 for the detail
         // bg 46 52 64 // #2E3440
         bg 0 95 95 // #005f5f
         black 59 66 82 // #3B4252

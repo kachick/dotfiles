@@ -5,6 +5,10 @@ import = [
   "~/.config/alacritty/themes/iceberg-dark.toml",
 ]
 
+# See #295 for the detail
+[colors.selection]
+background = "#005f5f"
+
 [selection]
 save_to_clipboard = true
 
