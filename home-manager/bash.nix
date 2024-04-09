@@ -91,6 +91,7 @@
       "rm"
       "rmdir"
       "git show"
+      "tldr"
       "exit"
     ];
 
