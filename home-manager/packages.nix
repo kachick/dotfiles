@@ -136,8 +136,6 @@
       openssh
 
       iputils # `ping` etc
-
-      wslu # WSL helpers like `wslview`
     ])
     ++ (lib.optionals stdenv.isDarwin [
       # https://github.com/NixOS/nixpkgs/issues/240819
