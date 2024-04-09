@@ -20,6 +20,7 @@ let
       colorized-logs
     ];
     text = ''
+      # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
       _fzf_git_fzf() {
         fzf-tmux -p80%,60% -- \
