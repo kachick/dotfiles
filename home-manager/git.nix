@@ -16,8 +16,10 @@ let
     runtimeInputs = with pkgs; [
       edge-pkgs.fzf
       coreutils
+      git
       gh
       colorized-logs
+      bat
     ];
     text = ''
       # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
@@ -31,13 +33,16 @@ let
           --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
       }
 
+      # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
       _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
         --preview 'echo {} | \
           cut --delimiter " " --fields 2 --only-delimited | \
           ansi2txt | \
           xargs --no-run-if-empty --max-lines=1 git show --color=always | \
           bat --language=gitlog --color=always --style=plain --wrap=character' \
-        --bind 'enter:become(gh repo view --branch {2} --web)'
+        --header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
+        --bind 'ctrl-o:execute-silent(gh browse {2})' \
+        --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
     '';
   };
 in
