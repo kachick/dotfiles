@@ -13,14 +13,19 @@
 let
   git-log-fzf = pkgs.writeShellApplication {
     name = "git-log-pp-fzf";
-    runtimeInputs = with pkgs; [
-      edge-pkgs.fzf
-      coreutils
-      git
-      gh
-      colorized-logs
-      bat
-    ];
+    runtimeInputs =
+      with pkgs;
+      [
+        edge-pkgs.fzf
+        coreutils
+        git
+        gh
+        colorized-logs
+        bat
+      ]
+      ++ (lib.optionals stdenv.isLinux [
+        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+      ]);
     text = ''
       # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
