@@ -192,6 +192,11 @@
     # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
     changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
+
+    colors = {
+      # See #295 for the background
+      "bg+" = "#005f5f";
+    };
   };
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
