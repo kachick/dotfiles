@@ -38,3 +38,6 @@ keybinds {
         unbind "Ctrl t" // conflict fzf
     }
 }
+
+// $SHELL is now bash since #452
+default_shell "zsh"
