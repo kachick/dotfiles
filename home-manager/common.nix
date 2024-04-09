@@ -289,6 +289,10 @@
     config = {
       # Candidates: bat --list-themes
       theme = "Nord";
+
+      style = "plain";
+
+      wrap = "character";
     };
   };
 
