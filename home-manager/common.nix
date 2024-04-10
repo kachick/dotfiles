@@ -182,6 +182,11 @@
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
     defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
 
+    defaultOptions = [
+      # --walker*: Default file filtering will be changed by this option if FZF_DEFAULT_COMMAND is not set: https://github.com/junegunn/fzf/pull/3649/files
+      "--walker-skip '.git,node_modules,.direnv,vendor,dist'"
+    ];
+
     # CTRL+T
     fileWidgetCommand = defaultCommand;
     fileWidgetOptions = [
