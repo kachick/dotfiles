@@ -21,18 +21,28 @@ script = [
   "nix flake update --commit-lock-file",
 ]
 
+[tasks.build-lint]
+condition.files_modified = { input = ["./cmd/lint/*.go"], output = ["./dist/lint"] }
+command = 'go'
+args = ['build', '-v', '-o', 'dist', './cmd/lint']
+
 [tasks.lint]
-dependencies = ['build']
+dependencies = ['build-lint']
 command = 'dist/lint'
 
 [tasks.lint-all]
-dependencies = ['build']
+dependencies = ['build-lint']
 command = 'dist/lint'
 args = ['-all']
 
+[tasks.build-fmt]
+condition.files_modified = { input = ["./cmd/fmt/*.go"], output = ["./dist/fmt"] }
+command = 'go'
+args = ['build', '-v', '-o', 'dist', './cmd/fmt']
+
 [tasks.fmt]
-dependencies = ['build']
-command = 'dist/fmt'
+dependencies = ['build-fmt']
+command = './dist/fmt'
 
 [tasks.check]
 dependencies = [
