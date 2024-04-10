@@ -19,7 +19,8 @@ func main() {
 		{Path: "shellcheck", Args: bashPaths},
 		// nix fmt doesn't have check option: https://github.com/NixOS/nix/issues/6918, so do not include here
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
-		{Path: "gitleaks", Args: []string{"detect"}},
+		// No git makes 4x+ faster
+		{Path: "gitleaks", Args: []string{"detect", "--no-git"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 	}
