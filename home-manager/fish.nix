@@ -58,7 +58,7 @@
 
       set -g fish_greeting
 
-      eval "$(${lib.getExe edge-pkgs.mise} activate zsh)"
+      eval "$(${lib.getExe edge-pkgs.mise} activate fish)"
     '';
 
     plugins = [
