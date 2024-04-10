@@ -11,7 +11,8 @@
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
-  programs.fzf.enableBashIntegration = true;
+  # TODO: I can enable since release-24.05: https://github.com/nix-community/home-manager/pull/5239
+  programs.fzf.enableBashIntegration = false;
   # programs.mise.enableBashIntegration = true;
   # Intentionally disabled for keeping stable bash
   programs.zellij.enableBashIntegration = false;
@@ -117,6 +118,8 @@
         starship_precmd_user_func="set_win_title"
 
         eval "$(${lib.getExe edge-pkgs.mise} activate bash)"
+
+        eval "$(${lib.getExe edge-pkgs.fzf} --bash)"
 
         source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
