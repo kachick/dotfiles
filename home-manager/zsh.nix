@@ -201,6 +201,9 @@
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
 
+      # Disable `Ctrl + S(no output tty)`
+      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+
       # https://unix.stackexchange.com/a/3449
       source_sh () {
         emulate -LR sh

@@ -107,6 +107,10 @@
       fi
     '';
 
+    # For interactive shells. In .bashrc and after early return
+    # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bash.nix#L221-L222
+    # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc
+    #
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra =
       ''
@@ -125,6 +129,9 @@
 
         source "${../dependencies/podman/completions.bash}"
         source "${../dependencies/dprint/completions.bash}"
+
+        # Disable `Ctrl + S(no output tty)`
+        ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
         source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
       ''
