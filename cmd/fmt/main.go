@@ -3,7 +3,6 @@
 package main
 
 import (
-	"github.com/kachick/dotfiles/internal/constants"
 	"github.com/kachick/dotfiles/internal/fileutils"
 	"github.com/kachick/dotfiles/internal/runner"
 )
@@ -20,7 +19,6 @@ func main() {
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
 		// nix fmt doesn't respect .gitignore, without paths, .direnv included: https://github.com/NixOS/nixfmt/issues/151
 		{Path: "nix", Args: append([]string{"fmt"}, nixPaths...)},
-		{Path: "typos", Args: append(constants.GetTyposTargetedRoots(), "--write-changes")},
 		{Path: "go", Args: []string{"fmt", "./..."}},
 	}
 
