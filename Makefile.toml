@@ -25,6 +25,11 @@ script = [
 dependencies = ['build']
 command = 'dist/lint'
 
+[tasks.lint-all]
+dependencies = ['build']
+command = 'dist/lint'
+args = ['-all']
+
 [tasks.fmt]
 dependencies = ['build']
 command = 'dist/fmt'
@@ -33,7 +38,7 @@ command = 'dist/fmt'
 dependencies = [
   'build',
   'test',
-  'lint',
+  'lint-all',
   'build-go-race-as-the-race-test',
 ]
 
@@ -112,7 +117,7 @@ dependencies = [
   'deps',
   'build',
   # 'test', # Needs home-manager, so needless in Nix-CI
-  'lint',
+  'lint-all',
   'test-go',
   'build-go-race-as-the-race-test',
   'fmt',
