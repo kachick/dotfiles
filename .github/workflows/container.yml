@@ -73,6 +73,7 @@ jobs:
       pr-number: ${{ github.event.number }}
   build_and_push:
     needs: [get-meta, minimize-old-comments]
+    if: ${{ ! failure() }}
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
