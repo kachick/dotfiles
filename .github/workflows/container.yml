@@ -9,6 +9,7 @@ on:
       - '.github/workflows/container.yml'
       - 'containers/**'
       - '.containerignore'
+      - 'flake.*'
       - 'home-manager/**'
       - 'config/**'
       - '!**.md'
@@ -17,14 +18,11 @@ on:
       - '.github/workflows/container.yml'
       - 'containers/**'
       - '.containerignore'
+      - 'flake.*'
       - 'home-manager/**'
       - 'config/**'
       - '!**.md'
   workflow_dispatch:
-
-concurrency:
-  group: 'deploy-container-${{ github.ref }}'
-  cancel-in-progress: true
 
 jobs:
   # podman can handle lowercase. So normalize the outputs
@@ -76,6 +74,9 @@ jobs:
     with:
       pr-number: ${{ github.event.number }}
   build_and_push:
+    concurrency:
+      group: 'deploy-container-${{ github.ref }}'
+      cancel-in-progress: true
     needs: [get-meta, minimize-old-comments]
     if: ${{ ! failure() }}
     runs-on: ubuntu-22.04
