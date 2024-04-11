@@ -310,6 +310,20 @@ fusermount -u /path/to/local/mount
 umount /path/to/local/mount
 ```
 
+## How oneshot sync source code for podman-remote
+
+This is just a note, prefer `rclone mount` for easier
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+z project_path
+
+rclone sync --progress . "podman-machine:repos/$(basename "$(pwd)")"
+```
+
 ## Why aren't these packages in winget list?
 
 - [micro](https://github.com/zyedidia/micro/issues/2339)
