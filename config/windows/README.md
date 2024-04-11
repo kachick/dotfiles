@@ -293,21 +293,15 @@ rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.
 # Make sure the connection
 rclone lsd podman-machine:/home/user
 
-mkdir -p for-mount
-rclone mount podman-machine:/home/user/myproject42 ./for-mount &
+z project_path 
+rclone mount --daemon "podman-machine:repos/$(basename "$(pwd)")" .
 
-cp README.md for-mount
-rclone cat podman-machine:/home/user/myproject42/README.md
-```
-
-Unmount
-
-```bash
-# Unmount instead of kill the background job
+# If you want to unmount, use specific command instead of kill the background job
+# 
 # Linux
 fusermount -u /path/to/local/mount
 # OS X
-umount /path/to/local/mount
+# umount /path/to/local/mount
 ```
 
 ## How oneshot sync source code for podman-remote
