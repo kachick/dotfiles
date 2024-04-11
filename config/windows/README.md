@@ -248,6 +248,17 @@ winget install --exact --id RedHat.Podman-Desktop
 
 And create the new podman-machine-default
 
+## How mount project volumes in podman-remote
+
+Track the [official discussion](https://github.com/containers/podman/discussions/13537), but there are no simple solutions for now.\
+This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
+
+1. Ubuntu: Activate the home-manager with `--flake .#wsl`.
+2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
+3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu22/home`
+4. Ubuntu: `cdg project_path`
+5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu22/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
+
 ## How SSH login to podman-machine from another WSL instance like default Ubuntu?
 
 ### WSL - Ubuntu
