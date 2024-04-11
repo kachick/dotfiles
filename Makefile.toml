@@ -40,6 +40,11 @@ condition.files_modified = { input = ["./cmd/fmt/*.go"], output = ["./dist/fmt"]
 command = 'go'
 args = ['build', '-v', '-o', 'dist', './cmd/fmt']
 
+[tasks.fmt-all]
+dependencies = ['build-fmt']
+command = './dist/fmt'
+args = ['-all']
+
 [tasks.fmt]
 dependencies = ['build-fmt']
 command = './dist/fmt'
@@ -130,7 +135,7 @@ dependencies = [
   'lint-all',
   'test-go',
   'build-go-race-as-the-race-test',
-  'fmt',
+  'fmt-all',
 ]
 
 [tasks.build-container]

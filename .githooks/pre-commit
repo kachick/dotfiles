@@ -2,5 +2,5 @@
 
 set -euxo pipefail
 
-makers fmt
-makers lint
+makers --loglevel=error fmt
+makers --loglevel=error lint
