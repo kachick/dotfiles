@@ -6,6 +6,11 @@ let
   #   - https://wiki.archlinux.jp/index.php/XDG_Base_Directory
   #   - https://superuser.com/a/1606519/120469
   sshDir = "${config.home.homeDirectory}/.ssh";
+  sharedConfig = {
+    identityFile = "${sshDir}/id_ed25519";
+    identitiesOnly = true;
+    user = "git";
+  };
 in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
@@ -56,7 +61,7 @@ in
 
       PasswordAuthentication no
 
-      # default: "ask" - I'm disabling it for now
+      # default: "ask"
       StrictHostKeyChecking yes
 
       # https://serverfault.com/a/1109184/112217
@@ -70,34 +75,18 @@ in
     # No problem to register the same *.pub in different services
     matchBlocks = {
       # ANYONE can access the registered public key at https://github.com/kachick.keys
-      "github.com" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-      };
+      "github.com" = sharedConfig;
 
       # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-      "gitlab.com" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-      };
+      "gitlab.com" = sharedConfig;
 
       # Need authentication to get the public keys
       #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
       #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-      "bitbucket.org" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-      };
+      "bitbucket.org" = sharedConfig;
 
       # For WSL2 instances like default Ubuntu and podman-machine
-      "localhost" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-
+      "localhost" = sharedConfig // {
         extraOptions = {
           StrictHostKeyChecking = "no";
           UserKnownHostsFile = "/dev/null";
