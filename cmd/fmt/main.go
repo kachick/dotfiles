@@ -23,13 +23,17 @@ func main() {
 	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"fmt"}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
-		{Path: "go", Args: []string{"fmt", "./..."}},
 	}
 
+	// Editing them basically will be fmt in editor integrations
 	if *allFlag {
-		// nix fmt doesn't respect .gitignore, without paths, .direnv included: https://github.com/NixOS/nixfmt/issues/151
-		// nixfmt-rfc-style looks like using cache, if update with empty commit, it takes longtime
-		cmds = append(cmds, runner.Cmd{Path: "nix", Args: append([]string{"fmt"}, nixPaths...)})
+		cmds = append(cmds, runner.Commands{
+			// nix fmt doesn't respect .gitignore, without paths, .direnv included: https://github.com/NixOS/nixfmt/issues/151
+			// nixfmt-rfc-style looks like using cache, if update with empty commit, it takes longtime
+			{Path: "nix", Args: append([]string{"fmt"}, nixPaths...)},
+			// go fmt looks like caching, but refreshed in each commit, and it takes bit longer than others
+			{Path: "go", Args: []string{"fmt", "./..."}},
+		}...)
 	}
 
 	cmds.ParallelRun()
