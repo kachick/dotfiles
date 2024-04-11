@@ -91,6 +91,18 @@ in
         identitiesOnly = true;
         user = "git";
       };
+
+      # For WSL2 instances like default Ubuntu and podman-machine
+      "localhost" = {
+        identityFile = "${sshDir}/id_ed25519";
+        identitiesOnly = true;
+        user = "git";
+
+        extraOptions = {
+          StrictHostKeyChecking = "no";
+          UserKnownHostsFile = "/dev/null";
+        };
+      };
     };
   };
 }
