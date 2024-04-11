@@ -12,7 +12,9 @@
   },
   "excludes": [
     ".git",
-    "**/*-lock.json"
+    ".direnv",
+    "dist",
+    "dependencies"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.2.wasm",
