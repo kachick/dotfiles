@@ -282,6 +282,34 @@ You can login with the port number, for example 53061
 ssh user@localhost -p 53061
 ```
 
+## How mount client volume with podman-remote
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.ssh/id_ed25519.pub user=user
+# Make sure the connection
+rclone lsd podman-machine:/home/user
+
+mkdir -p for-mount
+rclone mount podman-machine:/home/user/myproject42 ./for-mount &
+
+cp README.md for-mount
+rclone cat podman-machine:/home/user/myproject42/README.md
+```
+
+Unmount
+
+```bash
+# Unmount instead of kill the background job
+# Linux
+fusermount -u /path/to/local/mount
+# OS X
+umount /path/to/local/mount
+```
+
 ## Why aren't these packages in winget list?
 
 - [micro](https://github.com/zyedidia/micro/issues/2339)
