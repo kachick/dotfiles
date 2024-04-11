@@ -248,6 +248,40 @@ winget install --exact --id RedHat.Podman-Desktop
 
 And create the new podman-machine-default
 
+## How SSH login to podman-machine from another WSL instance like default Ubuntu?
+
+### WSL - Ubuntu
+
+Get pubkey
+
+```bash
+cat ~/.ssh/id_ed25519.pub | clip.exe
+```
+
+### WSL - podman-machine
+
+Register the Ubuntu pubkey
+
+```bash
+vi ~/.ssh/authorized_keys
+```
+
+### Host - Windows
+
+Get podman-machine port number
+
+```pwsh
+podman system connection list | Select-String 'ssh://\w+@[^:]+:(\d+)' | % { $_.Matches.Groups[1].Value }
+```
+
+### WSL - Ubuntu
+
+You can login with the port number, for example 53061
+
+```bash
+ssh user@localhost -p 53061
+```
+
 ## Why aren't these packages in winget list?
 
 - [micro](https://github.com/zyedidia/micro/issues/2339)
