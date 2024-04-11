@@ -88,6 +88,8 @@
       _7zz # `7zz` 7zip, not
       tlrc # `tldr` rust client, tealdeer is another candidate
 
+      rclone
+
       # How to get the installed font names
       # fontconfig by nix: `fc-list : family style`
       # darwin: system_profiler SPFontsDataType
