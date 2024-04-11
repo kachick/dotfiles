@@ -14,14 +14,8 @@ on:
       - 'config/**'
       - '!**.md'
   pull_request:
-    paths:
-      - '.github/workflows/container.yml'
-      - 'containers/**'
-      - '.containerignore'
-      - 'flake.*'
-      - 'home-manager/**'
-      - 'config/**'
-      - '!**.md'
+    types:
+      - labeled
   workflow_dispatch:
 
 jobs:
@@ -78,7 +72,10 @@ jobs:
       group: 'deploy-container-${{ github.ref }}'
       cancel-in-progress: true
     needs: [get-meta, minimize-old-comments]
-    if: ${{ ! failure() }}
+    if: >-
+      (! failure()) &&
+      ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
+      (github.event_name != 'pull_request'))
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
