@@ -122,7 +122,7 @@ args = [
   '-b',
   'backup',
   '--flake',
-  '.#kachick',
+  '.#${@}',
 ]
 
 [tasks.ci-dev]

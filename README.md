@@ -24,9 +24,10 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    bash
    ```
-1. Install [home-manager](https://github.com/nix-community/home-manager) and dotfiles
+1. Install [home-manager](https://github.com/nix-community/home-manager) and dotfiles\
+   For visitors, if you want to test these dotfiles, `s/PRESONA/user/` will fit.
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#PERSONA'
    ```
 
 ## Installation - Windows
@@ -38,7 +39,7 @@ Read [the tips](config/windows/README.md) and CI
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply
+makers apply PERSONA
 ```
 
 If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.

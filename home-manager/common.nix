@@ -2,19 +2,19 @@
   config,
   pkgs,
   edge-pkgs,
+  lib,
   ...
 }:
 
 {
   imports = [
-    ./packages.nix
     ./bash.nix
     ./zsh.nix
     ./fish.nix
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./darwin.nix # Omit needless parts for Linux in the file
+    ./darwin.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -62,6 +62,11 @@
       # Put executable for temporary use
       "${config.xdg.dataHome}/tmpbin"
     ];
+
+    packages = import ./packages.nix {
+      inherit pkgs;
+      inherit edge-pkgs;
+    };
   };
 
   # https://github.com/nix-community/home-manager/issues/605
