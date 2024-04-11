@@ -5,17 +5,21 @@ on:
       - 'v*'
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - '.vscode/**'
-      - '.git**'
-      - '!.github/workflows/container.yml'
+    paths:
+      - '.github/workflows/container.yml'
+      - 'containers/**'
+      - '.containerignore'
+      - 'home-manager/**'
+      - 'config/**'
+      - '!**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '.vscode/**'
-      - '.git**'
-      - '!.github/workflows/container.yml'
+    paths:
+      - '.github/workflows/container.yml'
+      - 'containers/**'
+      - '.containerignore'
+      - 'home-manager/**'
+      - 'config/**'
+      - '!**.md'
   workflow_dispatch:
 
 concurrency:
