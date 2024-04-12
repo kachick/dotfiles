@@ -70,6 +70,17 @@
             };
           };
 
+          wsl = home-manager.lib.homeManagerConfiguration {
+            inherit pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/wsl.nix
+            ];
+            extraSpecialArgs = {
+              inherit edge-pkgs;
+            };
+          };
+
           github-actions = home-manager.lib.homeManagerConfiguration {
             inherit pkgs;
             modules = [
@@ -87,10 +98,7 @@
             inherit pkgs;
             modules = [
               ./home-manager/common.nix
-              {
-                # "user" is default in podman-machine-default
-                home.username = "user";
-              }
+              { home.username = "user"; }
             ];
             extraSpecialArgs = {
               inherit edge-pkgs;

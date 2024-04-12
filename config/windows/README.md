@@ -248,6 +248,87 @@ winget install --exact --id RedHat.Podman-Desktop
 
 And create the new podman-machine-default
 
+## How mount project volumes in podman-remote
+
+Track the [official discussion](https://github.com/containers/podman/discussions/13537), but there are no simple solutions for now.\
+This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
+
+1. Ubuntu: Activate the home-manager with `--flake .#wsl`.
+2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
+3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu22/home`
+4. Ubuntu: `cdg project_path`
+5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu22/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
+
+## How SSH login to podman-machine from another WSL instance like default Ubuntu?
+
+### WSL - Ubuntu
+
+Get pubkey
+
+```bash
+cat ~/.ssh/id_ed25519.pub | clip.exe
+```
+
+### WSL - podman-machine
+
+Register the Ubuntu pubkey
+
+```bash
+vi ~/.ssh/authorized_keys
+```
+
+### Host - Windows
+
+Get podman-machine port number
+
+```pwsh
+podman system connection list | Select-String 'ssh://\w+@[^:]+:(\d+)' | % { $_.Matches.Groups[1].Value }
+```
+
+### WSL - Ubuntu
+
+You can login with the port number, for example 53061
+
+```bash
+ssh user@localhost -p 53061
+```
+
+## How mount client volume with podman-remote
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.ssh/id_ed25519.pub user=user
+# Make sure the connection
+rclone lsd podman-machine:/home/user
+
+z project_path 
+rclone mount --daemon "podman-machine:repos/$(basename "$(pwd)")" .
+
+# If you want to unmount, use specific command instead of kill the background job
+# 
+# Linux
+fusermount -u /path/to/local/mount
+# OS X
+# umount /path/to/local/mount
+```
+
+## How oneshot sync source code for podman-remote
+
+This is just a note, prefer `rclone mount` for easier
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+z project_path
+
+rclone sync --progress . "podman-machine:repos/$(basename "$(pwd)")"
+```
+
 ## Why aren't these packages in winget list?
 
 - [micro](https://github.com/zyedidia/micro/issues/2339)
