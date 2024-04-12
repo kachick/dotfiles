@@ -9,6 +9,16 @@
 Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
+## For visitors
+
+If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
+```
+
+For local use, replace `s/PRESONA/user/` in following sections may fit.
+
 ## Installation - Linux(Ubuntu), Darwin
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
@@ -24,8 +34,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
    ```bash
    bash
    ```
-1. Install [home-manager](https://github.com/nix-community/home-manager) and dotfiles\
-   For visitors, if you want to test these dotfiles, `s/PRESONA/user/` will fit.
+1. Apply dotfiles for each use
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#PERSONA'
    ```
@@ -40,12 +49,6 @@ If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
 makers apply PERSONA
-```
-
-If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
-
-```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
 
 Using podmain may require to install some dependencies without Nix
