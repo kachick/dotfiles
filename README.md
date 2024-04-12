@@ -51,7 +51,7 @@ If you are developing this repository, the simple reactivation is as follows.
 makers apply PERSONA
 ```
 
-Using podmain may require to install some dependencies without Nix
+Using podman may require to install some dependencies without Nix
 
 ```bash
 # "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
