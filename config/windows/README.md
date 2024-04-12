@@ -328,7 +328,3 @@ z project_path
 
 rclone sync --progress . "podman-machine:repos/$(basename "$(pwd)")"
 ```
-
-## Why aren't these packages in winget list?
-
-- [micro](https://github.com/zyedidia/micro/issues/2339)
