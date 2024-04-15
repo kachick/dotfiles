@@ -93,7 +93,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v5
         with:
           install-only: true
-          version: 'v1.25.0' # selfup { "regex": "\\d[^']+", "script": "goreleaser --version | grep 'GitVersion:' | tr -s ' ' | cut -d ' ' -f 2" }
+          version: 'v1.25.1' # selfup { "regex": "\\d[^']+", "script": "goreleaser --version | grep 'GitVersion:' | tr -s ' ' | cut -d ' ' -f 2" }
       - name: List files - before build
         run: Get-ChildItem
       - name: Build winit-*
