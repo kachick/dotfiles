@@ -36,6 +36,8 @@ jobs:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
@@ -57,6 +59,8 @@ jobs:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
         timeout-minutes: 10
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --squash "$PR_URL"
         env:
@@ -72,6 +76,8 @@ jobs:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
         timeout-minutes: 20
+        with:
+          skip-same-workflow: 'true'
       - name: Approve and merge
         run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
         env:
