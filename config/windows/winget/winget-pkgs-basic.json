@@ -20,9 +20,6 @@
           "PackageIdentifier": "Microsoft.PowerToys"
         },
         {
-          "PackageIdentifier": "Google.VPNByGoogleOne"
-        },
-        {
           "PackageIdentifier": "Cloudflare.Warp"
         },
         {
