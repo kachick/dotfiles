@@ -221,6 +221,16 @@ It needs special WSL distribution. How to run it from standard WSL ubuntu is wri
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.
 
+This is an worked example
+
+```bash
+# WSL - Ubuntu
+
+podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+cdg irb-power_assert
+podman run --volume /mnt/wsl/instances/ubuntu22/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
+```
+
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
 
 ```
