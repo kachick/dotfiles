@@ -91,6 +91,7 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 - https://github.com/karakaram/alt-ime-ahk
 - https://github.com/yuru7/PlemolJP
 - https://www.realforce.co.jp/support/download/
+- https://www.kensington.com/ja-jp/software/kensingtonworks/#download # [winget cannot support v3.1.8+](https://github.com/microsoft/winget-pkgs/pull/136817)
 - https://www.kioxia.com/ja-jp/personal/software/ssd-utility.html
 
 ## History substring search in major shells for Windows
