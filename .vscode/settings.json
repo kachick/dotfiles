@@ -22,5 +22,6 @@
   },
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
-  }
+  },
+  "typos.path": "/nix/store/02sj7rvbhzvlj1nsjzwya9fhbq34178f-typos-lsp-0.1.17/bin/typos-lsp" // selfup {"extract":"/nix/store/[^\"]+/bin/typos-lsp","replacer":["bash", "-c", "command -v typos-lsp"]}
 }

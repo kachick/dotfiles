@@ -19,10 +19,7 @@ jobs:
       pr-title: 'Bump flake.lock and related dependencies'
       optional-run: |
         nix run .#bump_completions
-        git add ./dependencies
-        # https://stackoverflow.com/q/34807971
-        git update-index -q --really-refresh
-        git diff-index --quiet HEAD || git commit -m 'Update dprint completions' ./dependencies/dprint
+        nix run .#bump_lsp
     secrets:
       APP_ID: ${{ secrets.APP_ID }}
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

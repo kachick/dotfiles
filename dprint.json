@@ -6,10 +6,6 @@
   },
   "toml": {
   },
-  "prettier": {
-    "printWidth": 120,
-    "singleQuote": true
-  },
   "excludes": [
     ".git",
     ".direnv",
@@ -19,7 +15,6 @@
   "plugins": [
     "https://plugins.dprint.dev/json-0.19.2.wasm",
     "https://plugins.dprint.dev/markdown-0.16.4.wasm",
-    "https://plugins.dprint.dev/toml-0.6.1.wasm",
-    "https://plugins.dprint.dev/prettier-0.35.0.json@0df49c4d878bb1051af2fa1d1f69ba6400f4b78633f49baa1f38954a6fd32b40"
+    "https://plugins.dprint.dev/toml-0.6.1.wasm"
   ]
 }

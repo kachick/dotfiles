@@ -54,7 +54,9 @@
               cargo-make
 
               edge-pkgs.dprint
+              edge-pkgs.yamlfmt
               edge-pkgs.typos
+              edge-pkgs.typos-lsp
               edge-pkgs.go_1_22
               edge-pkgs.goreleaser
               edge-pkgs.trivy
@@ -106,38 +108,6 @@
           };
         };
 
-        packages.bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
-          set -euo pipefail
-
-          ${edge-pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-          ${edge-pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-          ${edge-pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
-
-          ${edge-pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-          ${edge-pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-          ${edge-pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
-        '';
-
-        packages.check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {
-          name = "check_no_dirty_xz_in_nix_store";
-          runtimeInputs = with pkgs; [ fd ];
-          text = ''
-            # nix store should have xz: https://github.com/NixOS/nixpkgs/blob/b96bc828b81140dd3fb096b4e66a6446d6d5c9dc/doc/stdenv/stdenv.chapter.md?plain=1#L177
-            # You can't use --max-results instead of --has-results even if you want the log, it always returns true
-            fd '^\w+-xz-[0-9\.]+\.drv' --search-path /nix/store --has-results
-
-            # Why toggling errexit and return code here: https://github.com/kachick/times_kachick/issues/278
-            set +o errexit
-            fd '^\w+-xz-5\.6\.[01]\.drv' --search-path /nix/store --has-results
-            fd_return_code="$?" # Do not directly use the $? to prevent feature broken if inserting another command before check
-            set -o errexit
-            [[ "$fd_return_code" -eq 1 ]]
-          '';
-          meta = {
-            description = "Prevent #530 (around CVE-2024-3094)";
-          };
-        };
-
         apps = {
           # example: `nix run .#home-manager -- switch -n -b backup --flake .#kachick`
           # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
@@ -145,12 +115,83 @@
 
           bump_completions = {
             type = "app";
-            program = "${packages.bump_completions}/bin/bump_completions";
+            program =
+              with pkgs;
+              lib.getExe (writeShellApplication {
+                name = "bump_completions";
+                runtimeInputs = with pkgs; [
+                  git
+                  edge-pkgs.podman
+                  edge-pkgs.dprint
+                ];
+                text = ''
+                  podman completion bash > ./dependencies/podman/completions.bash
+                  podman completion zsh > ./dependencies/podman/completions.zsh
+                  podman completion fish > ./dependencies/podman/completions.fish
+
+                  git add ./dependencies/podman
+                  # https://stackoverflow.com/q/34807971
+                  git update-index -q --really-refresh
+                  git diff-index --quiet HEAD || git commit -m 'Update podman completions' ./dependencies/podman
+
+                  dprint completions bash > ./dependencies/dprint/completions.bash
+                  dprint completions zsh > ./dependencies/dprint/completions.zsh
+                  dprint completions fish > ./dependencies/dprint/completions.fish
+
+                  git add ./dependencies/dprint
+                  git update-index -q --really-refresh
+                  git diff-index --quiet HEAD || git commit -m 'Update dprint completions' ./dependencies/dprint
+                '';
+                meta = {
+                  description = "Bump shell completions with cached files to make faster";
+                };
+              });
+          };
+
+          bump_lsp = {
+            type = "app";
+            program =
+              with pkgs;
+              lib.getExe (writeShellApplication {
+                name = "bump_lsp";
+                runtimeInputs = with pkgs; [
+                  git
+                  nix
+                  edge-pkgs.typos-lsp
+                ];
+                text = ''
+                  git ls-files .vscode | xargs nix run github:kachick/selfup/v1.1.2 -- run
+                  git diff-index --quiet HEAD || git commit -m 'Sync LSP path with nixpkgs' .vscode
+                '';
+                meta = {
+                  description = "Bump typos-lsp";
+                };
+              });
           };
 
           check_no_dirty_xz_in_nix_store = {
             type = "app";
-            program = "${packages.check_no_dirty_xz_in_nix_store}/bin/check_no_dirty_xz_in_nix_store";
+            program =
+              with pkgs;
+              lib.getExe (writeShellApplication {
+                name = "check_no_dirty_xz_in_nix_store";
+                runtimeInputs = with pkgs; [ fd ];
+                text = ''
+                  # nix store should have xz: https://github.com/NixOS/nixpkgs/blob/b96bc828b81140dd3fb096b4e66a6446d6d5c9dc/doc/stdenv/stdenv.chapter.md?plain=1#L177
+                  # You can't use --max-results instead of --has-results even if you want the log, it always returns true
+                  fd '^\w+-xz-[0-9\.]+\.drv' --search-path /nix/store --has-results
+
+                  # Why toggling errexit and return code here: https://github.com/kachick/times_kachick/issues/278
+                  set +o errexit
+                  fd '^\w+-xz-5\.6\.[01]\.drv' --search-path /nix/store --has-results
+                  fd_return_code="$?" # Do not directly use the $? to prevent feature broken if inserting another command before check
+                  set -o errexit
+                  [[ "$fd_return_code" -eq 1 ]]
+                '';
+                meta = {
+                  description = "Prevent #530 (around CVE-2024-3094)";
+                };
+              });
           };
         };
       }
