@@ -2,7 +2,6 @@
   config,
   pkgs,
   edge-pkgs,
-  lib,
   ...
 }:
 
@@ -176,6 +175,14 @@
 
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
+
+  # Do not use recursive to keep other files in the directory
+  xdg.configFile."fcitx5/config" = {
+    source = ../config/fcitx5/config;
+  };
+  xdg.configFile."fcitx5/profile" = {
+    source = ../config/fcitx5/profile;
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
