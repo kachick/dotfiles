@@ -10,6 +10,8 @@ tmp/
 
 .direnv
 
+*hardware-configuration.nix
+
 # macOS
 **/AppSupport
 .DS_Store
