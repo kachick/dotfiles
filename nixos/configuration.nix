@@ -156,6 +156,7 @@
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
     vscodium
+    chromium
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
@@ -199,5 +200,12 @@
 
   programs.hyprland.enable = true;
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld = {
+    enable = true;
+    # https://discourse.nixos.org/t/nix-ld-rs-testers-wanted/42145
+    # package = pkgs.nix-ld-rs;
+  };
+  # environment.sessionVariables = {
+  #   NIX_LD = pkgs.lib.fileContents "${pkgs.stdenv.cc}/nix-support/dynamic-linker";
+  # };
 }

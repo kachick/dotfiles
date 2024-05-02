@@ -53,7 +53,23 @@
               gitleaks
               cargo-make
 
-              edge-pkgs.dprint
+              # edge-pkgs.dprint
+              (writeShellApplication {
+                name = "dprint";
+                runtimeInputs = with pkgs; [
+                  edge-pkgs.dprint
+                  nix-ld
+                ];
+                text = ''
+                  # NIX_LD=${lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker"}
+
+                  dprint "@"
+                '';
+                meta = {
+                  description = "Run dprint prtittier and exec plugins on NixOS and pure devshell";
+                };
+              })
+
               edge-pkgs.yamlfmt
               edge-pkgs.typos
               edge-pkgs.typos-lsp
@@ -61,10 +77,40 @@
               edge-pkgs.goreleaser
               edge-pkgs.trivy
             ];
-
-            # Needed for some dprint plugins, prettier and exec
-            NIX_LD = lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker";
           };
+        # mkShell (
+        #   lib.mkMerge ([
+        #     {
+        #       buildInputs = [
+        #         # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+        #         bashInteractive
+        #         edge-pkgs.nixfmt-rfc-style
+        #         edge-pkgs.nil
+        #         # To get sha256 around pkgs.fetchFromGitHub in CLI
+        #         nix-prefetch-git
+        #         jq
+
+        #         shellcheck
+        #         shfmt
+        #         gitleaks
+        #         cargo-make
+
+        #         edge-pkgs.dprint
+        #         edge-pkgs.yamlfmt
+        #         edge-pkgs.typos
+        #         edge-pkgs.typos-lsp
+        #         edge-pkgs.go_1_22
+        #         edge-pkgs.goreleaser
+        #         edge-pkgs.trivy
+        #       ];
+        #     }
+
+        #     (lib.mkIf stdenv.isNixOS {
+        #       # Needed for some dprint plugins, prettier and exec
+        #       NIX_LD = lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker";
+        #     })
+        #   ])
+        # );
 
         packages.homeConfigurations = {
           kachick = home-manager.lib.homeManagerConfiguration {
