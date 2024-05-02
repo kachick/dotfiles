@@ -61,6 +61,9 @@
               edge-pkgs.goreleaser
               edge-pkgs.trivy
             ];
+
+            # Needed for some dprint plugins, prettier and exec
+            NIX_LD = lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker";
           };
 
         packages.homeConfigurations = {
