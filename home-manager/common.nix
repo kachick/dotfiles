@@ -165,15 +165,6 @@
     }
     + "/.editorconfig";
 
-  xdg.configFile."irb/irbrc".source =
-    pkgs.fetchFromGitHub {
-      owner = "kachick";
-      repo = "irb-power_assert";
-      rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-      sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-    }
-    + "/examples/.irbrc";
-
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
 
