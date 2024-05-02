@@ -198,4 +198,6 @@
   system.stateVersion = "23.11"; # Did you read the comment?
 
   programs.hyprland.enable = true;
+
+  programs.nix-ld.enable = true;
 }
