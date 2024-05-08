@@ -55,7 +55,7 @@ C:\Users\YOU\AppData\Local\Temp
 winget does not support it, run as follows
 
 ```pwsh
-wsl.exe --install --distribution "Ubuntu-22.04"
+wsl.exe --install --distribution "Ubuntu-24.04"
 ```
 
 ## PowerShell startup is too slow
@@ -81,7 +81,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```pwsh
-winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
@@ -151,7 +151,7 @@ No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/p
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
