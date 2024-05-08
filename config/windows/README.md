@@ -228,7 +228,7 @@ This is an worked example
 
 podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
 cdg irb-power_assert
-podman run --volume /mnt/wsl/instances/ubuntu-24_04/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
+podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
 ```
 
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
@@ -262,9 +262,9 @@ This repository provides a mount based solution, mount from another instance as 
 
 1. Ubuntu: Activate the home-manager with `--flake .#wsl`.
 2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
-3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu-24_04/home`
+3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
 4. Ubuntu: `cdg project_path`
-5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu-24_04/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
+5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
 
 ## How SSH login to podman-machine from another WSL instance like default Ubuntu?
 
