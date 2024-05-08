@@ -55,7 +55,7 @@ C:\Users\YOU\AppData\Local\Temp
 winget does not support it, run as follows
 
 ```pwsh
-wsl.exe --install --distribution "Ubuntu-22.04"
+wsl.exe --install --distribution "Ubuntu-24.04"
 ```
 
 ## PowerShell startup is too slow
@@ -81,7 +81,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```pwsh
-winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
@@ -151,7 +151,7 @@ No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/p
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
@@ -227,8 +227,16 @@ This is an worked example
 # WSL - Ubuntu
 
 podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# Since Ubuntu 24.04, you may need to update the usergroup of socket file
+sudo chgrp "$(whoami)" /mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# See wsl.nix for detail
+# TODO: Update cmd/wsl-init
+sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu24.mount --now
+
 cdg irb-power_assert
-podman run --volume /mnt/wsl/instances/ubuntu22/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
+podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
 ```
 
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
@@ -262,9 +270,9 @@ This repository provides a mount based solution, mount from another instance as 
 
 1. Ubuntu: Activate the home-manager with `--flake .#wsl`.
 2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
-3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu22/home`
+3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
 4. Ubuntu: `cdg project_path`
-5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu22/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
+5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
 
 ## How SSH login to podman-machine from another WSL instance like default Ubuntu?
 
