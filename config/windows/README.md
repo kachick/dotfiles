@@ -227,6 +227,14 @@ This is an worked example
 # WSL - Ubuntu
 
 podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# Since Ubuntu 24.04, you may need to update the usergroup of socket file
+sudo chgrp "$(whoami)" /mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# See wsl.nix for detail
+# TODO: Update cmd/wsl-init
+sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu24.mount --now
+
 cdg irb-power_assert
 podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
 ```
