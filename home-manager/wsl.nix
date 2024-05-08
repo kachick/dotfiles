@@ -5,8 +5,8 @@
   # Originally "system" should be better than "user", but it is not a home-manager role
   systemd.user = {
     # - This name should be same of Mount.Where
-    # - You can manually enable with `sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu22.mount --now`
-    mounts.mnt-wsl-instances-ubuntu22 =
+    # - You can manually enable with `sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu-24_04.mount --now`
+    mounts.mnt-wsl-instances-ubuntu-24_04 =
       # https://superuser.com/questions/1659218/is-there-a-way-to-access-files-from-one-wsl-2-distro-image-in-another-one
       {
         Unit = {
@@ -14,7 +14,7 @@
         };
         Mount = {
           What = "/";
-          Where = "/mnt/wsl/instances/ubuntu22";
+          Where = "/mnt/wsl/instances/ubuntu-24_04";
           Type = "none";
           Options = "defaults,bind,X-mount.mkdir";
         };
@@ -25,9 +25,9 @@
 
     # - Set sameme of Mount definition
     # - You can manually enable with `systemctl enable --now mount-point.automount`
-    automounts.mnt-wsl-instances-ubuntu22 = {
+    automounts.mnt-wsl-instances-ubuntu-24_04 = {
       Mount = {
-        Where = "/mnt/wsl/instances/ubuntu22";
+        Where = "/mnt/wsl/instances/ubuntu-24_04";
       };
       Install = {
         WantedBy = [ "multi-user.target" ];
