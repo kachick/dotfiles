@@ -15,7 +15,6 @@ with pkgs;
   powershell # Keep to stable nixpkgs, because this is one of the depending to xz. See #530
   starship
   direnv
-  zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Using in stable home-manager integration, but using edge fzf here.
   # Because strongly want to use the new features. Consider to translate Nix -> native config style
@@ -23,6 +22,8 @@ with pkgs;
   # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
   # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
   edge-pkgs.fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+  # Use same nixpkgs channel as same as fzf
+  edge-pkgs.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
   coreutils

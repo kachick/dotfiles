@@ -102,6 +102,9 @@
 
   programs.zoxide = {
     enable = true;
+
+    # Use same nixpkgs channel as same as fzf
+    package = edge-pkgs.zoxide;
   };
 
   # https://nixos.wiki/wiki/Home_Manager
