@@ -13,6 +13,7 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
+    ./micro.nix
     ./darwin.nix
   ];
 
@@ -222,52 +223,6 @@
   #   };
   # };
   xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
-
-  # TODO: Consider to extract from nix managed, because of now also using in windows
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/micro.nix
-  # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
-  programs.micro = {
-    enable = true;
-
-    # `micro -options` shows candidates and we can temporally change some options by giving "-OPTION_NAME VALUE"
-    settings = {
-      autosu = true;
-      cursorline = true;
-      backup = true;
-      autosave = 0; # Means false
-      basename = false;
-      clipboard = "external";
-      colorcolumn = 0; # Means false
-      diffgutter = true;
-      ignorecase = true;
-      incsearch = true;
-      hlsearch = true;
-      infobar = true;
-      keepautoindent = false;
-      mouse = true;
-      mkparents = false;
-      matchbrace = true;
-      multiopen = "tab";
-      parsecursor = true;
-      reload = "prompt";
-      rmtrailingws = false;
-      relativeruler = false;
-      savecursor = true;
-      savehistory = true;
-      saveundo = true;
-      softwrap = true;
-      splitbottom = true;
-      splitright = true;
-      statusline = true;
-      syntax = true;
-      "ft:ruby" = {
-        tabsize = 2;
-      };
-
-      # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
-      colorscheme = "twilight"; # "default" is NFM, prefer solarized for dark blue
-    };
-  };
 
   # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
