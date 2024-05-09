@@ -132,6 +132,10 @@
       fi
     }
 
+    cdt() {
+      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+    }
+
     git-commit-message-from-history() {
       fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
     }
