@@ -2,7 +2,6 @@
   config,
   pkgs,
   edge-pkgs,
-  lib,
   ...
 }:
 
