@@ -10,7 +10,7 @@ permissions:
 jobs:
   judge-dependabot:
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       merge: ${{ steps.conclusion.outputs.merge }}
     if: ${{ github.actor == 'dependabot[bot]' }}
@@ -28,7 +28,7 @@ jobs:
     needs: [judge-dependabot]
     if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Dependabot metadata
         id: metadata
@@ -53,7 +53,7 @@ jobs:
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
@@ -70,7 +70,7 @@ jobs:
   # https://github.com/kachick/anylang-template/issues/51
   selfup-runner:
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs

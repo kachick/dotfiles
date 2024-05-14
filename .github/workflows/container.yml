@@ -21,7 +21,7 @@ on:
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
       started_at: ${{ steps.timestamp.outputs.started_at }}
@@ -76,7 +76,7 @@ jobs:
       (! failure()) &&
       ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
       (github.event_name != 'pull_request'))
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
       - name: Logging initial dependency versions

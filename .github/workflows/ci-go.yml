@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
+          - ubuntu-24.04
           - macos-14 # M1 - https://github.blog/changelog/2024-01-30-github-actions-introducing-the-new-m1-macos-runner-available-to-open-source/
           - windows-latest
     runs-on: ${{ matrix.os }}
@@ -40,7 +40,7 @@ jobs:
       - run: go test ./...
       - run: go build -v -race ./...
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Set up Go
