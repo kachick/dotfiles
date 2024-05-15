@@ -41,9 +41,6 @@
           "PackageIdentifier": "Balena.Etcher"
         },
         {
-          "PackageIdentifier": "Canonical.Ubuntu.2204"
-        },
-        {
           "PackageIdentifier": "RedHat.Podman"
         },
         {
