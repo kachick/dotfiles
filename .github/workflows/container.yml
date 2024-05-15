@@ -68,9 +68,11 @@ jobs:
     with:
       pr-number: ${{ github.event.number }}
   build_and_push:
+    # Do not set `cancel-in-progress: true` in main branch, it displays failure badges
+    # https://github.com/orgs/community/discussions/8336
     concurrency:
       group: 'deploy-container-${{ github.ref }}'
-      cancel-in-progress: true
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     needs: [get-meta, minimize-old-comments]
     if: >-
       (! failure()) &&
