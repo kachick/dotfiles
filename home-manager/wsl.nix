@@ -23,7 +23,7 @@
         };
       };
 
-    # - Set sameme of Mount definition
+    # - Set same name of Mount definition
     # - You can manually enable with `systemctl enable --now mount-point.automount`
     automounts.mnt-wsl-instances-ubuntu24 = {
       Mount = {
