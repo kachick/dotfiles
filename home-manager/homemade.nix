@@ -18,6 +18,18 @@ let
       eza --long --all --group-directories-first --color=always "$@"
     '';
   };
+
+  safe_quote_backtik = pkgs.writeShellApplication {
+    name = "safe_quote_backtik";
+    text = ''
+      quote='`'
+      message="$1"
+      echo "$quote$message$quote"
+    '';
+    meta = {
+      description = "Quote `body` without command executions";
+    };
+  };
 in
 [
   (pkgs.writeShellApplication {
@@ -155,25 +167,21 @@ in
   (pkgs.writeShellApplication {
     name = "fzf-bind-posix-shell-history-to-git-commit-message";
     runtimeInputs = with pkgs; [
+      safe_quote_backtik
       git
       edge-pkgs.fzf
       edge-pkgs.ruby_3_3
     ];
     text = ''
-      # Avoiding nested single quote use
-      bind="$(
-      cat<<'EOF'
-      enter:become(echo '`{}`' | git commit -a -F -)
-      EOF
-      )"
-
       # Why ruby?
       # - bash keeps whitespace prefix even specified -n option for fc -l
       # - lstrip is not enough for some history
       # - Keep line-end in fzf input
       # shellcheck disable=SC2016 disable=SC2086
       ruby -e 'STDIN.each { |line| puts line.strip }' | \
-        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind "$bind"
+        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} \
+          -n2..,.. --scheme=history \
+          --bind 'enter:become(safe_quote_backtik {} | git commit -a -F -)'
     '';
     meta = {
       description = "Used in git alias";
