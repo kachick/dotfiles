@@ -26,3 +26,7 @@ alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"SauceCodeP
 ```
 
 And you can test with actual toml in the `$HOME/.config/alacritty/local.toml`
+
+## Can I list runtime config?
+
+No. See https://github.com/alacritty/alacritty/issues/7147

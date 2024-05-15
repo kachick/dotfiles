@@ -5,27 +5,23 @@ on:
       - 'v*'
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - '.vscode/**'
-      - '.git**'
-      - '!.github/workflows/container.yml'
+    paths:
+      - '.github/workflows/container.yml'
+      - 'containers/**'
+      - '.containerignore'
+      - 'flake.*'
+      - 'home-manager/**'
+      - 'config/**'
+      - '!**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '.vscode/**'
-      - '.git**'
-      - '!.github/workflows/container.yml'
+    types:
+      - labeled
   workflow_dispatch:
-
-concurrency:
-  group: 'deploy-container-${{ github.ref }}'
-  cancel-in-progress: true
 
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     outputs:
       started_at: ${{ steps.timestamp.outputs.started_at }}
@@ -72,28 +68,17 @@ jobs:
     with:
       pr-number: ${{ github.event.number }}
   build_and_push:
+    concurrency:
+      group: 'deploy-container-${{ github.ref }}'
+      cancel-in-progress: true
     needs: [get-meta, minimize-old-comments]
-    runs-on: ubuntu-22.04
+    if: >-
+      (! failure()) &&
+      ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
+      (github.event_name != 'pull_request'))
+    runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
-      - name: Logging initial dependency versions
-        run: |
-          podman version
-          crun --version
-          buildah version
-      - name: |
-          Update podman and buildah with kubic to avoid and prevent following issues
-            * https://noobient.com/2023/11/15/fixing-ubuntu-containers-failing-to-start-with-systemd/
-            * https://github.com/containers/buildah/issues/4632
-            * https://github.com/containers/podman/issues/14065
-        # https://podman.io/docs/installation#ubuntu
-        run: |
-          # https://github.com/containers/podman/issues/14302#issuecomment-1564806361
-          # https://software.opensuse.org//download.html?project=devel%3Akubic%3Alibcontainers%3Aunstable&package=podman
-          echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
-          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
-          sudo apt-get update
-          sudo apt-get -y install podman buildah
       - name: Logging dependency versions
         run: |
           podman version

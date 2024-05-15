@@ -1,11 +1,18 @@
-{ config, lib, pkgs, edge-pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   services.gpg-agent.enableZshIntegration = true;
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  programs.fzf.enableZshIntegration = true;
+  # TODO: I can enable since release-24.05: https://github.com/nix-community/home-manager/pull/5239
+  programs.fzf.enableZshIntegration = false;
   # programs.mise.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
@@ -37,7 +44,20 @@
 
       # https://askubuntu.com/questions/999923/syntax-in-history-ignore
       # https://github.com/zsh-users/zsh/blob/aa8e4a02904b3a1c4b3064eb7502d887f7de958b/Src/hist.c#L3006-L3015
-      ignorePatterns = [ "cd *" "pushd *" "popd *" "z *" "ls *" "ll *" "la *" "rm *" "rmdir *" "git show *" "exit" ];
+      ignorePatterns = [
+        "cd *"
+        "pushd *"
+        "popd *"
+        "z *"
+        "ls *"
+        "ll *"
+        "la *"
+        "rm *"
+        "rmdir *"
+        "git show *"
+        "tldr *"
+        "exit"
+      ];
 
       # Hist memory size should be grater than saving file size if enabled
       expireDuplicatesFirst = true;
@@ -174,11 +194,15 @@
       precmd_functions+=(set_win_title)
 
       eval "$(${lib.getExe edge-pkgs.mise} activate zsh)"
+      eval "$(${lib.getExe edge-pkgs.fzf} --zsh)"
 
       source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
+
+      # Disable `Ctrl + S(no output tty)`
+      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
       # https://unix.stackexchange.com/a/3449
       source_sh () {

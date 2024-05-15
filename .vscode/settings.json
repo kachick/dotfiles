@@ -17,7 +17,7 @@
   "nix.enableLanguageServer": true,
   "nix.serverSettings": {
     "nil": {
-      "formatting": { "command": ["nixpkgs-fmt"] }
+      "formatting": { "command": ["nixfmt"] }
     }
   },
   "gopls": {
