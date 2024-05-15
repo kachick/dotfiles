@@ -179,8 +179,9 @@ in
       # - Keep line-end in fzf input
       # shellcheck disable=SC2016 disable=SC2086
       ruby -e 'STDIN.each { |line| puts line.strip }' | \
-        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history \
-        --bind 'enter:become(safe_quote_backtik {} | git commit -a -F -)'
+        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} \
+          -n2..,.. --scheme=history \
+          --bind 'enter:become(safe_quote_backtik {} | git commit -a -F -)'
     '';
     meta = {
       description = "Used in git alias";
