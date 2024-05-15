@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          - ubuntu-24.04
           - macos-14 # M1 - https://github.blog/changelog/2024-01-30-github-actions-introducing-the-new-m1-macos-runner-available-to-open-source/
           # Disabled macOS-13 because the runner is too slow.
           # I have Intel Mac, but it have latest darwin. So only testing in ubuntu runner and macos-14 runner is enough.
