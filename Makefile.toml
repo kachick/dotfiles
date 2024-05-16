@@ -109,7 +109,7 @@ args = [
   '-b',
   'backup',
   '--flake',
-  '.#kachick',
+  '.#${@}',
 ]
 
 [tasks.apply]

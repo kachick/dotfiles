@@ -36,8 +36,13 @@ For local use, replace `s/PRESONA/user/` in following sections may fit.
    ```
 1. Apply dotfiles for each use
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#PERSONA'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux'
    ```
+   Candidates
+   - user@linux # Used in container
+   - kachick@linux
+   - kachick@wsl
+   - kachick@macbook
 
 ## Installation - Windows
 
@@ -48,7 +53,7 @@ Read [the tips](config/windows/README.md) and CI
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply PERSONA
+makers apply user@linux
 ```
 
 Using podman may require to install some dependencies without Nix
