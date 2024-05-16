@@ -39,14 +39,14 @@ For local use, replace `s/PRESONA/user/` in following sections may fit.
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux'
    ```
    Candidates
-   - user@linux # Used in container
-   - kachick@linux
-   - kachick@wsl
-   - kachick@macbook
+   - `user@linux` # Used in container
+   - `kachick@linux`
+   - `kachick@macbook`
 
 ## Installation - Windows
 
-Read [the tips](config/windows/README.md) and CI
+After installing WSL2, you can activate home-manager with `kachick@wsl` as above.\
+Read [Windows README](config/windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note
 
