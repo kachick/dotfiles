@@ -21,7 +21,8 @@ jobs:
       - name: Judge
         id: conclusion
         if: >-
-          steps.dependabot.outputs.update-type != 'version-update:semver-major' || contains(steps.dependabot.outputs.dependency-names, 'DeterminateSystems')
+          steps.dependabot.outputs.update-type != 'version-update:semver-major' ||
+          contains(steps.dependabot.outputs.dependency-names, 'DeterminateSystems')
         run: echo -n 'merge=true' | tee -a "$GITHUB_OUTPUT"
   dependabot:
     needs: [judge-dependabot]
