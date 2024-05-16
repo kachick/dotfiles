@@ -2,6 +2,7 @@
   "recommendations": [
     "editorconfig.editorconfig",
     "dprint.dprint",
+    "kachick.vscode-yamlfmt",
     "tekumara.typos-vscode",
     "github.vscode-github-actions",
     "timonwong.shellcheck",
