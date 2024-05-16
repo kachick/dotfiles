@@ -8,9 +8,6 @@
           "PackageIdentifier": "7zip.7zip"
         },
         {
-          "PackageIdentifier": "Kensington.KensingtonWorks"
-        },
-        {
           "PackageIdentifier": "Google.JapaneseIME"
         },
         {
@@ -18,9 +15,6 @@
         },
         {
           "PackageIdentifier": "Microsoft.PowerToys"
-        },
-        {
-          "PackageIdentifier": "Google.VPNByGoogleOne"
         },
         {
           "PackageIdentifier": "Cloudflare.Warp"
@@ -45,9 +39,6 @@
         },
         {
           "PackageIdentifier": "Balena.Etcher"
-        },
-        {
-          "PackageIdentifier": "Canonical.Ubuntu.2204"
         },
         {
           "PackageIdentifier": "RedHat.Podman"

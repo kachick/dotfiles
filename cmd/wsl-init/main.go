@@ -12,8 +12,9 @@ import (
 	"golang.org/x/sys/unix"
 )
 
+// TODO: We can remove this, I think. (In Ubuntu 24.04 image, true by default)
 // Exists for remember https://github.com/kachick/dotfiles/pull/264#discussion_r1289600371
-func mustActivateSystemDOnWSL() {
+func mustActivateSystemdOnWSL() {
 	path := filepath.Join("etc", "wsl.conf")
 
 	const systemdEnablingEntry = `[boot]
@@ -72,5 +73,5 @@ func main() {
 		log.Fatalf("Looks executed on non WSL systems: %s", unameStr)
 	}
 
-	mustActivateSystemDOnWSL()
+	mustActivateSystemdOnWSL()
 }

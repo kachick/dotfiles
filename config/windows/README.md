@@ -29,11 +29,7 @@ Basically following codes will be done in PowerShell
    winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM2\winget-pkgs-storage.json"
    winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
-1. Remove needless pre-installed tools
-   ```pwsh
-   # 9MSSGKG348SP is the Windows Widget(Windows Web Experience Pack)
-   winget uninstall --id 9MSSGKG348SP
-   ```
+1. Remove needless pre-installed tools. Pick up from [bulk-uninstall.ps](./winget/bulk-uninstall.ps1)
 1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.\
    See https://zmzlz.blogspot.com/2014/10/windows-dropbox.html for detail
 1. Enable Bitlocker and backup the restore key
@@ -59,7 +55,7 @@ C:\Users\YOU\AppData\Local\Temp
 winget does not support it, run as follows
 
 ```pwsh
-wsl.exe --install --distribution "Ubuntu-22.04"
+wsl.exe --install --distribution "Ubuntu-24.04"
 ```
 
 ## PowerShell startup is too slow
@@ -85,7 +81,7 @@ One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NE
 ## How to export winget list?
 
 ```pwsh
-winget export --output "\\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --output "\\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\config\windows\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
@@ -95,6 +91,7 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 - https://github.com/karakaram/alt-ime-ahk
 - https://github.com/yuru7/PlemolJP
 - https://www.realforce.co.jp/support/download/
+- https://www.kensington.com/ja-jp/software/kensingtonworks/#download # [winget cannot support v3.1.8+](https://github.com/microsoft/winget-pkgs/pull/136817)
 - https://www.kioxia.com/ja-jp/personal/software/ssd-utility.html
 
 ## History substring search in major shells for Windows
@@ -154,7 +151,7 @@ No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/p
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-22.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
@@ -224,6 +221,24 @@ It needs special WSL distribution. How to run it from standard WSL ubuntu is wri
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.
 
+This is an worked example
+
+```bash
+# WSL - Ubuntu
+
+podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# Since Ubuntu 24.04, you may need to update the usergroup of socket file
+sudo chgrp "$(whoami)" /mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
+
+# See wsl.nix for detail
+# TODO: Update cmd/wsl-init
+sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu24.mount --now
+
+cdg irb-power_assert
+podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
+```
+
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
 
 ```
@@ -248,6 +263,83 @@ winget install --exact --id RedHat.Podman-Desktop
 
 And create the new podman-machine-default
 
-## Why aren't these packages in winget list?
+## How mount project volumes in podman-remote
 
-- [micro](https://github.com/zyedidia/micro/issues/2339)
+Track the [official discussion](https://github.com/containers/podman/discussions/13537), but there are no simple solutions for now.\
+This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
+
+1. Ubuntu: Activate the home-manager with `--flake .#wsl`.
+2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
+3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
+4. Ubuntu: `cdg project_path`
+5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
+
+## How SSH login to podman-machine from another WSL instance like default Ubuntu?
+
+### WSL - Ubuntu
+
+Get pubkey
+
+```bash
+cat ~/.ssh/id_ed25519.pub | clip.exe
+```
+
+### WSL - podman-machine
+
+Register the Ubuntu pubkey
+
+```bash
+vi ~/.ssh/authorized_keys
+```
+
+### Host - Windows
+
+Get podman-machine port number
+
+```pwsh
+podman system connection list | Select-String 'ssh://\w+@[^:]+:(\d+)' | % { $_.Matches.Groups[1].Value }
+```
+
+### WSL - Ubuntu
+
+You can login with the port number, for example 53061
+
+```bash
+ssh user@localhost -p 53061
+```
+
+## How mount client volume with podman-remote
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.ssh/id_ed25519.pub user=user
+# Make sure the connection
+rclone lsd podman-machine:/home/user
+
+z project_path 
+rclone mount --daemon "podman-machine:repos/$(basename "$(pwd)")" .
+
+# If you want to unmount, use specific command instead of kill the background job
+# 
+# Linux
+fusermount -u /path/to/local/mount
+# OS X
+# umount /path/to/local/mount
+```
+
+## How oneshot sync source code for podman-remote
+
+This is just a note, prefer `rclone mount` for easier
+
+After SSH setup as above steps
+
+In WSL - Ubuntu
+
+```bash
+z project_path
+
+rclone sync --progress . "podman-machine:repos/$(basename "$(pwd)")"
+```

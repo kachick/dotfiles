@@ -6,12 +6,16 @@ let
   #   - https://wiki.archlinux.jp/index.php/XDG_Base_Directory
   #   - https://superuser.com/a/1606519/120469
   sshDir = "${config.home.homeDirectory}/.ssh";
-
-  # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
-  # - id_*.pub: I CAN register them for different services.
+  sharedConfig = {
+    identityFile = "${sshDir}/id_ed25519";
+    identitiesOnly = true;
+    user = "git";
+  };
 in
+# - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
+# - id_*.pub: I CAN register them for different services.
 {
-  # https://github.com/nix-community/home-manager/blob/master/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # These hosts are taken from the public resources of each provider.
@@ -28,9 +32,10 @@ in
     bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDQeJzhupRu0u0cdegZIa8e86EG2qOCsIsD1Xw0xSeiPDlCr7kq97NLmMbpKTX6Esc30NuoqEEHCuc7yWtwp8dI76EEEB1VqY9QJq6vk+aySyboD5QF61I/1WeTwu+deCbgKMGbUijeXhtfbxSxm6JwGrXrhBdofTsbKRUsrN1WoNgUa8uqN1Vx6WAJw1JHPhglEGGHea6QICwJOAr/6mrui/oB7pkaWKHj3z7d1IC4KWLtY47elvjbaTlkN04Kc/5LFEirorGYVbt15kAUlqGM65pk6ZBxtaO3+30LVlORZkxOh+LKL/BvbZ/iRNhItLqNyieoQj/uh/7Iv4uyH/cV/0b4WDSd3DptigWq84lJubb9t/DnZlrJazxyDCulTmKdOR7vs9gMTo+uoIrPSb8ScTtvw65+odKAlBj59dhnVp9zd7QUojOpXlL62Aw56U4oO+FALuevvMjiWeavKhJqlR7i5n9srYcrNV7ttmDw7kf/97P5zauIhxcjX+xHv4M=
     bitbucket.org ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBPIQmuzMBuKdWeF4+a2sjSSpBK0iqitSQ+5BM9KhpexuGt20JpTVM7u5BDZngncgrqDMbWdxMWWOGtZ9UgbqgZE=
     bitbucket.org ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIazEu89wgQZ4bqs3d63QSMzYVa0MuJ2e2gKTKqu+UUO
+    sfo2.tmate.io ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTnCMAanvAYXe8RSbSgpz2agNiU2i2Y2ryPWeFx+yh473Aj0zW6x/BzApOn5k4qiPmf8LOVSIk5hL01W8l2y5yHC2CXFyBpQuc/uNZzLpAxrvTSVN1rp7hu3dR5keybHFdd8SEWlPI4m9vPYUVqXMrXBjfsSZxeYOUKNav3aWWPGtO19KhmCdMbIZx3PN0QvklhkJ2ElRZO7uiACvvCWS8LOo3ht/Y6QdGIfQqTX3DJlFXwfvnoqhlmV8LGVKk/y6jtqPmmengEEHtvRcH92LzBIR5e0NQj+5/WDHquh1p9xiaA3TZD6zStWSrbqFovm7aAAM9WKfb866WkUK1HlNv
   '';
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 
@@ -46,19 +51,18 @@ in
     controlMaster = "auto";
     controlPersist = "10m";
 
-    addKeysToAgent = "yes";
-
     # Enable custom or temporary config without `home-manager switch`
-    includes = [
-      "${sshDir}/config.local"
-    ];
+    includes = [ "${sshDir}/config.local" ];
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
+    # TODO: Update AddKeysToAgent since release-24.05. See #394
     extraConfig = ''
+      AddKeysToAgent yes
+
       PasswordAuthentication no
 
-      # default: "ask" - I'm disabling it for now
+      # default: "ask"
       StrictHostKeyChecking yes
 
       # https://serverfault.com/a/1109184/112217
@@ -72,26 +76,22 @@ in
     # No problem to register the same *.pub in different services
     matchBlocks = {
       # ANYONE can access the registered public key at https://github.com/kachick.keys
-      "github.com" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-      };
+      "github.com" = sharedConfig;
 
       # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-      "gitlab.com" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
-      };
+      "gitlab.com" = sharedConfig;
 
       # Need authentication to get the public keys
       #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
       #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-      "bitbucket.org" = {
-        identityFile = "${sshDir}/id_ed25519";
-        identitiesOnly = true;
-        user = "git";
+      "bitbucket.org" = sharedConfig;
+
+      # For WSL2 instances like default Ubuntu and podman-machine
+      "localhost" = sharedConfig // {
+        extraOptions = {
+          StrictHostKeyChecking = "no";
+          UserKnownHostsFile = "/dev/null";
+        };
       };
     };
   };

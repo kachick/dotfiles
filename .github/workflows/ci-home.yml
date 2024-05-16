@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
+          - ubuntu-24.04
           - macos-14 # M1 - https://github.blog/changelog/2024-01-30-github-actions-introducing-the-new-m1-macos-runner-available-to-open-source/
           # Disabled macOS-13 because the runner is too slow.
           # I have Intel Mac, but it have latest darwin. So only testing in ubuntu runner and macos-14 runner is enough.
@@ -36,16 +36,23 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v10
+      - uses: DeterminateSystems/nix-installer-action@v11
       - name: Print some dotfiles overviews
         run: |
           cat /etc/nix/nix.conf
           ls -alh ~
-      - uses: DeterminateSystems/magic-nix-cache-action@v4
+      - uses: DeterminateSystems/magic-nix-cache-action@v6
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
+      - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix run .#home-manager -- switch -b backup --flake .#github-actions
+      - name: 'Make sure no possibilities in nix store around #530 (around CVE-2024-3094)'
+        run: |
+          which xz
+          # Can be used when the xz is using /nix/store one
+          # nix-store --query --referrers "$(which xz)"
+          nix run .#check_no_dirty_xz_in_nix_store
       - name: Print some paths and versions
         run: |
           which fish
@@ -73,3 +80,11 @@ jobs:
         run: |
           zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
+      - name: Backup generated config
+        run: |
+          zsh -c 'archive-home-files home-manager-generation-home-files'
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'home-files-${{ github.sha }}-${{ runner.os }}'
+          path: home-manager-generation-home-files.tar.gz

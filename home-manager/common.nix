@@ -1,35 +1,42 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   imports = [
-    ./packages.nix
     ./bash.nix
     ./zsh.nix
     ./fish.nix
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./darwin.nix # Omit needless parts for Linux in the file
+    ./micro.nix
+    ./darwin.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
   # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
+  home.homeDirectory =
+    if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
   xdg.enable = true;
 
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "23.11";
-
   home = {
+    # This value determines the Home Manager release that your
+    # configuration is compatible with. This helps avoid breakage
+    # when a new Home Manager release introduces backwards
+    # incompatible changes.
+    #
+    # You can update Home Manager without changing this value. See
+    # the Home Manager release notes for a list of state version
+    # changes in each release.
+    stateVersion = "23.11";
+    enableNixpkgsReleaseCheck = true;
+
     sessionVariables = {
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
       EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
@@ -55,9 +62,15 @@
       # Put executable for temporary use
       "${config.xdg.dataHome}/tmpbin"
     ];
+
+    packages = import ./packages.nix {
+      inherit pkgs;
+      inherit edge-pkgs;
+    };
   };
 
   # https://github.com/nix-community/home-manager/issues/605
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/fontconfig.nix
   fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
@@ -89,6 +102,9 @@
 
   programs.zoxide = {
     enable = true;
+
+    # Use same nixpkgs channel as same as fzf
+    package = edge-pkgs.zoxide;
   };
 
   # https://nixos.wiki/wiki/Home_Manager
@@ -116,13 +132,18 @@
       fi
     }
 
-    git-commit-message-from-history() {
+    cdt() {
+      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+    }
+
+    gch() {
       fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
     }
   '';
 
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
-  xdg.configFile."alacritty/unix.toml".source = ../config/alacritty/unix.toml;
+  xdg.configFile."alacritty/unix.toml".source =
+    if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
   xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
   xdg.configFile."alacritty/themes" = {
     source = ../config/alacritty/themes;
@@ -143,41 +164,31 @@
   # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
   # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
   home.file.".editorconfig".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "anylang-template";
-        rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
-        sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
-      }
-    + "/.editorconfig"
-  ;
+    pkgs.fetchFromGitHub {
+      owner = "kachick";
+      repo = "anylang-template";
+      rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
+      sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
+    }
+    + "/.editorconfig";
 
-  xdg.configFile."irb/irbrc".source =
-    pkgs.fetchFromGitHub
-      {
-        owner = "kachick";
-        repo = "irb-power_assert";
-        rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-        sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-      }
-    + "/examples/.irbrc"
-  ;
+  # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
+  xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
 
-  # typos does not have feature global config, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
-  xdg.configFile."typos/_typos.toml".text = ''
-    [default.extend-words]
-    # https://github.com/crate-ci/typos/issues/415
-    ba = "ba"
-  '';
-
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;
 
+    package = edge-pkgs.fzf;
+
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
     defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
+
+    defaultOptions = [
+      # --walker*: Default file filtering will be changed by this option if FZF_DEFAULT_COMMAND is not set: https://github.com/junegunn/fzf/pull/3649/files
+      "--walker-skip '.git,node_modules,.direnv,vendor,dist'"
+    ];
 
     # CTRL+T
     fileWidgetCommand = defaultCommand;
@@ -188,101 +199,66 @@
 
     # ALT-C
     changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
-    changeDirWidgetOptions = [
-      "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'"
-    ];
+    changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
+
+    colors = {
+      # See #295 for the detail
+      "bg+" = "#005f5f";
+    };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
+  # TODO: Enable since release-24.05
   # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
-  programs.mise = {
-    enable = true;
+  # Current shell integrations should be refer
+  #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109
+  # programs.mise = {
+  #   enable = true;
+  #   globalConfig = {
+  #     plugins = {
+  #       # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
+  #       # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
+  #       podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
+  #     };
+  #   };
+  # };
+  xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
 
-    globalConfig = {
-      plugins = {
-        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-      };
-    };
-  };
-
-  # TODO: Consider to extract from nix managed, because of now also using in windows
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/micro.nix
-  # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
-  programs.micro = {
-    enable = true;
-
-    # `micro -options` shows candidates and we can temporally change some options by giving "-OPTION_NAME VALUE"
-    settings = {
-      autosu = true;
-      cursorline = true;
-      backup = true;
-      autosave = 0; # Means false
-      basename = false;
-      clipboard = "external";
-      colorcolumn = 0; # Means false
-      diffgutter = true;
-      ignorecase = true;
-      incsearch = true;
-      hlsearch = true;
-      infobar = true;
-      keepautoindent = false;
-      mouse = true;
-      mkparents = false;
-      matchbrace = true;
-      multiopen = "tab";
-      parsecursor = true;
-      reload = "prompt";
-      rmtrailingws = false;
-      relativeruler = false;
-      savecursor = true;
-      savehistory = true;
-      saveundo = true;
-      softwrap = true;
-      splitbottom = true;
-      splitright = true;
-      statusline = true;
-      syntax = true;
-      "ft:ruby" = {
-        tabsize = 2;
-      };
-
-      # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
-      colorscheme = "twilight"; # "default" is NFM, prefer solarized for dark blue
-    };
-  };
-
-
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins = [ pkgs.vimPlugins.iceberg-vim ];
 
-    settings = { background = "dark"; };
+    settings = {
+      background = "dark";
+    };
     extraConfig = ''
       colorscheme iceberg
       set termguicolors
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
     config = {
       # Candidates: bat --list-themes
       theme = "Nord";
+
+      style = "plain";
+
+      wrap = "character";
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

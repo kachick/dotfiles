@@ -1,11 +1,21 @@
-[default.extend-words]
-# https://github.com/crate-ci/typos/issues/415
-ba = "ba"
-# https://github.com/crate-ci/typos/issues/536#issuecomment-1216549808
-iterm = "iterm"
+[default]
+# https://github.com/crate-ci/typos/blob/v1.19.0/docs/reference.md
+# Be careful to handle extend-ignore-* variants
+# - extend-ignore-words-re: matched symbol
+# - extend-ignore-identifiers-re: suggesting symbol
+# - extend-ignore-re: matching target string
+extend-ignore-words-re = [
+  # In my experience, false positive detection in typos occurred for short words.
+  #
+  # * My typos are increased as the words get longer
+  # * Too short often conflict with hash strings especially `ba`: https://github.com/crate-ci/typos/issues/415
+  # * Added 2 or 3 character abbreviations as wrong: https://github.com/crate-ci/typos/issues/955
+  #
+  # So I guess skipping all these detections makes reasonable behaviors for now and for the future.
+  "\\A[a-zA-Z]{1,3}\\z",
+]
 
 [files]
 extend-exclude = [
   "go.mod",
-  "*.terminal",
 ]

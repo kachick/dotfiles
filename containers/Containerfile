@@ -1,5 +1,5 @@
 # https://github.com/kachick/containers
-FROM ghcr.io/kachick/ubuntu-nix-systemd:20240308-103859-utc
+FROM ghcr.io/kachick/ubuntu-24.04-nix-systemd:20240515-154517-utc
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
 LABEL org.opencontainers.image.description="Example by kachick/dotfiles"

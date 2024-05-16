@@ -1,9 +1,60 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  lib,
+  config,
+  ...
+}:
 
+# tig
+#
+# tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
+
+let
+  git-log-fzf = pkgs.writeShellApplication {
+    name = "git-log-pp-fzf";
+    runtimeInputs =
+      with pkgs;
+      [
+        edge-pkgs.fzf
+        coreutils
+        git
+        gh
+        colorized-logs
+        bat
+      ]
+      ++ (lib.optionals stdenv.isLinux [
+        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+      ]);
+    text = ''
+      # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
+      _fzf_git_fzf() {
+        fzf-tmux -p80%,60% -- \
+          --layout=reverse --multi --height=50% --min-height=20 --border \
+          --border-label-pos=2 \
+          --color='header:italic:underline,label:blue' \
+          --preview-window='right,50%,border-left' \
+          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
+      }
+
+      # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
+        --preview 'echo {} | \
+          cut --delimiter " " --fields 2 --only-delimited | \
+          ansi2txt | \
+          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
+          bat --language=gitlog --color=always --style=plain --wrap=character' \
+        --header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
+        --bind 'ctrl-o:execute-silent(gh browse {2})' \
+        --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
+    '';
+  };
+in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -14,28 +65,55 @@
     # `git config --get-regexp ^alias` will show current aliases
     aliases = {
       fixup = "commit --all --amend";
-      empty = "commit --allow-empty";
-      start = "empty -m 'Start project from empty'";
       current = "symbolic-ref --short HEAD";
       switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-      duster = "remote update origin --prune";
-      refresh = "!git switch-default && git pull \"$(git upstream)\" \"$(git current)\"";
-      r = "refresh"; # refresh is long for typing
+      refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
-      gui = "!lazygit";
-      pp = "log --pretty=format:'%Cgreen%cd %Cblue%h %Creset%s' --date=short --decorate --graph --tags HEAD";
+      # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
+      pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
+      lf = "!git pp | ${lib.getExe git-log-fzf}";
     };
 
-    # - They will be overridden by local hooks, currently I do nothing to merge global and local hooks
-    #   If I want it, https://github.com/timokau/dotfiles/blob/dfee6670a42896cfb5a94fdedf96c9ed2fa1c9d2/home/git.nix#L3-L11 may be a good example
-    # - I don't have confident for executable permissions are reqiored or not for them, removing it worked. :<
+    # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
-      commit-msg = pkgs.writeShellScript "prevent_typo.bash" ''
-        set -euo pipefail
+      commit-msg = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "prevent_typos_in_commit_mssage.bash";
+          meta.description = "#325";
+          runtimeInputs = [ edge-pkgs.typos ];
+          text = ''
+            typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+          '';
+        }
+      );
 
-        ${lib.getBin pkgs.typos}/bin/typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
-      '';
+      post-checkout = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "alert_typos_in_branch_name.bash";
+          meta.description = "#540";
+          runtimeInputs = with pkgs; [
+            git
+            edge-pkgs.typos
+          ];
+          # What arguments: https://git-scm.com/docs/githooks#_post_checkout
+          text = ''
+            is_file_checkout="$3" # 0: file, 1: branch
+            if [[ "$is_file_checkout" -eq 0 ]]; then
+              exit 0
+            fi
+
+            branch_name="$(git rev-parse --abbrev-ref 'HEAD')"
+
+            # Checkout to no branch and no tag
+            if [[ "$branch_name" = 'HEAD' ]]; then
+              exit 0
+            fi
+
+            (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
+          '';
+        }
+      );
     };
 
     extraConfig = {
@@ -93,6 +171,10 @@
         sort = "-committerdate";
       };
 
+      log = {
+        date = "iso-local";
+      };
+
       url = {
         # Why?
         # - ghq default is https, this omit -p option for the ssh push
@@ -112,29 +194,31 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 
     settings = {
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
-        setup = ''!gh repo edit --enable-auto-merge && \
-          gh api --method PUT --verbose \
-          --header 'Accept: application/vnd.github+json' \
-          --header 'X-GitHub-Api-Version: 2022-11-28' \
-          '/repos/{owner}/{repo}/actions/permissions/workflow' \
-          --field 'can_approve_pull_request_reviews=true' \
-          --raw-field 'default_workflow_permissions=write'
+        setup = ''
+          !gh repo edit --enable-auto-merge && \
+            gh api --method PUT --verbose \
+              --header 'Accept: application/vnd.github+json' \
+              --header 'X-GitHub-Api-Version: 2022-11-28' \
+              '/repos/{owner}/{repo}/actions/permissions/workflow' \
+              --field 'can_approve_pull_request_reviews=true' \
+              --raw-field 'default_workflow_permissions=write'
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''!cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
-          gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
-          cd "$1" && \
-          gh setup && \
-          ${pkgs.direnv}/bin/direnv allow && \
-          ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
+        burl = ''
+          !cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
+            gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
+              cd "$1" && \
+                gh setup && \
+                  ${pkgs.direnv}/bin/direnv allow && \
+                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
         '';
       };
     };
@@ -146,22 +230,6 @@
         "https://github.com"
         "https://gist.github.com"
       ];
-    };
-  };
-
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/lazygit.nix
-  programs.lazygit = {
-    enable = true;
-
-    # https://dev.classmethod.jp/articles/eetann-lazygit-config-new-option/
-    settings = {
-      gui = {
-        language = "ja";
-        showIcons = true;
-        theme = {
-          lightTheme = true;
-        };
-      };
     };
   };
 }

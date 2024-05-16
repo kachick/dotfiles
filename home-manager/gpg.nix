@@ -1,6 +1,5 @@
 { config, pkgs, ... }:
 
-
 # ## FAQ - GPG
 #
 # - How to list keys?
@@ -20,7 +19,7 @@
 # - How to backup private key?
 #   - `gpg --export-secret-keys --armor > gpg-private.keys.bak`
 {
-  # https://github.com/nix-community/home-manager/blob/master/modules/services/gpg-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/gpg-agent.nix
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
 
@@ -30,10 +29,11 @@
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
 
-    pinentryPackage = pkgs.pinentry-tty;
+    # TODO: Enable since release-24.05
+    # pinentryPackage = pkgs.pinentry-tty;
   };
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/gpg.nix
+  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gpg.nix
 
   programs.gpg = {
     enable = true;

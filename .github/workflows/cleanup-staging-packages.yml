@@ -16,21 +16,31 @@ defaults:
     shell: bash -Ceuxo pipefail {0}
 
 jobs:
-  ghcr:
-    runs-on: ubuntu-22.04
-    if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
-    timeout-minutes: 15
+  get-meta:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      pr-number: ${{ steps.get-meta.outputs.pr-number }}
     steps:
-      - name: Install gh-action-escape
-        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - name: Get metadata
         id: get-meta
         run: |
           if [ '${{ github.event_name }}' == 'pull_request' ]; then
-            echo -n '${{ github.event.pull_request.number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+            echo 'pr-number=${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
           else
-            echo -n '${{ inputs.pr-number }}' | gh-action-escape -name=pr_number | tee -a "$GITHUB_OUTPUT"
+            echo 'pr-number=${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
           fi
+  minimize-old-comments:
+    needs: [get-meta]
+    uses: ./.github/workflows/minimize-staging-deploy-comments.yml
+    with:
+      pr-number: ${{ fromJSON(needs.get-meta.outputs.pr-number) }}
+  ghcr:
+    needs: [get-meta]
+    runs-on: ubuntu-24.04
+    if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
+    timeout-minutes: 15
+    steps:
       - name: Inspect the PR published package
         id: inspect-package
         run: |
@@ -38,12 +48,13 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /users/kachick/packages/container/home/versions \
-            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ steps.get-meta.outputs.pr_number }}-")).id' | \
+            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ needs.get-meta.outputs.pr-number }}-")).id' | \
               ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
-              gh-action-escape -name=package-version-ids | tee -a "$GITHUB_OUTPUT"
+              xargs --no-run-if-empty --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         with:
           owner: ${{ github.repository_owner }}
           package-name: 'home'
@@ -51,8 +62,10 @@ jobs:
           token: ${{ github.token }}
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
       - name: Prepare git to run gh commands
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         uses: actions/checkout@v4
       - name: Post comments to the PR
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -64,4 +77,4 @@ jobs:
           ${{ steps.inspect-package.outputs.package-version-ids }}
           ```
           EOF
-          ) | gh pr comment '${{ steps.get-meta.outputs.pr_number }}' --body-file -
+          ) | gh pr comment '${{ needs.get-meta.outputs.pr-number }}' --body-file -

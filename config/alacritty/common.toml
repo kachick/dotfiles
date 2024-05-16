@@ -5,8 +5,15 @@ import = [
   "~/.config/alacritty/themes/iceberg-dark.toml",
 ]
 
+# See #295 for the detail
+[colors.selection]
+background = "#005f5f"
+
 [selection]
 save_to_clipboard = true
+
+[cursor]
+style.shape = "Beam"
 
 [font]
 size = 12
@@ -35,3 +42,8 @@ dimensions.lines = 50
 
 position.x = 10
 position.y = 10
+
+# [[keyboard.bindings]]
+# Copy and Paste can be used ctrl + shift + c/v, but it is annoy. Remember following
+# Copy: Needless keybind, use 'selection.save_to_clipboard = true'
+# Paste: Shift + Insert
