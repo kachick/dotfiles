@@ -75,9 +75,7 @@ jobs:
       cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     needs: [get-meta, minimize-old-comments]
     if: >-
-      (! failure()) &&
-      ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
-      (github.event_name != 'pull_request'))
+      (! failure()) && ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) || (github.event_name != 'pull_request'))
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:

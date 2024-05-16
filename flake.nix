@@ -63,6 +63,7 @@
                 cargo-make
 
                 edge-pkgs.dprint
+                edge-pkgs.yamlfmt
                 edge-pkgs.typos
                 edge-pkgs.go_1_22
                 edge-pkgs.goreleaser
