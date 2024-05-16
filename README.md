@@ -11,13 +11,11 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## For visitors
 
-If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
+If you are using [Podman](https://podman.io/), you can test the pre-built [container-image](containers) as follows.
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
-
-For local use, replace `s/PRESONA/user/` in following sections may fit.
 
 ## Installation - Linux(Ubuntu), Darwin
 
