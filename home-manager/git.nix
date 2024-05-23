@@ -1,6 +1,5 @@
 {
   pkgs,
-  edge-pkgs,
   lib,
   config,
   ...
@@ -16,7 +15,7 @@ let
     runtimeInputs =
       with pkgs;
       [
-        edge-pkgs.fzf
+        fzf
         coreutils
         git
         gh
@@ -27,7 +26,7 @@ let
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
       ]);
     text = ''
-      # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      # source nixpkgs file does not work here: source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
       _fzf_git_fzf() {
         fzf-tmux -p80%,60% -- \
@@ -54,7 +53,7 @@ in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -81,7 +80,7 @@ in
         pkgs.writeShellApplication {
           name = "prevent_typos_in_commit_mssage.bash";
           meta.description = "#325";
-          runtimeInputs = [ edge-pkgs.typos ];
+          runtimeInputs = with pkgs; [ typos ];
           text = ''
             typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
           '';
@@ -94,7 +93,7 @@ in
           meta.description = "#540";
           runtimeInputs = with pkgs; [
             git
-            edge-pkgs.typos
+            typos
           ];
           # What arguments: https://git-scm.com/docs/githooks#_post_checkout
           text = ''
@@ -194,7 +193,7 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 

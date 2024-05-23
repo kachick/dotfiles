@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 
 # fzf
 #
@@ -59,7 +59,7 @@ in
   (pkgs.writeShellApplication {
     name = "updeps";
     # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       echo 'this updater assume you have the privilege and sudo command'
 
@@ -93,7 +93,7 @@ in
   (pkgs.writeShellApplication {
     name = "walk";
     runtimeInputs = with pkgs; [
-      edge-pkgs.fzf
+      fzf
       bat
       micro
     ];
@@ -108,7 +108,7 @@ in
   #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
   (pkgs.writeShellApplication {
     name = "podman";
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       mise exec podman@latest -- podman "$@"
     '';
@@ -169,8 +169,8 @@ in
     runtimeInputs = with pkgs; [
       safe_quote_backtik
       git
-      edge-pkgs.fzf
-      edge-pkgs.ruby_3_3
+      fzf
+      ruby_3_3
     ];
     text = ''
       # Why ruby?
@@ -192,7 +192,7 @@ in
     name = "todo";
     runtimeInputs = with pkgs; [
       git
-      edge-pkgs.fzf
+      fzf
       micro
       bat
     ];
@@ -212,7 +212,7 @@ in
     name = "ghqf";
     runtimeInputs = with pkgs; [
       ghq
-      edge-pkgs.fzf
+      fzf
       la
     ];
     text = ''

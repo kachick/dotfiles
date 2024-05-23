@@ -22,7 +22,7 @@
   home.homeDirectory =
     if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -34,7 +34,7 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-    stateVersion = "23.11";
+    stateVersion = "24.05";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
@@ -70,7 +70,7 @@
   };
 
   # https://github.com/nix-community/home-manager/issues/605
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/fontconfig.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
   fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
@@ -104,7 +104,6 @@
     enable = true;
 
     # Use same nixpkgs channel as same as fzf
-    package = edge-pkgs.zoxide;
   };
 
   # https://nixos.wiki/wiki/Home_Manager
@@ -175,12 +174,10 @@
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;
-
-    package = edge-pkgs.fzf;
 
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
     defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
@@ -207,28 +204,29 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
-  # TODO: Enable since release-24.05
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
-  # Current shell integrations should be refer
-  #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109
-  # programs.mise = {
-  #   enable = true;
-  #   globalConfig = {
-  #     plugins = {
-  #       # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-  #       # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-  #       podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-  #     };
-  #   };
-  # };
-  xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/mise.nix
+  programs.mise = {
+    enable = true;
+    globalConfig = {
+      plugins = {
+        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
+        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
+        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
+      };
+    };
+    settings = {
+      status = {
+        missing_tools = "never";
+      };
+    };
+  };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
     enable = true;
@@ -244,7 +242,7 @@
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -258,7 +256,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

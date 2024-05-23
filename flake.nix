@@ -5,11 +5,14 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    # TODO: s/release-24.05/nixos-24.05/ after nixpkgs branch off it
+    # - https://discourse.nixos.org/t/differences-between-nix-channels/13998/2?u=kachick
+    # - https://github.com/NixOS/nixpkgs/issues/303285
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # https://github.com/nix-community/home-manager/blob/release-23.11/docs/manual/nix-flakes.md
+    # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager = {
-      url = "github:nix-community/home-manager/release-23.11";
+      url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -22,7 +25,7 @@
       home-manager,
     }:
     let
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-23.11/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "x86_64-darwin"
@@ -36,7 +39,7 @@
       # - https://github.com/NixOS/nixfmt/issues/129
       # - https://github.com/NixOS/rfcs/pull/166
       # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-      formatter = forAllSystems (system: edge-nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
       devShells = forAllSystems (
         system:
@@ -51,8 +54,8 @@
               buildInputs = [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                edge-pkgs.nixfmt-rfc-style
-                edge-pkgs.nil
+                nixfmt-rfc-style
+                nil
                 # To get sha256 around pkgs.fetchFromGitHub in CLI
                 nix-prefetch-git
                 jq
@@ -62,12 +65,13 @@
                 gitleaks
                 cargo-make
 
-                edge-pkgs.dprint
+                dprint
+                # TODO: Use stable if https://github.com/google/yamlfmt/pull/179 is released
                 edge-pkgs.yamlfmt
-                edge-pkgs.typos
-                edge-pkgs.go_1_22
-                edge-pkgs.goreleaser
-                edge-pkgs.trivy
+                typos
+                go_1_22
+                goreleaser
+                trivy
               ];
             };
         }

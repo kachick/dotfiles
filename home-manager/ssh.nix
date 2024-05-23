@@ -15,7 +15,7 @@ in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
 {
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
   services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
 
   # These hosts are taken from the public resources of each provider.
@@ -35,7 +35,7 @@ in
     sfo2.tmate.io ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTnCMAanvAYXe8RSbSgpz2agNiU2i2Y2ryPWeFx+yh473Aj0zW6x/BzApOn5k4qiPmf8LOVSIk5hL01W8l2y5yHC2CXFyBpQuc/uNZzLpAxrvTSVN1rp7hu3dR5keybHFdd8SEWlPI4m9vPYUVqXMrXBjfsSZxeYOUKNav3aWWPGtO19KhmCdMbIZx3PN0QvklhkJ2ElRZO7uiACvvCWS8LOo3ht/Y6QdGIfQqTX3DJlFXwfvnoqhlmV8LGVKk/y6jtqPmmengEEHtvRcH92LzBIR5e0NQj+5/WDHquh1p9xiaA3TZD6zStWSrbqFovm7aAAM9WKfb866WkUK1HlNv
   '';
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 
@@ -51,15 +51,14 @@ in
     controlMaster = "auto";
     controlPersist = "10m";
 
+    addKeysToAgent = "yes";
+
     # Enable custom or temporary config without `home-manager switch`
     includes = [ "${sshDir}/config.local" ];
 
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
-    # TODO: Update AddKeysToAgent since release-24.05. See #394
     extraConfig = ''
-      AddKeysToAgent yes
-
       PasswordAuthentication no
 
       # default: "ask"
