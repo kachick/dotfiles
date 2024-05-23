@@ -19,7 +19,7 @@
 # - How to backup private key?
 #   - `gpg --export-secret-keys --armor > gpg-private.keys.bak`
 {
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/services/gpg-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/gpg-agent.nix
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
 
@@ -33,7 +33,7 @@
     # pinentryPackage = pkgs.pinentry-tty;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gpg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
 
   programs.gpg = {
     enable = true;

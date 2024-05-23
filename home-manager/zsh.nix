@@ -19,7 +19,7 @@
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zsh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   # TODO: Re-apply some patches since release-24.05: #497
   programs.zsh = {

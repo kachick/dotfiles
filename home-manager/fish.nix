@@ -26,7 +26,7 @@
   xdg.dataFile."fish/vendor_completions.d/podman.fish".source = ../dependencies/podman/completions.fish;
   xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fish.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fish.nix
   programs.fish = {
     enable = true;
 

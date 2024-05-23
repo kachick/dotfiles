@@ -22,7 +22,7 @@
   home.homeDirectory =
     if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -34,7 +34,7 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-    stateVersion = "23.11";
+    stateVersion = "24.05";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
@@ -70,7 +70,7 @@
   };
 
   # https://github.com/nix-community/home-manager/issues/605
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/fontconfig.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
   fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
@@ -175,7 +175,7 @@
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;
@@ -207,7 +207,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
@@ -228,7 +228,7 @@
   # };
   xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
     enable = true;
@@ -244,7 +244,7 @@
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -258,7 +258,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 
