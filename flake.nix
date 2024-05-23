@@ -5,10 +5,7 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    # TODO: s/release-24.05/nixos-24.05/ after nixpkgs branch off it
-    # - https://discourse.nixos.org/t/differences-between-nix-channels/13998/2?u=kachick
-    # - https://github.com/NixOS/nixpkgs/issues/303285
-    nixpkgs.url = "github:NixOS/nixpkgs/release-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager = {
