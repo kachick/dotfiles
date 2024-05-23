@@ -29,8 +29,7 @@
     defaultCacheTtl = 60480000; # 700 days
     maxCacheTtl = 60480000; # 700 days
 
-    # TODO: Enable since release-24.05
-    # pinentryPackage = pkgs.pinentry-tty;
+    pinentryPackage = pkgs.pinentry-tty;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix

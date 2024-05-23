@@ -19,7 +19,6 @@
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
-  # TODO: Re-apply some patches since release-24.05: #497
   programs.zsh = {
     enable = true;
 
@@ -83,16 +82,16 @@
         "root"
       ];
 
-      # TODO: Enable since release-24.05
-      #
-      # # This will work if you enabled "pattern" highlighter
-      # patterns = {
-      #   # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
-      #   "rm -rf *" = "fg=white,bold,bg=red";
-      # };
+      # This will work if you enabled "pattern" highlighter
+      patterns = {
+        # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
+        "rm -rf *" = "fg=white,bold,bg=red";
+      };
     };
 
-    enableAutosuggestions = true;
+    autosuggestion = {
+      enable = true;
+    };
 
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
@@ -210,9 +209,6 @@
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
-
-      # TODO: Replace this section with home-manager module `patterns` since release-24.05
-      ZSH_HIGHLIGHT_PATTERNS+=('rm -rf *' 'fg=white,bold,bg=red')
 
       # Same as .zshenv.local
       if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
