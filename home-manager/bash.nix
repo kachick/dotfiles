@@ -10,8 +10,7 @@
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
-  # TODO: I can enable since release-24.05: https://github.com/nix-community/home-manager/pull/5239
-  programs.fzf.enableBashIntegration = false;
+  programs.fzf.enableBashIntegration = true;
   programs.mise.enableBashIntegration = true;
   # Intentionally disabled for keeping stable bash
   programs.zellij.enableBashIntegration = false;
@@ -119,8 +118,6 @@
         }
         # shellcheck disable=SC2034
         starship_precmd_user_func="set_win_title"
-
-        eval "$(${lib.getExe pkgs.fzf} --bash)"
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 

@@ -10,8 +10,7 @@
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  # TODO: I can enable since release-24.05: https://github.com/nix-community/home-manager/pull/5239
-  programs.fzf.enableZshIntegration = false;
+  programs.fzf.enableZshIntegration = true;
   programs.mise.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
@@ -191,8 +190,6 @@
         echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
       }
       precmd_functions+=(set_win_title)
-
-      eval "$(${lib.getExe pkgs.fzf} --zsh)"
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
