@@ -212,21 +212,22 @@
     enable = true;
   };
 
-  # TODO: Enable since release-24.05
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
-  # Current shell integrations should be refer
-  #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109
-  # programs.mise = {
-  #   enable = true;
-  #   globalConfig = {
-  #     plugins = {
-  #       # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-  #       # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-  #       podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-  #     };
-  #   };
-  # };
-  xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/mise.nix
+  programs.mise = {
+    enable = true;
+    globalConfig = {
+      plugins = {
+        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
+        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
+        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
+      };
+    };
+    settings = {
+      status = {
+        missing_tools = "never";
+      };
+    };
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim

@@ -59,7 +59,7 @@ in
   (pkgs.writeShellApplication {
     name = "updeps";
     # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       echo 'this updater assume you have the privilege and sudo command'
 
@@ -108,7 +108,7 @@ in
   #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
   (pkgs.writeShellApplication {
     name = "podman";
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       mise exec podman@latest -- podman "$@"
     '';

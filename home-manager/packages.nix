@@ -38,7 +38,7 @@ with pkgs;
   gawk
   netcat # `nc`
 
-  edge-pkgs.mise # alt asdf
+  mise # alt asdf
 
   git
   gh

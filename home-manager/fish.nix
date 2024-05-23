@@ -13,7 +13,7 @@
   programs.zoxide.enableFishIntegration = true;
   # TODO: I can enable since release-24.05: https://github.com/nix-community/home-manager/pull/5239
   programs.fzf.enableFishIntegration = false;
-  # programs.mise.enableFishIntegration = true;
+  programs.mise.enableFishIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableFishIntegration = false;
 
@@ -58,8 +58,6 @@
       functions --erase la
 
       set -g fish_greeting
-
-      eval "$(${lib.getExe edge-pkgs.mise} activate fish)"
 
       eval "$(${lib.getExe edge-pkgs.fzf} --fish)"
     '';
