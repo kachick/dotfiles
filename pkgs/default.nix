@@ -1,15 +1,15 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 {
   bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
     set -euo pipefail
 
-    ${edge-pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-    ${edge-pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-    ${edge-pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+    ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
+    ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
+    ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
 
-    ${edge-pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-    ${edge-pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-    ${edge-pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
+    ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
+    ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
+    ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
   '';
 
   check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {

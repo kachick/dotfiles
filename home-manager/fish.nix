@@ -1,9 +1,4 @@
-{
-  lib,
-  pkgs,
-  edge-pkgs,
-  ...
-}:
+{ lib, pkgs, ... }:
 
 {
   services.gpg-agent.enableFishIntegration = true;
@@ -59,7 +54,7 @@
 
       set -g fish_greeting
 
-      eval "$(${lib.getExe edge-pkgs.fzf} --fish)"
+      eval "$(${lib.getExe pkgs.fzf} --fish)"
     '';
 
     plugins = [

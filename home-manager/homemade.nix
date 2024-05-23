@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 
 # fzf
 #
@@ -93,7 +93,7 @@ in
   (pkgs.writeShellApplication {
     name = "walk";
     runtimeInputs = with pkgs; [
-      edge-pkgs.fzf
+      fzf
       bat
       micro
     ];
@@ -169,8 +169,8 @@ in
     runtimeInputs = with pkgs; [
       safe_quote_backtik
       git
-      edge-pkgs.fzf
-      edge-pkgs.ruby_3_3
+      fzf
+      ruby_3_3
     ];
     text = ''
       # Why ruby?
@@ -192,7 +192,7 @@ in
     name = "todo";
     runtimeInputs = with pkgs; [
       git
-      edge-pkgs.fzf
+      fzf
       micro
       bat
     ];
@@ -212,7 +212,7 @@ in
     name = "ghqf";
     runtimeInputs = with pkgs; [
       ghq
-      edge-pkgs.fzf
+      fzf
       la
     ];
     text = ''

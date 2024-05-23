@@ -39,7 +39,7 @@
       # - https://github.com/NixOS/nixfmt/issues/129
       # - https://github.com/NixOS/rfcs/pull/166
       # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-      formatter = forAllSystems (system: edge-nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
 
       devShells = forAllSystems (
         system:
@@ -54,8 +54,8 @@
               buildInputs = [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                edge-pkgs.nixfmt-rfc-style
-                edge-pkgs.nil
+                nixfmt-rfc-style
+                nil
                 # To get sha256 around pkgs.fetchFromGitHub in CLI
                 nix-prefetch-git
                 jq
@@ -65,12 +65,13 @@
                 gitleaks
                 cargo-make
 
-                edge-pkgs.dprint
+                dprint
+                # TODO: Use stable if https://github.com/google/yamlfmt/pull/179 is released
                 edge-pkgs.yamlfmt
-                edge-pkgs.typos
-                edge-pkgs.go_1_22
-                edge-pkgs.goreleaser
-                edge-pkgs.trivy
+                typos
+                go_1_22
+                goreleaser
+                trivy
               ];
             };
         }

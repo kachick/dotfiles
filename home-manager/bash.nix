@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -121,9 +120,9 @@
         # shellcheck disable=SC2034
         starship_precmd_user_func="set_win_title"
 
-        eval "$(${lib.getExe edge-pkgs.fzf} --bash)"
+        eval "$(${lib.getExe pkgs.fzf} --bash)"
 
-        source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
         source "${../dependencies/podman/completions.bash}"
         source "${../dependencies/dprint/completions.bash}"

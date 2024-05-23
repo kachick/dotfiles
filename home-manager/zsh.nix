@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -193,9 +192,9 @@
       }
       precmd_functions+=(set_win_title)
 
-      eval "$(${lib.getExe edge-pkgs.fzf} --zsh)"
+      eval "$(${lib.getExe pkgs.fzf} --zsh)"
 
-      source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"

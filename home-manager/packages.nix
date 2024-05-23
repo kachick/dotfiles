@@ -18,12 +18,12 @@ with pkgs;
 
   # Using in stable home-manager integration, but using edge fzf here.
   # Because strongly want to use the new features. Consider to translate Nix -> native config style
-  edge-pkgs.fzf # History: CTRL+R, Walker: CTRL+T
+  fzf # History: CTRL+R, Walker: CTRL+T
   # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
   # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-  edge-pkgs.fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+  fzf-git-sh # CTRL-G CTRL-{} keybinds for git
   # Use same nixpkgs channel as same as fzf
-  edge-pkgs.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
+  zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
   coreutils
@@ -59,7 +59,7 @@ with pkgs;
   curl
   wget
   jq
-  edge-pkgs.jnv # interactive jq
+  edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
   ripgrep # `rg`
   bat # alt cat
   hexyl # hex viewer
@@ -70,14 +70,14 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  edge-pkgs.alacritty
-  edge-pkgs.typos
+  alacritty
+  typos
   hyperfine
   difftastic
   gnumake
   gitleaks
-  edge-pkgs.deno
-  edge-pkgs.ruby_3_3
+  edge-pkgs.deno # Use unstable to track latest
+  ruby_3_3
   unzip # Required in many asdf plugins
   _7zz # `7zz` 7zip, not
   tlrc # `tldr` rust client, tealdeer is another candidate
@@ -96,12 +96,12 @@ with pkgs;
 
   # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
   # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-  edge-pkgs.plemoljp-nf
-  pkgs.ibm-plex # For sans-serif, use plemoljp for developing
+  plemoljp-nf
+  ibm-plex # For sans-serif, use plemoljp for developing
 
-  pkgs.source-han-code-jp # Includes many definitions, useful for fallback
-  pkgs.inconsolata
-  pkgs.mplus-outline-fonts.githubRelease # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
+  source-han-code-jp # Includes many definitions, useful for fallback
+  inconsolata
+  mplus-outline-fonts.githubRelease # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
   # pkgs.sarasa-gothic # Large filesize
 
   # Includes follows in each repository if needed, not in global
