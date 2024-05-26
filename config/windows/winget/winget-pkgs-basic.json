@@ -11,7 +11,7 @@
           "PackageIdentifier": "Google.JapaneseIME"
         },
         {
-          "PackageIdentifier": "Google.Chrome"
+          "PackageIdentifier": "Google.Chrome.EXE"
         },
         {
           "PackageIdentifier": "Microsoft.PowerToys"
