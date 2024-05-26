@@ -55,3 +55,15 @@ changelog:
 # Feel free to remove those if you don't want/use them.
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 # vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+git:
+  # Tags to be ignored by GoReleaser.
+  # This means that GoReleaser will not pick up tags that match any of the
+  # provided values as either previous or current tags.
+  #
+  # Since: v1.21
+  # Templates: allowed
+  ignore_tags:
+    - nixos-24.05-release
+
+  # I can't use ignore_tag_prefixes, it is GoReleaser Pro only feature :<

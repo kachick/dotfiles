@@ -10,7 +10,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/kachick/dotfiles/config"
+	"github.com/kachick/dotfiles"
 )
 
 const usage = `Usage: winit-conf [SUB] [OPTIONS]
@@ -18,7 +18,7 @@ const usage = `Usage: winit-conf [SUB] [OPTIONS]
 Windows initialization to apply my settings for some apps
 
 $ winit-conf.exe generate -list-path
-$ winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
+$ winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
 $ winit-conf.exe run
 `
 
@@ -32,7 +32,7 @@ type provisioner struct {
 
 func newProvisioner(embedTree []string, dstTree []string) provisioner {
 	return provisioner{
-		FS:        config.WindowsAssets,
+		FS:        dotfiles.WindowsAssets,
 		EmbedTree: embedTree,
 		DstTree:   dstTree,
 	}
@@ -80,12 +80,12 @@ func provisioners() []provisioner {
 	}
 
 	return []provisioner{
-		newProvisioner([]string{"starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
-		newProvisioner([]string{"alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
-		newProvisioner([]string{"alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
+		newProvisioner([]string{"config", "starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
+		newProvisioner([]string{"config", "alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
+		newProvisioner([]string{"config", "alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
 		// TODO: Copy all TOMLs under themes
-		newProvisioner([]string{"alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
-		newProvisioner([]string{"alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
+		newProvisioner([]string{"config", "alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
+		newProvisioner([]string{"config", "alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
@@ -142,7 +142,7 @@ func main() {
 		}
 
 		if *listPathFlag {
-			err := fs.WalkDir(config.WindowsAssets, ".", func(path string, d fs.DirEntry, err error) error {
+			err := fs.WalkDir(dotfiles.WindowsAssets, ".", func(path string, d fs.DirEntry, err error) error {
 				if d.IsDir() {
 					return nil
 				}
@@ -155,7 +155,7 @@ func main() {
 		}
 
 		if path != "" {
-			body, err := config.WindowsAssets.ReadFile(path)
+			body, err := dotfiles.WindowsAssets.ReadFile(path)
 			if err != nil {
 				log.Fatalf("Failed to open file: %s %+v", path, err)
 			}

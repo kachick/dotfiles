@@ -12,7 +12,7 @@ Basically following codes will be done in PowerShell
    Install-Module -Name PSFzfHistory
    # $PROFILE is an "Automatic Variables", not ENV
    # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-   ./winit-conf.exe generate -path="powershell/Profile.ps1" > "$PROFILE"
+   ./winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
 
    ./winit-reg.exe list
    ./winit-reg.exe run --all
