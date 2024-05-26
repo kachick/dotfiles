@@ -16,7 +16,7 @@ in
 # - id_*.pub: I CAN register them for different services.
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
-  services.ssh-agent.enable = if pkgs.stdenv.isLinux then true else false;
+  services.ssh-agent.enable = pkgs.stdenv.isLinux;
 
   # These hosts are taken from the public resources of each provider.
   #   - https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
