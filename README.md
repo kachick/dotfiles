@@ -44,7 +44,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/contai
 ## Installation - Windows
 
 After installing WSL2, you can activate home-manager with `kachick@wsl` as above.\
-Read [Windows README](config/windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
+Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note
 
