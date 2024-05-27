@@ -17,7 +17,7 @@ If you are using [Podman](https://podman.io/), you can test the pre-built [conta
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
 
-## Installation - Linux(Ubuntu), Darwin
+## Linux(Ubuntu)
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
    ```bash
@@ -39,11 +39,18 @@ bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/contai
    Candidates
    - `user@linux` # Used in container
    - `kachick@linux`
-   - `kachick@macbook`
 
-## Installation - Windows
+## NixOS
 
-After installing WSL2, you can activate home-manager with `kachick@wsl` as above.\
+[Work in Progress](https://github.com/kachick/dotfiles/pull/576)
+
+## macOS(Darwin)
+
+Activate `kachick@macbook` as Linux
+
+## Windows
+
+After installing WSL2, you can activate home-manager with `kachick@wsl` as Linux.\
 Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note
