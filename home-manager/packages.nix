@@ -1,4 +1,9 @@
-{ pkgs, edge-pkgs, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  homemade-pkgs,
+  ...
+}:
 
 # Prefer stable pkgs as possible, if you want to use edge pkgs
 #   - Keep zero or tiny config in home-manager layer
@@ -118,10 +123,22 @@ with pkgs;
   # libyaml
   # openssl
 ]
-++ (import ./homemade.nix {
-  inherit pkgs;
-  inherit edge-pkgs;
-})
+++ (with homemade-pkgs; [
+  la
+  lat
+  fzf-bind-posix-shell-history-to-git-commit-message
+  git-delete-merged-branches
+  todo
+  ghqf
+  zj
+  p
+  g
+  podman
+  walk
+  updeps
+  bench_shells
+  archive-home-files
+])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
   glibc

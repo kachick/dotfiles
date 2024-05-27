@@ -17,9 +17,17 @@ If you are using [Podman](https://podman.io/), you can test the pre-built [conta
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
 
+Or, you can directly use some commands with `nix run` without any installation steps.
+
+```bash
+nix run 'github:kachick/dotfiles#todo'
+nix run 'github:kachick/dotfiles#bench_shells'
+nix run 'github:kachick/dotfiles#git-delete-merged-branches'
+```
+
 ## Linux(Ubuntu)
 
-1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
+1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
