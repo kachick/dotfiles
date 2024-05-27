@@ -1,11 +1,10 @@
-{ pkgs, edge-pkgs, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  homemade-pkgs,
+  ...
+}:
 
-let
-  homemades = import ../pkgs {
-    inherit pkgs;
-    inherit edge-pkgs;
-  };
-in
 # Prefer stable pkgs as possible, if you want to use edge pkgs
 #   - Keep zero or tiny config in home-manager layer
 #   - Set `mod-name.package = edge-pkgs.the-one;`
@@ -124,7 +123,7 @@ with pkgs;
   # libyaml
   # openssl
 ]
-++ (with homemades; [
+++ (with homemade-pkgs; [
   la
   lat
   fzf-bind-posix-shell-history-to-git-commit-message

@@ -1,5 +1,6 @@
 {
   pkgs,
+  homemade-pkgs,
   lib,
   config,
   ...
@@ -9,9 +10,6 @@
 #
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
-let
-  homemades = import ../pkgs { inherit pkgs; };
-in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
@@ -33,7 +31,7 @@ in
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
       pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
-      lf = "!git pp | ${lib.getExe homemades.git-log-fzf}";
+      lf = "!git pp | ${lib.getExe homemade-pkgs.git-log-fzf}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545

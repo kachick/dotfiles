@@ -146,6 +146,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           modules = [ ./home-manager/kachick.nix ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.x86_64-linux;
             edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
           };
         };
@@ -157,6 +158,7 @@
             ./home-manager/wsl.nix
           ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.x86_64-linux;
             edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
           };
         };
@@ -165,6 +167,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-darwin;
           modules = [ ./home-manager/kachick.nix ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.x86_64-darwin;
             edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
           };
         };
@@ -178,6 +181,7 @@
             { home.username = "runner"; }
           ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.x86_64-linux;
             edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
           };
         };
@@ -191,6 +195,7 @@
             { home.username = "runner"; }
           ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.aarch64-darwin;
             edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
           };
         };
@@ -202,6 +207,7 @@
             { home.username = "user"; }
           ];
           extraSpecialArgs = {
+            homemade-pkgs = packages.x86_64-linux;
             edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
           };
         };
