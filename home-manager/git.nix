@@ -10,45 +10,7 @@
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
 let
-  git-log-fzf = pkgs.writeShellApplication {
-    name = "git-log-pp-fzf";
-    runtimeInputs =
-      with pkgs;
-      [
-        fzf
-        coreutils
-        git
-        gh
-        colorized-logs
-        bat
-      ]
-      ++ (lib.optionals stdenv.isLinux [
-        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
-      ]);
-    text = ''
-      # source nixpkgs file does not work here: source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
-      _fzf_git_fzf() {
-        fzf-tmux -p80%,60% -- \
-          --layout=reverse --multi --height=50% --min-height=20 --border \
-          --border-label-pos=2 \
-          --color='header:italic:underline,label:blue' \
-          --preview-window='right,50%,border-left' \
-          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
-      }
-
-      # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
-      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
-        --preview 'echo {} | \
-          cut --delimiter " " --fields 2 --only-delimited | \
-          ansi2txt | \
-          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
-          bat --language=gitlog --color=always --style=plain --wrap=character' \
-        --header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
-        --bind 'ctrl-o:execute-silent(gh browse {2})' \
-        --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
-    '';
-  };
+  homemades = import ../pkgs { inherit pkgs; };
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -71,7 +33,7 @@ in
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
       pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
-      lf = "!git pp | ${lib.getExe git-log-fzf}";
+      lf = "!git pp | ${lib.getExe homemades.git-log-fzf}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545

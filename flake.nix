@@ -99,6 +99,46 @@
           type = "app";
           program = "${packages.${system}.check_no_dirty_xz_in_nix_store}/bin/check_no_dirty_xz_in_nix_store";
         };
+
+        bench_shells = {
+          type = "app";
+          program = "${packages.${system}.bench_shells}/bin/bench_shells";
+        };
+
+        walk = {
+          type = "app";
+          program = "${packages.${system}.walk}/bin/walk";
+        };
+
+        todo = {
+          type = "app";
+          program = "${packages.${system}.todo}/bin/todo";
+        };
+
+        la = {
+          type = "app";
+          program = "${packages.${system}.la}/bin/la";
+        };
+
+        lat = {
+          type = "app";
+          program = "${packages.${system}.lat}/bin/lat";
+        };
+
+        ghqf = {
+          type = "app";
+          program = "${packages.${system}.ghqf}/bin/ghqf";
+        };
+
+        git-delete-merged-branches = {
+          type = "app";
+          program = "${packages.${system}.git-delete-merged-branches}/bin/git-delete-merged-branches";
+        };
+
+        git-log-fzf = {
+          type = "app";
+          program = "${packages.${system}.git-log-fzf}/bin/git-log-fzf";
+        };
       });
 
       homeConfigurations = {
