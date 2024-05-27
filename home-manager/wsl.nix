@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
@@ -35,10 +35,5 @@
     };
   };
 
-  home.packages =
-    (import ./packages.nix {
-      inherit pkgs;
-      inherit edge-pkgs;
-    })
-    ++ [ pkgs.wslu ];
+  home.packages = [ pkgs.wslu ];
 }
