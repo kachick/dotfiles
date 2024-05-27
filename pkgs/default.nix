@@ -10,17 +10,35 @@
 # - Tiny tools by me, they may be rewritten with another language.
 # - Aliases across multiple shells
 rec {
-  bump_completions = pkgs.writeShellScriptBin "bump_completions" ''
-    set -euo pipefail
+  bump_completions = pkgs.writeShellApplication {
+    name = "bump_completions";
+    runtimeInputs = with pkgs; [
+      git
+      podman
+      dprint
+    ];
+    text = ''
+      podman completion bash > ./dependencies/podman/completions.bash
+      podman completion zsh > ./dependencies/podman/completions.zsh
+      podman completion fish > ./dependencies/podman/completions.fish
 
-    ${pkgs.podman}/bin/podman completion bash > ./dependencies/podman/completions.bash
-    ${pkgs.podman}/bin/podman completion zsh > ./dependencies/podman/completions.zsh
-    ${pkgs.podman}/bin/podman completion fish > ./dependencies/podman/completions.fish
+      git add ./dependencies/podman
+      # https://stackoverflow.com/q/34807971
+      git update-index -q --really-refresh
+      git diff-index --quiet HEAD || git commit -m 'Update podman completions' ./dependencies/podman
 
-    ${pkgs.dprint}/bin/dprint completions bash > ./dependencies/dprint/completions.bash
-    ${pkgs.dprint}/bin/dprint completions zsh > ./dependencies/dprint/completions.zsh
-    ${pkgs.dprint}/bin/dprint completions fish > ./dependencies/dprint/completions.fish
-  '';
+      dprint completions bash > ./dependencies/dprint/completions.bash
+      dprint completions zsh > ./dependencies/dprint/completions.zsh
+      dprint completions fish > ./dependencies/dprint/completions.fish
+
+      git add ./dependencies/dprint
+      git update-index -q --really-refresh
+      git diff-index --quiet HEAD || git commit -m 'Update dprint completions' ./dependencies/dprint
+    '';
+    meta = {
+      description = "Bump shell completions with cached files to make faster";
+    };
+  };
 
   check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {
     name = "check_no_dirty_xz_in_nix_store";
