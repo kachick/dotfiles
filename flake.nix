@@ -29,6 +29,11 @@
         # I don't have M1+ mac, providing this for macos-14 free runner https://github.com/actions/runner-images/issues/9741
         "aarch64-darwin"
       ];
+
+      mkApp = pkg: {
+        type = "app";
+        program = nixpkgs.lib.getExe pkg;
+      };
     in
     rec {
       # nixfmt will be official
@@ -85,60 +90,17 @@
       apps = forAllSystems (system: {
         # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-        home-manager = {
-          type = "app";
-          program = "${home-manager.defaultPackage.${system}}/bin/home-manager";
-        };
-
-        bump_completions = {
-          type = "app";
-          program = "${packages.${system}.bump_completions}/bin/bump_completions";
-        };
-
-        check_no_dirty_xz_in_nix_store = {
-          type = "app";
-          program = "${packages.${system}.check_no_dirty_xz_in_nix_store}/bin/check_no_dirty_xz_in_nix_store";
-        };
-
-        bench_shells = {
-          type = "app";
-          program = "${packages.${system}.bench_shells}/bin/bench_shells";
-        };
-
-        walk = {
-          type = "app";
-          program = "${packages.${system}.walk}/bin/walk";
-        };
-
-        todo = {
-          type = "app";
-          program = "${packages.${system}.todo}/bin/todo";
-        };
-
-        la = {
-          type = "app";
-          program = "${packages.${system}.la}/bin/la";
-        };
-
-        lat = {
-          type = "app";
-          program = "${packages.${system}.lat}/bin/lat";
-        };
-
-        ghqf = {
-          type = "app";
-          program = "${packages.${system}.ghqf}/bin/ghqf";
-        };
-
-        git-delete-merged-branches = {
-          type = "app";
-          program = "${packages.${system}.git-delete-merged-branches}/bin/git-delete-merged-branches";
-        };
-
-        git-log-fzf = {
-          type = "app";
-          program = "${packages.${system}.git-log-fzf}/bin/git-log-fzf";
-        };
+        home-manager = mkApp home-manager.defaultPackage.${system};
+        bump_completions = mkApp packages.${system}.check_no_dirty_xz_in_nix_store;
+        check_no_dirty_xz_in_nix_store = mkApp packages.${system}.check_no_dirty_xz_in_nix_store;
+        bench_shells = mkApp packages.${system}.bench_shells;
+        walk = mkApp packages.${system}.walk;
+        todo = mkApp packages.${system}.todo;
+        la = mkApp packages.${system}.la;
+        lat = mkApp packages.${system}.lat;
+        ghqf = mkApp packages.${system}.ghqf;
+        git-delete-merged-branches = mkApp packages.${system}.git-delete-merged-branches;
+        git-log-fzf = mkApp packages.${system}.git-log-fzf;
       });
 
       homeConfigurations = {
