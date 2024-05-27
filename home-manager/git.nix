@@ -1,6 +1,6 @@
 {
   pkgs,
-  edge-pkgs,
+  homemade-pkgs,
   lib,
   config,
   ...
@@ -10,51 +10,10 @@
 #
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
-let
-  git-log-fzf = pkgs.writeShellApplication {
-    name = "git-log-pp-fzf";
-    runtimeInputs =
-      with pkgs;
-      [
-        edge-pkgs.fzf
-        coreutils
-        git
-        gh
-        colorized-logs
-        bat
-      ]
-      ++ (lib.optionals stdenv.isLinux [
-        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
-      ]);
-    text = ''
-      # source nixpkgs file does not work here: source "${edge-pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
-      _fzf_git_fzf() {
-        fzf-tmux -p80%,60% -- \
-          --layout=reverse --multi --height=50% --min-height=20 --border \
-          --border-label-pos=2 \
-          --color='header:italic:underline,label:blue' \
-          --preview-window='right,50%,border-left' \
-          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
-      }
-
-      # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
-      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
-        --preview 'echo {} | \
-          cut --delimiter " " --fields 2 --only-delimited | \
-          ansi2txt | \
-          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
-          bat --language=gitlog --color=always --style=plain --wrap=character' \
-        --header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
-        --bind 'ctrl-o:execute-silent(gh browse {2})' \
-        --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
-    '';
-  };
-in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -72,7 +31,7 @@ in
       all = "!git refresh && git-delete-merged-branches";
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
       pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
-      lf = "!git pp | ${lib.getExe git-log-fzf}";
+      lf = "!git pp | ${lib.getExe homemade-pkgs.git-log-fzf}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
@@ -81,9 +40,9 @@ in
         pkgs.writeShellApplication {
           name = "prevent_typos_in_commit_mssage.bash";
           meta.description = "#325";
-          runtimeInputs = [ edge-pkgs.typos ];
+          runtimeInputs = with pkgs; [ typos ];
           text = ''
-            typos --config "${config.xdg.configHome}/typos/_typos.toml" "$1"
+            typos --config "${config.xdg.configHome}/typos/typos.toml" "$1"
           '';
         }
       );
@@ -94,7 +53,7 @@ in
           meta.description = "#540";
           runtimeInputs = with pkgs; [
             git
-            edge-pkgs.typos
+            typos
           ];
           # What arguments: https://git-scm.com/docs/githooks#_post_checkout
           text = ''
@@ -110,7 +69,7 @@ in
               exit 0
             fi
 
-            (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/_typos.toml" -) || true
+            (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/typos.toml" -) || true
           '';
         }
       );
@@ -194,7 +153,7 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 

@@ -11,17 +11,23 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## For visitors
 
-If you are using the [podman](https://podman.io/), You can test the pre-built [container-image](containers) as follows.
+If you are using [Podman](https://podman.io/), you can test the pre-built [container-image](containers) as follows.
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
 
-For local use, replace `s/PRESONA/user/` in following sections may fit.
+Or, you can directly use some commands with `nix run` without any installation steps.
 
-## Installation - Linux(Ubuntu), Darwin
+```bash
+nix run 'github:kachick/dotfiles#todo'
+nix run 'github:kachick/dotfiles#bench_shells'
+nix run 'github:kachick/dotfiles#git-delete-merged-branches'
+```
 
-1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer).
+## Linux(Ubuntu)
+
+1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
@@ -36,19 +42,31 @@ For local use, replace `s/PRESONA/user/` in following sections may fit.
    ```
 1. Apply dotfiles for each use
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#PERSONA'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux'
    ```
+   Candidates
+   - `user@linux` # Used in container
+   - `kachick@linux`
 
-## Installation - Windows
+## NixOS
 
-Read [the tips](config/windows/README.md) and CI
+[Work in Progress](https://github.com/kachick/dotfiles/pull/576)
+
+## macOS(Darwin)
+
+Activate `kachick@macbook` as Linux
+
+## Windows
+
+After installing WSL2, you can activate home-manager with `kachick@wsl` as Linux.\
+Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note
 
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply PERSONA
+makers apply user@linux
 ```
 
 Using podman may require to install some dependencies without Nix

@@ -2,6 +2,7 @@
   config,
   pkgs,
   edge-pkgs,
+  homemade-pkgs,
   ...
 }:
 
@@ -13,6 +14,7 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
+    ./micro.nix
     ./darwin.nix
   ];
 
@@ -21,7 +23,7 @@
   home.homeDirectory =
     if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -33,7 +35,7 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-    stateVersion = "23.11";
+    stateVersion = "24.05";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
@@ -65,11 +67,12 @@
     packages = import ./packages.nix {
       inherit pkgs;
       inherit edge-pkgs;
+      inherit homemade-pkgs;
     };
   };
 
   # https://github.com/nix-community/home-manager/issues/605
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/misc/fontconfig.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
   fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
@@ -101,6 +104,8 @@
 
   programs.zoxide = {
     enable = true;
+
+    # Use same nixpkgs channel as same as fzf
   };
 
   # https://nixos.wiki/wiki/Home_Manager
@@ -128,7 +133,11 @@
       fi
     }
 
-    git-commit-message-from-history() {
+    cdt() {
+      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+    }
+
+    gch() {
       fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
     }
   '';
@@ -164,19 +173,9 @@
     }
     + "/.editorconfig";
 
-  xdg.configFile."irb/irbrc".source =
-    pkgs.fetchFromGitHub {
-      owner = "kachick";
-      repo = "irb-power_assert";
-      rev = "98ad68b4c391bb30adee1ba119cb6c6ed5bd0bfc";
-      sha256 = "sha256-Su3jaPELaBKa+CJpNp6OzOb/6/wwGk7JDxP/w9wVBtM=";
-    }
-    + "/examples/.irbrc";
-
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
-  xdg.configFile."typos/_typos.toml".source = ../_typos.toml;
+  xdg.configFile."typos/typos.toml".source = ../typos.toml;
 
-  # Do not use recursive to keep other files in the directory
   xdg.configFile."fcitx5/config" = {
     source = ../config/fcitx5/config;
   };
@@ -184,12 +183,10 @@
     source = ../config/fcitx5/profile;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;
-
-    package = edge-pkgs.fzf;
 
     # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
     defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
@@ -216,74 +213,29 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
-  # TODO: Enable since release-24.05
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/mise.nix
-  # Current shell integrations should be refer
-  #   - https://github.com/nix-community/home-manager/blob/30f2ec39519f4f5a8a96af808c439e730c15aeab/modules/programs/mise.nix#L97-L109
-  # programs.mise = {
-  #   enable = true;
-  #   globalConfig = {
-  #     plugins = {
-  #       # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-  #       # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-  #       podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-  #     };
-  #   };
-  # };
-  xdg.configFile."mise/config.toml".source = ../config/mise/config.toml;
-
-  # TODO: Consider to extract from nix managed, because of now also using in windows
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/micro.nix
-  # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
-  programs.micro = {
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/mise.nix
+  programs.mise = {
     enable = true;
-
-    # `micro -options` shows candidates and we can temporally change some options by giving "-OPTION_NAME VALUE"
-    settings = {
-      autosu = true;
-      cursorline = true;
-      backup = true;
-      autosave = 0; # Means false
-      basename = false;
-      clipboard = "external";
-      colorcolumn = 0; # Means false
-      diffgutter = true;
-      ignorecase = true;
-      incsearch = true;
-      hlsearch = true;
-      infobar = true;
-      keepautoindent = false;
-      mouse = true;
-      mkparents = false;
-      matchbrace = true;
-      multiopen = "tab";
-      parsecursor = true;
-      reload = "prompt";
-      rmtrailingws = false;
-      relativeruler = false;
-      savecursor = true;
-      savehistory = true;
-      saveundo = true;
-      softwrap = true;
-      splitbottom = true;
-      splitright = true;
-      statusline = true;
-      syntax = true;
-      "ft:ruby" = {
-        tabsize = 2;
+    globalConfig = {
+      plugins = {
+        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
+        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
+        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
       };
-
-      # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
-      colorscheme = "twilight"; # "default" is NFM, prefer solarized for dark blue
+    };
+    settings = {
+      status = {
+        missing_tools = "never";
+      };
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
     enable = true;
@@ -299,7 +251,7 @@
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -313,7 +265,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-23.11/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

@@ -1,6 +1,12 @@
 {
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
+  "[yaml]": {
+    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
+  },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
@@ -23,5 +29,5 @@
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
-  "typos.path": "/nix/store/02sj7rvbhzvlj1nsjzwya9fhbq34178f-typos-lsp-0.1.17/bin/typos-lsp" // selfup {"extract":"/nix/store/[^\"]+/bin/typos-lsp","replacer":["bash", "-c", "command -v typos-lsp"]}
+  "typos.path": "/nix/store/vdlaj6ar78v7p6cdhlmvavwanl98hzyl-typos-lsp-0.1.18/bin/typos-lsp" // selfup {"extract":"/nix/store/[^\"]+/bin/typos-lsp","replacer":["bash", "-c", "command -v typos-lsp"]}
 }

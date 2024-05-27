@@ -7,23 +7,34 @@ on:
 
 jobs:
   dprint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
       - uses: dprint/check@v2.2
         with:
-          dprint-version: '0.45.0' # selfup {"extract":"\\d[^']+","replacer":["dprint", "--version"], "nth": 2}
+          dprint-version: '0.45.1' # selfup {"extract":"\\d[^']+","replacer":["dprint", "--version"], "nth": 2}
 
   typos:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - uses: crate-ci/typos@v1.20.9 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
+      - uses: crate-ci/typos@v1.21.0 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
         with:
           # https://github.com/crate-ci/typos/issues/779#issuecomment-1635761199
           files: |
             .
             .github
             .vscode
+
+  yamlfmt:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+      - name: Install yamlfmt
+        run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.12.1 # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/180
+      - run: yamlfmt -lint .

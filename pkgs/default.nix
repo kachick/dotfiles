@@ -1,5 +1,4 @@
-{ pkgs, edge-pkgs, ... }:
-
+{ pkgs, ... }:
 # fzf
 #
 # --preview: the placeholder will be quoted by singlequote, so do not add excess double quote as "{}". This will be evaluated the given `` and $()
@@ -10,17 +9,86 @@
 
 # - Tiny tools by me, they may be rewritten with another language.
 # - Aliases across multiple shells
-let
-  la = pkgs.writeShellApplication {
-    name = "la";
-    runtimeInputs = with pkgs; [ eza ];
+rec {
+  bump_completions = pkgs.writeShellApplication {
+    name = "bump_completions";
+    runtimeInputs = with pkgs; [
+      git
+      podman
+      dprint
+    ];
     text = ''
-      eza --long --all --group-directories-first --color=always "$@"
+      podman completion bash > ./dependencies/podman/completions.bash
+      podman completion zsh > ./dependencies/podman/completions.zsh
+      podman completion fish > ./dependencies/podman/completions.fish
+
+      git add ./dependencies/podman
+      # https://stackoverflow.com/q/34807971
+      git update-index -q --really-refresh
+      git diff-index --quiet HEAD || git commit -m 'Update podman completions' ./dependencies/podman
+
+      dprint completions bash > ./dependencies/dprint/completions.bash
+      dprint completions zsh > ./dependencies/dprint/completions.zsh
+      dprint completions fish > ./dependencies/dprint/completions.fish
+
+      git add ./dependencies/dprint
+      git update-index -q --really-refresh
+      git diff-index --quiet HEAD || git commit -m 'Update dprint completions' ./dependencies/dprint
     '';
+    meta = {
+      description = "Bump shell completions with cached files to make faster";
+    };
   };
-in
-[
-  (pkgs.writeShellApplication {
+
+  bump_lsp = pkgs.writeShellApplication {
+    name = "bump_lsp";
+    runtimeInputs = with pkgs; [
+      git
+      nix
+      typos-lsp
+    ];
+    text = ''
+      git ls-files .vscode | xargs nix run github:kachick/selfup/v1.1.2 -- run
+      git diff-index --quiet HEAD || git commit -m 'Sync LSP path with nixpkgs' .vscode
+    '';
+    meta = {
+      description = "Bump typos-lsp";
+    };
+  };
+
+  check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {
+    name = "check_no_dirty_xz_in_nix_store";
+    runtimeInputs = with pkgs; [ fd ];
+    text = ''
+      # nix store should have xz: https://github.com/NixOS/nixpkgs/blob/b96bc828b81140dd3fb096b4e66a6446d6d5c9dc/doc/stdenv/stdenv.chapter.md?plain=1#L177
+      # You can't use --max-results instead of --has-results even if you want the log, it always returns true
+      fd '^\w+-xz-[0-9\.]+\.drv' --search-path /nix/store --has-results
+
+      # Why toggling errexit and return code here: https://github.com/kachick/times_kachick/issues/278
+      set +o errexit
+      fd '^\w+-xz-5\.6\.[01]\.drv' --search-path /nix/store --has-results
+      fd_return_code="$?" # Do not directly use the $? to prevent feature broken if inserting another command before check
+      set -o errexit
+      [[ "$fd_return_code" -eq 1 ]]
+    '';
+    meta = {
+      description = "Prevent #530 (around CVE-2024-3094)";
+    };
+  };
+
+  safe_quote_backtik = pkgs.writeShellApplication {
+    name = "safe_quote_backtik";
+    text = ''
+      quote='`'
+      message="$1"
+      echo "$quote$message$quote"
+    '';
+    meta = {
+      description = "Quote `body` without command executions";
+    };
+  };
+
+  bench_shells = pkgs.writeShellApplication {
     name = "bench_shells";
     runtimeInputs = with pkgs; [
       hyperfine
@@ -42,12 +110,12 @@ in
         'bash -i -c exit' \
         'fish --interactive --command exit'
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  updeps = pkgs.writeShellApplication {
     name = "updeps";
     # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       echo 'this updater assume you have the privilege and sudo command'
 
@@ -66,22 +134,28 @@ in
 
       mise plugins update
     '';
-  })
+  };
 
-  la
+  la = pkgs.writeShellApplication {
+    name = "la";
+    runtimeInputs = with pkgs; [ eza ];
+    text = ''
+      eza --long --all --group-directories-first --color=always "$@"
+    '';
+  };
 
-  (pkgs.writeShellApplication {
+  lat = pkgs.writeShellApplication {
     name = "lat";
     runtimeInputs = [ la ];
     text = ''
       la --tree "$@"
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  walk = pkgs.writeShellApplication {
     name = "walk";
     runtimeInputs = with pkgs; [
-      edge-pkgs.fzf
+      fzf
       bat
       micro
     ];
@@ -89,20 +163,20 @@ in
       # shellcheck disable=SC2016
       fzf --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
     '';
-  })
+  };
 
   # Why need the wrapper?
   #   nixpkgs provide 4.9.3 is not including podman-remote.
   #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
-  (pkgs.writeShellApplication {
+  podman = pkgs.writeShellApplication {
     name = "podman";
-    runtimeInputs = [ edge-pkgs.mise ];
+    runtimeInputs = with pkgs; [ mise ];
     text = ''
       mise exec podman@latest -- podman "$@"
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  zj = pkgs.writeShellApplication {
     name = "zj";
     runtimeInputs = with pkgs; [
       coreutils
@@ -113,26 +187,26 @@ in
 
       zellij attach "$name" || zellij --session "$name"
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  p = pkgs.writeShellApplication {
     name = "p";
     runtimeInputs = with pkgs; [ nix ];
     text = ''
       # Needless to trim the default command, nix-shell only runs last command if given multiple.
       nix-shell --command "$SHELL" --packages "$@"
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  g = pkgs.writeShellApplication {
     name = "g";
     runtimeInputs = with pkgs; [ git ];
     text = ''
       git "$@"
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  git-delete-merged-branches = pkgs.writeShellApplication {
     name = "git-delete-merged-branches";
     runtimeInputs = with pkgs; [
       git
@@ -150,41 +224,37 @@ in
         comm --check-order -13 - <(git branch --sort=refname --format='%(refname:short)' --merged) |
         xargs --no-run-if-empty --max-lines=1 git branch --delete
     '';
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  fzf-bind-posix-shell-history-to-git-commit-message = pkgs.writeShellApplication {
     name = "fzf-bind-posix-shell-history-to-git-commit-message";
     runtimeInputs = with pkgs; [
+      safe_quote_backtik
       git
-      edge-pkgs.fzf
-      edge-pkgs.ruby_3_3
+      fzf
+      ruby_3_3
     ];
     text = ''
-      # Avoiding nested single quote use
-      bind="$(
-      cat<<'EOF'
-      enter:become(echo '`{}`' | git commit -a -F -)
-      EOF
-      )"
-
       # Why ruby?
       # - bash keeps whitespace prefix even specified -n option for fc -l
       # - lstrip is not enough for some history
       # - Keep line-end in fzf input
       # shellcheck disable=SC2016 disable=SC2086
       ruby -e 'STDIN.each { |line| puts line.strip }' | \
-        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} -n2..,.. --scheme=history --bind "$bind"
+        fzf --height ''${FZF_TMUX_HEIGHT:-40%} ''${FZF_DEFAULT_OPTS-} \
+          -n2..,.. --scheme=history \
+          --bind 'enter:become(safe_quote_backtik {} | git commit -a -F -)'
     '';
     meta = {
       description = "Used in git alias";
     };
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  todo = pkgs.writeShellApplication {
     name = "todo";
     runtimeInputs = with pkgs; [
       git
-      edge-pkgs.fzf
+      fzf
       micro
       bat
     ];
@@ -198,13 +268,13 @@ in
     meta = {
       description = "List todo family";
     };
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  ghqf = pkgs.writeShellApplication {
     name = "ghqf";
     runtimeInputs = with pkgs; [
       ghq
-      edge-pkgs.fzf
+      fzf
       la
     ];
     text = ''
@@ -222,9 +292,9 @@ in
     meta = {
       description = "ghq + fzf result";
     };
-  })
+  };
 
-  (pkgs.writeShellApplication {
+  archive-home-files = pkgs.writeShellApplication {
     name = "archive-home-files";
     runtimeInputs = with pkgs; [
       gnutar
@@ -241,5 +311,45 @@ in
     meta = {
       description = "Backup dotfiles they are generated with home-manager. See #243";
     };
-  })
-]
+  };
+
+  git-log-fzf = pkgs.writeShellApplication {
+    name = "git-log-pp-fzf";
+    runtimeInputs =
+      with pkgs;
+      [
+        fzf
+        coreutils
+        git
+        gh
+        colorized-logs
+        bat
+      ]
+      ++ (lib.optionals stdenv.isLinux [
+        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+      ]);
+    text = ''
+      # source nixpkgs file does not work here: source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
+      _fzf_git_fzf() {
+        fzf-tmux -p80%,60% -- \
+          --layout=reverse --multi --height=50% --min-height=20 --border \
+          --border-label-pos=2 \
+          --color='header:italic:underline,label:blue' \
+          --preview-window='right,50%,border-left' \
+          --bind='ctrl-/:change-preview-window(down,50%,border-top|hidden|)' "$@"
+      }
+
+      # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
+        --preview 'echo {} | \
+          cut --delimiter " " --fields 2 --only-delimited | \
+          ansi2txt | \
+          xargs --no-run-if-empty --max-lines=1 git show --color=always | \
+          bat --language=gitlog --color=always --style=plain --wrap=character' \
+        --header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
+        --bind 'ctrl-o:execute-silent(gh browse {2})' \
+        --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
+    '';
+  };
+}
