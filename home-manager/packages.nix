@@ -73,6 +73,7 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  wezterm
   alacritty
   typos
   hyperfine

@@ -53,6 +53,9 @@
           "PackageIdentifier": "Microsoft.PowerShell"
         },
         {
+          "PackageIdentifier": "wez.wezterm"
+        },
+        {
           "PackageIdentifier": "Alacritty.Alacritty"
         },
         {
