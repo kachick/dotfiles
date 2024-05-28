@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local config = wezterm.config_builder()
+local act = wezterm.action
 local launch_menu = {}
 
 config.color_scheme = "iceberg-dark"
@@ -22,6 +23,11 @@ if string.find(wezterm.target_triple, "pc-windows", 1, true) then
     args = { "pwsh", "-NoLogo" },
   })
 end
+
+config.keys = {
+  -- TODO: Consider to move into windows only combination
+  { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+}
 
 config.launch_menu = launch_menu
 
