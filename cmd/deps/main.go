@@ -18,6 +18,7 @@ func main() {
 		{Path: "typos", Args: []string{"--version"}},
 		{Path: "gitleaks", Args: []string{"version"}},
 		{Path: "stylua", Args: []string{"--version"}},
+		{Path: "nixpkgs-lint", Args: []string{"--version"}},
 		{Path: "goreleaser", Args: []string{"--version"}},
 
 		// Even if nixfmt returns old version as v0.5.0, the actual code is latest
