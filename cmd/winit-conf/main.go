@@ -81,11 +81,16 @@ func provisioners() []provisioner {
 
 	return []provisioner{
 		newProvisioner([]string{"config", "starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
+
+		// TODO: Copy all this wezterm dir
+		newProvisioner([]string{"config", "wezterm", "wezterm.lua"}, []string{homePath, ".config", "wezterm", "wezterm.lua"}),
+
 		newProvisioner([]string{"config", "alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		newProvisioner([]string{"config", "alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"config", "alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"config", "alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
+
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
