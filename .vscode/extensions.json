@@ -11,6 +11,7 @@
     "jnoortheen.nix-ide",
     "golang.go",
     "bmalehorn.vscode-fish",
-    "kdl-org.kdl"
+    "kdl-org.kdl",
+    "JohnnyMorganz.stylua"
   ]
 }

@@ -70,6 +70,7 @@
                 dprint
                 # TODO: Use stable if https://github.com/google/yamlfmt/pull/179 is released
                 edge-pkgs.yamlfmt
+                stylua
                 typos
                 go_1_22
                 goreleaser

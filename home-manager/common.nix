@@ -142,6 +142,11 @@
     }
   '';
 
+  xdg.configFile."wezterm" = {
+    source = ../config/wezterm;
+    recursive = true;
+  };
+
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source =
     if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
