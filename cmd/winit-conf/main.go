@@ -70,9 +70,13 @@ func provisioners() []provisioner {
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "wezterm"), 0750)
+	if err != nil {
+		log.Fatalf("Failed to create wezterm dotfiles directory: %+v", err)
+	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), 0750)
 	if err != nil {
-		log.Fatalf("Failed to create dotfiles directory: %+v", err)
+		log.Fatalf("Failed to create alacritty dotfiles directory: %+v", err)
 	}
 	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), 0750)
 	if err != nil {
