@@ -23,7 +23,7 @@ config.window_frame = {
 -- target_triple candidates
 -- https://doc.rust-lang.org/nightly/rustc/platform-support.html
 if string.find(wezterm.target_triple, "pc-windows", 1, true) then
-  config.default_prog = { "pwsh", "-NoLogo" }
+  config.default_prog = { "wsl.exe", "--distribution", "Ubuntu-24.04", "--cd", "~" }
   table.insert(launch_menu, {
     label = "PowerShell",
     args = { "pwsh", "-NoLogo" },
