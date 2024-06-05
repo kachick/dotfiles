@@ -2,17 +2,23 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local act = wezterm.action
 local launch_menu = {}
-
-config.color_scheme = "iceberg-dark"
-config.window_background_opacity = 0.87
-config.default_cursor_style = "BlinkingBar"
-config.font = wezterm.font_with_fallback({
-  { family = "PlemolJP Console NF", harfbuzz_features = { "zero" } },
+local font_with_fallback <const> = wezterm.font_with_fallback({
+  { family = "PlemolJP Console NF", harfbuzz_features = { "zero" }, weight = "Medium" },
   "源ノ角ゴシック Code JP",
   "Noto Color Emoji",
   "Cascadia Code",
 })
+
+config.color_scheme = "iceberg-dark"
+config.window_background_opacity = 0.94
+config.default_cursor_style = "BlinkingBar"
+config.font = font_with_fallback
+config.font_size = 13
 config.adjust_window_size_when_changing_font_size = nil
+config.window_frame = {
+  font = font_with_fallback,
+  font_size = 12,
+}
 
 -- target_triple candidates
 -- https://doc.rust-lang.org/nightly/rustc/platform-support.html
