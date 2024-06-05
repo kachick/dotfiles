@@ -1,7 +1,7 @@
-local wezterm = require("wezterm")
-local config = wezterm.config_builder()
-local act = wezterm.action
-local launch_menu = {}
+local wezterm <const> = require("wezterm")
+local config <const> = wezterm.config_builder()
+local act <const> = wezterm.action
+local launch_menu <const> = {}
 local font_with_fallback <const> = wezterm.font_with_fallback({
   { family = "PlemolJP Console NF", harfbuzz_features = { "zero" }, weight = "Medium" },
   "源ノ角ゴシック Code JP",
