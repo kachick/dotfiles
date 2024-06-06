@@ -75,7 +75,7 @@ bar:
     - type: "clock"
       # Documentation on formatting date/time string:
       # https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
-      # WHY_CHNAGED: I prefer this formats
+      # WHY_CHANGED: I prefer this formats
       # time_formatting: "hh:mm tt  ddd MMM d"
       # TODO: Translate ddd with AbbreviatedDayNames
       time_formatting: "HH:mm ddd M/d"
