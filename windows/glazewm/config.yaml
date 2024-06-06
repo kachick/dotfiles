@@ -174,7 +174,7 @@ keybindings:
     binding: "Alt+F"
 
   # Change the focused window to be floating / tiling.
-    # WHY_CHANGED: Adjust for non above
+  # WHY_CHANGED: Adjust for non above
   - command: "toggle floating"
     # binding: "Alt+Shift+Space"
     binding: "Alt+Space+F"
