@@ -203,7 +203,9 @@ keybindings:
   # to start Windows Terminal and Git Bash respectively.
   # WHY_CHANGED: cmd is not useful
   # - command: "exec cmd"
-  - command: "exec wezterm"
+  # `exec wezterm start` will not detach from cmd, so use pwsh or wt(Windows Terminal)
+  - command: "exec pwsh -NoLogo"
+    # - command: "exec wt"
     binding: "Alt+Enter"
 
   # Focus the workspace that last had focus.
