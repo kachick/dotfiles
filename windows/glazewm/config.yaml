@@ -75,7 +75,10 @@ bar:
     - type: "clock"
       # Documentation on formatting date/time string:
       # https://learn.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
-      time_formatting: "hh:mm tt  ddd MMM d"
+      # WHY_CHNAGED: I prefer this formats
+      # time_formatting: "hh:mm tt  ddd MMM d"
+      # TODO: Translate ddd with AbbreviatedDayNames
+      time_formatting: "HH:mm ddd M/d"
 
 workspaces:
   - name: "1"
@@ -166,11 +169,15 @@ keybindings:
 
   # Change focus between floating / tiling windows.
   - command: "focus mode toggle"
-    binding: "Alt+Space"
+    # WHY_CHANGED: Default Alt+Space hijacks PowerToys Run
+    # binding: "Alt+Space"
+    binding: "Alt+F"
 
   # Change the focused window to be floating / tiling.
+    # WHY_CHANGED: Adjust for non above
   - command: "toggle floating"
-    binding: "Alt+Shift+Space"
+    # binding: "Alt+Shift+Space"
+    binding: "Alt+Space+F"
 
   # Change the focused window to be maximized / unmaximized.
   - command: "toggle maximized"
@@ -194,7 +201,9 @@ keybindings:
 
   # Launch CMD terminal (alternatively `exec wt` or `exec %ProgramFiles%/Git/git-bash.exe`
   # to start Windows Terminal and Git Bash respectively.
-  - command: "exec cmd"
+  # WHY_CHANGED: cmd is not useful
+  # - command: "exec cmd"
+  - command: "exec wezterm"
     binding: "Alt+Enter"
 
   # Focus the workspace that last had focus.
@@ -228,14 +237,15 @@ keybindings:
     binding: "Alt+9"
 
   # Move focused workspace to a monitor in a given direction.
-  - command: "move workspace left"
-    binding: "Alt+A"
-  - command: "move workspace right"
-    binding: "Alt+F"
-  - command: "move workspace up"
-    binding: "Alt+D"
-  - command: "move workspace down"
-    binding: "Alt+S"
+  # WHY_CHANGED: I don't know the use-case and and the keys will be used in others  
+  # - command: "move workspace left"
+  #   binding: "Alt+A"
+  # - command: "move workspace right"
+  #   binding: "Alt+F"
+  # - command: "move workspace up"
+  #   binding: "Alt+D"
+  # - command: "move workspace down"
+  #   binding: "Alt+S"
 
   # Move focused window to a workspace defined in `workspaces` config.
   - commands: ["move to workspace 1", "focus workspace 1"]
