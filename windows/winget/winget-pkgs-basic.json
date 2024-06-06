@@ -66,6 +66,9 @@
         },
         {
           "PackageIdentifier": "Microsoft.VisualStudioCode"
+        },
+        {
+          "PackageIdentifier": "glzr-io.glazewm"
         }
       ],
       "SourceDetails": {
