@@ -72,7 +72,7 @@ func provisioners() []provisioner {
 	// As I understand it, unix like permission masks will work even in windows...
 	const dirPerm = 0750
 
-	// GlazeWM does not support support .config directory
+	// GlazeWM does not support .config directory
 	err = os.MkdirAll(filepath.Join(homePath, ".glaze-wm"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
