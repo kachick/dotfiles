@@ -177,7 +177,7 @@ keybindings:
   # WHY_CHANGED: Adjust for non above
   - command: "toggle floating"
     # binding: "Alt+Shift+Space"
-    binding: "Alt+Space+F"
+    binding: "Alt+Shift+F"
 
   # Change the focused window to be maximized / unmaximized.
   - command: "toggle maximized"
