@@ -342,8 +342,10 @@ rec {
     runtimeInputs =
       with pkgs;
       [
+        coreutils
         fzf
         gh
+        micro
       ]
       ++ (lib.optionals stdenv.isLinux [
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
@@ -353,7 +355,7 @@ rec {
       gh pr list --state 'open' --search 'draft:false' | fzf --ansi --delimiter "\t" --nth 2 \
         --preview 'gh pr view {1}' \
         --header $'CTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\nCTRL-O (Open in browser)\n\n' \
-        --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(echo {2} | micro)")' \
+        --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(micro | cat)")' \
         --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
         --bind 'ctrl-o:become(gh pr view {1} --web)'
     '';
