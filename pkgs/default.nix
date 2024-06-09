@@ -339,10 +339,15 @@ rec {
 
   prs = pkgs.writeShellApplication {
     name = "prs";
-    runtimeInputs = with pkgs; [
-      fzf
-      gh
-    ];
+    runtimeInputs =
+      with pkgs;
+      [
+        fzf
+        gh
+      ]
+      ++ (lib.optionals stdenv.isLinux [
+        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+      ]);
     text = ''
       gh pr list --state 'open' --search 'draft:false' | fzf --ansi --delimiter "\t" --nth 2 \
         --preview 'gh pr view {1}' \
