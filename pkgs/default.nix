@@ -349,6 +349,7 @@ rec {
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
       ]);
     text = ''
+      # shellcheck disable=SC2016
       gh pr list --state 'open' --search 'draft:false' | fzf --ansi --delimiter "\t" --nth 2 \
         --preview 'gh pr view {1}' \
         --header $'CTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
