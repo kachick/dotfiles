@@ -352,7 +352,7 @@ rec {
       gh pr list --state 'open' --search 'draft:false' | fzf --ansi --delimiter "\t" --nth 2 \
         --preview 'gh pr view {1}' \
         --header $'CTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
-        --bind 'ctrl-s:execute-silent(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash)' \
+        --bind 'ctrl-s:execute-silent(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(echo {2} | micro)")' \
         --bind 'ctrl-m:execute-silent(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
         --bind 'enter:become(gh pr view {1} --web)'
     '';
