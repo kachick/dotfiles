@@ -360,7 +360,7 @@ rec {
         --bind 'ctrl-o:become(gh pr view {1} --web)' \
         --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2} | micro)")' \
         --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
-        --bind 'enter:become(echo {1})'
+        --bind 'enter:become(echo {1} | tr -d "#")'
     '';
   };
 }
