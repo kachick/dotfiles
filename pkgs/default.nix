@@ -359,9 +359,9 @@ rec {
           --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
           --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
           --bind 'alt-c:become(gh pr checkout {1})' \
-          --bind 'ctrl-o:become(gh pr view {1} --web)' \
-          --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2..} | micro)")' \
-          --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
+          --bind 'ctrl-o::execute(gh pr view {1} --web)' \
+          --bind 'ctrl-s:execute(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2..} | micro)")' \
+          --bind 'ctrl-m:execute(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
           --bind 'enter:become(echo {1} | tr -d "#")'
     '';
   };
