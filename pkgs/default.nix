@@ -361,7 +361,6 @@ rec {
         coreutils
         fzf
         gh
-        micro
         wait-and-squashmerge
       ]
       ++ (lib.optionals stdenv.isLinux [
