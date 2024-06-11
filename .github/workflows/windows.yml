@@ -94,7 +94,7 @@ jobs:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
       - name: Install goreleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
           install-only: true
           version: 'v1.26.1' # selfup { "extract": "\\d[^']+", "replacer": ["bash", "-c", "goreleaser --version | grep 'GitVersion:'"], "nth": 2 }
