@@ -343,7 +343,6 @@ rec {
       gh
       micro
     ];
-    # Don't use `gh --json --template`, golang template syntax cannot use if in pipe, so changing color for draft state will gone
     text = ''
       readonly pr_number="$1"
       readonly subject_base="$2"
