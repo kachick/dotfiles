@@ -343,6 +343,7 @@ rec {
       with pkgs;
       [
         coreutils
+        safe_quote_backtik
         fzf
         gh
         micro
@@ -354,10 +355,11 @@ rec {
       # shellcheck disable=SC2016
       gh pr list --state 'open' --search 'draft:false' | fzf --ansi --delimiter "\t" --nth 2 \
         --preview 'gh pr view {1}' \
-        --header $'CTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\nCTRL-O (Open in browser)\n\n' \
-        --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(micro | cat)")' \
-        --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
-        --bind 'ctrl-o:become(gh pr view {1} --web)'
+        --header $'CTRL-C (Checkout) / CTRL-O (Open in browser)\n\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
+        --bind 'ctrl-c:become(gh pr checkout {1})' \
+        --bind 'ctrl-o:become(gh pr view {1} --web)' \
+        --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2} | micro)")' \
+        --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)'
     '';
   };
 }
