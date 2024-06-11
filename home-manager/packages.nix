@@ -139,6 +139,7 @@ with pkgs;
   updeps
   bench_shells
   archive-home-files
+  prs
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
