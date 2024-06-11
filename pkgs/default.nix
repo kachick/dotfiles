@@ -351,16 +351,18 @@ rec {
       ++ (lib.optionals stdenv.isLinux [
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
       ]);
+    # Don't use `gh --json --template`, golang template syntax cannot use if in pipe, so changing color for draft state will gone
     text = ''
       # shellcheck disable=SC2016
-      CLICOLOR_FORCE='1' gh pr list --state 'open' --json number,title --template '{{range .}}{{tablerow (printf "#%v" .number | autocolor "green") .title}}{{end}}' | fzf --ansi --nth 2.. \
-        --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
-        --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
-        --bind 'alt-c:become(gh pr checkout {1})' \
-        --bind 'ctrl-o:become(gh pr view {1} --web)' \
-        --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2} | micro)")' \
-        --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
-        --bind 'enter:become(echo {1} | tr -d "#")'
+      GH_FORCE_TTY='50%' gh pr list --state 'open' | \
+        fzf --ansi --header-lines=4 --nth 2.. \
+          --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
+          --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
+          --bind 'alt-c:become(gh pr checkout {1})' \
+          --bind 'ctrl-o:become(gh pr view {1} --web)' \
+          --bind 'ctrl-s:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(safe_quote_backtik {2..} | micro)")' \
+          --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
+          --bind 'enter:become(echo {1} | tr -d "#")'
     '';
   };
 }
