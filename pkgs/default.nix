@@ -352,4 +352,48 @@ rec {
         --bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
     '';
   };
+
+  wait-and-squashmerge = pkgs.writeShellApplication {
+    name = "wait-and-squashmerge";
+    runtimeInputs = with pkgs; [
+      gh
+      micro
+    ];
+    text = ''
+      readonly pr_number="$1"
+      commit_subject="$(gh pr view "$pr_number" --json title --template '{{ .title }}' | micro)"
+      readonly commit_subject
+
+      gh pr checks "$pr_number" --interval 5 --watch --fail-fast && \
+        gh pr merge "$pr_number" --delete-branch --squash --subject "$commit_subject"
+    '';
+  };
+
+  prs = pkgs.writeShellApplication {
+    name = "prs";
+    runtimeInputs =
+      with pkgs;
+      [
+        coreutils
+        fzf
+        gh
+        wait-and-squashmerge
+      ]
+      ++ (lib.optionals stdenv.isLinux [
+        wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+      ]);
+    # Don't use `gh --json --template`, golang template syntax cannot use if in pipe, so changing color for draft state will gone
+    text = ''
+      # shellcheck disable=SC2016
+      GH_FORCE_TTY='50%' gh pr list --state 'open' | \
+        fzf --ansi --header-lines=4 --nth 2.. \
+          --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
+          --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
+          --bind 'alt-c:become(gh pr checkout {1})' \
+          --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
+          --bind 'ctrl-s:become(wait-and-squashmerge {1})' \
+          --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
+          --bind 'enter:become(echo {1} | tr -d "#")'
+    '';
+  };
 }

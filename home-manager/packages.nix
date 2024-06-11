@@ -73,6 +73,7 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  wezterm
   alacritty
   typos
   hyperfine
@@ -138,6 +139,7 @@ with pkgs;
   updeps
   bench_shells
   archive-home-files
+  prs
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`

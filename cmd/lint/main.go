@@ -29,6 +29,8 @@ func main() {
 		// No git makes 4x+ faster
 		{Path: "gitleaks", Args: []string{"detect", "--no-git"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
+		{Path: "stylua", Args: []string{"--check", "."}},
+		{Path: "nixpkgs-lint", Args: []string{"."}},
 	}
 
 	if *allFlag {

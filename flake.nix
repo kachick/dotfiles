@@ -58,6 +58,7 @@
                 bashInteractive
                 nixfmt-rfc-style
                 nil
+                nixpkgs-lint-community
                 # To get sha256 around pkgs.fetchFromGitHub in CLI
                 nix-prefetch-git
                 jq
@@ -70,6 +71,7 @@
                 dprint
                 # TODO: Use stable if https://github.com/google/yamlfmt/pull/179 is released
                 edge-pkgs.yamlfmt
+                stylua
                 typos
                 typos-lsp
                 go_1_22

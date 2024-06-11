@@ -19,6 +19,9 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
   "nix.serverPath": "nil",
   "nix.enableLanguageServer": true,
   "nix.serverSettings": {

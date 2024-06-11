@@ -23,6 +23,7 @@ Or, you can directly use some commands with `nix run` without any installation s
 nix run 'github:kachick/dotfiles#todo'
 nix run 'github:kachick/dotfiles#bench_shells'
 nix run 'github:kachick/dotfiles#git-delete-merged-branches'
+nix run 'github:kachick/dotfiles#prs'
 ```
 
 ## Linux(Ubuntu)

@@ -38,3 +38,15 @@ jobs:
       - name: Install yamlfmt
         run: go install github.com/google/yamlfmt/cmd/yamlfmt@v0.12.1 # TODO: Apply selfup after https://github.com/google/yamlfmt/pull/180
       - run: yamlfmt -lint .
+
+  stylua:
+    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Pinning because of needed the GITHUB_TOKEN
+      - uses: JohnnyMorganz/stylua-action@b6661824b86c9c33121bed87a778b660ba90cf77 # v4.0.0
+        with:
+          token: ${{ github.token }}
+          version: '0.20.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["stylua", "--version"], "nth": 2}
+          args: --check .

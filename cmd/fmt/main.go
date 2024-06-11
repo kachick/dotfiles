@@ -24,6 +24,7 @@ func main() {
 		{Path: "dprint", Args: []string{"fmt"}},
 		{Path: "yamlfmt", Args: []string{"."}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
+		{Path: "stylua", Args: []string{"."}},
 	}
 
 	// Editing them basically will be fmt in editor integrations

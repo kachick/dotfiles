@@ -36,12 +36,12 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v11
+      # Do not use DeterminateSystems/magic-nix-cache-action for home workflow, it always faced to GitHub rate limit because of home depends on many packages
+      - uses: DeterminateSystems/nix-installer-action@v12
       - name: Print some dotfiles overviews
         run: |
           cat /etc/nix/nix.conf
           ls -alh ~
-      - uses: DeterminateSystems/magic-nix-cache-action@v6
       - uses: actions/checkout@v4
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
@@ -84,7 +84,8 @@ jobs:
         run: |
           zsh -c 'archive-home-files home-manager-generation-home-files'
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: 'home-files-${{ github.sha }}-${{ runner.os }}'
           path: home-manager-generation-home-files.tar.gz
+          if-no-files-found: 'error'

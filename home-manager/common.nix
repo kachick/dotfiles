@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   edge-pkgs,
   homemade-pkgs,
   ...
@@ -39,9 +40,10 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
+      # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = "${pkgs.micro}/bin/micro"; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
-      VISUAL = "code -w";
+      EDITOR = lib.getExe pkgs.micro; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
+      VISUAL = lib.getExe pkgs.micro; # vscode is heavy even if in VISUAL use
       PAGER = "less";
 
       # - You can check the candidates in `locale -a`
@@ -141,6 +143,11 @@
       fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
     }
   '';
+
+  xdg.configFile."wezterm" = {
+    source = ../config/wezterm;
+    recursive = true;
+  };
 
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source =

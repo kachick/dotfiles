@@ -70,25 +70,43 @@ func provisioners() []provisioner {
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
-	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), 0750)
+	const dirPerm = 0750
+
+	// GlazeWM does not support .config directory
+	err = os.MkdirAll(filepath.Join(homePath, ".glaze-wm"), dirPerm)
 	if err != nil {
-		log.Fatalf("Failed to create dotfiles directory: %+v", err)
+		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
 	}
-	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), 0750)
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "wezterm"), dirPerm)
+	if err != nil {
+		log.Fatalf("Failed to create wezterm dotfiles directory: %+v", err)
+	}
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), dirPerm)
+	if err != nil {
+		log.Fatalf("Failed to create alacritty dotfiles directory: %+v", err)
+	}
+	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
 	}
 
 	return []provisioner{
 		newProvisioner([]string{"config", "starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
+
+		// TODO: Copy all this wezterm dir
+		newProvisioner([]string{"config", "wezterm", "wezterm.lua"}, []string{homePath, ".config", "wezterm", "wezterm.lua"}),
+
 		newProvisioner([]string{"config", "alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		newProvisioner([]string{"config", "alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"config", "alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"config", "alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
+
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
+
+		newProvisioner([]string{"windows", "glazewm", "config.yaml"}, []string{homePath, ".glaze-wm", "config.yaml"}),
 	}
 }
 

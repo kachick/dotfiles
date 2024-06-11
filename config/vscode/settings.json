@@ -1,0 +1,93 @@
+{
+  "$schema": "vscode://schemas/settings/user",
+  "[json]": {
+    "editor.formatOnSave": true
+  },
+  "json.format.enable": false,
+  "workbench.colorCustomizations": {
+    "terminal.background": "#282C34",
+    "terminal.foreground": "#ABB2BF",
+    "terminalCursor.background": "#ABB2BF",
+    "terminalCursor.foreground": "#ABB2BF",
+    "terminal.ansiBlack": "#282C34",
+    "terminal.ansiBlue": "#61AFEF",
+    "terminal.ansiBrightBlack": "#545862",
+    "terminal.ansiBrightBlue": "#61AFEF",
+    "terminal.ansiBrightCyan": "#56B6C2",
+    "terminal.ansiBrightGreen": "#98C379",
+    "terminal.ansiBrightMagenta": "#C678DD",
+    "terminal.ansiBrightRed": "#E06C75",
+    "terminal.ansiBrightWhite": "#C8CCD4",
+    "terminal.ansiBrightYellow": "#E5C07B",
+    "terminal.ansiCyan": "#56B6C2",
+    "terminal.ansiGreen": "#98C379",
+    "terminal.ansiMagenta": "#C678DD",
+    "terminal.ansiRed": "#E06C75",
+    "terminal.ansiWhite": "#ABB2BF",
+    "terminal.ansiYellow": "#E5C07B"
+  },
+  "workbench.editor.enablePreview": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "diffEditor.ignoreTrimWhitespace": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.suggestSelection": "first",
+  "editor.tabSize": 2,
+  "editor.renderWhitespace": "all",
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": true,
+  "go.toolsManagement.autoUpdate": true,
+  "workbench.startupEditor": "none",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.editorAssociations": {
+    "git-rebase-todo": "default"
+  },
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.integrated.copyOnSelection": true,
+  "window.title": "${activeEditorMedium}${separator}${rootName}",
+  "files.watcherExclude": {
+    "**.log": true,
+    "**/build/**": true,
+    "**/node_modules/**": true,
+    "**/vendor/**": true,
+    "**/.direnv/**": true
+  },
+  "search.exclude": {
+    "**.log": true,
+    "**/build/**": true,
+    "**/node_modules/**": true,
+    "**/log": true,
+    "**/tmp": true,
+    "**/vendor": true,
+    "**/.direnv/**": true
+  },
+  "go.editorContextMenuCommands": {
+    "fillStruct": true
+  },
+  "diffEditor.wordWrap": "off",
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "search.followSymlinks": false,
+  "search.useGlobalIgnoreFiles": true,
+  "git.autofetch": true,
+  "git.ignoreRebaseWarning": true,
+  "files.autoGuessEncoding": true,
+  "editor.guides.indentation": false,
+  "editor.linkedEditing": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.guides.bracketPairs": true,
+  "editor.bracketPairColorization.enabled": true,
+  "elmLS.elmReviewDiagnostics": "warning",
+  "typescript.format.enable": false,
+  "editor.fontFamily": "'PlemolJP Console NF', '源ノ角ゴシック Code JP', monospace",
+  "editor.fontLigatures": "'zero'",
+  "editor.inlineSuggest.enabled": true,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "git.openRepositoryInParentFolders": "never",
+  "shellcheck.ignorePatterns": {
+    "**/.envrc": true
+  },
+  "debug.openDebug": "neverOpen",
+  "editor.tabCompletion": "on",
+  "files.defaultLanguage": "powershell",
+  "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+  "workbench.colorTheme": "Iceberg"
+}
