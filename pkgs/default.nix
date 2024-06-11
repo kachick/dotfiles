@@ -347,7 +347,8 @@ rec {
     text = ''
       readonly pr_number="$1"
       readonly subject_base="$2"
-      readonly commit_subject="$(echo "subject_base" | micro)"
+      commit_subject="$(echo "$subject_base" | micro)"
+      readonly commit_subject
 
       gh pr checks "$pr_number" --interval 5 --watch --fail-fast && \
         gh pr merge "$pr_number" --delete-branch --squash --subject "$commit_subject"
