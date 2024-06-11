@@ -337,6 +337,23 @@ rec {
     '';
   };
 
+  wait-and-squashmerge = pkgs.writeShellApplication {
+    name = "wait-and-squashmerge";
+    runtimeInputs = with pkgs; [
+      gh
+      micro
+    ];
+    text = ''
+      readonly pr_number="$1"
+      readonly subject_base="$2"
+      commit_subject="$(echo "$subject_base" | micro)"
+      readonly commit_subject
+
+      gh pr checks "$pr_number" --interval 5 --watch --fail-fast && \
+        gh pr merge "$pr_number" --delete-branch --squash --subject "$commit_subject"
+    '';
+  };
+
   prs = pkgs.writeShellApplication {
     name = "prs";
     runtimeInputs =
@@ -346,6 +363,7 @@ rec {
         fzf
         gh
         micro
+        wait-and-squashmerge
       ]
       ++ (lib.optionals stdenv.isLinux [
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
@@ -359,7 +377,7 @@ rec {
           --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
           --bind 'alt-c:become(gh pr checkout {1})' \
           --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-          --bind 'ctrl-s:execute(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch --squash --subject "$(echo {2..} | micro)")' \
+          --bind 'ctrl-s:execute(wait-and-squashmerge {1} {2..})' \
           --bind 'ctrl-m:execute(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
           --bind 'enter:become(echo {1} | tr -d "#")'
     '';
