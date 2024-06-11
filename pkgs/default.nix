@@ -345,8 +345,7 @@ rec {
     ];
     text = ''
       readonly pr_number="$1"
-      readonly subject_base="$2"
-      commit_subject="$(echo "$subject_base" | micro)"
+      commit_subject="$(gh pr view "$pr_number" --json title --template '{{ .title }}' | micro)"
       readonly commit_subject
 
       gh pr checks "$pr_number" --interval 5 --watch --fail-fast && \
@@ -377,7 +376,7 @@ rec {
           --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
           --bind 'alt-c:become(gh pr checkout {1})' \
           --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-          --bind 'ctrl-s:become(wait-and-squashmerge {1} {2..})' \
+          --bind 'ctrl-s:become(wait-and-squashmerge {1})' \
           --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
           --bind 'enter:become(echo {1} | tr -d "#")'
     '';
