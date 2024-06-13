@@ -4,6 +4,38 @@
     "editor.formatOnSave": true
   },
   "json.format.enable": false,
+  "[yaml]": {
+    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "off"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "gopls": {
+    "build.buildFlags": ["-tags=linux,windows,darwin"]
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[ruby]": {
+    "editor.defaultFormatter": "rubocop.vscode-rubocop"
+  },
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  "[fish]": {
+    "editor.defaultFormatter": "bmalehorn.vscode-fish"
+  },
   "workbench.colorCustomizations": {
     "terminal.background": "#282C34",
     "terminal.foreground": "#ABB2BF",
