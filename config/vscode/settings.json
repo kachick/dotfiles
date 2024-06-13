@@ -16,7 +16,7 @@
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer",
     "editor.formatOnSave": true,
-    "editor.inlayHints.enabled": "off"
+    "editor.inlayHints.enabled": "onUnlessPressed"
   },
   "[go]": {
     "editor.defaultFormatter": "golang.go"
