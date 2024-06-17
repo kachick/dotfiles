@@ -319,10 +319,18 @@ rec {
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
       ]);
     text = ''
+      if [ $# -ge 1 ]; then
+        query="$1"
+      else
+        query=""
+      fi
+
       # source nixpkgs file does not work here: source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
       _fzf_git_fzf() {
-        fzf-tmux -p80%,60% -- \
+        local -r query="$1"
+
+        fzf-tmux --query "$query" -p80%,60% -- \
           --layout=reverse --multi --height=50% --min-height=20 --border \
           --border-label-pos=2 \
           --color='header:italic:underline,label:blue' \
@@ -331,7 +339,7 @@ rec {
       }
 
       # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
-      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --query "$query" --border-label '🪵 Logs' \
         --preview 'echo {} | \
           cut --delimiter " " --fields 2 --only-delimited | \
           ansi2txt | \
