@@ -129,10 +129,15 @@
   # TODO: Use absolute path for homemade commands
   xdg.configFile."posix_shells/shared_functions.sh".text = ''
     cdg() {
-      local dest="$(ghqf "$@")"
-      if [ -n "$dest" ]; then
-        cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$dest")"
+      local -r repo="$(ghqf "$@")"
+      if [ -n "$repo" ]; then
+        cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$repo")"
       fi
+    }
+
+    gg() {
+      local -r repo="$1"
+      ${pkgs.ghq}/bin/ghq get "$repo" && cdg "$repo"
     }
 
     cdt() {
