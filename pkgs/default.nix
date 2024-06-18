@@ -395,16 +395,16 @@ rec {
     '';
   };
 
-  trim-github-user-prefix-for-reponame = pkgs.buildGo122Module {
+  trim-github-user-prefix-for-reponame = pkgs.buildGo122Module rec {
     pname = "trim-github-user-prefix-for-reponame";
     version = "0.0.1";
-    default = "trim-github-user-prefix-for-reponame";
+    default = pname;
     vendorHash = null;
-    src = ./trim-github-user-prefix-for-reponame;
+    src = ./${pname};
 
     meta = {
       description = "kachick/dotfiles => dotfiles, dotfiles => dotfiles";
-      mainProgram = "trim-github-user-prefix-for-reponame";
+      mainProgram = pname;
     };
   };
 }
