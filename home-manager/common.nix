@@ -129,16 +129,15 @@
   # TODO: Use absolute path for homemade commands
   xdg.configFile."posix_shells/shared_functions.sh".text = ''
     cdg() {
-      local -r repo="$(ghqf "$@")"
+      local -r query-repoonly="$(echo "$1" | ${lib.getExe homemade-pkgs.trim-github-user-prefix-for-reponame})"
+      local -r repo="$(${lib.getExe homemade-pkgs.ghqf} "$query-repoonly")"
       if [ -n "$repo" ]; then
-        cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$repo")"
+        cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
       fi
     }
 
     gg() {
-      local -r repofuzzy="$1"
-      local -r repoonly="$(echo "$repofuzzy" | ${lib.getExe homemade-pkgs.trim-github-user-prefix-for-reponame})"
-      ${lib.getExe pkgs.ghq} get "$repofuzzy" && cdg "$repoonly"
+      ${lib.getExe pkgs.ghq} get "$1" && cdg "$1"
     }
 
     cdt() {
