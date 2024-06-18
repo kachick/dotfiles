@@ -136,8 +136,9 @@
     }
 
     gg() {
-      local -r repo="$1"
-      ${pkgs.ghq}/bin/ghq get "$repo" && cdg "$repo"
+      local -r repofuzzy="$1"
+      local -r repoonly="$(echo "$repofuzzy" | ${lib.getExe homemade-pkgs.trim-github-user-prefix-for-reponame})"
+      ${lib.getExe pkgs.ghq} get "$repofuzzy" && cdg "$repoonly"
     }
 
     cdt() {
