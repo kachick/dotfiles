@@ -125,8 +125,6 @@
   # - aliases around `cd` is the typical use, because they should be alias or sourced shell function
   # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
   # - Do not add shebang and options
-  #
-  # TODO: Use absolute path for homemade commands
   xdg.configFile."posix_shells/shared_functions.sh".text = ''
     cdg() {
       local -r query_repoonly="$(echo "$1" | ${lib.getExe homemade-pkgs.trim-github-user-prefix-for-reponame})"
@@ -145,7 +143,7 @@
     }
 
     gch() {
-      fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
+      fc -nrl 1 | ${lib.getExe homemade-pkgs.fzf-bind-posix-shell-history-to-git-commit-message}
     }
   '';
 
