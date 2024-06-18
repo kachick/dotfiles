@@ -395,19 +395,11 @@ rec {
     '';
   };
 
-  # trim-github-user-prefix-for-reponame = pkgs.writeRubyBin {
-  #   name = "trim-github-user-prefix-for-reponame";
-  #   text = ''
-  #     STDIN.each_line { |l| puts l.split("/").last }
-  #   '';
-  # };
-
   trim-github-user-prefix-for-reponame = pkgs.buildGo122Module {
     pname = "trim-github-user-prefix-for-reponame";
     version = "0.0.1";
     default = "trim-github-user-prefix-for-reponame";
     vendorHash = null;
-    # modRoot = "../";
     src = ./trim-github-user-prefix-for-reponame;
 
     meta = {
