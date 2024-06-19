@@ -27,11 +27,17 @@
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
+  "[crystal]": {
+    "editor.defaultFormatter": "crystal-lang-tools.crystal-lang"
+  },
   "[ruby]": {
     "editor.defaultFormatter": "rubocop.vscode-rubocop"
   },
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua"
+  },
+  "[elm]": {
+    "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
   },
   "[fish]": {
     "editor.defaultFormatter": "bmalehorn.vscode-fish"

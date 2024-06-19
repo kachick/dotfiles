@@ -1,0 +1,4 @@
+hbenl.vscode-test-explorer
+katjanakosic.vscode-json5
+ms-vscode.makefile-tools
+ms-vscode.test-adapter-converter
