@@ -57,6 +57,7 @@ so you should activate with `--impure` to load `/etc/nixos/hardware-configuratio
 
 ```bash
 sudo nixos-rebuild switch --impure --flake .#nixos-desktop
+sudo reboot now
 ```
 
 ## macOS(Darwin)
