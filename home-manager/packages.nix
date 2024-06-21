@@ -74,8 +74,7 @@ with pkgs;
   xh # alt HTTPie
   zellij
 
-  # In NixOS 24.05 packages version having: https://github.com/wez/wezterm/issues/5263
-  edge-pkgs.wezterm
+  wezterm
   alacritty
 
   typos
