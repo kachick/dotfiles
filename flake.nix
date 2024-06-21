@@ -39,6 +39,7 @@
         devShells.default =
           with pkgs;
           mkShell {
+            # runtimeInputs = [ stdenv.cc ];
             buildInputs = [
               # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
               bashInteractive
@@ -53,22 +54,23 @@
               gitleaks
               cargo-make
 
-              # edge-pkgs.dprint
-              (writeShellApplication {
-                name = "dprint";
-                runtimeInputs = with pkgs; [
-                  edge-pkgs.dprint
-                  nix-ld
-                ];
-                text = ''
-                  # NIX_LD=${lib.fileContents "${stdenv.cc}/nix-support/dynamic-linker"}
+              # stdenv.cc
 
-                  dprint "@"
-                '';
-                meta = {
-                  description = "Run dprint prtittier and exec plugins on NixOS and pure devshell";
-                };
-              })
+              # steam-run
+              edge-pkgs.dprint
+              # (writeShellApplication {
+              #   name = "dprint";
+              #   runtimeInputs = with pkgs; [
+              #     edge-pkgs.dprint
+              #     # nix-ld
+              #   ];
+              #   text = ''
+              #     dprint "@"
+              #   '';
+              #   meta = {
+              #     description = "Run dprint prtittier and exec plugins on NixOS and pure devshell";
+              #   };
+              # })
 
               edge-pkgs.yamlfmt
               edge-pkgs.typos

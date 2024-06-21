@@ -7,6 +7,7 @@
     # unstable-pkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
+    # nix-alien-flake.url = "github:thiagokokada/nix-alien";
   };
 
   outputs =

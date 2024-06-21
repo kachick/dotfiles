@@ -4,6 +4,12 @@
 
 { config, pkgs, ... }:
 
+let
+  nix-alien-pkgs =
+    import
+      (builtins.fetchTarball "https://github.com/thiagokokada/nix-alien/tarball/db5d6107d3c72d5eb0b7a02a30b87b1f0076fcc5")
+      { };
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -152,6 +158,9 @@
     fd
     fzf
     ripgrep
+
+    nix-alien-pkgs.nix-alien
+    nix-alien-pkgs.nix-alien-ld
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
