@@ -30,6 +30,10 @@ if string.find(wezterm.target_triple, "pc-windows", 1, true) then
   })
 end
 
+-- wezterm never starts in wayland, both nixos-24.05 and nixos-unstable
+-- https://github.com/wez/wezterm/issues/5340
+config.enable_wayland = false
+
 config.keys = {
   -- TODO: Consider to move into windows only combination
   { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
