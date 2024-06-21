@@ -12,6 +12,8 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
+    xremap-flake.url = "github:xremap/nix-flake";
   };
 
   outputs =
@@ -20,8 +22,10 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-    }:
+      xremap-flake,
+    }@inputs:
     let
+      inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
@@ -34,8 +38,16 @@
         type = "app";
         program = nixpkgs.lib.getExe pkg;
       };
+
+      packages = forAllSystems (
+        system:
+        (import ./pkgs {
+          pkgs = nixpkgs.legacyPackages.${system};
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        })
+      );
     in
-    rec {
+    {
       # nixfmt will be official
       # - https://github.com/NixOS/nixfmt/issues/153
       # - https://github.com/NixOS/nixfmt/issues/129
@@ -82,14 +94,6 @@
         }
       );
 
-      packages = forAllSystems (
-        system:
-        (import ./pkgs {
-          pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
-      );
-
       apps = forAllSystems (system: {
         # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
@@ -107,6 +111,59 @@
         git-log-fzf = mkApp packages.${system}.git-log-fzf;
         prs = mkApp packages.${system}.prs;
       });
+
+      nixosConfigurations = {
+        "nixos-desktop" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          modules = [
+            ./nixos/configuration.nix
+            home-manager.nixosModules.default
+            {
+              home-manager = {
+                users.kachick = import ./home-manager/kachick.nix;
+
+                extraSpecialArgs = {
+                  homemade-pkgs = packages.x86_64-linux;
+                  edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+                };
+              };
+            }
+            xremap-flake.nixosModules.default
+            {
+              # Modmap for single key rebinds
+              services.xremap.config = {
+                modmap = [
+                  {
+                    name = "Global";
+                    remap = {
+                      "CapsLock" = "Ctrl_L";
+                      "Alt_L" = {
+                        "held" = "Alt_L";
+                        "alone" = "Muhenkan";
+                        "alone_timeout_millis" = 500;
+                      };
+                      "Alt_R" = "Henkan";
+                    };
+                  }
+                ];
+
+                # Keymap for key combo rebinds
+                keymap = [
+                  {
+                    name = "Gnome lancher";
+                    remap = {
+                      "Alt-Space" = "LEFTMETA";
+                    };
+                  }
+                ];
+              };
+            }
+          ];
+          specialArgs = {
+            inherit inputs outputs;
+          };
+        };
+      };
 
       homeConfigurations = {
         "kachick@linux" = home-manager.lib.homeManagerConfiguration {

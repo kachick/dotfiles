@@ -52,7 +52,12 @@ nix run 'github:kachick/dotfiles#prs'
 
 ## NixOS
 
-[Work in Progress](https://github.com/kachick/dotfiles/pull/576)
+This repository does not save the `hardware-configuration.nix` for each host,\
+so you should activate with `--impure` to load `/etc/nixos/hardware-configuration.nix` in your local
+
+```bash
+sudo nixos-rebuild switch --impure --flake .#nixos-desktop
+```
 
 ## macOS(Darwin)
 

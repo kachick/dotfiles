@@ -7,8 +7,7 @@
 {
   imports = [
     # Include the results of the hardware scan.
-    ./hardware-configuration.nix
-    <home-manager/nixos>
+    /etc/nixos/hardware-configuration.nix
   ];
 
   nix.settings.experimental-features = [
@@ -121,8 +120,6 @@
       packages = with pkgs; [ firefox ];
     };
   };
-
-  home-manager.users.kachick = ./home-manager/kachick.nix;
 
   i18n.inputMethod = {
     enabled = "fcitx5";

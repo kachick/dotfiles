@@ -11,6 +11,7 @@ tmp/
 .direnv
 
 *hardware-configuration.nix
+result
 
 # macOS
 **/AppSupport
