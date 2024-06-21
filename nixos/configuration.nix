@@ -136,6 +136,7 @@
   services.dbus.packages = [ config.i18n.inputMethod.package ];
 
   # Allow unfree packages
+  # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
@@ -159,6 +160,10 @@
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
     vscodium
+
+    # Unfree packages
+    vscode
+    google-chrome
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
