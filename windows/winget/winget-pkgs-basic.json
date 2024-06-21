@@ -68,7 +68,10 @@
           "PackageIdentifier": "Microsoft.VisualStudioCode"
         },
         {
-          "PackageIdentifier": "glzr-io.glazewm"
+          "PackageIdentifier": "LGUG2Z.komorebi"
+        },
+        {
+          "PackageIdentifier": "LGUG2Z.whkd"
         }
       ],
       "SourceDetails": {

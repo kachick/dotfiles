@@ -14,3 +14,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+  - package-ecosystem: 'gomod'
+    directory: '/pkgs/trim-github-user-prefix-for-reponame'
+    schedule:
+      interval: 'weekly'

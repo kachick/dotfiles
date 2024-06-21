@@ -120,19 +120,22 @@
   # https://unix.stackexchange.com/a/3449
   # Use shared aliases in both bash and zsh with sourcing
   #
-  # - We CAN use `local` if omit ksh
+  # - We CAN use `local` and `local -r` if omit ksh
   # - Keep minimum
   # - aliases around `cd` is the typical use, because they should be alias or sourced shell function
   # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
   # - Do not add shebang and options
-  #
-  # TODO: Use absolute path for homemade commands
   xdg.configFile."posix_shells/shared_functions.sh".text = ''
     cdg() {
-      local dest="$(ghqf "$@")"
-      if [ -n "$dest" ]; then
-        cd "$(${pkgs.ghq}/bin/ghq list --full-path --exact "$dest")"
+      local -r query_repoonly="$(echo "$1" | ${lib.getExe homemade-pkgs.trim-github-user-prefix-for-reponame})"
+      local -r repo="$(${lib.getExe homemade-pkgs.ghqf} "$query_repoonly")"
+      if [ -n "$repo" ]; then
+        cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
       fi
+    }
+
+    gg() {
+      ${lib.getExe pkgs.ghq} get "$1" && cdg "$1"
     }
 
     cdt() {
@@ -140,7 +143,7 @@
     }
 
     gch() {
-      fc -nrl 1 | fzf-bind-posix-shell-history-to-git-commit-message
+      fc -nrl 1 | ${lib.getExe homemade-pkgs.fzf-bind-posix-shell-history-to-git-commit-message}
     }
   '';
 

@@ -160,8 +160,14 @@ rec {
       micro
     ];
     text = ''
+      if [ $# -ge 1 ]; then
+        query="$1"
+      else
+        query=""
+      fi
+
       # shellcheck disable=SC2016
-      fzf --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
+      fzf --query "$query" --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
     '';
   };
 
@@ -329,10 +335,18 @@ rec {
         wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
       ]);
     text = ''
+      if [ $# -ge 1 ]; then
+        query="$1"
+      else
+        query=""
+      fi
+
       # source nixpkgs file does not work here: source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       # https://github.com/junegunn/fzf-git.sh/blob/0f1e52079ffd9741eec723f8fd92aa09f376602f/fzf-git.sh#L118C1-L125C2
       _fzf_git_fzf() {
-        fzf-tmux -p80%,60% -- \
+        local -r query="$1"
+
+        fzf-tmux --query "$query" -p80%,60% -- \
           --layout=reverse --multi --height=50% --min-height=20 --border \
           --border-label-pos=2 \
           --color='header:italic:underline,label:blue' \
@@ -341,7 +355,7 @@ rec {
       }
 
       # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
-      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --border-label '🪵 Logs' \
+      _fzf_git_fzf --ansi --nth 1,3.. --no-sort --query "$query" --border-label '🪵 Logs' \
         --preview 'echo {} | \
           cut --delimiter " " --fields 2 --only-delimited | \
           ansi2txt | \
@@ -388,12 +402,25 @@ rec {
       GH_FORCE_TTY='50%' gh pr list --state 'open' | \
         fzf --ansi --header-lines=4 --nth 2.. \
           --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
-          --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-S (Squash and merge) ╱ CTRL-M (Merge)\n\n' \
+          --header $'ALT-C (Checkout) / CTRL-O (Open in browser)\nCTRL-ALT-S (Squash and merge) ╱ CTRL-ALT-M (Merge)\n\n' \
           --bind 'alt-c:become(gh pr checkout {1})' \
           --bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
-          --bind 'ctrl-s:become(wait-and-squashmerge {1})' \
-          --bind 'ctrl-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
+          --bind 'ctrl-alt-s:become(wait-and-squashmerge {1})' \
+          --bind 'ctrl-alt-m:become(gh pr checks {1} --interval 5 --watch --fail-fast && gh pr merge {1} --delete-branch)' \
           --bind 'enter:become(echo {1} | tr -d "#")'
     '';
+  };
+
+  trim-github-user-prefix-for-reponame = pkgs.buildGo122Module rec {
+    pname = "trim-github-user-prefix-for-reponame";
+    version = "0.0.1";
+    default = pname;
+    vendorHash = null;
+    src = ./${pname};
+
+    meta = {
+      description = "kachick/dotfiles => dotfiles, dotfiles => dotfiles";
+      mainProgram = pname;
+    };
   };
 }

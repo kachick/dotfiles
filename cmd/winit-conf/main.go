@@ -72,11 +72,6 @@ func provisioners() []provisioner {
 	// As I understand it, unix like permission masks will work even in windows...
 	const dirPerm = 0750
 
-	// GlazeWM does not support .config directory
-	err = os.MkdirAll(filepath.Join(homePath, ".glaze-wm"), dirPerm)
-	if err != nil {
-		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
-	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "wezterm"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create wezterm dotfiles directory: %+v", err)
@@ -88,6 +83,10 @@ func provisioners() []provisioner {
 	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
+	}
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "whkd"), dirPerm)
+	if err != nil {
+		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
 	}
 
 	return []provisioner{
@@ -106,7 +105,10 @@ func provisioners() []provisioner {
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
 
-		newProvisioner([]string{"windows", "glazewm", "config.yaml"}, []string{homePath, ".glaze-wm", "config.yaml"}),
+		// Can I move it to komorebi~ path? application.yaml in root looks like too wide
+		newProvisioner([]string{"windows", "komorebi", "applications.yaml"}, []string{homePath, "applications.yaml"}),
+		newProvisioner([]string{"windows", "komorebi", "komorebi.json"}, []string{homePath, "komorebi.json"}),
+		newProvisioner([]string{"windows", "whkd", "whkdrc"}, []string{homePath, ".config", "whkd", "whkdrc"}),
 	}
 }
 
