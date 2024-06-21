@@ -209,5 +209,5 @@
   #  - https://github.com/NixOS/nixpkgs/pull/314871
   programs.hyprland.enable = false;
 
-  programs.nix-ld.enable = true;
+  programs.nix-ld.enable = false;
 }
