@@ -73,8 +73,11 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  wezterm
+
+  # In NixOS 24.05 packages version having: https://github.com/wez/wezterm/issues/5263
+  edge-pkgs.wezterm
   alacritty
+
   typos
   hyperfine
   difftastic
