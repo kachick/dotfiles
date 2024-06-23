@@ -114,6 +114,7 @@
         git-delete-merged-branches = mkApp packages.${system}.git-delete-merged-branches;
         git-log-fzf = mkApp packages.${system}.git-log-fzf;
         prs = mkApp packages.${system}.prs;
+        generate-clipcat-config = mkApp packages.${system}.generate-clipcat-config;
       });
 
       nixosConfigurations = {

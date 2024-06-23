@@ -226,4 +226,7 @@
     mplus-outline-fonts.githubRelease
     # sarasa-gothic # Large filesize
   ];
+
+  # https://github.com/xrelkd/clipcat/tree/develop
+  services.clipcat.enable = true;
 }
