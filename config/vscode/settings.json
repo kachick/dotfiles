@@ -127,5 +127,6 @@
   "editor.tabCompletion": "on",
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
-  "workbench.colorTheme": "Iceberg"
+  "workbench.colorTheme": "Iceberg",
+  "stylua.searchBinaryInPATH": true
 }

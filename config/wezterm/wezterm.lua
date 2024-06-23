@@ -3,9 +3,14 @@ local config <const> = wezterm.config_builder()
 local act <const> = wezterm.action
 local launch_menu <const> = {}
 local font_with_fallback <const> = wezterm.font_with_fallback({
-  { family = "PlemolJP Console NF", harfbuzz_features = { "zero" }, weight = "Medium", assume_emoji_presentation = false },
+  {
+    family = "PlemolJP Console NF",
+    harfbuzz_features = { "zero" },
+    weight = "Medium",
+    assume_emoji_presentation = false,
+  },
   { family = "Beedii", assume_emoji_presentation = true },
-  "源ノ角ゴシック Code JP"
+  "源ノ角ゴシック Code JP",
 })
 
 config.color_scheme = "iceberg-dark"
