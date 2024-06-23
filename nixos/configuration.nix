@@ -53,19 +53,15 @@
   };
 
   # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # services.xserver.enable = true;
 
   # Configure keymap in X11
-  services.xserver = {
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
+  # services.xserver = {
+  #   xkb = {
+  #     layout = "us";
+  #     variant = "";
+  #   };
+  # };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -92,8 +88,8 @@
   # };
 
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
-  security.pam.services.swaylock = { };
-  security.pam.services.swaylock.fprintAuth = true;
+  # security.pam.services.swaylock = { };
+  # security.pam.services.swaylock.fprintAuth = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -219,7 +215,10 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  programs.hyprland.enable = true;
+  programs.hyprland = {
+    enable = true;
+    # xwayland.enable = true;
+  };
 
   programs.nix-ld.enable = false;
 
