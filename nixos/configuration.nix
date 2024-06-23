@@ -53,15 +53,15 @@
   };
 
   # Enable the X11 windowing system.
-  # services.xserver.enable = true;
+  services.xserver.enable = true;
 
   # Configure keymap in X11
-  # services.xserver = {
-  #   xkb = {
-  #     layout = "us";
-  #     variant = "";
-  #   };
-  # };
+  services.xserver = {
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
+  };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
@@ -109,7 +109,7 @@
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
+  services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
@@ -159,9 +159,9 @@
 
     # Don't use clipcat, copyq for wayland problem
     # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-    clipse
+    # clipse
     # Required in clipse
-    wl-clipboard
+    # wl-clipboard
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
