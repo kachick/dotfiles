@@ -161,9 +161,9 @@
     fzf
     ripgrep
 
-    # Don't use clipcat at least https://github.com/xrelkd/clipcat/issues/1 is completed,.
-    # I couldn't use clipcat 0.17.0 in wayland
-    copyq
+    # Don't use clipcat, copyq for wayland problem
+    # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
+    clipse
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
