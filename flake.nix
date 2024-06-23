@@ -14,6 +14,8 @@
     };
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
+    # https://github.com/wez/wezterm/pull/3547#issuecomment-1915820504
+    wezterm-flake.url = "github:wez/wezterm?dir=nix";
   };
 
   outputs =
@@ -23,6 +25,7 @@
       edge-nixpkgs,
       home-manager,
       xremap-flake,
+      wezterm-flake,
     }@inputs:
     let
       inherit (self) outputs;

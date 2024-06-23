@@ -145,6 +145,7 @@
     micro
     wezterm
     alacritty
+    inputs.wezterm-flake.packages.${pkgs.system}.default
     ibm-plex
 
     wget
@@ -205,10 +206,7 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  # Do not use hyprland until we can use the wezterm fixed versions
-  #  - https://github.com/wez/wezterm/issues/5263
-  #  - https://github.com/NixOS/nixpkgs/pull/314871
-  programs.hyprland.enable = false;
+  programs.hyprland.enable = true;
 
   programs.nix-ld.enable = false;
 }
