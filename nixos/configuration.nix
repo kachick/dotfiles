@@ -151,8 +151,6 @@
     alacritty
     # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
     inputs.wezterm-flake.packages.${pkgs.system}.default
-    ibm-plex
-    inputs.beedii-nixpkgs.legacyPackages.${pkgs.system}.beedii
 
     wget
     curl
@@ -215,4 +213,14 @@
   programs.hyprland.enable = true;
 
   programs.nix-ld.enable = false;
+
+  fonts.packages = with pkgs; [
+    ibm-plex
+    plemoljp-nf
+    inputs.beedii-nixpkgs.legacyPackages.${pkgs.system}.beedii
+    source-han-code-jp # Includes many definitions, useful for fallback
+    inconsolata
+    mplus-outline-fonts.githubRelease
+    # sarasa-gothic # Large filesize
+  ];
 }
