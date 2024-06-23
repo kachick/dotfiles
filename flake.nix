@@ -7,6 +7,7 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    beedii-nixpkgs.url = "github:kachick/nixpkgs/init-beedii";
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
@@ -23,6 +24,7 @@
       self,
       nixpkgs,
       edge-nixpkgs,
+      beedii-nixpkgs,
       home-manager,
       xremap-flake,
       wezterm-flake,

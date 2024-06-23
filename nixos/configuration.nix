@@ -152,6 +152,7 @@
     # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
     inputs.wezterm-flake.packages.${pkgs.system}.default
     ibm-plex
+    inputs.beedii-nixpkgs.legacyPackages.${pkgs.system}.beedii
 
     wget
     curl

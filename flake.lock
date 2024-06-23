@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "beedii-nixpkgs": {
+      "locked": {
+        "lastModified": 1718954922,
+        "narHash": "sha256-xMM0HpszRfnUC80HnOr/PKrlsdf5EP8KvCxuiNnTjVE=",
+        "owner": "kachick",
+        "repo": "nixpkgs",
+        "rev": "0b72286b41c9c2e86cf33dd46207726fa5328454",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kachick",
+        "ref": "init-beedii",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "crane": {
       "inputs": {
         "nixpkgs": [
@@ -464,6 +480,7 @@
     },
     "root": {
       "inputs": {
+        "beedii-nixpkgs": "beedii-nixpkgs",
         "edge-nixpkgs": "edge-nixpkgs",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
