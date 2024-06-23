@@ -125,6 +125,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                backupFileExtension = "backup";
                 users.kachick = import ./home-manager/kachick.nix;
 
                 extraSpecialArgs = {

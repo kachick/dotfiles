@@ -20,3 +20,4 @@ result
 winget-pkgs-*-raw.json
 
 *.bak
+*.backup
