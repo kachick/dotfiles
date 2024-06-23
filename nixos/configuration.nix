@@ -166,8 +166,11 @@
     xdg-user-dirs
     vscodium
 
-    # Unfree packages
+    ## Unfree packages
     vscode
+
+    # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
+    # `rm -rf ~/.config/google-chrome/Singleton*`
     google-chrome
   ];
 
