@@ -23,6 +23,7 @@ on:
 
 jobs:
   home-manager:
+    if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
     timeout-minutes: 30
     strategy:
       fail-fast: false
