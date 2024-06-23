@@ -124,7 +124,6 @@
         "networkmanager"
         "wheel"
       ];
-      packages = with pkgs; [ firefox ];
     };
   };
 
@@ -165,6 +164,7 @@
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
     vscodium
+    firefox
 
     ## Unfree packages
     vscode
