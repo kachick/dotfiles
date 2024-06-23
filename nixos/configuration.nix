@@ -119,7 +119,7 @@
   users.users = {
     kachick = {
       isNormalUser = true;
-      description = "admin";
+      description = "An admin";
       extraGroups = [
         "networkmanager"
         "wheel"
