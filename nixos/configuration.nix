@@ -55,6 +55,9 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  services.xserver.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma6.enable = true;
+
   # Configure keymap in X11
   services.xserver = {
     xkb = {
@@ -214,11 +217,6 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
-
-  programs.hyprland = {
-    enable = true;
-    # xwayland.enable = true;
-  };
 
   programs.nix-ld.enable = false;
 

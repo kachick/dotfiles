@@ -38,7 +38,7 @@ end
 -- https://github.com/wez/wezterm/issues/5340
 if string.find(wezterm.target_triple, "-linux", 1, true) then
   -- wezterem often broken on wayland, especially always on hyprland https://github.com/wez/wezterm/issues/4857#issuecomment-1911269113
-  config.enable_wayland = false
+  config.enable_wayland = true
 end
 
 config.keys = {
