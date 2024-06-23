@@ -74,8 +74,9 @@ with pkgs;
   xh # alt HTTPie
   zellij
 
-  # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
-  inputs.wezterm-flake.packages.${pkgs.system}.default
+  # Do not install wezterm in home-manager layer for non NixOS
+  # - Released wezterm versions are broken on wayland
+  # - Using nightly needs to take long build time, avoiding it for CI time
   alacritty
 
   typos

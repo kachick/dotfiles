@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{
+  inputs,
+  config,
+  pkgs,
+  ...
+}:
 
 {
   imports = [
@@ -145,6 +150,7 @@
     micro
     wezterm
     alacritty
+    # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
     inputs.wezterm-flake.packages.${pkgs.system}.default
     ibm-plex
 
