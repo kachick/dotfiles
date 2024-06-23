@@ -407,21 +407,4 @@ rec {
       mainProgram = pname;
     };
   };
-
-  generate-clipcat-config = pkgs.writeShellApplication {
-    name = "generate-clipcat-config";
-    runtimeInputs = with pkgs; [
-      coreutils
-      clipcat
-    ];
-    text = ''
-      mkdir -p "$XDG_CONFIG_HOME/clipcat"
-      clipcatd default-config > "$XDG_CONFIG_HOME/clipcat/clipcatd.toml"
-      clipcatctl default-config > "$XDG_CONFIG_HOME/clipcat/clipcatctl.toml"
-      clipcat-menu default-config > "$XDG_CONFIG_HOME/clipcat/clipcat-menu.toml"
-    '';
-    meta = {
-      description = "clipcat generates context specific config, so do not directly save them in dotfiles";
-    };
-  };
 }

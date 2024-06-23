@@ -161,8 +161,9 @@
     fzf
     ripgrep
 
-    clipcat
-    rofi # clipcat can use other tools as fzf, but rofi is the default and not config will work
+    # Don't use clipcat at least https://github.com/xrelkd/clipcat/issues/1 is completed,.
+    # I couldn't use clipcat 0.17.0 in wayland
+    copyq
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
@@ -229,7 +230,4 @@
     mplus-outline-fonts.githubRelease
     # sarasa-gothic # Large filesize
   ];
-
-  # https://github.com/xrelkd/clipcat/tree/develop
-  services.clipcat.enable = true;
 }
