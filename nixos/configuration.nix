@@ -148,7 +148,6 @@
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     micro
-    wezterm
     alacritty
     # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
     inputs.wezterm-flake.packages.${pkgs.system}.default
