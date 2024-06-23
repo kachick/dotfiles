@@ -162,6 +162,7 @@
     ripgrep
 
     clipcat
+    rofi # clipcat can use other tools as fzf, but rofi is the default and not config will work
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
