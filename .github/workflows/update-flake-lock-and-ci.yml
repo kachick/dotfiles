@@ -20,6 +20,5 @@ jobs:
       pr-title: 'Bump flake.lock and related dependencies'
       optional-run: |
         nix run .#bump_completions
-        nix run .#bump_lsp
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

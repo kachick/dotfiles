@@ -40,22 +40,6 @@ rec {
     };
   };
 
-  bump_lsp = pkgs.writeShellApplication {
-    name = "bump_lsp";
-    runtimeInputs = with pkgs; [
-      git
-      nix
-      typos-lsp
-    ];
-    text = ''
-      git ls-files .vscode | xargs nix run github:kachick/selfup/v1.1.2 -- run
-      git diff-index --quiet HEAD || git commit -m 'Sync LSP path with nixpkgs' .vscode
-    '';
-    meta = {
-      description = "Bump typos-lsp";
-    };
-  };
-
   check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {
     name = "check_no_dirty_xz_in_nix_store";
     runtimeInputs = with pkgs; [ fd ];
