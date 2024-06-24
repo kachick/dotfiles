@@ -57,8 +57,33 @@
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  # services.xserver.desktopManager.gnome.enable = true;
+  services = {
+    desktopManager.plasma6.enable = true;
+    displayManager = {
+      sddm.enable = true;
+      defaultSession = "plasma";
+    };
+  };
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    plasma-browser-integration
+    konsole
+    oxygen
+  ];
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style = "adwaita-dark";
+  };
+  environment.sessionVariables = {
+    MOZ_ENABLE_WAYLAND = "1";
+    SSH_ASKPASS_REQUIRE = "prefer";
+  };
+
+  services.packagekit = {
+    enable = true;
+  };
 
   # Configure keymap in X11
   services.xserver = {
