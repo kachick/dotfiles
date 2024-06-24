@@ -166,7 +166,8 @@
   };
 
   environment.variables = {
-    QT_IM_MODULE = "fcitx";
+    # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
+    # QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
 
     EDITOR = lib.getExe pkgs.micro;
