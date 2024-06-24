@@ -37,7 +37,7 @@ end
 -- Using in wayland requires non released versions
 -- https://github.com/wez/wezterm/issues/5340
 if string.find(wezterm.target_triple, "-linux", 1, true) then
-  config.enable_wayland = true
+  config.enable_wayland = false
 end
 
 config.keys = {
