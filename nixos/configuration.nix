@@ -56,7 +56,9 @@
   services.xserver.enable = true;
 
   services.displayManager.sddm.enable = true;
+  # services.displayManager.gdm.enable = true;
   services.desktopManager.plasma6.enable = true;
+  services.gnome.gnome-keyring.enable = true;
 
   # Configure keymap in X11
   services.xserver = {
@@ -91,8 +93,9 @@
   # };
 
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
-  # security.pam.services.swaylock = { };
+  security.pam.services.swaylock = { };
   # security.pam.services.swaylock.fprintAuth = true;
+  security.pam.services.gdm.enableGnomeKeyring = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
