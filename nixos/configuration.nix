@@ -55,11 +55,6 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  services.displayManager.sddm.enable = true;
-  # services.displayManager.gdm.enable = true;
-  services.desktopManager.plasma6.enable = true;
-  services.gnome.gnome-keyring.enable = true;
-
   # Configure keymap in X11
   services.xserver = {
     xkb = {
@@ -93,9 +88,8 @@
   # };
 
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
-  security.pam.services.swaylock = { };
+  # security.pam.services.swaylock = { };
   # security.pam.services.swaylock.fprintAuth = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -220,6 +214,11 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
+
+  programs.hyprland = {
+    enable = true;
+    # xwayland.enable = true;
+  };
 
   programs.nix-ld.enable = false;
 
