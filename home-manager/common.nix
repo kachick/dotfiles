@@ -90,8 +90,14 @@
 
   programs.lesspipe.enable = true;
 
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
+
+    config.global = {
+      # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
+      hide_env_diff = true;
+    };
 
     # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
     #
