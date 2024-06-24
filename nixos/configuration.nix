@@ -10,7 +10,7 @@
   ...
 }:
 let
-  edge-pkgs = inputs.edge-nixpkgs.packages.${pkgs.system};
+  edge-pkgs = inputs.edge-nixpkgs.legacyPackages.${pkgs.system};
 in
 {
   imports = [
