@@ -55,6 +55,10 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
+  # Enable the GNOME Desktop Environment.
+  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.desktopManager.gnome.enable = true;
+
   # Configure keymap in X11
   services.xserver = {
     xkb = {
@@ -88,8 +92,8 @@
   # };
 
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
-  # security.pam.services.swaylock = { };
-  # security.pam.services.swaylock.fprintAuth = true;
+  security.pam.services.swaylock = { };
+  security.pam.services.swaylock.fprintAuth = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -109,7 +113,7 @@
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
+  # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users = {
@@ -159,9 +163,9 @@
 
     # Don't use clipcat, copyq for wayland problem
     # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-    # clipse
+    clipse
     # Required in clipse
-    # wl-clipboard
+    wl-clipboard
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
@@ -215,10 +219,7 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  programs.hyprland = {
-    enable = true;
-    # xwayland.enable = true;
-  };
+  programs.hyprland.enable = true;
 
   programs.nix-ld.enable = false;
 
