@@ -10,6 +10,7 @@
   ...
 }:
 let
+  inputs.edge-nixpkgs.config.allowUnfree = true;
   edge-pkgs = inputs.edge-nixpkgs.legacyPackages.${pkgs.system};
 in
 {
@@ -39,6 +40,10 @@ in
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
+
+  # Allow unfree packages
+  # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
+  nixpkgs.config.allowUnfree = true;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "ja_JP.UTF-8";
@@ -181,10 +186,6 @@ in
   };
 
   services.dbus.packages = [ config.i18n.inputMethod.package ];
-
-  # Allow unfree packages
-  # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
-  nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
