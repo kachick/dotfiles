@@ -136,7 +136,6 @@ with pkgs;
   zj
   p
   g
-  podman
   walk
   updeps
   bench_shells
@@ -155,4 +154,5 @@ with pkgs;
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
+  homemade-pkgs.podman
 ])
