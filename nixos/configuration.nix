@@ -10,7 +10,6 @@
   ...
 }:
 let
-  inputs.edge-nixpkgs.config.allowUnfree = true;
   edge-pkgs = inputs.edge-nixpkgs.legacyPackages.${pkgs.system};
 in
 {
@@ -44,6 +43,7 @@ in
   # Allow unfree packages
   # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
   nixpkgs.config.allowUnfree = true;
+  edge-nixpkgs.config.allowUnfree = true;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "ja_JP.UTF-8";
