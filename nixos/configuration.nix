@@ -6,6 +6,7 @@
   inputs,
   config,
   pkgs,
+  lib,
   ...
 }:
 
@@ -140,6 +141,11 @@
 
   environment.variables = {
     QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+
+    EDITOR = lib.getExe pkgs.micro;
+    SYSTEMD_EDITOR = lib.getExe pkgs.micro;
+    VISUAL = lib.getExe pkgs.micro;
   };
 
   services.dbus.packages = [ config.i18n.inputMethod.package ];
