@@ -178,6 +178,18 @@
     Type=Application
   '';
 
+  # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
+  xdg.configFile."autostart/userdirs.desktop".text = ''
+    [Desktop Entry]
+    Exec=xdg-user-dirs-update
+    TryExec=xdg-user-dirs-update
+    NoDisplay=true
+    StartupNotify=false
+    Type=Application
+    X-KDE-AutostartScript=true
+    X-KDE-autostart-phase=1
+  '';
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
