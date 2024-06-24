@@ -217,7 +217,6 @@ in
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
-    vscodium
     edge-pkgs.firefox
 
     ## Unfree packages
