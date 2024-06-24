@@ -9,7 +9,9 @@
   lib,
   ...
 }:
-
+let
+  edge-pkgs = inputs.edge-nixpkgs.packages.${pkgs.system};
+in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -216,14 +218,14 @@
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
     vscodium
-    firefox
+    edge-pkgs.firefox
 
     ## Unfree packages
-    vscode
+    edge-pkgs.vscode
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
     # `rm -rf ~/.config/google-chrome/Singleton*`
-    google-chrome
+    edge-pkgs.google-chrome
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
