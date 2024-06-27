@@ -320,6 +320,11 @@
     profiles.default = {
       isDefault = true;
       settings = {
+        # UI lang
+        "intl.locale.requested" = "ja";
+
+        "browser.shell.checkDefaultBrowser" = false;
+
         # Enabling userChrome.css
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
