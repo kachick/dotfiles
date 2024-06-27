@@ -278,11 +278,14 @@ in
     packages = with pkgs; [
       ibm-plex
       plemoljp-nf
-      noto-fonts-color-emoji
-      beedii
       inconsolata
       mplus-outline-fonts.githubRelease
-      # sarasa-gothic # Large filesize
+      # sarasa-gothic # Avoiding because of the large filesize
+
+      # emoji
+      noto-fonts-color-emoji
+      beedii
+      twemoji-color-font
 
       # Source Han family includes many definitions, useful for fallback
       source-han-code-jp
