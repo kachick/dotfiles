@@ -117,6 +117,12 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
+          pkgs = import nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+            };
+          };
         in
         {
           "nixos-desktop" = nixpkgs.lib.nixosSystem {
@@ -130,36 +136,38 @@
                   useUserPackages = true;
                   backupFileExtension = "backup";
                   users.kachick = import ./home-manager/kachick.nix;
-                  # Only add unfree packages definitions here
-                  user.kachick.programs = {
-                    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-                    google-chrome = {
-                      enable = true;
-                      # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-                      commandLineArgs = [ "--enable-wayland-ime" ];
-                    };
-
-                    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
-                    vscode = {
-                      enable = true;
-                      # Keep empty to prefer cloud sync
-                      userSettings = { };
-                      package = (
-                        nixpkgs.legacyPackages.${system}.vscode.override {
-                          # https://wiki.archlinux.org/title/Wayland#Electron
-                          commandLineArgs = [
-                            " --enable-features=UseOzonePlatform"
-                            "--ozone-platform=wayland"
-                            "--enable-wayland-ime"
-                          ];
-                        }
-                      );
-                    };
-                  };
 
                   extraSpecialArgs = {
                     homemade-pkgs = packages.x86_64-linux;
                     edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+                  };
+                };
+              }
+              {
+                # Only add unfree packages definitions here
+                home-manager.users.kachick.programs = {
+                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+                  google-chrome = {
+                    enable = true;
+                    # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+                    commandLineArgs = [ "--enable-wayland-ime" ];
+                  };
+
+                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
+                  vscode = {
+                    enable = true;
+                    # Keep empty to prefer cloud sync
+                    userSettings = { };
+                    package = (
+                      pkgs.vscode.override {
+                        # https://wiki.archlinux.org/title/Wayland#Electron
+                        commandLineArgs = [
+                          " --enable-features=UseOzonePlatform"
+                          "--ozone-platform=wayland"
+                          "--enable-wayland-ime"
+                        ];
+                      }
+                    );
                   };
                 };
               }

@@ -10,11 +10,6 @@
   ...
 }:
 let
-  edge-pkgs = import inputs.edge-nixpkgs {
-    system = pkgs.system;
-    config.allowUnfree = true;
-  };
-
   beedii = pkgs.callPackage ../pkgs/beedii.nix { };
 in
 {
@@ -226,14 +221,17 @@ in
 
     # https://github.com/NixOS/nixpkgs/issues/33282
     xdg-user-dirs
-    edge-pkgs.firefox
+
+    # Use stable packages even for GUI apps, because of using home-manager stable channel
+
+    firefox
 
     ## Unfree packages
-    edge-pkgs.vscode
+    vscode
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
     # `rm -rf ~/.config/google-chrome/Singleton*`
-    edge-pkgs.google-chrome
+    google-chrome
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
