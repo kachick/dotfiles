@@ -69,4 +69,37 @@ in
       colorscheme = "nord-16";
     };
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
+  # https://nixos.wiki/wiki/Vim
+  programs.vim = {
+    enable = true;
+    # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
+    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+
+    settings = {
+      background = "dark";
+    };
+    extraConfig = ''
+      colorscheme iceberg
+      set termguicolors
+    '';
+  };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
+  programs.vscode = {
+    enable = true;
+    # Keep empty to prefer cloud sync
+    userSettings = { };
+    package = (
+      pkgs.vscode.override {
+        # https://wiki.archlinux.org/title/Wayland#Electron
+        commandLineArgs = [
+          " --enable-features=UseOzonePlatform"
+          "--ozone-platform=wayland"
+          "--enable-wayland-ime"
+        ];
+      }
+    );
+  };
 }

@@ -60,13 +60,6 @@ sudo nixos-rebuild switch --impure --flake .#nixos-desktop
 sudo reboot now
 ```
 
-Enabling IME on chromium based apps and wayland requires some flags in the execution
-
-```bash
-google-chrome-stable --enable-wayland-ime
-code --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime .
-```
-
 ## macOS(Darwin)
 
 Activate `kachick@macbook` as Linux
