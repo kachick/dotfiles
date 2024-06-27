@@ -114,62 +114,92 @@
         prs = mkApp packages.${system}.prs;
       });
 
-      nixosConfigurations = {
-        "nixos-desktop" = nixpkgs.lib.nixosSystem {
+      nixosConfigurations =
+        let
           system = "x86_64-linux";
-          modules = [
-            ./nixos/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                backupFileExtension = "backup";
-                users.kachick = import ./home-manager/kachick.nix;
+        in
+        {
+          "nixos-desktop" = nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              ./nixos/configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  backupFileExtension = "backup";
+                  users.kachick = import ./home-manager/kachick.nix;
+                  # Only add unfree packages definitions here
+                  user.kachick.programs = {
+                    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+                    google-chrome = {
+                      enable = true;
+                      # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+                      commandLineArgs = [ "--enable-wayland-ime" ];
+                    };
 
-                extraSpecialArgs = {
-                  homemade-pkgs = packages.x86_64-linux;
-                  edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+                    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
+                    vscode = {
+                      enable = true;
+                      # Keep empty to prefer cloud sync
+                      userSettings = { };
+                      package = (
+                        nixpkgs.legacyPackages.${system}.vscode.override {
+                          # https://wiki.archlinux.org/title/Wayland#Electron
+                          commandLineArgs = [
+                            " --enable-features=UseOzonePlatform"
+                            "--ozone-platform=wayland"
+                            "--enable-wayland-ime"
+                          ];
+                        }
+                      );
+                    };
+                  };
+
+                  extraSpecialArgs = {
+                    homemade-pkgs = packages.x86_64-linux;
+                    edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+                  };
                 };
-              };
-            }
-            xremap-flake.nixosModules.default
-            {
-              # Modmap for single key rebinds
-              services.xremap.config = {
-                modmap = [
-                  {
-                    name = "Global";
-                    remap = {
-                      "CapsLock" = "Ctrl_L";
-                      "Alt_L" = {
-                        "held" = "Alt_L";
-                        "alone" = "Muhenkan";
-                        "alone_timeout_millis" = 500;
+              }
+              xremap-flake.nixosModules.default
+              {
+                # Modmap for single key rebinds
+                services.xremap.config = {
+                  modmap = [
+                    {
+                      name = "Global";
+                      remap = {
+                        "CapsLock" = "Ctrl_L";
+                        "Alt_L" = {
+                          "held" = "Alt_L";
+                          "alone" = "Muhenkan";
+                          "alone_timeout_millis" = 500;
+                        };
+                        "Alt_R" = "Henkan";
                       };
-                      "Alt_R" = "Henkan";
-                    };
-                  }
-                ];
+                    }
+                  ];
 
-                # Keymap for key combo rebinds
-                keymap = [
-                  {
-                    name = "Gnome lancher";
-                    remap = {
-                      "Alt-Space" = "LEFTMETA";
-                    };
-                  }
-                ];
-              };
-            }
-          ];
-          specialArgs = {
-            inherit inputs outputs;
-            homemade-pkgs = packages;
+                  # Keymap for key combo rebinds
+                  keymap = [
+                    {
+                      name = "Gnome lancher";
+                      remap = {
+                        "Alt-Space" = "LEFTMETA";
+                      };
+                    }
+                  ];
+                };
+              }
+            ];
+            specialArgs = {
+              inherit inputs outputs;
+              homemade-pkgs = packages;
+            };
           };
         };
-      };
 
       homeConfigurations = {
         "kachick@linux" = home-manager.lib.homeManagerConfiguration {

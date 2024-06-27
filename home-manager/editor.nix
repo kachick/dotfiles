@@ -86,20 +86,5 @@ in
     '';
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
-  programs.vscode = {
-    enable = true;
-    # Keep empty to prefer cloud sync
-    userSettings = { };
-    package = (
-      pkgs.vscode.override {
-        # https://wiki.archlinux.org/title/Wayland#Electron
-        commandLineArgs = [
-          " --enable-features=UseOzonePlatform"
-          "--ozone-platform=wayland"
-          "--enable-wayland-ime"
-        ];
-      }
-    );
-  };
+  # Don't add unfree packages like vscode here for using in containers
 }
