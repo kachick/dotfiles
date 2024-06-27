@@ -165,6 +165,10 @@ in
         "networkmanager"
         "wheel"
       ];
+      packages = with pkgs; [
+        # Comment-in while subscribed :)
+        spotify
+      ];
     };
   };
 
