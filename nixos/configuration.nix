@@ -14,6 +14,8 @@ let
     system = pkgs.system;
     config.allowUnfree = true;
   };
+
+  beedii = pkgs.callPackage ../pkgs/beedii.nix { };
 in
 {
   imports = [
@@ -274,7 +276,7 @@ in
   fonts.packages = with pkgs; [
     ibm-plex
     plemoljp-nf
-    inputs.beedii-nixpkgs.legacyPackages.${pkgs.system}.beedii
+    beedii
     source-han-code-jp # Includes many definitions, useful for fallback
     inconsolata
     mplus-outline-fonts.githubRelease
