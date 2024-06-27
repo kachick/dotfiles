@@ -325,6 +325,9 @@
 
         "browser.shell.checkDefaultBrowser" = false;
 
+        # Required for playing DRM contents as Spotify
+        "media.eme.enabled" = true;
+
         # Enabling userChrome.css
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 

@@ -165,9 +165,9 @@ in
         "networkmanager"
         "wheel"
       ];
-      packages = with pkgs; [
-        # Comment-in while subscribed :)
-        spotify
+      packages = [
+        # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
+        # Use the Web Player via Firefox
       ];
     };
   };
