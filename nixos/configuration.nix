@@ -273,15 +273,45 @@ in
 
   programs.nix-ld.enable = false;
 
-  fonts.packages = with pkgs; [
-    ibm-plex
-    plemoljp-nf
-    beedii
-    source-han-code-jp # Includes many definitions, useful for fallback
-    inconsolata
-    mplus-outline-fonts.githubRelease
-    # sarasa-gothic # Large filesize
-  ];
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      ibm-plex
+      plemoljp-nf
+      noto-fonts-color-emoji
+      beedii
+      inconsolata
+      mplus-outline-fonts.githubRelease
+      # sarasa-gothic # Large filesize
+
+      # Source Han family includes many definitions, useful for fallback
+      source-han-code-jp
+      source-han-sans-japanese
+      source-han-serif-japanese
+    ];
+    fontconfig = {
+      enable = true;
+      hinting.enable = true;
+      defaultFonts = {
+        serif = [
+          "IBM Plex Serif"
+          "Source Han Serif"
+        ];
+        sansSerif = [
+          "IBM Plex Sans"
+          "Source Han Sans"
+        ];
+        monospace = [
+          "PlemolJP Console NF"
+          "Source Han Code JP"
+        ];
+        emoji = [
+          "Beedii"
+          "Noto Color Emoji"
+        ];
+      };
+    };
+  };
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
