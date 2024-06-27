@@ -313,4 +313,21 @@
     source = ../config/zellij;
     recursive = true;
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/firefox.nix
+  programs.firefox = {
+    enable = true;
+    profiles.default = {
+      isDefault = true;
+      settings = {
+        # Enabling userChrome.css
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+
+        # Disabling alt+ keybinds for lanchers
+        # https://www.reddit.com/r/firefox/comments/129w85w/is_there_a_way_to_disable_firefox_alt_keyboard/
+        "ui.key.menuAccessKeyFocuses" = false;
+      };
+      userChrome = builtins.readFile ../config/Firefox/userChrome.css;
+    };
+  };
 }
