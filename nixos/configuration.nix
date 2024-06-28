@@ -226,7 +226,17 @@ in
 
     firefox
 
-    signal-desktop
+    (signal-desktop.overrideAttrs (prev: {
+      preFixup =
+        prev.preFixup
+        + ''
+          gappsWrapperArgs+=(
+            --add-flags "--enable-features=UseOzonePlatform"
+            --add-flags "--ozone-platform=wayland"
+            --add-flags "--enable-wayland-ime"
+          )
+        '';
+    }))
 
     ## Unfree packages
     vscode
