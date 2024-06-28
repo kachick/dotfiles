@@ -5,4 +5,4 @@ google-chrome-stable --enable-wayland-ime
 code --enable-features=UseOzonePlatform --ozone-platform=wayland --enable-wayland-ime .
 ```
 
-Remember to set `commandLineArgs` for that situation.
+Remember to set `commandLineArgs` for that situation. Or make sure it will work with specified in electron-flags.conf.

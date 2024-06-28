@@ -197,6 +197,14 @@
     X-KDE-autostart-phase=1
   '';
 
+  # https://wiki.archlinux.org/title/wayland
+  # Didn't work if the electron is bundled one
+  xdg.configFile."electron-flags.conf".text = ''
+    --enable-features=UseOzonePlatform
+    --ozone-platform=wayland
+    --enable-wayland-ime
+  '';
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
