@@ -204,45 +204,57 @@
           };
         in
         {
-          "kachick@linux" = home-manager.lib.homeManagerConfiguration x86-Linux // {
-            modules = [ ./home-manager/kachick.nix ];
-          };
+          "kachick@linux" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux // { modules = [ ./home-manager/kachick.nix ]; }
+          );
 
-          "kachick@wsl" = home-manager.lib.homeManagerConfiguration x86-Linux // {
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/wsl.nix
-            ];
-          };
+          "kachick@wsl" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/wsl.nix
+              ];
+            }
+          );
 
-          "kachick@macbook" = home-manager.lib.homeManagerConfiguration x86-macOS // {
-            modules = [ ./home-manager/kachick.nix ];
-          };
+          "kachick@macbook" = home-manager.lib.homeManagerConfiguration (
+            x86-macOS // { modules = [ ./home-manager/kachick.nix ]; }
+          );
 
-          "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration x86-Linux // {
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            modules = [
-              ./home-manager/kachick.nix
-              { home.username = "runner"; }
-            ];
-          };
+          "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              # Prefer "kachick" over "common" only here.
+              # Using values as much as possible as actual values to create a robust CI
+              modules = [
+                ./home-manager/kachick.nix
+                { home.username = "runner"; }
+              ];
+            }
+          );
 
-          "github-actions@macos-13" = home-manager.lib.homeManagerConfiguration x86-macOS // {
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            modules = [
-              ./home-manager/kachick.nix
-              { home.username = "runner"; }
-            ];
-          };
+          "github-actions@macos-13" = home-manager.lib.homeManagerConfiguration (
+            x86-macOS
+            // {
+              # Prefer "kachick" over "common" only here.
+              # Using values as much as possible as actual values to create a robust CI
+              modules = [
+                ./home-manager/kachick.nix
+                { home.username = "runner"; }
+              ];
+            }
+          );
 
-          "user@linux" = home-manager.lib.homeManagerConfiguration x86-Linux // {
-            modules = [
-              ./home-manager/common.nix
-              { home.username = "user"; }
-            ];
-          };
+          "user@linux" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/common.nix
+                { home.username = "user"; }
+              ];
+            }
+          );
         };
     };
 }
