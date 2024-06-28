@@ -143,17 +143,6 @@
                   };
                 };
               }
-              {
-                # Only add unfree packages definitions here
-                home-manager.users.kachick.programs = {
-                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-                  google-chrome = {
-                    enable = true;
-                    # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-                    commandLineArgs = [ "--enable-wayland-ime" ];
-                  };
-                };
-              }
               xremap-flake.nixosModules.default
               {
                 # Modmap for single key rebinds
