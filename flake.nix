@@ -143,34 +143,34 @@
                   };
                 };
               }
-              # {
-              #   # Only add unfree packages definitions here
-              #   home-manager.users.kachick.programs = {
-              #     # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-              #     google-chrome = {
-              #       enable = true;
-              #       # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-              #       commandLineArgs = [ "--enable-wayland-ime" ];
-              #     };
+              {
+                # Only add unfree packages definitions here
+                home-manager.users.kachick.programs = {
+                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+                  google-chrome = {
+                    enable = true;
+                    # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+                    commandLineArgs = [ "--enable-wayland-ime" ];
+                  };
 
-              #     # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
-              #     vscode = {
-              #       enable = true;
-              #       # Keep empty to prefer cloud sync
-              #       userSettings = { };
-              #       package = (
-              #         pkgs.vscode.override {
-              #           # https://wiki.archlinux.org/title/Wayland#Electron
-              #           commandLineArgs = [
-              #             " --enable-features=UseOzonePlatform"
-              #             "--ozone-platform=wayland"
-              #             "--enable-wayland-ime"
-              #           ];
-              #         }
-              #       );
-              #     };
-              #   };
-              # }
+                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
+                  vscode = {
+                    enable = true;
+                    # Keep empty to prefer cloud sync
+                    userSettings = { };
+                    package = (
+                      pkgs.vscode.override {
+                        # https://wiki.archlinux.org/title/Wayland#Electron
+                        commandLineArgs = [
+                          " --enable-features=UseOzonePlatform"
+                          "--ozone-platform=wayland"
+                          "--enable-wayland-ime"
+                        ];
+                      }
+                    );
+                  };
+                };
+              }
               xremap-flake.nixosModules.default
               {
                 # Modmap for single key rebinds

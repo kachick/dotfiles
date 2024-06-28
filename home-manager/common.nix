@@ -198,12 +198,12 @@
   '';
 
   # https://wiki.archlinux.org/title/wayland
-  # Didn't work if the electron is bundled one
-  xdg.configFile."electron-flags.conf".text = ''
-    --enable-features=UseOzonePlatform
-    --ozone-platform=wayland
-    --enable-wayland-ime
-  '';
+  # Didn't work if the electron is bundled, so unfit for nixpkgs distributing apps
+  # xdg.configFile."electron-flags.conf".text = ''
+  #   --enable-features=UseOzonePlatform
+  #   --ozone-platform=wayland
+  #   --enable-wayland-ime
+  # '';
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
