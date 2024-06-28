@@ -185,68 +185,55 @@
           };
         };
 
-      homeConfigurations = {
-        "kachick@linux" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home-manager/kachick.nix ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+      homeConfigurations =
+        let
+          x86-macOS = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+            modules = [ ./home-manager/kachick.nix ];
+            extraSpecialArgs = {
+              homemade-pkgs = packages.x86_64-darwin;
+              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+            };
           };
-        };
 
-        "kachick@wsl" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./home-manager/kachick.nix
-            ./home-manager/wsl.nix
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+          x86-Linux = home-manager.lib.homeManagerConfiguration {
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            modules = [ ./home-manager/kachick.nix ];
+            extraSpecialArgs = {
+              homemade-pkgs = packages.x86_64-linux;
+              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+            };
           };
-        };
+        in
+        {
+          "kachick@linux" = x86-Linux;
 
-        "kachick@macbook" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-          modules = [ ./home-manager/kachick.nix ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-darwin;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
-          };
-        };
-
-        "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
+          "kachick@wsl" = x86-Linux.overrideAttrs (prev: {
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
-            ./home-manager/kachick.nix
-            { home.username = "runner"; }
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
-          };
-        };
+            modules = prev.modules ++ [ ./home-manager/wsl.nix ];
+          });
 
-        "github-actions@macos-13" = "kachick@macbook".overrideAttrs (prev: {
-          # Prefer "kachick" over "common" only here.
-          # Using values as much as possible as actual values to create a robust CI
-          modules = prev.modules ++ [ { home.username = "runner"; } ];
-        });
+          "kachick@macbook" = x86-macOS;
 
-        "user@linux" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./home-manager/common.nix
-            { home.username = "user"; }
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
-          };
+          "github-actions@ubuntu-24.04" = x86-Linux.overrideAttrs (prev: {
+            # Prefer "kachick" over "common" only here.
+            # Using values as much as possible as actual values to create a robust CI
+            modules = prev.modules ++ [ { home.username = "runner"; } ];
+          });
+
+          "github-actions@macos-13" = x86-macOS.overrideAttrs (prev: {
+            # Prefer "kachick" over "common" only here.
+            # Using values as much as possible as actual values to create a robust CI
+            modules = prev.modules ++ [ { home.username = "runner"; } ];
+          });
+
+          "user@linux" = x86-Linux.overrideAttrs (prev: {
+            modules = [
+              ./home-manager/common.nix
+              { home.username = "user"; }
+            ];
+          });
         };
-      };
     };
 }
