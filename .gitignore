@@ -10,6 +10,8 @@ tmp/
 
 .direnv
 
+# NixOS
+*hardware-configuration.nix
 result
 
 # macOS
@@ -19,3 +21,4 @@ result
 winget-pkgs-*-raw.json
 
 *.bak
+*.backup

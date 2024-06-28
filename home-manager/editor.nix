@@ -69,4 +69,22 @@ in
       colorscheme = "nord-16";
     };
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
+  # https://nixos.wiki/wiki/Vim
+  programs.vim = {
+    enable = true;
+    # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
+    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+
+    settings = {
+      background = "dark";
+    };
+    extraConfig = ''
+      colorscheme iceberg
+      set termguicolors
+    '';
+  };
+
+  # Don't add unfree packages like vscode here for using in containers
 }

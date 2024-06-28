@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, homemade-pkgs, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
@@ -35,5 +35,8 @@
     };
   };
 
-  home.packages = [ pkgs.wslu ];
+  home.packages = [
+    pkgs.wslu
+    homemade-pkgs.podman
+  ];
 }

@@ -73,8 +73,12 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  wezterm
+
+  # Do not install wezterm in home-manager layer for non NixOS
+  # - Released wezterm versions are broken on wayland
+  # - Using nightly needs to take long build time, avoiding it for CI time
   alacritty
+
   typos
   hyperfine
   difftastic
@@ -105,8 +109,6 @@ with pkgs;
 
   source-han-code-jp # Includes many definitions, useful for fallback
   inconsolata
-  mplus-outline-fonts.githubRelease # https://github.com/NixOS/nixpkgs/blob/c56f470377573b3170b62242ce21abcc196cb4ef/pkgs/data/fonts/mplus-outline-fonts/default.nix#L33
-  # pkgs.sarasa-gothic # Large filesize
 
   # Includes follows in each repository if needed, not in global
   # gcc
@@ -134,7 +136,6 @@ with pkgs;
   zj
   p
   g
-  podman
   walk
   updeps
   bench_shells
@@ -153,4 +154,5 @@ with pkgs;
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
+  homemade-pkgs.podman
 ])

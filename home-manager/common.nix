@@ -15,7 +15,8 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./micro.nix
+    ./editor.nix
+    ./firefox.nix
     ./darwin.nix
   ];
 
@@ -174,6 +175,36 @@
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
 
+  # https://github.com/savedra1/clipse/issues/41#issuecomment-2099269175
+  xdg.configFile."autostart/clipse-clipboard-manager.desktop".text = ''
+    [Desktop Entry]
+    Name=clipse
+    Comment=Clipse event listener autostart.
+    Exec=${lib.getExe pkgs.clipse} --listen %f
+    Terminal=false
+    Type=Application
+  '';
+
+  # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
+  xdg.configFile."autostart/userdirs.desktop".text = ''
+    [Desktop Entry]
+    Exec=xdg-user-dirs-update
+    TryExec=xdg-user-dirs-update
+    NoDisplay=true
+    StartupNotify=false
+    Type=Application
+    X-KDE-AutostartScript=true
+    X-KDE-autostart-phase=1
+  '';
+
+  # https://wiki.archlinux.org/title/wayland
+  # Didn't work if the electron is bundled, so unfit for nixpkgs distributing apps
+  # xdg.configFile."electron-flags.conf".text = ''
+  #   --enable-features=UseOzonePlatform
+  #   --ozone-platform=wayland
+  #   --enable-wayland-ime
+  # '';
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
@@ -191,6 +222,13 @@
 
   # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
   xdg.configFile."typos/typos.toml".source = ../typos.toml;
+
+  xdg.configFile."fcitx5/config" = {
+    source = ../config/fcitx5/config;
+  };
+  xdg.configFile."fcitx5/profile" = {
+    source = ../config/fcitx5/profile;
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
@@ -242,22 +280,6 @@
         missing_tools = "never";
       };
     };
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
-  # https://nixos.wiki/wiki/Vim
-  programs.vim = {
-    enable = true;
-    # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
-    plugins = [ pkgs.vimPlugins.iceberg-vim ];
-
-    settings = {
-      background = "dark";
-    };
-    extraConfig = ''
-      colorscheme iceberg
-      set termguicolors
-    '';
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix

@@ -3,10 +3,14 @@ local config <const> = wezterm.config_builder()
 local act <const> = wezterm.action
 local launch_menu <const> = {}
 local font_with_fallback <const> = wezterm.font_with_fallback({
-  { family = "PlemolJP Console NF", harfbuzz_features = { "zero" }, weight = "Medium" },
+  {
+    family = "PlemolJP Console NF",
+    harfbuzz_features = { "zero" },
+    weight = "Medium",
+    assume_emoji_presentation = false,
+  },
+  { family = "Beedii", assume_emoji_presentation = true },
   "源ノ角ゴシック Code JP",
-  "Noto Color Emoji",
-  "Cascadia Code",
 })
 
 config.color_scheme = "iceberg-dark"
@@ -28,6 +32,13 @@ if string.find(wezterm.target_triple, "pc-windows", 1, true) then
     label = "PowerShell",
     args = { "pwsh", "-NoLogo" },
   })
+end
+
+-- Using in wayland requires non released versions
+-- https://github.com/wez/wezterm/issues/5340
+if string.find(wezterm.target_triple, "-linux", 1, true) then
+  config.enable_wayland = true
+  config.use_ime = true
 end
 
 config.keys = {

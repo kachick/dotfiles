@@ -12,6 +12,10 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
+    xremap-flake.url = "github:xremap/nix-flake";
+    # https://github.com/wez/wezterm/pull/3547#issuecomment-1915820504
+    wezterm-flake.url = "github:wez/wezterm?dir=nix";
   };
 
   outputs =
@@ -20,8 +24,11 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-    }:
+      xremap-flake,
+      wezterm-flake,
+    }@inputs:
     let
+      inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
@@ -34,8 +41,16 @@
         type = "app";
         program = nixpkgs.lib.getExe pkg;
       };
+
+      packages = forAllSystems (
+        system:
+        (import ./pkgs {
+          pkgs = nixpkgs.legacyPackages.${system};
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        })
+      );
     in
-    rec {
+    {
       # nixfmt will be official
       # - https://github.com/NixOS/nixfmt/issues/153
       # - https://github.com/NixOS/nixfmt/issues/129
@@ -73,20 +88,13 @@
                 edge-pkgs.yamlfmt
                 stylua
                 typos
+                typos-lsp
                 go_1_22
                 goreleaser
                 trivy
               ];
             };
         }
-      );
-
-      packages = forAllSystems (
-        system:
-        (import ./pkgs {
-          pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
       );
 
       apps = forAllSystems (system: {
@@ -106,76 +114,147 @@
         prs = mkApp packages.${system}.prs;
       });
 
-      homeConfigurations = {
-        "kachick@linux" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home-manager/kachick.nix ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+      nixosConfigurations =
+        let
+          system = "x86_64-linux";
+          edge-pkgs = import edge-nixpkgs {
+            inherit system;
+            config = {
+              allowUnfree = true;
+            };
+          };
+          homemade-pkgs = packages.${system};
+        in
+        {
+          "nixos-desktop" = nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              ./nixos/configuration.nix
+              home-manager.nixosModules.home-manager
+              {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  backupFileExtension = "backup";
+                  users.kachick = import ./home-manager/kachick.nix;
+
+                  extraSpecialArgs = {
+                    inherit homemade-pkgs edge-pkgs;
+                  };
+                };
+              }
+              xremap-flake.nixosModules.default
+              {
+                # Modmap for single key rebinds
+                services.xremap.config = {
+                  modmap = [
+                    {
+                      name = "Global";
+                      remap = {
+                        "CapsLock" = "Ctrl_L";
+                        "Alt_L" = {
+                          "held" = "Alt_L";
+                          "alone" = "Muhenkan";
+                          "alone_timeout_millis" = 500;
+                        };
+                        "Alt_R" = "Henkan";
+                      };
+                    }
+                  ];
+
+                  # Keymap for key combo rebinds
+                  keymap = [
+                    {
+                      name = "Gnome lancher";
+                      remap = {
+                        "Alt-Space" = "LEFTMETA";
+                      };
+                    }
+                  ];
+                };
+              }
+            ];
+            specialArgs = {
+              inherit
+                inputs
+                outputs
+                homemade-pkgs
+                edge-pkgs
+                ;
+            };
           };
         };
 
-        "kachick@wsl" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./home-manager/kachick.nix
-            ./home-manager/wsl.nix
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+      homeConfigurations =
+        let
+          x86-Linux = {
+            pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            extraSpecialArgs = {
+              homemade-pkgs = packages.x86_64-linux;
+              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+            };
           };
-        };
 
-        "kachick@macbook" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-          modules = [ ./home-manager/kachick.nix ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-darwin;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+          x86-macOS = {
+            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+            extraSpecialArgs = {
+              homemade-pkgs = packages.x86_64-darwin;
+              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+            };
           };
-        };
+        in
+        {
+          "kachick@linux" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux // { modules = [ ./home-manager/kachick.nix ]; }
+          );
 
-        "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            ./home-manager/kachick.nix
-            { home.username = "runner"; }
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
-          };
-        };
+          "kachick@wsl" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/wsl.nix
+              ];
+            }
+          );
 
-        "github-actions@macos-14" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-          modules = [
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            ./home-manager/kachick.nix
-            { home.username = "runner"; }
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.aarch64-darwin;
-            edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
-          };
-        };
+          "kachick@macbook" = home-manager.lib.homeManagerConfiguration (
+            x86-macOS // { modules = [ ./home-manager/kachick.nix ]; }
+          );
 
-        "user@linux" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [
-            ./home-manager/common.nix
-            { home.username = "user"; }
-          ];
-          extraSpecialArgs = {
-            homemade-pkgs = packages.x86_64-linux;
-            edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
-          };
+          "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              # Prefer "kachick" over "common" only here.
+              # Using values as much as possible as actual values to create a robust CI
+              modules = [
+                ./home-manager/kachick.nix
+                { home.username = "runner"; }
+              ];
+            }
+          );
+
+          "github-actions@macos-13" = home-manager.lib.homeManagerConfiguration (
+            x86-macOS
+            // {
+              # Prefer "kachick" over "common" only here.
+              # Using values as much as possible as actual values to create a robust CI
+              modules = [
+                ./home-manager/kachick.nix
+                { home.username = "runner"; }
+              ];
+            }
+          );
+
+          "user@linux" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/common.nix
+                { home.username = "user"; }
+              ];
+            }
+          );
         };
-      };
     };
 }

@@ -11,7 +11,7 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## For visitors
 
-If you are using [Podman](https://podman.io/), you can test the pre-built [container-image](containers) as follows.
+If you are using [Podman](https://podman.io/), you can test the pre-built [ubuntu container-image](containers) as follows.
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
@@ -27,7 +27,22 @@ nix run 'github:kachick/dotfiles#walk'
 nix run 'github:kachick/dotfiles#prs'
 ```
 
-## Linux(Ubuntu)
+## NixOS
+
+This repository does not save the `hardware-configuration.nix` for each host,\
+so you should activate with `--impure` to load `/etc/nixos/hardware-configuration.nix` in your local
+
+```bash
+sudo nixos-rebuild switch --impure --flake .#nixos-desktop
+sudo reboot now
+```
+
+Some tools are not yet fully automated, read each docs.
+
+- [WARP](./nixos/WARP.md)
+- [OneDrive](./nixos/OneDrive.md)
+
+## Ubuntu
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
    ```bash
@@ -50,11 +65,7 @@ nix run 'github:kachick/dotfiles#prs'
    - `user@linux` # Used in container
    - `kachick@linux`
 
-## NixOS
-
-[Work in Progress](https://github.com/kachick/dotfiles/pull/576)
-
-## macOS(Darwin)
+## macOS
 
 Activate `kachick@macbook` as Linux
 

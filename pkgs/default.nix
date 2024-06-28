@@ -101,6 +101,11 @@ rec {
     # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
     runtimeInputs = with pkgs; [ mise ];
     text = ''
+      if [ -f /etc/NIXOS ]; then
+        echo 'Needless this updater for NixOS, so exit with nothing'
+        exit 1
+      fi
+
       echo 'this updater assume you have the privilege and sudo command'
 
       set -x
