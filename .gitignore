@@ -10,6 +10,8 @@ tmp/
 
 .direnv
 
+result
+
 # macOS
 **/AppSupport
 .DS_Store
