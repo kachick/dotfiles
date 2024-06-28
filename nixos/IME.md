@@ -1,4 +1,4 @@
-Enabling IME on chromium based apps like Electron and wayland requires some flags in the execution
+Enabling IME on chromium based apps like [Electron and wayland](https://github.com/electron/electron/issues/33662) requires some flags in the execution
 
 ```bash
 google-chrome-stable --enable-wayland-ime
