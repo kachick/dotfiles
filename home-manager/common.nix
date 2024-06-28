@@ -16,7 +16,7 @@
     ./ssh.nix
     ./git.nix
     ./editor.nix
-    ./browser.nix
+    ./firefox.nix
     ./darwin.nix
   ];
 
