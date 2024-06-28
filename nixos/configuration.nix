@@ -243,11 +243,16 @@ in
 
     (edge-pkgs.vscode.overrideAttrs (prev: {
       # https://wiki.archlinux.org/title/Wayland#Electron
-      commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-        "--enable-features=UseOzonePlatform"
-        "--ozone-platform=wayland"
-        "--enable-wayland-ime"
-      ];
+      # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
+      preFixup =
+        prev.preFixup
+        + ''
+          gappsWrapperArgs+=(
+            --add-flags "--enable-features=UseOzonePlatform"
+            --add-flags "--ozone-platform=wayland"
+            --add-flags "--enable-wayland-ime"
+          )
+        '';
     }))
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
