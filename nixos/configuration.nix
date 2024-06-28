@@ -226,12 +226,16 @@ in
 
     firefox
 
+    signal-desktop
+
     ## Unfree packages
     vscode
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
     # `rm -rf ~/.config/google-chrome/Singleton*`
     google-chrome
+
+    cloudflare-warp
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
@@ -331,4 +335,7 @@ in
       defaultNetwork.settings.dns_enabled = true;
     };
   };
+
+  # https://nixos.wiki/wiki/OneDrive
+  services.onedrive.enable = true;
 }
