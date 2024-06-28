@@ -79,11 +79,6 @@ in
     konsole
     oxygen
   ];
-  # qt = {
-  #   enable = true;
-  #   platformTheme = "gnome";
-  #   style = "adwaita-dark";
-  # };
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
