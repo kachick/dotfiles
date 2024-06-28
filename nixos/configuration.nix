@@ -6,6 +6,7 @@
   inputs,
   config,
   pkgs,
+  edge-pkgs,
   lib,
   ...
 }:
@@ -239,7 +240,15 @@ in
     }))
 
     ## Unfree packages
-    vscode
+
+    (edge-pkgs.vscode.overrideAttrs (prev: {
+      # https://wiki.archlinux.org/title/Wayland#Electron
+      commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
+        "--enable-features=UseOzonePlatform"
+        "--ozone-platform=wayland"
+        "--enable-wayland-ime"
+      ];
+    }))
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
     # `rm -rf ~/.config/google-chrome/Singleton*`

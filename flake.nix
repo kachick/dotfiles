@@ -117,12 +117,13 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          pkgs = import nixpkgs {
+          edge-pkgs = import edge-nixpkgs {
             inherit system;
             config = {
               allowUnfree = true;
             };
           };
+          homemade-pkgs = packages.${system};
         in
         {
           "nixos-desktop" = nixpkgs.lib.nixosSystem {
@@ -138,8 +139,7 @@
                   users.kachick = import ./home-manager/kachick.nix;
 
                   extraSpecialArgs = {
-                    homemade-pkgs = packages.x86_64-linux;
-                    edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
+                    inherit homemade-pkgs edge-pkgs;
                   };
                 };
               }
@@ -151,23 +151,6 @@
                     enable = true;
                     # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
                     commandLineArgs = [ "--enable-wayland-ime" ];
-                  };
-
-                  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vscode.nix
-                  vscode = {
-                    enable = true;
-                    # Keep empty to prefer cloud sync
-                    userSettings = { };
-                    package = (
-                      pkgs.vscode.override {
-                        # https://wiki.archlinux.org/title/Wayland#Electron
-                        commandLineArgs = [
-                          " --enable-features=UseOzonePlatform"
-                          "--ozone-platform=wayland"
-                          "--enable-wayland-ime"
-                        ];
-                      }
-                    );
                   };
                 };
               }
@@ -203,8 +186,12 @@
               }
             ];
             specialArgs = {
-              inherit inputs outputs;
-              homemade-pkgs = packages;
+              inherit
+                inputs
+                outputs
+                homemade-pkgs
+                edge-pkgs
+                ;
             };
           };
         };
