@@ -157,18 +157,7 @@
           };
         in
         {
-          "nixos-desktop" =
-            shared
-            // (nixpkgs.lib.nixosSystem {
-              modules = [
-                {
-                  imports = [
-                    # Using local absolute path requires to be called on --impure mode
-                    /etc/nixos/hardware-configuration.nix
-                  ];
-                }
-              ];
-            });
+          "nixos-desktop" = shared;
 
           "nixos-wsl" =
             shared
