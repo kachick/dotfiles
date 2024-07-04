@@ -126,7 +126,7 @@
             };
           };
           homemade-pkgs = packages.${system};
-          shared = nixpkgs.lib.nixosSystem {
+          shared = {
             inherit system;
             modules = [
               ./nixos/configuration.nix
@@ -157,16 +157,17 @@
           };
         in
         {
-          "nixos-desktop" = shared;
+          "nixos-desktop" = nixpkgs.lib.nixosSystem shared;
 
-          "nixos-wsl" =
+          "nixos-wsl" = nixpkgs.lib.nixosSystem (
             shared
-            // (nixpkgs.lib.nixosSystem {
-              modules = [
+            // {
+              modules = shared.modules ++ [
                 nixos-wsl.nixosModules.default
                 { wsl.enable = true; }
               ];
-            });
+            }
+          );
         };
 
       homeConfigurations =
