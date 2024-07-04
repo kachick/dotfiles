@@ -39,6 +39,8 @@ wsl.exe --distribution "NixOS"
 ```bash
 sudo nix-channel --update
 sudo nixos-generate-config
+# Remove the entry for /mnt/wslg/distro if that has empty `device = "";`. See https://github.com/Misterio77/nix-starter-configs/issues/49
+
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
   --impure --flake 'github:kachick/dotfiles#nixos-wsl'
