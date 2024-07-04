@@ -37,6 +37,7 @@ wsl.exe --distribution "NixOS"
 ```
 
 ```bash
+sudo nix-channel --update
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
   --flake 'github:kachick/dotfiles#nixos-wsl'

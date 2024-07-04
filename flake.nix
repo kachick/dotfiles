@@ -12,6 +12,7 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
     # https://github.com/wez/wezterm/pull/3547#issuecomment-1915820504
@@ -24,6 +25,7 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
+      nixos-wsl,
       xremap-flake,
       wezterm-flake,
     }@inputs:
@@ -124,9 +126,7 @@
             };
           };
           homemade-pkgs = packages.${system};
-        in
-        {
-          "nixos-desktop" = nixpkgs.lib.nixosSystem {
+          shared = nixpkgs.lib.nixosSystem {
             inherit system;
             modules = [
               ./nixos/configuration.nix
@@ -144,35 +144,7 @@
                 };
               }
               xremap-flake.nixosModules.default
-              {
-                # Modmap for single key rebinds
-                services.xremap.config = {
-                  modmap = [
-                    {
-                      name = "Global";
-                      remap = {
-                        "CapsLock" = "Ctrl_L";
-                        "Alt_L" = {
-                          "held" = "Alt_L";
-                          "alone" = "Muhenkan";
-                          "alone_timeout_millis" = 500;
-                        };
-                        "Alt_R" = "Henkan";
-                      };
-                    }
-                  ];
-
-                  # Keymap for key combo rebinds
-                  keymap = [
-                    {
-                      name = "Gnome lancher";
-                      remap = {
-                        "Alt-Space" = "LEFTMETA";
-                      };
-                    }
-                  ];
-                };
-              }
+              ./nixos/xremap.nix
             ];
             specialArgs = {
               inherit
@@ -183,6 +155,29 @@
                 ;
             };
           };
+        in
+        {
+          "nixos-desktop" =
+            shared
+            // (nixpkgs.lib.nixosSystem {
+              modules = [
+                {
+                  imports = [
+                    # Using local absolute path requires to be called on --impure mode
+                    /etc/nixos/hardware-configuration.nix
+                  ];
+                }
+              ];
+            });
+
+          "nixos-wsl" =
+            shared
+            // (nixpkgs.lib.nixosSystem {
+              modules = [
+                nixos-wsl.nixosModules.default
+                { wsl.enable = true; }
+              ];
+            });
         };
 
       homeConfigurations =
