@@ -32,8 +32,12 @@ nix run 'github:kachick/dotfiles#prs'
 This repository does not save the `hardware-configuration.nix` for each host,\
 so you should activate with `--impure` to load `/etc/nixos/hardware-configuration.nix` in your local
 
+Using flake style is also disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
+
 ```bash
-sudo nixos-rebuild switch --impure --flake .#nixos-desktop
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
+  --command sudo nixos-rebuild switch --impure \
+  --flake 'github:kachick/dotfiles#nixos-desktop'
 sudo reboot now
 ```
 
@@ -71,7 +75,7 @@ Activate `kachick@macbook` as Linux
 
 ## Windows
 
-After installing WSL2, you can activate home-manager with `kachick@wsl` as Linux.\
+After installing [WSL2](windows/docs/WSL.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
 Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note

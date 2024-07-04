@@ -23,3 +23,31 @@ z "$(wslpath 'G:\GoogleDrive')"
 ```pwsh
 wsl --user root
 ```
+
+## Setup NixOS on WSL2
+
+Use [NixOS](https://github.com/nix-community/NixOS-WSL).\
+You should remember that does not have `/etc/nixos/hardware-configuration.nix` and the [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md).
+
+```pwsh
+wsl.exe --install --no-distribution
+curl -OL "https://github.com/nix-community/NixOS-WSL/releases/download/2311.5.3/nixos-wsl.tar.gz"
+wsl.exe --import NixOS $env:USERPROFILE\NixOS\ nixos-wsl.tar.gz
+wsl.exe --distribution "NixOS"
+```
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
+  --command sudo nixos-rebuild switch \
+  --flake 'github:kachick/dotfiles#nixos-wsl'
+sudo reboot now
+```
+
+## Setup Ubuntu on WSL2
+
+```pwsh
+wsl.exe --install "Ubuntu-24.04"
+wsl.exe --distribution "Ubuntu-24.04"
+```
+
+Setup nix and activate home-manager as written in [README](../README.md) with `kachick@wsl`
