@@ -47,5 +47,7 @@ config.keys = {
 }
 
 config.launch_menu = launch_menu
+config.initial_cols = 170
+config.initial_rows = 50
 
 return config
