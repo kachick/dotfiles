@@ -270,7 +270,7 @@ rec {
     runtimeInputs = with pkgs; [
       ghq
       fzf
-      la
+      eza
     ];
     text = ''
       if [ $# -ge 1 ]; then
@@ -280,9 +280,10 @@ rec {
       fi
 
       # shellcheck disable=SC2016
-      ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview 'la "$(
-        ghq list --full-path --exact {}
-      )"' --preview-window '~3'
+      ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview \
+        'eza --group-directories-first --icons=always --color=always --no-user --no-time --no-filesize --no-permissions "$(
+          ghq list --full-path --exact {}
+        )"' --preview-window '~3'
     '';
     meta = {
       description = "ghq + fzf result";
