@@ -72,6 +72,9 @@
         },
         {
           "PackageIdentifier": "LGUG2Z.whkd"
+        },
+        {
+          "PackageIdentifier": "ajeetdsouza.zoxide"
         }
       ],
       "SourceDetails": {
