@@ -129,7 +129,7 @@ rec {
     name = "la";
     runtimeInputs = with pkgs; [ eza ];
     text = ''
-      eza --long --all --group-directories-first --color=always "$@"
+      eza --long --all --group-directories-first --time-style=iso --color=always --no-user --no-permissions --octal-permissions --total-size --sort=modified "$@"
     '';
   };
 
@@ -281,7 +281,7 @@ rec {
 
       # shellcheck disable=SC2016
       ghq list | fzf --query "$query" --delimiter / --nth 3.. --preview \
-        'eza --group-directories-first --icons=always --color=always --no-user --no-time --no-filesize --no-permissions "$(
+        'eza --group-directories-first --icons=always --color=always --no-user --no-time --no-filesize --no-permissions --sort=modified "$(
           ghq list --full-path --exact {}
         )"' --preview-window '~3'
     '';
