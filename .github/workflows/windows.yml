@@ -38,7 +38,9 @@ defaults:
 jobs:
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
-  terraform: # Not Terraform :)
+  #
+  # Not Terraform :)
+  terraform:
     runs-on: windows-2022
     steps:
       - name: Prepare Windows Defender

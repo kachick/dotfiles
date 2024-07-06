@@ -4,6 +4,9 @@
   },
   "markdown": {
   },
+  "yaml": {
+    "quotes": "preferSingle"
+  },
   "toml": {
   },
   "excludes": [
