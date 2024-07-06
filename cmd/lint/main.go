@@ -21,7 +21,6 @@ func main() {
 
 	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"check"}},
-		{Path: "yamlfmt", Args: []string{"-lint", "."}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
 		{Path: "shellcheck", Args: bashPaths},
 		// nix fmt doesn't have check option: https://github.com/NixOS/nix/issues/6918, so do not include here

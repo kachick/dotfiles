@@ -4,12 +4,6 @@
     "editor.formatOnSave": true
   },
   "json.format.enable": false,
-  "[yaml]": {
-    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
-  },
-  "[github-actions-workflow]": {
-    "editor.defaultFormatter": "kachick.vscode-yamlfmt"
-  },
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },

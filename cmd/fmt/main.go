@@ -22,7 +22,6 @@ func main() {
 	// Do not cover the same files in another formatter for parallel processing
 	cmds := runner.Commands{
 		{Path: "dprint", Args: []string{"fmt"}},
-		{Path: "yamlfmt", Args: []string{"."}},
 		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--write"}, bashPaths...)},
 		{Path: "stylua", Args: []string{"."}},
 	}
