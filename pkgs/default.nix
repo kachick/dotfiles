@@ -129,7 +129,7 @@ rec {
     name = "la";
     runtimeInputs = with pkgs; [ eza ];
     text = ''
-      eza --long --all --group-directories-first --time-style=iso --color=always --no-user --no-permissions --octal-permissions --total-size --sort=modified "$@"
+      eza --long --all --group-directories-first --time-style=iso --color=always --no-user --no-permissions --octal-permissions --sort=modified "$@"
     '';
   };
 
