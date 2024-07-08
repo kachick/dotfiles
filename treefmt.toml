@@ -31,16 +31,10 @@ command = "gofmt"
 options = ["-w"]
 includes = ["*.go"]
 
-[formatter.shellcheck]
-command = "shellcheck"
-includes = ["*.sh", "*.bash", "*.envrc"]
-priority = 0
-
 [formatter.shfmt]
 command = "shfmt"
 options = ["--language-dialect", "bash", "--write"]
 includes = ["*.sh", "*.bash", "*.envrc"]
-priority = 1
 
 [formatter.stylua]
 command = "stylua"
