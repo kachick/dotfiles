@@ -37,8 +37,11 @@ style = "Bold Italic"
 [window]
 opacity = 0.85
 
+# Do not assume wide display
+# - Alacritty cannot automate sizing as wezterm
+# - Alacritty is used for a stable terminal
 dimensions.columns = 120
-dimensions.lines = 50
+dimensions.lines = 40
 
 position.x = 10
 position.y = 10
