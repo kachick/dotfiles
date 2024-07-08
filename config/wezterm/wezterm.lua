@@ -24,6 +24,7 @@ config.window_frame = {
   font = font_with_fallback,
   font_size = 12,
 }
+config.window_close_confirmation = "NeverPrompt"
 
 -- target_triple candidates
 -- https://doc.rust-lang.org/nightly/rustc/platform-support.html
@@ -45,6 +46,11 @@ end
 config.keys = {
   -- TODO: Consider to move into windows only combination
   { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+  {
+    key = "r",
+    mods = "CMD|SHIFT",
+    action = wezterm.action.ReloadConfiguration,
+  },
 }
 
 wezterm.on("gui-startup", function(cmd)
