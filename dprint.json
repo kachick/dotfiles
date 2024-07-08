@@ -13,6 +13,7 @@
     ".git",
     ".direnv",
     "dist",
+    "result",
     "dependencies"
   ],
   "plugins": [

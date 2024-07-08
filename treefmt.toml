@@ -1,11 +1,47 @@
 # One CLI to format the code tree - https://github.com/numtide/treefmt
 
-[formatter.mylanguage]
-# Formatter to run
-command = "command-to-run"
-# Command-line arguments for the command
-options = []
-# Glob pattern of files to include
-includes = ["*.<language-extension>"]
-# Glob patterns of files to exclude
-excludes = []
+[global]
+# "/*" means recursive
+excludes = [
+  ".git/*",
+  ".direnv/*",
+  "dist/*",
+  "result/*",
+  "dependencies/*",
+]
+
+[formatter.dprint]
+command = "dprint"
+options = ["fmt"]
+includes = [
+  "*.json",
+  "*.jsonc",
+  "*.toml",
+  "*.md",
+  "*.yaml",
+  "*.yml",
+]
+
+[formatter.nixfmt-rfc-style]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.go]
+command = "gofmt"
+options = ["-w"]
+includes = ["*.go"]
+
+[formatter.shellcheck]
+command = "shellcheck"
+includes = ["*.sh", "*.bash", "*.envrc"]
+priority = 0
+
+[formatter.shfmt]
+command = "shfmt"
+options = ["--language-dialect", "bash", "--write"]
+includes = ["*.sh", "*.bash", "*.envrc"]
+priority = 1
+
+[formatter.stylua]
+command = "stylua"
+includes = ["*.lua"]
