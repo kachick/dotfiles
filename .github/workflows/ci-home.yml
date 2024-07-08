@@ -68,7 +68,7 @@ jobs:
         run: |
           which podman
           sudo mkdir -p /etc/containers
-          cp ./config/containers/policy.json /etc/containers
+          sudo cp ./config/containers/policy.json /etc/containers
           sudo apt-get install --assume-yes uidmap
           zsh -c 'podman version'
       # Do not use interactive mode here.
