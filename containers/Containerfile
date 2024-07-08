@@ -5,6 +5,14 @@ LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
 LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
 LABEL org.opencontainers.image.licenses=MIT
 
+# Available versions in apt: https://packages.ubuntu.com/noble/curl
+# --no-install-recommends omits ca-certificates
+# sudo is required in non systemd with Nix
+RUN apt-get update \
+ && apt-get install --assume-yes --install-recommends uidmap=1:4.13+dfsg1-4ubuntu3 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 USER user
 # Docker/Podman doesn't set $USER in USER instruction, and it makes failure in home-manager activation
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
