@@ -59,6 +59,7 @@ jobs:
           which ruby
           which irb
           which ssh
+          which podman
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
@@ -74,6 +75,7 @@ jobs:
           zsh -c 'irb --version'
           zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
+          zsh -c 'podman version'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

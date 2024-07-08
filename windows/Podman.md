@@ -2,7 +2,15 @@
 
 ## Containers?
 
-I now prefer podman over docker and singularity.\
+I now prefer podman over docker and singularity.
+
+## How to install
+
+Use one of following.
+
+- Directly Install podman into the debian family # Now using. The whole steps are written in [README](../README.md) and [WSL](WSL/README.md)
+- [Install podman-desktop](./Podman-Remote.md), it easy to install but requires annoy setups with another WSL instance. # Old way, Written in this file
+
 It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.

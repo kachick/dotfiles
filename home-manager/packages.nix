@@ -41,8 +41,6 @@ with pkgs;
   gawk
   netcat # `nc`
 
-  mise # alt asdf
-
   git
   gh
   ghq
@@ -125,6 +123,11 @@ with pkgs;
   # zlib
   # libyaml
   # openssl
+
+  # - Enable special module for Nix OS.
+  # - Linux package does not contains podman-remote, you should install uidmap with apt and use this as actual engine
+  # - In darwin, this package will be needed as a podman-remote, you should manually install podman-desktop
+  podman
 ]
 ++ (with homemade-pkgs; [
   la
@@ -154,5 +157,4 @@ with pkgs;
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
-  homemade-pkgs.podman
 ])

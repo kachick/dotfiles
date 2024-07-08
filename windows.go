@@ -2,7 +2,7 @@ package dotfiles
 
 import "embed"
 
-//go:embed windows/*
+//go:embed all:windows/*
 //go:embed config/powershell/*
 //go:embed config/starship/*
 //go:embed config/wezterm/*

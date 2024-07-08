@@ -55,3 +55,10 @@ wsl.exe --distribution "Ubuntu-24.04"
 ```
 
 Setup nix and activate home-manager as written in [README](../README.md) with `kachick@wsl`
+
+Disable cgroup v1 as putting [.wslconfig](.wslconfig) and restart for setting up podman
+
+```pwsh
+winit-conf.exe generate -path=windows/WSL/.wslconfig  > %UserProfile%\.wslconfig
+wsl.exe --shutdown
+```

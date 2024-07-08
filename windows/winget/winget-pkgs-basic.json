@@ -41,12 +41,6 @@
           "PackageIdentifier": "Balena.Etcher"
         },
         {
-          "PackageIdentifier": "RedHat.Podman"
-        },
-        {
-          "PackageIdentifier": "RedHat.Podman-Desktop"
-        },
-        {
           "PackageIdentifier": "Microsoft.WindowsTerminal"
         },
         {

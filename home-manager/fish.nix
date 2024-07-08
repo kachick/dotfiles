@@ -7,7 +7,6 @@
   # programs.direnv.enableFishIntegration = true;
   programs.zoxide.enableFishIntegration = true;
   programs.fzf.enableFishIntegration = true;
-  programs.mise.enableFishIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableFishIntegration = false;
 
