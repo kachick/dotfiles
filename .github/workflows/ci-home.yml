@@ -59,12 +59,18 @@ jobs:
           which ruby
           which irb
           which ssh
-          which podman
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(fish -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+      - name: Make sure Podman is useable with the steps
+        run: |
+          which podman
+          sudo mkdir -p /etc/containers
+          cp ./config/containers/policy.json /etc/containers
+          sudo apt-get install --assume-yes uidmap
+          zsh -c 'podman version'
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
@@ -75,7 +81,6 @@ jobs:
           zsh -c 'irb --version'
           zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
-          zsh -c 'podman version'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'
