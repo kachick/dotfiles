@@ -2,5 +2,5 @@
 
 set -euxo pipefail
 
-makers --loglevel=error fmt
+treefmt
 makers --loglevel=error lint

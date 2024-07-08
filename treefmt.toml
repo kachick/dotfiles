@@ -1,0 +1,41 @@
+# One CLI to format the code tree - https://github.com/numtide/treefmt
+
+[global]
+# "/*" means recursive
+excludes = [
+  ".git/*",
+  ".direnv/*",
+  "dist/*",
+  "result/*",
+  "dependencies/*",
+]
+
+[formatter.dprint]
+command = "dprint"
+options = ["fmt"]
+includes = [
+  "*.json",
+  "*.jsonc",
+  "*.toml",
+  "*.md",
+  "*.yaml",
+  "*.yml",
+]
+
+[formatter.nixfmt-rfc-style]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.go]
+command = "gofmt"
+options = ["-w"]
+includes = ["*.go"]
+
+[formatter.shfmt]
+command = "shfmt"
+options = ["--language-dialect", "bash", "--write"]
+includes = ["*.sh", "*.bash", "*.envrc"]
+
+[formatter.stylua]
+command = "stylua"
+includes = ["*.lua"]

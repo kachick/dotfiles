@@ -22,7 +22,7 @@ script = [
 ]
 
 [tasks.build-lint]
-condition.files_modified = { input = ["./cmd/lint/*.go"], output = ["./dist/lint"] }
+condition.files_modified = { input = ["internal/fileutils/*.go", "./cmd/lint/*.go"], output = ["./dist/lint"] }
 command = 'go'
 args = ['build', '-v', '-o', 'dist', './cmd/lint']
 
@@ -35,19 +35,8 @@ dependencies = ['build-lint']
 command = 'dist/lint'
 args = ['-all']
 
-[tasks.build-fmt]
-condition.files_modified = { input = ["./cmd/fmt/*.go"], output = ["./dist/fmt"] }
-command = 'go'
-args = ['build', '-v', '-o', 'dist', './cmd/fmt']
-
-[tasks.fmt-all]
-dependencies = ['build-fmt']
-command = './dist/fmt'
-args = ['-all']
-
 [tasks.fmt]
-dependencies = ['build-fmt']
-command = './dist/fmt'
+command = 'treefmt'
 
 [tasks.check]
 dependencies = [
@@ -135,7 +124,7 @@ dependencies = [
   'lint-all',
   'test-go',
   'build-go-race-as-the-race-test',
-  'fmt-all',
+  'fmt',
 ]
 
 [tasks.build-container]

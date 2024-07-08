@@ -64,7 +64,6 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         in
         {
           default =
@@ -85,6 +84,9 @@
                 gitleaks
                 cargo-make
 
+                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                # https://github.com/numtide/treefmt/pull/250
+                treefmt2
                 dprint
                 stylua
                 typos
