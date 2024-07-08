@@ -1,4 +1,5 @@
 local wezterm <const> = require("wezterm")
+local mux <const> = wezterm.mux
 local config <const> = wezterm.config_builder()
 local act <const> = wezterm.action
 local launch_menu <const> = {}
@@ -46,8 +47,15 @@ config.keys = {
   { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
 }
 
+wezterm.on("gui-startup", function(cmd)
+  local tab, pane, window <const> = mux.spawn_window(cmd or {})
+  local screen <const> = wezterm.gui.screens().active
+  local gui_window <const> = window:gui_window()
+
+  gui_window:set_inner_size(screen.width * 0.8, screen.height * 0.8)
+  gui_window:set_position(screen.width * 0.05, screen.height * 0.05)
+end)
+
 config.launch_menu = launch_menu
-config.initial_cols = 170
-config.initial_rows = 50
 
 return config
