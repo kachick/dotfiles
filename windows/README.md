@@ -41,7 +41,3 @@ Basically following codes will be done in PowerShell
 ## I forgot to backup Bitlocker restore key 😋
 
 https://account.microsoft.com/devices/recoverykey may help
-
-## FAQ
-
-Read [docs](docs)
