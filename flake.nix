@@ -84,6 +84,7 @@
                 gitleaks
                 cargo-make
 
+                treefmt
                 dprint
                 stylua
                 typos
