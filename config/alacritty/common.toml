@@ -37,7 +37,7 @@ style = "Bold Italic"
 [window]
 opacity = 0.85
 
-dimensions.columns = 180
+dimensions.columns = 120
 dimensions.lines = 50
 
 position.x = 10
