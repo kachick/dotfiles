@@ -83,11 +83,32 @@ Some tools are not yet fully automated, read each docs.
 
    ```bash
    sudo mkdir -p /etc/containers
-   /etc/containers
-   curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
+   cd /etc/containers
+   sudo curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
    ```
 
 1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
+
+1. Make sure you can run containers as `podman run -it docker.io/debian:12.5`
+
+## Debian
+
+After installing missing tools, you can complete same steps as Ubuntu
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install --assume-yes curl
+sudo apt install --assume-yes dbus-user-session # For podman
+```
+
+Remember to set special config and reboot if you on WSL
+
+```
+echo '
+[boot]
+systemd=true' | sudo tee /etc/wsl.conf
+```
 
 ## macOS
 

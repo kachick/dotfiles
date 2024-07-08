@@ -1,8 +1,12 @@
 # Podman
 
-## Containers?
+## How to resolve `WARN[0000] "/" is not a shared mount, this could cause issues or missing mounts with rootless containers`
 
-I now prefer podman over docker and singularity.
+See https://github.com/containers/buildah/issues/3726#issuecomment-1171146242
+
+```bash
+sudo mount --make-rshared /
+```
 
 ## How to install
 
