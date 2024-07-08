@@ -265,23 +265,6 @@
     enable = true;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/mise.nix
-  programs.mise = {
-    enable = true;
-    globalConfig = {
-      plugins = {
-        # It is not registered in asdf-vm/plugins and does not appear to be actively maintained. So specify the ref here
-        # https://github.com/tvon/asdf-podman/tree/974e0fbb6051aaea0a685d8b14587113dfba9173
-        podman = "https://github.com/tvon/asdf-podman.git#974e0fbb6051aaea0a685d8b14587113dfba9173";
-      };
-    };
-    settings = {
-      status = {
-        missing_tools = "never";
-      };
-    };
-  };
-
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;

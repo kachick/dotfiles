@@ -35,8 +35,5 @@
     };
   };
 
-  home.packages = [
-    pkgs.wslu
-    homemade-pkgs.podman
-  ];
+  home.packages = [ pkgs.wslu ];
 }

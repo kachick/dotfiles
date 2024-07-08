@@ -109,6 +109,9 @@ func provisioners() []provisioner {
 		newProvisioner([]string{"windows", "komorebi", "applications.yaml"}, []string{homePath, "applications.yaml"}),
 		newProvisioner([]string{"windows", "komorebi", "komorebi.json"}, []string{homePath, "komorebi.json"}),
 		newProvisioner([]string{"windows", "whkd", "whkdrc"}, []string{homePath, ".config", "whkd", "whkdrc"}),
+
+		// You may need to custom the memory size
+		newProvisioner([]string{"windows", "WSL", ".wslconfig"}, []string{homePath, ".wslconfig"}),
 	}
 }
 

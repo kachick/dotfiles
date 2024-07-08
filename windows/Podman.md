@@ -1,8 +1,20 @@
 # Podman
 
-## Containers?
+## How to resolve `WARN[0000] "/" is not a shared mount, this could cause issues or missing mounts with rootless containers`
 
-I now prefer podman over docker and singularity.\
+See https://github.com/containers/buildah/issues/3726#issuecomment-1171146242
+
+```bash
+sudo mount --make-rshared /
+```
+
+## How to install
+
+Use one of following.
+
+- Directly Install podman into the debian family # Now using. The whole steps are written in [README](../README.md) and [WSL](WSL/README.md)
+- [Install podman-desktop](./Podman-Remote.md), it easy to install but requires annoy setups with another WSL instance. # Old way, Written in this file
+
 It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
 Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
 This repository aliases podman command to mise installed binary.

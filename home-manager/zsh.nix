@@ -11,7 +11,6 @@
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
-  programs.mise.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
 

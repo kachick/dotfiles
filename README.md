@@ -69,13 +69,54 @@ Some tools are not yet fully automated, read each docs.
    - `user@linux` # Used in container
    - `kachick@linux`
 
+### Podman on Ubuntu
+
+1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
+
+   - "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
+
+   ```bash
+   sudo apt-get install --assume-yes uidmap
+   ```
+
+1. Make sure putting /etc/containers/policy.json, it is not a home-manager role
+
+   ```bash
+   sudo mkdir -p /etc/containers
+   cd /etc/containers
+   sudo curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
+   ```
+
+1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
+
+1. Make sure you can run containers as `podman run -it docker.io/debian:12.5`
+
+## Debian
+
+After installing missing tools, you can complete same steps as Ubuntu
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install --assume-yes curl
+sudo apt install --assume-yes dbus-user-session # For podman
+```
+
+Remember to set special config and reboot if you on WSL
+
+```
+echo '
+[boot]
+systemd=true' | sudo tee /etc/wsl.conf
+```
+
 ## macOS
 
 Activate `kachick@macbook` as Linux
 
 ## Windows
 
-After installing [WSL2](windows/docs/WSL.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
+After installing [WSL2](windows/WSL/README.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
 Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
 ## Note
@@ -84,13 +125,6 @@ If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
 makers apply user@linux
-```
-
-Using podman may require to install some dependencies without Nix
-
-```bash
-# "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
-sudo apt-get install uidmap
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).

@@ -11,7 +11,6 @@
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = true;
-  programs.mise.enableBashIntegration = true;
   # Intentionally disabled for keeping stable bash
   programs.zellij.enableBashIntegration = false;
 

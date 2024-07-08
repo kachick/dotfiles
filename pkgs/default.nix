@@ -99,7 +99,7 @@ rec {
   updeps = pkgs.writeShellApplication {
     name = "updeps";
     # Do no include "nix" in inputs: https://github.com/NixOS/nix/issues/5473
-    runtimeInputs = with pkgs; [ mise ];
+    runtimeInputs = [ ];
     text = ''
       if [ -f /etc/NIXOS ]; then
         echo 'Needless this updater for NixOS, so exit with nothing'
@@ -120,8 +120,6 @@ rec {
       esac
 
       sudo -i nix upgrade-nix
-
-      mise plugins update
     '';
   };
 
@@ -157,17 +155,6 @@ rec {
 
       # shellcheck disable=SC2016
       fzf --query "$query" --preview 'bat --color=always {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
-    '';
-  };
-
-  # Why need the wrapper?
-  #   nixpkgs provide 4.9.3 is not including podman-remote.
-  #   https://github.com/NixOS/nixpkgs/blob/e3474e1d1e53b70e2b2af73ea26d6340e82f6b8b/pkgs/applications/virtualization/podman/default.nix#L104-L108
-  podman = pkgs.writeShellApplication {
-    name = "podman";
-    runtimeInputs = with pkgs; [ mise ];
-    text = ''
-      mise exec podman@latest -- podman "$@"
     '';
   };
 
