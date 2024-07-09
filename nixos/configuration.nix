@@ -249,11 +249,15 @@ in
 
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
     # `rm -rf ~/.config/google-chrome/Singleton*`
-    (edge-pkgs.google-chrome.override {
+    (edge-pkgs.google-chrome.override (prev: {
       # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
       # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-      commandLineArgs = builtins.concatStringsSep " " [ "--enable-wayland-ime" ];
-    })
+      commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
+        "--ozone-platform=wayland"
+        "--ozone-platform-hint=auto"
+        "--enable-wayland-ime"
+      ];
+    }))
 
     cloudflare-warp
   ];
