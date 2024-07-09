@@ -145,6 +145,7 @@ in
   services.libinput = {
     enable = true;
     mouse.naturalScrolling = true;
+    touchpad.naturalScrolling = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
