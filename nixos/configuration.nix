@@ -111,8 +111,10 @@ in
     # https://discourse.nixos.org/t/cannot-enroll-fingerprints-with-fprintd-no-devices-available/40362
     tod = {
       enable = true;
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/development/libraries/libfprint-2-tod1-elan/default.nix#L16
-      driver = pkgs.libfprint-2-tod1-elan;
+      # This select is a bit different of https://github.com/ramaureirac/thinkpad-e14-linux/blob/7539f51b1c29d116a549265f992032aa9642d4a5/tweaks/fingerprint/README.md#L19
+      # You should check actual vendor with `lsusb | grep FingerPrint`
+      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/development/libraries/libfprint-2-tod1-goodix-550a/default.nix#L9
+      driver = pkgs.libfprint-2-tod1-goodix-550a;
     };
 
     # https://github.com/NixOS/nixpkgs/issues/298150
@@ -160,6 +162,7 @@ in
       extraGroups = [
         "networkmanager"
         "wheel"
+        "input" # For finger print in GDM
       ];
       packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
