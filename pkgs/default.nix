@@ -40,6 +40,25 @@ rec {
     };
   };
 
+  bump_gomod = pkgs.writeShellApplication {
+    name = "bump_gomod";
+    runtimeInputs = with pkgs; [
+      git
+      go
+      gnugrep
+    ];
+    text = ''
+      go get "go@$(go version | grep -oP '(?<=go)\d\S+')"
+
+      git add go.mod go.sum
+      git update-index -q --really-refresh
+      git diff-index --quiet HEAD || git commit -m 'Update go.mod' go.mod go.sum
+    '';
+    meta = {
+      description = "Update go.mod with method of https://github.com/kachick/times_kachick/issues/265";
+    };
+  };
+
   check_no_dirty_xz_in_nix_store = pkgs.writeShellApplication {
     name = "check_no_dirty_xz_in_nix_store";
     runtimeInputs = with pkgs; [ fd ];
