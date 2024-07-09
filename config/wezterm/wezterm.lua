@@ -1,7 +1,7 @@
 local wezterm <const> = require("wezterm")
 local mux <const> = wezterm.mux
 local config <const> = wezterm.config_builder()
-local act <const> = wezterm.action
+local action <const> = wezterm.action
 local launch_menu <const> = {}
 local font_with_fallback <const> = wezterm.font_with_fallback({
   {
@@ -45,11 +45,11 @@ end
 
 config.keys = {
   -- TODO: Consider to move into windows only combination
-  { key = "v", mods = "CTRL", action = act.PasteFrom("Clipboard") },
+  { key = "v", mods = "CTRL", action = action.PasteFrom("Clipboard") },
   {
     key = "r",
     mods = "CMD|SHIFT",
-    action = wezterm.action.ReloadConfiguration,
+    action = action.ReloadConfiguration,
   },
 }
 
