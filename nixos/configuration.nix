@@ -103,26 +103,26 @@ in
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
   services.blueman.enable = true;
 
-  # Didn't work for current device
-  # services.fprintd = {
-  #   enable = true;
+  services.fprintd = {
+    enable = true;
 
-  #   # https://gitlab.freedesktop.org/libfprint/libfprint/-/issues/402#note_1860665
+    # https://gitlab.freedesktop.org/libfprint/libfprint/-/issues/402#note_1860665
 
-  #   # https://discourse.nixos.org/t/cannot-enroll-fingerprints-with-fprintd-no-devices-available/40362
-  #   tod = {
-  #     enable = true;
-  #     driver = pkgs.libfprint-2-tod1-elan;
-  #   };
+    # https://discourse.nixos.org/t/cannot-enroll-fingerprints-with-fprintd-no-devices-available/40362
+    tod = {
+      enable = true;
+      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/development/libraries/libfprint-2-tod1-elan/default.nix#L16
+      driver = pkgs.libfprint-2-tod1-elan;
+    };
 
-  #   # https://github.com/NixOS/nixpkgs/issues/298150
-  #   package = pkgs.fprintd.overrideAttrs {
-  #     mesonCheckFlags = [
-  #       "--no-suite"
-  #       "fprintd:TestPamFprintd"
-  #     ];
-  #   };
-  # };
+    # https://github.com/NixOS/nixpkgs/issues/298150
+    # package = pkgs.fprintd.overrideAttrs {
+    #   mesonCheckFlags = [
+    #     "--no-suite"
+    #     "fprintd:TestPamFprintd"
+    #   ];
+    # };
+  };
 
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
   security.pam.services.swaylock = { };
