@@ -119,6 +119,25 @@ Activate `kachick@macbook` as Linux
 After installing [WSL2](windows/WSL/README.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
 Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
+## Following steps
+
+1. Restore GPG secret from STDIN
+
+   ```bash
+   gpg --import
+   ```
+
+1. Restore SSH secret from STDIN
+
+   ```bash
+   touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
+   micro ~/.ssh/id_ed25519
+   ```
+
+1. Restore shell history
+
+   [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
+
 ## Note
 
 If you are developing this repository, the simple reactivation is as follows.
