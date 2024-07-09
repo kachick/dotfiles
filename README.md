@@ -89,7 +89,7 @@ Some tools are not yet fully automated, read each docs.
 
 1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
 
-1. Make sure you can run containers as `podman run -it docker.io/debian:12.5`
+1. Make sure you can run containers as `podman run public.ecr.aws/debian/debian:12.6-slim cat /etc/os-release`
 
 ## Debian
 
