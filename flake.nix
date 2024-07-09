@@ -103,7 +103,7 @@
         # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
         home-manager = mkApp home-manager.defaultPackage.${system};
-        bump_completions = mkApp packages.${system}.check_no_dirty_xz_in_nix_store;
+        bump_completions = mkApp packages.${system}.bump_completions;
         check_no_dirty_xz_in_nix_store = mkApp packages.${system}.check_no_dirty_xz_in_nix_store;
         bench_shells = mkApp packages.${system}.bench_shells;
         walk = mkApp packages.${system}.walk;
