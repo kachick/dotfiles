@@ -99,6 +99,10 @@ in
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
+  services.blueman.enable = true;
+
   # Didn't work for current device
   # services.fprintd = {
   #   enable = true;
