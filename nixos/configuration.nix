@@ -274,6 +274,18 @@ in
     VIDEOS=Videos
   '';
 
+  # Make it natural scroll on KDE, not enough only in libinput
+  # https://github.com/NixOS/nixpkgs/issues/51875#issuecomment-846251880
+  environment.etc."X11/xorg.conf.d/30-touchpad.conf".text = ''
+    Section "InputClass"
+            Identifier "libinput touchpad catchall"
+            MatchIsTouchpad "on"
+            MatchDevicePath "/dev/input/event*"
+            Driver "libinput"
+            Option "NaturalScrolling" "on"
+    EndSection
+  '';
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
