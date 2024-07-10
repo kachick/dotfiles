@@ -368,6 +368,21 @@ in
     };
   };
 
+  # Apply better fonts for non X consoles
+  # https://github.com/NixOS/nixpkgs/issues/219239
+  boot.initrd.kernelModules = [ "amdgpu" ];
+  console = {
+    earlySetup = true;
+    # The font should have PSF formats. Do not specify TTF and OTF
+    font = "ter-u24n";
+
+    packages = with pkgs; [
+      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/data/fonts/terminus-font/default.nix#L41-L43
+      terminus_font
+    ];
+    keyMap = "us";
+  };
+
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
     containers.enable = true;
