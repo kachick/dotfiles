@@ -383,6 +383,25 @@ in
     keyMap = "us";
   };
 
+  # Better console appearance even if no X
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/ttys/kmscon.nix
+  services.kmscon = {
+    enable = true;
+    hwRender = true;
+    fonts = with pkgs; [
+      {
+        name = "PlemolJP Console NF";
+        package = plemoljp-nf;
+      }
+      {
+        name = "Noto Color Emoji";
+        package = noto-fonts-color-emoji;
+      }
+    ];
+    extraConfig = "font-size=24";
+    extraOptions = "--term xterm-256color";
+  };
+
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
     containers.enable = true;
