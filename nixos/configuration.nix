@@ -245,6 +245,9 @@ in
         '';
     }))
 
+    podman-tui
+    docker-compose
+
     ## Unfree packages
 
     (edge-pkgs.vscode.override (prev: {
