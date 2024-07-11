@@ -127,6 +127,8 @@
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
         source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+
+        apply_iceberg_scheme_on_linux_console
       ''
       + builtins.readFile ./initExtra.bash;
 

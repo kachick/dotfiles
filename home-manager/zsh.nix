@@ -205,6 +205,8 @@
 
       source_sh "${config.xdg.configHome}/posix_shells/shared_functions.sh"
 
+      apply_iceberg_scheme_on_linux_console
+
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
