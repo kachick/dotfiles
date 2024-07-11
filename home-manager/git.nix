@@ -32,6 +32,13 @@
       # Do not add `--graph`, it makes too slow in large repository as NixOS/nixpkgs
       pp = "log --format='format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d' --date=short --color=always";
       lf = "!git pp | ${lib.getExe homemade-pkgs.git-log-fzf}";
+      reset-main = ''
+        !git fetch origin && \
+          git switch main && \
+          git branch -m "backup-main-$(${lib.getBin pkgs.ruby_3_3}/bin/ruby -r 'securerandom' -e 'puts SecureRandom.uuid')" && \
+          git checkout origin/main && \
+          git checkout -b main
+      '';
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
