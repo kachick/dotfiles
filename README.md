@@ -119,6 +119,10 @@ Activate `kachick@macbook` as Linux
 After installing [WSL2](windows/WSL/README.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
 Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
 
+## Multi-booting on Windows and Linux
+
+Check [traps](./windows/Multi-booting.md)
+
 ## Following steps
 
 1. Restore GPG secret from STDIN
