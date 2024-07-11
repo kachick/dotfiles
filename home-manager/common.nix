@@ -152,6 +152,38 @@
     gch() {
       fc -nrl 1 | ${lib.getExe homemade-pkgs.fzf-bind-posix-shell-history-to-git-commit-message}
     }
+
+    # See the reason in GH-660
+    # Original scheme: https://gist.github.com/cocopon/1d481941907d12db7a0df2f8806cfd41
+    apply_iceberg() {
+      # Blue. Mandatory to be changed from ANSI
+      echo -en "\e]P484a0c6"
+      echo -en "\e]PC91acd1"
+
+      # Black
+      echo -en "\e]P01e2132"
+      echo -en "\e]P86b7089"
+
+      # Red
+      echo -en "\e]P1e27878"
+      echo -en "\e]P9e98989"
+
+      # Green
+      echo -en "\e]P2b4be82"
+      echo -en "\e]PAc0ca8e"
+
+      # Yellow
+      echo -en "\e]P3e2a478"
+      echo -en "\e]PBe9b189"
+
+      # Magenta
+      echo -en "\e]P5a093c7"
+      echo -en "\e]PDada0d3"
+
+      # White
+      echo -en "\e]P7c6c8d1"
+      echo -en "\e]PFd2d4de"
+    }
   '';
 
   xdg.configFile."wezterm" = {

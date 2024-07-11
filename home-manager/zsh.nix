@@ -205,6 +205,10 @@
 
       source_sh "${config.xdg.configHome}/posix_shells/shared_functions.sh"
 
+      if [ 'linux' = "$TERM" ]; then
+        apply_iceberg
+      fi
+
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }

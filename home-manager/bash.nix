@@ -127,6 +127,10 @@
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
         source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+
+        if [ 'linux' = "$TERM" ]; then
+          apply_iceberg
+        fi
       ''
       + builtins.readFile ./initExtra.bash;
 
