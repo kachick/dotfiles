@@ -52,7 +52,7 @@
         })
       );
     in
-    {
+    rec {
       # nixfmt will be official
       # - https://github.com/NixOS/nixfmt/issues/153
       # - https://github.com/NixOS/nixfmt/issues/129
@@ -137,7 +137,7 @@
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   backupFileExtension = "backup";
-                  users.kachick = import ./home-manager/kachick.nix;
+                  users.kachick = homeConfigurations."kachick@nixos";
 
                   extraSpecialArgs = {
                     inherit homemade-pkgs edge-pkgs;
@@ -191,6 +191,16 @@
         in
         {
           "kachick@linux" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/systemd.nix
+              ];
+            }
+          );
+
+          "kachick@nixos" = home-manager.lib.homeManagerConfiguration (
             x86-Linux // { modules = [ ./home-manager/kachick.nix ]; }
           );
 
@@ -216,6 +226,7 @@
               modules = [
                 ./home-manager/kachick.nix
                 { home.username = "runner"; }
+                ./home-manager/systemd.nix
               ];
             }
           );
@@ -238,6 +249,7 @@
               modules = [
                 ./home-manager/common.nix
                 { home.username = "user"; }
+                ./home-manager/systemd.nix
               ];
             }
           );
