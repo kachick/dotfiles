@@ -128,7 +128,9 @@
 
         source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
 
-        apply_iceberg_scheme_on_linux_console
+        if [ 'linux' = "$TERM" ]; then
+          apply_iceberg
+        fi
       ''
       + builtins.readFile ./initExtra.bash;
 
