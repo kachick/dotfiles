@@ -33,7 +33,7 @@ $character"""
 disabled = false
 
 [directory]
-style = "blue"
+style = "bright-blue"
 
 [direnv]
 # Do not enable until https://github.com/starship/starship/pull/5657 is released

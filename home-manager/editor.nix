@@ -66,7 +66,10 @@ in
 
       # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
       # But none of fit colors with other place, See #587 for further detail
-      colorscheme = "nord-16";
+      # Should set 16-color scheme to keep compatibility with TERM=linux
+      # candidates: simple, cmc-16, solarized
+      # https://github.com/zyedidia/micro/issues/1743#issuecomment-649113426
+      colorscheme = "simple";
     };
   };
 

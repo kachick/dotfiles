@@ -371,9 +371,14 @@ in
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
   boot.initrd.kernelModules = [ "amdgpu" ];
+  # https://wiki.archlinux.org/title/Linux_console
   console = {
+    # TODO: Don't use ANSI blue. Similar as https://github.com/systemd/systemd/issues/14495
+    # echo -en "\e]P0403030" # Make blue bright blue
+
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
+    # You can list current glyphs with `showconsolefont`
     font = "ter-u24n";
 
     packages = with pkgs; [
