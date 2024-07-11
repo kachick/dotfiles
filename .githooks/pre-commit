@@ -3,4 +3,4 @@
 set -euxo pipefail
 
 treefmt
-makers --loglevel=error lint
+makers lint
