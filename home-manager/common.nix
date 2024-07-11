@@ -217,6 +217,14 @@
     Type=Application
   '';
 
+  # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
+  # Check your `~/.config/user-dirs.dirs` if you faced any trouble
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg-user-dirs.nix
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+  };
+
   # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
   xdg.configFile."autostart/userdirs.desktop".text = ''
     [Desktop Entry]
