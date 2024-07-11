@@ -7,8 +7,8 @@ Here is a note for me.
 
   Problems
 
-  - [Unstable Wifi](GH-663)
-  - [Wrong timestamp on dmesg](GH-664)
+  - [Unstable Wifi](/../../issues/663)
+  - [Wrong timestamp on dmesg](/../../issues/664)
 
   Solutions
 
