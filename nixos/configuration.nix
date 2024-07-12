@@ -200,6 +200,7 @@ in
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     micro
     lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
+    zed-editor
 
     usbutils # `lsusb` to get IDs
 
