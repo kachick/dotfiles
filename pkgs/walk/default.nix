@@ -5,6 +5,5 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     fzf
     bat
-    micro
   ];
 }
