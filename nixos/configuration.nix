@@ -199,6 +199,7 @@ in
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     micro
+    edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
     lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
     usbutils # `lsusb` to get IDs

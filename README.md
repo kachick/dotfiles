@@ -104,7 +104,7 @@ sudo apt install --assume-yes dbus-user-session # For podman
 
 Remember to set special config and reboot if you on WSL
 
-```
+```bash
 echo '
 [boot]
 systemd=true' | sudo tee /etc/wsl.conf
@@ -112,7 +112,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## macOS
 
-Activate `kachick@macbook` as Linux
+Activate `kachick@macbook` as Linux and [manually setup some packages](./darwin/README.md).
 
 ## Windows
 
