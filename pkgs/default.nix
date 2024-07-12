@@ -46,5 +46,5 @@
     inherit pkgs;
   };
 
-  beedii = import ./beedii { inherit pkgs; };
+  beedii = pkgs.callPackage ./beedii { };
 }
