@@ -1,0 +1,18 @@
+{ pkgs, ... }:
+pkgs.writeShellApplication rec {
+  name = "git-log-fzf";
+  text = builtins.readFile ./${name}.bash;
+  runtimeInputs =
+    with pkgs;
+    [
+      fzf
+      coreutils
+      git
+      gh
+      colorized-logs
+      bat
+    ]
+    ++ (lib.optionals stdenv.isLinux [
+      wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
+    ]);
+}
