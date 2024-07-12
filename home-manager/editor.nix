@@ -86,5 +86,7 @@ in
     '';
   };
 
+  xdg.configFile."zed/settings.json".source = ../config/zed/settings.json;
+
   # Don't add unfree packages like vscode here for using in containers
 }
