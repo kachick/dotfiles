@@ -22,9 +22,10 @@ Or, you can directly use some commands with `nix run` without any installation s
 ```bash
 nix run 'github:kachick/dotfiles#todo'
 nix run 'github:kachick/dotfiles#bench_shells'
-nix run 'github:kachick/dotfiles#git-delete-merged-branches'
 nix run 'github:kachick/dotfiles#walk'
 nix run 'github:kachick/dotfiles#prs'
+nix run 'github:kachick/dotfiles#git-log-fzf'
+nix run 'github:kachick/dotfiles#git-delete-merged-branches'
 ```
 
 ## NixOS

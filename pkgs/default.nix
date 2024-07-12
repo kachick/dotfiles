@@ -38,6 +38,7 @@
   archive-home-files = import ./archive-home-files { inherit pkgs; };
 
   git-log-fzf = import ./git-log-fzf { inherit pkgs; };
+  git-log-simple = import ./git-log-simple { inherit pkgs; };
 
   prs = import ./prs { inherit pkgs; };
 

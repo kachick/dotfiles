@@ -114,6 +114,7 @@
         ghqf = mkApp homemade-packages.${system}.ghqf;
         git-delete-merged-branches = mkApp homemade-packages.${system}.git-delete-merged-branches;
         git-log-fzf = mkApp homemade-packages.${system}.git-log-fzf;
+        git-log-simple = mkApp homemade-packages.${system}.git-log-simple;
         prs = mkApp homemade-packages.${system}.prs;
         trim-github-user-prefix-for-reponame =
           mkApp

@@ -18,7 +18,7 @@ _fzf_git_fzf() {
 }
 
 # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
-_fzf_git_fzf --ansi --nth 1,3.. --no-sort --query "$query" --border-label '🪵 Logs' \
+git-log-simple | _fzf_git_fzf --ansi --nth 1,3.. --no-sort --query "$query" --border-label '🪵 Logs' \
 	--preview 'echo {} | \
           cut --delimiter " " --fields 2 --only-delimited | \
           ansi2txt | \
