@@ -115,6 +115,9 @@
         git-delete-merged-branches = mkApp packages.${system}.git-delete-merged-branches;
         git-log-fzf = mkApp packages.${system}.git-log-fzf;
         prs = mkApp packages.${system}.prs;
+        trim-github-user-prefix-for-reponame =
+          mkApp
+            packages.${system}.trim-github-user-prefix-for-reponame;
       });
 
       nixosConfigurations =
