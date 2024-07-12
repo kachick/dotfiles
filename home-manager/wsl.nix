@@ -1,9 +1,13 @@
-{ pkgs, homemade-pkgs, ... }:
+{ pkgs, lib, ... }:
+
+let
+  commonSystemd = import ./systemd.nix { inherit pkgs lib; };
+in
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
   # Originally "system" should be better than "user", but it is not a home-manager role
-  systemd.user = {
+  systemd.user = commonSystemd.systemd.user // {
     # - This name should be same of Mount.Where. Do not use `-` except path separator
     # - You can manually enable with `sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu24.mount --now`
     mounts.mnt-wsl-instances-ubuntu24 =

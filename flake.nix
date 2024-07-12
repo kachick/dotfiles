@@ -191,7 +191,13 @@
         in
         {
           "kachick@linux" = home-manager.lib.homeManagerConfiguration (
-            x86-Linux // { modules = [ ./home-manager/kachick.nix ]; }
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/systemd.nix
+              ];
+            }
           );
 
           "kachick@wsl" = home-manager.lib.homeManagerConfiguration (
@@ -216,6 +222,7 @@
               modules = [
                 ./home-manager/kachick.nix
                 { home.username = "runner"; }
+                ./home-manager/systemd.nix
               ];
             }
           );
@@ -238,6 +245,7 @@
               modules = [
                 ./home-manager/common.nix
                 { home.username = "user"; }
+                ./home-manager/systemd.nix
               ];
             }
           );
