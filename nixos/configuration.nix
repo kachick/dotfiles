@@ -7,12 +7,10 @@
   config,
   pkgs,
   edge-pkgs,
+  homemade-pkgs,
   lib,
   ...
 }:
-let
-  beedii = pkgs.callPackage ../pkgs/beedii.nix { };
-in
 {
   imports = [
     # Include the results of the hardware scan.
@@ -340,7 +338,7 @@ in
 
       # emoji
       noto-fonts-color-emoji
-      beedii
+      homemade-pkgs.beedii
       twemoji-color-font
 
       # Source Han family includes many definitions, useful for fallback

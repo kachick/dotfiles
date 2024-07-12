@@ -44,4 +44,6 @@
   trim-github-user-prefix-for-reponame = import ./trim-github-user-prefix-for-reponame {
     inherit pkgs;
   };
+
+  beedii = import ./beedii { inherit pkgs; };
 }

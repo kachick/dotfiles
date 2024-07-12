@@ -44,7 +44,7 @@
         program = nixpkgs.lib.getExe pkg;
       };
 
-      packages = forAllSystems (
+      homemade-packages = forAllSystems (
         system:
         (import ./pkgs {
           pkgs = nixpkgs.legacyPackages.${system};
@@ -103,21 +103,21 @@
         # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
         home-manager = mkApp home-manager.defaultPackage.${system};
-        bump_completions = mkApp packages.${system}.bump_completions;
-        bump_gomod = mkApp packages.${system}.bump_gomod;
-        check_no_dirty_xz_in_nix_store = mkApp packages.${system}.check_no_dirty_xz_in_nix_store;
-        bench_shells = mkApp packages.${system}.bench_shells;
-        walk = mkApp packages.${system}.walk;
-        todo = mkApp packages.${system}.todo;
-        la = mkApp packages.${system}.la;
-        lat = mkApp packages.${system}.lat;
-        ghqf = mkApp packages.${system}.ghqf;
-        git-delete-merged-branches = mkApp packages.${system}.git-delete-merged-branches;
-        git-log-fzf = mkApp packages.${system}.git-log-fzf;
-        prs = mkApp packages.${system}.prs;
+        bump_completions = mkApp homemade-packages.${system}.bump_completions;
+        bump_gomod = mkApp homemade-packages.${system}.bump_gomod;
+        check_no_dirty_xz_in_nix_store = mkApp homemade-packages.${system}.check_no_dirty_xz_in_nix_store;
+        bench_shells = mkApp homemade-packages.${system}.bench_shells;
+        walk = mkApp homemade-packages.${system}.walk;
+        todo = mkApp homemade-packages.${system}.todo;
+        la = mkApp homemade-packages.${system}.la;
+        lat = mkApp homemade-packages.${system}.lat;
+        ghqf = mkApp homemade-packages.${system}.ghqf;
+        git-delete-merged-branches = mkApp homemade-packages.${system}.git-delete-merged-branches;
+        git-log-fzf = mkApp homemade-packages.${system}.git-log-fzf;
+        prs = mkApp homemade-packages.${system}.prs;
         trim-github-user-prefix-for-reponame =
           mkApp
-            packages.${system}.trim-github-user-prefix-for-reponame;
+            homemade-packages.${system}.trim-github-user-prefix-for-reponame;
       });
 
       nixosConfigurations =
@@ -129,7 +129,7 @@
               allowUnfree = true;
             };
           };
-          homemade-pkgs = packages.${system};
+          homemade-pkgs = homemade-packages.${system};
           shared = {
             inherit system;
             modules = [
@@ -179,7 +179,7 @@
           x86-Linux = {
             pkgs = nixpkgs.legacyPackages.x86_64-linux;
             extraSpecialArgs = {
-              homemade-pkgs = packages.x86_64-linux;
+              homemade-pkgs = homemade-packages.x86_64-linux;
               edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
             };
           };
@@ -187,7 +187,7 @@
           x86-macOS = {
             pkgs = nixpkgs.legacyPackages.x86_64-darwin;
             extraSpecialArgs = {
-              homemade-pkgs = packages.x86_64-darwin;
+              homemade-pkgs = homemade-packages.x86_64-darwin;
               edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
             };
           };
