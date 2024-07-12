@@ -46,7 +46,7 @@
     inherit pkgs;
   };
 
-  beedii = import ./beedii { inherit pkgs; };
+  beedii = pkgs.callPackage ./beedii { };
 
-  mplus_bitmap_font = import ./mplus_bitmap_font { inherit pkgs; };
+  mplus_bitmap_font = pkgs.callPackage ./mplus_bitmap_font { };
 }
