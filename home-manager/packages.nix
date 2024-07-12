@@ -160,5 +160,4 @@ with pkgs;
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
-  edge-pkgs.zed-editor
 ])
