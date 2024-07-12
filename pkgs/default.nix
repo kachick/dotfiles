@@ -47,4 +47,6 @@
   };
 
   beedii = import ./beedii { inherit pkgs; };
+
+  mplus_bitmap_font = import ./mplus_bitmap_font { inherit pkgs; };
 }
