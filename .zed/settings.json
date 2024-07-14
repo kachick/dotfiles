@@ -1,6 +1,7 @@
 {
   "formatter": {
     "external": {
+      // TODO: Apply dprint for markdown files. That didn't work only in zed :<
       "command": "dprint",
       "arguments": ["fmt", "--stdin", "{buffer_path}"]
     }
