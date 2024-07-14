@@ -7,12 +7,20 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Ayu Dark",
+  "theme": "Solarized Dark",
   "telemetry": {
     "metrics": false
   },
   "ui_font_size": 16,
-  "buffer_font_family": "PlemolJP Console NF",
-  "buffer_font_features": { "harfbuzz": "zero" },
-  "buffer_font_size": 16
+  // FIXME: PlemolJP Console NF looks not working.
+  //   Sarasa is good for my favor and zed, because of zed using Iosevka family
+  //   However the font size is too large, I want to avoid it for now
+  "buffer_font_family": "Sarasa Mono J",
+  "buffer_font_size": 16,
+  "auto_install_extensions": {
+    "nix": true,
+    "toml": true,
+    "lua": true,
+    "basher": true
+  }
 }

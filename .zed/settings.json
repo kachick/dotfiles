@@ -1,0 +1,43 @@
+{
+  "formatter": {
+    "external": {
+      // TODO: Apply dprint for markdown files. That didn't work only in zed :<
+      "command": "dprint",
+      "arguments": ["fmt", "--stdin", "{buffer_path}"]
+    }
+  },
+  "languages": {
+    "Nix": {
+      "formatter": {
+        "external": {
+          "command": "nixfmt",
+          "arguments": ["-"]
+        }
+      }
+    },
+    "Go": {
+      "formatter": {
+        "external": {
+          "command": "gofmt",
+          "arguments": []
+        }
+      }
+    },
+    "Shell Script": {
+      "formatter": {
+        "external": {
+          "command": "shfmt",
+          "arguments": ["--language-dialect", "bash", "-"]
+        }
+      }
+    },
+    "Lua": {
+      "formatter": {
+        "external": {
+          "command": "stylua",
+          "arguments": ["-"]
+        }
+      }
+    }
+  }
+}
