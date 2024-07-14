@@ -12,6 +12,9 @@
     "metrics": false
   },
   "ui_font_size": 16,
+  // FIXME: PlemolJP Console NF looks not working.
+  //   Sarasa is good for my favor and zed, because of zed using Iosevka family
+  //   However the font size is too large, I want to avoid it for now
   "buffer_font_family": "Sarasa Mono J",
   "buffer_font_size": 16,
   "auto_install_extensions": {
