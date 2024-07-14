@@ -64,7 +64,6 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         in
         {
           default =
@@ -92,7 +91,6 @@
                 stylua
                 typos
                 typos-lsp
-                edge-pkgs.bash-language-server
                 go_1_22
                 goreleaser
                 trivy
