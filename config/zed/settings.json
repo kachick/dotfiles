@@ -7,7 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Ayu Dark",
+  "theme": "Solarized Dark",
   "telemetry": {
     "metrics": false
   },
