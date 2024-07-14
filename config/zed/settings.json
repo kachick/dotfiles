@@ -12,7 +12,6 @@
     "metrics": false
   },
   "ui_font_size": 16,
-  "buffer_font_family": "PlemolJP Console NF",
-  "buffer_font_features": { "harfbuzz": "zero" },
+  "buffer_font_family": "Sarasa Mono J",
   "buffer_font_size": 16
 }
