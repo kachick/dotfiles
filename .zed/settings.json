@@ -1,0 +1,8 @@
+{
+  "formatter": {
+    "external": {
+      "command": "treefmt",
+      "arguments": ["--stdin"]
+    }
+  }
+}
