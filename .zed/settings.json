@@ -1,8 +1,42 @@
 {
   "formatter": {
     "external": {
-      "command": "treefmt",
-      "arguments": ["--stdin", "{FILENAME}"]
+      "command": "dprint",
+      "arguments": ["fmt", "--stdin", "{buffer_path}"]
+    }
+  },
+  "languages": {
+    "Nix": {
+      "formatter": {
+        "external": {
+          "command": "nixfmt",
+          "arguments": ["-"]
+        }
+      }
+    },
+    "Go": {
+      "formatter": {
+        "external": {
+          "command": "gofmt",
+          "arguments": []
+        }
+      }
+    },
+    "Shell Script": {
+      "formatter": {
+        "external": {
+          "command": "shfmt",
+          "arguments": ["--language-dialect", "bash", "-"]
+        }
+      }
+    },
+    "Lua": {
+      "formatter": {
+        "external": {
+          "command": "stylua",
+          "arguments": ["-"]
+        }
+      }
     }
   }
 }

@@ -13,5 +13,11 @@
   },
   "ui_font_size": 16,
   "buffer_font_family": "Sarasa Mono J",
-  "buffer_font_size": 16
+  "buffer_font_size": 16,
+  "auto_install_extensions": {
+    "nix": true,
+    "toml": true,
+    "lua": true,
+    "basher": true
+  }
 }
