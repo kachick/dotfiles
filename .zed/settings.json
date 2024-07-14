@@ -2,7 +2,7 @@
   "formatter": {
     "external": {
       "command": "treefmt",
-      "arguments": ["--stdin"]
+      "arguments": ["--stdin", "{FILENAME}"]
     }
   }
 }
