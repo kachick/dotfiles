@@ -1,4 +1,4 @@
-https://nixos.wiki/wiki/OneDrive
+<https://nixos.wiki/wiki/OneDrive>
 
 ```bash
 onedrive

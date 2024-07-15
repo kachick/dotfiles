@@ -2,7 +2,7 @@
 
 ## How to resolve `WARN[0000] "/" is not a shared mount, this could cause issues or missing mounts with rootless containers`
 
-See https://github.com/containers/buildah/issues/3726#issuecomment-1171146242
+See <https://github.com/containers/buildah/issues/3726#issuecomment-1171146242>
 
 ```bash
 sudo mount --make-rshared /
