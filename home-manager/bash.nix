@@ -119,8 +119,8 @@
         starship_precmd_user_func="set_win_title"
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        source "${pkgs.podman}/share/bash-completion/completions/podman"
 
-        source "${../dependencies/podman/completions.bash}"
         source "${../dependencies/dprint/completions.bash}"
 
         # Disable `Ctrl + S(no output tty)`

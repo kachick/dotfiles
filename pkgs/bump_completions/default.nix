@@ -4,7 +4,6 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     git
-    podman
     dprint
   ];
 }

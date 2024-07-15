@@ -190,8 +190,8 @@
       precmd_functions+=(set_win_title)
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      source "${pkgs.podman}/share/zsh/site-functions/_podman"
 
-      source "${../dependencies/podman/completions.zsh}"
       source "${../dependencies/dprint/completions.zsh}"
 
       # Disable `Ctrl + S(no output tty)`
