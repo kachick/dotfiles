@@ -1,12 +1,17 @@
 {
   "formatter": {
     "external": {
-      // TODO: Apply dprint for markdown files. That didn't work only in zed :<
       "command": "dprint",
       "arguments": ["fmt", "--stdin", "{buffer_path}"]
     }
   },
   "languages": {
+    "Markdown": {
+      // Disabled by default in markdown: https://github.com/zed-industries/zed/blob/684d9dde5681504d8fe53ffe450c94902b3fa45b/assets/settings/default.json#L781
+      "format_on_save": "on",
+      // Without this, muliti-line ending trims over escaping
+      "remove_trailing_whitespace_on_save": false
+    },
     "Nix": {
       "formatter": {
         "external": {
