@@ -1,3 +1,5 @@
+# WezTerm
+
 ## How to debug Lua code?
 
 CTRL-SHIFT-L
