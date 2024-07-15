@@ -47,4 +47,6 @@
   };
 
   beedii = pkgs.callPackage ./beedii { };
+
+  mplus_bitmap_font = pkgs.callPackage ./mplus_bitmap_font { };
 }

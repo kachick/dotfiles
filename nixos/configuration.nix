@@ -378,11 +378,12 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "ter-u24n";
+    font = "mplus_j12r";
 
     packages = with pkgs; [
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/data/fonts/terminus-font/default.nix#L41-L43
       terminus_font
+      homemade-pkgs.mplus_bitmap_font
     ];
     keyMap = "us";
   };
