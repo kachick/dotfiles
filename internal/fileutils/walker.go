@@ -56,15 +56,3 @@ func (w Walker) GetAllBash() []string {
 
 	return paths
 }
-
-func (w Walker) GetAllNix() []string {
-	paths := []string{}
-
-	for _, r := range w.reports {
-		if strings.HasSuffix(r.Dir.Name(), ".nix") {
-			paths = append(paths, r.Path)
-		}
-	}
-
-	return paths
-}
