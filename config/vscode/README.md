@@ -1,3 +1,5 @@
+# vscode
+
 ## How to bulk install extensions without cloud sync
 
 ```bash

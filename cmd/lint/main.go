@@ -18,6 +18,7 @@ func main() {
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
+	markdownPaths := walker.GetAllMarkdown()
 
 	cmds := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
@@ -26,6 +27,7 @@ func main() {
 		{Path: "gitleaks", Args: []string{"detect", "--no-git"}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
+		{Path: "markdownlint-cli2", Args: markdownPaths},
 	}
 
 	if *allFlag {

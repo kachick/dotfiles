@@ -50,22 +50,30 @@ Some tools are not yet fully automated, read each docs.
 ## Ubuntu
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
+
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
+
 1. Make sure there is a nix directory that is used in the home-manager.\
    This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
+
    ```bash
    mkdir -p ~/.local/state/nix/profiles
    ```
+
 1. Restart current shell to load Nix as a PATH
+
    ```bash
    bash
    ```
+
 1. Apply dotfiles for each use
+
    ```bash
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux'
    ```
+
    Candidates
    - `user@linux` # Used in container
    - `kachick@linux`
@@ -74,7 +82,7 @@ Some tools are not yet fully automated, read each docs.
 
 1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
 
-   - "shadow" in nixpkg is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
+   - "shadow" in nixpkg is not enough for podman - <https://github.com/NixOS/nixpkgs/issues/138423>
 
    ```bash
    sudo apt-get install --assume-yes uidmap

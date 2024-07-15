@@ -29,4 +29,4 @@ And you can test with actual toml in the `$HOME/.config/alacritty/local.toml`
 
 ## Can I list runtime config?
 
-No. See https://github.com/alacritty/alacritty/issues/7147
+No. See <https://github.com/alacritty/alacritty/issues/7147>

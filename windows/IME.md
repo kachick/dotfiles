@@ -18,4 +18,4 @@ Cons for Microsoft IME
 
 ## How to toggle with US keyboard?
 
-- https://github.com/karakaram/alt-ime-ahk
+- <https://github.com/karakaram/alt-ime-ahk>

@@ -29,29 +29,23 @@ Loading personal and system profiles took 897ms.
 
 Reason: ngen.exe cannot compile latest pwsh
 
-- Official: https://github.com/PowerShell/PowerShell/issues/14374#issuecomment-1416688062
-- Better: https://superuser.com/a/1411591/120469
-- Didn't: https://stackoverflow.com/questions/59341482/powershell-steps-to-fix-slow-startup
-- How: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
+- Official: <https://github.com/PowerShell/PowerShell/issues/14374#issuecomment-1416688062>
+- Better: <https://superuser.com/a/1411591/120469>
+- Didn't: <https://stackoverflow.com/questions/59341482/powershell-steps-to-fix-slow-startup>
+- How: <https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26>
 
 One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NET\Framework" as "C:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe"
 
 ## How to write PowerShell scripts?
 
-- https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines
-- https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md
-- https://github.com/kachick/learn_PowerShell
+- <https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines>
+- <https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md>
+- <https://github.com/kachick/learn_PowerShell>
 
 ## History substring search in major shells for Windows
 
-- PowerShell: Using https://github.com/kelleyma49/PSFzf made much slow, prefer https://github.com/kachick/PSFzfHistory
+- PowerShell: Using <https://github.com/kelleyma49/PSFzf> made much slow, prefer <https://github.com/kachick/PSFzfHistory>
 - nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
-
-## How to write PowerShell scripts?
-
-- https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines
-- https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md
-- https://github.com/kachick/learn_PowerShell
 
 ## How to get helps for PowerShell commands as `cmd --help` in Unix?
 
@@ -95,7 +89,7 @@ After completed tasks, disable it as follows
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-## History in PowerShell does not work...
+## History in PowerShell does not work
 
 If PowerShell in WindowsTerminal displaying as below,
 
@@ -107,10 +101,10 @@ Cannot load PSReadline module.  Console is running without PSReadline.
 I have faced this problem when called `Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser`.\
 Try to set the permission as `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
-https://github.com/microsoft/terminal/issues/7257#issuecomment-1107700978
+<https://github.com/microsoft/terminal/issues/7257#issuecomment-1107700978>
 
 ## Some PowerShell scripts did not change windows behaviors
 
-https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752
+<https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752>
 
 After registry editing, needs to restart windows or the process

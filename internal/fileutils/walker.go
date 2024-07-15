@@ -56,3 +56,15 @@ func (w Walker) GetAllBash() []string {
 
 	return paths
 }
+
+func (w Walker) GetAllMarkdown() []string {
+	paths := []string{}
+
+	for _, r := range w.reports {
+		if !r.Dir.IsDir() && strings.HasSuffix(r.Dir.Name(), ".md") {
+			paths = append(paths, r.Path)
+		}
+	}
+
+	return paths
+}

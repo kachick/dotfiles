@@ -2,7 +2,7 @@
 
 ## How to resolve `WARN[0000] "/" is not a shared mount, this could cause issues or missing mounts with rootless containers`
 
-See https://github.com/containers/buildah/issues/3726#issuecomment-1171146242
+See <https://github.com/containers/buildah/issues/3726#issuecomment-1171146242>
 
 ```bash
 sudo mount --make-rshared /
@@ -39,7 +39,7 @@ podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /wor
 
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
 
-```
+```plaintext
 Error: Command execution failed with exit code 125 Command execution failed with exit code 125 Error: unable to load machine config file: "json: cannot unmarshal string into Go struct field MachineConfig.ImagePath of type define.VMFile"
 ```
 
@@ -74,37 +74,37 @@ This repository provides a mount based solution, mount from another instance as 
 
 ## How SSH login to podman-machine from another WSL instance like default Ubuntu?
 
-### WSL - Ubuntu
+1. WSL - Ubuntu
 
-Get pubkey
+   Get pubkey
 
-```bash
-cat ~/.ssh/id_ed25519.pub | clip.exe
-```
+   ```bash
+   cat ~/.ssh/id_ed25519.pub | clip.exe
+   ```
 
-### WSL - podman-machine
+2. WSL - podman-machine
 
-Register the Ubuntu pubkey
+   Register the Ubuntu pubkey
 
-```bash
-vi ~/.ssh/authorized_keys
-```
+   ```bash
+   vi ~/.ssh/authorized_keys
+   ```
 
-### Host - Windows
+3. Host - Windows
 
-Get podman-machine port number
+   Get podman-machine port number
 
-```pwsh
-podman system connection list | Select-String 'ssh://\w+@[^:]+:(\d+)' | % { $_.Matches.Groups[1].Value }
-```
+   ```pwsh
+   podman system connection list | Select-String 'ssh://\w+@[^:]+:(\d+)' | % { $_.Matches.Groups[1].Value }
+   ```
 
-### WSL - Ubuntu
+4. WSL - Ubuntu
 
-You can login with the port number, for example 53061
+   You can login with the port number, for example 53061
 
-```bash
-ssh user@localhost -p 53061
-```
+   ```bash
+   ssh user@localhost -p 53061
+   ```
 
 ## How mount client volume with podman-remote
 

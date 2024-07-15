@@ -12,7 +12,7 @@ Here is a note for me.
 
   Solutions
 
-  - https://superuser.com/a/1347749
+  - <https://superuser.com/a/1347749>
 
   In regedit and paste HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power for the URL
   Make sure `HiberbootEnabled` is `0`, if not, change it from Control Panel
