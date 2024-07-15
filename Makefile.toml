@@ -24,7 +24,7 @@ script = [
 [tasks.build-lint]
 condition.files_modified = { input = ["internal/fileutils/*.go", "./cmd/lint/*.go"], output = ["./dist/lint"] }
 command = 'go'
-args = ['build', '-v', '-o', 'dist', './cmd/lint']
+args = ['build', '-v', '-o', 'dist/lint', './cmd/lint']
 
 [tasks.lint]
 dependencies = ['build-lint']
