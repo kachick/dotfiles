@@ -334,7 +334,7 @@
       plemoljp-nf
       inconsolata
       mplus-outline-fonts.githubRelease
-      sarasa-gothic # TODO: Drop this if we can, because of the large filesize
+      # sarasa-gothic # Drop this because of the large filesize
 
       # emoji
       noto-fonts-color-emoji
