@@ -2,6 +2,3 @@ config:
   default: true
   # MD013/line-length
   MD013: false
-
-# Disabling for git commit hook
-noProgress: true
