@@ -64,6 +64,7 @@
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         in
         {
           default =
@@ -94,6 +95,7 @@
                 go_1_22
                 goreleaser
                 trivy
+                edge-pkgs.markdownlint-cli2
               ];
             };
         }
