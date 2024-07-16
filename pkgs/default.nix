@@ -47,4 +47,6 @@
   };
 
   beedii = pkgs.callPackage ./beedii { };
+
+  wezterm = pkgs.callPackage ./wezterm { };
 }
