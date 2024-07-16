@@ -206,8 +206,9 @@
     skktools
 
     alacritty
-    # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
-    inputs.wezterm-flake.packages.${pkgs.system}.default
+    # Don't use nightly wezterm, that still does not enable IME on wayland
+    # inputs.wezterm-flake.packages.${pkgs.system}.default
+    wezterm
 
     wget
     curl
