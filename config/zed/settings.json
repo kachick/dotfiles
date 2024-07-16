@@ -7,7 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Solarized Dark",
+  "theme": "Catppuccin Mocha",
   "telemetry": {
     "metrics": false
   },
@@ -19,6 +19,7 @@
     "nix": true,
     "toml": true,
     "lua": true,
-    "basher": true
+    "basher": true,
+    "catppuccin": true
   }
 }
