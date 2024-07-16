@@ -80,7 +80,10 @@
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
+    NIXOS_OZONE_WL = "1";
   };
+
+  programs.hyprland.enable = true;
 
   services.packagekit = {
     enable = true;
