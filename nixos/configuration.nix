@@ -253,6 +253,9 @@
         "--enable-features=UseOzonePlatform"
         "--ozone-platform=wayland"
         "--enable-wayland-ime"
+        # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
+        # This bug appeared only when using GNOME, not in KDE
+        "--disable-features=WaylandFractionalScaleV1"
       ];
     }))
 
