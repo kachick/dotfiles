@@ -48,7 +48,7 @@
       };
 
       homemade-packages = forAllSystems (
-        system: (nixpkgs.legacyPackages.${system}.callPackage ./pkgs { inherit inputs; })
+        system: (nixpkgs.legacyPackages.${system}.callPackage ./pkgs { })
       );
     in
     {
