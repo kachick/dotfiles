@@ -213,6 +213,8 @@
     # inputs.wezterm-flake.packages.${pkgs.system}.default
     wezterm
 
+    waybar
+
     wget
     curl
     git
