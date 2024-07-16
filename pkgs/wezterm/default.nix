@@ -1,30 +1,17 @@
-{
-  wezterm,
-  lib,
-  pkgs,
-  ...
-}:
+{ wezterm, pkgs, ... }:
 
-pkgs.stdenv.mkDerivation (finalAttrs: {
-  pname = "wezterm";
-  version = wezterm.version;
+wezterm.overrideAttrs (
+  final: prev: {
+    nativeBuildInputs = prev.nativeBuildInputs ++ [ pkgs.makeWrapper ];
 
-  nativeBuildInputs = [
-    wezterm
-    pkgs.makeWrapper
-  ];
+    # Wrap for https://github.com/wez/wezterm/pull/4777#issuecomment-2014478175
+    postFixup = ''
+      makeShellWrapper $out/bin/${prev.meta.mainProgram} $out/bin/${final.meta.mainProgram} \
+          --set WAYLAND_DISPLAY 1
+    '';
 
-  # https://github.com/NixOS/nixpkgs/issues/23099#issuecomment-964024407
-  dontUnpack = true;
-
-  installPhase = ''
-    runHook preInstall
-
-    makeShellWrapper ${lib.getExe wezterm} $out/bin/wezterm \
-        --set WAYLAND_DISPLAY 1
-
-    runHook postInstall
-  '';
-
-  meta = wezterm.meta;
-})
+    meta = prev.meta // {
+      mainProgram = "${prev.meta.mainProgram}-wrapped";
+    };
+  }
+)
