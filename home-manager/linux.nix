@@ -10,5 +10,7 @@ lib.mkMerge [
       enable = true;
       createDirectories = true;
     };
+
+    xdg.configFile."hypr/hyprland.conf".source = ../config/hyprland/hyprland.conf;
   })
 ]

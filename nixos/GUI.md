@@ -26,3 +26,11 @@ Config
 Enabling by NixOS module is required, but setting by home-manager should be considered.
 
 waybar is another tool, we should seprately install
+
+For Nix managing configurations, seprarwly having local file should be helpful for develop.
+
+```bash
+touch ~/.config/hypr/local.conf
+```
+
+And comment-out the `source = ~/.config/hypr/local.conf` in your config
