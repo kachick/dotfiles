@@ -16,7 +16,10 @@
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
     # https://github.com/wez/wezterm/pull/3547#issuecomment-1915820504
-    wezterm-flake.url = "github:wez/wezterm?dir=nix";
+    wezterm-flake = {
+      url = "github:wez/wezterm?dir=nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -117,7 +120,6 @@
         trim-github-user-prefix-for-reponame =
           mkApp
             homemade-packages.${system}.trim-github-user-prefix-for-reponame;
-        wezterm = mkApp homemade-packages.${system}.wezterm;
       });
 
       nixosConfigurations =
