@@ -68,6 +68,17 @@
   # TODO: Install gnome-shell-extension-pop-shell
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/desktops/gnome/extensions/pop-shell/default.nix
 
+  environment.gnome.excludePackages =
+    (with pkgs; [
+      gnome-tour
+      gnome-connections
+    ])
+    ++ (with pkgs.gnome; [
+      # epiphany # web browser
+      geary # email reader
+      evince # document viewer
+    ]);
+
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
