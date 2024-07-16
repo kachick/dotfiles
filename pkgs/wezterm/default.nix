@@ -1,14 +1,30 @@
-{ wezterm, pkgs, ... }:
+{
+  wezterm,
+  lib,
+  pkgs,
+  ...
+}:
 
-pkgs.writeShellApplication {
-  name = "wezterm";
-  # Wrap for https://github.com/wez/wezterm/pull/4777#issuecomment-2014478175
-  text = ''
-    export WAYLAND_DISPLAY=1
-    wezterm "$@"
-  '';
-  runtimeInputs = [
-    # Using latest to avoid stable release and wayland problems https://github.com/wez/wezterm/issues/5340
+pkgs.stdenv.mkDerivation (finalAttrs: {
+  pname = "wezterm";
+  version = wezterm.version;
+
+  nativeBuildInputs = [
     wezterm
+    pkgs.makeWrapper
   ];
-}
+
+  # https://github.com/NixOS/nixpkgs/issues/23099#issuecomment-964024407
+  dontUnpack = true;
+
+  installPhase = ''
+    runHook preInstall
+
+    makeShellWrapper ${lib.getExe wezterm} $out/bin/wezterm \
+        --set WAYLAND_DISPLAY 1
+
+    runHook postInstall
+  '';
+
+  meta = wezterm.meta;
+})
