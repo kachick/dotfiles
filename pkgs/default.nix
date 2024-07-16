@@ -1,4 +1,4 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   bump_completions = import ./bump_completions { inherit pkgs; };
@@ -47,6 +47,4 @@
   };
 
   beedii = pkgs.callPackage ./beedii { };
-
-  wezterm = pkgs.callPackage ./wezterm { inherit inputs; };
 }

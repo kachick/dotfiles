@@ -120,7 +120,6 @@
         trim-github-user-prefix-for-reponame =
           mkApp
             homemade-packages.${system}.trim-github-user-prefix-for-reponame;
-        wezterm = mkApp homemade-packages.${system}.wezterm;
       });
 
       nixosConfigurations =

@@ -39,7 +39,8 @@ end
 -- Using in wayland requires non released versions
 -- https://github.com/wez/wezterm/issues/5340
 if string.find(wezterm.target_triple, "-linux", 1, true) then
-  config.enable_wayland = true
+  -- Don't set WAYLAND_DISPLAY: https://github.com/wez/wezterm/issues/5263#issuecomment-2095021883
+  config.enable_wayland = false
   config.use_ime = true
 end
 
