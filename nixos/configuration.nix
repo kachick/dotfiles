@@ -65,8 +65,8 @@
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
-  # TODO: Install gnome-shell-extension-pop-shell
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/desktops/gnome/extensions/pop-shell/default.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
+  programs.dconf.enable = true;
 
   environment.gnome.excludePackages =
     (with pkgs; [
