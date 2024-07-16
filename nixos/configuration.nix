@@ -199,93 +199,98 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-    micro
-    edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
-    lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
+  environment.systemPackages =
+    with pkgs;
+    [
+      vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+      micro
+      edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
+      lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
-    usbutils # `lsusb` to get IDs
+      usbutils # `lsusb` to get IDs
 
-    skk-dicts
-    skktools
+      skk-dicts
+      skktools
 
-    alacritty
-    # Don't use nightly wezterm, that still does not enable IME on wayland
-    # inputs.wezterm-flake.packages.${pkgs.system}.default
-    wezterm
+      alacritty
+      # Don't use nightly wezterm, that still does not enable IME on wayland
+      # inputs.wezterm-flake.packages.${pkgs.system}.default
+      wezterm
 
-    waybar
+      waybar
 
-    wget
-    curl
-    git
-    bat
-    coreutils
-    findutils
-    fd
-    fzf
-    ripgrep
+      wget
+      curl
+      git
+      bat
+      coreutils
+      findutils
+      fd
+      fzf
+      ripgrep
 
-    # Don't use clipcat, copyq for wayland problem
-    # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-    clipse
-    # Required in clipse
-    wl-clipboard
+      # Don't use clipcat, copyq for wayland problem
+      # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
+      clipse
+      # Required in clipse
+      wl-clipboard
 
-    # https://github.com/NixOS/nixpkgs/issues/33282
-    xdg-user-dirs
+      # https://github.com/NixOS/nixpkgs/issues/33282
+      xdg-user-dirs
 
-    # Use stable packages even for GUI apps, because of using home-manager stable channel
+      # Use stable packages even for GUI apps, because of using home-manager stable channel
 
-    firefox
+      firefox
 
-    (signal-desktop.overrideAttrs (prev: {
-      preFixup =
-        prev.preFixup
-        + ''
-          gappsWrapperArgs+=(
-            --add-flags "--enable-features=UseOzonePlatform"
-            --add-flags "--ozone-platform=wayland"
-            --add-flags "--enable-wayland-ime"
-          )
-        '';
-    }))
+      (signal-desktop.overrideAttrs (prev: {
+        preFixup =
+          prev.preFixup
+          + ''
+            gappsWrapperArgs+=(
+              --add-flags "--enable-features=UseOzonePlatform"
+              --add-flags "--ozone-platform=wayland"
+              --add-flags "--enable-wayland-ime"
+            )
+          '';
+      }))
 
-    podman-tui
-    docker-compose
+      podman-tui
+      docker-compose
 
-    ## Unfree packages
+      ## Unfree packages
 
-    (edge-pkgs.vscode.override (prev: {
-      # https://wiki.archlinux.org/title/Wayland#Electron
-      # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
-      commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-        "--enable-features=UseOzonePlatform"
-        "--ozone-platform=wayland"
-        "--enable-wayland-ime"
-        # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
-        # This bug appeared only when using GNOME, not in KDE
-        "--disable-features=WaylandFractionalScaleV1"
-      ];
-    }))
+      (edge-pkgs.vscode.override (prev: {
+        # https://wiki.archlinux.org/title/Wayland#Electron
+        # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
+        commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
+          "--enable-features=UseOzonePlatform"
+          "--ozone-platform=wayland"
+          "--enable-wayland-ime"
+          # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
+          # This bug appeared only when using GNOME, not in KDE
+          "--disable-features=WaylandFractionalScaleV1"
+        ];
+      }))
 
-    # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
-    # `rm -rf ~/.config/google-chrome/Singleton*`
-    (edge-pkgs.google-chrome.override (prev: {
-      # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-      # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-      commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-        "--ozone-platform=wayland"
-        "--ozone-platform-hint=auto"
-        "--enable-wayland-ime"
-      ];
-    }))
+      # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
+      # `rm -rf ~/.config/google-chrome/Singleton*`
+      (edge-pkgs.google-chrome.override (prev: {
+        # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+        # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+        commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
+          "--ozone-platform=wayland"
+          "--ozone-platform-hint=auto"
+          "--enable-wayland-ime"
+        ];
+      }))
 
-    cloudflare-warp
-
-    gnomeExtensions.appindicator
-  ];
+      cloudflare-warp
+    ]
+    ++ (with pkgs.gnomeExtensions; [
+      appindicator
+      blur-my-shell
+      pop-shell
+    ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
   environment.etc."xdg/user-dirs.defaults".text = ''
