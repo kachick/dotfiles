@@ -3,7 +3,6 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
-  inputs,
   config,
   pkgs,
   edge-pkgs,
@@ -58,32 +57,24 @@
     LC_TIME = "ja_JP.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  # services.xserver.displayManager.sddm.wayland.enable = true;
-  # services.xserver.desktopManager.gnome.enable = true;
-  services = {
-    desktopManager.plasma6.enable = true;
-    # displayManager = {
-    #   sddm.enable = true;
-    #   defaultSession = "plasma";
-    # };
+  services.xserver = {
+    enable = true;
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
   };
-  environment.plasma6.excludePackages = with pkgs.kdePackages; [
-    plasma-browser-integration
-    konsole
-    oxygen
-  ];
+
+  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
+  # TODO: Install gnome-shell-extension-pop-shell
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/desktops/gnome/extensions/pop-shell/default.nix
+
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
     NIXOS_OZONE_WL = "1";
   };
 
-  programs.hyprland.enable = true;
+  programs.hyprland.enable = false;
 
   services.packagekit = {
     enable = true;
@@ -278,6 +269,8 @@
     }))
 
     cloudflare-warp
+
+    gnomeExtensions.appindicator
   ];
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
@@ -294,15 +287,15 @@
 
   # Make it natural scroll on KDE, not enough only in libinput
   # https://github.com/NixOS/nixpkgs/issues/51875#issuecomment-846251880
-  environment.etc."X11/xorg.conf.d/30-touchpad.conf".text = ''
-    Section "InputClass"
-            Identifier "libinput touchpad catchall"
-            MatchIsTouchpad "on"
-            MatchDevicePath "/dev/input/event*"
-            Driver "libinput"
-            Option "NaturalScrolling" "on"
-    EndSection
-  '';
+  # environment.etc."X11/xorg.conf.d/30-touchpad.conf".text = ''
+  #   Section "InputClass"
+  #           Identifier "libinput touchpad catchall"
+  #           MatchIsTouchpad "on"
+  #           MatchDevicePath "/dev/input/event*"
+  #           Driver "libinput"
+  #           Option "NaturalScrolling" "on"
+  #   EndSection
+  # '';
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
