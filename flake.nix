@@ -45,11 +45,7 @@
       };
 
       homemade-packages = forAllSystems (
-        system:
-        (import ./pkgs {
-          pkgs = nixpkgs.legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
+        system: (nixpkgs.legacyPackages.${system}.callPackage ./pkgs { })
       );
     in
     {
@@ -121,6 +117,7 @@
         trim-github-user-prefix-for-reponame =
           mkApp
             homemade-packages.${system}.trim-github-user-prefix-for-reponame;
+        wezterm = mkApp homemade-packages.${system}.wezterm;
       });
 
       nixosConfigurations =
