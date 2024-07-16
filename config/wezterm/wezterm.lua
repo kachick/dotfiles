@@ -40,7 +40,7 @@ end
 -- https://github.com/wez/wezterm/issues/5340
 if string.find(wezterm.target_triple, "-linux", 1, true) then
   -- Don't set WAYLAND_DISPLAY: https://github.com/wez/wezterm/issues/5263#issuecomment-2095021883
-  config.enable_wayland = false
+  config.enable_wayland = true
   config.use_ime = true
 end
 
