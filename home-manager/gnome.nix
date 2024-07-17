@@ -27,6 +27,21 @@
         toggle-message-tray = [ "<Super>m" ]; # default: ['<Super>v', '<Super>m']
       };
 
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        control-center = [ "<Super>comma" ];
+        www = [ "<Super>w" ];
+        search = [ "<Super>f" ];
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+        ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+        name = "Terminal";
+        binding = "<Super>t";
+        command = "alacritty";
+      };
+
       "org/gnome/shell/extensions/pop-shell" = {
         tile-by-default = true;
       };
