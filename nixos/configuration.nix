@@ -167,6 +167,7 @@
               --add-flags "--enable-features=UseOzonePlatform"
               --add-flags "--ozone-platform=wayland"
               --add-flags "--enable-wayland-ime"
+              --add-flags "--disable-features=WaylandFractionalScaleV1"
             )
           '';
       }))
