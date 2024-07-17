@@ -4,6 +4,19 @@ Started from KDE for the battery-included and stable behaviors.\
 However I need tilling window manager for several reasons, especially unstable wezterm and zelliji cannot define multiple modifier.\
 So I started to using Hyprland. This maybe the note.
 
+=> And switched to GNOME
+
+## GNOME
+
+Q: How to reload GNOME on wayland settings without reboot?\
+A: [`SUPER+L`](https://superuser.com/a/1740160)
+
+Q: How to check current settings?\
+A: `gsettings get org.gnome.desktop.lockdown disable-lock-screen`
+
+Q: How to persist this config from settings menu?
+A: `dconf watch /`
+
 ## KDE
 
 The shortcut of Meta+Q conflicts to Hyprland exec terminal. Disable from system settings.\
