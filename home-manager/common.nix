@@ -50,7 +50,8 @@
 
       # - You can check the candidates in `locale -a`
       # - pkgs.glibc installs many candidates, but it does not support darwin
-      LANG = "en_US.UTF-8";
+      # This value may overrides NixOS config for GNOME
+      # LANG = "en_US.UTF-8";
 
       # NOTE: Original comments in zsh
       # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
@@ -74,10 +75,6 @@
       inherit homemade-pkgs;
     };
   };
-
-  # https://github.com/nix-community/home-manager/issues/605
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
-  fonts.fontconfig.enable = true;
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
   # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16

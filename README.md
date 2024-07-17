@@ -71,12 +71,12 @@ Some tools are not yet fully automated, read each docs.
 1. Apply dotfiles for each use
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux-cui'
    ```
 
    Candidates
-   - `user@linux` # Used in container
-   - `kachick@linux`
+   - `user@linux-cui` # Used in container
+   - `kachick@linux-gui`
 
 ### Podman on Ubuntu
 
@@ -156,7 +156,7 @@ Check [traps](./windows/Multi-booting.md)
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply user@linux
+makers apply user@linux-cui
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
