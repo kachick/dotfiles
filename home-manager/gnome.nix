@@ -17,6 +17,7 @@
 
         favorite-apps = [
           "Alacritty.desktop"
+          "dev.zed.Zed.desktop"
           "org.gnome.Nautilus.desktop"
           "firefox.desktop"
         ];
