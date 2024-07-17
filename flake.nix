@@ -73,7 +73,8 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixfmt-rfc-style
-                nil # TODO: Used in vscode Nix extension. Consider to replace with nixd: https://github.com/oxalica/nil/issues/111
+                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
+                nil # Used in vscode Nix extension
                 nixd # Used in zed Nix extension
                 nixpkgs-lint-community
                 # To get sha256 around pkgs.fetchFromGitHub in CLI
