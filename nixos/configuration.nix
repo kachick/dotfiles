@@ -288,6 +288,7 @@
       blur-my-shell
       pop-shell
       clipboard-history
+      kimpanel
     ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259

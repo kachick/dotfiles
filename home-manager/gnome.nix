@@ -12,6 +12,7 @@
           blur-my-shell.extensionUuid
           pop-shell.extensionUuid
           clipboard-history.extensionUuid
+          kimpanel.extensionUuid
         ];
 
         favorite-apps = [
