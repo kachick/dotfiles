@@ -14,8 +14,18 @@
           clipboard-history.extensionUuid
         ];
       };
+
+      "org/gnome/desktop/wm/keybindings" = {
+        toggle-message-tray = [ "<Super>m" ]; # default: ['<Super>v', '<Super>m']
+      };
+
       "org/gnome/shell/extensions/pop-shell" = {
         tile-by-default = true;
+      };
+
+      "org/gnome/shell/extensions/clipboard-history" = {
+        history-size = 100;
+        toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
       };
     };
   };
