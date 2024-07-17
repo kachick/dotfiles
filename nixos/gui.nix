@@ -7,7 +7,11 @@
   services.xserver = {
     enable = true;
     displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome = {
+      enable = true;
+      # https://github.com/NixOS/nixpkgs/issues/114514
+      extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+    };
 
     # Configure keymap in X11
     xkb = {

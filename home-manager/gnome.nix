@@ -57,6 +57,10 @@
         history-size = 100;
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
       };
+
+      "org/gnome/mutter" = {
+        experimental-features = [ "scale-monitor-framebuffer" ];
+      };
     };
   };
 }
