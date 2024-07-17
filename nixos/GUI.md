@@ -12,10 +12,18 @@ Q: How to reload GNOME on wayland settings without reboot?\
 A: [`SUPER+L`](https://superuser.com/a/1740160)
 
 Q: How to check current settings?\
-A: `gsettings get org.gnome.desktop.lockdown disable-lock-screen`
+A: Use `gsettings`
+
+```bash
+gsettings get org.gnome.desktop.lockdown disable-lock-screen
+gsettings list-recursively org.gnome.shell.keybindings | fzf
+```
 
 Q: How to persist this config from settings menu?\
 A: `dconf watch /`
+
+Q: Why default-apps changes will not be appeared in dconf watch?\
+A: `xdg-settings get default-web-browser`
 
 Q: [Broken cursor as white square](https://github.com/NixOS/nixpkgs/issues/140505#issuecomment-1637341617)\
 A: `dconf reset /org/gnome/desktop/interface/cursor-theme`
