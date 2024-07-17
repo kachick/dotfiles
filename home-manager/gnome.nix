@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
@@ -6,9 +6,12 @@
     enable = true;
     settings = {
       "org/gnome/shell" = {
-        enabled-extensions = [
-          "blur-my-shell@aunetx"
-          "pop-shell@system76.com"
+        disable-user-extensions = false;
+        enabled-extensions = with pkgs.gnomeExtensions; [
+          appindicator.extensionUuid
+          blur-my-shell.extensionUuid
+          pop-shell.extensionUuid
+          clipboard-history.extensionUuid
         ];
       };
       "org/gnome/shell/extensions/pop-shell" = {

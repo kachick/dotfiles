@@ -290,6 +290,7 @@
       appindicator
       blur-my-shell
       pop-shell
+      clipboard-history
     ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
