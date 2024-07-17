@@ -19,7 +19,6 @@
           "Alacritty.desktop"
           "org.gnome.Nautilus.desktop"
           "firefox.desktop"
-          "google-chrome.desktop"
         ];
       };
 
