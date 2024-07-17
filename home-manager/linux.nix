@@ -14,5 +14,5 @@ lib.mkMerge [
     xdg.configFile."hypr/hyprland.conf".source = ../config/hyprland/hyprland.conf;
   })
 
-  (lib.mkIf pkgs.stdenv.isLinux (import ./gnome.nix { inherit pkgs; }))
+  (lib.mkIf pkgs.stdenv.isLinux (import ./gnome.nix { inherit pkgs lib; }))
 ]
