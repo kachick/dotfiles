@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  homemade-pkgs,
   ...
 }:
 
@@ -205,7 +206,7 @@
         . "$@"
       }
 
-      source_sh "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+      source "${homemade-pkgs.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
         apply_iceberg

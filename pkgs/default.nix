@@ -47,4 +47,6 @@
   };
 
   beedii = pkgs.callPackage ./beedii { };
+
+  posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 }
