@@ -74,9 +74,10 @@
       gnome-connections
     ])
     ++ (with pkgs.gnome; [
-      # epiphany # web browser
+      epiphany # web browser
       geary # email reader
       evince # document viewer
+      gnome-calendar
     ]);
 
   environment.sessionVariables = {
