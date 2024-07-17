@@ -101,7 +101,7 @@
       );
 
       apps = forAllSystems (system: {
-        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux`
+        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cui`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
         home-manager = mkApp home-manager.defaultPackage.${system};
         bump_completions = mkApp homemade-packages.${system}.bump_completions;
@@ -125,6 +125,7 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
+          pkgs = import nixpkgs { inherit system; };
           edge-pkgs = import edge-nixpkgs {
             inherit system;
             config = {
@@ -142,8 +143,8 @@
                   useGlobalPkgs = true;
                   useUserPackages = true;
                   backupFileExtension = "backup";
+                  # FIXME: Apply gnome.nix in #680
                   users.kachick = import ./home-manager/kachick.nix;
-
                   extraSpecialArgs = {
                     inherit homemade-pkgs edge-pkgs;
                   };
@@ -195,12 +196,13 @@
           };
         in
         {
-          "kachick@linux" = home-manager.lib.homeManagerConfiguration (
+          "kachick@linux-gui" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
                 ./home-manager/kachick.nix
                 ./home-manager/systemd.nix
+                ./home-manager/gnome.nix
               ];
             }
           );
@@ -244,7 +246,7 @@
             }
           );
 
-          "user@linux" = home-manager.lib.homeManagerConfiguration (
+          "user@linux-cui" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
