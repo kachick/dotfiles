@@ -86,8 +86,6 @@
     NIXOS_OZONE_WL = "1";
   };
 
-  programs.hyprland.enable = false;
-
   services.packagekit = {
     enable = true;
   };
@@ -217,8 +215,6 @@
       # Don't use nightly wezterm, that still does not enable IME on wayland
       # inputs.wezterm-flake.packages.${pkgs.system}.default
       wezterm
-
-      waybar
 
       wget
       curl
