@@ -80,7 +80,10 @@
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
+    NIXOS_OZONE_WL = "1";
   };
+
+  programs.hyprland.enable = true;
 
   services.packagekit = {
     enable = true;
@@ -209,6 +212,8 @@
     # Don't use nightly wezterm, that still does not enable IME on wayland
     # inputs.wezterm-flake.packages.${pkgs.system}.default
     wezterm
+
+    waybar
 
     wget
     curl
