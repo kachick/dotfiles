@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  homemade-pkgs,
   ...
 }:
 
@@ -126,7 +127,7 @@
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
-        source "${config.xdg.configHome}/posix_shells/shared_functions.sh"
+        source "${homemade-pkgs.posix_shared_functions}"
 
         if [ 'linux' = "$TERM" ]; then
           apply_iceberg
