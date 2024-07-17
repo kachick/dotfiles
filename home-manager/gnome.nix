@@ -13,6 +13,13 @@
           pop-shell.extensionUuid
           clipboard-history.extensionUuid
         ];
+
+        favorite-apps = [
+          "Alacritty.desktop"
+          "org.gnome.Nautilus.desktop"
+          "firefox.desktop"
+          "google-chrome.desktop"
+        ];
       };
 
       "org/gnome/desktop/wm/keybindings" = {
