@@ -34,7 +34,7 @@ Basically following codes will be done in PowerShell
    ```
 
 1. Remove needless pre-installed tools. Pick up from [bulk-uninstall.ps](./winget/bulk-uninstall.ps1)
-1. Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.\
+1. If you are still using Dropbox, Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.\
    See <https://zmzlz.blogspot.com/2014/10/windows-dropbox.html> for detail
 1. Enable Bitlocker and backup the restore key
 

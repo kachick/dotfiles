@@ -11,9 +11,6 @@
           "PackageIdentifier": "Cryptomator.Cryptomator"
         },
         {
-          "PackageIdentifier": "Dropbox.Dropbox"
-        },
-        {
           "PackageIdentifier": "Microsoft.OneDrive"
         },
         {
