@@ -206,7 +206,7 @@
         . "$@"
       }
 
-      source "${homemade-pkgs.posix_shared_functions}"
+      source_sh "${homemade-pkgs.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
         apply_iceberg
