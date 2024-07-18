@@ -6,6 +6,15 @@
 {
   fonts = {
     enableDefaultPackages = true;
+
+    # Provide dir for easy useable fc-query
+    # For getting font family name
+    # ```bash
+    # cd /nix/var/nix/profiles/system/sw/share/X11/fonts
+    # fc-query IBMPlexSansJP-Regular.otf | grep '^\s\+family:' | cut -d'"' -f2
+    # ```
+    fontDir.enable = true;
+
     packages = with pkgs; [
       ibm-plex
       plemoljp-nf
@@ -24,6 +33,7 @@
       source-han-serif-japanese
     ];
 
+    # Same as home-manager module?
     # https://github.com/nix-community/home-manager/issues/605
     # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
     fontconfig = {
