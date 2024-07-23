@@ -27,7 +27,7 @@ func main() {
 		//  https://github.com/actions/runner-images/issues/9741#issuecomment-2075259811
 		Os: []string{
 			"ubuntu-24.04",
-			//  M1. Doesn't match for my Intel Mac, but preferring for much faster.
+			//  M1. Doesn't match for my Intel Mac, but preferring with the speed.
 			"macos-14",
 		},
 	}
