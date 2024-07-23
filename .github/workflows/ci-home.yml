@@ -28,6 +28,7 @@ jobs:
     outputs:
       matrix: ${{ steps.generator.outputs.matrix }}
     steps:
+      - uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
