@@ -47,13 +47,9 @@
           meta.description = "#325";
           runtimeInputs = with pkgs; [ typos ];
           text = ''
-            # Check the diff first to avoid discarding original mesasges for retrying commits
-            if [ -n "$(typos --diff "$1")" ]; then
-              echo "$1"
-              cat "$1"
-              # Same check, but to exit error code with better message than diff
-              typos --config "${../typos.toml}" "$1"
-            fi
+            echo "original commit message has been saved at: $1"
+
+            typos --config "${../typos.toml}" "$1"
           '';
         }
       );
