@@ -50,7 +50,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       # Do not use DeterminateSystems/magic-nix-cache-action for home workflow, it always faced to GitHub rate limit because of home depends on many packages
-      - uses: DeterminateSystems/nix-installer-action@v12
+      - uses: DeterminateSystems/nix-installer-action@v13
       - name: Print some dotfiles overviews
         run: |
           cat /etc/nix/nix.conf

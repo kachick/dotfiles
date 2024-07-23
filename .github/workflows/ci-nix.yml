@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@v12
+      - uses: DeterminateSystems/nix-installer-action@v13
       - name: Print some dotfiles overviews
         run: |
           cat /etc/nix/nix.conf
