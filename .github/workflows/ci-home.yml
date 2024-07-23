@@ -99,6 +99,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: 'home-files-${{ github.sha }}-${{ runner.os }}'
+          name: 'home-files-${{ github.sha }}-${{ matrix.os }}'
           path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'
