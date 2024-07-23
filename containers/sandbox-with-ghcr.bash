@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env -S bash
 
 ## Use Process Substitution for this script
 # - https://www.gnu.org/software/bash/manual/html_node/Process-Substitution.html
