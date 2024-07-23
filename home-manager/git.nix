@@ -47,9 +47,9 @@
           meta.description = "#325";
           runtimeInputs = with pkgs; [ typos ];
           text = ''
-            echo "original commit message has been saved at: $1"
+            set +o errexit
 
-            typos --config "${../typos.toml}" "$1"
+            typos --config "${../typos.toml}" "$1" || echo "original commit message: $1"
           '';
         }
       );
