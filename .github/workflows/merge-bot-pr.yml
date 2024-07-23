@@ -27,7 +27,7 @@ jobs:
   dependabot:
     needs: [judge-dependabot]
     if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
-    timeout-minutes: 30
+    timeout-minutes: 90
     runs-on: ubuntu-24.04
     steps:
       - name: Dependabot metadata
@@ -35,7 +35,7 @@ jobs:
         uses: dependabot/fetch-metadata@v2.2.0
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
-        timeout-minutes: 10
+        timeout-minutes: 75
         with:
           skip-same-workflow: 'true'
       - name: Approve and merge
@@ -52,13 +52,13 @@ jobs:
   #    - `Require status checks to pass before merging` and specify the status names
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
   renovate:
-    timeout-minutes: 30
+    timeout-minutes: 90
     runs-on: ubuntu-24.04
     if: ${{ github.actor == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
-        timeout-minutes: 10
+        timeout-minutes: 75
         with:
           skip-same-workflow: 'true'
       - name: Approve and merge
@@ -69,13 +69,13 @@ jobs:
 
   # https://github.com/kachick/anylang-template/issues/51
   selfup-runner:
-    timeout-minutes: 30
+    timeout-minutes: 90
     runs-on: ubuntu-24.04
     if: ${{ github.actor == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
-        timeout-minutes: 20
+        timeout-minutes: 75
         with:
           skip-same-workflow: 'true'
       - name: Approve and merge
