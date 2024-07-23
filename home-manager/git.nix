@@ -47,7 +47,7 @@
           meta.description = "#325";
           runtimeInputs = with pkgs; [ typos ];
           text = ''
-            typos --config "${config.xdg.configHome}/typos/typos.toml" "$1"
+            typos --config "${../typos.toml}" "$1"
           '';
         }
       );
@@ -74,7 +74,7 @@
               exit 0
             fi
 
-            (echo "$branch_name" | typos --config "${config.xdg.configHome}/typos/typos.toml" -) || true
+            (echo "$branch_name" | typos --config "${../typos.toml}" -) || true
           '';
         }
       );

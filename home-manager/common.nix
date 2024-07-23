@@ -188,9 +188,6 @@
     }
     + "/.editorconfig";
 
-  # typos does not have global config feature, this is used in git hooks for https://github.com/kachick/dotfiles/issues/412
-  xdg.configFile."typos/typos.toml".source = ../typos.toml;
-
   xdg.configFile."fcitx5/config" = {
     source = ../config/fcitx5/config;
   };
