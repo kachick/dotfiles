@@ -68,7 +68,7 @@
         {
           default =
             with pkgs;
-            mkShell {
+            mkShellNoCC {
               buildInputs = [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
