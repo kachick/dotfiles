@@ -41,37 +41,10 @@
 
     # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
-      commit-msg = lib.getExe (
-        pkgs.writeShellApplication {
-          name = "prevent_typos_in_commit_mssage.bash";
-          meta.description = "#325";
-          runtimeInputs = with pkgs; [ typos ];
-          text = ''
-            typos --config "${../typos.toml}" "$1"
-          '';
-        }
-      );
+      commit-msg = lib.getExe homemade-pkgs.git-hooks-commit-msg;
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-      pre-push = lib.getExe (
-        pkgs.writeShellApplication {
-          name = "prevent_typos_in_branch_name.bash";
-          meta.description = "#540";
-          runtimeInputs = with pkgs; [
-            typos
-            coreutils # `basename`
-          ];
-          # What arguments: https://git-scm.com/docs/githooks#_pre_push
-          text = ''
-            while read -r _local_ref _local_oid remote_ref _remote_oid
-            do
-              # Git ref is not a file path, but avoiding a typos bug for slash
-              # https://github.com/crate-ci/typos/issues/758
-              basename "$remote_ref" | typos --config "${../typos.toml}" -
-            done
-          '';
-        }
-      );
+      pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
     };
 
     extraConfig = {

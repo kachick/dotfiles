@@ -40,6 +40,9 @@
   git-log-fzf = import ./git-log-fzf { inherit pkgs; };
   git-log-simple = import ./git-log-simple { inherit pkgs; };
 
+  git-hooks-commit-msg = import ./git-hooks-commit-msg { inherit pkgs; };
+  git-hooks-pre-push = import ./git-hooks-pre-push { inherit pkgs; };
+
   prs = import ./prs { inherit pkgs; };
 
   trim-github-user-prefix-for-reponame = import ./trim-github-user-prefix-for-reponame {
