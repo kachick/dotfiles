@@ -36,7 +36,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v13
       - name: Print some dotfiles overviews
         run: |
-          cat /etc/nix/nix.conf
+          </etc/nix/nix.conf
           ls -alh ~
       - uses: DeterminateSystems/magic-nix-cache-action@v7
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'

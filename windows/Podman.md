@@ -79,7 +79,7 @@ This repository provides a mount based solution, mount from another instance as 
    Get pubkey
 
    ```bash
-   cat ~/.ssh/id_ed25519.pub | clip.exe
+   <~/.ssh/id_ed25519.pub | clip.exe
    ```
 
 2. WSL - podman-machine
