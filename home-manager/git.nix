@@ -58,17 +58,16 @@
           name = "prevent_typos_in_branch_name.bash";
           meta.description = "#540";
           runtimeInputs = with pkgs; [
-            git
             typos
+            coreutils # `basename`
           ];
           # What arguments: https://git-scm.com/docs/githooks#_pre_push
           text = ''
-            while read -r local_ref _local_oid remote_ref _remote_oid
+            while read -r _local_ref _local_oid remote_ref _remote_oid
             do
-                {
-                  echo "$local_ref"
-                  echo "$remote_ref"
-                } | typos --config "${../typos.toml}" -
+              # Git ref is not a file path, but avoiding a typos bug for slash
+              # https://github.com/crate-ci/typos/issues/758
+              basename "$remote_ref" | typos --config "${../typos.toml}" -
             done
           '';
         }
