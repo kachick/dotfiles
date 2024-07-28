@@ -29,6 +29,9 @@
           "PackageIdentifier": "junegunn.fzf"
         },
         {
+          "PackageIdentifier": "sharkdp.fd"
+        },
+        {
           "PackageIdentifier": "sharkdp.hexyl"
         },
         {
