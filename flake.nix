@@ -139,8 +139,7 @@
             inherit system;
             modules = [
               ./nixos/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
+              (home-manager.nixosModules.home-manager {
                 home-manager = {
                   useGlobalPkgs = true;
                   useUserPackages = true;
@@ -151,7 +150,7 @@
                     inherit homemade-pkgs edge-pkgs;
                   };
                 };
-              }
+              })
               xremap-flake.nixosModules.default
               ./nixos/xremap.nix
             ];
