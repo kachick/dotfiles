@@ -166,7 +166,12 @@
           };
         in
         {
-          "nixos-desktop" = nixpkgs.lib.nixosSystem shared;
+          "moss" = nixpkgs.lib.nixosSystem (
+            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss.nix ]; }
+          );
+          # "algae" = nixpkgs.lib.nixosSystem (
+          #   shared // { modules = shared.modules ++ [ ./nixos/hosts/algae.nix ]; }
+          # );
 
           "nixos-wsl" = nixpkgs.lib.nixosSystem (
             shared

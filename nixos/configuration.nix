@@ -12,8 +12,6 @@
 }:
 {
   imports = [
-    # Include the results of the hardware scan.
-    /etc/nixos/hardware-configuration.nix
     (import ./font.nix { inherit pkgs homemade-pkgs; })
     (import ./console.nix { inherit pkgs; })
     (import ./language.nix { inherit config pkgs; })
