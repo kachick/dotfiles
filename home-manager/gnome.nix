@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
@@ -13,7 +18,7 @@
           pop-shell.extensionUuid
           clipboard-history.extensionUuid
           kimpanel.extensionUuid
-          rclone-manager.extensionUuid
+          edge-pkgs.gnomeExtensions.rclone-manager.extensionUuid
         ];
 
         favorite-apps = [
