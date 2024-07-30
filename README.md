@@ -147,6 +147,8 @@ Check [traps](./windows/Multi-booting.md)
    micro ~/.ssh/id_ed25519
    ```
 
+1. [Restore encrypted rclone.conf from STDIN](config/reclone.md)
+
 1. Restore shell history
 
    [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
