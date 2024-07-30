@@ -65,4 +65,4 @@ rclone mount google-drive-Foo-Vault: "$mount_to" --vfs-cache-mode writes --log-l
 
 ## GUI on Linux
 
-TODO: Integrate <https://github.com/germanztz/gnome-shell-extension-rclone-manager>
+See <https://github.com/germanztz/gnome-shell-extension-rclone-manager> for detail

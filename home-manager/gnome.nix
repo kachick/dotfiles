@@ -13,6 +13,7 @@
           pop-shell.extensionUuid
           clipboard-history.extensionUuid
           kimpanel.extensionUuid
+          rclone-manager.extensionUuid
         ];
 
         favorite-apps = [
