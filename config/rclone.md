@@ -35,6 +35,17 @@ micro "$(rclone config file | tail -1)"
 
 Don't save the file in this repository even if it is encrypted with agenix or sops-nix.
 
+## Persist the token in a session
+
+Always need the token when modifying config is too annoy.\
+And `read -s` does not work in zsh, so use this for both bash and zsh.
+
+```bash
+export RCLONE_CONFIG_PASS="$(micro)"
+```
+
+I don't have plan to add this tiny code in *shrc for now.
+
 ## Mount
 
 ### Windows
