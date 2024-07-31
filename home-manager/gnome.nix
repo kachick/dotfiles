@@ -7,13 +7,21 @@
     settings = {
       "org/gnome/shell" = {
         disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          appindicator.extensionUuid
-          blur-my-shell.extensionUuid
-          pop-shell.extensionUuid
-          clipboard-history.extensionUuid
-          kimpanel.extensionUuid
-        ];
+        enabled-extensions = map (ext: ext.extensionUuid) (
+          with pkgs.gnomeExtensions;
+          [
+            appindicator
+            blur-my-shell
+            pop-shell
+            clipboard-history
+            kimpanel
+            removable-drive-menu
+            system-monitor
+            places-status-indicator
+            window-list
+            workspace-indicator
+          ]
+        );
 
         favorite-apps = [
           "Alacritty.desktop"
