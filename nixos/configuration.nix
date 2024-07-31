@@ -146,6 +146,10 @@
       fzf
       ripgrep
 
+      # Don't install in container images. Because of Bitwarden SDK is not a FOSS
+      # https://github.com/bitwarden/sdk/issues/898
+      bws
+
       # 3rd-party bitwarden helper, because of official cli does not have many core features
       # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
       edge-pkgs.goldwarden
