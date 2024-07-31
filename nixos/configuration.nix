@@ -147,8 +147,8 @@
       ripgrep
 
       # 3rd-party bitwarden helper, because of official cli does not have many core features
-      # Prefer NixOS modules rather than home-manager for easy setting up
-      goldwarden
+      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
+      edge-pkgs.goldwarden
 
       # Clipboard
       #
@@ -260,7 +260,11 @@
 
   programs.nix-ld.enable = false;
 
-  programs.goldwarden.enable = true;
+  # Prefer NixOS modules rather than home-manager for easy setting up
+  programs.goldwarden = {
+    package = edge-pkgs.goldwarden;
+    enable = true;
+  };
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
