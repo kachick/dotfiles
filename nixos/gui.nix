@@ -23,8 +23,12 @@
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
-  programs.dconf.enable = true;
+  programs = {
+    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
+    dconf.enable = true;
+    # For lanching with command passed via STDIN. alacritty does not have the feature
+    gnome-terminal.enable = true;
+  };
 
   environment.gnome.excludePackages =
     (with pkgs; [
