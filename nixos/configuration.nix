@@ -146,6 +146,10 @@
       fzf
       ripgrep
 
+      # 3rd-party bitwarden helper, because of official cli does not have many core features
+      # Prefer NixOS modules rather than home-manager for easy setting up
+      goldwarden
+
       # Clipboard
       #
       # Don't use clipcat, copyq for wayland problem
@@ -255,6 +259,8 @@
   # networking.firewall.enable = false;
 
   programs.nix-ld.enable = false;
+
+  programs.goldwarden.enable = true;
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
