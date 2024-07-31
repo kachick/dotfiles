@@ -88,6 +88,8 @@ with pkgs;
   _7zz # `7zz` 7zip, not
   tlrc # `tldr` rust client, tealdeer is another candidate
 
+  goldwarden # 3rd-party bitwarden helper, because of official cli does not have many core features
+
   rclone
 
   # How to get the installed font names
