@@ -25,6 +25,8 @@
             places-status-indicator
             window-list
             workspace-indicator
+            applications-menu
+            auto-move-windows
           ]
         );
 
