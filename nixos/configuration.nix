@@ -59,6 +59,15 @@
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
     NIXOS_OZONE_WL = "1";
+
+    # https://github.com/germanztz/gnome-shell-extension-rclone-manager attempt to decrypt the config file via `--password-command` by default
+    # And it uses `echo` in the implementation, NixOS does not have /bin/echo and printing the secret does not make sense to me...
+    # And it does not have the feature to specify environments. So needed to set here
+    # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L124-L1>
+    # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L594
+    RCLONE_PASSWORD_COMMAND = ''
+      ${lib.getExe edge-pkgs.goldwarden} logins get --name 'Rclone - Configuration Password'
+    '';
   };
 
   services.packagekit = {

@@ -6,15 +6,6 @@
 }:
 
 {
-  # https://github.com/germanztz/gnome-shell-extension-rclone-manager attempt to decrypt the config file via `--password-command` by default
-  # And it uses `echo` in the implementation, NixOS does not have /bin/echo and printing the secret does not make sense to me...
-  # And it does not have the feature to specify environments. So needed to set here
-  # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L124-L126
-  # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L594
-  home.file.".gnomerc".text = ''
-    export RCLONE_CONFIG_PASS="$(${lib.getExe pkgs.micro})"
-  '';
-
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
   dconf = {
     enable = true;
