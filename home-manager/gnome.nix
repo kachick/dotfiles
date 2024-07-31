@@ -7,6 +7,11 @@
     settings = {
       "org/gnome/shell" = {
         disable-user-extensions = false;
+
+        # Why needed an empty list?
+        # I don't know why Gnome have both disabled and enabled, but disabled by settings menu inserts here and it ignores enabled-extensions...
+        disabled-extensions = [ ];
+
         enabled-extensions = map (ext: ext.extensionUuid) (
           with pkgs.gnomeExtensions;
           [
