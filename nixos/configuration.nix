@@ -146,11 +146,13 @@
       fzf
       ripgrep
 
+      # Clipboard
+      #
       # Don't use clipcat, copyq for wayland problem
       # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-      clipse
-      # Required in clipse
-      wl-clipboard
+      # Don't use clipse that depending wl-clipboard makes flickers in gnome
+      #
+      # So use a clipboard gnome extension
 
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
@@ -204,14 +206,22 @@
 
       cloudflare-warp
     ]
-    ++ (with pkgs.gnomeExtensions; [
-      appindicator
-      blur-my-shell
-      pop-shell
-      clipboard-history
-      kimpanel
-      edge-pkgs.gnomeExtensions.rclone-manager
-    ]);
+    ++ (
+      with pkgs.gnomeExtensions;
+      [
+        appindicator
+        blur-my-shell
+        pop-shell
+        clipboard-history
+        kimpanel
+
+      ]
+      ++ [
+        # nixos-24.05 package does not support GNOME 46
+        # https://github.com/NixOS/nixpkgs/commit/48a52a281c505#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR4974
+        edge-pkgs.gnomeExtensions.rclone-manager
+      ]
+    );
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
   environment.etc."xdg/user-dirs.defaults".text = ''
