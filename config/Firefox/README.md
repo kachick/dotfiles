@@ -5,7 +5,7 @@
 1. Open `about:config`
 1. Check `Display only changed flags` (I don't know the original English message)
 1. Modify config with `about:preferences`
-1. Check `about:config` again
+1. Open `about:config` again
 
 And <https://github.com/yokoffing/Betterfox/blob/> helps to know the overview.
 
