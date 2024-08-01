@@ -143,16 +143,6 @@
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
 
-  # https://github.com/savedra1/clipse/issues/41#issuecomment-2099269175
-  xdg.configFile."autostart/clipse-clipboard-manager.desktop".text = ''
-    [Desktop Entry]
-    Name=clipse
-    Comment=Clipse event listener autostart.
-    Exec=${lib.getExe pkgs.clipse} --listen %f
-    Terminal=false
-    Type=Application
-  '';
-
   # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
   xdg.configFile."autostart/userdirs.desktop".text = ''
     [Desktop Entry]

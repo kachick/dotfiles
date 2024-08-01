@@ -43,8 +43,16 @@
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix
+  networking.networkmanager = {
+    enable = true;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix#L261-L289
+    wifi = {
+      # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
+      powersave = false;
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
@@ -144,11 +152,17 @@
       fzf
       ripgrep
 
+      # 3rd-party bitwarden helper, because of official cli does not have many core features
+      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
+      edge-pkgs.goldwarden
+
+      # Clipboard
+      #
       # Don't use clipcat, copyq for wayland problem
       # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-      clipse
-      # Required in clipse
-      wl-clipboard
+      # Don't use clipse that depending wl-clipboard makes flickers in gnome
+      #
+      # So use a clipboard gnome extension
 
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
@@ -242,6 +256,12 @@
   # networking.firewall.enable = false;
 
   programs.nix-ld.enable = false;
+
+  # Prefer NixOS modules rather than home-manager for easy setting up
+  programs.goldwarden = {
+    package = edge-pkgs.goldwarden;
+    enable = true;
+  };
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {

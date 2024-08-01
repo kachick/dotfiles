@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
@@ -7,13 +12,28 @@
     settings = {
       "org/gnome/shell" = {
         disable-user-extensions = false;
-        enabled-extensions = with pkgs.gnomeExtensions; [
-          appindicator.extensionUuid
-          blur-my-shell.extensionUuid
-          pop-shell.extensionUuid
-          clipboard-history.extensionUuid
-          kimpanel.extensionUuid
-        ];
+
+        # Why needed an empty list?
+        # I don't know why Gnome have both disabled and enabled, but disabled by settings menu inserts here and it ignores enabled-extensions...
+        disabled-extensions = [ ];
+
+        enabled-extensions = map (ext: ext.extensionUuid) (
+          with pkgs.gnomeExtensions;
+          [
+            appindicator
+            blur-my-shell
+            pop-shell
+            clipboard-history
+            kimpanel
+            removable-drive-menu
+            system-monitor
+            places-status-indicator
+            window-list
+            workspace-indicator
+            applications-menu
+            auto-move-windows
+          ]
+        );
 
         favorite-apps = [
           "Alacritty.desktop"
