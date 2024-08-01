@@ -5,12 +5,6 @@
     {
       "Packages": [
         {
-          "PackageIdentifier": "Rclone.Rclone"
-        },
-        {
-          "PackageIdentifier": "Cryptomator.Cryptomator"
-        },
-        {
           "PackageIdentifier": "Microsoft.OneDrive"
         },
         {

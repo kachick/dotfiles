@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  edge-pkgs,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix

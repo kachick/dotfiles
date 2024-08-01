@@ -48,7 +48,10 @@
       };
 
       homemade-packages = forAllSystems (
-        system: (nixpkgs.legacyPackages.${system}.callPackage ./pkgs { })
+        system:
+        (nixpkgs.legacyPackages.${system}.callPackage ./pkgs {
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        })
       );
     in
     {

@@ -146,6 +146,10 @@
       fzf
       ripgrep
 
+      # 3rd-party bitwarden helper, because of official cli does not have many core features
+      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
+      edge-pkgs.goldwarden
+
       # Clipboard
       #
       # Don't use clipcat, copyq for wayland problem
@@ -246,6 +250,12 @@
   # networking.firewall.enable = false;
 
   programs.nix-ld.enable = false;
+
+  # Prefer NixOS modules rather than home-manager for easy setting up
+  programs.goldwarden = {
+    package = edge-pkgs.goldwarden;
+    enable = true;
+  };
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {

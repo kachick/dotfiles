@@ -72,6 +72,12 @@
         },
         {
           "PackageIdentifier": "ajeetdsouza.zoxide"
+        },
+        {
+          "PackageIdentifier": "Rclone.Rclone"
+        },
+        {
+          "PackageIdentifier": "WinFsp.WinFsp"
         }
       ],
       "SourceDetails": {
