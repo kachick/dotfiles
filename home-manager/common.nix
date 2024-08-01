@@ -62,6 +62,15 @@
       LESSCHARSET = "utf-8";
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
+
+      # https://github.com/germanztz/gnome-shell-extension-rclone-manager attempt to decrypt the config file via `--password-command` by default
+      # And it uses `echo` in the implementation, NixOS does not have /bin/echo and printing the secret does not make sense to me...
+      # And it does not have the feature to specify environments. So needed to set here
+      # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L124-L1>
+      # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L594
+      #
+      # For implementation, --name should be quoted with double quote, quoting with single does not work...
+      RCLONE_PASSWORD_COMMAND = lib.getExe homemade-pkgs.get-rclone-config-password;
     };
 
     sessionPath = [
