@@ -156,6 +156,9 @@ with pkgs;
   openssh
 
   iputils # `ping` etc
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
+  edge-pkgs.iw # replacement of wireless-tools(iwconfig)
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
