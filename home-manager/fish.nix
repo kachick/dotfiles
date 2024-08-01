@@ -18,6 +18,7 @@
   # If added here, check the result of `bench_shells`: https://github.com/kachick/dotfiles/pull/423/files#r1503804605
   xdg.dataFile."fish/vendor_completions.d/podman.fish".source = "${pkgs.podman}/share/fish/vendor_completions.d/podman.fish";
   xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
+  xdg.dataFile."fish/vendor_completions.d/goldwarden.fish".source = ../dependencies/goldwarden/completions.fish;
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fish.nix
   programs.fish = {

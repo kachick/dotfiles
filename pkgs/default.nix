@@ -1,7 +1,7 @@
 { pkgs, edge-pkgs, ... }:
 
 {
-  bump_completions = import ./bump_completions { inherit pkgs; };
+  bump_completions = import ./bump_completions { inherit pkgs edge-pkgs; };
 
   bump_gomod = import ./bump_gomod { inherit pkgs; };
 

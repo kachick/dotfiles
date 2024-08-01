@@ -196,6 +196,7 @@
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
 
       source "${../dependencies/dprint/completions.zsh}"
+      source "${../dependencies/goldwarden/completions.zsh}"
 
       # Disable `Ctrl + S(no output tty)`
       ${lib.getBin pkgs.coreutils}/bin/stty stop undef
