@@ -15,8 +15,7 @@ tmp/
 
 .direnv
 
-# NixOS
-*hardware-configuration.nix
+# Nix
 result
 
 # macOS

@@ -169,12 +169,19 @@
           };
         in
         {
-          "nixos-desktop" = nixpkgs.lib.nixosSystem shared;
+          "moss" = nixpkgs.lib.nixosSystem (
+            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
+          );
 
-          "nixos-wsl" = nixpkgs.lib.nixosSystem (
+          "algae" = nixpkgs.lib.nixosSystem (
+            shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
+          );
+
+          "wsl" = nixpkgs.lib.nixosSystem (
             shared
             // {
               modules = shared.modules ++ [
+                ./nixos/hosts/wsl
                 nixos-wsl.nixosModules.default
                 { wsl.enable = true; }
               ];
