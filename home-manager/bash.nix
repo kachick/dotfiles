@@ -123,6 +123,7 @@
         source "${pkgs.podman}/share/bash-completion/completions/podman"
 
         source "${../dependencies/dprint/completions.bash}"
+        source "${../dependencies/goldwarden/completions.bash}"
 
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
