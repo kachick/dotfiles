@@ -45,8 +45,16 @@
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix
+  networking.networkmanager = {
+    enable = true;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix#L261-L289
+    wifi = {
+      # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
+      powersave = false;
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
