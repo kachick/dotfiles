@@ -43,7 +43,8 @@ sudo nixos-generate-config
 
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
-  --impure --flake 'github:kachick/dotfiles#nixos-wsl'
+  --flake 'github:kachick/dotfiles#wsl' \
+  --show-trace
 sudo reboot now
 ```
 

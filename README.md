@@ -37,7 +37,7 @@ For example
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
-  --command sudo nixos-rebuild switch --impure \
+  --command sudo nixos-rebuild switch \
   --flake 'github:kachick/dotfiles#moss' \
   --show-trace
 sudo reboot now
