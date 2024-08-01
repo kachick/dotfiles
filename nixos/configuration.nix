@@ -210,22 +210,14 @@
 
       cloudflare-warp
     ]
-    ++ (
-      with pkgs.gnomeExtensions;
-      [
-        appindicator
-        blur-my-shell
-        pop-shell
-        clipboard-history
-        kimpanel
+    ++ (with pkgs.gnomeExtensions; [
+      appindicator
+      blur-my-shell
+      pop-shell
+      clipboard-history
+      kimpanel
 
-      ]
-      ++ [
-        # nixos-24.05 package does not support GNOME 46
-        # https://github.com/NixOS/nixpkgs/commit/48a52a281c505#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR4974
-        edge-pkgs.gnomeExtensions.rclone-manager
-      ]
-    );
+    ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
   environment.etc."xdg/user-dirs.defaults".text = ''

@@ -65,4 +65,4 @@ rclone mount google-drive-Foo-Vault: "$mount_to" --vfs-cache-mode writes --log-l
 
 ## GUI on Linux
 
-See <https://github.com/germanztz/gnome-shell-extension-rclone-manager> for detail
+Don't use <https://github.com/germanztz/gnome-shell-extension-rclone-manager> with the encrypted rclone config. (Looks like supporting, but I don't favor the [giving echo PASS](https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L125) style as [written by rclone author](https://github.com/rclone/rclone/issues/7875#issuecomment-2155656214). And [cannot be intgerated with env style](https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L594) of `RCLONE_PASSWORD_COMMAND` and `RCLONE_CONFIG_PASS`)

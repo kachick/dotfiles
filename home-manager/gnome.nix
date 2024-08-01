@@ -17,25 +17,23 @@
         # I don't know why Gnome have both disabled and enabled, but disabled by settings menu inserts here and it ignores enabled-extensions...
         disabled-extensions = [ ];
 
-        enabled-extensions =
-          map (ext: ext.extensionUuid) (
-            with pkgs.gnomeExtensions;
-            [
-              appindicator
-              blur-my-shell
-              pop-shell
-              clipboard-history
-              kimpanel
-              removable-drive-menu
-              system-monitor
-              places-status-indicator
-              window-list
-              workspace-indicator
-              applications-menu
-              auto-move-windows
-            ]
-          )
-          ++ [ edge-pkgs.gnomeExtensions.rclone-manager.extensionUuid ];
+        enabled-extensions = map (ext: ext.extensionUuid) (
+          with pkgs.gnomeExtensions;
+          [
+            appindicator
+            blur-my-shell
+            pop-shell
+            clipboard-history
+            kimpanel
+            removable-drive-menu
+            system-monitor
+            places-status-indicator
+            window-list
+            workspace-indicator
+            applications-menu
+            auto-move-windows
+          ]
+        );
 
         favorite-apps = [
           "Alacritty.desktop"
