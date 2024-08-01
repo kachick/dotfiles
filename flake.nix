@@ -170,7 +170,7 @@
         in
         {
           "moss" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss.nix ]; }
+            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
           );
           # "algae" = nixpkgs.lib.nixosSystem (
           #   shared // { modules = shared.modules ++ [ ./nixos/hosts/algae.nix ]; }

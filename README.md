@@ -21,25 +21,32 @@ Or, you can directly use some commands with `nix run` without any installation s
 
 ```bash
 nix run 'github:kachick/dotfiles#todo'
-nix run 'github:kachick/dotfiles#bench_shells'
-nix run 'github:kachick/dotfiles#walk'
-nix run 'github:kachick/dotfiles#prs'
-nix run 'github:kachick/dotfiles#git-log-fzf'
-nix run 'github:kachick/dotfiles#git-delete-merged-branches'
+```
+
+List them
+
+```bash
+nix flake show 'github:kachick/dotfiles' --json | jq '.apps | ."x86_64-linux" | keys[]'
 ```
 
 ## NixOS
 
-This repository does not save the `hardware-configuration.nix` for each host,\
-so you should activate with `--impure` to load `/etc/nixos/hardware-configuration.nix` in your local
+Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
 
-Using flake style is also disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
+For example
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch --impure \
-  --flake 'github:kachick/dotfiles#nixos-desktop'
+  --flake 'github:kachick/dotfiles#moss' \
+  --show-trace
 sudo reboot now
+```
+
+List defined hostnames
+
+```bash
+nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
 
 Some tools are not yet fully automated, read each docs.

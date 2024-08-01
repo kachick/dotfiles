@@ -15,8 +15,6 @@
     (import ./font.nix { inherit pkgs homemade-pkgs; })
     (import ./console.nix { inherit pkgs; })
     (import ./language.nix { inherit config pkgs; })
-    (import ./gui.nix { inherit pkgs; })
-    (import ./fingerprint.nix { inherit pkgs; })
   ];
 
   nix.settings.experimental-features = [
@@ -36,7 +34,6 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.05"; # Did you read the comment?
 
-  networking.hostName = "nixos-desktop"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
