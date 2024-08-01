@@ -67,9 +67,7 @@
     # https://github.com/germanztz/gnome-shell-extension-rclone-manager/blob/72f1a2ac4a1205069bc2bda5d1e5906e83a2b4ab/fileMonitorHelper.js#L594
     #
     # For implementation, --name should be quoted with double quote, quoting with single does not work...
-    RCLONE_PASSWORD_COMMAND = ''
-      ${lib.getExe edge-pkgs.goldwarden} logins get --name "Rclone - Configuration Password"
-    '';
+    RCLONE_PASSWORD_COMMAND = lib.getExe homemade-pkgs.get-rclone-config-password;
   };
 
   services.packagekit = {

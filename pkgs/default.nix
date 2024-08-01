@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, edge-pkgs, ... }:
 
 {
   bump_completions = import ./bump_completions { inherit pkgs; };
@@ -52,4 +52,6 @@
   beedii = pkgs.callPackage ./beedii { };
 
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
+
+  get-rclone-config-password = import ./get-rclone-config-password { inherit pkgs edge-pkgs; };
 }

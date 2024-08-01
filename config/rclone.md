@@ -38,13 +38,13 @@ Don't save the file in this repository even if it is encrypted with agenix or so
 ## Persist the token in a session
 
 Always need the token when modifying config is too annoy.\
-And `read -s` does not work in zsh, so use this for both bash and zsh.
+Now it reads from `RCLONE_PASSWORD_COMMAND`.\
+Or directly set `RCLONE_CONFIG_PASS` as this.\
+(`read -s` does not work in zsh)
 
 ```bash
 export RCLONE_CONFIG_PASS="$(micro)"
 ```
-
-I don't have plan to add this tiny code in *shrc for now.
 
 ## Mount
 
