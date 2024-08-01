@@ -7,6 +7,6 @@
     ../../configuration.nix
     ../../gui.nix
 
-    # ./hardware-configuration.nix
+    ./hardware-configuration.nix
   ];
 }
