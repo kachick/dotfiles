@@ -172,14 +172,16 @@
           "moss" = nixpkgs.lib.nixosSystem (
             shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
           );
-          # "algae" = nixpkgs.lib.nixosSystem (
-          #   shared // { modules = shared.modules ++ [ ./nixos/hosts/algae.nix ]; }
-          # );
 
-          "nixos-wsl" = nixpkgs.lib.nixosSystem (
+          "algae" = nixpkgs.lib.nixosSystem (
+            shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
+          );
+
+          "wsl" = nixpkgs.lib.nixosSystem (
             shared
             // {
               modules = shared.modules ++ [
+                ./nixos/hosts/wsl
                 nixos-wsl.nixosModules.default
                 { wsl.enable = true; }
               ];
