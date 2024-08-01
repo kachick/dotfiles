@@ -5,9 +5,9 @@
 
   imports = [
     ../../configuration.nix
-    ../../fingerprint.nix
     ../../gui.nix
 
     ./hardware-configuration.nix
+    ./fingerprint.nix
   ];
 }
