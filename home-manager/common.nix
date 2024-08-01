@@ -63,7 +63,7 @@
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
 
-      # For implementation, --name should be quoted with double quote, quoting with single does not work...
+      # For implementation, handling bitwarden logins which contains space seprared text here looks complex and buggy. So extracted to a script.
       RCLONE_PASSWORD_COMMAND = lib.getExe homemade-pkgs.get-rclone-config-password;
     };
 
