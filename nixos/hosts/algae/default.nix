@@ -14,5 +14,7 @@
   # https://github.com/NixOS/nixpkgs/issues/219239
   boot.initrd.kernelModules = [ "amdgpu" ];
 
+  boot.loader.systemd-boot.enable = true;
+
   services.xserver.videoDrivers = [ "amdgpu" ];
 }
