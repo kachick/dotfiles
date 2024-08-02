@@ -23,7 +23,6 @@
   ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   # This value determines the NixOS release from which the default

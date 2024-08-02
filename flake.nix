@@ -12,7 +12,7 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/2405.5.4";
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
     # Don't use wezterm-flake for now. The IME on wayland does not work than old stable.
@@ -155,8 +155,6 @@
                   };
                 };
               }
-              xremap-flake.nixosModules.default
-              ./nixos/xremap.nix
             ];
             specialArgs = {
               inherit
@@ -177,16 +175,7 @@
             shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
           );
 
-          "wsl" = nixpkgs.lib.nixosSystem (
-            shared
-            // {
-              modules = shared.modules ++ [
-                ./nixos/hosts/wsl
-                nixos-wsl.nixosModules.default
-                { wsl.enable = true; }
-              ];
-            }
-          );
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = shared.modules ++ [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =
