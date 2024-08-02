@@ -155,8 +155,6 @@
                   };
                 };
               }
-              xremap-flake.nixosModules.default
-              ./nixos/xremap.nix
             ];
             specialArgs = {
               inherit

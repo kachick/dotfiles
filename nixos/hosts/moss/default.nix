@@ -1,4 +1,4 @@
-{ pkgs, edge-pkgs, ... }:
+{ inputs, ... }:
 
 {
   networking.hostName = "moss";
@@ -9,6 +9,9 @@
 
     ./hardware-configuration.nix
     ./fingerprint.nix
+
+    inputs.xremap-flake.nixosModules.default
+    ../..xremap.nix
   ];
 
   # Apply better fonts for non X consoles
