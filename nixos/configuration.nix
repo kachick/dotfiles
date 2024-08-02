@@ -205,8 +205,9 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-          "--ozone-platform=wayland"
-          "--ozone-platform-hint=auto"
+          "--ozone-platform-hint=wayland"
+          "--gtk-version=4"
+          "--enable-features=TouchpadOverscrollHistoryNavigation"
           "--enable-wayland-ime"
         ];
       }))
