@@ -32,5 +32,18 @@
     };
   };
 
+  gtk = {
+    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
+    gtk2.extraConfig = ''
+      gtk-im-module=fcitx
+    '';
+    gtk3.extraConfig = {
+      gtk-im-module = "fcitx";
+    };
+    gtk4.extraConfig = {
+      gtk-im-module = "fcitx";
+    };
+  };
+
   services.dbus.packages = [ config.i18n.inputMethod.package ];
 }
