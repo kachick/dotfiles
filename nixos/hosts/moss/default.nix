@@ -11,7 +11,7 @@
     ./fingerprint.nix
 
     inputs.xremap-flake.nixosModules.default
-    ../..xremap.nix
+    ../../xremap.nix
   ];
 
   # Apply better fonts for non X consoles
