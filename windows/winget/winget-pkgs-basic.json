@@ -78,6 +78,9 @@
         },
         {
           "PackageIdentifier": "WinFsp.WinFsp"
+        },
+        {
+          "PackageIdentifier": "Fastfetch-cli.Fastfetch"
         }
       ],
       "SourceDetails": {

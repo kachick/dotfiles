@@ -131,6 +131,8 @@ with pkgs;
   podman
   podman-tui
   docker-compose
+
+  fastfetch # active replacement of neofetch
 ]
 ++ (with homemade-pkgs; [
   la
