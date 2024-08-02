@@ -65,4 +65,8 @@ end)
 
 config.launch_menu = launch_menu
 
+-- By default true, that makes always hiding cursor after typed in wayland
+-- Might be related to https://github.com/wez/wezterm/issues/3334
+config.hide_mouse_cursor_when_typing = false
+
 return config
