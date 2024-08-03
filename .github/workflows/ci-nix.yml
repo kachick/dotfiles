@@ -42,4 +42,7 @@ jobs:
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix flake show
       - run: nix flake check
+        if: runner.os == 'Linux'
+      - run: nix flake check --no-build
+        if: runner.os == 'macOS'
       - run: nix develop --command makers ci-dev
