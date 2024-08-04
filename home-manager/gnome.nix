@@ -34,7 +34,7 @@
             auto-move-windows
             just-perfection
             dash-to-dock
-            color-picker
+            # color-picker # Don't enable by default. It conflicts with clipboard-history
           ]
         );
 
