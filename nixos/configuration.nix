@@ -225,11 +225,12 @@
 
       # Should be changed from default CSS to another to avoid https://github.com/pop-os/shell/issues/132
       # https://github.com/pop-os/shell/blob/cfa0c55e84b7ce339e5ce83832f76fee17e99d51/light.css#L20-L24
+      # Apple same color as nord(Nordic) https://github.com/EliverLara/Nordic/blob/5c53654fb6f3e0266ad8c481a099091e92f28274/gnome-shell/_colors.scss#L14-L15
       (pop-shell.overrideAttrs (prev: {
         preFixup =
           prev.preFixup
           + ''
-            echo '.pop-shell-search-element:select{ background: #005f5f !important; color: #d2d4de !important; }' >> $out/share/gnome-shell/extensions/pop-shell@system76.com/light.css
+            echo '.pop-shell-search-element:select{ background: #8fbcbb !important; color: #fefefe !important; }' >> $out/share/gnome-shell/extensions/pop-shell@system76.com/light.css
           '';
       }))
       clipboard-history
