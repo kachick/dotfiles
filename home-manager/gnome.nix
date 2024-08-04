@@ -108,7 +108,8 @@
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
         # control-center = [ "<Super>comma" ]; # I set this because of inspired by vscode, but disable to avoid conflict of pop-shell minimizerr
-        # www = [ "<Super>w" ]; # pop-shell sets to Super+b
+        www = [ "<Super>w" ]; # Prefer w even through pop-shell recommends to Super+b
+        terminal = [ "<Super>t" ];
         # search = [ "<Super>f" ]; # pop-shell sets to file manager
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
