@@ -28,7 +28,7 @@
             removable-drive-menu
             # system-monitor
             places-status-indicator
-            window-list
+            # window-list
             workspace-indicator
             applications-menu
             auto-move-windows
