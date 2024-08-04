@@ -33,6 +33,7 @@
             applications-menu
             auto-move-windows
             just-perfection
+            dash-to-dock
           ]
         );
 
@@ -94,6 +95,11 @@
       "org.gnome.desktop.interface" = {
         enable-hot-corners = false;
       };
+
+      "org/gnome/shell/extensions/dash-to-dock" = {
+        dock-position = "LEFT";
+      };
+
     };
   };
 }

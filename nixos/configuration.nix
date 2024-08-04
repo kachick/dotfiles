@@ -221,6 +221,7 @@
       clipboard-history
       kimpanel
       just-perfection
+      dash-to-dock
     ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
