@@ -200,6 +200,9 @@
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
+        # Should be disabled to avoid conflicting keybinds against <Super>Number workspace switcher
+        hot-keys = false;
+
         dock-position = "LEFT";
 
         dock-fixed = true;
