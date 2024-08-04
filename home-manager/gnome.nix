@@ -176,7 +176,6 @@
         multi-monitor = true;
       };
 
-      # Should be changed from default Adwaita to another to avoid https://github.com/pop-os/shell/issues/132
       "org/gnome/desktop/wm/preferences" = {
         theme = "Nordic";
       };
