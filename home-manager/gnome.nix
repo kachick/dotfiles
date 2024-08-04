@@ -84,6 +84,37 @@
       "org/gnome/desktop/wm/keybindings" = {
         activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
 
+        close = [
+          "<Super>q"
+          "<Alt>F4"
+        ];
+
+        switch-to-workspace-down = [
+          "<Primary><Super>Down"
+          "<Primary><Super>j"
+        ];
+
+        switch-to-workspace-up = [
+          "<Primary><Super>Up"
+          "<Primary><Super>k"
+        ];
+
+        move-to-monitor-left = [ ];
+        move-to-monitor-down = [ ];
+        move-to-monitor-up = [ ];
+        move-to-monitor-right = [ ];
+
+        move-to-workspace-down = [ ];
+        move-to-workspace-up = [ ];
+
+        toggle-maximized = [ "<Super>m" ];
+        maximize = [ ];
+        unmaximize = [ ];
+        minimize = [ "<Super>comma" ];
+
+        switch-to-workspace-left = [ ];
+        switch-to-workspace-right = [ ];
+
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
 
         switch-to-workspace-1 = [ "<Super>1" ];
