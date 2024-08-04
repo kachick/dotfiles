@@ -79,6 +79,11 @@
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
       };
 
+      "org/gnome/shell/just-perfection" = {
+        clock-menu-position = 1;
+        clock-menu-position-offset = 15;
+      };
+
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" ];
       };
