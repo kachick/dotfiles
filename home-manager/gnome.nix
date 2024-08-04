@@ -98,6 +98,11 @@
 
       "org/gnome/shell/extensions/dash-to-dock" = {
         dock-position = "LEFT";
+
+        dock-fixed = true;
+        custom-theme-shrink = true;
+
+        multi-monitor = true;
       };
 
     };
