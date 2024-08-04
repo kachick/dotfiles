@@ -16,14 +16,15 @@
       }
     ];
 
+    # Disabled while using Alt-Space for pop-shell launcher
     # Keymap for key combo rebinds
-    keymap = [
-      {
-        name = "Gnome lancher";
-        remap = {
-          "Alt-Space" = "LEFTMETA";
-        };
-      }
-    ];
+    # keymap = [
+    #   {
+    #     name = "Gnome lancher";
+    #     remap = {
+    #       "Alt-Space" = "LEFTMETA";
+    #     };
+    #   }
+    # ];
   };
 }
