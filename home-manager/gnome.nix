@@ -80,6 +80,8 @@
       };
 
       "org/gnome/shell/just-perfection" = {
+        startup-status = 0;
+
         clock-menu-position = 1;
         clock-menu-position-offset = 15;
       };
