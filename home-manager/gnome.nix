@@ -81,6 +81,8 @@
       };
 
       "org/gnome/desktop/wm/keybindings" = {
+        activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
+
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
 
         switch-to-workspace-1 = [ "<Super>1" ];
