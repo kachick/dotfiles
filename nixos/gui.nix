@@ -6,7 +6,7 @@
 {
   services.xserver = {
     enable = true;
-    displayManager.gdm.enable = true;
+    displayManager.gdm.enable = false;
     desktopManager.gnome = {
       enable = true;
       # https://github.com/NixOS/nixpkgs/issues/114514
