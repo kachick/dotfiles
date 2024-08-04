@@ -58,22 +58,22 @@
         switch-to-application-1 = [ ];
         switch-to-application-2 = [ ];
         switch-to-application-3 = [ ];
-        switch-to-application-4 = [ ];
-        switch-to-application-5 = [ ];
-        switch-to-application-6 = [ ];
-        switch-to-application-7 = [ ];
-        switch-to-application-8 = [ ];
-        switch-to-application-9 = [ ];
+        # switch-to-application-4 = [ ];
+        # switch-to-application-5 = [ ];
+        # switch-to-application-6 = [ ];
+        # switch-to-application-7 = [ ];
+        # switch-to-application-8 = [ ];
+        # switch-to-application-9 = [ ];
 
         open-new-window-application-1 = [ ];
         open-new-window-application-2 = [ ];
         open-new-window-application-3 = [ ];
-        open-new-window-application-4 = [ ];
-        open-new-window-application-5 = [ ];
-        open-new-window-application-6 = [ ];
-        open-new-window-application-7 = [ ];
-        open-new-window-application-8 = [ ];
-        open-new-window-application-9 = [ ];
+        # open-new-window-application-4 = [ ];
+        # open-new-window-application-5 = [ ];
+        # open-new-window-application-6 = [ ];
+        # open-new-window-application-7 = [ ];
+        # open-new-window-application-8 = [ ];
+        # open-new-window-application-9 = [ ];
       };
 
       "org/gnome/desktop/wm/preferences" = {
