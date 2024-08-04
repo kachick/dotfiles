@@ -26,7 +26,7 @@
             clipboard-history
             kimpanel
             removable-drive-menu
-            system-monitor
+            # system-monitor
             places-status-indicator
             window-list
             workspace-indicator
