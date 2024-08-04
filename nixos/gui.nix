@@ -6,8 +6,12 @@
 {
   services.xserver = {
     enable = true;
-    displayManager.gdm.enable = false;
-    displayManager.lightdm.enable = true;
+
+    # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
+    # And when I was using KDE, GDM only worked, SDDM didn't work
+    displayManager.gdm.enable = true;
+    # displayManager.lightdm.enable = false;
+
     desktopManager.gnome = {
       enable = true;
       # https://github.com/NixOS/nixpkgs/issues/114514
