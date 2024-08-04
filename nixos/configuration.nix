@@ -216,6 +216,8 @@
 
       # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
       pop-launcher
+
+      nordic
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator

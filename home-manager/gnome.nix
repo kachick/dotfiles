@@ -163,6 +163,8 @@
 
         # https://unix.stackexchange.com/questions/327975/how-to-change-the-gnome-panel-time-format
         clock-show-weekday = true;
+
+        gtk-theme = "Nordic";
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
@@ -174,6 +176,10 @@
         multi-monitor = true;
       };
 
+      # Should be changed from default Adwaita to another to avoid https://github.com/pop-os/shell/issues/132
+      "org/gnome/desktop/wm/preferences" = {
+        theme = "Nordic";
+      };
     };
   };
 }
