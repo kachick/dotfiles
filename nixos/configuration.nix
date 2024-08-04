@@ -211,6 +211,8 @@
       }))
 
       cloudflare-warp
+
+      gnome.dconf-editor
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
