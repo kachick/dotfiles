@@ -91,9 +91,12 @@
         experimental-features = [ "scale-monitor-framebuffer" ];
       };
 
-      # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
       "org.gnome.desktop.interface" = {
+        # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
         enable-hot-corners = false;
+
+        # https://unix.stackexchange.com/questions/327975/how-to-change-the-gnome-panel-time-format
+        clock-show-weekday = true;
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
