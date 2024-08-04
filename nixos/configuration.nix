@@ -236,6 +236,7 @@
       kimpanel
       just-perfection
       dash-to-dock
+      color-picker
     ]);
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259

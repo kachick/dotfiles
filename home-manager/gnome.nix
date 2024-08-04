@@ -34,6 +34,7 @@
             auto-move-windows
             just-perfection
             dash-to-dock
+            color-picker
           ]
         );
 

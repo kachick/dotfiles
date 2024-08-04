@@ -88,6 +88,8 @@ with pkgs;
   _7zz # `7zz` 7zip, not
   tlrc # `tldr` rust client, tealdeer is another candidate
 
+  pastel
+
   rclone
 
   # How to get the installed font names
