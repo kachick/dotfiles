@@ -125,6 +125,9 @@
     };
   };
 
+  # If you encounter .config/gh/config.yml readonly permission errors, attempt after `rm -rf ~/.config/gh`
+  # https://github.com/cli/cli/pull/5378#issuecomment-2252558180
+  #
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
   programs.gh = {
     enable = true;
