@@ -32,6 +32,7 @@
             workspace-indicator
             applications-menu
             auto-move-windows
+            just-perfection
           ]
         );
 
