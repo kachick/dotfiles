@@ -109,15 +109,21 @@
       "org/gnome/settings-daemon/plugins/media-keys" = {
         # control-center = [ "<Super>comma" ]; # I set this because of inspired by vscode, but disable to avoid conflict of pop-shell minimizerr
         www = [ "<Super>w" ]; # Prefer w even through pop-shell recommends to Super+b
-        terminal = [ "<Super>t" ];
+        # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
         # search = [ "<Super>f" ]; # pop-shell sets to file manager
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          # "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
+        name = "Alacritty";
+        binding = "<Super>t";
+        command = lib.getExe pkgs.alacritty;
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
         name = "Resource Monitor - TUI";
         binding = "<Super>r";
         command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.bottom} --title='Resource Monitor(btm)'";
