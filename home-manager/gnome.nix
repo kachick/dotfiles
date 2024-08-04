@@ -81,6 +81,11 @@
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" ];
       };
+
+      # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
+      "org.gnome.desktop.interface" = {
+        enable-hot-corners = false;
+      };
     };
   };
 }
