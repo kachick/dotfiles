@@ -176,7 +176,7 @@
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
       };
 
-      "org/gnome/shell/just-perfection" = {
+      "org/gnome/shell/extensions/just-perfection" = {
         startup-status = 0;
 
         clock-menu-position = 1;
