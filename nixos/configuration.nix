@@ -213,8 +213,6 @@
       cloudflare-warp
 
       gnome.dconf-editor
-
-      lemurs
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
