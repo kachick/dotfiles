@@ -45,34 +45,40 @@
         ];
       };
 
+      # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
+      "org/gnome/desktop/default-applications/terminal" = {
+        exec = lib.getExe pkgs.alacritty;
+        # exec-arg="";
+      };
+
       "org/gnome/desktop/wm/keybindings" = {
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        control-center = [ "<Super>comma" ];
-        www = [ "<Super>w" ];
-        search = [ "<Super>f" ];
+        # control-center = [ "<Super>comma" ]; # I set this because of inspired by vscode, but disable to avoid conflict of pop-shell minimizerr
+        # www = [ "<Super>w" ]; # pop-shell sets to Super+b
+        # search = [ "<Super>f" ]; # pop-shell sets to file manager
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-        name = "Terminal";
-        binding = "<Super>t";
-        command = lib.getExe pkgs.alacritty;
-      };
-
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
         name = "Resource Monitor - TUI";
-        binding = "<Super>b"; # I don't know why, <Super>m don't work even if removed other shortcuts :<
+        binding = "<Super>r";
         command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.bottom} --title='Resource Monitor(btm)'";
       };
 
+      # https://github.com/pop-os/shell/blob/master_noble/schemas/org.gnome.shell.extensions.pop-shell.gschema.xml
       "org/gnome/shell/extensions/pop-shell" = {
         tile-by-default = true;
+
+        # Keybindings: https://github.com/pop-os/shell/blob/master_noble/scripts/configure.sh
+
+        # https://www.reddit.com/r/pop_os/comments/mt5kgf/how_to_change_default_keybind_for/
+        activate-launcher = "['<Alt>space']";
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
