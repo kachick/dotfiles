@@ -213,6 +213,9 @@
       cloudflare-warp
 
       gnome.dconf-editor
+
+      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
+      pop-launcher
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
