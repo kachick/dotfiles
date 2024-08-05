@@ -1,11 +1,17 @@
 {
+  config,
   lib,
   pkgs,
   edge-pkgs,
   ...
 }:
 
+let
+  spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
+in
 {
+  xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
+
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
   dconf = {
     enable = true;
@@ -213,6 +219,13 @@
 
       "org/gnome/desktop/wm/preferences" = {
         theme = "Nordic";
+      };
+
+      "org/gnome/shell/extensions/auto-move-windows" = {
+        application-list = [
+          "${spotify-pwa-file}:3"
+          "org.gnome.Music.desktop:3"
+        ];
       };
     };
   };
