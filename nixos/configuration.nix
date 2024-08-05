@@ -13,7 +13,7 @@
 {
   imports = [
     (import ./font.nix { inherit pkgs homemade-pkgs; })
-    (import ./console.nix { inherit pkgs; })
+    (import ./console.nix { inherit homemade-pkgs; })
     (import ./language.nix { inherit config pkgs; })
   ];
 
