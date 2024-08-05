@@ -44,6 +44,7 @@
       geary # email reader
       evince # document viewer
       gnome-calendar
+      gnome-music # does not support flac by defaults
     ]);
 
   # Enable touchpad support (enabled default in most desktopManager).
