@@ -54,6 +54,12 @@
     touchpad.naturalScrolling = true;
   };
 
+  environment.systemPackages = with pkgs; [
+    # gnome-music does not support flac.
+    # tramhao/termusic and tsirysndr/music-player does not figure how to use.
+    rhythmbox
+  ];
+
   # Make it natural scroll on KDE, not enough only in libinput
   # https://github.com/NixOS/nixpkgs/issues/51875#issuecomment-846251880
   # environment.etc."X11/xorg.conf.d/30-touchpad.conf".text = ''

@@ -101,13 +101,9 @@
         "wheel"
         "input" # For finger print in GDM
       ];
-      packages = with pkgs; [
+      packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
         # Use the Web Player via Firefox
-
-        # gnome-music does not support flac.
-        # tramhao/termusic and tsirysndr/music-player does not figure how to use.
-        rhythmbox
       ];
     };
   };

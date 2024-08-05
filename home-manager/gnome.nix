@@ -224,7 +224,7 @@ in
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
           "${spotify-pwa-file}:3"
-          # "org.gnome.Music.desktop:3"
+          "org.gnome.Rhythmbox3.desktop:3"
         ];
       };
     };
