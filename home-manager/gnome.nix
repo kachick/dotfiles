@@ -197,6 +197,11 @@ in
         dynamic-workspaces = false;
       };
 
+      "org/gnome/mutter/keybindings" = {
+        toggle-tiled-left = [ ];
+        toggle-tiled-right = [ ];
+      };
+
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
         enable-hot-corners = false;
