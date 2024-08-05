@@ -9,12 +9,9 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "ter-u24n";
+    font = "${pkgs.cozette}/share/fonts/misc/cozette.psf";
 
-    packages = with pkgs; [
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/data/fonts/terminus-font/default.nix#L41-L43
-      terminus_font
-    ];
+    packages = with pkgs; [ cozette ];
     keyMap = "us";
   };
 
