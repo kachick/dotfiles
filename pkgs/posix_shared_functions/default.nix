@@ -8,6 +8,8 @@
 # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
 # - Do not add shebang and options. It means you shouldn't select `writeShellApplication` here
 #
+# How to stop blinking cursor in Linux console?
+# => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
 let
   trim-github-user-prefix-for-reponame = pkgs.callPackage ../trim-github-user-prefix-for-reponame { };
   ghqf = pkgs.callPackage ../ghqf { };
@@ -34,5 +36,9 @@ pkgs.writeText "posix_shared_functions.sh" ''
 
   gch() {
     fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
+  }
+
+  disable_blinking_cursor() {
+    echo -en '\033[?16;5;140c'
   }
 ''

@@ -209,6 +209,10 @@
 
       source_sh "${homemade-pkgs.posix_shared_functions}"
 
+      if [ 'linux' = "$TERM" ]; then
+        disable_blinking_cursor
+      fi
+
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
