@@ -81,6 +81,8 @@ in
         open-new-window-application-7 = [ ];
         open-new-window-application-8 = [ ];
         open-new-window-application-9 = [ ];
+
+        toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
       };
 
       "org/gnome/desktop/wm/preferences" = {
@@ -120,8 +122,6 @@ in
 
         switch-to-workspace-left = [ ];
         switch-to-workspace-right = [ ];
-
-        toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
 
         switch-to-workspace-1 = [ "<Super>1" ];
         switch-to-workspace-2 = [ "<Super>2" ];
