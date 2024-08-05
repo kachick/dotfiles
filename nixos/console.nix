@@ -9,7 +9,7 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "${homemade-pkgs.cozette}/share/consolefonts/cozette.psf";
+    font = "${homemade-pkgs.cozette}/share/consolefonts/cozette_hidpi.psf";
 
     packages = with homemade-pkgs; [ cozette ];
     keyMap = "us";
