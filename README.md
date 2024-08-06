@@ -49,10 +49,6 @@ List defined hostnames
 nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
 
-Some tools are not yet fully automated, read each docs.
-
-- [WARP](./nixos/WARP.md)
-
 ## Ubuntu
 
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.

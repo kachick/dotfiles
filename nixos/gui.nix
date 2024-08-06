@@ -2,14 +2,16 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   services.xserver = {
     enable = true;
 
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/gdm.nix
     displayManager.gdm.enable = true;
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
@@ -71,4 +73,15 @@
   #           Option "NaturalScrolling" "on"
   #   EndSection
   # '';
+
+  # https://askubuntu.com/a/88947
+  environment.etc."gdm/PostLogin/Default".source = lib.getExe (
+    pkgs.writeShellApplication {
+      name = "connect_cloudflare-warp";
+      runtimeInputs = with pkgs; [ cloudflare-warp ];
+      text = ''
+        warp-cli connect
+      '';
+    }
+  );
 }
