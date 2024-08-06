@@ -150,7 +150,7 @@ in
         home = [ ];
         email = [ ];
         # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
-        search = [ "<Super>f" ]; # pop-shell sets to file manager, but reolace to overview
+        search = [ "<Super>f" ]; # pop-shell sets to file manager, but replace to overview
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
