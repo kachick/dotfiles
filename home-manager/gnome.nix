@@ -177,6 +177,8 @@ in
 
         # https://www.reddit.com/r/pop_os/comments/mt5kgf/how_to_change_default_keybind_for/
         activate-launcher = [ "<Alt>space" ];
+
+        active-hint = true;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
