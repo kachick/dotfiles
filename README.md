@@ -52,7 +52,6 @@ nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | key
 Some tools are not yet fully automated, read each docs.
 
 - [WARP](./nixos/WARP.md)
-- [OneDrive](./nixos/OneDrive.md)
 
 ## Ubuntu
 
