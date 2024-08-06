@@ -50,3 +50,8 @@ position.y = 10
 # Copy and Paste can be used ctrl + shift + c/v, but it is annoy. Remember following
 # Copy: Needless keybind, use 'selection.save_to_clipboard = true'
 # Paste: Shift + Insert
+
+[mouse]
+# true by default, but looks unstable behaviors
+# so prefer always displaying as I did in wezterm
+hide_when_typing = false
