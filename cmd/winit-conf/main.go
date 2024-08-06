@@ -86,7 +86,7 @@ func provisioners() []provisioner {
 	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "whkd"), dirPerm)
 	if err != nil {
-		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
+		log.Fatalf("Failed to create whkd dotfiles directory: %+v", err)
 	}
 
 	return []provisioner{
