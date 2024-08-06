@@ -150,7 +150,7 @@ in
         home = [ ];
         email = [ ];
         # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
-        # search = [ "<Super>f" ]; # pop-shell sets to file manager
+        search = [ "<Super>f" ]; # pop-shell sets to file manager, but reolace to overview
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
@@ -197,6 +197,11 @@ in
         experimental-features = [ "scale-monitor-framebuffer" ];
 
         dynamic-workspaces = false;
+
+        # Disable default Super runs GNOME overview with search
+        # https://ubuntuforums.org/showthread.php?t=2405352
+        # The feature is useful, but frustrated when using pop-shell shortcuts. Super modifier is mostly used now
+        overlay-key = "";
       };
 
       "org/gnome/mutter/keybindings" = {
