@@ -62,6 +62,12 @@
     MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
     NIXOS_OZONE_WL = "1";
+
+    # Avoiding hidden or unstable mouse cursors when using Alacritty/Wezterm on Wayland
+    #
+    # https://github.com/NixOS/nixpkgs/issues/22652
+    # https://github.com/alacritty/alacritty/issues/6703#issuecomment-2222503206
+    XCURSOR_THEME = "Adwaita";
   };
 
   services.packagekit = {
