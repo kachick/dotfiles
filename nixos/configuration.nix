@@ -12,6 +12,7 @@
 }:
 {
   imports = [
+    ./modules/cloudflare-warp.nix
     (import ./font.nix { inherit pkgs homemade-pkgs; })
     (import ./console.nix { inherit homemade-pkgs; })
     (import ./language.nix { inherit config pkgs; })
@@ -89,6 +90,10 @@
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
+  };
+
+  services.cloudflare-warp = {
+    enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -210,8 +215,6 @@
         ];
       }))
 
-      cloudflare-warp
-
       gnome.dconf-editor
 
       # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
@@ -292,8 +295,4 @@
       defaultNetwork.settings.dns_enabled = true;
     };
   };
-
-  # https://github.com/NixOS/nixpkgs/issues/213177#issuecomment-1905556283
-  systemd.packages = [ pkgs.cloudflare-warp ]; # for warp-cli
-  systemd.targets.multi-user.wants = [ "warp-svc.service" ]; # causes warp-svc to be started automatically
 }
