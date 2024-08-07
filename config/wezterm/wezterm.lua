@@ -61,6 +61,10 @@ wezterm.on("gui-startup", function(cmd)
 
   gui_window:set_inner_size(screen.width * 0.8, screen.height * 0.8)
   gui_window:set_position(screen.width * 0.05, screen.height * 0.05)
+
+  local right_pane <const> = pane:split({ direction = "Right", size = 0.3 })
+  right_pane:split({ direction = "Bottom", size = 0.5 })
+  pane:activate()
 end)
 
 config.launch_menu = launch_menu
