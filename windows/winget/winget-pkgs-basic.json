@@ -81,6 +81,9 @@
         },
         {
           "PackageIdentifier": "Fastfetch-cli.Fastfetch"
+        },
+        {
+          "PackageIdentifier": "Clement.bottom"
         }
       ],
       "SourceDetails": {
