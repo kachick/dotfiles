@@ -166,7 +166,9 @@ keybindings:
 
   # Change focus from tiling windows -> floating -> fullscreen.
   - commands: ['wm-cycle-focus']
-    bindings: ['alt+space']
+    # https://github.com/glzr-io/glazewm/issues/648
+    # bindings: ['alt+space']
+    bindings: []
 
   # Change the focused window to be floating.
   - commands: ['toggle-floating --centered']
