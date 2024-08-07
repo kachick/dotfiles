@@ -79,7 +79,7 @@ with pkgs;
 
   typos
   hyperfine
-  difftastic
+  difftastic # `difft`
   gnumake
   gitleaks
   edge-pkgs.deno # Use unstable to track latest
