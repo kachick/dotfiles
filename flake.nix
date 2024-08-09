@@ -67,6 +67,7 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+          homemade-pkgs = homemade-packages.${system};
         in
         {
           default =
@@ -99,8 +100,7 @@
                 go_1_22
                 goreleaser
                 trivy
-                edge-pkgs.markdownlint-cli2
-              ];
+              ] ++ (with edge-pkgs; [ markdownlint-cli2 ]) ++ (with homemade-pkgs; [ kdlfmt ]);
             };
         }
       );
