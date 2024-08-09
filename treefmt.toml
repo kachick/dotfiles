@@ -39,3 +39,8 @@ includes = ["*.sh", "*.bash", "*.envrc"]
 [formatter.stylua]
 command = "stylua"
 includes = ["*.lua"]
+
+[formatter.kdl]
+command = "kdlfmt"
+options = ["format"]
+includes = ["*.kdl"]
