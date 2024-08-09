@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "editorconfig.editorconfig",
-    "ibecker.treefmt-vscode",
     "dprint.dprint",
     "tekumara.typos-vscode",
     "github.vscode-github-actions",

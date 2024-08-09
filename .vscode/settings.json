@@ -1,9 +1,20 @@
 {
-  "editor.defaultFormatter": "ibecker.treefmt-vscode",
+  "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
-  "treefmt.command": "treefmt",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
   "[fish]": {
     "editor.defaultFormatter": "bmalehorn.vscode-fish"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua"
   },
   "nix.serverPath": "nil",
   "nix.enableLanguageServer": true,
