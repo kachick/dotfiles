@@ -241,6 +241,11 @@ in
           "org.gnome.Rhythmbox3.desktop:3"
         ];
       };
+
+      # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
+      "org.gnome.settings-daemon.plugins.xsettings" = {
+        overrides = "{'Gtk/IMModule':<'fcitx'>}";
+      };
     };
   };
 }
