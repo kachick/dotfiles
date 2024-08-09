@@ -73,34 +73,39 @@
           default =
             with pkgs;
             mkShellNoCC {
-              buildInputs = [
-                # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-                bashInteractive
-                nixfmt-rfc-style
-                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
-                nil # Used in vscode Nix extension
-                nixd # Used in zed Nix extension
-                nixpkgs-lint-community
-                # To get sha256 around pkgs.fetchFromGitHub in CLI
-                nix-prefetch-git
-                jq
+              buildInputs =
+                [
+                  # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+                  bashInteractive
+                  nixfmt-rfc-style
+                  # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
+                  nil # Used in vscode Nix extension
+                  nixd # Used in zed Nix extension
+                  nixpkgs-lint-community
+                  # To get sha256 around pkgs.fetchFromGitHub in CLI
+                  nix-prefetch-git
+                  jq
 
-                shellcheck
-                shfmt
-                gitleaks
-                cargo-make
+                  shellcheck
+                  shfmt
+                  gitleaks
+                  cargo-make
 
-                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                # https://github.com/numtide/treefmt/pull/250
-                treefmt2
-                dprint
-                stylua
-                typos
-                typos-lsp
-                go_1_22
-                goreleaser
-                trivy
-              ] ++ (with edge-pkgs; [ markdownlint-cli2 ]) ++ (with homemade-pkgs; [ kdlfmt ]);
+                  dprint
+                  stylua
+                  typos
+                  typos-lsp
+                  go_1_22
+                  goreleaser
+                  trivy
+                ]
+                ++ (with edge-pkgs; [
+                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                  # https://github.com/numtide/treefmt/pull/250
+                  treefmt2
+                  markdownlint-cli2
+                ])
+                ++ (with homemade-pkgs; [ kdlfmt ]);
             };
         }
       );
