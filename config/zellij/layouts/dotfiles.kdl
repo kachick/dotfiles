@@ -1,0 +1,36 @@
+layout {
+    tab focus=true name="common" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        // BPS
+        pane split_direction="vertical" {
+            pane size="70%" {
+
+            }
+            pane split_direction="horizontal" size="30%" {
+                pane
+                pane
+            }
+        }
+    }
+    tab name="dconf" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane name="edit" edit="home-manager/gnome.nix" size="70%"
+        pane split_direction="vertical" size="30%" {
+            pane name="watch" start_suspended=true command="dconf" {
+                args "watch" "/"
+                start_suspended true
+            }
+            pane name="blank"
+        }
+    }
+}
