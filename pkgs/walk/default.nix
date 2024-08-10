@@ -1,20 +1,11 @@
 { pkgs, ... }:
-pkgs.buildGo122Module rec {
-  pname = "walk";
-  version = "0.0.1";
-  default = pname;
-  vendorHash = null;
-  src = ./.;
-
+pkgs.writeShellApplication rec {
+  name = "walk";
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
-    bash
     fzf
     fd
     bat
+    getoptions
   ];
-
-  meta = {
-    description = "find file with fuzzy finder, and open it in TUI editor";
-    mainProgram = pname;
-  };
 }

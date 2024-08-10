@@ -17,7 +17,7 @@
 
   lat = import ./lat { inherit pkgs; };
 
-  walk = pkgs.callPackage ./walk { };
+  walk = import ./walk { inherit pkgs; };
 
   zj = import ./zj { inherit pkgs; };
 
