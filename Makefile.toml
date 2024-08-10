@@ -138,3 +138,7 @@ command = './containers/sandbox-with-ghcr.bash'
 args = [
   'latest',
 ]
+
+[tasks.workspace]
+command = 'zellij'
+args = ['--layout', './config/zellij/layouts/dotfiles.kdl']

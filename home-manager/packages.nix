@@ -86,7 +86,6 @@ with pkgs;
   ruby_3_3
   unzip # Required in many asdf plugins
   _7zz # `7zz` 7zip, not
-  tlrc # `tldr` rust client, tealdeer is another candidate
 
   pastel
 
@@ -163,6 +162,10 @@ with pkgs;
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
   edge-pkgs.iw # replacement of wireless-tools(iwconfig)
+
+  # `tldr` rust client, tealdeer is another candidate.
+  # Do not inject this tlrc package in macOS, it is broken even in stable NixOS channel. See GH-720
+  tlrc
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819

@@ -20,6 +20,7 @@ includes = [
   "*.md",
   "*.yaml",
   "*.yml",
+  "*.kdl",
 ]
 
 [formatter.nixfmt-rfc-style]

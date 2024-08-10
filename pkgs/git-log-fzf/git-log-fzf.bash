@@ -24,6 +24,7 @@ git-log-simple | _fzf_git_fzf --ansi --nth 1,3.. --no-sort --query "$query" --bo
           ansi2txt | \
           xargs --no-run-if-empty --max-lines=1 git show --color=always | \
           bat --language=gitlog --color=always --style=plain --wrap=character' \
-	--header $'CTRL-O (Open in browser) ╱ Enter (git show with bat)\n\n' \
+	--header $'CTRL-O (Open in browser) / CTRL-R (Revert)\nEnter (Detail)\n\n' \
 	--bind 'ctrl-o:execute-silent(gh browse {2})' \
+	--bind 'ctrl-r:become(git revert {2})' \
 	--bind 'enter:become(git show --color=always {2} | bat --language=gitlog --color=always --style=plain --wrap=character)'
