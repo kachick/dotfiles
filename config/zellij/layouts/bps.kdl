@@ -1,0 +1,39 @@
+layout {
+    tab_template name="BPS" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        // BPS - even used 7-3, call binary here :)
+        pane split_direction="vertical" {
+            pane size="70%" {
+
+            }
+            pane split_direction="horizontal" size="30%" {
+                pane
+                pane
+            }
+        }
+    }
+    tab_template name="wide" {
+        // compact looks beautiful, but not enough for beginners like me!
+        //
+        // pane size=1 borderless=true {
+        //     plugin location="zellij:compact-bar"
+        // }
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane
+    }
+    BPS focus=true name="BPS1"
+    BPS name="BPS2"
+    BPS name="BPS3"
+    wide name="wide1"
+    wide name="wide2"
+}

@@ -52,8 +52,6 @@
   beedii = pkgs.callPackage ./beedii { };
   cozette = pkgs.callPackage ./cozette { };
 
-  kdlfmt = pkgs.callPackage ./kdlfmt { };
-
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 
   get-rclone-config-password = import ./get-rclone-config-password { inherit pkgs edge-pkgs; };
