@@ -3,15 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
-
-	"github.com/mattn/go-pipeline"
 )
 
 func main() {
-	wdirFlag := flag.String("d", ".", "working directory")
+	wdirFlag := flag.String("wd", ".", "working directory")
 
 	flag.Parse()
 
@@ -24,23 +24,46 @@ func main() {
 		queries = []string{}
 	}
 
-	// query := os.Args[2]
-
-	// queries := []string{"l", "m"}
-
-	// strings.Join(queries, " ")
-
-	// fmt.Println(strings.Join(queries, " "))
-
-	bytes, err := pipeline.CombinedOutput(
-		[]string{
-			"fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git", ".", workingDirectory,
-		},
-		[]string{
-			"fzf", "--query", strings.Join(queries, " "), "--preview", "bat --color=always {}", "--preview-window", "~3", "--bind", "enter:become(command \"$EDITOR\" {})",
-		},
+	fdCmd := exec.Command(
+		"fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git", ".", workingDirectory,
+	)
+	fzfCmd := exec.Command(
+		"fzf", "--query", strings.Join(queries, " "), "--preview", "bat --color=always {}", "--preview-window", "~3", "--bind", "enter:become(command \"$EDITOR\" {})",
 	)
 
+	fdOut, err := fdCmd.StdoutPipe()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fzfOut, err := fzfCmd.StdoutPipe()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	fzfCmd.Stdin = fdOut
+
+	// Required to start following command first...?
+	err = fzfCmd.Start()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = fdCmd.Start()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Readall looks not correct choice
+	bytes, err := io.ReadAll(fzfOut)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = fdCmd.Wait()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = fzfCmd.Wait()
 	if err != nil {
 		log.Fatalln(err)
 	}

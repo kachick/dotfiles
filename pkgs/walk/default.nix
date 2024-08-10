@@ -3,7 +3,7 @@ pkgs.buildGo122Module rec {
   pname = "walk";
   version = "0.0.1";
   default = pname;
-  vendorHash = "sha256-Y7DufJ0l+IZ/l2/LPmFRJevc+MCPqGxnESn7RWmSatg=";
+  vendorHash = null;
   src = ./.;
 
   runtimeInputs = with pkgs; [
