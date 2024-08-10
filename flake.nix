@@ -67,7 +67,6 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-          homemade-pkgs = homemade-packages.${system};
         in
         {
           default =
@@ -104,8 +103,7 @@
                   # https://github.com/numtide/treefmt/pull/250
                   treefmt2
                   markdownlint-cli2
-                ])
-                ++ (with homemade-pkgs; [ kdlfmt ]);
+                ]);
             };
         }
       );
