@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
@@ -18,55 +17,22 @@ func main() {
 	workingDirectory := *wdirFlag
 	var queries []string
 
-	if len(os.Args) > 2 {
-		queries = os.Args[2:]
+	if len(os.Args) > 1 {
+		queries = os.Args[1:]
 	} else {
 		queries = []string{}
 	}
 
-	fdCmd := exec.Command(
-		"fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git", ".", workingDirectory,
-	)
-	fzfCmd := exec.Command(
-		"fzf", "--query", strings.Join(queries, " "), "--preview", "bat --color=always {}", "--preview-window", "~3", "--bind", "enter:become(command \"$EDITOR\" {})",
-	)
+	// println(os.Args)
 
-	fdOut, err := fdCmd.StdoutPipe()
+	// Using golang to handle CLI flags. So omitting to translate pipe handling
+
+	fdCmd := fmt.Sprintf("fd --type f --hidden --follow --exclude .git '%s'", workingDirectory)
+	fzfCmd := fmt.Sprintf("fzf --query '%s' --preview 'bat --color=always {}' --preview-window ~3 --bind 'enter:become(command \"$EDITOR\" {})'", strings.Join(queries, " "))
+
+	bytes, err := exec.Command("bash", "-c", strings.Join([]string{fdCmd, fzfCmd}, " | ")).CombinedOutput()
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	fzfOut, err := fzfCmd.StdoutPipe()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	fzfCmd.Stdin = fdOut
-
-	// Required to start following command first...?
-	err = fzfCmd.Start()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = fdCmd.Start()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	// Readall looks not correct choice
-	bytes, err := io.ReadAll(fzfOut)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	err = fdCmd.Wait()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = fzfCmd.Wait()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	fmt.Println(string(bytes))
 }

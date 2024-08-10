@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }:
+{ pkgs, ... }:
 pkgs.buildGo122Module rec {
   pname = "walk";
   version = "0.0.1";
@@ -7,6 +7,7 @@ pkgs.buildGo122Module rec {
   src = ./.;
 
   runtimeInputs = with pkgs; [
+    bash
     fzf
     fd
     bat
