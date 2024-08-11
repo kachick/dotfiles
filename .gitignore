@@ -26,3 +26,6 @@ winget-pkgs-*-raw.json
 
 *.bak
 *.backup
+
+browser-sets*
+!browser-sets.inc.patch

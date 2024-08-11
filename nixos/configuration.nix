@@ -176,8 +176,6 @@
 
       # Use stable packages even for GUI apps, because of using home-manager stable channel
 
-      firefox
-
       (signal-desktop.overrideAttrs (prev: {
         preFixup =
           prev.preFixup
@@ -285,6 +283,16 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
+
+    package = pkgs.firefox.overrideAttrs (oldAttrs: {
+
+      buildCommand =
+        (oldAttrs.buildCommand or "")
+        + ''
+          patch tip/browser/base/content/browser-sets.inc < ${../config/Firefox/browser-sets.inc.patch}
+        '';
+    });
+
     languagePacks = [
       "en-US"
       "ja"
