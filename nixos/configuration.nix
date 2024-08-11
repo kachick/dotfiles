@@ -285,10 +285,13 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
+
     languagePacks = [
       "en-US"
       "ja"
     ];
+
+    autoConfig = builtins.readFile ../config/Firefox/autoconfig.cfg.js;
   };
 
   # Prefer NixOS modules rather than home-manager for easy setting up
