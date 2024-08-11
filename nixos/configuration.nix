@@ -285,12 +285,12 @@
     enable = true;
 
     package = pkgs.firefox.overrideAttrs (oldAttrs: {
-
-      buildCommand =
-        (oldAttrs.buildCommand or "")
-        + ''
-          patch tip/browser/base/content/browser-sets.inc < ${../config/Firefox/browser-sets.inc.patch}
-        '';
+      # buildCommand =
+      #   (oldAttrs.buildCommand or "")
+      #   + ''
+      #     patch chrome/browser/content/browser/browser-sets.inc < ${../config/Firefox/browser-sets.inc.patch}
+      #   '';
+      extraPatches = [ ../config/Firefox/browser-sets.inc.patch ];
     });
 
     languagePacks = [

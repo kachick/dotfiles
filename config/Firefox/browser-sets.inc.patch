@@ -1,5 +1,5 @@
 --- config/Firefox/browser-sets.inc	2024-08-11 20:37:12.244474828 +0900
-+++ config/Firefox/browser-sets.my.inc	2024-08-11 20:40:34.739375616 +0900
++++ config/Firefox/browser-sets.inc	2024-08-11 20:40:34.739375616 +0900
 @@ -163,7 +163,7 @@
      <key id="openFileKb" data-l10n-id="file-open-shortcut" command="Browser:OpenFile"  modifiers="accel"/>
      <key id="key_savePage" data-l10n-id="save-page-shortcut" command="Browser:SavePage" modifiers="accel"/>
