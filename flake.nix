@@ -97,6 +97,14 @@
                   go_1_22
                   goreleaser
                   trivy
+
+                  llvmPackages_17.llvm
+                  llvmPackages_17.libclang
+                  # Additional dependencies needed at runtime, for building and/or
+                  # flashing.
+                  llvmPackages_17.lld
+
+                  rustc
                 ]
                 ++ (with edge-pkgs; [
                   # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
@@ -104,6 +112,16 @@
                   treefmt2
                   markdownlint-cli2
                 ]);
+
+              shellHook = ''
+                # Configure CLANG, LLVM_AR, and LLVM_NM for `make wasi-libc`.
+                # Without setting these explicitly, Homebrew versions might be used
+                # or the default `ar` and `nm` tools might be used (which don't
+                # support wasi).
+                export CLANG="clang-17 -resource-dir ${llvmPackages_17.clang.cc.lib}/lib/clang/17"
+                export LLVM_AR=llvm-ar
+                export LLVM_NM=llvm-nm
+              '';
             };
         }
       );
