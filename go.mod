@@ -4,5 +4,5 @@ go 1.22.5
 
 require (
 	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b
-	golang.org/x/sys v0.23.0
+	golang.org/x/sys v0.24.0
 )
