@@ -99,6 +99,7 @@ args = [
   'backup',
   '--flake',
   '.#${@}',
+  '--show-trace',
 ]
 
 [tasks.apply]
@@ -112,6 +113,7 @@ args = [
   'backup',
   '--flake',
   '.#${@}',
+  '--show-trace',
 ]
 
 [tasks.ci-dev]
