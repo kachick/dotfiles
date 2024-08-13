@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  lib,
+  pkgs,
+  homemade-pkgs,
+  ...
+}:
 
 let
   nordcolors = pkgs.stdenv.mkDerivation {
@@ -22,6 +27,11 @@ in
   xdg.configFile."micro/colorschemes/.keep".text = "";
   xdg.configFile."micro/colorschemes/nord-tc.micro".source = "${nordcolors}/colorschemes/nord-tc.micro";
   xdg.configFile."micro/colorschemes/nord-16.micro".source = "${nordcolors}/colorschemes/nord-16.micro";
+
+  xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
+
+  # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
+  xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;
 
   # TODO: Consider to extract from nix managed, because of now also using in windows
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/micro.nix
@@ -67,6 +77,10 @@ in
       # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
       # But none of fit colors with other place, See #587 for further detail
       colorscheme = "nord-16";
+
+      fzfcmd = lib.getExe pkgs.fzf;
+      fzfarg = "--preview '${lib.getExe pkgs.bat} --color=always {}'";
+      fzfopen = "newtab";
     };
   };
 
