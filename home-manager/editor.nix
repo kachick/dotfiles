@@ -5,30 +5,12 @@
   ...
 }:
 
-let
-  nordcolors = pkgs.stdenv.mkDerivation {
-    name = "micro-nordcolors";
-    src = pkgs.fetchFromGitHub {
-      owner = "KiranWells";
-      repo = "micro-nord-tc-colors";
-      rev = "f63c855735f755704c25c958abe45f12a4b2c8d3";
-      sha256 = "sha256-giCansV+9oa2OSQlt7DkLtL7B7sD00JUBaS9YsbJ9aU=";
-    };
-    buildPhase = ''
-      mkdir $out
-    '';
-    installPhase = ''
-      cp -rf ./colorschemes $out/colorschemes
-    '';
-    system = builtins.currentSystem;
-  };
-in
 {
+  # For temporal use
   xdg.configFile."micro/colorschemes/.keep".text = "";
-  xdg.configFile."micro/colorschemes/nord-tc.micro".source = "${nordcolors}/colorschemes/nord-tc.micro";
-  xdg.configFile."micro/colorschemes/nord-16.micro".source = "${nordcolors}/colorschemes/nord-16.micro";
 
   xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
+  xdg.configFile."micro/plug/nordcolors".source = homemade-pkgs.micro-nordcolors;
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
   xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;

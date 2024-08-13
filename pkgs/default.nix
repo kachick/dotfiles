@@ -57,4 +57,5 @@
   get-rclone-config-password = import ./get-rclone-config-password { inherit pkgs edge-pkgs; };
 
   micro-fzfinder = pkgs.callPackage ./micro-fzfinder { };
+  micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
 }
