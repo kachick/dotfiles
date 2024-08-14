@@ -85,6 +85,7 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "editor.guides.bracketPairs": true,
   "editor.bracketPairColorization.enabled": true,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
   "elmLS.elmReviewDiagnostics": "warning",
   "typescript.format.enable": false,
   "editor.fontFamily": "'PlemolJP Console NF', '源ノ角ゴシック Code JP', monospace",
@@ -99,6 +100,6 @@
   "editor.tabCompletion": "on",
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
-  "workbench.colorTheme": "Iceberg",
+  "workbench.colorTheme": "Blueberry Brackets dark theme",
   "stylua.searchBinaryInPATH": true
 }
