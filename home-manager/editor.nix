@@ -71,7 +71,10 @@
   programs.vim = {
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
-    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+    plugins = [
+      pkgs.vimPlugins.iceberg-vim
+      homemade-pkgs.kdl-vim
+    ];
 
     settings = {
       background = "dark";

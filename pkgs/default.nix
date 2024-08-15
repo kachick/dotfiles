@@ -58,4 +58,6 @@
 
   micro-fzfinder = pkgs.callPackage ./micro-fzfinder { };
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
+
+  kdl-vim = pkgs.callPackage ./kdl.vim { };
 }
