@@ -54,6 +54,7 @@ with pkgs;
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro # alt nano
+  helix # `hx`
 
   tree
   eza # alt ls
