@@ -57,6 +57,7 @@
   get-rclone-config-password = import ./get-rclone-config-password { inherit pkgs edge-pkgs; };
 
   micro-fzfinder = pkgs.callPackage ./micro-fzfinder { };
+  micro-kdl = pkgs.callPackage ./micro-kdl { };
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
 
   kdl-vim = pkgs.callPackage ./kdl.vim { };

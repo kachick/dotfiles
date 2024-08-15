@@ -10,6 +10,7 @@
   xdg.configFile."micro/colorschemes/.keep".text = "";
 
   xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
+  xdg.configFile."micro/plug/kdl".source = homemade-pkgs.micro-kdl;
   xdg.configFile."micro/plug/nordcolors".source = homemade-pkgs.micro-nordcolors;
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
