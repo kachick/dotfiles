@@ -67,9 +67,40 @@
     };
   };
 
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/helix.nix
+  # https://docs.helix-editor.com/keymap.html
+  programs.helix = {
+    # Enabling this may cause colisions. Do not add in packages list
+    enable = true;
+
+    settings = {
+      theme = "base16_transparent";
+
+      editor = {
+        soft-wrap = {
+          enable = true;
+        };
+
+        lsp = {
+          display-inlay-hints = true;
+          display-messages = true;
+        };
+      };
+    };
+
+    ignores = [
+      ".git/"
+      ".direnv/"
+      ".node_modules/"
+    ];
+
+    extraPackages = with pkgs; [ marksman ];
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
+    # Enabling this may cause colisions. Do not add in packages list
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins =
