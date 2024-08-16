@@ -106,6 +106,17 @@
           # To avoid conflicting with markdown headers. Should be synced with core.commentchar
           comment-token = ";";
         }
+        {
+          name = "bash";
+          auto-format = true;
+          formatter = {
+            command = lib.getExe pkgs.shfmt;
+            args = [
+              "--language-dialect"
+              "bash"
+            ];
+          };
+        }
       ];
     };
 
@@ -115,7 +126,64 @@
       ".node_modules/"
     ];
 
-    extraPackages = with pkgs; [ marksman ];
+    # TODO: Can I specfiy and inject these LSP for each repository? Global only require few packages and languages such as Nix and bash...
+    extraPackages = with pkgs; [
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+      nil
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
+      nodePackages.bash-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
+      rust-analyzer
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
+      gopls
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
+      golangci-lint-langserver
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+      nodePackages.typescript-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
+      nodePackages.yaml-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
+      taplo
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
+      marksman
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
+      # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
+      nodePackages.dockerfile-language-server-nodejs
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
+      nodePackages.graphql-language-service-cli
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
+      lua-language-server
+
+      ## Omitting below because of inactive using langs in these days
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
+      # crystalline
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
+      # solargraph # Can we prefer steep here?
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
+      # nu-lsp
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
+      # elm-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
+      # haskell-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
+      # zls
+    ];
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
