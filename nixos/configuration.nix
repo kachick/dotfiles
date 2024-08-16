@@ -136,6 +136,7 @@
     [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       micro
+      helix
       edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
@@ -281,6 +282,15 @@
   # networking.firewall.enable = false;
 
   programs.nix-ld.enable = false;
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
+  programs.firefox = {
+    enable = true;
+    languagePacks = [
+      "en-US"
+      "ja"
+    ];
+  };
 
   # Prefer NixOS modules rather than home-manager for easy setting up
   programs.goldwarden = {

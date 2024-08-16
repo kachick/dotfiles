@@ -26,6 +26,11 @@ lib.mkMerge [
 
           "browser.newtabpage.activity-stream.showSponsoredTopSites" = false; # `Sponsored shortcuts`
           "browser.newtabpage.activity-stream.showSponsored" = false;
+
+          "browser.quitShortcut.disabled" = true;
+          "browser.warnOnQuitShortcut" = true; # By default true, just ensuring
+
+          "layout.spellcheckDefault" = true;
         };
         userChrome = builtins.readFile ../config/Firefox/userChrome.css;
       };

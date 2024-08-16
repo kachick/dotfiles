@@ -1,27 +1,20 @@
-{ pkgs, ... }:
-
-let
-  nordcolors = pkgs.stdenv.mkDerivation {
-    name = "micro-nordcolors";
-    src = pkgs.fetchFromGitHub {
-      owner = "KiranWells";
-      repo = "micro-nord-tc-colors";
-      rev = "f63c855735f755704c25c958abe45f12a4b2c8d3";
-      sha256 = "sha256-giCansV+9oa2OSQlt7DkLtL7B7sD00JUBaS9YsbJ9aU=";
-    };
-    buildPhase = ''
-      mkdir $out
-    '';
-    installPhase = ''
-      cp -rf ./colorschemes $out/colorschemes
-    '';
-    system = builtins.currentSystem;
-  };
-in
 {
+  lib,
+  pkgs,
+  homemade-pkgs,
+  ...
+}:
+
+{
+  # For temporal use
   xdg.configFile."micro/colorschemes/.keep".text = "";
-  xdg.configFile."micro/colorschemes/nord-tc.micro".source = "${nordcolors}/colorschemes/nord-tc.micro";
-  xdg.configFile."micro/colorschemes/nord-16.micro".source = "${nordcolors}/colorschemes/nord-16.micro";
+
+  xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
+  xdg.configFile."micro/plug/kdl".source = homemade-pkgs.micro-kdl;
+  xdg.configFile."micro/plug/nordcolors".source = homemade-pkgs.micro-nordcolors;
+
+  # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
+  xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;
 
   # TODO: Consider to extract from nix managed, because of now also using in windows
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/micro.nix
@@ -67,15 +60,145 @@ in
       # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
       # But none of fit colors with other place, See #587 for further detail
       colorscheme = "nord-16";
+
+      fzfcmd = lib.getExe pkgs.fzf;
+      fzfarg = "--preview '${lib.getExe pkgs.bat} --color=always {}'";
+      fzfopen = "newtab";
     };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/helix.nix
+  # https://docs.helix-editor.com/keymap.html
+  programs.helix = {
+    # Enabling this may cause colisions. Do not add in packages list
+    enable = true;
+
+    settings = {
+      theme = "base16_transparent";
+
+      editor = {
+        soft-wrap = {
+          enable = true;
+        };
+
+        lsp = {
+          display-inlay-hints = true;
+          display-messages = true;
+        };
+      };
+    };
+
+    # https://docs.helix-editor.com/lang-support.html
+    languages = {
+      language-server = {
+        typos = {
+          command = lib.getExe pkgs.typos-lsp;
+          config.config = "${../typos.toml}";
+        };
+      };
+
+      language = [
+        {
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1563-L1570
+          name = "git-commit";
+          language-servers = [ "typos" ];
+
+          # To avoid conflicting with markdown headers. Should be synced with core.commentchar
+          comment-token = ";";
+        }
+        {
+          name = "bash";
+          auto-format = true;
+          formatter = {
+            command = lib.getExe pkgs.shfmt;
+            args = [
+              "--language-dialect"
+              "bash"
+            ];
+          };
+        }
+      ];
+    };
+
+    ignores = [
+      ".git/"
+      ".direnv/"
+      ".node_modules/"
+    ];
+
+    extraPackages = with pkgs; [
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+      nil
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
+      nodePackages.bash-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
+      rust-analyzer
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
+      gopls
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
+      golangci-lint-langserver
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
+      marksman
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
+      lua-language-server
+
+      ## Not helpful. Didin't activated?
+      #
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
+      # nodePackages.yaml-language-server
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
+      # taplo
+
+      ## Keep minimum for global use. Inject in each project repositories if you need these
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+      # nodePackages.typescript-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
+      # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
+      # nodePackages.dockerfile-language-server-nodejs
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
+      # nodePackages.graphql-language-service-cli
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
+      # crystalline
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
+      # solargraph # Can we prefer steep here?
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
+      # nu-lsp
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
+      # elm-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
+      # haskell-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
+      # zls
+    ];
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
   # https://nixos.wiki/wiki/Vim
   programs.vim = {
+    # Enabling this may cause colisions. Do not add in packages list
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
-    plugins = [ pkgs.vimPlugins.iceberg-vim ];
+    plugins =
+      (with pkgs.vimPlugins; [
+        iceberg-vim
+        fzf-vim
+      ])
+      ++ [ homemade-pkgs.kdl-vim ];
 
     settings = {
       background = "dark";
