@@ -147,7 +147,7 @@
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
       lua-language-server
 
-      ## Not helpful. Didin't acticated correctly?
+      ## Not helpful. Didin't activated?
       #
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
       # nodePackages.yaml-language-server
