@@ -88,6 +88,7 @@
       };
     };
 
+    # https://docs.helix-editor.com/lang-support.html
     languages = {
       language-server = {
         typos = {
@@ -98,8 +99,12 @@
 
       language = [
         {
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1563-L1570
           name = "git-commit";
           language-servers = [ "typos" ];
+
+          # To avoid conflicting with markdown headers. Should be synced with core.commentchar
+          comment-token = ";";
         }
       ];
     };

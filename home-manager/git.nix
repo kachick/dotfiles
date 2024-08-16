@@ -72,6 +72,9 @@
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1569
         editor = lib.getExe pkgs.helix;
         quotepath = false;
+
+        # To avoid conflicting with markdown headers
+        commentchar = ";";
       };
 
       # Affect in rebase -i
