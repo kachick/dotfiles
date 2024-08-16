@@ -6,6 +6,5 @@ pkgs.writeShellApplication rec {
     fzf
     fd
     bat
-    getoptions
   ];
 }
