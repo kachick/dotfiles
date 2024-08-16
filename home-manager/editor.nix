@@ -88,6 +88,22 @@
       };
     };
 
+    languages = {
+      language-server = {
+        typos = {
+          command = lib.getExe pkgs.typos-lsp;
+          config.config = "${../typos.toml}";
+        };
+      };
+
+      language = [
+        {
+          name = "git-commit";
+          language-servers = [ "typos" ];
+        }
+      ];
+    };
+
     ignores = [
       ".git/"
       ".direnv/"

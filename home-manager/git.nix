@@ -68,16 +68,15 @@
       };
 
       core = {
-        # For git commit message 50/72 convention
-        editor = "micro -colorcolumn 72";
+        # Helix considers git commit message 50/72 convention by default
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1569
+        editor = lib.getExe pkgs.helix;
         quotepath = false;
       };
 
       # Affect in rebase -i
       sequence = {
-        # - For git commit message 50/72 convention
-        # - Consider prefixed 5 + 1 + 7 + 1 chars as "pick c290ca9 "
-        editor = "micro -colorcolumn 64";
+        editor = lib.getExe pkgs.helix;
       };
 
       init = {
