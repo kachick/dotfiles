@@ -111,7 +111,7 @@
       );
 
       apps = forAllSystems (system: {
-        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cui`
+        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
         home-manager = mkApp home-manager.defaultPackage.${system};
         bump_completions = mkApp homemade-packages.${system}.bump_completions;
@@ -273,7 +273,7 @@
             }
           );
 
-          "user@linux-cui" = home-manager.lib.homeManagerConfiguration (
+          "user@linux-cli" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
