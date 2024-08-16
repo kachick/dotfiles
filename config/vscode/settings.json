@@ -101,5 +101,6 @@
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "workbench.colorTheme": "Blueberry Brackets dark theme",
-  "stylua.searchBinaryInPATH": true
+  "stylua.searchBinaryInPATH": true,
+  "editor.cursorSurroundingLines": 5
 }
