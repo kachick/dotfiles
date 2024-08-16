@@ -206,7 +206,7 @@
     ];
 
     # ALT-C
-    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
+    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d --hidden --exclude .git";
     changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
 
     colors = {
