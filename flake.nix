@@ -119,6 +119,7 @@
         check_no_dirty_xz_in_nix_store = mkApp homemade-packages.${system}.check_no_dirty_xz_in_nix_store;
         bench_shells = mkApp homemade-packages.${system}.bench_shells;
         walk = mkApp homemade-packages.${system}.walk;
+        ir = mkApp homemade-packages.${system}.ir;
         todo = mkApp homemade-packages.${system}.todo;
         la = mkApp homemade-packages.${system}.la;
         lat = mkApp homemade-packages.${system}.lat;

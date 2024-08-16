@@ -19,6 +19,8 @@
 
   walk = import ./walk { inherit pkgs; };
 
+  ir = pkgs.callPackage ./ir { };
+
   zj = import ./zj { inherit pkgs; };
 
   p = import ./p { inherit pkgs; };

@@ -146,6 +146,7 @@ with pkgs;
   p
   g
   walk
+  ir
   updeps
   bench_shells
   archive-home-files
