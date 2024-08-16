@@ -89,6 +89,7 @@ jobs:
           zsh -c 'irb --version'
           zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
+          zsh -c 'hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'
