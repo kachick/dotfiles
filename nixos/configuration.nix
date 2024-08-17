@@ -124,9 +124,9 @@
     # QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
 
-    EDITOR = lib.getExe pkgs.micro;
-    SYSTEMD_EDITOR = lib.getExe pkgs.micro;
-    VISUAL = lib.getExe pkgs.micro;
+    EDITOR = lib.getExe pkgs.helix;
+    SYSTEMD_EDITOR = lib.getExe pkgs.helix;
+    VISUAL = lib.getExe pkgs.helix;
   };
 
   # List packages installed in system profile. To search, run:
@@ -135,8 +135,8 @@
     with pkgs;
     [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-      micro
       helix
+      micro
       edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
