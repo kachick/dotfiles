@@ -38,6 +38,9 @@
           "PackageIdentifier": "sharkdp.bat"
         },
         {
+          "PackageIdentifier": "Helix.Helix"
+        },
+        {
           "PackageIdentifier": "zyedidia.micro"
         },
         {

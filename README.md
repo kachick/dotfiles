@@ -146,7 +146,7 @@ Check [traps](./windows/Multi-booting.md)
 
    ```bash
    touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   micro ~/.ssh/id_ed25519
+   hx ~/.ssh/id_ed25519
    ```
 
 1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
