@@ -86,6 +86,8 @@
           display-inlay-hints = true;
           display-messages = true;
         };
+
+        color-modes = true;
       };
     };
 
