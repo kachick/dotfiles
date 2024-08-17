@@ -44,7 +44,7 @@
     sessionVariables = {
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = lib.getExe pkgs.helix; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
+      EDITOR = lib.getExe pkgs.helix;
       VISUAL = lib.getExe pkgs.helix; # vscode is heavy even if in VISUAL use
       PAGER = "less";
 

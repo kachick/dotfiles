@@ -19,6 +19,7 @@
   # TODO: Consider to extract from nix managed, because of now also using in windows
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/micro.nix
   # https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/options.md
+  # keybinds: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
   programs.micro = {
     enable = true;
 
@@ -68,7 +69,7 @@
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/helix.nix
-  # https://docs.helix-editor.com/keymap.html
+  # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {
     # Enabling this may cause colisions. Do not add in packages list
     enable = true;
