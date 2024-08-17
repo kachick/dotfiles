@@ -134,6 +134,21 @@ in
           ];
         }
         {
+          name = "rust";
+          language-servers = [
+            "rust-analyzer"
+            "typos"
+          ];
+        }
+        {
+          name = "go";
+          language-servers = [
+            "gopls"
+            "golangci-lint-lsp"
+            "typos"
+          ];
+        }
+        {
           name = "kdl";
           auto-format = true;
           formatter = mkDprint "kdl";
