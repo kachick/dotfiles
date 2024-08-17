@@ -134,6 +134,8 @@ with pkgs;
   docker-compose
 
   fastfetch # active replacement of neofetch
+
+  zk # Support Zettelkasten method
 ]
 ++ (with homemade-pkgs; [
   la

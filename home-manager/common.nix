@@ -204,4 +204,23 @@
     source = ../config/zellij;
     recursive = true;
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zk.nix
+  programs.zk = {
+    enable = true;
+    settings = {
+      note = {
+        language = "en"; # Clarify to keep default en here, it will be used in slugs and date format
+      };
+
+      format.markdown = {
+        hashtags = true;
+      };
+
+      tool = {
+        # Because of I'm a beginner for mode editor....
+        # editor = lib.getExe pkgs.micro;
+      };
+    };
+  };
 }
