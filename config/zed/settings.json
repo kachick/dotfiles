@@ -7,10 +7,11 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Catppuccin Mocha",
+  "theme": "Base16 Icy Dark",
   "telemetry": {
     "metrics": false
   },
+  "auto_update": false,
   "ui_font_family": "PlemolJP Console NF",
   "ui_font_size": 16,
   "buffer_font_family": "PlemolJP Console NF",
@@ -20,6 +21,6 @@
     "toml": true,
     "lua": true,
     "basher": true,
-    "catppuccin": true
+    "base16": true
   }
 }
