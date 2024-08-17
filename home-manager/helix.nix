@@ -43,6 +43,8 @@ in
     # https://docs.helix-editor.com/lang-support.html
     languages = {
       language-server = {
+        # Helix cannot set common LSP. https://github.com/helix-editor/helix/discussions/8850
+        # So required to manually merge language-servers for each language
         typos = {
           command = lib.getExe pkgs.typos-lsp;
           config.config = "${../typos.toml}";
@@ -68,6 +70,10 @@ in
               "bash"
             ];
           };
+          language-servers = [
+            "bash-language-server"
+            "typos"
+          ];
         }
         {
           name = "nix";
@@ -75,36 +81,63 @@ in
           formatter = {
             command = lib.getExe pkgs.nixfmt-rfc-style;
           };
+          language-servers = [
+            "nil"
+            "typos"
+          ];
         }
         {
           name = "json";
           auto-format = true;
           formatter = mkDprint "json";
+          language-servers = [
+            "vscode-json-language-server"
+            "typos"
+          ];
         }
         {
           name = "jsonc";
           auto-format = true;
           formatter = mkDprint "jsonc";
+          language-servers = [
+            "vscode-json-language-server"
+            "typos"
+          ];
         }
         {
           name = "markdown";
           auto-format = true;
           formatter = mkDprint "md";
+          language-servers = [
+            "marksman"
+            "markdown-oxide"
+            "typos"
+          ];
         }
         {
           name = "yaml";
           auto-format = true;
           formatter = mkDprint "yml";
+          language-servers = [
+            "yaml-language-server"
+            "ansible-language-server"
+            "typos"
+          ];
         }
         {
           name = "toml";
           auto-format = true;
           formatter = mkDprint "toml";
+          language-servers = [
+            "taplo"
+            "typos"
+          ];
         }
         {
           name = "kdl";
           auto-format = true;
           formatter = mkDprint "kdl";
+          language-servers = [ "typos" ];
         }
         {
           name = "lua";
@@ -113,6 +146,10 @@ in
             command = lib.getExe pkgs.stylua;
             args = [ "-" ];
           };
+          language-servers = [
+            "lua-language-server"
+            "typos"
+          ];
         }
       ];
     };
