@@ -32,7 +32,7 @@ lib.mkMerge [
 
           "layout.spellcheckDefault" = true;
         };
-        userChrome = builtins.readFile ../config/Firefox/userChrome.css;
+        userChrome = builtins.readFile ../config/firefox/userChrome.css;
       };
     };
   })
