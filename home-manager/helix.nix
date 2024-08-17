@@ -93,7 +93,7 @@ in
           };
           language-servers = [
             "nil"
-            "nixd"
+            # "nixd" # TODO: Enable since NixOS 24.11(Helix 24.07+)
             "typos"
           ];
         }
@@ -189,7 +189,7 @@ in
     extraPackages = with pkgs; [
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
       nil
-      nixd
+      # nixd
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
       nodePackages.bash-language-server
