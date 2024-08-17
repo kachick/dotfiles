@@ -185,7 +185,7 @@
     enable = true;
 
     config = {
-      # Candidates: bat --list-themes
+      # Candidates: preview: bat --list-themes | fzf --preview='bat --theme={} --color=always flake.nix'
       theme = "Nord";
 
       style = "plain";
