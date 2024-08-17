@@ -29,7 +29,7 @@ in
             appindicator
             blur-my-shell
             pop-shell
-            pano
+            clipboard-history
             kimpanel
             removable-drive-menu
             # system-monitor
@@ -40,7 +40,7 @@ in
             auto-move-windows
             just-perfection
             dash-to-dock
-            # color-picker # Don't enable by default. It conflicted with clipboard-history
+            # color-picker # Don't enable by default. It conflicts with clipboard-history
           ]
         );
 
@@ -181,15 +181,9 @@ in
         active-hint = true;
       };
 
-      "org/gnome/shell/extensions/pano" = {
-        history-length = 100;
-        global-shortcut = [ "<Super>v" ]; # default: ['<Super><Shift>v']
-        open-links-in-browser = true;
-        play-audio-on-copy = false;
-        send-notification-on-copy = false;
-        paste-on-select = false;
-        session-only-mode = false;
-        show-indicator = true;
+      "org/gnome/shell/extensions/clipboard-history" = {
+        history-size = 100;
+        toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
       };
 
       "org/gnome/shell/extensions/just-perfection" = {

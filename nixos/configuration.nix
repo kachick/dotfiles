@@ -229,7 +229,7 @@
 
       nordic
     ]
-    ++ (with gnomeExtensions; [
+    ++ (with pkgs.gnomeExtensions; [
       appindicator
       blur-my-shell
 
@@ -243,7 +243,7 @@
             echo '.pop-shell-search-element:select{ background: #8fbcbb !important; color: #fefefe !important; }' >> $out/share/gnome-shell/extensions/pop-shell@system76.com/light.css
           '';
       }))
-      pano
+      clipboard-history
       kimpanel
       just-perfection
       dash-to-dock
