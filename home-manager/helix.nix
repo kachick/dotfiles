@@ -93,6 +93,7 @@ in
           };
           language-servers = [
             "nil"
+            "nixd"
             "typos"
           ];
         }
@@ -188,6 +189,7 @@ in
     extraPackages = with pkgs; [
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
       nil
+      nixd
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
       nodePackages.bash-language-server
