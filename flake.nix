@@ -81,6 +81,8 @@
                   nil # Used in vscode Nix extension
                   nixd # Used in zed Nix extension
                   nixpkgs-lint-community
+                  nix-init
+                  nurl
                   # To get sha256 around pkgs.fetchFromGitHub in CLI
                   nix-prefetch-git
                   jq
@@ -109,7 +111,7 @@
       );
 
       apps = forAllSystems (system: {
-        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cui`
+        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
         # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
         home-manager = mkApp home-manager.defaultPackage.${system};
         bump_completions = mkApp homemade-packages.${system}.bump_completions;
@@ -117,6 +119,7 @@
         check_no_dirty_xz_in_nix_store = mkApp homemade-packages.${system}.check_no_dirty_xz_in_nix_store;
         bench_shells = mkApp homemade-packages.${system}.bench_shells;
         walk = mkApp homemade-packages.${system}.walk;
+        ir = mkApp homemade-packages.${system}.ir;
         todo = mkApp homemade-packages.${system}.todo;
         la = mkApp homemade-packages.${system}.la;
         lat = mkApp homemade-packages.${system}.lat;
@@ -270,7 +273,7 @@
             }
           );
 
-          "user@linux-cui" = home-manager.lib.homeManagerConfiguration (
+          "user@linux-cli" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
