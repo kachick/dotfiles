@@ -1,5 +1,21 @@
 { lib, pkgs, ... }:
 
+let
+  # Alternative global dprint
+  #   - https://github.com/dprint/dprint/issues/355
+  #   - https://github.com/dprint/dprint-vscode/issues/13
+  mkDprint = extension: {
+    command = lib.getExe pkgs.dprint;
+    args = [
+      "fmt"
+      "--config"
+      "${../dprint.json}"
+      "--stdin"
+      # No need to specify all extensions, just providing a hint to detect language
+      extension
+    ];
+  };
+in
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
@@ -59,6 +75,36 @@
           formatter = {
             command = lib.getExe pkgs.nixfmt-rfc-style;
           };
+        }
+        {
+          name = "json";
+          auto-format = true;
+          formatter = mkDprint "json";
+        }
+        {
+          name = "jsonc";
+          auto-format = true;
+          formatter = mkDprint "jsonc";
+        }
+        {
+          name = "markdown";
+          auto-format = true;
+          formatter = mkDprint "md";
+        }
+        {
+          name = "yaml";
+          auto-format = true;
+          formatter = mkDprint "yml";
+        }
+        {
+          name = "toml";
+          auto-format = true;
+          formatter = mkDprint "toml";
+        }
+        {
+          name = "kdl";
+          auto-format = true;
+          formatter = mkDprint "kdl";
         }
       ];
     };
