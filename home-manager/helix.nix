@@ -106,6 +106,14 @@ in
           auto-format = true;
           formatter = mkDprint "kdl";
         }
+        {
+          name = "lua";
+          auto-format = true;
+          formatter = {
+            command = lib.getExe pkgs.stylua;
+            args = [ "-" ];
+          };
+        }
       ];
     };
 
