@@ -184,6 +184,7 @@ in
       "org/gnome/shell/extensions/clipboard-history" = {
         history-size = 100;
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
+        cache-only-favorites = true;
       };
 
       "org/gnome/shell/extensions/just-perfection" = {
