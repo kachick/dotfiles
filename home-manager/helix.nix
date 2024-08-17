@@ -195,6 +195,8 @@ in
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
       rust-analyzer
 
+      # Looks like required to enable gopls
+      go_1_22
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
       gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
