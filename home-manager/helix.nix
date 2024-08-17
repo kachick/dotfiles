@@ -32,11 +32,21 @@ in
         };
 
         lsp = {
-          display-inlay-hints = true;
+          display-inlay-hints = false;
           display-messages = true;
         };
 
         color-modes = true;
+      };
+
+      keys = {
+        normal = {
+          space = {
+            # https://github.com/helix-editor/helix/issues/6338
+            # https://github.com/helix-editor/helix/discussions/7690
+            H = ":toggle lsp.display-inlay-hints";
+          };
+        };
       };
     };
 
