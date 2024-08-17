@@ -15,7 +15,7 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./editor.nix
+    ./editors.nix
     ./firefox.nix
     ./linux.nix
     ./darwin.nix
