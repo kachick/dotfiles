@@ -83,9 +83,6 @@
                   nixpkgs-lint-community
                   nix-init
                   nurl
-                  # To get sha256 around pkgs.fetchFromGitHub in CLI
-                  nix-prefetch-git
-                  jq
 
                   shellcheck
                   shfmt
