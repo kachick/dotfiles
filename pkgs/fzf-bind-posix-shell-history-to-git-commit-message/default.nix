@@ -6,8 +6,11 @@ pkgs.writeShellApplication rec {
     (import ../safe_quote_backtik { inherit pkgs; })
     git
     fzf
-    ruby_3_3
+    go_1_22
   ];
+  runtimeEnv = {
+    GO_SCRIPT_TO_NORMALIZE = "${./main.go}";
+  };
   meta = {
     description = "Used in git alias";
   };
