@@ -82,7 +82,7 @@ with pkgs;
   difftastic # `difft`
   gnumake
   gitleaks
-  edge-pkgs.deno # Use unstable to track latest
+  deno
   ruby_3_3
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
