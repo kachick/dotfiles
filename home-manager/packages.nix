@@ -108,22 +108,6 @@ with pkgs;
   source-han-code-jp # Includes many definitions, useful for fallback
   inconsolata
 
-  # Includes follows in each repository if needed, not in global
-  # gcc
-  # rustup
-  # go
-  # crystal
-  # elmPackages.elm
-  # sqlite
-  # postgresql
-  # cargo-make
-
-  # If you need to build cruby from source, this section may remind the struggle
-  # Often failed to build cruby even if I enabled following dependencies
-  # zlib
-  # libyaml
-  # openssl
-
   # - Enable special module for Nix OS.
   # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
   #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
