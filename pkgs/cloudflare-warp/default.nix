@@ -30,8 +30,8 @@ stdenv.mkDerivation rec {
     url = "https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_${version}-1_${suffix}.deb";
     hash =
       {
-        aarch64-linux = lib.fakeHash;
-        x86_64-linux = lib.fakeHash;
+        aarch64-linux = "sha256-j0D1VcPCJpp0yoK6GjuKKwTVNEqKgr9+6X1AfBbsXAg=";
+        x86_64-linux = "sha256-y+1TQ/QzzjkorSscB2+QBYR81IowKWcgSoUm1Nz9Gts=";
       }
       .${stdenv.hostPlatform.system} or (throw "Unsupported system: ${stdenv.hostPlatform.system}");
   };
