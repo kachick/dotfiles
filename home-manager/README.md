@@ -6,6 +6,7 @@ Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
 
 ```bash
 nurl https://github.com/oh-my-fish/plugin-foreign-env.git 3ee95536106c11073d6ff466c1681cde31001383
+nix-hash-url https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_2024.6.497-1_amd64.deb
 ```
 
 ## How to convert JSON to Nix?
