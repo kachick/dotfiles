@@ -7,4 +7,4 @@
 go run "$GO_SCRIPT_TO_NORMALIZE" |
 	fzf --height "${FZF_TMUX_HEIGHT:-40%}" "${FZF_DEFAULT_OPTS-}" \
 		-n2..,.. --scheme=history \
-		--bind 'enter:become(safe_quote_backtik {} | git commit -a -F -)'
+		--bind 'enter:become(safe_quote_backtik {} | command "$EDITOR" | git commit -a -F -)'
