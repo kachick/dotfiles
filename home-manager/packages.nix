@@ -17,7 +17,6 @@ with pkgs;
   # readline # needless and using it does not fix bash problems
   zsh
   fish
-  powershell # Keep to stable nixpkgs, because this is one of the depending to xz. See #530
   starship
   direnv
 
@@ -37,8 +36,6 @@ with pkgs;
   findutils
   diffutils
   gnugrep
-  gnused
-  gawk
   netcat # `nc`
 
   git
