@@ -100,6 +100,8 @@
 
   services.cloudflare-warp = {
     enable = true;
+    # Using latest to avoid GH-749
+    package = edge-pkgs.cloudflare-warp;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

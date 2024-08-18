@@ -2,7 +2,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  lib,
+  ...
+}:
 {
   services.xserver = {
     enable = true;
@@ -78,7 +83,7 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
-      runtimeInputs = with pkgs; [ cloudflare-warp ];
+      runtimeInputs = with edge-pkgs; [ cloudflare-warp ];
       text = ''
         warp-cli connect
       '';
