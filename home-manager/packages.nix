@@ -84,8 +84,7 @@ with pkgs;
   gitleaks
   edge-pkgs.deno # Use unstable to track latest
   ruby_3_3
-  unzip # Required in many asdf plugins
-  _7zz # `7zz` 7zip, not
+  _7zz # `7zz` - 7zip. Command is not 7zip.
 
   pastel
 
