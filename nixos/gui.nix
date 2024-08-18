@@ -4,7 +4,7 @@
 
 {
   pkgs,
-  edge-pkgs,
+  homemade-pkgs,
   lib,
   ...
 }:
@@ -83,7 +83,7 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
-      runtimeInputs = with edge-pkgs; [ cloudflare-warp ];
+      runtimeInputs = with homemade-pkgs; [ cloudflare-warp ];
       text = ''
         warp-cli connect
       '';
