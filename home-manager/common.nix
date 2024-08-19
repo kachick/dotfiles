@@ -204,4 +204,15 @@
     source = ../config/zellij;
     recursive = true;
   };
+
+  # TODO: Switch to raw config file and shared in Windows
+  programs.ripgrep = {
+    enable = true;
+    # https://github.com/BurntSushi/ripgrep/issues/623#issuecomment-659909044
+    arguments = [
+      "--hidden"
+      "--glob"
+      "!.git"
+    ];
+  };
 }
