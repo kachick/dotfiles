@@ -37,6 +37,11 @@ in
         };
 
         color-modes = true;
+
+        file-picker = {
+          # This option makes much confusion, actually working `false = show dotfiles but respecting .gitignore`
+          hidden = false;
+        };
       };
 
       keys = {
