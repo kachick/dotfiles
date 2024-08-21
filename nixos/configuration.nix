@@ -195,6 +195,8 @@
       podman-tui
       docker-compose
 
+      edge-pkgs.chawan
+
       ## Unfree packages
 
       (edge-pkgs.vscode.override (prev: {
