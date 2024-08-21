@@ -37,6 +37,7 @@ with pkgs;
   diffutils
   gnugrep
   netcat # `nc`
+  dig # Alt and raw-data oriented nslookup. TODO: Consider another candidate: dug - https://eng-blog.iij.ad.jp/archives/27527
 
   git
   gh

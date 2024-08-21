@@ -159,6 +159,7 @@
       fd
       fzf
       ripgrep
+      dig
 
       # 3rd-party bitwarden helper, because of official cli does not have many core features
       # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
