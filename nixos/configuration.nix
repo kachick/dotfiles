@@ -198,6 +198,13 @@
 
       edge-pkgs.chawan
 
+      gnome.dconf-editor
+
+      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
+      pop-launcher
+
+      nordic
+
       ## Unfree packages
 
       (edge-pkgs.vscode.override (prev: {
@@ -224,13 +231,6 @@
           "--enable-wayland-ime"
         ];
       }))
-
-      gnome.dconf-editor
-
-      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
-      pop-launcher
-
-      nordic
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
