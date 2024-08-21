@@ -101,6 +101,9 @@ with pkgs;
   podman-tui
   docker-compose
 
+  # `tldr` rust client, tealdeer is another candidate.
+  tlrc
+
   fastfetch # active replacement of neofetch
 ]
 ++ (with homemade-pkgs; [
@@ -131,10 +134,6 @@ with pkgs;
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
   edge-pkgs.iw # replacement of wireless-tools(iwconfig)
-
-  # `tldr` rust client, tealdeer is another candidate.
-  # Do not inject this tlrc package in macOS, it is broken even in stable NixOS channel. See GH-720
-  tlrc
 
   # Alt w3m
   # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
