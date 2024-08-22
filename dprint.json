@@ -21,6 +21,6 @@
     "https://plugins.dprint.dev/markdown-0.17.4.wasm",
     "https://plugins.dprint.dev/toml-0.6.2.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.4.0.wasm",
-    "https://github.com/kachick/dprint-plugin-kdl/releases/download/0.1.0/plugin.wasm"
+    "https://plugins.dprint.dev/kachick/kdl-0.1.0.wasm"
   ]
 }
