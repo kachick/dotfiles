@@ -196,7 +196,7 @@
       podman-tui
       docker-compose
 
-      edge-pkgs.chawan
+      chawan
 
       gnome.dconf-editor
 
