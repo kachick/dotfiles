@@ -90,6 +90,9 @@
         },
         {
           "PackageIdentifier": "Wilfred.difftastic"
+        },
+        {
+          "PackageIdentifier": "sxyazi.yazi"
         }
       ],
       "SourceDetails": {

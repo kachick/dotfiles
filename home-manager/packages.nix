@@ -69,6 +69,7 @@ with pkgs;
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  yazi # prefer the shell wrapper `yy`
 
   # Do not install wezterm in home-manager layer for non NixOS
   # - Released wezterm versions are broken on wayland
