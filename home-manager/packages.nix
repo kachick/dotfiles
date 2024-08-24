@@ -122,6 +122,7 @@ with pkgs;
   bench_shells
   archive-home-files
   prs
+  gredit
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
