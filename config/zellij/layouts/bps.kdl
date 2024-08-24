@@ -1,4 +1,20 @@
 layout {
+    tab_template name="Filer" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="horizontal" {
+            pane size="80%" command="yazi" {
+
+            }
+            pane size="20%" {
+
+            }
+        }
+    }
     tab_template name="BPS" {
         pane size=2 borderless=true {
             plugin location="zellij:status-bar"
@@ -17,7 +33,7 @@ layout {
             }
         }
     }
-    tab_template name="wide" {
+    tab_template name="Plain" {
         // compact looks beautiful, but not enough for beginners like me!
         //
         // pane size=1 borderless=true {
@@ -31,9 +47,7 @@ layout {
         }
         pane
     }
-    BPS focus=true name="BPS1"
-    BPS name="BPS2"
-    BPS name="BPS3"
-    wide name="wide1"
-    wide name="wide2"
+    Filer focus=true name="Filer"
+    BPS name="BPS"
+    Plain name="Plain"
 }
