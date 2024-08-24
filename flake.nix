@@ -129,6 +129,7 @@
               "git-delete-merged-branches"
               "git-log-fzf"
               "git-log-simple"
+              "git-resolve-conflict"
               "prs"
               "nix-hash-url"
               "trim-github-user-prefix-for-reponame"

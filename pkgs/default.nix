@@ -67,4 +67,5 @@
   nix-hash-url = pkgs.callPackage ./nix-hash-url { };
 
   gredit = pkgs.callPackage ./gredit { };
+  git-resolve-conflict = pkgs.callPackage ./git-resolve-conflict { };
 }
