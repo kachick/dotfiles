@@ -124,6 +124,8 @@ with pkgs;
   archive-home-files
   prs
   gredit
+  renmark
+  preview
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`

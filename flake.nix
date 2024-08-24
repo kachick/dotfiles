@@ -134,6 +134,8 @@
               "nix-hash-url"
               "trim-github-user-prefix-for-reponame"
               "gredit"
+              "renmark"
+              "preview"
             ]
           )
           ++ [
