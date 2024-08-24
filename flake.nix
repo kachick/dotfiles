@@ -67,71 +67,84 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+          homemade-pkgs = homemade-packages.${system};
         in
         {
-          default =
-            with pkgs;
-            mkShellNoCC {
-              buildInputs =
-                [
-                  # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-                  bashInteractive
-                  nixfmt-rfc-style
-                  # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
-                  nil # Used in vscode Nix extension
-                  nixd # Used in zed Nix extension
-                  nixpkgs-lint-community
-                  nix-init
-                  nurl
-                  # To get sha256 around pkgs.fetchFromGitHub in CLI
-                  nix-prefetch-git
-                  jq
+          default = pkgs.mkShellNoCC {
+            buildInputs =
+              (with pkgs; [
+                # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+                bashInteractive
+                nixfmt-rfc-style
+                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
+                nil # Used in vscode Nix extension
+                nixd # Used in zed Nix extension
+                nixpkgs-lint-community
+                nix-init
+                nurl
 
-                  shellcheck
-                  shfmt
-                  gitleaks
-                  cargo-make
+                shellcheck
+                shfmt
+                gitleaks
+                cargo-make
 
-                  dprint
-                  stylua
-                  typos
-                  typos-lsp
-                  go_1_22
-                  goreleaser
-                  trivy
-                ]
-                ++ (with edge-pkgs; [
-                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                  # https://github.com/numtide/treefmt/pull/250
-                  treefmt2
-                  markdownlint-cli2
-                ]);
-            };
+                dprint
+                stylua
+                typos
+                typos-lsp
+                go_1_22
+                goreleaser
+                trivy
+              ])
+              ++ (with edge-pkgs; [
+                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                # https://github.com/numtide/treefmt/pull/250
+                treefmt2
+                markdownlint-cli2
+              ])
+              ++ (with homemade-pkgs; [ nix-hash-url ]);
+          };
         }
       );
 
-      apps = forAllSystems (system: {
-        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
-        # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-        home-manager = mkApp home-manager.defaultPackage.${system};
-        bump_completions = mkApp homemade-packages.${system}.bump_completions;
-        bump_gomod = mkApp homemade-packages.${system}.bump_gomod;
-        check_no_dirty_xz_in_nix_store = mkApp homemade-packages.${system}.check_no_dirty_xz_in_nix_store;
-        bench_shells = mkApp homemade-packages.${system}.bench_shells;
-        walk = mkApp homemade-packages.${system}.walk;
-        ir = mkApp homemade-packages.${system}.ir;
-        todo = mkApp homemade-packages.${system}.todo;
-        la = mkApp homemade-packages.${system}.la;
-        lat = mkApp homemade-packages.${system}.lat;
-        ghqf = mkApp homemade-packages.${system}.ghqf;
-        git-delete-merged-branches = mkApp homemade-packages.${system}.git-delete-merged-branches;
-        git-log-fzf = mkApp homemade-packages.${system}.git-log-fzf;
-        git-log-simple = mkApp homemade-packages.${system}.git-log-simple;
-        prs = mkApp homemade-packages.${system}.prs;
-        trim-github-user-prefix-for-reponame =
-          mkApp
-            homemade-packages.${system}.trim-github-user-prefix-for-reponame;
-      });
+      apps = forAllSystems (
+        system:
+        builtins.listToAttrs (
+          (map
+            (name: {
+              inherit name;
+              value = mkApp homemade-packages.${system}.${name};
+            })
+            [
+              "bump_completions"
+              "bump_gomod"
+              "check_no_dirty_xz_in_nix_store"
+              "bench_shells"
+              "walk"
+              "ir"
+              "todo"
+              "la"
+              "lat"
+              "ghqf"
+              "git-delete-merged-branches"
+              "git-log-fzf"
+              "git-log-simple"
+              "prs"
+              "nix-hash-url"
+              "trim-github-user-prefix-for-reponame"
+              "gredit"
+            ]
+          )
+          ++ [
+            # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
+            # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+            {
+              name = "home-manager";
+              value = mkApp home-manager.defaultPackage.${system};
+            }
+          ]
+        )
+      );
 
       nixosConfigurations =
         let

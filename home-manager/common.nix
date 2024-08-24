@@ -205,6 +205,17 @@
     recursive = true;
   };
 
+  # TODO: Switch to raw config file and shared in Windows
+  programs.ripgrep = {
+    enable = true;
+    # https://github.com/BurntSushi/ripgrep/issues/623#issuecomment-659909044
+    arguments = [
+      "--hidden"
+      "--glob"
+      "!.git"
+    ];
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zk.nix
   programs.zk = {
     enable = true;

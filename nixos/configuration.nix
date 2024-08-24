@@ -159,6 +159,7 @@
       fd
       fzf
       ripgrep
+      dig
 
       # 3rd-party bitwarden helper, because of official cli does not have many core features
       # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
@@ -195,6 +196,15 @@
       podman-tui
       docker-compose
 
+      chawan
+
+      gnome.dconf-editor
+
+      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
+      pop-launcher
+
+      nordic
+
       ## Unfree packages
 
       (edge-pkgs.vscode.override (prev: {
@@ -221,13 +231,6 @@
           "--enable-wayland-ime"
         ];
       }))
-
-      gnome.dconf-editor
-
-      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
-      pop-launcher
-
-      nordic
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator

@@ -7,11 +7,12 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Base16 Icy Dark",
+  "theme": "Base16 Oxocarbon Dark",
   "telemetry": {
     "metrics": false
   },
   "auto_update": false,
+  "soft_wrap": "editor_width",
   "ui_font_family": "PlemolJP Console NF",
   "ui_font_size": 16,
   "buffer_font_family": "PlemolJP Console NF",

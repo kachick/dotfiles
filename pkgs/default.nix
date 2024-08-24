@@ -63,4 +63,8 @@
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
 
   kdl-vim = pkgs.callPackage ./kdl.vim { };
+
+  nix-hash-url = pkgs.callPackage ./nix-hash-url { };
+
+  gredit = pkgs.callPackage ./gredit { };
 }

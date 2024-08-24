@@ -17,7 +17,6 @@ with pkgs;
   # readline # needless and using it does not fix bash problems
   zsh
   fish
-  powershell # Keep to stable nixpkgs, because this is one of the depending to xz. See #530
   starship
   direnv
 
@@ -37,9 +36,8 @@ with pkgs;
   findutils
   diffutils
   gnugrep
-  gnused
-  gawk
   netcat # `nc`
+  dig # Alt and raw-data oriented nslookup. TODO: Consider another candidate: dug - https://eng-blog.iij.ad.jp/archives/27527
 
   git
   gh
@@ -82,10 +80,9 @@ with pkgs;
   difftastic # `difft`
   gnumake
   gitleaks
-  edge-pkgs.deno # Use unstable to track latest
+  deno
   ruby_3_3
-  unzip # Required in many asdf plugins
-  _7zz # `7zz` 7zip, not
+  _7zz # `7zz` - 7zip. Command is not 7zip.
 
   pastel
 
@@ -96,35 +93,6 @@ with pkgs;
   # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
-  # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
-  # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
-  #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
-  # - Keep fewer nerd fonts to reduce disk space
-
-  # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
-  # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-  plemoljp-nf
-  ibm-plex # For sans-serif, use plemoljp for developing
-
-  source-han-code-jp # Includes many definitions, useful for fallback
-  inconsolata
-
-  # Includes follows in each repository if needed, not in global
-  # gcc
-  # rustup
-  # go
-  # crystal
-  # elmPackages.elm
-  # sqlite
-  # postgresql
-  # cargo-make
-
-  # If you need to build cruby from source, this section may remind the struggle
-  # Often failed to build cruby even if I enabled following dependencies
-  # zlib
-  # libyaml
-  # openssl
-
   # - Enable special module for Nix OS.
   # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
   #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
@@ -132,6 +100,9 @@ with pkgs;
   podman
   podman-tui
   docker-compose
+
+  # `tldr` rust client, tealdeer is another candidate.
+  tlrc
 
   fastfetch # active replacement of neofetch
 
@@ -153,6 +124,7 @@ with pkgs;
   bench_shells
   archive-home-files
   prs
+  gredit
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
@@ -166,11 +138,25 @@ with pkgs;
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
   edge-pkgs.iw # replacement of wireless-tools(iwconfig)
 
-  # `tldr` rust client, tealdeer is another candidate.
-  # Do not inject this tlrc package in macOS, it is broken even in stable NixOS channel. See GH-720
-  tlrc
+  # Alt w3m
+  # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
+  # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
+  chawan # `cha`
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
+
+  # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
+  # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
+  #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
+  # - Keep fewer nerd fonts to reduce disk space
+
+  # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
+  # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
+  plemoljp-nf
+  ibm-plex # For sans-serif, use plemoljp for developing
+
+  source-han-code-jp # Includes many definitions, useful for fallback
+  inconsolata
 ])
