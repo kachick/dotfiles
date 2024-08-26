@@ -2,7 +2,7 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
-    "github>kachick/renovate-config-dprint#1.1.0",
+    "github>kachick/renovate-config-dprint#1.2.0",
     "github>kachick/renovate-config-dprint:self"
   ],
   "labels": ["dependencies", "renovate"],
