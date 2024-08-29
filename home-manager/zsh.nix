@@ -84,11 +84,20 @@
 
       # This will work if you enabled "pattern" highlighter
       # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
-      patterns = {
-        "rm -rf *" = "fg=red,bold";
-        # typo of origin
-        "orgiin" = "fg=red,bold";
-      };
+      patterns = builtins.listToAttrs (
+        (map (typo: {
+          name = typo;
+          value = "fg=red,bold";
+        }))
+          (
+            [
+              "rm -rf *"
+              # typo of "-a -m"
+              "-a- m"
+            ]
+            ++ import ./typo_commands.nix
+          )
+      );
     };
 
     autosuggestion = {
