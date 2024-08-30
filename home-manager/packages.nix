@@ -106,6 +106,7 @@ with pkgs;
   tlrc
 
   fastfetch # active replacement of neofetch
+  newsflash # RSS reader
 ]
 ++ (with homemade-pkgs; [
   la
