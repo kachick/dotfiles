@@ -94,6 +94,19 @@ with pkgs;
   # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
+  # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
+  # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
+  #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
+  # - Keep fewer nerd fonts to reduce disk space
+
+  # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
+  # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
+  plemoljp-nf
+  ibm-plex # For sans-serif, use plemoljp for developing
+
+  source-han-code-jp # Includes many definitions, useful for fallback
+  inconsolata
+
   # - Enable special module for Nix OS.
   # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
   #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
@@ -146,17 +159,4 @@ with pkgs;
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
   pinentry_mac
-
-  # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
-  # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
-  #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
-  # - Keep fewer nerd fonts to reduce disk space
-
-  # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
-  # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-  plemoljp-nf
-  ibm-plex # For sans-serif, use plemoljp for developing
-
-  source-han-code-jp # Includes many definitions, useful for fallback
-  inconsolata
 ])
