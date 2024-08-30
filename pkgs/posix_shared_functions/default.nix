@@ -17,47 +17,36 @@ let
     pkgs.callPackage ../fzf-bind-posix-shell-history-to-git-commit-message
       { };
 in
-pkgs.writeText "posix_shared_functions.sh" ''
-  cdg() {
-    local -r query_repoonly="$(echo "$1" | ${lib.getExe trim-github-user-prefix-for-reponame})"
-    local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
-    if [ -n "$repo" ]; then
-      cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
-    fi
-  }
+pkgs.writeText "posix_shared_functions.sh" (
+  ''
+    cdrepo() {
+      local -r query_repoonly="$(echo "$1" | ${lib.getExe trim-github-user-prefix-for-reponame})"
+      local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
+      if [ -n "$repo" ]; then
+        cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
+      fi
+    }
 
-  gg() {
-    ${lib.getExe pkgs.ghq} get "$1" && cdg "$1"
-  }
+    getrepo() {
+      ${lib.getExe pkgs.ghq} get "$1" && cdrepo "$1"
+    }
 
-  cdt() {
-    cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
-  }
+    cdtemp() {
+      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+    }
 
-  cdn() {
-    if [ $# -lt 1 ]; then
-      echo "Specify Nix injected command you want to dive"
-      return 2
-    fi
-    # TODO: Check exit code and Nix or not
-    local -r command="$(command -v "$1")"
-    cd "$(dirname "$(dirname "$(readlink "$command")")")"
-  }
+    gch() {
+      fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
+    }
 
-  gch() {
-    fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
-  }
-
-  disable_blinking_cursor() {
-    echo -en '\033[?16;5;140c'
-  }
-
-  yy() {
-    local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
-    ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
-    if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-      builtin cd -- "$cwd"
-    fi
-    ${pkgs.coreutils}/bin/rm -f -- "$tmp"
-  }
-''
+    yy() {
+      local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
+      ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
+      if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+      fi
+      ${pkgs.coreutils}/bin/rm -f -- "$tmp"
+    }
+  ''
+  + (builtins.readFile ./non_nix.bash)
+)
