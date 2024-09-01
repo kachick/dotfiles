@@ -5,7 +5,6 @@
 Several packages are missing or broken for darwin. Or the x86-64 darwin.\
 So you should manually install followings.
 
-- [wezterm](https://github.com/wez/wezterm/releases/download/nightly/WezTerm-macos-nightly.zip)
 - [vscode](https://code.visualstudio.com/download)
 - [zed-editor](https://zed.dev/download)
 - [podman-desktop](https://podman-desktop.io/downloads)

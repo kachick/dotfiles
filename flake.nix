@@ -15,11 +15,6 @@
     nixos-wsl.url = "github:nix-community/NixOS-WSL/2405.5.4";
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
-    # Don't use wezterm-flake for now. The IME on wayland does not work than old stable.
-    # wezterm-flake = {
-    #   url = "github:wez/wezterm?dir=nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
   };
 
   outputs =
@@ -30,7 +25,6 @@
       home-manager,
       nixos-wsl,
       xremap-flake,
-    # wezterm-flake,
     }@inputs:
     let
       inherit (self) outputs;

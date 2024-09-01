@@ -146,9 +146,6 @@
       skktools
 
       alacritty
-      # Don't use nightly wezterm, that still does not enable IME on wayland
-      # inputs.wezterm-flake.packages.${pkgs.system}.default
-      wezterm
 
       wget
       curl

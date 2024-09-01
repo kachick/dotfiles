@@ -123,11 +123,6 @@
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
 
-  xdg.configFile."wezterm" = {
-    source = ../config/wezterm;
-    recursive = true;
-  };
-
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source =
     if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;

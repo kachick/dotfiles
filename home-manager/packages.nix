@@ -71,9 +71,6 @@ with pkgs;
   zellij
   yazi # prefer the shell wrapper `yy`
 
-  # Do not install wezterm in home-manager layer for non NixOS
-  # - Released wezterm versions are broken on wayland
-  # - Using nightly needs to take long build time, avoiding it for CI time
   alacritty
 
   typos
