@@ -3,6 +3,7 @@
   lib,
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   ...
 }:
 
@@ -203,7 +204,9 @@
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
-      source "${pkgs.go-task}/share/zsh/site-functions/_task"
+
+      # Using latest package to apply patch of https://github.com/NixOS/nixpkgs/pull/332696
+      source "${edge-pkgs.go-task}/share/zsh/site-functions/_task"
 
       source "${../dependencies/dprint/completions.zsh}"
       source "${../dependencies/goldwarden/completions.zsh}"
