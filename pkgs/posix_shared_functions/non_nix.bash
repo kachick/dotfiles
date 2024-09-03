@@ -8,7 +8,7 @@ cdnix() {
 	# TODO: Check exit code and Nix or not
 	local -r command="$(command -v "$1")"
 	# shellcheck disable=SC2164
-	cd "$(dirname "$(dirname "$(readlink "$command")")")"
+	cd "$(dirname "$(dirname "$(readlink --canonicalize "$command")")")"
 }
 
 cdwin() {
