@@ -77,6 +77,7 @@ with pkgs;
   hyperfine
   difftastic # `difft`
   gnumake
+  go-task # Installing for enabling shell completion easy
   gitleaks
   deno
   ruby_3_3
