@@ -49,9 +49,17 @@ _fzf_complete_task_post() {
 }
 
 _fzf_complete_zellij() {
-	_fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
-		zellij list-sessions
-	)
+	local -r args="$*"
+	if [[ "$args" == 'zellij kill-session'* ]]; then
+		_fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
+			zellij list-sessions | rg --invert-match --fixed-strings -e 'EXITED'
+		)
+
+	else
+		_fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
+			zellij list-sessions
+		)
+	fi
 }
 
 _fzf_complete_zellij_post() {
