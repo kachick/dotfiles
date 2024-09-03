@@ -35,7 +35,7 @@ includes = ["*.go"]
 [formatter.shfmt]
 command = "shfmt"
 options = ["--language-dialect", "bash", "--write"]
-includes = ["*.sh", "*.bash", "*.envrc"]
+includes = ["*.sh", "*.bash", "*.zsh", "*.envrc"]
 
 [formatter.stylua]
 command = "stylua"

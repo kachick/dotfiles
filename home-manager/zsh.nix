@@ -176,61 +176,63 @@
       fi
     '';
 
-    initExtra = ''
-      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
-      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+    initExtra =
+      ''
+        typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+        typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+        typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
 
-      setopt correct
-      unsetopt BEEP
+        setopt correct
+        unsetopt BEEP
 
-      setopt hist_reduce_blanks
-      setopt hist_save_no_dups
-      setopt hist_no_store
-      setopt HIST_NO_FUNCTIONS
-      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
-      setopt interactivecomments
+        setopt hist_reduce_blanks
+        setopt hist_save_no_dups
+        setopt hist_no_store
+        setopt HIST_NO_FUNCTIONS
+        # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+        setopt interactivecomments
 
-      # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
-      bindkey ";5C" forward-word
-      bindkey ";5D" backward-word
+        # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
+        bindkey ";5C" forward-word
+        bindkey ";5D" backward-word
 
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-        echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
-      }
-      precmd_functions+=(set_win_title)
+        # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+        function set_win_title() {
+          echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+        }
+        precmd_functions+=(set_win_title)
 
-      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      source "${pkgs.podman}/share/zsh/site-functions/_podman"
+        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        source "${pkgs.podman}/share/zsh/site-functions/_podman"
 
-      source "${../dependencies/dprint/completions.zsh}"
-      source "${../dependencies/goldwarden/completions.zsh}"
+        source "${../dependencies/dprint/completions.zsh}"
+        source "${../dependencies/goldwarden/completions.zsh}"
 
-      # Disable `Ctrl + S(no output tty)`
-      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+        # Disable `Ctrl + S(no output tty)`
+        ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
-      # https://unix.stackexchange.com/a/3449
-      source_sh () {
-        emulate -LR sh
-        . "$@"
-      }
+        # https://unix.stackexchange.com/a/3449
+        source_sh () {
+          emulate -LR sh
+          . "$@"
+        }
 
-      source_sh "${homemade-pkgs.posix_shared_functions}"
+        source_sh "${homemade-pkgs.posix_shared_functions}"
 
-      if [ 'linux' = "$TERM" ]; then
-        disable_blinking_cursor
-      fi
+        if [ 'linux' = "$TERM" ]; then
+          disable_blinking_cursor
+        fi
 
-      # https://superuser.com/a/902508/120469
-      # https://github.com/zsh-users/zsh-autosuggestions/issues/259
-      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+        # https://superuser.com/a/902508/120469
+        # https://github.com/zsh-users/zsh-autosuggestions/issues/259
+        zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
 
-      # Same as .zshenv.local
-      if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
-        source '${config.xdg.configHome}/zsh/.zshrc.local'
-      fi
-    '';
+        # Same as .zshenv.local
+        if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+          source '${config.xdg.configHome}/zsh/.zshrc.local'
+        fi
+      ''
+      + builtins.readFile ./initExtra.zsh;
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''

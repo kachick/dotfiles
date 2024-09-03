@@ -27,6 +27,10 @@ disable_blinking_cursor() {
 # TODO: Consider to inject Nix path into fzf complemetion commands for making secure and robustness
 # However it maybe unuseful, because of different version maybe used in each repo...
 
+# NOTE: You should remember difference of bash and zsh for the arguments
+# https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
+# And add prefix ___fzf_ for shared function to avoid conflict. It should be used in _fzf_ in each bash and zsh
+
 # No need adding for `cargo-make`, it require subcommand as `cargo-make make`. I'm avoiding the style
 _fzf_complete_makers() {
 	_fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
@@ -48,19 +52,16 @@ _fzf_complete_task_post() {
 	rg --regexp='(\S+?): ' --replace='$1'
 }
 
-_fzf_complete_zellij() {
-	# $1 contains whole command line as `zellij kill-session`
-	local -r subcmd=${1#* }
-	if [[ "$subcmd" == kill-session* ]]; then
-		_fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
-			zellij list-sessions | rg --invert-match --fixed-strings -e 'EXITED'
-		)
+___fzf_complete_zellij_all_sessions() {
+	_fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
+		zellij list-sessions
+	)
+}
 
-	else
-		_fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
-			zellij list-sessions
-		)
-	fi
+___fzf_complete_zellij_active_sessions() {
+	_fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
+		zellij list-sessions | rg --invert-match --fixed-strings -e 'EXITED'
+	)
 }
 
 _fzf_complete_zellij_post() {
