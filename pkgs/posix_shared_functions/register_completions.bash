@@ -8,6 +8,12 @@ _fzf_complete_zellij() {
 	else
 		___fzf_complete_zellij_all_sessions
 	fi
+
+	case "$subcmd" in
+	kill-session) ___fzf_complete_zellij_active_sessions ;;
+	attach | delete-session) ___fzf_complete_zellij_all_sessions ;;
+	*) _zellij ;;
+	esac
 }
 
 # Required to be defined just before complete
