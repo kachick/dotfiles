@@ -17,6 +17,7 @@
   # home-manager doesn't accept the special attrset: https://github.com/nix-community/home-manager/blob/1d085ea4444d26aa52297758b333b449b2aa6fca/modules/programs/fish.nix
   # If added here, check the result of `bench_shells`: https://github.com/kachick/dotfiles/pull/423/files#r1503804605
   xdg.dataFile."fish/vendor_completions.d/podman.fish".source = "${pkgs.podman}/share/fish/vendor_completions.d/podman.fish";
+  xdg.dataFile."fish/vendor_completions.d/task.fish".source = "${pkgs.go-task}/share/fish/vendor_completions.d/task.fish";
   xdg.dataFile."fish/vendor_completions.d/dprint.fish".source = ../dependencies/dprint/completions.fish;
   xdg.dataFile."fish/vendor_completions.d/goldwarden.fish".source = ../dependencies/goldwarden/completions.fish;
 

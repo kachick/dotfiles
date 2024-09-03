@@ -203,6 +203,7 @@
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
+      source "${pkgs.go-task}/share/zsh/site-functions/_task"
 
       source "${../dependencies/dprint/completions.zsh}"
       source "${../dependencies/goldwarden/completions.zsh}"
