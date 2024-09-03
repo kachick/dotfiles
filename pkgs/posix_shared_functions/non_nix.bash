@@ -47,3 +47,13 @@ _fzf_complete_task() {
 _fzf_complete_task_post() {
 	rg --regexp='(\S+?): ' --replace='$1'
 }
+
+_fzf_complete_zellij() {
+	_fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
+		zellij list-sessions
+	)
+}
+
+_fzf_complete_zellij_post() {
+	cut --delimiter=' ' --fields=1
+}
