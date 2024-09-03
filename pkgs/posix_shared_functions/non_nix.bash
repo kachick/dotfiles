@@ -30,10 +30,20 @@ disable_blinking_cursor() {
 # No need adding for `cargo-make`, it require subcommand as `cargo-make make`. I'm avoiding the style
 _fzf_complete_makers() {
 	_fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
-		makers --list-all-steps | rg -e '^\w+ -'
+		makers --list-all-steps | rg --regexp='^\w+ -'
 	)
 }
 
 _fzf_complete_makers_post() {
 	cut --delimiter=' ' --fields=1
+}
+
+_fzf_complete_task() {
+	_fzf_complete --multi --reverse --prompt="task> " -- "$@" < <(
+		task --list-all | rg --regexp='^\* (.+)' --replace='$1'
+	)
+}
+
+_fzf_complete_task_post() {
+	rg --regexp='(\S+?): ' --replace='$1'
 }
