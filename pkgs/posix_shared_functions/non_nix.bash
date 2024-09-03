@@ -21,3 +21,17 @@ cdwin() {
 disable_blinking_cursor() {
 	echo -en '\033[?16;5;140c'
 }
+
+# TODO: Consider to inject Nix path into fzf complemetion commands for making secure and robustness
+# However it maybe unuseful, because of different version maybe used in each repo...
+
+# No need adding for `cargo-make`, it require subcommand as `cargo-make make`. I'm avoiding the style
+_fzf_complete_makers() {
+	_fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
+		makers --list-all-steps | rg -e '^\w+ -'
+	)
+}
+
+_fzf_complete_makers_post() {
+	cut --delimiter=' ' --fields=1
+}
