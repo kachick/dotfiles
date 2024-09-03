@@ -49,8 +49,9 @@ _fzf_complete_task_post() {
 }
 
 _fzf_complete_zellij() {
-	local -r args="$*"
-	if [[ "$args" == 'zellij kill-session'* ]]; then
+	# $1 contains whole command line as `zellij kill-session`
+	local -r subcmd=${1#* }
+	if [[ "$subcmd" == kill-session* ]]; then
 		_fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
 			zellij list-sessions | rg --invert-match --fixed-strings -e 'EXITED'
 		)
