@@ -124,6 +124,7 @@
 
         source "${../dependencies/dprint/completions.bash}"
         source "${../dependencies/goldwarden/completions.bash}"
+        source "${../pkgs/posix_shared_functions/register_completions.bash}"
 
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef

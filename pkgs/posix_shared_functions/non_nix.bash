@@ -1,3 +1,5 @@
+# Actually this file is not a bash script, but dash mode is unuseful. Expecting mostly bash code will work even in zsh...
+
 cdnix() {
 	if [ $# -lt 1 ]; then
 		echo "Specify Nix injected command you want to dive"
