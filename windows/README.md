@@ -38,10 +38,6 @@ Basically following codes will be done in PowerShell
    See <https://zmzlz.blogspot.com/2014/10/windows-dropbox.html> for detail
 1. Enable Bitlocker and backup the restore key
 
-## Workflow
-
-1. `komorebic start --whkd`
-
 ## I forgot to backup Bitlocker restore key 😋
 
 <https://account.microsoft.com/devices/recoverykey> may help

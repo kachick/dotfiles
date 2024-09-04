@@ -98,11 +98,6 @@ func provisioners() []provisioner {
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
 
-		// Can I move it to komorebi~ path? application.yaml in root looks like too wide
-		newProvisioner([]string{"windows", "komorebi", "applications.yaml"}, []string{homePath, "applications.yaml"}),
-		newProvisioner([]string{"windows", "komorebi", "komorebi.json"}, []string{homePath, "komorebi.json"}),
-		newProvisioner([]string{"windows", "whkd", "whkdrc"}, []string{homePath, ".config", "whkd", "whkdrc"}),
-
 		// You may need to custom the memory size
 		newProvisioner([]string{"windows", "WSL", ".wslconfig"}, []string{homePath, ".wslconfig"}),
 	}
