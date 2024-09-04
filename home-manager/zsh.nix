@@ -139,6 +139,8 @@
     completionInit = ''
       # `autoload` enable to use compinit
       autoload -Uz compinit && _compinit_with_interval
+      # for cargo-make
+      autoload -U +X bashcompinit && bashcompinit
     '';
 
     # Setting bindkey

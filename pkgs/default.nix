@@ -62,6 +62,8 @@
   micro-kdl = pkgs.callPackage ./micro-kdl { };
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
 
+  cargo-make-completions = pkgs.callPackage ./cargo-make-completions { };
+
   kdl-vim = pkgs.callPackage ./kdl.vim { };
 
   nix-hash-url = pkgs.callPackage ./nix-hash-url { };

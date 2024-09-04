@@ -96,7 +96,10 @@
                 treefmt2
                 markdownlint-cli2
               ])
-              ++ (with homemade-pkgs; [ nix-hash-url ]);
+              ++ (with homemade-pkgs; [
+                nix-hash-url
+                cargo-make-completions
+              ]);
           };
         }
       );
