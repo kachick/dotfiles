@@ -33,6 +33,18 @@ layout {
             }
         }
     }
+    tab_template name="Side-by-Side" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
+        pane split_direction="vertical" {
+            pane
+            pane
+        }
+    }
     tab_template name="Plain" {
         // compact looks beautiful, but not enough for beginners like me!
         //
@@ -49,5 +61,6 @@ layout {
     }
     Filer focus=true name="Filer"
     BPS name="BPS"
+    Side-by-Side name="Side-by-Side"
     Plain name="Plain"
 }

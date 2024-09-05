@@ -7,6 +7,6 @@ pkgs.writeShellApplication rec {
     zellij
   ];
   runtimeEnv = {
-    ZELLIJ_LAYOUT_BPS_PATH = "${../../config/zellij/layouts/bps.kdl}";
+    ZELLIJ_LAYOUT_BPS_PATH = "${../../config/zellij/layouts/regular.kdl}";
   };
 }
