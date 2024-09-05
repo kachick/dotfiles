@@ -179,65 +179,107 @@
       fi
     '';
 
-    initExtra =
-      ''
-        typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
-        typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-        typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+    initExtra = ''
+      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
 
-        setopt correct
-        unsetopt BEEP
+      setopt correct
+      unsetopt BEEP
 
-        setopt hist_reduce_blanks
-        setopt hist_save_no_dups
-        setopt hist_no_store
-        setopt HIST_NO_FUNCTIONS
-        # https://apple.stackexchange.com/questions/405246/zsh-comment-character
-        setopt interactivecomments
+      setopt hist_reduce_blanks
+      setopt hist_save_no_dups
+      setopt hist_no_store
+      setopt HIST_NO_FUNCTIONS
+      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+      setopt interactivecomments
 
-        # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
-        bindkey ";5C" forward-word
-        bindkey ";5D" backward-word
+      # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
+      bindkey ";5C" forward-word
+      bindkey ";5D" backward-word
 
-        # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-        function set_win_title() {
-          echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
-        }
-        precmd_functions+=(set_win_title)
+      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+      function set_win_title() {
+        echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+      }
+      precmd_functions+=(set_win_title)
 
-        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-        source "${pkgs.podman}/share/zsh/site-functions/_podman"
-        # cargo-make recommends to use bash completions for zsh
-        source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
+      source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      source "${pkgs.podman}/share/zsh/site-functions/_podman"
+      # cargo-make recommends to use bash completions for zsh
+      source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
-        source "${../dependencies/dprint/completions.zsh}"
-        source "${../dependencies/goldwarden/completions.zsh}"
+      # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
+      # So currently injecting only in zsh
 
-        # Disable `Ctrl + S(no output tty)`
-        ${lib.getBin pkgs.coreutils}/bin/stty stop undef
-
-        # https://unix.stackexchange.com/a/3449
-        source_sh () {
-          emulate -LR sh
-          . "$@"
-        }
-
-        source_sh "${homemade-pkgs.posix_shared_functions}"
-
-        if [ 'linux' = "$TERM" ]; then
-          disable_blinking_cursor
+      _fzf_complete_zellij() {
+        local -r subcmd=''${1#* }
+        if [[ "$subcmd" == kill-session* ]]; then
+          _fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
+            ${lib.getExe pkgs.zellij} list-sessions | ${lib.getExe pkgs.ripgrep} --invert-match --fixed-strings -e 'EXITED'
+          )
+        else
+          _fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
+            ${lib.getExe pkgs.zellij} list-sessions
+          )
         fi
+      }
 
-        # https://superuser.com/a/902508/120469
-        # https://github.com/zsh-users/zsh-autosuggestions/issues/259
-        zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+      _fzf_complete_zellij_post() {
+        ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
+      }
 
-        # Same as .zshenv.local
-        if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
-          source '${config.xdg.configHome}/zsh/.zshrc.local'
-        fi
-      ''
-      + builtins.readFile ./initExtra.zsh;
+      # Do not use absolute path for makers to respect current version in each repository
+      # No need adding for `cargo-make`, it requires subcommand as `cargo-make make`. I'm avoiding the style
+      _fzf_complete_makers() {
+        _fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
+          # Don't use `--output-format autocomplete`, it truncates task description
+          makers --list-all-steps | ${lib.getExe pkgs.ripgrep} --regexp='^\w+ -'
+        )
+      }
+
+      _fzf_complete_makers_post() {
+        ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
+      }
+
+      # Do not use absolute path for go-task to respect current version in each repository
+      _fzf_complete_task() {
+        _fzf_complete --multi --reverse --prompt="task> " -- "$@" < <(
+          task --list-all | ${lib.getExe pkgs.ripgrep} --regexp='^\* (.+)' --replace='$1'
+        )
+      }
+
+      _fzf_complete_task_post() {
+        ${lib.getExe pkgs.ripgrep} --regexp='(\S+?): ' --replace='$1'
+      }
+
+      source "${../dependencies/dprint/completions.zsh}"
+      source "${../dependencies/goldwarden/completions.zsh}"
+
+      # Disable `Ctrl + S(no output tty)`
+      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+
+      # https://unix.stackexchange.com/a/3449
+      source_sh () {
+        emulate -LR sh
+        . "$@"
+      }
+
+      source_sh "${homemade-pkgs.posix_shared_functions}"
+
+      if [ 'linux' = "$TERM" ]; then
+        disable_blinking_cursor
+      fi
+
+      # https://superuser.com/a/902508/120469
+      # https://github.com/zsh-users/zsh-autosuggestions/issues/259
+      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # Same as .zshenv.local
+      if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+        source '${config.xdg.configHome}/zsh/.zshrc.local'
+      fi
+    '';
 
     # Use one of profileExtra or loginExtra. Not both
     profileExtra = ''

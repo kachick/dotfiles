@@ -8,6 +8,9 @@
 # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
 # - Do not add shebang and options. It means you shouldn't select `writeShellApplication` here
 #
+# NOTE: You should remember difference of bash and zsh for the arguments handling in completions
+# https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
+#
 # How to stop blinking cursor in Linux console?
 # => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
 let
