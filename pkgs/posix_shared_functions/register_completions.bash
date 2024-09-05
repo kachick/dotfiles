@@ -1,3 +1,0 @@
-# Do not add custom completions if bash default having it. AFAIK bash cannot have both, registering new completions overrides others...
-
-complete -F _fzf_complete_makers -o default -o bashdefault makers
