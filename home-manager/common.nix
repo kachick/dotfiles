@@ -49,6 +49,10 @@
       VISUAL = lib.getExe pkgs.helix; # vscode is heavy even if in VISUAL use
       PAGER = "less";
 
+      # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
+      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
+      MANROFFOPT = "-c";
+
       # - You can check the candidates in `locale -a`
       # - pkgs.glibc installs many candidates, but it does not support darwin
       # This value may overrides NixOS config for GNOME
