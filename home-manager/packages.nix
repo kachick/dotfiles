@@ -104,6 +104,12 @@ with pkgs;
   tlrc
 
   fastfetch # active replacement of neofetch
+
+  # Alternative candidates
+  #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
+  #  - argos-translate - can be closed in offline, but not yet enough accuracy
+  #  - Apertium - does not support Japanese
+  translate-shell # `echo "$text" | trans en:ja`
 ]
 ++ (with homemade-pkgs; [
   la
@@ -139,12 +145,6 @@ with pkgs;
   # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
   chawan # `cha`
-
-  # Alternative candidates
-  #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
-  #  - argos-translate - can be closed in offline, but not yet enough accuracy
-  #  - Apertium - does not support Japanese
-  translate-shell # `echo "$text" | trans en:ja`
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
