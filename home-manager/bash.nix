@@ -121,6 +121,8 @@
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/bash-completion/completions/podman"
+        source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
+        source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
         source "${../dependencies/goldwarden/completions.bash}"
