@@ -139,6 +139,8 @@
     completionInit = ''
       # `autoload` enable to use compinit
       autoload -Uz compinit && _compinit_with_interval
+      # for cargo-make
+      autoload -U +X bashcompinit && bashcompinit
     '';
 
     # Setting bindkey
@@ -204,6 +206,8 @@
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/zsh/site-functions/_podman"
+        # cargo-make recommends to use bash completions for zsh
+        source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.zsh}"
         source "${../dependencies/goldwarden/completions.zsh}"
@@ -218,8 +222,6 @@
         }
 
         source_sh "${homemade-pkgs.posix_shared_functions}"
-        # cargo-make recommends to use bash completions for zsh
-        source_sh "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
         if [ 'linux' = "$TERM" ]; then
           disable_blinking_cursor
