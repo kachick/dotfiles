@@ -143,6 +143,7 @@ with pkgs;
   # Alternative candidates
   #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
   #  - argos-translate - can be closed in offline, but not yet enough accuracy
+  #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
 ])
 ++ (lib.optionals stdenv.isDarwin [
