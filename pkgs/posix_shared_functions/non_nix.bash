@@ -31,9 +31,10 @@ disable_blinking_cursor() {
 # https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
 # And add prefix ___fzf_ for shared function to avoid conflict. It should be used in _fzf_ in each bash and zsh
 
-# No need adding for `cargo-make`, it require subcommand as `cargo-make make`. I'm avoiding the style
+# No need adding for `cargo-make`, it requires subcommand as `cargo-make make`. I'm avoiding the style
 _fzf_complete_makers() {
 	_fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
+		# Don't use `--output-format autocomplete`, it truncates task description
 		makers --list-all-steps | rg --regexp='^\w+ -'
 	)
 }

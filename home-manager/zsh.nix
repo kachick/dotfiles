@@ -206,6 +206,7 @@
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/zsh/site-functions/_podman"
+        # cargo-make recommends to use bash completions for zsh
         source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.zsh}"
