@@ -35,6 +35,17 @@ pkgs.writeText "posix_shared_functions.sh" (
       cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
     }
 
+    cdnix() {
+      if [ $# -lt 1 ]; then
+        echo "Specify Nix injected command you want to dive"
+        return 2
+      fi
+      # TODO: Check exit code and Nix or not
+      local -r command="$(command -v "$1")"
+      # shellcheck disable=SC2164
+      cd "$(${pkgs.coreutils}/bin/dirname "$(${pkgs.coreutils}/bin/dirname "$(${pkgs.coreutils}/bin/readlink --canonicalize "$command")")")"
+    }
+
     gch() {
       fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
     }
