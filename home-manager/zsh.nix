@@ -140,6 +140,7 @@
       # `autoload` enable to use compinit
       autoload -Uz compinit && _compinit_with_interval
       # for cargo-make
+      # AFAIK, it does not take path options. And fast for now, so needless to be cached
       autoload -U +X bashcompinit && bashcompinit
     '';
 
