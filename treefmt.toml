@@ -34,8 +34,14 @@ includes = ["*.go"]
 
 [formatter.shfmt]
 command = "shfmt"
-options = ["--language-dialect", "bash", "--write"]
-includes = ["*.sh", "*.bash", "*.zsh", "*.envrc"]
+options = [
+  "--language-dialect",
+  # shfmt is not supporting zsh even through specified "auto"
+  # https://github.com/mvdan/sh/issues/120
+  "bash",
+  "--write",
+]
+includes = ["*.sh", "*.bash", "*.envrc"]
 
 [formatter.stylua]
 command = "stylua"
