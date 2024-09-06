@@ -126,7 +126,7 @@
 
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = lib.getExe edge-pkgs.zed-editor;
+    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
   };
 
   # List packages installed in system profile. To search, run:
@@ -204,6 +204,8 @@
 
       ## Unfree packages
 
+      # TODO: Consider using vscodium again
+      # TODO: Consider to drop the unuseful vscode until fixed the Wayland problems
       (edge-pkgs.vscode.override (prev: {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
