@@ -22,6 +22,7 @@
     "toml": true,
     "lua": true,
     "basher": true,
-    "base16": true
+    "base16": true,
+    "iceberg": true
   }
 }
