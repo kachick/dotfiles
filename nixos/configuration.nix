@@ -126,7 +126,7 @@
 
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = lib.getExe pkgs.helix;
+    VISUAL = lib.getExe edge-pkgs.zed-editor;
   };
 
   # List packages installed in system profile. To search, run:
