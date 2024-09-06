@@ -37,6 +37,7 @@
           git checkout origin/main && \
           git checkout -b main
       '';
+      resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545

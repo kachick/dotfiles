@@ -31,6 +31,12 @@ in
           enable = true;
         };
 
+        cursor-shape = {
+          insert = "bar";
+          normal = "block";
+          select = "underline";
+        };
+
         lsp = {
           display-inlay-hints = false;
           display-messages = true;

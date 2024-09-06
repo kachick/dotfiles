@@ -1,12 +1,27 @@
 layout {
-    tab focus=true name="common" {
+    tab focus=true name="Filer" {
         pane size=2 borderless=true {
             plugin location="zellij:status-bar"
         }
         pane size=1 borderless=true {
             plugin location="zellij:tab-bar"
         }
-        // BPS
+        pane split_direction="horizontal" {
+            pane size="80%" command="yazi" {
+
+            }
+            pane size="20%" {
+
+            }
+        }
+    }
+    tab name="BPS" {
+        pane size=2 borderless=true {
+            plugin location="zellij:status-bar"
+        }
+        pane size=1 borderless=true {
+            plugin location="zellij:tab-bar"
+        }
         pane split_direction="vertical" {
             pane size="70%" {
 

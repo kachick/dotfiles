@@ -53,9 +53,6 @@
           "PackageIdentifier": "Microsoft.PowerShell"
         },
         {
-          "PackageIdentifier": "wez.wezterm"
-        },
-        {
           "PackageIdentifier": "Alacritty.Alacritty"
         },
         {
@@ -66,12 +63,6 @@
         },
         {
           "PackageIdentifier": "Microsoft.VisualStudioCode"
-        },
-        {
-          "PackageIdentifier": "LGUG2Z.komorebi"
-        },
-        {
-          "PackageIdentifier": "LGUG2Z.whkd"
         },
         {
           "PackageIdentifier": "ajeetdsouza.zoxide"
@@ -90,6 +81,9 @@
         },
         {
           "PackageIdentifier": "Wilfred.difftastic"
+        },
+        {
+          "PackageIdentifier": "sxyazi.yazi"
         }
       ],
       "SourceDetails": {
