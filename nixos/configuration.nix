@@ -233,7 +233,6 @@
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-      blur-my-shell
 
       # Should be changed from default CSS to another to avoid https://github.com/pop-os/shell/issues/132
       # https://github.com/pop-os/shell/blob/cfa0c55e84b7ce339e5ce83832f76fee17e99d51/light.css#L20-L24

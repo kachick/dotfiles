@@ -27,7 +27,7 @@ in
           with pkgs.gnomeExtensions;
           [
             appindicator
-            blur-my-shell
+            # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
             pop-shell
             clipboard-history
             kimpanel
