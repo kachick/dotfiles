@@ -116,7 +116,7 @@
       ];
       packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
-        # Use the Web Player via Firefox
+        # Use Web Player or PWA
       ];
     };
   };
