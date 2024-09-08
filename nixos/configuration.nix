@@ -221,9 +221,12 @@
         ];
       }))
 
+      # Don't use latest chrome - See GH-776
+      # In the first place, it does not run even through it having crucial fixes
+      #
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
-      (edge-pkgs.google-chrome.override (prev: {
+      (google-chrome.override (prev: {
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
