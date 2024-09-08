@@ -179,6 +179,8 @@
 
       firefox
 
+      # Don't use unstable channel. It frequently backported to stable channel
+      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/networking/instant-messengers/signal-desktop/signal-desktop.nix
       (signal-desktop.overrideAttrs (prev: {
         preFixup =
           prev.preFixup
@@ -208,7 +210,9 @@
 
       # TODO: Consider using vscodium again
       # TODO: Consider to drop the unuseful vscode until fixed the Wayland problems
-      (edge-pkgs.vscode.override (prev: {
+      # Don't use unstable channel. It frequently backported to stable channel
+      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
+      (vscode.override (prev: {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
@@ -221,8 +225,9 @@
         ];
       }))
 
-      # Don't use latest chrome - See GH-776
-      # In the first place, it does not run even through it having crucial fixes
+      # Don't use unstable channel. It frequently backported to stable channel
+      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/by-name/go/google-chrome/package.nix
+      #  - Actually unstable is/was broken. See GH-776
       #
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
