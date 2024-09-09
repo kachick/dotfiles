@@ -6,8 +6,9 @@
     # https://github.com/xremap/nix-flake/blob/3717cb0539f4967010ba540baa439a4cf6ea8576/lib/default.nix#L64-L65
     withGnome = true;
 
-    # To investigate GH-773
-    debug = true;
+    # Enable when you investigate GH-773
+    # You can check the logs with `journalctl -f`
+    debug = false;
 
     config = {
       modmap = [
