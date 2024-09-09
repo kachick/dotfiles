@@ -20,7 +20,7 @@
 
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 42;
+    configurationLimit = 20;
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];
