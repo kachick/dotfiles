@@ -1,10 +1,13 @@
 {
   # Modmap for single key rebinds
   services.xremap = {
-    enabled = true;
+    enable = true;
     # https://github.com/xremap/xremap-gnome
     # https://github.com/xremap/nix-flake/blob/3717cb0539f4967010ba540baa439a4cf6ea8576/lib/default.nix#L64-L65
     withGnome = true;
+
+    # To investigate GH-773
+    debug = true;
 
     config = {
       modmap = [
