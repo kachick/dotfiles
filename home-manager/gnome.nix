@@ -41,6 +41,7 @@ in
             just-perfection
             dash-to-dock
             # color-picker # Don't enable by default. It conflicts with clipboard-history
+            xremap
           ]
         );
 
