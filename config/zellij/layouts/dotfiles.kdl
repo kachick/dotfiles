@@ -41,7 +41,7 @@ layout {
     }
     tab name="Help" {
         pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
+            plugin location="zellij:compact-bar"
         }
         pane
         pane size=2 borderless=true {
