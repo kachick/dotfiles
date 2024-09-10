@@ -10,6 +10,17 @@
   lib,
   ...
 }:
+let
+  # https://github.com/NixOS/nixpkgs/issues/309662#issuecomment-2155122284
+  zed-fhs = pkgs.buildFHSUserEnv {
+    name = "zed";
+    targetPkgs = pkgs: [
+      # version in nixos-24.05 does not enable IME
+      edge-pkgs.zed-editor
+    ];
+    runScript = "zed";
+  };
+in
 {
   imports = [
     ./modules/cloudflare-warp.nix
@@ -128,7 +139,7 @@
 
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
+    VISUAL = "${zed-fhs} --wait";
   };
 
   # List packages installed in system profile. To search, run:
@@ -139,7 +150,7 @@
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       helix
       micro
-      edge-pkgs.zed-editor # version in nixos-24.05 does not enable IME
+      zed-fhs
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       usbutils # `lsusb` to get IDs
