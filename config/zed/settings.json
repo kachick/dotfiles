@@ -17,6 +17,7 @@
   "ui_font_size": 16,
   "buffer_font_family": "PlemolJP Console NF",
   "buffer_font_size": 16,
+  "file_icons": true,
   "auto_install_extensions": {
     "nix": true,
     "toml": true,
