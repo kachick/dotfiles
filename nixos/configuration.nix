@@ -139,7 +139,7 @@ in
 
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = "${zed-fhs} --wait";
+    VISUAL = "${lib.getExe zed-fhs} --wait";
   };
 
   # List packages installed in system profile. To search, run:
