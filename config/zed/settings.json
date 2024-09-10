@@ -25,6 +25,8 @@
     "lua": true,
     "kdl": true,
     "basher": true,
+    "powershell": true,
+    "fish": true,
     "base16": true,
     "iceberg": true
   }
