@@ -21,7 +21,9 @@
     "nix": true,
     "toml": true,
     "typos": true,
+    "ruby": true,
     "lua": true,
+    "kdl": true,
     "basher": true,
     "base16": true,
     "iceberg": true
