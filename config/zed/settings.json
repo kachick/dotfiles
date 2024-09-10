@@ -20,6 +20,7 @@
   "auto_install_extensions": {
     "nix": true,
     "toml": true,
+    "typos": true,
     "lua": true,
     "basher": true,
     "base16": true,
