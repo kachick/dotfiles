@@ -10,10 +10,10 @@
     withGnome = true;
 
     # Enable when you investigate GH-773
-    # You can check the logs with `journalctl -f`
     debug = false;
 
     # `"system"` mode does not support Gnome
+    # You can check the log with `journalctl --user --unit xremap --reverse`
     serviceMode = "user";
     userName = "kachick";
     watch = true;
