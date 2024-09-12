@@ -2,6 +2,9 @@
   # Modmap for single key rebinds
   services.xremap = {
     enable = true;
+
+    # If xremap does not start or down with some reasons, try `systemctl --user start xremap`
+    #
     # https://github.com/xremap/xremap-gnome
     # https://github.com/xremap/nix-flake/blob/3717cb0539f4967010ba540baa439a4cf6ea8576/lib/default.nix#L64-L65
     withGnome = true;
@@ -9,6 +12,11 @@
     # Enable when you investigate GH-773
     # You can check the logs with `journalctl -f`
     debug = false;
+
+    # `"system"` mode does not support Gnome
+    serviceMode = "user";
+    userName = "kachick";
+    watch = true;
 
     config = {
       modmap = [
