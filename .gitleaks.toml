@@ -1,0 +1,14 @@
+[extend]
+# useDefault will extend the base configuration with the default gitleaks config:
+# https://github.com/zricethezav/gitleaks/blob/master/config/gitleaks.toml
+useDefault = true
+
+[allowlist]
+stopwords = [
+  # This pattern was detected in `facebook-page-access-token`, but I believe this is a false positive.
+  # See GH-783 for detail
+  # https://github.com/kachick/dotfiles/pull/783#issuecomment-2345176253
+  # https://gist.github.com/cocopon/a04be63f5e0856daa594702299c13160#file-iceberg-terminal-L170
+  # https://github.com/gitleaks/gitleaks/pull/1372
+  '''EAAC2z2Rlc2MAAAAAAAAAFklFQyBodHRwOi8vd3d3LmllYy5j''',
+]

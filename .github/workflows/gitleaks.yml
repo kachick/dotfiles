@@ -15,3 +15,8 @@ jobs:
           # No this env uses hardcoded old version.
           # https://github.com/gitleaks/gitleaks-action/blob/2ec8b9f617b48c888d0653fb5925820e0de9c674/README.md?plain=1#L59C4-L59C20
           GITLEAKS_VERSION: 'latest'
+          # action README says it will respect `gitleaks.toml`, however ths CLI respects only `.gitleaks.toml`
+          # I don't know which is correct or just a typo, so clarifying the path here
+          # https://github.com/gitleaks/gitleaks/blob/e93a7c0d2604fd1bcc43ac9cac6144a62387a8a4/cmd/root.go#L33C18-L33C27
+          # https://github.com/gitleaks/gitleaks-action/blob/2ec8b9f617b48c888d0653fb5925820e0de9c674/README.md?plain=1#L56
+          GITLEAKS_CONFIG: '.gitleaks.toml'
