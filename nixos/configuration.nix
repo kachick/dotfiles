@@ -19,6 +19,7 @@ let
       edge-pkgs.zed-editor
     ];
     runScript = "zed";
+    meta.mainProgram = "zed";
   };
 in
 {
