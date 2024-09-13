@@ -167,7 +167,8 @@ in
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
         name = "Resource Monitor - TUI";
         binding = "<Super>r";
-        command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.btop} --title='Resource Monitor'";
+        # https://askubuntu.com/questions/5172/running-a-desktop-file-in-the-terminal
+        command = "gtk-launch btop.desktop";
       };
 
       # https://github.com/pop-os/shell/blob/master_noble/schemas/org.gnome.shell.extensions.pop-shell.gschema.xml
@@ -239,6 +240,7 @@ in
 
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
+          "btop.desktop:2" # FIXME: Not working
           "${spotify-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
