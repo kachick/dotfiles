@@ -167,7 +167,7 @@ in
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
         name = "Resource Monitor - TUI";
         binding = "<Super>r";
-        command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.bottom} --title='Resource Monitor(btm)'";
+        command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.btop} --title='Resource Monitor'";
       };
 
       # https://github.com/pop-os/shell/blob/master_noble/schemas/org.gnome.shell.extensions.pop-shell.gschema.xml
