@@ -17,7 +17,6 @@
   # See https://github.com/NixOS/nixpkgs/issues/182966 for detail
   environment.etc."udev/hwdb.d/99-local.hwdb".text = ''
     evdev:name:Topre REALFORCE 87 US:*
-      # original: capslock
-      KEYBOARD_KEY_70039=leftctrl
+      KEYBOARD_KEY_70039=leftctrl # original: capslock
   '';
 }
