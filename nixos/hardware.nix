@@ -1,6 +1,7 @@
 { ... }:
 {
   services.udev = {
+    enable = true;
     # Settings keyremap in raw layer than X. See GH-784
     #
     # Specify hardware names even if `evdev:input:*` working for mostcase
