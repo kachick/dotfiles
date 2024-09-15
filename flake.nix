@@ -101,6 +101,10 @@
         }
       );
 
+      packages = forAllSystems (system: {
+        cozette = homemade-packages.${system}.cozette;
+      });
+
       apps = forAllSystems (
         system:
         builtins.listToAttrs (
