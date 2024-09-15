@@ -27,7 +27,8 @@ stdenvNoCC.mkDerivation rec {
     install -Dm644 *.woff -t $out/share/fonts/woff
     install -Dm644 *.woff2 -t $out/share/fonts/woff2
 
-    rename .psf .psfu *.psf
+    cp cozette.psf cozette.psfu
+    cp cozette_hidpi.psf cozette_hidpi.psfu
     install -Dm644 *.psfu -t $out/share/consolefonts
 
     runHook postInstall
