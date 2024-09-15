@@ -19,6 +19,7 @@
   # Specify hardware names even if `evdev:input:*` working for mostcase. I should care both US and JIS layout
   # How to get the KEYBOARD_KEY_700??: `showkey --scancodes` in VT
   # How to get the hardware name:: `udevadm info --attribute-walk /dev/input/event?? | grep -F 'ATTRS{name}'`
+  # How to apply?: After nixos-rebuild switch `sudo udevadm hwdb --update && sudo udevadm trigger` # TODO: Rewrite with systemd-hwdb
   environment.etc."udev/hwdb.d/99-local.hwdb".text = ''
     evdev:name:Topre REALFORCE 87 US:*
       KEYBOARD_KEY_70039=leftctrl # original: capslock
