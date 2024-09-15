@@ -5,7 +5,7 @@
     #
     # Specify hardware names even if `evdev:input:*` working for mostcase
     extraHwdb = ''
-      evdev:input:Topre REALFORCE 87 US:*
+      evdev:name:Topre REALFORCE 87 US:*
         KEYBOARD_KEY_70039=leftctrl # original: capslock
     '';
   };
