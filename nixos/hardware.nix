@@ -25,6 +25,6 @@
       KEYBOARD_KEY_70039=leftctrl # original: capslock
 
     evdev:name:Lenovo ThinkPad Compact USB Keyboard with TrackPoint:* # JIS
-      KEYBOARD_KEY_7003a=leftctrl # original: capslock
+      KEYBOARD_KEY_70039=leftctrl # original: capslock
   '';
 }
