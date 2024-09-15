@@ -23,7 +23,7 @@
         {
           name = "Global";
           remap = {
-            "CapsLock" = "Ctrl_L";
+            # "CapsLock" = "Ctrl_L"; # Avoid using xremap to kill capslock for stability. See GH-784
             "Alt_L" = {
               "held" = "Alt_L";
               "alone" = "Muhenkan";
