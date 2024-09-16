@@ -66,20 +66,19 @@ with pkgs;
   fd # alt find
   du-dust # `dust`, alt du
   procs
+  btop # alt top
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   yazi # prefer the shell wrapper `yy`
 
-  # Do not install wezterm in home-manager layer for non NixOS
-  # - Released wezterm versions are broken on wayland
-  # - Using nightly needs to take long build time, avoiding it for CI time
   alacritty
 
   typos
   hyperfine
   difftastic # `difft`
   gnumake
+  go-task # Installing for enabling shell completion easy
   gitleaks
   deno
   ruby_3_3
@@ -106,6 +105,12 @@ with pkgs;
   tlrc
 
   fastfetch # active replacement of neofetch
+
+  # Alternative candidates
+  #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
+  #  - argos-translate - can be closed in offline, but not yet enough accuracy
+  #  - Apertium - does not support Japanese
+  translate-shell # `echo "$text" | trans en:ja`
 ]
 ++ (with homemade-pkgs; [
   la
@@ -160,4 +165,8 @@ with pkgs;
 
   source-han-code-jp # Includes many definitions, useful for fallback
   inconsolata
+
+  # Don't add zed in macOS with nixpkgs
+  # https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
+  # edge-pkgs.zed-editor
 ])

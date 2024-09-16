@@ -46,8 +46,11 @@
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
       EDITOR = lib.getExe pkgs.helix;
-      VISUAL = lib.getExe pkgs.helix; # vscode is heavy even if in VISUAL use
       PAGER = "less";
+
+      # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
+      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
+      MANROFFOPT = "-c";
 
       # - You can check the candidates in `locale -a`
       # - pkgs.glibc installs many candidates, but it does not support darwin
@@ -122,11 +125,6 @@
 
   # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
   # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
-
-  xdg.configFile."wezterm" = {
-    source = ../config/wezterm;
-    recursive = true;
-  };
 
   xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
   xdg.configFile."alacritty/unix.toml".source =

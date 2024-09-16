@@ -1,4 +1,4 @@
 # GlazeWM
 
-This config maybe too old since I using komorebi instead.
+This config maybe too old.\
 Just keeping settings for now, feel free to remove it.

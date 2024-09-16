@@ -39,12 +39,3 @@ jobs:
           token: ${{ github.token }}
           version: '0.20.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["stylua", "--version"], "nth": 2}
           args: --check .
-
-  markdownlint:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - uses: DavidAnson/markdownlint-cli2-action@b4c9feab76d8025d1e83c653fa3990936df0e6c8 # v16
-        with:
-          globs: '**/*.md'
