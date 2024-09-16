@@ -70,4 +70,6 @@
 
   gredit = pkgs.callPackage ./gredit { };
   git-resolve-conflict = pkgs.callPackage ./git-resolve-conflict { };
+  renmark = pkgs.callPackage ./renmark { };
+  preview = pkgs.callPackage ./preview { };
 }

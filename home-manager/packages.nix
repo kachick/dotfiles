@@ -61,6 +61,7 @@ with pkgs;
   edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
   ripgrep # `rg`
   bat # alt cat
+  mdcat # pipe friendly markdown viewer rather than glow
   hexyl # hex viewer
   dysk # alt df
   fd # alt find
@@ -129,6 +130,7 @@ with pkgs;
   archive-home-files
   prs
   gredit
+  preview
 ])
 ++ (lib.optionals stdenv.isLinux [
   # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
@@ -146,6 +148,8 @@ with pkgs;
   # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
   chawan # `cha`
+
+  homemade-pkgs.renmark # Depend on chawan
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
