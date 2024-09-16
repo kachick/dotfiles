@@ -15,10 +15,10 @@ pkgs.writeShellApplication rec {
       bat # code
       hexyl # binary
       # libsixel
+      mdcat # markdown - Avoid renmark to keep compatibility in darwin
     ])
     ++ [
       (import ../la { inherit pkgs; }) # directory
-      (import ../renmark { inherit pkgs; }) # Markdown
     ];
   # Especially provided for fzf: https://github.com/junegunn/fzf/issues/2855#issuecomment-1164015794
   meta.description = "Run preview commands that are suitable for the file type";

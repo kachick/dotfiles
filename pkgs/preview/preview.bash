@@ -9,7 +9,7 @@ text/html)
 text/*)
 	case "$extension" in
 	md | markdown)
-		renmark "$path"
+		mdcat "$path"
 		;;
 	*)
 		bat --color=always "$path"
