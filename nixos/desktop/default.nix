@@ -50,8 +50,13 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
-    # FIXME: Apply gnome.nix in #680
-    users.kachick = import ../../home-manager/kachick.nix;
+    users.kachick = {
+      imports = [
+        ../../home-manager/kachick.nix
+        ../../home-manager/systemd.nix
+        ../../home-manager/gnome.nix
+      ];
+    };
     extraSpecialArgs = {
       inherit
         inputs

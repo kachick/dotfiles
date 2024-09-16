@@ -78,7 +78,6 @@ nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | key
 
    Candidates
    - `user@linux-cli` # Used in container
-   - `kachick@linux-gui`
 
 ### Podman on Ubuntu
 
