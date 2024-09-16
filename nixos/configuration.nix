@@ -10,22 +10,9 @@
   lib,
   ...
 }:
-let
-  # https://github.com/NixOS/nixpkgs/issues/309662#issuecomment-2155122284
-  zed-fhs = pkgs.buildFHSUserEnv {
-    name = "zed";
-    targetPkgs = pkgs: [
-      # version in nixos-24.05 does not enable IME
-      edge-pkgs.zed-editor
-    ];
-    runScript = "zed";
-    meta.mainProgram = "zed";
-  };
-in
 {
   imports = [
     ./modules/cloudflare-warp.nix
-    (import ./font.nix { inherit pkgs homemade-pkgs; })
     (import ./console.nix { inherit homemade-pkgs; })
     (import ./language.nix { inherit config pkgs; })
   ];
@@ -63,7 +50,7 @@ in
     };
   };
 
-  # Set your time zone.
+  # TODO: Reconsider to set UTC for servers
   time.timeZone = "Asia/Tokyo";
 
   # Allow unfree packages
@@ -71,17 +58,10 @@ in
   nixpkgs.config.allowUnfree = true;
 
   environment.sessionVariables = {
-    MOZ_ENABLE_WAYLAND = "1";
     SSH_ASKPASS_REQUIRE = "prefer";
-    NIXOS_OZONE_WL = "1";
-
-    # Avoiding hidden or unstable mouse cursors when using Alacritty/Wezterm on Wayland
-    #
-    # https://github.com/NixOS/nixpkgs/issues/22652
-    # https://github.com/alacritty/alacritty/issues/6703#issuecomment-2222503206
-    XCURSOR_THEME = "Adwaita";
   };
 
+  # TODO: Reconsider to drop this
   services.packagekit = {
     enable = true;
   };
@@ -91,7 +71,6 @@ in
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
-  services.blueman.enable = true;
 
   # Enable sound with pipewire.
   sound.enable = true;
@@ -116,50 +95,20 @@ in
     package = edge-pkgs.cloudflare-warp;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    kachick = {
-      isNormalUser = true;
-      description = "An admin";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "input" # For finger print in GDM
-      ];
-      packages = [
-        # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
-        # Use Web Player or PWA
-      ];
-    };
-  };
-
   environment.variables = {
-    # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
-    # QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
-
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = "${lib.getExe zed-fhs} --wait";
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages =
-    with pkgs;
-    [
+    (with pkgs; [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       helix
       micro
-      zed-fhs
-      lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       usbutils # `lsusb` to get IDs
-
-      skk-dicts
-      skktools
-
-      alacritty
 
       wget
       curl
@@ -172,10 +121,6 @@ in
       ripgrep
       dig
 
-      # 3rd-party bitwarden helper, because of official cli does not have many core features
-      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
-      edge-pkgs.goldwarden
-
       # Clipboard
       #
       # Don't use clipcat, copyq for wayland problem
@@ -184,107 +129,18 @@ in
       #
       # So use a clipboard gnome extension
 
-      # https://github.com/NixOS/nixpkgs/issues/33282
-      xdg-user-dirs
-
       # Use stable packages even for GUI apps, because of using home-manager stable channel
-
-      firefox
-
-      # Don't use unstable channel. It frequently backported to stable channel
-      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/networking/instant-messengers/signal-desktop/signal-desktop.nix
-      (signal-desktop.overrideAttrs (prev: {
-        preFixup =
-          prev.preFixup
-          + ''
-            gappsWrapperArgs+=(
-              --add-flags "--enable-features=UseOzonePlatform"
-              --add-flags "--ozone-platform=wayland"
-              --add-flags "--enable-wayland-ime"
-              --add-flags "--disable-features=WaylandFractionalScaleV1"
-            )
-          '';
-      }))
 
       podman-tui
       docker-compose
 
       chawan
-
-      gnome.dconf-editor
-
-      # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
-      pop-launcher
-
-      nordic
-
-      ## Unfree packages
-
-      # TODO: Consider using vscodium again
-      # TODO: Consider to drop the unuseful vscode until fixed the Wayland problems
-      # Don't use unstable channel. It frequently backported to stable channel
-      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
-      (vscode.override (prev: {
-        # https://wiki.archlinux.org/title/Wayland#Electron
-        # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
-        commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-          "--enable-features=UseOzonePlatform"
-          "--ozone-platform=wayland"
-          "--enable-wayland-ime"
-          # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
-          # This bug appeared only when using GNOME, not in KDE
-          "--disable-features=WaylandFractionalScaleV1"
-        ];
-      }))
-
-      # Don't use unstable channel. It frequently backported to stable channel
-      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/by-name/go/google-chrome/package.nix
-      #  - Actually unstable is/was broken. See GH-776
-      #
-      # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
-      # `rm -rf ~/.config/google-chrome/Singleton*`
-      (google-chrome.override (prev: {
-        # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-        # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
-        commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
-          "--ozone-platform=wayland"
-          "--ozone-platform-hint=auto"
-          "--enable-wayland-ime"
-        ];
-      }))
-    ]
-    ++ (with pkgs.gnomeExtensions; [
-      appindicator
-
-      # Should be changed from default CSS to another to avoid https://github.com/pop-os/shell/issues/132
-      # https://github.com/pop-os/shell/blob/cfa0c55e84b7ce339e5ce83832f76fee17e99d51/light.css#L20-L24
-      # Apple same color as nord(Nordic) https://github.com/EliverLara/Nordic/blob/5c53654fb6f3e0266ad8c481a099091e92f28274/gnome-shell/_colors.scss#L14-L15
-      (pop-shell.overrideAttrs (prev: {
-        preFixup =
-          prev.preFixup
-          + ''
-            echo '.pop-shell-search-element:select{ background: #8fbcbb !important; color: #fefefe !important; }' >> $out/share/gnome-shell/extensions/pop-shell@system76.com/light.css
-          '';
-      }))
-      clipboard-history
-      kimpanel
-      just-perfection
-      dash-to-dock
-      color-picker
-      xremap
+    ])
+    ++ (with edge-pkgs; [
+      # 3rd-party bitwarden helper, because of official cli does not have many core features
+      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
+      goldwarden
     ]);
-
-  # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
-  environment.etc."xdg/user-dirs.defaults".text = ''
-    DESKTOP=Desktop
-    DOCUMENTS=Documents
-    DOWNLOAD=Downloads
-    MUSIC=Music
-    PICTURES=Pictures
-    PUBLICSHARE=Public
-    TEMPLATES=Templates
-    VIDEOS=Videos
-  '';
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -305,16 +161,7 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  programs.nix-ld.enable = false;
-
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
-  programs.firefox = {
-    enable = true;
-    languagePacks = [
-      "en-US"
-      "ja"
-    ];
-  };
+  # programs.nix-ld.enable = false;
 
   # Prefer NixOS modules rather than home-manager for easy setting up
   programs.goldwarden = {

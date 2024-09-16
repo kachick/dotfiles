@@ -5,13 +5,11 @@
 
   imports = [
     ../../configuration.nix
-    ../../desktop.nix
     ../../hardware.nix
 
-    ./hardware-configuration.nix
+    ../desktop
 
-    inputs.xremap-flake.nixosModules.default
-    ../../xremap.nix
+    ./hardware-configuration.nix
   ];
 
   # Apply better fonts for non X consoles

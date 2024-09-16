@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 {
   # Select internationalisation properties.
   i18n = {
@@ -15,18 +15,5 @@
       LC_TELEPHONE = "ja_JP.UTF-8";
       LC_TIME = "ja_JP.UTF-8";
     };
-
-    inputMethod = {
-      enabled = "fcitx5";
-
-      fcitx5.addons = [
-        pkgs.fcitx5-mozc
-        pkgs.fcitx5-gtk
-      ];
-
-      fcitx5.waylandFrontend = true;
-    };
   };
-
-  services.dbus.packages = [ config.i18n.inputMethod.package ];
 }
