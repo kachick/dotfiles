@@ -111,8 +111,6 @@ with pkgs;
   #  - argos-translate - can be closed in offline, but not yet enough accuracy
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
-
-  hello # Test home-manager is active
 ]
 ++ (with homemade-pkgs; [
   la
