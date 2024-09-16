@@ -6,8 +6,7 @@
   imports = [
     ../../configuration.nix
     ../../hardware.nix
-
-    ../desktop
+    ../../desktop
 
     ./hardware-configuration.nix
     ./fingerprint.nix
