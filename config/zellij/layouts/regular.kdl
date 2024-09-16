@@ -1,5 +1,11 @@
 layout {
-    tab focus=true name="Filer" {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        children
+    }
+    tab_template name="Filer" {
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
@@ -12,10 +18,11 @@ layout {
             }
         }
     }
-    tab name="BPS" {
+    tab_template name="BPS" {
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
+        // BPS - even used 7-3, call binary here :)
         pane split_direction="vertical" {
             pane size="70%" {
 
@@ -26,20 +33,27 @@ layout {
             }
         }
     }
-    tab name="dconf" {
+    tab_template name="Side-by-Side" {
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
-        pane name="edit" edit="home-manager/gnome.nix" size="70%"
-        pane split_direction="vertical" size="30%" {
-            pane name="watch" start_suspended=true command="dconf" {
-                args "watch" "/"
-                start_suspended true
-            }
-            pane name="blank"
+        pane split_direction="vertical" {
+            pane
+            pane
         }
     }
-    tab name="Help" {
+    tab_template name="Plain" {
+        pane size=1 borderless=true {
+            plugin location="zellij:compact-bar"
+        }
+        pane
+    }
+    tab_template name="Help" {
+        // compact looks beautiful, but not enough for beginners like me!
+        //
+        // pane size=1 borderless=true {
+        //     plugin location="zellij:compact-bar"
+        // }
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
@@ -48,4 +62,9 @@ layout {
             plugin location="zellij:status-bar"
         }
     }
+    BPS focus=true name="BPS"
+    Filer name="Filer"
+    Side-by-Side name="Side-by-Side"
+    Plain name="Plain"
+    Help name="Help"
 }

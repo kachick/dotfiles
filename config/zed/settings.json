@@ -7,7 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Base16 Oxocarbon Dark",
+  "theme": "Iceberg",
   "telemetry": {
     "metrics": false
   },
@@ -17,11 +17,20 @@
   "ui_font_size": 16,
   "buffer_font_family": "PlemolJP Console NF",
   "buffer_font_size": 16,
+  "tabs": {
+    "file_icons": true
+  },
   "auto_install_extensions": {
     "nix": true,
     "toml": true,
+    "typos": true,
+    "ruby": true,
     "lua": true,
+    "kdl": true,
     "basher": true,
-    "base16": true
+    "powershell": true,
+    "fish": true,
+    "base16": true,
+    "iceberg": true
   }
 }

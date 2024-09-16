@@ -26,5 +26,6 @@
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
-  "stylua.searchBinaryInPATH": true
+  "stylua.searchBinaryInPATH": true,
+  "shellformat.useEditorConfig": true
 }
