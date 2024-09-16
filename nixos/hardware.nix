@@ -16,7 +16,7 @@
   # Use another filename of "99-local.hwdb"", it is preserved for each host
   #
   # - Specify hardware names even if `evdev:input:*` working for mostcase. I should care both US and JIS layout
-  # - How to get the KEYBOARD_KEY_700??: `nix run nixpkgs#evtest -- /dev/input/event??`
+  # - How to get the KEYBOARD_KEY_700??: `evtest /dev/input/event??`
   # - How to get the hardware name:: `udevadm info --attribute-walk /dev/input/event?? | grep -F 'ATTRS{name}'`
   # - How to apply?: After nixos-rebuild switch `sudo systemd-hwdb update && sudo udevadm trigger`
   environment.etc."udev/hwdb.d/98-keyboards.hwdb".text = ''

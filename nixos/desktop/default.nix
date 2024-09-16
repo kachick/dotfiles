@@ -143,6 +143,8 @@ in
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.
       rhythmbox
 
+      evtest # To debug keyremapper as GH-786
+
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/networking/instant-messengers/signal-desktop/signal-desktop.nix
       (signal-desktop.overrideAttrs (prev: {
