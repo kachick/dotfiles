@@ -1,18 +1,15 @@
-{ inputs, ... }:
+{ ... }:
 
 {
   networking.hostName = "moss";
 
   imports = [
     ../../configuration.nix
-    ../../gui.nix
     ../../hardware.nix
+    ../../desktop
 
     ./hardware-configuration.nix
     ./fingerprint.nix
-
-    inputs.xremap-flake.nixosModules.default
-    ../../xremap.nix
   ];
 
   # Apply better fonts for non X consoles
