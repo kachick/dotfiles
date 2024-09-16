@@ -148,7 +148,6 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          pkgs = import nixpkgs { inherit system; };
           edge-pkgs = import edge-nixpkgs {
             inherit system;
             config = {
@@ -158,21 +157,6 @@
           homemade-pkgs = homemade-packages.${system};
           shared = {
             inherit system;
-            modules = [
-              home-manager.nixosModules.home-manager
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  backupFileExtension = "backup";
-                  # FIXME: Apply gnome.nix in #680
-                  users.kachick = import ./home-manager/kachick.nix;
-                  extraSpecialArgs = {
-                    inherit homemade-pkgs edge-pkgs;
-                  };
-                };
-              }
-            ];
             specialArgs = {
               inherit
                 inputs
@@ -184,15 +168,9 @@
           };
         in
         {
-          "moss" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
-          );
-
-          "algae" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
-          );
-
-          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = shared.modules ++ [ ./nixos/hosts/wsl ]; });
+          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
+          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =

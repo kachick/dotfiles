@@ -1,6 +1,7 @@
 {
   config,
   inputs,
+  outputs,
   pkgs,
   edge-pkgs,
   homemade-pkgs,
@@ -25,7 +26,41 @@ in
     (import ./font.nix { inherit pkgs homemade-pkgs; })
     inputs.xremap-flake.nixosModules.default
     ./xremap.nix
+    inputs.home-manager.nixosModules.home-manager
   ];
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users = {
+    kachick = {
+      isNormalUser = true;
+      description = "An admin";
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "input" # For finger print in GDM
+      ];
+      packages = [
+        # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
+        # Use Web Player or PWA
+      ];
+    };
+  };
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+    # FIXME: Apply gnome.nix in #680
+    users.kachick = import ../../home-manager/kachick.nix;
+    extraSpecialArgs = {
+      inherit
+        inputs
+        outputs
+        edge-pkgs
+        homemade-pkgs
+        ;
+    };
+  };
 
   services.xserver = {
     enable = true;
@@ -242,23 +277,6 @@ in
       "en-US"
       "ja"
     ];
-  };
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    kachick = {
-      isNormalUser = true;
-      description = "An admin";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "input" # For finger print in GDM
-      ];
-      packages = [
-        # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
-        # Use Web Player or PWA
-      ];
-    };
   };
 
   i18n = {

@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ ... }:
 
 {
   networking.hostName = "algae";
