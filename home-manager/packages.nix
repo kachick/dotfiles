@@ -130,7 +130,6 @@ with pkgs;
   archive-home-files
   prs
   gredit
-  renmark
   preview
 ])
 ++ (lib.optionals stdenv.isLinux [
@@ -150,7 +149,7 @@ with pkgs;
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
   chawan # `cha`
 
-  renmark # Depend on chawan
+  homemade-pkgs.renmark # Depend on chawan
 ])
 ++ (lib.optionals stdenv.isDarwin [
   # https://github.com/NixOS/nixpkgs/issues/240819
