@@ -5,7 +5,7 @@
 
   imports = [
     ../../configuration.nix
-    ../../gui.nix
+    ../../desktop.nix
     ../../hardware.nix
 
     ./hardware-configuration.nix
