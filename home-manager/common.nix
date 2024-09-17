@@ -73,11 +73,20 @@
       "${config.xdg.dataHome}/tmpbin"
     ];
 
-    packages = import ./packages.nix {
-      inherit pkgs;
-      inherit edge-pkgs;
-      inherit homemade-pkgs;
-    };
+    packages =
+      import ./packages.nix {
+        inherit pkgs;
+        inherit edge-pkgs;
+        inherit homemade-pkgs;
+      }
+      ++ [
+        (pkgs.writeTextFile {
+          name = "starship.toml";
+          # Not under "starship/starship.toml"
+          destination = "${config.xdg.configHome}/starship.toml";
+          text = builtins.readFile ../config/starship/starship.toml;
+        })
+      ];
   };
 
   # This also changes xdg? Official manual sed this config is better for non NixOS Linux
@@ -134,9 +143,6 @@
     source = ../config/alacritty/themes;
     recursive = true;
   };
-
-  # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
