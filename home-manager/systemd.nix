@@ -4,6 +4,10 @@
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
   systemd = {
     user = {
+
+      # https://github.com/nix-community/home-manager/issues/5452
+      startServices = "sd-switch";
+
       services.podman = {
         Unit = {
           Description = "Podman API Service";
