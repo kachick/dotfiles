@@ -23,9 +23,9 @@ $cmd_duration\
 $container\
 $nix_shell\
 $shell\
-$line_break\
 $time\
 $status\
+$line_break\
 $character"""
 
 # https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
@@ -41,7 +41,7 @@ disabled = true
 
 [character]
 success_symbol = "[>](bold green)"
-error_symbol = "[!](italic purple)"
+error_symbol = "[>](italic purple)"
 
 [status]
 disabled = false
