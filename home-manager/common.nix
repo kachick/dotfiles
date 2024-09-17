@@ -166,11 +166,9 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
-  xdg.configFile."fcitx5/config" = {
-    source = ../config/fcitx5/config;
-  };
-  xdg.configFile."fcitx5/profile" = {
-    source = ../config/fcitx5/profile;
+  # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
+  xdg.configFile."fcitx5" = {
+    source = ../config/fcitx5;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
