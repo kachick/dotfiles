@@ -27,6 +27,13 @@
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
 
+    localVariables = {
+      # This is a minimum note for home-manager dead case such as https://github.com/kachick/dotfiles/issues/680#issuecomment-2353820508
+      PROMPT = ''
+        %~ %? %#
+        > '';
+    };
+
     history = {
       # in memory
       size = 84000;
