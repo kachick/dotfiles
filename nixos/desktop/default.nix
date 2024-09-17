@@ -38,6 +38,7 @@ in
         "networkmanager"
         "wheel"
         "input" # For finger print in GDM
+        "libvirtd" # For virt-manager
       ];
       packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
@@ -91,6 +92,13 @@ in
   };
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
+  # https://nixos.wiki/wiki/Virt-manager
+  #
+  # Alternative candidates: GNOME Boxes, virtualbox, vnware
+  # distrobox is a container based solution, not vm. And see https://github.com/89luca89/distrobox/issues/958
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
 
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
