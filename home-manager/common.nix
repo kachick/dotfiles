@@ -167,7 +167,7 @@
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
   # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
-  xdg.configFile."fcitx5" = {
+  xdg.configFile.fcitx5 = {
     source = ../config/fcitx5;
   };
 
