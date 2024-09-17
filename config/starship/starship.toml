@@ -41,12 +41,12 @@ disabled = true
 
 [character]
 success_symbol = "[>](bold green)"
-error_symbol = "[>](italic purple)"
+error_symbol = "[>](bold red)"
 
 [status]
 disabled = false
 # Displays as a part of character module
-style = "italic purple"
+style = "bold red"
 format = "[$status]($style)"
 
 [git_commit]
