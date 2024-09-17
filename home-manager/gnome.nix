@@ -245,6 +245,11 @@ in
           "org.gnome.Rhythmbox3.desktop:3"
         ];
       };
+
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = [ "qemu:///system" ];
+        uris = [ "qemu:///system" ];
+      };
     };
   };
 }

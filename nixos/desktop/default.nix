@@ -38,6 +38,7 @@ in
         "networkmanager"
         "wheel"
         "input" # For finger print in GDM
+        "libvirtd" # For virt-manager
       ];
       packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
