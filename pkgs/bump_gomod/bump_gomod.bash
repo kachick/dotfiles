@@ -5,6 +5,6 @@ for dir in "$@"; do
 	go get "go@$(go version | grep -oP '(?<=go)\d\S+')"
 done
 
-git ls-files '**go.mod' | xargs git add
+git ls-files '**go.mod' '**go.sum' | xargs git add
 git update-index -q --really-refresh
-git diff-index --quiet HEAD || git commit -m 'Update go.mod' go.mod go.sum
+git diff-index --quiet HEAD || git commit -m 'Update go.mod and go.sum'
