@@ -28,7 +28,8 @@ in
           [
             appindicator
             # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
-            pop-shell
+            # pop-shell # Don't use this extension, often unstable and inactive maintained in these months
+            material-shell
             clipboard-history
             kimpanel
             removable-drive-menu
@@ -146,12 +147,12 @@ in
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        # control-center = [ "<Super>comma" ]; # I set this because of inspired by vscode, but disable to avoid conflict of pop-shell minimizerr
-        www = [ "<Super>w" ]; # Prefer w even through pop-shell recommends to Super+b
+        control-center = [ "<Super>comma" ];
+        www = [ "<Super>w" ]; # Prefer w even through
         home = [ ];
         email = [ ];
         # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
-        search = [ "<Super>f" ]; # pop-shell sets to file manager, but replace to overview
+        search = [ "<Super>f" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
@@ -171,41 +172,28 @@ in
         command = "gtk-launch btop.desktop";
       };
 
-      # https://github.com/pop-os/shell/blob/master_noble/schemas/org.gnome.shell.extensions.pop-shell.gschema.xml
-      "org/gnome/shell/extensions/pop-shell" = {
-        tile-by-default = true;
+      activate-launcher = [ "<Alt>space" ];
 
-        # Keybindings: https://github.com/pop-os/shell/blob/master_noble/scripts/configure.sh
+      active-hint = true;
+    };
 
-        # https://www.reddit.com/r/pop_os/comments/mt5kgf/how_to_change_default_keybind_for/
-        activate-launcher = [ "<Alt>space" ];
+    "org/gnome/shell/extensions/clipboard-history" = {
+      history-size = 100;
+      toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
+      cache-only-favorites = true;
+    };
 
-        active-hint = true;
-      };
+    "org/gnome/shell/extensions/just-perfection" = {
+      startup-status = 0;
 
-      "org/gnome/shell/extensions/clipboard-history" = {
-        history-size = 100;
-        toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
-        cache-only-favorites = true;
-      };
+      clock-menu-position = 1;
+      clock-menu-position-offset = 15;
+    };
 
-      "org/gnome/shell/extensions/just-perfection" = {
-        startup-status = 0;
+    "org/gnome/mutter" = {
+      experimental-features = [ "scale-monitor-framebuffer" ];
 
-        clock-menu-position = 1;
-        clock-menu-position-offset = 15;
-      };
-
-      "org/gnome/mutter" = {
-        experimental-features = [ "scale-monitor-framebuffer" ];
-
-        dynamic-workspaces = false;
-
-        # Disable default Super runs GNOME overview with search
-        # https://ubuntuforums.org/showthread.php?t=2405352
-        # The feature is useful, but frustrated when using pop-shell shortcuts. Super modifier is mostly used now
-        overlay-key = "";
-      };
+      dynamic-workspaces = false;
 
       "org/gnome/mutter/keybindings" = {
         toggle-tiled-left = [ ];
