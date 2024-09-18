@@ -38,7 +38,7 @@ For example
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
-  --flake 'github:kachick/dotfiles#moss' \
+  --flake "github:kachick/dotfiles#$(hostname)" \
   --show-trace
 sudo reboot now
 ```
@@ -48,6 +48,15 @@ List defined hostnames
 ```bash
 nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
+
+This repository intentionally reverts the home-manager NixOS module.\
+So, you should activate the user dotfiles with standalone home-manager even though NixOS.
+
+```bash
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@desktop'
+```
+
+See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
 
 ## Ubuntu
 
@@ -160,6 +169,13 @@ If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
 makers apply user@linux-cli
+```
+
+For NixOS
+
+```bash
+sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
+    makers apply kachick@desktop
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).

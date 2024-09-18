@@ -202,6 +202,17 @@
           };
         in
         {
+          "kachick@desktop" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/systemd.nix
+                ./home-manager/gnome.nix
+              ];
+            }
+          );
+
           "kachick@wsl" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
