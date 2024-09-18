@@ -148,7 +148,7 @@ in
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
         control-center = [ "<Super>comma" ];
-        www = [ "<Super>w" ]; # Prefer w even through
+        www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
         # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
@@ -172,28 +172,29 @@ in
         command = "gtk-launch btop.desktop";
       };
 
-      activate-launcher = [ "<Alt>space" ];
+      "org/gnome/shell/extensions/clipboard-history" = {
+        history-size = 100;
+        toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
+        cache-only-favorites = true;
+      };
 
-      active-hint = true;
-    };
+      "org/gnome/shell/extensions/just-perfection" = {
+        startup-status = 0;
 
-    "org/gnome/shell/extensions/clipboard-history" = {
-      history-size = 100;
-      toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
-      cache-only-favorites = true;
-    };
+        clock-menu-position = 1;
+        clock-menu-position-offset = 15;
+      };
 
-    "org/gnome/shell/extensions/just-perfection" = {
-      startup-status = 0;
+      "org/gnome/mutter" = {
+        experimental-features = [ "scale-monitor-framebuffer" ];
 
-      clock-menu-position = 1;
-      clock-menu-position-offset = 15;
-    };
+        dynamic-workspaces = false;
 
-    "org/gnome/mutter" = {
-      experimental-features = [ "scale-monitor-framebuffer" ];
-
-      dynamic-workspaces = false;
+        # Disable default Super runs GNOME overview with search
+        # https://ubuntuforums.org/showthread.php?t=2405352
+        # The feature is useful, but frustrated when using Super key in another tools. Super modifier is mostly used now
+        overlay-key = "";
+      };
 
       "org/gnome/mutter/keybindings" = {
         toggle-tiled-left = [ ];
