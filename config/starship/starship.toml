@@ -36,8 +36,7 @@ disabled = false
 style = "blue"
 
 [direnv]
-# Do not enable until https://github.com/starship/starship/pull/5657 is released
-disabled = true
+disabled = false
 
 [character]
 success_symbol = "[>](bold green)"

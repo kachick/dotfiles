@@ -47,27 +47,6 @@ in
     };
   };
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.kachick = {
-      imports = [
-        ../../home-manager/kachick.nix
-        ../../home-manager/systemd.nix
-        ../../home-manager/gnome.nix
-      ];
-    };
-    extraSpecialArgs = {
-      inherit
-        inputs
-        outputs
-        edge-pkgs
-        homemade-pkgs
-        ;
-    };
-  };
-
   services.xserver = {
     enable = true;
 
@@ -95,7 +74,6 @@ in
 
   # https://nixos.wiki/wiki/Virt-manager
   #
-  # Alternative candidates: GNOME Boxes, virtualbox, vnware
   # distrobox is a container based solution, not vm. And see https://github.com/89luca89/distrobox/issues/958
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
@@ -140,6 +118,8 @@ in
       xdg-user-dirs
 
       alacritty
+      foot
+      kitty
 
       # TODO: Reconsider to drop this
       skk-dicts
@@ -171,6 +151,7 @@ in
       }))
 
       gnome.dconf-editor
+      gnome.gnome-boxes
 
       # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
       pop-launcher
