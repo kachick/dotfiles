@@ -118,6 +118,8 @@ in
       xdg-user-dirs
 
       alacritty
+      foot
+      kitty
 
       # TODO: Reconsider to drop this
       skk-dicts
