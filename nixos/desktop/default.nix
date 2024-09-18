@@ -47,27 +47,6 @@ in
     };
   };
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.kachick = {
-      imports = [
-        ../../home-manager/kachick.nix
-        ../../home-manager/systemd.nix
-        ../../home-manager/gnome.nix
-      ];
-    };
-    extraSpecialArgs = {
-      inherit
-        inputs
-        outputs
-        edge-pkgs
-        homemade-pkgs
-        ;
-    };
-  };
-
   services.xserver = {
     enable = true;
 
