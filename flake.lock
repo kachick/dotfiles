@@ -613,11 +613,11 @@
         "xremap": "xremap"
       },
       "locked": {
-        "lastModified": 1726517155,
-        "narHash": "sha256-xXgpTX1R2Mx+dWhXs7pupkXz1tgdWyNsGnjt2wsJCLk=",
+        "lastModified": 1726701848,
+        "narHash": "sha256-NBGchlI3+dg3cHAFP+PKWlysW3a88y83XKnthLAmDns=",
         "owner": "xremap",
         "repo": "nix-flake",
-        "rev": "4b70d925f2b0a9b805c7935ae7b20a2156139509",
+        "rev": "2c55335d6509702b0d337b8da697d7048e36123d",
         "type": "github"
       },
       "original": {
