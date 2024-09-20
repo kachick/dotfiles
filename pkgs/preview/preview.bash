@@ -2,7 +2,9 @@ path="$1"
 filename=$(basename -- "$path")
 extension="${filename##*.}"
 
-case "$(file --dereference --brief --mime-type "$path")" in
+IFS='; ' read -r -a mime <<<"$(file --dereference --brief --mime "$path")"
+
+case "${mime[0]}" in
 text/html)
 	cha "$path"
 	;;
@@ -28,6 +30,13 @@ application/x-executable)
 # 	img2sixel "$path"
 # 	;;
 *)
-	bat --color=always "$path"
+	case "${mime[1]}" in
+	charset=binary)
+		hexyl "$path"
+		;;
+	*)
+		bat --color=always "$path"
+		;;
+	esac
 	;;
 esac
