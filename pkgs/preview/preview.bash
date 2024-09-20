@@ -30,6 +30,8 @@ application/x-executable)
 # 	img2sixel "$path"
 # 	;;
 *)
+	printf "mime-type: %s\n" "${mime[0]}"
+
 	case "${mime[1]}" in
 	charset=binary)
 		hexyl --color=always "$path" | less --RAW-CONTROL-CHARS
