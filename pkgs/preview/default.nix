@@ -14,6 +14,7 @@ pkgs.writeShellApplication rec {
       coreutils # For `basename`
       bat # code
       hexyl # binary
+      less # Pager for hexyl. See https://github.com/sharkdp/hexyl/issues/40
       # libsixel
       mdcat # markdown - Avoid renmark to keep compatibility in darwin
     ])

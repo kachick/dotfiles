@@ -22,7 +22,7 @@ inode/directory)
 	la "$path"
 	;;
 application/x-executable)
-	hexyl "$path"
+	hexyl --color=always "$path" | less --RAW-CONTROL-CHARS
 	;;
 # image/*)
 # # TODO: Support images/PDF after using sixel supported terminals for main. Alacritty isn't
@@ -32,7 +32,7 @@ application/x-executable)
 *)
 	case "${mime[1]}" in
 	charset=binary)
-		hexyl "$path"
+		hexyl --color=always "$path" | less --RAW-CONTROL-CHARS
 		;;
 	*)
 		bat --color=always "$path"
