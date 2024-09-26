@@ -134,6 +134,7 @@
               "gredit"
               "renmark"
               "preview"
+              "p"
             ]
           )
           ++ [
