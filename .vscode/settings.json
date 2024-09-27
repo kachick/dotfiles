@@ -16,13 +16,8 @@
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua"
   },
-  "nix.serverPath": "nil",
+  "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
-  "nix.serverSettings": {
-    "nil": {
-      "formatting": { "command": ["nixfmt"] }
-    }
-  },
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
