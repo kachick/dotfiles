@@ -23,8 +23,7 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-      nixos-wsl,
-      xremap-flake,
+      ...
     }@inputs:
     let
       inherit (self) outputs;
