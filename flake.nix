@@ -68,6 +68,8 @@
             # Realize nixd pkgs version inlay hints for stable channel instead of latest
             NIX_PATH = "nixpkgs=${pkgs.path}";
 
+            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp;
+
             buildInputs =
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
@@ -85,7 +87,6 @@
                 dprint
                 stylua
                 typos
-                typos-lsp
                 go_1_22
                 goreleaser
                 trivy
