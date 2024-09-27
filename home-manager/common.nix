@@ -43,9 +43,6 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
-      # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
-      # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = lib.getExe pkgs.helix;
       PAGER = "less";
 
       # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219

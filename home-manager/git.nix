@@ -2,7 +2,6 @@
   pkgs,
   homemade-pkgs,
   lib,
-  config,
   ...
 }:
 

@@ -23,8 +23,7 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-      nixos-wsl,
-      xremap-flake,
+      ...
     }@inputs:
     let
       inherit (self) outputs;
@@ -65,14 +64,16 @@
         in
         {
           default = pkgs.mkShellNoCC {
+            # Realize nixd pkgs version inlay hints for stable channel instead of latest
+            NIX_PATH = "nixpkgs=${pkgs.path}";
+
+            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp;
+
             buildInputs =
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixfmt-rfc-style
-                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
-                nil # Used in vscode Nix extension
-                nixd # Used in zed Nix extension
                 nixpkgs-lint-community
                 nix-init
                 nurl
@@ -85,12 +86,12 @@
                 dprint
                 stylua
                 typos
-                typos-lsp
                 go_1_22
                 goreleaser
                 trivy
               ])
               ++ (with edge-pkgs; [
+                nixd
                 # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
@@ -117,6 +118,7 @@
               "bump_completions"
               "bump_gomod"
               "check_no_dirty_xz_in_nix_store"
+              "check_nixf"
               "bench_shells"
               "walk"
               "ir"

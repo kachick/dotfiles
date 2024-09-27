@@ -1,7 +1,6 @@
 {
   config,
   inputs,
-  outputs,
   pkgs,
   edge-pkgs,
   homemade-pkgs,

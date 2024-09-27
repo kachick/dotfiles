@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  edge-pkgs,
-  ...
-}:
+{ lib, pkgs, ... }:
 
 let
   spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
