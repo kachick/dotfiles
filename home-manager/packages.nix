@@ -112,6 +112,8 @@ with pkgs;
   #  - argos-translate - can be closed in offline, but not yet enough accuracy
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
+
+  zk # Support Zettelkasten method
 ]
 ++ (with homemade-pkgs; [
   la
