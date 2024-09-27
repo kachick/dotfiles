@@ -13,9 +13,6 @@
     # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
     # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
     EDITOR = lib.getExe pkgs.helix;
-
-    # nixd's version inlay-hints does not correctly undersdtand the nixpkgs version, it should be defined with global channel or absolute path for flake
-    NIXD_FLAGS = "--inlay-hints=false";
   };
 
   # TODO: Update since merged https://github.com/nix-community/home-manager/pull/5455

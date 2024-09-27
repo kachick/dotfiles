@@ -65,6 +65,9 @@
         in
         {
           default = pkgs.mkShellNoCC {
+            # Realize nixd pkgs version inlay hints for stable channel instead of latest
+            NIX_PATH = "nixpkgs=${pkgs.path}";
+
             buildInputs =
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
