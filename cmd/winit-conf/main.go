@@ -76,10 +76,10 @@ func provisioners() []provisioner {
 	if err != nil {
 		log.Fatalf("Failed to create alacritty dotfiles directory: %+v", err)
 	}
-	// err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), dirPerm)
-	// if err != nil {
-	// 	log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
-	// }
+	err = os.MkdirAll(filepath.Join(appdataPath, "alacritty"), dirPerm)
+	if err != nil {
+		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
+	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "whkd"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create whkd dotfiles directory: %+v", err)
