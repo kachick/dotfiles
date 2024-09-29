@@ -46,6 +46,8 @@ jobs:
           $PSNativeCommandErrorActionPreference
           $ErrorActionPreference
       - run: |
+          pwsh -Command 'exit'
+      - run: |
           pwsh -Command 'exit 42'
       - run: |
           $PSNativeCommandErrorActionPreference = $true
@@ -173,6 +175,11 @@ jobs:
         run: |
           Write-Host "$PROFILE"
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
+
+          if ($LASTEXITCODE) {
+              exit $LASTEXITCODE
+          }
+
           Install-Module -Force -Name PSFzfHistory
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
       - name: Make sure it correctly copied some config files
