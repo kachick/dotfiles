@@ -76,6 +76,10 @@ jobs:
 
           # Disable to skip(=Enable). When I removed, `Scanning D:\a\dotfiles\dotfiles\distributed-artifact.zip was skipped.` logged
           Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - name: Make sure dynamic signatures are enabled ... or not
         run: |
           Get-MpComputerStatus
@@ -85,6 +89,10 @@ jobs:
           #   Exit 42
           # }
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - uses: actions/checkout@v4
         with:
           # KEEP fetch-depth for goreleaser
@@ -103,7 +111,12 @@ jobs:
       - name: List files - before build
         run: Get-ChildItem
       - name: Build winit-*
-        run: goreleaser build --snapshot --clean
+        run: |
+          goreleaser build --snapshot --clean
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - name: List files - after build
         run: |
           Get-ChildItem
@@ -121,6 +134,10 @@ jobs:
         run: |
           gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" `
             repos/${{ github.repository }}/actions/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}/zip > distributed-artifact.zip
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - name: Check Windows Defender does not false positive detect the product
         run: |
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
@@ -131,6 +148,10 @@ jobs:
 
           Get-MpThreat
           Get-MpThreatDetection
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       # Skipping because of bit slow...
       # - name: Collect Defender log
       #   run: |
@@ -154,6 +175,10 @@ jobs:
         run: |
           .\dist\winit-reg_windows_amd64_v1\winit-reg.exe list
           .\dist\winit-reg_windows_amd64_v1\winit-reg.exe run --all
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
@@ -161,11 +186,23 @@ jobs:
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
           Install-Module -Force -Name PSFzfHistory
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - name: Make sure it correctly copied some config files
         run: |
           Test-Path "$PROFILE"
           Get-Content "$PROFILE"
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
       - name: Release the product
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           goreleaser release --clean
+
+          if ($LASTEXITCODE) {
+            exit $LASTEXITCODE
+          }
