@@ -41,7 +41,8 @@ jobs:
   inspect_runner:
     runs-on: windows-2022
     steps:
-      - run: |
+      - name: Print some variables which is applied in GH-617
+        run: |
           $PSVersionTable
           $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
