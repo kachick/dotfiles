@@ -38,6 +38,18 @@ defaults:
       pwsh -Command "$PSVersionTable; $PSNativeCommandErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
 
 jobs:
+  check_runner:
+    runs-on: windows-2022
+    steps:
+      - run: |
+          $PSVersionTable
+          $PSNativeCommandErrorActionPreference
+          $ErrorActionPreference
+      - run: |
+          pwsh -Command 'exit 42'
+      - run: |
+          $PSNativeCommandErrorActionPreference = $true
+          pwsh -Command 'exit 42'
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
