@@ -54,6 +54,7 @@ jobs:
           $PSVersionTable
           $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
+      - run: ruby -e 'exit 42'
   # This job has many comment-out style note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
