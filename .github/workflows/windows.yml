@@ -33,9 +33,9 @@ permissions:
 
 defaults:
   run:
-    # To respect exit code and make fail-fast behaviors. See https://github.com/kachick/dotfiles/issues/617
+    # To respect exit code and make fail-fast behaviors. See GH-617
     shell: |
-      pwsh -Command "$ErrorActionPreference = 'Stop'; & '{0}'"
+      pwsh -Command "$PSVersionTable; $PSNativeCommandErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
 
 jobs:
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
