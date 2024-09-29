@@ -46,7 +46,7 @@ jobs:
           $PSVersionTable
           $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
-  # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
+  # This job has many comment-out style note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
   # Not Terraform :)
