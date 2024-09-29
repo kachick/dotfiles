@@ -33,9 +33,19 @@ permissions:
 
 defaults:
   run:
-    shell: pwsh
+    # To respect exit code and make fail-fast behaviors. See GH-617
+    shell: |
+      pwsh -Command "$PSVersionTable; $PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
 
 jobs:
+  inspect_runner:
+    runs-on: windows-2022
+    steps:
+      - name: Print some variables which is applied in GH-617
+        run: |
+          $PSVersionTable
+          $PSNativeCommandUseErrorActionPreference
+          $ErrorActionPreference
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
