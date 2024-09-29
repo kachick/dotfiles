@@ -35,7 +35,7 @@ defaults:
   run:
     # To respect exit code and make fail-fast behaviors. See GH-617
     shell: |
-      pwsh -Command "$PSVersionTable; PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
+      pwsh -Command "$PSVersionTable; $PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
 
 jobs:
   check_runner:
@@ -43,14 +43,14 @@ jobs:
     steps:
       - run: |
           $PSVersionTable
-          PSNativeCommandUseErrorActionPreference
+          $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
       - run: |
           pwsh -Command 'exit'
       - run: |
           pwsh -Command 'exit 42'
       - run: |
-          PSNativeCommandUseErrorActionPreference = $true
+          $PSNativeCommandUseErrorActionPreference = $true
           pwsh -Command 'exit 42'
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
@@ -173,13 +173,13 @@ jobs:
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
-          PSNativeCommandUseErrorActionPreference
+          $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
 
           Write-Host "$PROFILE"
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
 
-          PSNativeCommandUseErrorActionPreference
+          $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
 
           Install-Module -Force -Name PSFzfHistory
