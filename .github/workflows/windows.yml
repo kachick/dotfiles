@@ -38,20 +38,13 @@ defaults:
       pwsh -Command "$PSVersionTable; $PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'Stop'; & '{0}'"
 
 jobs:
-  check_runner:
+  inspect_runner:
     runs-on: windows-2022
     steps:
       - run: |
           $PSVersionTable
           $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
-      - run: |
-          pwsh -Command 'exit'
-      - run: |
-          pwsh -Command 'exit 42'
-      - run: |
-          $PSNativeCommandUseErrorActionPreference = $true
-          pwsh -Command 'exit 42'
   # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
@@ -173,15 +166,8 @@ jobs:
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
-          $PSNativeCommandUseErrorActionPreference
-          $ErrorActionPreference
-
           Write-Host "$PROFILE"
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
-
-          $PSNativeCommandUseErrorActionPreference
-          $ErrorActionPreference
-
           Install-Module -Force -Name PSFzfHistory
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
       - name: Make sure it correctly copied some config files
