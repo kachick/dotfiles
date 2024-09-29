@@ -173,12 +173,14 @@ jobs:
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
+          $PSNativeCommandErrorActionPreference
+          $ErrorActionPreference
+
           Write-Host "$PROFILE"
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
 
-          if ($LASTEXITCODE) {
-              exit $LASTEXITCODE
-          }
+          $PSNativeCommandErrorActionPreference
+          $ErrorActionPreference
 
           Install-Module -Force -Name PSFzfHistory
           .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
