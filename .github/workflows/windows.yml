@@ -39,7 +39,7 @@ defaults:
     # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L16-L17
     # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L60-L65
     shell: |
-      pwsh -Command "$PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'stop'; . '{0}'"
+      pwsh -command "$PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'stop'; . '{0}'"
 
 jobs:
   inspect_runner:
