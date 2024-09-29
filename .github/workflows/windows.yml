@@ -41,8 +41,11 @@ defaults:
     shell: |
       pwsh -Command @'
         $PSNativeCommandUseErrorActionPreference = $true
-        $ErrorActionPreference = 'Stop'
+        $ErrorActionPreference = 'stop'
+
         . '{0}'
+
+        if ((Test-Path -LiteralPath variable:\LASTEXITCODE)) { exit $LASTEXITCODE }
       '@
 
 jobs:
