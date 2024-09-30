@@ -53,7 +53,7 @@ pkgs.writeText "posix_shared_functions.sh" (
       fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
     }
 
-    yy() {
+    y() {
       local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
       ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
       if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
