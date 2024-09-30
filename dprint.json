@@ -6,7 +6,8 @@
   "markdown": {
   },
   "yaml": {
-    "quotes": "preferSingle"
+    "quotes": "preferSingle",
+    "trimTrailingWhitespaces": false
   },
   "toml": {
   },
