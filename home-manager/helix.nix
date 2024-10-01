@@ -221,6 +221,9 @@ in
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
       lua-language-server
 
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
+      vscode-langservers-extracted
+
       ## Not helpful. Didin't activated?
       #
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
