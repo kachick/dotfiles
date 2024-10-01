@@ -22,12 +22,18 @@
   },
   "lsp": {
     "vscode-json-language-server": {
-      "command": "vscode-json-language-server",
-      "arguments": ["--stdio"]
+      "binary": {
+        "path": "/run/current-system/sw/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
     }
   },
   "languages": {
     "JSON": {
+      // See GH-781 and GH-809 for detail
+      "language_servers": ["vscode-json-language-server"]
+    },
+    "JSONC": {
       // See GH-781 and GH-809 for detail
       "language_servers": ["vscode-json-language-server"]
     }

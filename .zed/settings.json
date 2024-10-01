@@ -5,7 +5,31 @@
       "arguments": ["fmt", "--stdin", "{buffer_path}"]
     }
   },
+  "lsp": {
+    "vscode-json-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
+    }
+    // "json-language-server": {
+    //   "binary": {
+    //     "path": "/run/current-system/sw/bin/vscode-json-language-server",
+    //     "arguments": ["--stdio"]
+    //   }
+    // }
+  },
   "languages": {
+    "JSON": {
+      "enable_language_server": true,
+      // See GH-781 and GH-809 for detail
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+    },
+    "JSONC": {
+      "enable_language_server": true,
+      // See GH-781 and GH-809 for detail
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+    },
     "Markdown": {
       // Disabled by default in markdown: https://github.com/zed-industries/zed/blob/684d9dde5681504d8fe53ffe450c94902b3fa45b/assets/settings/default.json#L781
       "format_on_save": "on",
