@@ -118,6 +118,8 @@
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
+      vscode-langservers-extracted
+
       # gnome-music does not support flac.
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.
       rhythmbox

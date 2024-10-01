@@ -20,10 +20,16 @@
   "tabs": {
     "file_icons": true
   },
+  "lsp": {
+    "vscode-json-language-server": {
+      "command": "vscode-json-language-server",
+      "arguments": ["--stdio"]
+    }
+  },
   "languages": {
     "JSON": {
       // See GH-781 and GH-809 for detail
-      "enable_language_server": false
+      "language_servers": ["vscode-json-language-server"]
     }
   },
   "auto_install_extensions": {
