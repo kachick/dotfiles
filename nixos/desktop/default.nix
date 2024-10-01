@@ -99,6 +99,7 @@
   environment.systemPackages =
     [
       # version in nixos-24.05 does not enable IME
+      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       edge-pkgs.zed-editor
     ]
     ++ (with pkgs; [
