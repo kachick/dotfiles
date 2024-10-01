@@ -26,16 +26,24 @@
         "path": "/run/current-system/sw/bin/vscode-json-language-server",
         "arguments": ["--stdio"]
       }
+    },
+    "json-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
     }
   },
   "languages": {
     "JSON": {
+      // "enable_language_server": true,
       // See GH-781 and GH-809 for detail
-      "language_servers": ["vscode-json-language-server"]
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
     },
     "JSONC": {
+      // "enable_language_server": true,
       // See GH-781 and GH-809 for detail
-      "language_servers": ["vscode-json-language-server"]
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
     }
   },
   "auto_install_extensions": {
