@@ -8,18 +8,6 @@
   ...
 }:
 
-# let
-#   # https://github.com/NixOS/nixpkgs/issues/309662#issuecomment-2155122284
-#   zed-fhs = pkgs.buildFHSUserEnv {
-#     name = "zed";
-#     targetPkgs = pkgs: [
-#       # version in nixos-24.05 does not enable IME
-#       edge-pkgs.zed-editor
-#     ];
-#     runScript = "zed";
-#     meta.mainProgram = "zed";
-#   };
-# in
 {
   imports = [
     (import ./font.nix { inherit pkgs homemade-pkgs; })
