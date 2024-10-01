@@ -125,7 +125,7 @@
               "todo"
               "la"
               "lat"
-              "zed-editor"
+              "zed"
               "ghqf"
               "git-delete-merged-branches"
               "git-log-fzf"

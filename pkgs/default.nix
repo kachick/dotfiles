@@ -18,7 +18,7 @@
 
   lat = import ./lat { inherit pkgs; };
 
-  zed-editor = import ./zed-editor { inherit pkgs edge-pkgs; };
+  zed = import ./zed { inherit pkgs edge-pkgs; };
 
   walk = import ./walk { inherit pkgs; };
 

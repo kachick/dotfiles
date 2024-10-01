@@ -100,7 +100,9 @@
     [
       # version in nixos-24.05 does not enable IME
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      homemade-pkgs.zed-editor
+      edge-pkgs.zed-editor
+      # Adding for zed instead of zeditor since https://github.com/NixOS/nixpkgs/pull/344193. Also keep original zed-editor package here to add icons for GUI
+      homemade-pkgs.zed
     ]
     ++ (with pkgs; [
       firefox
@@ -231,7 +233,7 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe homemade-pkgs.zed-editor} --wait";
+    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
 
     # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
     # QT_IM_MODULE = "fcitx";
