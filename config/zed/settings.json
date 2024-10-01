@@ -47,6 +47,14 @@
       "enable_language_server": false
     }
   },
+  "terminal": {
+    "shell": {
+      "program": "zsh"
+    },
+    "copy_on_select": true // Looks not working.
+    // TODO: Track https://github.com/zed-industries/zed/issues/18507
+    // "cursor_shape": "bar"
+  },
   "auto_install_extensions": {
     "nix": true,
     "toml": true,
