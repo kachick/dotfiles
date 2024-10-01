@@ -36,14 +36,15 @@
   },
   "languages": {
     "JSON": {
-      // "enable_language_server": true,
-      // See GH-781 and GH-809 for detail
+      // "enable_language_server": false, // Didn't disable with this option
       "language_servers": ["vscode-json-language-server", "!json-language-server"]
     },
     "JSONC": {
-      // "enable_language_server": true,
-      // See GH-781 and GH-809 for detail
+      // "enable_language_server": false, // Didn't disable with this option
       "language_servers": ["vscode-json-language-server", "!json-language-server"]
+    },
+    "YAML": {
+      "enable_language_server": false
     }
   },
   "auto_install_extensions": {
