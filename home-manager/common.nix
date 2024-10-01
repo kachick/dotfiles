@@ -16,6 +16,7 @@
     ./ssh.nix
     ./git.nix
     ./editors.nix
+    ./terminals.nix
     ./fzf.nix
     ./firefox.nix
     ./linux.nix
@@ -116,25 +117,6 @@
     # Use same nixpkgs channel as same as fzf
   };
 
-  # https://nixos.wiki/wiki/Home_Manager
-  #   - Prefer XDG_*
-  #   - If can't write the reason as a comment
-
-  # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
-  # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
-
-  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
-  xdg.configFile."alacritty/unix.toml".source =
-    if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
-  xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
-  xdg.configFile."alacritty/themes" = {
-    source = ../config/alacritty/themes;
-    recursive = true;
-  };
-
-  # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
-
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
@@ -172,6 +154,9 @@
   programs.starship = {
     enable = true;
   };
+
+  # Not under "starship/starship.toml"
+  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/yazi.nix
   # TODO: Use shell integrations for `y` after release-24.11. 24.05 is using fixed old `ya`
