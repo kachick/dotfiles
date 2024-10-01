@@ -20,6 +20,14 @@
   "tabs": {
     "file_icons": true
   },
+  "lsp": {
+    "json-language-server": {
+      "binary": {
+        "path": "/nix/store/hrg81mqrw6ihcf0lafq695vwf7s9vs93-vscode-langservers-extracted-4.10.0/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
+    }
+  },
   "auto_install_extensions": {
     "nix": true,
     "toml": true,

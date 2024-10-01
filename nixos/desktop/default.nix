@@ -8,18 +8,18 @@
   ...
 }:
 
-let
-  # https://github.com/NixOS/nixpkgs/issues/309662#issuecomment-2155122284
-  zed-fhs = pkgs.buildFHSUserEnv {
-    name = "zed";
-    targetPkgs = pkgs: [
-      # version in nixos-24.05 does not enable IME
-      edge-pkgs.zed-editor
-    ];
-    runScript = "zed";
-    meta.mainProgram = "zed";
-  };
-in
+# let
+#   # https://github.com/NixOS/nixpkgs/issues/309662#issuecomment-2155122284
+#   zed-fhs = pkgs.buildFHSUserEnv {
+#     name = "zed";
+#     targetPkgs = pkgs: [
+#       # version in nixos-24.05 does not enable IME
+#       edge-pkgs.zed-editor
+#     ];
+#     runScript = "zed";
+#     meta.mainProgram = "zed";
+#   };
+# in
 {
   imports = [
     (import ./font.nix { inherit pkgs homemade-pkgs; })
@@ -109,7 +109,10 @@ in
   services.blueman.enable = true;
 
   environment.systemPackages =
-    [ zed-fhs ]
+    [
+      # version in nixos-24.05 does not enable IME
+      edge-pkgs.zed-editor
+    ]
     ++ (with pkgs; [
       firefox
 
@@ -125,6 +128,8 @@ in
       skktools
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
+
+      vscode-langservers-extracted # Used for zed-editor
 
       # gnome-music does not support flac.
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.
@@ -237,7 +242,7 @@ in
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe zed-fhs} --wait";
+    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
 
     # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
     # QT_IM_MODULE = "fcitx";

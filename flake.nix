@@ -82,6 +82,8 @@
                 shfmt
                 gitleaks
                 cargo-make
+                # https://github.com/NixOS/nixpkgs/blob/2c5fac3edf2d00d948253e392ec1604b29b38f14/pkgs/development/node-packages/aliases.nix#L192-L195
+                vscode-langservers-extracted
 
                 dprint
                 stylua
