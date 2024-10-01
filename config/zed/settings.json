@@ -20,6 +20,7 @@
   "tabs": {
     "file_icons": true
   },
+  // FIXME: Actually not working...
   "lsp": {
     "vscode-json-language-server": {
       "binary": {
@@ -31,6 +32,12 @@
       "binary": {
         "path": "/run/current-system/sw/bin/vscode-json-language-server",
         "arguments": ["--stdio"]
+      }
+    },
+    "bash-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/bash-language-server",
+        "arguments": ["start"]
       }
     }
   },
@@ -44,6 +51,9 @@
       "language_servers": ["vscode-json-language-server", "!json-language-server"]
     },
     "YAML": {
+      "enable_language_server": false
+    },
+    "Shell Script": {
       "enable_language_server": false
     }
   },
