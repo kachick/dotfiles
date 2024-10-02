@@ -4,6 +4,6 @@ Version=1.0
 Terminal=false
 Type=Application
 Name=Amazon Music
-Exec=google-chrome-stable --profile-directory=Default --app-id=dojpeppajphepagdhclblkkjnoaeamee
-Icon=chrome-dojpeppajphepagdhclblkkjnoaeamee-Default
+Exec=google-chrome-stable "--profile-directory=Profile_1" --app-id=dojpeppajphepagdhclblkkjnoaeamee
+Icon=chrome-dojpeppajphepagdhclblkkjnoaeamee-Profile_1
 StartupWMClass=crx_dojpeppajphepagdhclblkkjnoaeamee

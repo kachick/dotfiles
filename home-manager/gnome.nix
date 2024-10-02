@@ -2,7 +2,7 @@
 
 let
   spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
-  amazon_music-pwa-file = "chrome-dojpeppajphepagdhclblkkjnoaeamee-Default.desktop";
+  amazon_music-pwa-file = "chrome-dojpeppajphepagdhclblkkjnoaeamee-Profile_1.desktop";
 in
 {
   xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
