@@ -19,6 +19,7 @@
     ./terminals.nix
     ./fzf.nix
     ./firefox.nix
+    ./ime.nix
     ./linux.nix
     ./darwin.nix
   ];
@@ -132,14 +133,6 @@
     X-KDE-AutostartScript=true
     X-KDE-autostart-phase=1
   '';
-
-  # https://wiki.archlinux.org/title/wayland
-  # Didn't work if the electron is bundled, so unfit for nixpkgs distributing apps
-  # xdg.configFile."electron-flags.conf".text = ''
-  #   --enable-features=UseOzonePlatform
-  #   --ozone-platform=wayland
-  #   --enable-wayland-ime
-  # '';
 
   xdg.dataFile."tmpbin/.keep".text = "";
 

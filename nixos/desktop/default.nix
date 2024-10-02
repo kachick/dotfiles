@@ -133,6 +133,7 @@
 
       newsflash # RSS reader # TODO: Manage config (sqlite?) or Backup the exported OPML
 
+      # TODO: Add `"--wayland-text-input-version=3"` after signal-desktop updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/networking/instant-messengers/signal-desktop/signal-desktop.nix
       (signal-desktop.overrideAttrs (prev: {
@@ -158,8 +159,8 @@
 
       ## Unfree packages
 
+      # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # TODO: Consider using vscodium again
-      # TODO: Consider to drop the unuseful vscode until fixed the Wayland problems
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
       (vscode.override (prev: {
@@ -185,8 +186,10 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
+          "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
           "--ozone-platform-hint=auto"
+          "--wayland-text-input-version=3"
           "--enable-wayland-ime"
         ];
       }))
@@ -238,9 +241,12 @@
   environment.variables = {
     VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
 
-    # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
-    # QT_IM_MODULE = "fcitx";
-    XMODIFIERS = "@im=fcitx";
+    XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
+
+    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
+    # Don't set these in KDE, but should set in GNOME https://discuss.kde.org/t/kde-plasma-wayland/9014
+    QT_IM_MODULE = "fcitx";
+    GTK_IM_MODULE = "fcitx";
   };
 
   environment.sessionVariables = {
