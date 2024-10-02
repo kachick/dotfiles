@@ -19,7 +19,6 @@
     ./terminals.nix
     ./fzf.nix
     ./firefox.nix
-    ./ime.nix
     ./linux.nix
     ./darwin.nix
   ];

@@ -248,11 +248,6 @@ in
         autoconnect = [ "qemu:///system" ];
         uris = [ "qemu:///system" ];
       };
-
-      # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-      "org/gnome/settings-daemon/plugins/xsettings" = {
-        overrides = "{'Gtk/IMModule':<'fcitx'>}";
-      };
     };
   };
 }
