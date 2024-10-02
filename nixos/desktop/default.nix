@@ -121,6 +121,7 @@
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       # Add LSP global for zed-editor. Prefer external package for helix
+      typos-lsp
       vscode-langservers-extracted
       nodePackages.bash-language-server
 
