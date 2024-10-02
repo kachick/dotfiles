@@ -237,7 +237,8 @@ in
 
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
-          "btop.desktop:2" # FIXME: Not working
+          "dev.zed.Zed.desktop:2"
+          # TODO: Add vscode here as zed-editor
           "${spotify-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
