@@ -133,6 +133,7 @@
 
       newsflash # RSS reader # TODO: Manage config (sqlite?) or Backup the exported OPML
 
+      # TODO: Add `"--wayland-text-input-version=3"` after signal-desktop updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/networking/instant-messengers/signal-desktop/signal-desktop.nix
       (signal-desktop.overrideAttrs (prev: {
@@ -142,7 +143,6 @@
             gappsWrapperArgs+=(
               --add-flags "--enable-features=UseOzonePlatform"
               --add-flags "--ozone-platform=wayland"
-              --add-flags "--wayland-text-input-version=3"
               --add-flags "--enable-wayland-ime"
               --add-flags "--disable-features=WaylandFractionalScaleV1"
             )
@@ -159,8 +159,8 @@
 
       ## Unfree packages
 
+      # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # TODO: Consider using vscodium again
-      # TODO: Consider to drop the unuseful vscode until fixed the Wayland problems
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
       (vscode.override (prev: {
@@ -169,7 +169,6 @@
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
           "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
-          "--wayland-text-input-version=3"
           "--enable-wayland-ime"
           # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
           # This bug appeared only when using GNOME, not in KDE
