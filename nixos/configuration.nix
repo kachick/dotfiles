@@ -103,7 +103,6 @@
 
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
-    VISUAL = lib.getExe pkgs.micro;
   };
 
   # List packages installed in system profile. To search, run:
