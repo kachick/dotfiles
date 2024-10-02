@@ -94,13 +94,6 @@
   };
 
   environment.variables = {
-    # Required in both GNOME and KDE
-    XMODIFIERS = "@im=fcitx";
-    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-    # Don't set these in KDE, but should set in GNOME https://discuss.kde.org/t/kde-plasma-wayland/9014
-    QT_IM_MODULE = "fcitx";
-    GTK_IM_MODULE = "fcitx";
-
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
   };
