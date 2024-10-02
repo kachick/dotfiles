@@ -41,9 +41,12 @@ in
 
         favorite-apps = [
           "Alacritty.desktop"
+          "kitty.desktop"
           "dev.zed.Zed.desktop"
-          "org.gnome.Nautilus.desktop"
           "firefox.desktop"
+          "io.gitlab.news_flash.NewsFlash.desktop"
+          "org.gnome.Rhythmbox3.desktop"
+          "org.gnome.Nautilus.desktop"
         ];
       };
 
