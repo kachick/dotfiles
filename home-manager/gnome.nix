@@ -2,9 +2,11 @@
 
 let
   spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
+  amazon_music-pwa-file = "chrome-dojpeppajphepagdhclblkkjnoaeamee-Default.desktop";
 in
 {
   xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
+  xdg.dataFile."applications/${amazon_music-pwa-file}".source = ../config/pwa/amazon_music.desktop;
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
   dconf = {
@@ -46,6 +48,7 @@ in
           "firefox.desktop"
           "google-chrome.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
+          amazon_music-pwa-file
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
         ];
@@ -241,6 +244,7 @@ in
           "dev.zed.Zed.desktop:2"
           # TODO: Add vscode here as zed-editor
           "${spotify-pwa-file}:3"
+          "${amazon_music-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
       };
