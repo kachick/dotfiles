@@ -241,8 +241,6 @@
   environment.variables = {
     VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
 
-    # Don't set *IM_MODULE in KDE: https://discuss.kde.org/t/kde-plasma-wayland/9014
-    # QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
 
     # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
