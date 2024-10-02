@@ -44,6 +44,7 @@ in
           "kitty.desktop"
           "dev.zed.Zed.desktop"
           "firefox.desktop"
+          "google-chrome.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
