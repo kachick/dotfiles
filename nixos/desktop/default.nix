@@ -76,6 +76,7 @@
     (with pkgs; [
       gnome-tour
       gnome-connections
+      # gnome-keyring
     ])
     ++ (with pkgs.gnome; [
       epiphany # web browser
@@ -84,6 +85,13 @@
       gnome-calendar
       gnome-music # does not support flac by defaults
     ]);
+
+  # Recommended to be uninstalled by gnupg.
+  # https://wiki.gnupg.org/GnomeKeyring
+  #
+  # And enabling this makes $SSH_AUTH_SOCK overriding even through enabled gpg-agent in home-manager
+  # https://github.com/NixOS/nixpkgs/issues/101616
+  services.gnome.gnome-keyring.enable = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
