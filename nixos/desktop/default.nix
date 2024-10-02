@@ -142,7 +142,7 @@
             gappsWrapperArgs+=(
               --add-flags "--enable-features=UseOzonePlatform"
               --add-flags "--ozone-platform=wayland"
-              --add-flags "--gtk-version=4"
+              --add-flags "--wayland-text-input-version=3"
               --add-flags "--enable-wayland-ime"
               --add-flags "--disable-features=WaylandFractionalScaleV1"
             )
@@ -169,7 +169,7 @@
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
           "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
-          "--gtk-version=4"
+          "--wayland-text-input-version=3"
           "--enable-wayland-ime"
           # https://github.com/microsoft/vscode/issues/192590#issuecomment-1731312805
           # This bug appeared only when using GNOME, not in KDE
@@ -190,7 +190,7 @@
           "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
           "--ozone-platform-hint=auto"
-          "--gtk-version=4"
+          "--wayland-text-input-version=3"
           "--enable-wayland-ime"
         ];
       }))
