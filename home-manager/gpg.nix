@@ -30,6 +30,8 @@
     maxCacheTtl = 60480000; # 700 days
 
     pinentryPackage = pkgs.pinentry-tty;
+
+    enableSshSupport = true;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
