@@ -30,7 +30,7 @@ Assume you encrypted the config
 
 ```bash
 rclone config touch
-micro "$(rclone config file | tail -1)"
+hx "$(rclone config file | tail -1)"
 ```
 
 Don't save the file in this repository even if it is encrypted with agenix or sops-nix.
@@ -43,7 +43,7 @@ Or directly set `RCLONE_CONFIG_PASS` as this.\
 (`read -s` does not work in zsh)
 
 ```bash
-export RCLONE_CONFIG_PASS="$(micro)"
+export RCLONE_CONFIG_PASS="$(hx)"
 ```
 
 ## Mount

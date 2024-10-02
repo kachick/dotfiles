@@ -1,6 +1,7 @@
 # What are these packages
 
 - Tiny tools by me, they may be rewritten with another language.
+- Nix packages that are not yet included in [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs)
 - Aliases across multiple shells
 
 ## Do not

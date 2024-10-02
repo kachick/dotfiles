@@ -1,6 +1,5 @@
 // candidates: https://github.com/zellij-org/zellij/tree/v0.39.2/zellij-utils/assets/themes
 theme "nord-contrast"
-
 themes {
     // Modified from original nord theme.
     nord-contrast {
@@ -19,25 +18,24 @@ themes {
         orange 208 135 112 // #D08770
     }
 }
-
-default_mode "locked"
-
+// default_mode "locked"
 // candidates: https://github.com/zellij-org/zellij/blob/v0.39.2/zellij-utils/assets/config/default.kdl
 keybinds {
-    shared_except "locked" {
-        bind "Alt q" { Quit; }
-        unbind "Ctrl q" //  conflict micro
-    }
-
+    // shared_except "locked" {
+    //     bind "Alt q" {
+    //         Quit
+    //     }
+    //     unbind "Ctrl q" //  conflict micro
+    // }
     // shared_except "resize" "locked" {
     //     // unbind "Ctrl n" //  conflict why n = resize
     // }
-
     shared_except "tab" "locked" {
-        bind "Alt t" { SwitchToMode "Tab"; }
+        bind "Alt t" {
+            SwitchToMode "Tab"
+        }
         unbind "Ctrl t" // conflict fzf
     }
 }
-
 // $SHELL is now bash since #452
 default_shell "zsh"

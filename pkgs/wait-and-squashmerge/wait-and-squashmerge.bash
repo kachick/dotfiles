@@ -1,5 +1,5 @@
 readonly pr_number="$1"
-commit_subject="$(gh pr view "$pr_number" --json title --template '{{ .title }}' | micro)"
+commit_subject="$(gh pr view "$pr_number" --json title --template '{{ .title }}' | command "$EDITOR")"
 readonly commit_subject
 
 gh pr checks "$pr_number" --interval 5 --watch --fail-fast &&

@@ -15,7 +15,9 @@
     ./gpg.nix
     ./ssh.nix
     ./git.nix
-    ./editor.nix
+    ./editors.nix
+    ./terminals.nix
+    ./fzf.nix
     ./firefox.nix
     ./ime.nix
     ./linux.nix
@@ -43,11 +45,11 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
-      # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
-      # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = lib.getExe pkgs.micro; # If you forgot the keybind: https://github.com/zyedidia/micro/blob/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/help/defaultkeys.md
-      VISUAL = lib.getExe pkgs.micro; # vscode is heavy even if in VISUAL use
       PAGER = "less";
+
+      # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
+      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
+      MANROFFOPT = "-c";
 
       # - You can check the candidates in `locale -a`
       # - pkgs.glibc installs many candidates, but it does not support darwin
@@ -116,30 +118,6 @@
     # Use same nixpkgs channel as same as fzf
   };
 
-  # https://nixos.wiki/wiki/Home_Manager
-  #   - Prefer XDG_*
-  #   - If can't write the reason as a comment
-
-  # Do not alias *.nix into `xdg.configFile`, it actually cannot be used because of using many relative dirs
-  # So you should call `home-manager switch` with `-f ~/repos/dotfiles/USER_NAME.nix`
-
-  xdg.configFile."wezterm" = {
-    source = ../config/wezterm;
-    recursive = true;
-  };
-
-  xdg.configFile."alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
-  xdg.configFile."alacritty/unix.toml".source =
-    if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
-  xdg.configFile."alacritty/common.toml".source = ../config/alacritty/common.toml;
-  xdg.configFile."alacritty/themes" = {
-    source = ../config/alacritty/themes;
-    recursive = true;
-  };
-
-  # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
-
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
@@ -168,52 +146,9 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
-  # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1
-  # Intentionally avoided to use https://github.com/nix-community/home-manager/blob/f58889c07efa8e1328fdf93dc1796ec2a5c47f38/modules/misc/editorconfig.nix
-  home.file.".editorconfig".source =
-    pkgs.fetchFromGitHub {
-      owner = "kachick";
-      repo = "anylang-template";
-      rev = "45d7ef685ac4fd3836c3b32b8ce8fb45e909b771";
-      sha256 = "sha256-F8xP4xCIS1ybvRm1xGB2USekGWKKxz0nokpY6gRxKBE=";
-    }
-    + "/.editorconfig";
-
-  xdg.configFile."fcitx5/config" = {
-    source = ../config/fcitx5/config;
-  };
-  xdg.configFile."fcitx5/profile" = {
-    source = ../config/fcitx5/profile;
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
-  # https://github.com/junegunn/fzf/blob/master/README.md
-  programs.fzf = rec {
-    enable = true;
-
-    # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/README.md#respecting-gitignore
-    defaultCommand = "${pkgs.fd}/bin/fd --type f --strip-cwd-prefix --hidden --follow --exclude .git";
-
-    defaultOptions = [
-      # --walker*: Default file filtering will be changed by this option if FZF_DEFAULT_COMMAND is not set: https://github.com/junegunn/fzf/pull/3649/files
-      "--walker-skip '.git,node_modules,.direnv,vendor,dist'"
-    ];
-
-    # CTRL+T
-    fileWidgetCommand = defaultCommand;
-    fileWidgetOptions = [
-      "--preview '${pkgs.bat}/bin/bat --color=always {}'"
-      "--preview-window '~3'"
-    ];
-
-    # ALT-C
-    changeDirWidgetCommand = "${pkgs.fd}/bin/fd --type d";
-    changeDirWidgetOptions = [ "--preview '${pkgs.eza}/bin/eza --color=always --tree {} | head -200'" ];
-
-    colors = {
-      # See #295 for the detail
-      "bg+" = "#005f5f";
-    };
+  # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
+  xdg.configFile.fcitx5 = {
+    source = ../config/fcitx5;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
@@ -221,12 +156,26 @@
     enable = true;
   };
 
+  # Not under "starship/starship.toml"
+  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/yazi.nix
+  # TODO: Use shell integrations for `y` after release-24.11. 24.05 is using fixed old `ya`
+  programs.yazi = {
+    enable = true;
+    settings = {
+      manager = {
+        sort_dir_first = true;
+      };
+    };
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
     config = {
-      # Candidates: bat --list-themes
+      # Candidates: preview: bat --list-themes | fzf --preview='bat --theme={} --color=always flake.nix'
       theme = "Nord";
 
       style = "plain";
@@ -244,5 +193,16 @@
   xdg.configFile."zellij" = {
     source = ../config/zellij;
     recursive = true;
+  };
+
+  # TODO: Switch to raw config file and shared in Windows
+  programs.ripgrep = {
+    enable = true;
+    # https://github.com/BurntSushi/ripgrep/issues/623#issuecomment-659909044
+    arguments = [
+      "--hidden"
+      "--glob"
+      "!.git"
+    ];
   };
 }

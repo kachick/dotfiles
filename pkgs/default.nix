@@ -6,6 +6,7 @@
   bump_gomod = import ./bump_gomod { inherit pkgs; };
 
   check_no_dirty_xz_in_nix_store = import ./check_no_dirty_xz_in_nix_store { inherit pkgs; };
+  check_nixf = import ./check_nixf { inherit pkgs edge-pkgs; };
 
   safe_quote_backtik = import ./safe_quote_backtik { inherit pkgs; };
 
@@ -17,7 +18,11 @@
 
   lat = import ./lat { inherit pkgs; };
 
+  zed = import ./zed { inherit pkgs edge-pkgs; };
+
   walk = import ./walk { inherit pkgs; };
+
+  ir = pkgs.callPackage ./ir { };
 
   zj = import ./zj { inherit pkgs; };
 
@@ -50,8 +55,24 @@
   };
 
   beedii = pkgs.callPackage ./beedii { };
+  cozette = pkgs.callPackage ./cozette { };
 
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 
   get-rclone-config-password = import ./get-rclone-config-password { inherit pkgs edge-pkgs; };
+
+  micro-fzfinder = pkgs.callPackage ./micro-fzfinder { };
+  micro-kdl = pkgs.callPackage ./micro-kdl { };
+  micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
+
+  cargo-make-completions = pkgs.callPackage ./cargo-make-completions { };
+
+  kdl-vim = pkgs.callPackage ./kdl.vim { };
+
+  nix-hash-url = pkgs.callPackage ./nix-hash-url { };
+
+  gredit = pkgs.callPackage ./gredit { };
+  git-resolve-conflict = pkgs.callPackage ./git-resolve-conflict { };
+  renmark = pkgs.callPackage ./renmark { };
+  preview = pkgs.callPackage ./preview { };
 }

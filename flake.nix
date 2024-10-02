@@ -12,14 +12,9 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-wsl.url = "github:nix-community/NixOS-WSL/main";
+    nixos-wsl.url = "github:nix-community/NixOS-WSL/2405.5.4";
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
     xremap-flake.url = "github:xremap/nix-flake";
-    # Don't use wezterm-flake for now. The IME on wayland does not work than old stable.
-    # wezterm-flake = {
-    #   url = "github:wez/wezterm?dir=nix";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
   };
 
   outputs =
@@ -28,9 +23,7 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-      nixos-wsl,
-      xremap-flake,
-    # wezterm-flake,
+      ...
     }@inputs:
     let
       inherit (self) outputs;
@@ -67,70 +60,101 @@
         let
           pkgs = nixpkgs.legacyPackages.${system};
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+          homemade-pkgs = homemade-packages.${system};
         in
         {
-          default =
-            with pkgs;
-            mkShellNoCC {
-              buildInputs = [
+          default = pkgs.mkShellNoCC {
+            # Realize nixd pkgs version inlay hints for stable channel instead of latest
+            NIX_PATH = "nixpkgs=${pkgs.path}";
+
+            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
+
+            buildInputs =
+              (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixfmt-rfc-style
-                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
-                nil # Used in vscode Nix extension
-                nixd # Used in zed Nix extension
                 nixpkgs-lint-community
-                # To get sha256 around pkgs.fetchFromGitHub in CLI
-                nix-prefetch-git
-                jq
+                nix-init
+                nurl
 
                 shellcheck
                 shfmt
                 gitleaks
                 cargo-make
 
-                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                # https://github.com/numtide/treefmt/pull/250
-                treefmt2
                 dprint
                 stylua
                 typos
-                typos-lsp
+                typos-lsp # For zed-editor typos extension
                 go_1_22
                 goreleaser
                 trivy
-                edge-pkgs.markdownlint-cli2
-              ];
-            };
+              ])
+              ++ (with edge-pkgs; [
+                nixd
+                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                # https://github.com/numtide/treefmt/pull/250
+                treefmt2
+                markdownlint-cli2
+              ])
+              ++ (with homemade-pkgs; [ nix-hash-url ]);
+          };
         }
       );
 
-      apps = forAllSystems (system: {
-        # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cui`
-        # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-        home-manager = mkApp home-manager.defaultPackage.${system};
-        bump_completions = mkApp homemade-packages.${system}.bump_completions;
-        bump_gomod = mkApp homemade-packages.${system}.bump_gomod;
-        check_no_dirty_xz_in_nix_store = mkApp homemade-packages.${system}.check_no_dirty_xz_in_nix_store;
-        bench_shells = mkApp homemade-packages.${system}.bench_shells;
-        walk = mkApp homemade-packages.${system}.walk;
-        todo = mkApp homemade-packages.${system}.todo;
-        la = mkApp homemade-packages.${system}.la;
-        lat = mkApp homemade-packages.${system}.lat;
-        ghqf = mkApp homemade-packages.${system}.ghqf;
-        git-delete-merged-branches = mkApp homemade-packages.${system}.git-delete-merged-branches;
-        git-log-fzf = mkApp homemade-packages.${system}.git-log-fzf;
-        git-log-simple = mkApp homemade-packages.${system}.git-log-simple;
-        prs = mkApp homemade-packages.${system}.prs;
-        trim-github-user-prefix-for-reponame =
-          mkApp
-            homemade-packages.${system}.trim-github-user-prefix-for-reponame;
+      packages = forAllSystems (system: {
+        cozette = homemade-packages.${system}.cozette;
       });
+
+      apps = forAllSystems (
+        system:
+        builtins.listToAttrs (
+          (map
+            (name: {
+              inherit name;
+              value = mkApp homemade-packages.${system}.${name};
+            })
+            [
+              "bump_completions"
+              "bump_gomod"
+              "check_no_dirty_xz_in_nix_store"
+              "check_nixf"
+              "bench_shells"
+              "walk"
+              "ir"
+              "todo"
+              "la"
+              "lat"
+              "zed"
+              "ghqf"
+              "git-delete-merged-branches"
+              "git-log-fzf"
+              "git-log-simple"
+              "git-resolve-conflict"
+              "prs"
+              "nix-hash-url"
+              "trim-github-user-prefix-for-reponame"
+              "gredit"
+              "renmark"
+              "preview"
+              "p"
+            ]
+          )
+          ++ [
+            # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
+            # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+            {
+              name = "home-manager";
+              value = mkApp home-manager.defaultPackage.${system};
+            }
+          ]
+        )
+      );
 
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          pkgs = import nixpkgs { inherit system; };
           edge-pkgs = import edge-nixpkgs {
             inherit system;
             config = {
@@ -140,24 +164,6 @@
           homemade-pkgs = homemade-packages.${system};
           shared = {
             inherit system;
-            modules = [
-              ./nixos/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  backupFileExtension = "backup";
-                  # FIXME: Apply gnome.nix in #680
-                  users.kachick = import ./home-manager/kachick.nix;
-                  extraSpecialArgs = {
-                    inherit homemade-pkgs edge-pkgs;
-                  };
-                };
-              }
-              xremap-flake.nixosModules.default
-              ./nixos/xremap.nix
-            ];
             specialArgs = {
               inherit
                 inputs
@@ -169,24 +175,9 @@
           };
         in
         {
-          "moss" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
-          );
-
-          "algae" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
-          );
-
-          "wsl" = nixpkgs.lib.nixosSystem (
-            shared
-            // {
-              modules = shared.modules ++ [
-                ./nixos/hosts/wsl
-                nixos-wsl.nixosModules.default
-                { wsl.enable = true; }
-              ];
-            }
-          );
+          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
+          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =
@@ -216,7 +207,7 @@
           };
         in
         {
-          "kachick@linux-gui" = home-manager.lib.homeManagerConfiguration (
+          "kachick@desktop" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -278,7 +269,7 @@
             }
           );
 
-          "user@linux-cui" = home-manager.lib.homeManagerConfiguration (
+          "user@linux-cli" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [

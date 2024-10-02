@@ -6,4 +6,7 @@ pkgs.writeShellApplication rec {
     coreutils
     zellij
   ];
+  runtimeEnv = {
+    ZELLIJ_DEFAULT_LAYOUT_PATH = "${../../config/zellij/layouts/regular.kdl}";
+  };
 }

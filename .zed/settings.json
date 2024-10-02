@@ -18,6 +18,9 @@
           "command": "nixfmt",
           "arguments": ["-"]
         }
+      },
+      "inlay_hints": {
+        "enabled": true
       }
     },
     "Go": {

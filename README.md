@@ -38,7 +38,7 @@ For example
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
-  --flake 'github:kachick/dotfiles#moss' \
+  --flake "github:kachick/dotfiles#$(hostname)" \
   --show-trace
 sudo reboot now
 ```
@@ -49,10 +49,21 @@ List defined hostnames
 nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
 
-Some tools are not yet fully automated, read each docs.
+And you may need to manually update `/etc/udev/hwdb.bin` for remapping keyboards.\
+See [GH-801](https://github.com/kachick/dotfiles/issues/801) for detail.
 
-- [WARP](./nixos/WARP.md)
-- [OneDrive](./nixos/OneDrive.md)
+```bash
+sudo systemd-hwdb update && sudo udevadm trigger
+```
+
+This repository intentionally reverts the home-manager NixOS module.\
+So, you should activate the user dotfiles with standalone home-manager even though NixOS.
+
+```bash
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@desktop'
+```
+
+See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
 
 ## Ubuntu
 
@@ -78,12 +89,11 @@ Some tools are not yet fully automated, read each docs.
 1. Apply dotfiles for each use
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux-cui'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux-cli'
    ```
 
    Candidates
-   - `user@linux-cui` # Used in container
-   - `kachick@linux-gui`
+   - `user@linux-cli` # Used in container
 
 ### Podman on Ubuntu
 
@@ -151,7 +161,7 @@ Check [traps](./windows/Multi-booting.md)
 
    ```bash
    touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   micro ~/.ssh/id_ed25519
+   hx ~/.ssh/id_ed25519
    ```
 
 1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
@@ -165,7 +175,15 @@ Check [traps](./windows/Multi-booting.md)
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply user@linux-cui
+makers apply 'kachick@wsl'
+```
+
+For NixOS
+
+```bash
+sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
+    sudo systemd-hwdb update && sudo udevadm trigger && \
+        makers apply 'kachick@desktop'
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).

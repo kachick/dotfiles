@@ -5,7 +5,6 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     git
     fzf
-    micro
     bat
   ];
   meta = {

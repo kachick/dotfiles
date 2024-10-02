@@ -1,5 +1,7 @@
 # WezTerm
 
+Now I'm not using Wezterm from several reasons. But keeping the config and several note for possibilities to use it again in future...
+
 ## How to debug Lua code?
 
 CTRL-SHIFT-L

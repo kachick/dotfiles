@@ -33,10 +33,24 @@ permissions:
 
 defaults:
   run:
-    shell: pwsh
+    # To respect exit code and make fail-fast behaviors. See GH-617
+    #
+    # NOTE: `pwsh` specifier is defined in below
+    # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L16-L17
+    # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L60-L65
+    shell: |
+      pwsh -command "$PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'stop'; . '{0}'"
 
 jobs:
-  # This job has many comment-out tyle note, agree to ugly, but do NOT remove for now.
+  inspect_runner:
+    runs-on: windows-2022
+    steps:
+      - name: Print some variables which is applied in GH-617
+        run: |
+          $PSVersionTable
+          $PSNativeCommandUseErrorActionPreference
+          $ErrorActionPreference
+  # This job has many comment-out style note, agree to ugly, but do NOT remove for now.
   # See #443 for detail.
   #
   # Not Terraform :)

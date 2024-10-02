@@ -8,6 +8,11 @@
 # - Prefer `fname() {}` style: https://unix.stackexchange.com/a/73854
 # - Do not add shebang and options. It means you shouldn't select `writeShellApplication` here
 #
+# NOTE: You should remember difference of bash and zsh for the arguments handling in completions
+# https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
+#
+# How to stop blinking cursor in Linux console?
+# => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
 let
   trim-github-user-prefix-for-reponame = pkgs.callPackage ../trim-github-user-prefix-for-reponame { };
   ghqf = pkgs.callPackage ../ghqf { };
@@ -15,56 +20,47 @@ let
     pkgs.callPackage ../fzf-bind-posix-shell-history-to-git-commit-message
       { };
 in
-pkgs.writeText "posix_shared_functions.sh" ''
-  cdg() {
-    local -r query_repoonly="$(echo "$1" | ${lib.getExe trim-github-user-prefix-for-reponame})"
-    local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
-    if [ -n "$repo" ]; then
-      cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
-    fi
-  }
+pkgs.writeText "posix_shared_functions.sh" (
+  ''
+    cdrepo() {
+      local -r query_repoonly="$(echo "$1" | ${lib.getExe trim-github-user-prefix-for-reponame})"
+      local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
+      if [ -n "$repo" ]; then
+        cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
+      fi
+    }
 
-  gg() {
-    ${lib.getExe pkgs.ghq} get "$1" && cdg "$1"
-  }
+    getrepo() {
+      ${lib.getExe pkgs.ghq} get "$1" && cdrepo "$1"
+    }
 
-  cdt() {
-    cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
-  }
+    cdtemp() {
+      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+    }
 
-  gch() {
-    fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
-  }
+    cdnix() {
+      if [ $# -lt 1 ]; then
+        echo "Specify Nix injected command you want to dive"
+        return 2
+      fi
+      # TODO: Check exit code and Nix or not
+      local -r command="$(command -v "$1")"
+      # shellcheck disable=SC2164
+      cd "$(${pkgs.coreutils}/bin/dirname "$(${pkgs.coreutils}/bin/dirname "$(${pkgs.coreutils}/bin/readlink --canonicalize "$command")")")"
+    }
 
-  # See the reason in GH-660
-  # Original scheme: https://gist.github.com/cocopon/1d481941907d12db7a0df2f8806cfd41
-  apply_iceberg() {
-    # Blue. Mandatory to be changed from ANSI
-    echo -en "\e]P484a0c6"
-    echo -en "\e]PC91acd1"
+    gch() {
+      fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
+    }
 
-    # Black
-    echo -en "\e]P01e2132"
-    echo -en "\e]P86b7089"
-
-    # Red
-    echo -en "\e]P1e27878"
-    echo -en "\e]P9e98989"
-
-    # Green
-    echo -en "\e]P2b4be82"
-    echo -en "\e]PAc0ca8e"
-
-    # Yellow
-    echo -en "\e]P3e2a478"
-    echo -en "\e]PBe9b189"
-
-    # Magenta
-    echo -en "\e]P5a093c7"
-    echo -en "\e]PDada0d3"
-
-    # White
-    echo -en "\e]P7c6c8d1"
-    echo -en "\e]PFd2d4de"
-  }
-''
+    y() {
+      local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
+      ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
+      if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+        builtin cd -- "$cwd"
+      fi
+      ${pkgs.coreutils}/bin/rm -f -- "$tmp"
+    }
+  ''
+  + (builtins.readFile ./non_nix.bash)
+)

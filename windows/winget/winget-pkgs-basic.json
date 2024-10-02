@@ -38,6 +38,9 @@
           "PackageIdentifier": "sharkdp.bat"
         },
         {
+          "PackageIdentifier": "Helix.Helix"
+        },
+        {
           "PackageIdentifier": "zyedidia.micro"
         },
         {
@@ -48,9 +51,6 @@
         },
         {
           "PackageIdentifier": "Microsoft.PowerShell"
-        },
-        {
-          "PackageIdentifier": "wez.wezterm"
         },
         {
           "PackageIdentifier": "Alacritty.Alacritty"
@@ -65,12 +65,6 @@
           "PackageIdentifier": "Microsoft.VisualStudioCode"
         },
         {
-          "PackageIdentifier": "LGUG2Z.komorebi"
-        },
-        {
-          "PackageIdentifier": "LGUG2Z.whkd"
-        },
-        {
           "PackageIdentifier": "ajeetdsouza.zoxide"
         },
         {
@@ -78,6 +72,18 @@
         },
         {
           "PackageIdentifier": "WinFsp.WinFsp"
+        },
+        {
+          "PackageIdentifier": "Fastfetch-cli.Fastfetch"
+        },
+        {
+          "PackageIdentifier": "Clement.bottom"
+        },
+        {
+          "PackageIdentifier": "Wilfred.difftastic"
+        },
+        {
+          "PackageIdentifier": "sxyazi.yazi"
         }
       ],
       "SourceDetails": {

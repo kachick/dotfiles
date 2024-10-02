@@ -2,7 +2,6 @@
   pkgs,
   homemade-pkgs,
   lib,
-  config,
   ...
 }:
 
@@ -37,6 +36,7 @@
           git checkout origin/main && \
           git checkout -b main
       '';
+      resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
     };
 
     # TODO: They will be overridden by local hooks, Fixes in #545
@@ -68,16 +68,18 @@
       };
 
       core = {
-        # For git commit message 50/72 convention
-        editor = "micro -colorcolumn 72";
+        # Helix considers git commit message 50/72 convention by default
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1569
+        editor = lib.getExe pkgs.helix;
         quotepath = false;
+
+        # To avoid conflicting with markdown headers
+        commentchar = ";";
       };
 
       # Affect in rebase -i
       sequence = {
-        # - For git commit message 50/72 convention
-        # - Consider prefixed 5 + 1 + 7 + 1 chars as "pick c290ca9 "
-        editor = "micro -colorcolumn 64";
+        editor = lib.getExe pkgs.helix;
       };
 
       init = {
@@ -125,6 +127,9 @@
     };
   };
 
+  # If you encounter .config/gh/config.yml readonly permission errors, attempt after `rm -rf ~/.config/gh`
+  # https://github.com/cli/cli/pull/5378#issuecomment-2252558180
+  #
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
   programs.gh = {
     enable = true;

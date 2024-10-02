@@ -99,6 +99,7 @@ args = [
   'backup',
   '--flake',
   '.#${@}',
+  '--show-trace',
 ]
 
 [tasks.apply]
@@ -112,6 +113,7 @@ args = [
   'backup',
   '--flake',
   '.#${@}',
+  '--show-trace',
 ]
 
 [tasks.ci-dev]
@@ -138,3 +140,7 @@ command = './containers/sandbox-with-ghcr.bash'
 args = [
   'latest',
 ]
+
+[tasks.workspace]
+command = 'zellij'
+args = ['--layout', './config/zellij/layouts/dotfiles.kdl']

@@ -22,7 +22,6 @@ on:
 
 jobs:
   tasks:
-    if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
     strategy:
       fail-fast: false
       matrix:
@@ -33,12 +32,15 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@v13
+      - uses: DeterminateSystems/nix-installer-action@v14
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
           ls -alh ~
-      - uses: DeterminateSystems/magic-nix-cache-action@v7
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix flake show
+      - run: nix flake check
+        # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
+        if: runner.os == 'Linux'
       - run: nix develop --command makers ci-dev

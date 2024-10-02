@@ -72,10 +72,6 @@ func provisioners() []provisioner {
 	// As I understand it, unix like permission masks will work even in windows...
 	const dirPerm = 0750
 
-	err = os.MkdirAll(filepath.Join(homePath, ".config", "wezterm"), dirPerm)
-	if err != nil {
-		log.Fatalf("Failed to create wezterm dotfiles directory: %+v", err)
-	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create alacritty dotfiles directory: %+v", err)
@@ -86,14 +82,11 @@ func provisioners() []provisioner {
 	}
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "whkd"), dirPerm)
 	if err != nil {
-		log.Fatalf("Failed to create GlazeWM dotfiles directory: %+v", err)
+		log.Fatalf("Failed to create whkd dotfiles directory: %+v", err)
 	}
 
 	return []provisioner{
 		newProvisioner([]string{"config", "starship", "starship.toml"}, []string{homePath, ".config", "starship.toml"}),
-
-		// TODO: Copy all this wezterm dir
-		newProvisioner([]string{"config", "wezterm", "wezterm.lua"}, []string{homePath, ".config", "wezterm", "wezterm.lua"}),
 
 		newProvisioner([]string{"config", "alacritty", "common.toml"}, []string{homePath, ".config", "alacritty", "common.toml"}),
 		newProvisioner([]string{"config", "alacritty", "windows.toml"}, []string{homePath, ".config", "alacritty", "windows.toml"}),
@@ -104,11 +97,6 @@ func provisioners() []provisioner {
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-storage.json"}, []string{tmpdirPath, "winget-pkgs-storage.json"}),
-
-		// Can I move it to komorebi~ path? application.yaml in root looks like too wide
-		newProvisioner([]string{"windows", "komorebi", "applications.yaml"}, []string{homePath, "applications.yaml"}),
-		newProvisioner([]string{"windows", "komorebi", "komorebi.json"}, []string{homePath, "komorebi.json"}),
-		newProvisioner([]string{"windows", "whkd", "whkdrc"}, []string{homePath, ".config", "whkd", "whkdrc"}),
 
 		// You may need to custom the memory size
 		newProvisioner([]string{"windows", "WSL", ".wslconfig"}, []string{homePath, ".wslconfig"}),

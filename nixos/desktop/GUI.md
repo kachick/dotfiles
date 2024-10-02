@@ -12,7 +12,7 @@ Q: How to reload GNOME on wayland settings without reboot?\
 A: [`SUPER+L`](https://superuser.com/a/1740160)
 
 Q: How to check current settings?\
-A: Use `gsettings`
+A: Use `gsettings` or [`dconf-editor`](https://wiki.nixos.org/wiki/GNOME)
 
 ```bash
 gsettings get org.gnome.desktop.lockdown disable-lock-screen
