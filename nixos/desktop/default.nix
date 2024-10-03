@@ -76,7 +76,6 @@
     (with pkgs; [
       gnome-tour
       gnome-connections
-      # gnome-keyring
     ])
     ++ (with pkgs.gnome; [
       epiphany # web browser

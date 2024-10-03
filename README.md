@@ -162,6 +162,8 @@ Check [traps](./windows/Multi-booting.md)
    ```bash
    touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
    hx ~/.ssh/id_ed25519
+   echo UPDATESTARTUPTTY | gpg-connect-agent # https://unix.stackexchange.com/a/371910
+   ssh-add ~/.ssh/id_ed25519
    ```
 
 1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
