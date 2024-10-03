@@ -47,6 +47,8 @@
     # GPG
     gnupg
 
+    pass
+
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
     # See following issues
     # - https://github.com/kachick/dotfiles/issues/280

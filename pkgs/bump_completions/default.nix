@@ -1,11 +1,12 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 pkgs.writeShellApplication rec {
   name = "bump_completions";
   text = builtins.readFile ./${name}.bash;
-  runtimeInputs =
-    (with pkgs; [
+  runtimeInputs = (
+    with pkgs;
+    [
       git
       dprint
-    ])
-    ++ [ edge-pkgs.goldwarden ];
+    ]
+  );
 }

@@ -35,16 +35,9 @@ hx "$(rclone config file | tail -1)"
 
 Don't save the file in this repository even if it is encrypted with agenix or sops-nix.
 
-## Persist the token in a session
+## Decrypt the config in a session
 
-Always need the token when modifying config is too annoy.\
-Now it reads from `RCLONE_PASSWORD_COMMAND`.\
-Or directly set `RCLONE_CONFIG_PASS` as this.\
-(`read -s` does not work in zsh)
-
-```bash
-export RCLONE_CONFIG_PASS="$(hx)"
-```
+The token should be injected with `RCLONE_PASSWORD_COMMAND`.
 
 ## Mount
 

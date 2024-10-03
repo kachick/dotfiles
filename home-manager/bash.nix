@@ -125,7 +125,6 @@
         source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
-        source "${../dependencies/goldwarden/completions.bash}"
 
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef

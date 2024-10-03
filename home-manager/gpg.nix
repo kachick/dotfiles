@@ -29,14 +29,12 @@ in
 
     # Update [darwin.nix](darwin.nix) if changed this section
     #
-    # TODO: Reconsider the ttls with recent use
-    #
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
-    defaultCacheTtl = day * 700;
+    defaultCacheTtl = day * 7;
     # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
     # ssh-agent sets it as infinite by default. So I can relax here (maybe)
     defaultCacheTtlSsh = day * 30;
-    maxCacheTtl = day * 700;
+    maxCacheTtl = day * 7;
 
     pinentryPackage = pkgs.pinentry-tty;
 
@@ -61,5 +59,10 @@ in
 
       personal-digest-preferences = "SHA512";
     };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/password-store.nix
+  programs.password-store = {
+    enable = true;
   };
 }
