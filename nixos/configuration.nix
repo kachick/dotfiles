@@ -165,6 +165,7 @@
   programs.goldwarden = {
     package = edge-pkgs.goldwarden;
     enable = true;
+    useSshAgent = false;
   };
 
   # https://nixos.wiki/wiki/Podman
