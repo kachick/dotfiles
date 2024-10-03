@@ -64,6 +64,8 @@
       LESSCHARSET = "utf-8";
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
+
+      RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.pass} show 'rclone'";
     };
 
     sessionPath = [

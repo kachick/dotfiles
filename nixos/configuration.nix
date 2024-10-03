@@ -100,8 +100,9 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages =
-    (with pkgs; [
+  environment.systemPackages = (
+    with pkgs;
+    [
       vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
       helix
       micro
@@ -133,12 +134,8 @@
       docker-compose
 
       chawan
-    ])
-    ++ (with edge-pkgs; [
-      # 3rd-party bitwarden helper, because of official cli does not have many core features
-      # Use latest because of nixos-24.05 distributing version has a crucial bug: https://github.com/quexten/goldwarden/issues/190
-      goldwarden
-    ]);
+    ]
+  );
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -160,13 +157,6 @@
   # networking.firewall.enable = false;
 
   # programs.nix-ld.enable = false;
-
-  # Prefer NixOS modules rather than home-manager for easy setting up
-  programs.goldwarden = {
-    package = edge-pkgs.goldwarden;
-    enable = true;
-    useSshAgent = false;
-  };
 
   # https://nixos.wiki/wiki/Podman
   virtualisation = {
