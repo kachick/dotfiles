@@ -18,6 +18,10 @@
 #   - `gpg --armor --export PUBKEY | clip.exe`
 # - How to backup private key?
 #   - `gpg --export-secret-keys --armor > gpg-private.keys.bak`
+let
+  # All gpg-agent timeouts numbers should be specified with the `seconds`
+  day = 60 * 60 * 24;
+in
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/gpg-agent.nix
   services.gpg-agent = {
@@ -25,11 +29,18 @@
 
     # Update [darwin.nix](darwin.nix) if changed this section
     #
+    # TODO: Reconsider the ttls with recent use
+    #
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
-    defaultCacheTtl = 60480000; # 700 days
-    maxCacheTtl = 60480000; # 700 days
+    defaultCacheTtl = day * 700;
+    # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
+    # ssh-agent sets it as infinite by default. So I can relax here (maybe)
+    defaultCacheTtlSsh = day * 30;
+    maxCacheTtl = day * 700;
 
     pinentryPackage = pkgs.pinentry-tty;
+
+    enableSshSupport = true;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
