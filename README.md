@@ -166,6 +166,12 @@ Check [traps](./windows/Multi-booting.md)
    ssh-add ~/.ssh/id_ed25519
    ```
 
+1. Restore encrepted secrets from Private git repository
+
+   ```bash
+   git clone 'git@example.com:password-store.git' "$PASSWORD_STORE_DIR"
+   ```
+
 1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
 
 1. Restore shell history

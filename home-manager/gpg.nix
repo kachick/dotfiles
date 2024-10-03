@@ -62,4 +62,9 @@ in
       personal-digest-preferences = "SHA512";
     };
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/password-store.nix
+  programs.password-store = {
+    enable = true;
+  };
 }
