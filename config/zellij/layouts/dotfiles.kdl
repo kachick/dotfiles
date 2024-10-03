@@ -4,7 +4,7 @@ layout {
             plugin location="zellij:compact-bar"
         }
         pane split_direction="horizontal" {
-            pane size="80%" command="yazi" {
+            pane size="80%" command="yazi" close_on_exit=false {
 
             }
             pane size="20%" {
@@ -30,13 +30,16 @@ layout {
         pane size=1 borderless=true {
             plugin location="zellij:compact-bar"
         }
-        pane name="edit" edit="home-manager/gnome.nix" size="70%"
+        // Don't use edit pane. close_on_exit is only available in command panes
+        pane name="edit" command="hx" size="70%" close_on_exit=false {
+            args "home-manager/gnome.nix"
+        }
         pane split_direction="vertical" size="30%" {
-            pane name="watch" start_suspended=true command="dconf" {
+            pane name="watch" start_suspended=true command="dconf" close_on_exit=false {
                 args "watch" "/"
                 start_suspended true
             }
-            pane name="blank"
+            pane name="blank" command="zsh" close_on_exit=false
         }
     }
     tab name="Help" {
