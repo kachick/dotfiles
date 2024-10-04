@@ -20,6 +20,7 @@ $python\
 $deno\
 $nodejs\
 $cmd_duration\
+$os\
 $container\
 $nix_shell\
 $shell\
@@ -85,4 +86,7 @@ disabled = false
 bash_indicator = 'bash'
 
 [container]
+disabled = false
+
+[os]
 disabled = false
