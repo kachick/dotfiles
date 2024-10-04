@@ -36,6 +36,9 @@ Reason: ngen.exe cannot compile latest pwsh
 
 One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NET\Framework" as "C:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe"
 
+However, for my experience, pwsh is still much slow.\
+I didn't try disabling defenders, but using nushell might be better for the Windows daily driver.
+
 ## How to write PowerShell scripts?
 
 - <https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines>
