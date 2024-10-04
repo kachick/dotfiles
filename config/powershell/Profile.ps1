@@ -20,6 +20,8 @@ function la {
 
 # https://github.com/microsoft/winget-cli/issues/2498#issuecomment-1553863082
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
+# Specify `bash -i` to run the bash as interactive mode
+[Environment]::SetEnvironmentVariable("RCLONE_PASSWORD_COMMAND", 'wsl.exe --exec bash -ic "pass show rclone"')
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
