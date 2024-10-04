@@ -418,10 +418,39 @@ $env.config = {
         }
         {
             name: history_menu
-            modifier: control
+            modifier: control_shift # Changed from original ctrol to avoid conflict with fzf integration
             keycode: char_r
             mode: [emacs, vi_insert, vi_normal]
             event: { send: menu name: history_menu }
+        }
+        # https://github.com/nushell/nushell/issues/1616#issuecomment-2120164422
+        {
+          name: fuzzy_history
+          modifier: control
+          keycode: char_r
+          mode: [emacs, vi_normal, vi_insert]
+          event: [
+            {
+              send: ExecuteHostCommand
+              cmd: "commandline edit --insert (
+                history
+                  | get command
+                  | reverse
+                  | uniq
+                  | str join (char -i 0)
+                  | fzf
+                    --preview '{}'
+                    --preview-window 'right:30%'
+                    --scheme history
+                    --read0
+                    --layout reverse
+                    --height 40%
+                    --query (commandline)
+                  | decode utf-8
+                  | str trim
+              )"
+            }
+          ]
         }
         {
             name: help_menu
@@ -898,3 +927,5 @@ $env.config = {
 }
 
 use ~/.cache/starship/init.nu
+
+alias la = ls --all
