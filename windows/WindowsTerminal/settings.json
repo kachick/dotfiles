@@ -32,7 +32,7 @@
   ],
   "copyFormatting": "none",
   "copyOnSelect": true,
-  "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+  "defaultProfile": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
   "newTabMenu": [
     {
       "type": "remainingProfiles"
@@ -52,6 +52,31 @@
     },
     "list": [
       {
+        "guid": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
+        "hidden": false,
+        "name": "Nushell",
+        "source": "nu"
+      },
+      {
+        "elevate": false,
+        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+        "hidden": false,
+        "name": "PowerShell",
+        "source": "Windows.Terminal.PowershellCore"
+      },
+      {
+        "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+        "hidden": false,
+        "name": "Ubuntu 24.04.1 LTS",
+        "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
+      },
+      {
+        "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
+        "hidden": true,
+        "name": "Ubuntu-24.04",
+        "source": "Windows.Terminal.Wsl"
+      },
+      {
         "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
         "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
         "hidden": true,
@@ -70,38 +95,6 @@
         "source": "Windows.Terminal.Azure"
       },
       {
-        "elevate": false,
-        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-        "hidden": false,
-        "name": "PowerShell",
-        "source": "Windows.Terminal.PowershellCore"
-      },
-      {
-        "guid": "{17bf3de4-5353-5709-bcf9-835bd952a95e}",
-        "hidden": true,
-        "name": "Ubuntu-22.04",
-        "opacity": 95,
-        "source": "Windows.Terminal.Wsl"
-      },
-      {
-        "guid": "{8ab8e6f6-35c6-5b46-8419-3e1568105476}",
-        "hidden": false,
-        "name": "podman-machine-default",
-        "source": "Windows.Terminal.Wsl"
-      },
-      {
-        "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
-        "hidden": true,
-        "name": "Ubuntu-24.04",
-        "source": "Windows.Terminal.Wsl"
-      },
-      {
-        "guid": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
-        "hidden": false,
-        "name": "Nushell",
-        "source": "nu"
-      },
-      {
         "commandline": "C:\\Windows\\system32\\wsl.exe -d NixOS",
         "guid": "{588d0238-6339-4ad0-9e2f-c7cc93182b93}",
         "hidden": false,
@@ -110,16 +103,16 @@
         "startingDirectory": "~"
       },
       {
+        "guid": "{8ab8e6f6-35c6-5b46-8419-3e1568105476}",
+        "hidden": false,
+        "name": "podman-machine-default",
+        "source": "Windows.Terminal.Wsl"
+      },
+      {
         "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
         "hidden": false,
         "name": "Debian",
         "source": "Windows.Terminal.Wsl"
-      },
-      {
-        "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
-        "hidden": false,
-        "name": "Ubuntu 24.04.1 LTS",
-        "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
       }
     ]
   },
@@ -284,29 +277,6 @@
       "selectionBackground": "#16181E",
       "white": "#B3B8C3",
       "yellow": "#E5C179"
-    },
-    {
-      "background": "#300A24",
-      "black": "#171421",
-      "blue": "#0037DA",
-      "brightBlack": "#767676",
-      "brightBlue": "#08458F",
-      "brightCyan": "#2C9FB3",
-      "brightGreen": "#26A269",
-      "brightPurple": "#A347BA",
-      "brightRed": "#C01C28",
-      "brightWhite": "#F2F2F2",
-      "brightYellow": "#A2734C",
-      "cursorColor": "#FFFFFF",
-      "cyan": "#3A96DD",
-      "foreground": "#FFFFFF",
-      "green": "#26A269",
-      "name": "Ubuntu-22.04-ColorScheme",
-      "purple": "#881798",
-      "red": "#C21A23",
-      "selectionBackground": "#FFFFFF",
-      "white": "#CCCCCC",
-      "yellow": "#A2734C"
     },
     {
       "background": "#300A24",
