@@ -53,6 +53,9 @@
           "PackageIdentifier": "Microsoft.PowerShell"
         },
         {
+          "PackageIdentifier": "Nushell.Nushell"
+        },
+        {
           "PackageIdentifier": "Alacritty.Alacritty"
         },
         {
