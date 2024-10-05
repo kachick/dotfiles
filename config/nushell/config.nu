@@ -930,4 +930,4 @@ use ~/.cache/starship/init.nu
 
 source ~/.zoxide.nu
 
-alias la = ls --all
+def la [] { ls --all | sort-by type modified }
