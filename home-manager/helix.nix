@@ -132,7 +132,6 @@ in
           formatter = mkDprint "md";
           language-servers = [
             "marksman"
-            "markdown-oxide"
             "typos"
           ];
         }
