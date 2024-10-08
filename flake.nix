@@ -134,7 +134,7 @@
               "git-resolve-conflict"
               "prs"
               "nix-hash-url"
-              "trim-github-user-prefix-for-reponame"
+              "reponame"
               "gredit"
               "renmark"
               "preview"

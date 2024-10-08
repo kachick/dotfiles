@@ -50,9 +50,7 @@
 
   prs = import ./prs { inherit pkgs; };
 
-  trim-github-user-prefix-for-reponame = import ./trim-github-user-prefix-for-reponame {
-    inherit pkgs;
-  };
+  reponame = import ./reponame { inherit pkgs; };
 
   beedii = pkgs.callPackage ./beedii { };
   cozette = pkgs.callPackage ./cozette { };
