@@ -29,6 +29,10 @@ func TestExtractRepo(t *testing.T) {
 			input: "https://github.com/kachick/dotfiles.git",
 			repo:  "dotfiles",
 		},
+		"Non Git URL": {
+			input: "https://github.com/kachick/dotfiles",
+			repo:  "dotfiles",
+		},
 	}
 
 	for description, tc := range testCases {
