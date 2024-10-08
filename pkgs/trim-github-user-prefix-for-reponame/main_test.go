@@ -21,14 +21,14 @@ func TestExtractRepo(t *testing.T) {
 			input: "dotfiles",
 			repo:  "dotfiles",
 		},
-		// "SSH": {
-		// 	input: "git@github.com:kachick/dotfiles.git",
-		// 	repo:  "dotfiles",
-		// },
-		// "HTTPS": {
-		// 	input: "https://github.com/kachick/dotfiles.git",
-		// 	repo:  "dotfiles",
-		// },
+		"SSH": {
+			input: "git@github.com:kachick/dotfiles.git",
+			repo:  "dotfiles",
+		},
+		"HTTPS": {
+			input: "https://github.com/kachick/dotfiles.git",
+			repo:  "dotfiles",
+		},
 	}
 
 	for description, tc := range testCases {
