@@ -78,6 +78,20 @@ args = [
 ]
 
 [tasks.test-go]
+dependencies = [
+  'test-cmd',
+  'test-pkg-trim-github-user-prefix-for-reponame',
+]
+
+[tasks.test-cmd]
+command = 'go'
+args = [
+  'test',
+  './...',
+]
+
+[tasks.test-pkg-trim-github-user-prefix-for-reponame]
+cwd = "./pkgs/trim-github-user-prefix-for-reponame"
 command = 'go'
 args = [
   'test',
