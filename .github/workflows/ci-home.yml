@@ -87,7 +87,6 @@ jobs:
           zsh -c zsh -c 'which la; which p'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
-          zsh -c 'alacritty --version'
           zsh -c 'ssh -V'
           zsh -c 'hx --health'
       - name: Run homemade commands
