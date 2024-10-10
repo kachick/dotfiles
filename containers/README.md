@@ -1,5 +1,7 @@
 # Containers
 
+Base images are maintained in [another repository](https://github.com/kachick/containers)
+
 ## How to build and test in local
 
 ```bash

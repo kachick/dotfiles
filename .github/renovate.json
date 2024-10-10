@@ -2,11 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
+    "config:recommended",
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
   "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix", "regex"],
+  "enabledManagers": ["nix", "regex", "dockerfile"],
   "nix": {
     "enabled": true
   },
