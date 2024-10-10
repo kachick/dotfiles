@@ -49,13 +49,6 @@ List defined hostnames
 nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
 
-And you may need to manually update `/etc/udev/hwdb.bin` for remapping keyboards.\
-See [GH-801](https://github.com/kachick/dotfiles/issues/801) for detail.
-
-```bash
-sudo systemd-hwdb update && sudo udevadm trigger
-```
-
 This repository intentionally reverts the home-manager NixOS module.\
 So, you should activate the user dotfiles with standalone home-manager even though NixOS.
 
@@ -190,8 +183,7 @@ For NixOS
 
 ```bash
 sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    sudo systemd-hwdb update && sudo udevadm trigger && \
-        makers apply 'kachick@desktop'
+    makers apply 'kachick@desktop'
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
