@@ -76,8 +76,6 @@
     zellij
     yazi # prefer the shell wrapper `yy`
 
-    alacritty
-
     typos
     hyperfine
     difftastic # `difft`
@@ -138,6 +136,8 @@
   ++ (lib.optionals stdenv.isDarwin [
     # https://github.com/NixOS/nixpkgs/issues/240819
     pinentry_mac
+
+    alacritty
 
     # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
     # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
