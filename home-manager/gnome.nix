@@ -11,7 +11,6 @@ in
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
   dconf = {
     enable = true;
-    packages = pkgs.emptyDirectory;
     settings = {
       "org/gnome/shell" = {
         disable-user-extensions = false;
