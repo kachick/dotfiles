@@ -8,6 +8,7 @@ So you should manually install followings.
 - [vscode](https://code.visualstudio.com/download)
 - [zed-editor](https://zed.dev/download)
 - [podman-desktop](https://podman-desktop.io/downloads)
+- [Firefox](https://www.mozilla.org/ja/firefox/all/desktop-release/osx/ja/)
 
 ## Limitations
 

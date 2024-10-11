@@ -138,6 +138,10 @@
     pinentry_mac
 
     alacritty
+    kitty
+    # foot is only provided for Linux wayland
+
+    # Don't install firefox via nixpkgs for darwin, it is broken https://github.com/NixOS/nixpkgs/blob/bac526a0fe6da6b10cfe2454f62a0defdbf1d898/pkgs/applications/networking/browsers/firefox/packages.nix#L23
 
     # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
     # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,

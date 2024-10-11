@@ -17,6 +17,7 @@
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/kitty.nix
   programs.kitty = {
     enable = true;
+    package = pkgs.emptyDirectory;
     theme = "zenwritten_dark";
     settings = {
       shell = lib.getExe pkgs.zsh;
