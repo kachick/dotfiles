@@ -131,7 +131,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## macOS
 
-Activate `kachick@macbook` as Linux and [manually setup some packages](./darwin/README.md).
+Activate `kachick@macbook` as Linux and [manually setup some packages](https://github.com/kachick/dotfiles/wiki/macOS).
 
 ## Windows
 
