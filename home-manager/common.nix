@@ -81,10 +81,6 @@
     };
   };
 
-  # This also changes xdg? Official manual sed this config is better for non NixOS Linux
-  # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-  targets.genericLinux.enable = pkgs.stdenv.isLinux;
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
@@ -124,26 +120,9 @@
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
 
-  # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
-  xdg.configFile."autostart/userdirs.desktop".text = ''
-    [Desktop Entry]
-    Exec=xdg-user-dirs-update
-    TryExec=xdg-user-dirs-update
-    NoDisplay=true
-    StartupNotify=false
-    Type=Application
-    X-KDE-AutostartScript=true
-    X-KDE-autostart-phase=1
-  '';
-
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
-
-  # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
-  xdg.configFile.fcitx5 = {
-    source = ../config/fcitx5;
-  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
   programs.starship = {
