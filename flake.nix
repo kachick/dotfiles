@@ -31,7 +31,9 @@
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "x86_64-darwin"
-        # I don't have M1+ mac, providing this for macos-14 free runner https://github.com/actions/runner-images/issues/9741
+        # I don't have Apple Silicon machines, providing this for macos-15 free runner
+        #   - https://github.com/actions/runner-images/issues/9741
+        #   - https://github.com/actions/runner-images/issues/10686
         "aarch64-darwin"
       ];
 
@@ -257,7 +259,7 @@
             }
           );
 
-          "github-actions@macos-14" = home-manager.lib.homeManagerConfiguration (
+          "github-actions@macos-15" = home-manager.lib.homeManagerConfiguration (
             aarch64-macOS
             // {
               # Prefer "kachick" over "common" only here.
