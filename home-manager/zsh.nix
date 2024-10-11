@@ -287,14 +287,6 @@
       fi
     '';
 
-    # Use one of profileExtra or loginExtra. Not both
-    profileExtra = ''
-      # TODO: Switch to pkgs.zsh from current zsh in darwin
-
-      if [[ "$OSTYPE" == darwin* ]]; then
-        # TODO: May move to sessionVariables
-        export BROWSER='open'
-      fi
-    '';
+    # Useable one of profileExtra or loginExtra. Do not specify both.
   };
 }
