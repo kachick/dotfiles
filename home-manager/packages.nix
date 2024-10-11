@@ -138,6 +138,10 @@
     pinentry_mac
 
     alacritty
+    kitty
+    # foot is only provided for Linux wayland
+
+    firefox
 
     # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
     # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
