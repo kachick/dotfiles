@@ -294,11 +294,6 @@
       if [[ "$OSTYPE" == darwin* ]]; then
         # TODO: May move to sessionVariables
         export BROWSER='open'
-
-        # Microsoft recommends this will be written in ~/.zprofile,
-        if [ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]; then
-          export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-        fi
       fi
     '';
   };

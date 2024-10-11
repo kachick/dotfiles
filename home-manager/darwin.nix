@@ -10,6 +10,12 @@ lib.mkMerge [
         # * `cli: install` action installs into this path in macOS
         VISUAL = "/usr/local/bin/zed --wait";
       };
+
+      sessionPath = [
+        # Many apps installs the binary here if not used nixpkgs
+        # For example: zed-editor, cloudflare-warp, vscode(symlink?)
+        "/usr/local/bin"
+      ];
     };
 
     # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598
