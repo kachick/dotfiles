@@ -6,7 +6,7 @@ lib.mkMerge [
     # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/firefox.nix
     programs.firefox = {
       enable = true;
-      packages = pkgs.emptyDirectory;
+      package = pkgs.emptyDirectory;
       profiles.default = {
         isDefault = true;
         settings = {
