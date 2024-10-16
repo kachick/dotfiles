@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
@@ -27,11 +32,13 @@ lib.mkMerge [
           recursive = true;
         };
 
-        "karabiner/karabiner.hminit.json" = {
+        "karabiner/HomeManagerInit_karabiner.json" = {
           source = ../config/karabiner/karabiner.json;
           # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
           onChange = ''
-            https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
+            rm -f ${config.xdg.configHome}/karabiner/karabiner.json
+            cp ${config.xdg.configHome}/karabiner/HomeManagerInit_karabiner.json ${config.xdg.configHome}/karabiner/karabiner.json
+            chmod u+w ${config.xdg.configHome}/karabiner/karabiner.json
           '';
         };
       };
