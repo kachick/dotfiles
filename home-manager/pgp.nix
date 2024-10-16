@@ -1,6 +1,16 @@
 { config, pkgs, ... }:
 
-# ## FAQ - GPG
+# # FAQ
+#
+# ## sequoia-sq and gpg
+#
+# See GH-830
+#
+# ## sequoia-sq
+#
+# TODO: <UPDATE ME>
+#
+# ## GPG
 #
 # - How to list keys?
 #   - 1. `gpg --list-secret-keys --keyid-format=long` # The `sec` first section displays same text as `pub` by `gpg --list-keys --keyid-format=long`
@@ -23,6 +33,10 @@ let
   day = 60 * 60 * 24;
 in
 {
+  sessionVariables = {
+    SEQUOIA_HOME = "${config.xdg.dataHome}/sequoia";
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/gpg-agent.nix
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
@@ -42,7 +56,6 @@ in
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
-
   programs.gpg = {
     enable = true;
 

@@ -12,7 +12,7 @@
     ./bash.nix
     ./zsh.nix
     ./fish.nix
-    ./gpg.nix
+    ./pgp.nix
     ./ssh.nix
     ./git.nix
     ./editors.nix
