@@ -93,6 +93,11 @@
     package = edge-pkgs.cloudflare-warp;
   };
 
+  # https://nixos.org/manual/nixos/stable/options#opt-services.forgejo.enable
+  services.forgejo = {
+    enable = true;
+  };
+
   environment.variables = {
     EDITOR = lib.getExe pkgs.helix;
     SYSTEMD_EDITOR = lib.getExe pkgs.helix;
