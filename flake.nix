@@ -89,7 +89,7 @@
                 stylua
                 typos
                 typos-lsp # For zed-editor typos extension
-                go_1_22
+                go_1_23
                 goreleaser
                 trivy
               ])

@@ -1,5 +1,5 @@
 { pkgs, ... }:
-pkgs.buildGo122Module rec {
+pkgs.buildGo123Module rec {
   pname = "reponame";
   version = "0.0.1";
   default = pname;

@@ -4,7 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     git
-    go
+    go_1_23
     gnugrep
     findutils # `xargs`
   ];
