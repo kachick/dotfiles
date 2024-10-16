@@ -33,9 +33,8 @@ let
   day = 60 * 60 * 24;
 in
 {
-  home.sessionVariables = {
-    SEQUOIA_HOME = "${config.xdg.dataHome}/sequoia";
-  };
+  # Don't set $SEQUOIA_HOME, it unified config and data, cache to one directory as same as gpg era.
+  # Use default $HOME instead, it respects XDG Base Directory Specification
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/gpg-agent.nix
   services.gpg-agent = {
