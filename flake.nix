@@ -28,14 +28,7 @@
     let
       inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "x86_64-darwin"
-        # I don't have Apple Silicon machines, providing this for macos-15 free runner
-        #   - https://github.com/actions/runner-images/issues/9741
-        #   - https://github.com/actions/runner-images/issues/10686
-        "aarch64-darwin"
-      ];
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
 
       mkApp = pkg: {
         type = "app";
