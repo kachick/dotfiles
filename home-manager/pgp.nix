@@ -33,7 +33,7 @@ let
   day = 60 * 60 * 24;
 in
 {
-  sessionVariables = {
+  home.sessionVariables = {
     SEQUOIA_HOME = "${config.xdg.dataHome}/sequoia";
   };
 
