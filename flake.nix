@@ -92,6 +92,7 @@
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
                 markdownlint-cli2
+                sequoia-sq # TODO: Remove after applied in home-manager. This devshell entry only used for development phase.
               ])
               ++ (with homemade-pkgs; [ nix-hash-url ]);
           };
