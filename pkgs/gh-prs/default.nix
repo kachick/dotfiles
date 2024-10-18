@@ -1,5 +1,5 @@
 { pkgs, ... }:
-(pkgs.writeShellApplication rec {
+pkgs.writeShellApplication rec {
   name = "gh-prs";
   text = builtins.readFile ./${name}.bash;
   runtimeInputs =
@@ -13,8 +13,8 @@
     ++ (lib.optionals stdenv.isLinux [
       wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
     ]);
-}).overrideAttrs
-  (prev: {
+  derivationArgs = {
     # Required in https://github.com/nix-community/home-manager/blob/346973b338365240090eded0de62f7edce4ce3d1/modules/programs/gh.nix#L160
-    pname = prev.name;
-  })
+    pname = name;
+  };
+}
