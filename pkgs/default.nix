@@ -1,6 +1,6 @@
 { pkgs, edge-pkgs, ... }:
 
-{
+rec {
   bump_completions = import ./bump_completions { inherit pkgs edge-pkgs; };
 
   bump_gomod = import ./bump_gomod { inherit pkgs; };
@@ -19,6 +19,8 @@
   lat = import ./lat { inherit pkgs; };
 
   zed = import ./zed { inherit pkgs edge-pkgs; };
+
+  gpg-alias-with-sq = import ./gpg-alias-with-sq { inherit pkgs edge-pkgs; };
 
   walk = import ./walk { inherit pkgs; };
 
