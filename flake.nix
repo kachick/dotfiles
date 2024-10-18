@@ -101,6 +101,7 @@
 
       packages = forAllSystems (system: {
         cozette = homemade-packages.${system}.cozette;
+        micro-kdl = homemade-packages.${system}.micro-kdl;
       });
 
       apps = forAllSystems (

@@ -51,7 +51,7 @@ in
 
     pinentryPackage = pkgs.pinentry-tty;
 
-    enableSshSupport = true;
+    enableSshSupport = false;
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix

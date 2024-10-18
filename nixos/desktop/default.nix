@@ -85,7 +85,7 @@
       gnome-music # does not support flac by defaults
     ]);
 
-  # Recommended to be uninstalled by gnupg.
+  # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
   # https://wiki.gnupg.org/GnomeKeyring
   #
   # And enabling this makes $SSH_AUTH_SOCK overriding even through enabled gpg-agent in home-manager
