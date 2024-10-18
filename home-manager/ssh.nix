@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 
 let
   # SSH files cannot use XDG Base Directory.
@@ -18,6 +18,12 @@ in
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
   # Prefer gpg-agent for SSH agent role
   services.ssh-agent.enable = false;
+
+  home.sessionVariables = {
+    # 'force' ignores $DISPLAY. 'prefer' is not enough
+    SSH_ASKPASS_REQUIRE = "force";
+    SSH_ASKPASS = "${pkgs.lib.getExe pkgs.pass} show ssh-pass";
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
   programs.ssh = {
