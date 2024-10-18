@@ -1,4 +1,4 @@
-{ config, ... }:
+{ pkgs, config, ... }:
 
 let
   # SSH files cannot use XDG Base Directory.
@@ -16,8 +16,20 @@ in
 # - id_*.pub: I CAN register them for different services.
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
-  # Prefer gpg-agent for SSH agent role
-  services.ssh-agent.enable = false;
+  services.ssh-agent.enable = pkgs.stdenv.isLinux;
+
+  home.sessionVariables = {
+    # 'force' ignores $DISPLAY. 'prefer' is not enough
+    SSH_ASKPASS_REQUIRE = "force";
+    SSH_ASKPASS = pkgs.lib.getExe (
+      pkgs.writeShellApplication {
+        name = "ssh-ask-pass";
+        text = "pass show ssh-pass";
+        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
+        runtimeInputs = with pkgs; [ pass ];
+      }
+    );
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
   programs.ssh = {

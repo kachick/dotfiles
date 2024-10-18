@@ -155,7 +155,6 @@ Check [traps](./windows/Multi-booting.md)
    ```bash
    touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
    hx ~/.ssh/id_ed25519
-   gpg-connect-agent updatestartuptty /bye
    ssh-add ~/.ssh/id_ed25519
    ```
 
