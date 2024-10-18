@@ -128,7 +128,7 @@
               "git-log-fzf"
               "git-log-simple"
               "git-resolve-conflict"
-              "prs"
+              "gh-prs"
               "nix-hash-url"
               "reponame"
               "gredit"
