@@ -168,6 +168,6 @@
       ];
     };
 
-    extensions = [ homemade-pkgs.gh-prs ];
+    extensions = (with pkgs; [ gh-poi ]) ++ (with homemade-pkgs; [ gh-prs ]);
   };
 }
