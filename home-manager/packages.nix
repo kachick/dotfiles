@@ -44,7 +44,6 @@
     gh
     ghq
 
-    gnupg
     edge-pkgs.sequoia-sq # Alt `gpg` - nixos-24.05 does not backport recent versions and the older requires to rebuild. https://github.com/NixOS/nixpkgs/pull/331099
     edge-pkgs.sequoia-chameleon-gnupg
 
