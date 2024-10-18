@@ -1,6 +1,7 @@
 {
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   lib,
   ...
 }:
@@ -61,7 +62,7 @@
         # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
 
-        program = "${lib.getBin pkgs.sequoia-chameleon-gnupg}/gpg-sq"; # GH-830
+        program = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq"; # GH-830
       };
 
       commit = {
