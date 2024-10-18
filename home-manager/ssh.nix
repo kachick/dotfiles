@@ -24,9 +24,9 @@ in
     SSH_ASKPASS = pkgs.lib.getExe (
       pkgs.writeShellApplication {
         name = "ssh-ask-pass";
-        text = "pass show ssh-pass";
+        text = "gopass show ssh-pass";
         meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
-        runtimeInputs = with pkgs; [ pass ];
+        runtimeInputs = with pkgs; [ gopass ];
       }
     );
   };

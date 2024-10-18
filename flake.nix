@@ -123,6 +123,7 @@
               "la"
               "lat"
               "zed"
+              "gpg-alias-with-sq"
               "ghqf"
               "git-delete-merged-branches"
               "git-log-fzf"
