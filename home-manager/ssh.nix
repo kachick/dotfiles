@@ -21,7 +21,14 @@ in
   home.sessionVariables = {
     # 'force' ignores $DISPLAY. 'prefer' is not enough
     SSH_ASKPASS_REQUIRE = "force";
-    SSH_ASKPASS = "${pkgs.lib.getExe pkgs.pass} show ssh-pass";
+    SSH_ASKPASS = pkgs.lib.getExe (
+      pkgs.writeShellApplication {
+        name = "ssh-ask-pass";
+        text = "pass show ssh-pass";
+        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accepts arguments.";
+        runtimeInputs = with pkgs; [ pass ];
+      }
+    );
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
