@@ -64,8 +64,6 @@
 
             TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
 
-            GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
-
             buildInputs =
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
@@ -94,9 +92,6 @@
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
                 markdownlint-cli2
-                sequoia-sq # TODO: Remove after applied in home-manager. This devshell entry only used for development phase.
-                sequoia-chameleon-gnupg # TODO: Remove after applied in home-manager. This devshell entry only used for development phase.
-                gopass
               ])
               ++ (with homemade-pkgs; [ nix-hash-url ]);
           };
