@@ -25,7 +25,7 @@ in
       pkgs.writeShellApplication {
         name = "ssh-ask-pass";
         text = "pass show ssh-pass";
-        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accepts arguments.";
+        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
         runtimeInputs = with pkgs; [ pass ];
       }
     );
