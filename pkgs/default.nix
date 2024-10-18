@@ -48,7 +48,7 @@
   git-hooks-commit-msg = import ./git-hooks-commit-msg { inherit pkgs; };
   git-hooks-pre-push = import ./git-hooks-pre-push { inherit pkgs; };
 
-  prs = import ./prs { inherit pkgs; };
+  gh-prs = import ./gh-prs { inherit pkgs; };
 
   reponame = import ./reponame { inherit pkgs; };
 

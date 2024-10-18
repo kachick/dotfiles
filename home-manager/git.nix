@@ -167,5 +167,7 @@
         "https://gist.github.com"
       ];
     };
+
+    extensions = [ homemade-pkgs.gh-prs ];
   };
 }
