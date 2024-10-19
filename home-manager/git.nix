@@ -170,5 +170,7 @@
         "https://gist.github.com"
       ];
     };
+
+    extensions = (with pkgs; [ gh-poi ]) ++ (with homemade-pkgs; [ gh-prs ]);
   };
 }

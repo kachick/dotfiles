@@ -177,7 +177,6 @@
   updeps
   bench_shells
   archive-home-files
-  prs
   gredit
   preview
   gpg-alias-with-sq
