@@ -30,7 +30,7 @@
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
       forDarwinSystems = nixpkgs.lib.genAttrs [
-        "x86_64-darwin "
+        "x86_64-darwin"
         "aarch64-darwin"
       ];
 
