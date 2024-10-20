@@ -103,6 +103,7 @@
         micro-kdl = homemade-packages.${system}.micro-kdl;
         micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
         micro-everforest = homemade-packages.${system}.micro-everforest;
+        micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
       });
 
       apps = forAllSystems (

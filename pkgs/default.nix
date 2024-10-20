@@ -61,6 +61,7 @@
   micro-kdl = pkgs.callPackage ./micro-kdl { };
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
   micro-everforest = pkgs.callPackage ./micro-everforest { };
+  micro-catppuccin = pkgs.callPackage ./micro-catppuccin { };
 
   kdl-vim = pkgs.callPackage ./kdl.vim { };
 
