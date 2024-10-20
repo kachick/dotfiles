@@ -92,7 +92,6 @@
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
                 markdownlint-cli2
-                cargo-make
               ])
               ++ (with homemade-pkgs; [ nix-hash-url ]);
           };
