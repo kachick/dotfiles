@@ -292,6 +292,7 @@ in
       source_sh "${homemade-pkgs.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
+        export LANG=C # Avoid Tofu
         disable_blinking_cursor
       fi
 
