@@ -76,6 +76,7 @@
                 shellcheck
                 shfmt
                 gitleaks
+                cargo-make
 
                 dprint
                 stylua
@@ -91,7 +92,7 @@
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
                 markdownlint-cli2
-                cargo-make # To apply https://github.com/NixOS/nixpkgs/pull/349104
+                cargo-make
               ])
               ++ (with homemade-pkgs; [ nix-hash-url ]);
           };

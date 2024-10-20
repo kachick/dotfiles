@@ -3,6 +3,7 @@
   lib,
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   ...
 }:
 
@@ -122,6 +123,9 @@
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/bash-completion/completions/podman"
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
+
+        # Adding only in devshell is not enough
+        source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
 
