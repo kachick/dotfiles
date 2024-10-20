@@ -21,7 +21,7 @@ in
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
     if [[ -v oldGenPath ]]; then
-      run ${lib.getExe pkgs.zsh} --interactive -c 'compinit -C -d "${ZCOMPDUMP_CACHE_PATH}"'
+      run ${lib.getExe pkgs.zsh} --interactive -c 'compinit -d "${ZCOMPDUMP_CACHE_PATH}"'
     fi
   '';
 
@@ -147,6 +147,8 @@ in
           # -C omit to check new functions
           compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
         else
+          # For refreshing the cache
+
           ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
           compinit -d "$ZCOMPDUMP_CACHE_PATH"
           ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
