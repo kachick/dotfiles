@@ -292,7 +292,10 @@ in
       source_sh "${homemade-pkgs.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
-        export LANG=C # Avoid Tofu
+        # Avoid Tofu
+        export LANG=C
+        export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
+
         disable_blinking_cursor
       fi
 

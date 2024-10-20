@@ -67,6 +67,8 @@
 
       # Don't add needless quotation in the arguments. For example `gopass show 'rclone'` does not work. It should be `gopass show rclone`.
       RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
+
+      STARSHIP_CONFIG = ../config/starship/starship.toml;
     };
 
     sessionPath = [
@@ -135,9 +137,6 @@
   programs.starship = {
     enable = true;
   };
-
-  # Not under "starship/starship.toml"
-  xdg.configFile."starship.toml".source = ../config/starship/starship.toml;
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/yazi.nix
   # TODO: Use shell integrations for `y` after release-24.11. 24.05 is using fixed old `ya`
