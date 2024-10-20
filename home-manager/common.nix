@@ -79,6 +79,13 @@
       inherit edge-pkgs;
       inherit homemade-pkgs;
     };
+
+    # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
+    # https://github.com/nix-community/home-manager/blob/fe56302339bb28e3471632379d733547caec8103/modules/home-environment.nix#L11
+    language = {
+      base = "ja_JP.UTF-8";
+      time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+    };
   };
 
   # Let Home Manager install and manage itself.
