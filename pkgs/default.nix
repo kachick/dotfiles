@@ -20,8 +20,6 @@
 
   zed = import ./zed { inherit pkgs edge-pkgs; };
 
-  gpg-alias-with-sq = import ./gpg-alias-with-sq { inherit pkgs edge-pkgs; };
-
   walk = import ./walk { inherit pkgs; };
 
   ir = pkgs.callPackage ./ir { };
