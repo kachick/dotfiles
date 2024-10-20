@@ -6,6 +6,10 @@
   ...
 }:
 
+# NOTE:
+# Most frustrated part of zsh is how to keep speed with the slow completions.
+# See https://github.com/zsh-users/zsh/blob/zsh-5.9/Completion/compinit for the options.
+
 let
   ZCOMPDUMP_CACHE_DIR = "${config.xdg.cacheHome}/zsh";
   ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
@@ -20,10 +24,9 @@ in
   programs.zellij.enableZshIntegration = false;
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
-    if [[ -v oldGenPath ]]; then
-      run ${lib.getBin pkgs.coreutils}/bin/mkdir -p '${ZCOMPDUMP_CACHE_DIR}'
-      run ${lib.getExe pkgs.zsh} --interactive -c 'compinit -d "${ZCOMPDUMP_CACHE_PATH}"'
-      run ${lib.getBin pkgs.coreutils}/bin/touch '${ZCOMPDUMP_CACHE_PATH}' # Ensure to update timestamp
+    if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then
+      # Enforcing to clear old cache, because of just omitting -C kept the command names
+      ${lib.getBin pkgs.coreutils}/bin/rm '${ZCOMPDUMP_CACHE_PATH}'
     fi
   '';
 
