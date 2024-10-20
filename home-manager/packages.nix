@@ -162,6 +162,8 @@
     # Don't add zed in macOS with nixpkgs
     # https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
     # edge-pkgs.zed-editor
+
+    edge-pkgs.signal-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/348165
   ])
 )
 ++ (with homemade-pkgs; [
