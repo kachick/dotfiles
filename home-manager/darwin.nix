@@ -8,9 +8,6 @@
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
-    # Atleast required for signal-desktop. See https://github.com/NixOS/nixpkgs/pull/348165/files#diff-05921dc46b537c59c8a76dfc3c3e9a3a1fd93345ee5bff8573aae36dedf719bcR49
-    nixpkgs.config.allowUnfree = true;
-
     home = {
       sessionVariables = {
         # * Do not specify Nix store path for zed in macOS

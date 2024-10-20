@@ -186,19 +186,34 @@
             };
           };
 
-          x86-macOS = {
-            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+          x86-macOS = rec {
+            system = "x86_64-darwin";
+            pkgs = nixpkgs.legacyPackages.${system};
             extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.x86_64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+              homemade-pkgs = homemade-packages.${system};
+              edge-pkgs = import edge-nixpkgs {
+                inherit system;
+                config = {
+                  # Atleast required for following
+                  # signal-desktop: https://github.com/NixOS/nixpkgs/pull/348165/files#diff-05921dc46b537c59c8a76dfc3c3e9a3a1fd93345ee5bff8573aae36dedf719bcR49
+                  # android-studio: https://github.com/NixOS/nixpkgs/blob/3490095db7c455272ee96c1d99d424d029bdf576/pkgs/applications/editors/android-studio/common.nix#L281
+                  allowUnfree = true;
+                };
+              };
             };
           };
 
-          aarch64-macOS = {
-            pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          aarch64-macOS = rec {
+            system = "aarch64-darwin";
+            pkgs = nixpkgs.legacyPackages.${system};
             extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.aarch64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
+              homemade-pkgs = homemade-packages.${system};
+              edge-pkgs = import edge-nixpkgs {
+                inherit system;
+                config = {
+                  allowUnfree = true;
+                };
+              };
             };
           };
         in
