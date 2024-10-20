@@ -1,10 +1,10 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchFromGitHub,
 }:
 
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   pname = "micro-kdl";
   version = "0.1.0";
 
@@ -24,11 +24,11 @@ stdenv.mkDerivation rec {
     cp kdl.* $out
   '';
 
-  meta = with lib; {
+  meta = {
     description = "Micro editor syntax highlighting for KDL";
     homepage = "https://github.com/kachick/micro-kdl";
-    license = licenses.mit;
+    license = lib.licenses.mit;
     mainProgram = "micro-kdl";
-    platforms = platforms.all;
+    platforms = lib.platforms.all;
   };
 }

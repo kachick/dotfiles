@@ -1,6 +1,10 @@
-{ stdenv, fetchFromGitHub }:
+{
+  lib,
+  stdenvNoCC,
+  fetchFromGitHub,
+}:
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "micro-everforest";
   src = fetchFromGitHub {
     owner = "atomashevic";
@@ -17,4 +21,9 @@ stdenv.mkDerivation {
   installPhase = ''
     cp everforest.micro $out/colorschemes
   '';
+
+  meta = {
+    # https://github.com/atomashevic/everforest-micro/blob/3a1844eb88e58c582ac902e27d7cc1b33f43199b/LICENSE
+    license = lib.licenses.mit;
+  };
 }

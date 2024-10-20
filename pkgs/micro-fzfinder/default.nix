@@ -1,10 +1,10 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchFromGitHub,
 }:
 
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation rec {
   pname = "micro-fzfinder";
   version = "0.2.0";
 
@@ -24,11 +24,12 @@ stdenv.mkDerivation rec {
     cp fzfinder.lua $out
   '';
 
-  meta = with lib; {
+  meta = {
     description = "The plugin allows you to integrate fzf to select and search for your project files";
     homepage = "https://github.com/MuratovAS/micro-fzfinder";
-    license = licenses.mit;
+    # https://github.com/MuratovAS/micro-fzfinder/blob/7be0adb25d72b557eab9fea5aceaff18d47bff52/LICENSE
+    license = lib.licenses.mit;
     mainProgram = "micro-fzfinder";
-    platforms = platforms.all;
+    platforms = lib.platforms.all;
   };
 }
