@@ -12,6 +12,7 @@
   xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
   xdg.configFile."micro/plug/kdl".source = homemade-pkgs.micro-kdl;
   xdg.configFile."micro/plug/nordcolors".source = homemade-pkgs.micro-nordcolors;
+  xdg.configFile."micro/colorschemes/everforest.micro".source = "${homemade-pkgs.micro-everforest}/colorschemes/everforest.micro";
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
   xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;
@@ -60,7 +61,8 @@
 
       # Embed candidates are https://github.com/zyedidia/micro/tree/c15abea64c20066fc0b4c328dfabd3e6ba3253a0/runtime/colorschemes
       # But none of fit colors with other place, See #587 for further detail
-      colorscheme = "nord-16";
+      # Candidates: nord-16, everforest
+      colorscheme = "everforest";
 
       fzfcmd = lib.getExe pkgs.fzf;
       fzfarg = "--preview '${lib.getExe pkgs.bat} --color=always {}'";

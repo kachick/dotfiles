@@ -101,6 +101,8 @@
       packages = forAllSystems (system: {
         cozette = homemade-packages.${system}.cozette;
         micro-kdl = homemade-packages.${system}.micro-kdl;
+        micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
+        micro-everforest = homemade-packages.${system}.micro-everforest;
       });
 
       apps = forAllSystems (
