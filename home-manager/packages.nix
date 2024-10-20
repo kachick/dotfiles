@@ -164,6 +164,8 @@
     # edge-pkgs.zed-editor
 
     edge-pkgs.signal-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/348165
+
+    homemade-pkgs.maccy
   ])
 )
 ++ (with homemade-pkgs; [

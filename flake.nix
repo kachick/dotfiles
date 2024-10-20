@@ -104,6 +104,7 @@
         micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
         micro-everforest = homemade-packages.${system}.micro-everforest;
         micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+        maccy = homemade-packages.${system}.maccy;
       });
 
       apps = forAllSystems (
