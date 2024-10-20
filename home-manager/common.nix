@@ -67,6 +67,8 @@
 
       # Don't add needless quotation in the arguments. For example `gopass show 'rclone'` does not work. It should be `gopass show rclone`.
       RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
+
+      STARSHIP_CONFIG = ../config/starship/starship.toml;
     };
 
     sessionPath = [
@@ -86,8 +88,6 @@
       base = "ja_JP.UTF-8";
       time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
-
-    STARSHIP_CONFIG = ../config/starship/starship.toml;
   };
 
   # Let Home Manager install and manage itself.
