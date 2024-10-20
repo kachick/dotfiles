@@ -27,17 +27,16 @@
     }@inputs:
     let
       inherit (self) outputs;
-      inherit (nixpkgs) lib;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
-      forAllSystems = lib.genAttrs nixpkgs.lib.systems.flakeExposed;
-      forDarwinSystems = lib.genAttrs [
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+      forDarwinSystems = nixpkgs.lib.genAttrs [
         "x86_64-darwin "
         "aarch64-darwin"
       ];
 
       mkApp = pkg: {
         type = "app";
-        program = lib.getExe pkg;
+        program = nixpkgs.lib.getExe pkg;
       };
 
       homemade-packages = forAllSystems (
@@ -67,7 +66,7 @@
             # Realize nixd pkgs version inlay hints for stable channel instead of latest
             NIX_PATH = "nixpkgs=${pkgs.path}";
 
-            TYPOS_LSP_PATH = lib.getExe pkgs.typos-lsp; # For vscode typos extension
+            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
 
             buildInputs =
               (with pkgs; [
@@ -104,71 +103,65 @@
       );
 
       packages =
-        lib.recursiveUpdate
-          (forAllSystems (system: {
-            cozette = homemade-packages.${system}.cozette;
-            micro-kdl = homemade-packages.${system}.micro-kdl;
-            micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
-            micro-everforest = homemade-packages.${system}.micro-everforest;
-            micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
-          }))
-          (
-            forDarwinSystems (system: {
-              maccy = homemade-packages.${system}.maccy;
-            })
-          );
+        (forAllSystems (system: {
+          cozette = homemade-packages.${system}.cozette;
+          micro-kdl = homemade-packages.${system}.micro-kdl;
+          micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
+          micro-everforest = homemade-packages.${system}.micro-everforest;
+          micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+        }))
+        // (forDarwinSystems (system: {
+          maccy = homemade-packages.${system}.maccy;
+        }));
 
       apps =
-        lib.recursiveUpdate
-          (forAllSystems (
-            system:
-            builtins.listToAttrs (
-              (map
-                (name: {
-                  inherit name;
-                  value = mkApp homemade-packages.${system}.${name};
-                })
-                [
-                  "bump_completions"
-                  "bump_gomod"
-                  "check_no_dirty_xz_in_nix_store"
-                  "check_nixf"
-                  "bench_shells"
-                  "walk"
-                  "ir"
-                  "todo"
-                  "la"
-                  "lat"
-                  "zed"
-                  "ghqf"
-                  "git-delete-merged-branches"
-                  "git-log-fzf"
-                  "git-log-simple"
-                  "git-resolve-conflict"
-                  "gh-prs"
-                  "nix-hash-url"
-                  "reponame"
-                  "gredit"
-                  "renmark"
-                  "preview"
-                  "p"
-                ]
-              )
-              ++ [
-                # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
-                # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-                {
-                  name = "home-manager";
-                  value = mkApp home-manager.defaultPackage.${system};
-                }
+        (forAllSystems (
+          system:
+          builtins.listToAttrs (
+            (map
+              (name: {
+                inherit name;
+                value = mkApp homemade-packages.${system}.${name};
+              })
+              [
+                "bump_completions"
+                "bump_gomod"
+                "check_no_dirty_xz_in_nix_store"
+                "check_nixf"
+                "bench_shells"
+                "walk"
+                "ir"
+                "todo"
+                "la"
+                "lat"
+                "zed"
+                "ghqf"
+                "git-delete-merged-branches"
+                "git-log-fzf"
+                "git-log-simple"
+                "git-resolve-conflict"
+                "gh-prs"
+                "nix-hash-url"
+                "reponame"
+                "gredit"
+                "renmark"
+                "preview"
+                "p"
               ]
             )
-          ))
-          (
-            forDarwinSystems (system: {
-              maccy = mkApp homemade-packages.${system}.maccy;
-            })
-          );
+            ++ [
+              # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
+              # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+              {
+                name = "home-manager";
+                value = mkApp home-manager.defaultPackage.${system};
+              }
+            ]
+          )
+        ))
+        // (forDarwinSystems (system: {
+          maccy = mkApp homemade-packages.${system}.maccy;
+        }));
 
       nixosConfigurations =
         let
@@ -193,9 +186,9 @@
           };
         in
         {
-          "moss" = lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
-          "algae" = lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
-          "wsl" = lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
+          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
+          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =
