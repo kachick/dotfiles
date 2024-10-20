@@ -138,6 +138,7 @@
               "renmark"
               "preview"
               "p"
+              "maccy"
             ]
           )
           ++ [
