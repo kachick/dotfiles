@@ -6,6 +6,10 @@
   ...
 }:
 
+let
+  ZCOMPDUMP_CACHE_DIR = "${config.xdg.cacheHome}/zsh";
+  ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
+in
 {
   services.gpg-agent.enableZshIntegration = true;
   programs.starship.enableZshIntegration = true;
@@ -14,6 +18,12 @@
   programs.fzf.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
+
+  home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
+    if [[ -v oldGenPath ]]; then
+      run ${lib.getExe pkgs.zsh} --interactive -c 'compinit -C -d "${ZCOMPDUMP_CACHE_PATH}"'
+    fi
+  '';
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
@@ -27,14 +37,13 @@
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
 
-    localVariables = rec {
+    localVariables = {
+      inherit ZCOMPDUMP_CACHE_DIR ZCOMPDUMP_CACHE_PATH;
+
       # This is a minimum note for home-manager dead case such as https://github.com/kachick/dotfiles/issues/680#issuecomment-2353820508
       PROMPT = ''
         %~ %? %#
         > '';
-
-      ZCOMPDUMP_CACHE_DIR = "${config.xdg.cacheHome}/zsh";
-      ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
     };
 
     history = {
