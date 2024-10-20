@@ -70,7 +70,7 @@ in
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
   programs.gpg = {
     enable = true;
-    package = edge-pkgs.sequoia-chameleon-gnupg; # TODO: Consider to set pkgs.emptyDirectory
+    package = edge-pkgs.sequoia-chameleon-gnupg; # Also will be respected in gpg-agent: https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/services/gpg-agent.nix#L8C3-L8C9
 
     # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples
     #   - https://wiki.archlinux.org/title/XDG_Base_Directory

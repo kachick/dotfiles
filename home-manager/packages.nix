@@ -47,7 +47,8 @@
     edge-pkgs.sequoia-sq # Alt `gpg` - nixos-24.05 does not backport recent versions and the older requires to rebuild. https://github.com/NixOS/nixpkgs/pull/331099
     edge-pkgs.sequoia-chameleon-gnupg
 
-    gopass # Alt `pass` for password-store. Other candidates: prs
+    # Alt `pass` for password-store. Candidates: gopass, prs
+    gopass # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
     # Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
 
     # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
