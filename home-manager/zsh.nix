@@ -27,11 +27,14 @@
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
 
-    localVariables = {
+    localVariables = rec {
       # This is a minimum note for home-manager dead case such as https://github.com/kachick/dotfiles/issues/680#issuecomment-2353820508
       PROMPT = ''
         %~ %? %#
         > '';
+
+      ZCOMPDUMP_CACHE_DIR = "${config.xdg.cacheHome}/zsh";
+      ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
     };
 
     history = {
@@ -127,19 +130,17 @@
       # speed - https://gist.github.com/ctechols/ca1035271ad134841284
       # both - https://github.com/kachick/dotfiles/pull/155
       _compinit_with_interval() {
-        local -r dump_dir="${config.xdg.cacheHome}/zsh"
-        local -r dump_path="$dump_dir/zcompdump-$ZSH_VERSION"
         # seconds * minutes * hours
         local -r threshold="$((60 * 60 * 3))"
 
-        if [ -e "$dump_path" ] && [ "$(_elapsed_seconds_for "$dump_path")" -le "$threshold" ]; then
+        if [ -e "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
           # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
           # -C omit to check new functions
-          compinit -C -d "$dump_path"
+          compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
         else
-          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$dump_dir"
-          compinit -d "$dump_path"
-          ${lib.getBin pkgs.coreutils}/bin/touch "$dump_path" # Ensure to update timestamp
+          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
+          compinit -d "$ZCOMPDUMP_CACHE_PATH"
+          ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
         fi
       }
     '';
