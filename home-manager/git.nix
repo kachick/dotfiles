@@ -138,6 +138,9 @@
     enable = true;
 
     settings = {
+      # Without this, gh prefer $VISUAL
+      editor = lib.getExe pkgs.helix;
+
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
         setup = ''
