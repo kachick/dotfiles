@@ -65,6 +65,8 @@ in
 
   home.sessionVariables = {
     GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+
+    PASSAGE_DIR = "${config.xdg.dataHome}/passage/store";
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
