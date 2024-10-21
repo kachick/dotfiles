@@ -13,7 +13,7 @@ lib.mkMerge [
     # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
     targets.genericLinux.enable = true;
 
-    home.packages = [
+    home.packages = with pkgs; [
       # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
       glibc
 

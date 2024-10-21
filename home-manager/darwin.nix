@@ -26,7 +26,7 @@ lib.mkMerge [
         "/usr/local/bin"
       ];
 
-      packages = [
+      packages = with pkgs; [
         # https://github.com/NixOS/nixpkgs/issues/240819
         pinentry_mac
 
