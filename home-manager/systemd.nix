@@ -4,6 +4,11 @@
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
   systemd = {
     user = {
+      # To enable non English locale only for GNOME, terminals respect home.sessionVariables instead
+      sessionVariables = {
+        LANG = "ja_JP.UTF-8";
+      };
+
       services.podman = {
         Unit = {
           Description = "Podman API Service";
