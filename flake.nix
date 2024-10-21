@@ -29,10 +29,6 @@
       inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
-      forDarwinSystems = nixpkgs.lib.genAttrs [
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
 
       mkApp = pkg: {
         type = "app";
@@ -102,66 +98,58 @@
         }
       );
 
-      packages =
-        (forAllSystems (system: {
-          cozette = homemade-packages.${system}.cozette;
-          micro-kdl = homemade-packages.${system}.micro-kdl;
-          micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
-          micro-everforest = homemade-packages.${system}.micro-everforest;
-          micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
-        }))
-        // (forDarwinSystems (system: {
-          maccy = homemade-packages.${system}.maccy;
-        }));
+      packages = forAllSystems (system: {
+        cozette = homemade-packages.${system}.cozette;
+        micro-kdl = homemade-packages.${system}.micro-kdl;
+        micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
+        micro-everforest = homemade-packages.${system}.micro-everforest;
+        micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+      });
 
-      apps =
-        (forAllSystems (
-          system:
-          builtins.listToAttrs (
-            (map
-              (name: {
-                inherit name;
-                value = mkApp homemade-packages.${system}.${name};
-              })
-              [
-                "bump_completions"
-                "bump_gomod"
-                "check_no_dirty_xz_in_nix_store"
-                "check_nixf"
-                "bench_shells"
-                "walk"
-                "ir"
-                "todo"
-                "la"
-                "lat"
-                "zed"
-                "ghqf"
-                "git-delete-merged-branches"
-                "git-log-fzf"
-                "git-log-simple"
-                "git-resolve-conflict"
-                "gh-prs"
-                "nix-hash-url"
-                "reponame"
-                "gredit"
-                "renmark"
-                "preview"
-                "p"
-              ]
-            )
-            ++ [
-              # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
-              # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-              {
-                name = "home-manager";
-                value = mkApp home-manager.defaultPackage.${system};
-              }
+      apps = forAllSystems (
+        system:
+        builtins.listToAttrs (
+          (map
+            (name: {
+              inherit name;
+              value = mkApp homemade-packages.${system}.${name};
+            })
+            [
+              "bump_completions"
+              "bump_gomod"
+              "check_no_dirty_xz_in_nix_store"
+              "check_nixf"
+              "bench_shells"
+              "walk"
+              "ir"
+              "todo"
+              "la"
+              "lat"
+              "zed"
+              "ghqf"
+              "git-delete-merged-branches"
+              "git-log-fzf"
+              "git-log-simple"
+              "git-resolve-conflict"
+              "gh-prs"
+              "nix-hash-url"
+              "reponame"
+              "gredit"
+              "renmark"
+              "preview"
+              "p"
             ]
           )
-        ))
-        // (forDarwinSystems (system: {
-          maccy = mkApp homemade-packages.${system}.maccy;
-        }));
+          ++ [
+            # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
+            # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
+            {
+              name = "home-manager";
+              value = mkApp home-manager.defaultPackage.${system};
+            }
+          ]
+        )
+      );
 
       nixosConfigurations =
         let
