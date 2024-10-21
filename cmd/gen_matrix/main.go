@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 )
 
 type Matrix struct {
@@ -13,10 +14,24 @@ type Matrix struct {
 
 func main() {
 	eventNameFlag := flag.String("event_name", "", "github.event_name")
+	pathsFlag := flag.String("paths", "", "changed paths specified by lines")
 
 	flag.Parse()
 
 	eventName := *eventNameFlag
+	paths := *pathsFlag
+
+	higherMacOSPossibility := false
+
+	for paths != "" {
+		line, rest, _ := strings.Cut(paths, "\n")
+		paths = rest
+		line = strings.TrimSuffix(line, "\r")
+
+		if strings.Contains(line, "darwin") || line == "home-manager/packages.nix" {
+			higherMacOSPossibility = true
+		}
+	}
 
 	if eventName == "" {
 		flag.Usage()
@@ -32,7 +47,7 @@ func main() {
 		},
 	}
 
-	if eventName != "pull_request" {
+	if higherMacOSPossibility || eventName != "pull_request" {
 		matrix.Os = append(matrix.Os,
 			// Intel. Correct with the architecture. But basically skipping because of it is much slow to complete.
 			"macos-13",
