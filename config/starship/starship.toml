@@ -39,6 +39,11 @@ style = "blue"
 
 [direnv]
 disabled = false
+# https://github.com/direnv/direnv-logo/blob/0949c12bafa532da0b23482a1bb042cf41b654fc/direnv-logo.png
+symbol = '📁'
+loaded_msg = '🍃'
+unloaded_msg = '🍂'
+format = '[$symbol$loaded]($style)'
 
 [character]
 success_symbol = "[>](bold green)"
@@ -60,18 +65,9 @@ format = "[$branch]($style)"
 style = "242"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
 style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
-stashed = "≡"
 
 [git_state]
-format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "bright-black"
 
 [cmd_duration]
@@ -91,3 +87,8 @@ disabled = false
 
 [os]
 disabled = false
+
+[nix_shell]
+# Set another character with NixOS and keep short
+symbol = '☃️ '
+format = '[$symbol]($style)'
