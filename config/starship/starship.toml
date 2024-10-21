@@ -3,6 +3,8 @@
 format = """
 $username\
 $hostname\
+$os\
+$container\
 $shlvl\
 $directory\
 $git_branch\
@@ -18,8 +20,6 @@ $ruby\
 $python\
 $deno\
 $nodejs\
-$os\
-$container\
 $direnv\
 $nix_shell\
 $shell\
@@ -43,7 +43,7 @@ disabled = false
 symbol = '📁'
 loaded_msg = '🍃'
 unloaded_msg = '🍂'
-format = '[$symbol$loaded]($style)'
+format = '[$symbol$loaded]($style) '
 
 [character]
 success_symbol = "[>](bold green)"
@@ -74,10 +74,6 @@ style = "bright-black"
 format = "[$duration]($style) "
 style = "yellow"
 
-[python]
-format = "[$virtualenv]($style) "
-style = "bright-black"
-
 [shell]
 disabled = false
 bash_indicator = 'bash'
@@ -91,4 +87,4 @@ disabled = false
 [nix_shell]
 # Set another character with NixOS and keep short
 symbol = '☃️ '
-format = '[$symbol]($style)'
+format = '[$symbol]($style) '
