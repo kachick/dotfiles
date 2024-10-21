@@ -9,7 +9,6 @@ $git_branch\
 $git_commit\
 $git_state\
 $git_status\
-$direnv\
 $crystal\
 $elm\
 $haskell\
@@ -19,12 +18,14 @@ $ruby\
 $python\
 $deno\
 $nodejs\
-$cmd_duration\
 $os\
 $container\
+$direnv\
 $nix_shell\
 $shell\
+$jobs\
 $time\
+$cmd_duration\
 $status\
 $line_break\
 $character"""
