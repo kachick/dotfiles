@@ -25,6 +25,8 @@ lib.mkMerge [
       ];
     };
 
+    # :)
+
     xdg = {
       configFile = {
         "karabiner/assets" = {
