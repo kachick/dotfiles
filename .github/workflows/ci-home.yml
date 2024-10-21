@@ -4,14 +4,14 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home.yml'
-      - '**/home-manager/**.nix'
+      - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
       - 'Makefile.toml'
   pull_request:
     paths:
       - '.github/workflows/ci-home.yml'
-      - '**/home-manager/**.nix'
+      - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
       - 'Makefile.toml'
