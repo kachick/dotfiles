@@ -31,6 +31,8 @@ jobs:
       - name: Install gh-action-escape
         run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Get changed paths
         run: |
           git diff origin/main --name-only | gh-action-escape -name=CHANGED_PATHS | tee --append "$GITHUB_ENV"
