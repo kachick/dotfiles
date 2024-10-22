@@ -50,6 +50,9 @@ Style/QuotedSymbols:
 Style/MultilineInPatternThen:
   Enabled: true
 
+Layout:
+  Enabled: true
+
 Layout/TrailingEmptyLines:
   Enabled: true
 

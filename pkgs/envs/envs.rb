@@ -1,4 +1,4 @@
-# require 'open3'
+require 'open3'
 
 shortner = -> str {
   limit = 70
@@ -6,11 +6,12 @@ shortner = -> str {
   str.slice(...limit).gsub("\n", ' ') + (length > limit ? '...' : '')
 }
 
-puts(ENV.sort.map { |k, v| "#{k}=#{shortner.(v)}" })
+envs = ENV.sort.map { |k, v| "#{k}=#{shortner.(v)}" }
 
-# o, e, s = Open3.capture3("echo a; sort >&2", :stdin_data=>"foo\nbar\nbaz\n")
-# p o #=> "a\n"
-# p e #=> "bar\nbaz\nfoo\n"
-# p s #=> #<Process::Status: pid 32682 exit 0>
+fzf_query = ARGV.first
 
-# Open3.capture3("echo a; sort >&2", :stdin_data=>"foo\nbar\nbaz\n")
+Open3.pipeline_w(
+  %Q!fzf --delimiter '=' --nth '1' --query "#{fzf_query}"!
+) do |first_stdin, _wait_thrs|
+  first_stdin.puts envs
+end
