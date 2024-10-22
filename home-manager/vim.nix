@@ -1,4 +1,9 @@
-{ pkgs, homemade-pkgs, ... }:
+{
+  pkgs,
+  config,
+  homemade-pkgs,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/vim.nix
@@ -20,6 +25,7 @@
     extraConfig = ''
       colorscheme iceberg
       set termguicolors
+      set viminfofile=${config.xdg.stateHome}/vim/viminfo
     '';
   };
 }
