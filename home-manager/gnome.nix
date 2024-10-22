@@ -42,7 +42,6 @@ in
         );
 
         favorite-apps = [
-          "Alacritty.desktop"
           "kitty.desktop"
           "dev.zed.Zed.desktop"
           "firefox.desktop"
@@ -56,7 +55,7 @@ in
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.alacritty;
+        exec = lib.getExe pkgs.kitty;
         # exec-arg="";
       };
 
@@ -160,9 +159,9 @@ in
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-        name = "Alacritty";
+        name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.alacritty;
+        command = lib.getExe pkgs.kitty;
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
