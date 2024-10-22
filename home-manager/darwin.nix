@@ -12,10 +12,12 @@ lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
     home = {
       sessionVariables = {
-        # * Do not specify Nix store path for zed in macOS
-        #   https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
-        # * `cli: install` action installs into this path in macOS
-        VISUAL = "zed --wait";
+        # ## If you prefer zed
+        #   * Do not specify Nix store path for zed in macOS
+        #     https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
+        #   * `cli: install` action installs into this path in macOS
+        # VISUAL = "zed --wait";
+        VISUAL = lib.getExe edge-pkgs.vscode;
 
         BROWSER = "open";
       };
