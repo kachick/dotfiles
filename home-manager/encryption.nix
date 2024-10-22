@@ -63,10 +63,12 @@ in
     enableSshSupport = false;
   };
 
-  home.sessionVariables = {
+  home.sessionVariables = rec {
     GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
 
     PASSAGE_DIR = "${config.xdg.dataHome}/passage/store";
+    PASSAGE_RECIPIENTS_FILE = "${PASSAGE_DIR}/.age-recipients";
+    PASSAGE_IDENTITIES_FILE = "${config.xdg.configHome}/passage/identities";
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
