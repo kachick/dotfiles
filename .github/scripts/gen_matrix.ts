@@ -19,5 +19,8 @@ const runners = (higherMacOSPossibility || context.eventName !== "pull_request")
   ? [...fastRunners, "macos-13"]
   : fastRunners;
 
-// info(context.eventName) // Debug logger
-info(JSON.stringify(runners));
+const matrix = {
+  os: runners,
+} as const;
+console.error(context.eventName); // Debug logger
+info(JSON.stringify(matrix, null, "  "));
