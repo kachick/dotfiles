@@ -11,6 +11,9 @@
   },
   "toml": {
   },
+  "typescript": {
+    "quoteStyle": "preferSingle"
+  },
   "excludes": [
     ".git",
     ".direnv",
