@@ -86,8 +86,6 @@
                 goreleaser
                 trivy
 
-                # rubocop
-
                 (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
               ++ (with edge-pkgs; [
