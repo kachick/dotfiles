@@ -85,6 +85,8 @@
                 go_1_23
                 goreleaser
                 trivy
+
+                (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
               ++ (with edge-pkgs; [
                 nixd
@@ -104,6 +106,7 @@
         micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
         micro-everforest = homemade-packages.${system}.micro-everforest;
         micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+        envs = homemade-packages.${system}.envs;
       });
 
       apps = forAllSystems (
@@ -132,6 +135,7 @@
               "git-log-simple"
               "git-resolve-conflict"
               "gh-prs"
+              "envs"
               "nix-hash-url"
               "reponame"
               "gredit"

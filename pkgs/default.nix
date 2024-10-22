@@ -50,6 +50,8 @@
 
   gh-prs = import ./gh-prs { inherit pkgs; };
 
+  envs = import ./envs { inherit pkgs; };
+
   reponame = import ./reponame { inherit pkgs; };
 
   beedii = pkgs.callPackage ./beedii { };
