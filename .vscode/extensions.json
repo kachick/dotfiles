@@ -13,6 +13,7 @@
     "kdl-org.kdl",
     "JohnnyMorganz.stylua",
     "davidanson.vscode-markdownlint",
-    "TheNuProjectContributors.vscode-nushell-lang"
+    "TheNuProjectContributors.vscode-nushell-lang",
+    "denoland.vscode-deno"
   ]
 }

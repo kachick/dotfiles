@@ -85,6 +85,8 @@
                 go_1_23
                 goreleaser
                 trivy
+
+                deno
               ])
               ++ (with edge-pkgs; [
                 nixd

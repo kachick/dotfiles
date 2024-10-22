@@ -36,15 +36,22 @@ jobs:
       - name: Get changed paths
         run: |
           git diff origin/main --name-only | gh-action-escape -name=CHANGED_PATHS | tee --append "$GITHUB_ENV"
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      # - name: Set up Go
+      #   uses: actions/setup-go@v5
+      #   with:
+      #     go-version-file: 'go.mod'
+      #     cache-dependency-path: 'go.sum'
+      - uses: denoland/setup-deno@v1
         with:
-          go-version-file: 'go.mod'
-          cache-dependency-path: 'go.sum'
+          deno-version: '1.44.3' # selfup {"extract":"\\d[^']+","replacer":["bash","-c","deno --version | head -n 1 | cut -d ' ' -f 2"]}
+      # - name: Generate Matrix
+      #   id: generator
+      #   run: |
+      #     go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS" | gh-action-escape -name=matrix | tee -a "$GITHUB_OUTPUT"
       - name: Generate Matrix
         id: generator
         run: |
-          go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS" | gh-action-escape -name=matrix | tee -a "$GITHUB_OUTPUT"
+          deno run ./.github/scripts/gen_matrix.ts -paths "$CHANGED_PATHS" | gh-action-escape -name=matrix | tee -a "$GITHUB_OUTPUT"
   home-manager:
     needs: [generate_matrix]
     if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
