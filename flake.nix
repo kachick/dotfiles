@@ -132,6 +132,7 @@
               "git-log-simple"
               "git-resolve-conflict"
               "gh-prs"
+              "envs"
               "nix-hash-url"
               "reponame"
               "gredit"

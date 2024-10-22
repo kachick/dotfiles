@@ -126,6 +126,7 @@
   p
   g
   walk
+  envs
   ir
   updeps
   bench_shells
