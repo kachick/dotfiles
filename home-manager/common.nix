@@ -50,10 +50,6 @@
       MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
       MANROFFOPT = "-c";
 
-      # - You can check the candidates in `locale -a`
-      # - pkgs.glibc installs many candidates, but it does not support darwin
-      LANG = "ja_JP.UTF-8";
-
       # NOTE: Original comments in zsh
       # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
       # Remove -X and -F (exit if the content fits on one screen) to enable it.
@@ -81,10 +77,13 @@
       inherit homemade-pkgs;
     };
 
+    # You can check the candidates in `locale -a`
+    # pkgs.glibc installs many candidates, but it does not support darwin
     # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
     # https://github.com/nix-community/home-manager/blob/fe56302339bb28e3471632379d733547caec8103/modules/home-environment.nix#L11
     language = {
       base = "ja_JP.UTF-8";
+      # systemd config overrides this value in gnome-shell, however this will be used in Linux VT console
       time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
   };
