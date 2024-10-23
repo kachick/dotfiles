@@ -4,7 +4,7 @@
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
   systemd = {
     user = {
-      # Enable locale for GNOME, terminals respect home.sessionVariables instead
+      # Enable locale for GNOME and terminals in the gnome-shell. Linux VT console respects home.sessionVariables instead
       # https://superuser.com/a/1841368
       # https://github.com/nix-community/home-manager/blob/5ec753a1fc4454df9285d8b3ec0809234defb975/modules/systemd.nix#L92-L96
       sessionVariables = {
