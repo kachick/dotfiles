@@ -63,7 +63,7 @@
       # Don't add needless quotation in the arguments. For example `gopass show 'rclone'` does not work. It should be `gopass show rclone`.
       RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
 
-      STARSHIP_CONFIG = ../config/starship/starship.toml;
+      STARSHIP_CONFIG = "${../config/starship/starship.toml}";
     };
 
     sessionPath = [
