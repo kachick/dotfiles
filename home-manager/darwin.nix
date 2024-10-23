@@ -59,8 +59,6 @@ lib.mkMerge [
 
         edge-pkgs.vscode # Keep latest as possible
 
-        edge-pkgs.signal-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/348165
-
         homemade-pkgs.maccy
       ];
     };
