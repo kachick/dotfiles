@@ -7,6 +7,6 @@ pkgs.writeShellApplication rec {
     ruby_3_3 # pkgs.writers.writeRuby and writeRubyBin does not fit
   ];
   runtimeEnv = {
-    RUBY_SCRIPT_PATH = ./${name}.rb;
+    RUBY_SCRIPT_PATH = "${./${name}.rb}";
   };
 }
