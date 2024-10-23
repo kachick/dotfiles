@@ -34,6 +34,11 @@
     };
   };
 
+  i18n = {
+    # GNOME respects this, I don't know how to realize it only via home-manager
+    defaultLocale = "ja_JP.UTF-8";
+  };
+
   services.xserver = {
     enable = true;
 
