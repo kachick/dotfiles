@@ -112,6 +112,8 @@
       edge-pkgs.zed-editor
       # Adding for zed instead of zeditor since https://github.com/NixOS/nixpkgs/pull/344193. Also keep original zed-editor package here to add icons for GUI
       homemade-pkgs.zed
+
+      edge-pkgs.podman-desktop
     ]
     ++ (with pkgs; [
       firefox

@@ -46,6 +46,7 @@ in
           "dev.zed.Zed.desktop"
           "firefox.desktop"
           "google-chrome.desktop"
+          "podman-desktop.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           amazon_music-pwa-file
           "org.gnome.Rhythmbox3.desktop"

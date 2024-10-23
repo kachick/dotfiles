@@ -50,6 +50,8 @@
 
   gh-prs = import ./gh-prs { inherit pkgs; };
 
+  envs = import ./envs { inherit pkgs; };
+
   reponame = import ./reponame { inherit pkgs; };
 
   beedii = pkgs.callPackage ./beedii { };
@@ -63,8 +65,6 @@
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
   micro-everforest = pkgs.callPackage ./micro-everforest { };
   micro-catppuccin = pkgs.callPackage ./micro-catppuccin { };
-
-  kdl-vim = pkgs.callPackage ./kdl.vim { };
 
   nix-hash-url = pkgs.callPackage ./nix-hash-url { };
 

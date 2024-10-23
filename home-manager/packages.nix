@@ -99,7 +99,6 @@
   # - Enable special module for Nix OS.
   # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
   #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
-  # - In darwin, this package will be used for podman-remote, you should manually install podman-desktop for the engine
   podman
   podman-tui
   docker-compose
@@ -126,6 +125,7 @@
   p
   g
   walk
+  envs
   ir
   updeps
   bench_shells
