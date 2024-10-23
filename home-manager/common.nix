@@ -52,8 +52,7 @@
 
       # - You can check the candidates in `locale -a`
       # - pkgs.glibc installs many candidates, but it does not support darwin
-      # This value may overrides NixOS config for GNOME
-      # LANG = "en_US.UTF-8";
+      LANG = "ja_JP.UTF-8";
 
       # NOTE: Original comments in zsh
       # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
