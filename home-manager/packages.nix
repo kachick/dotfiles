@@ -113,6 +113,8 @@
   #  - argos-translate - can be closed in offline, but not yet enough accuracy
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
+
+  edge-pkgs.gurk-rs
 ])
 ++ (with homemade-pkgs; [
   la
