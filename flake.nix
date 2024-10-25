@@ -23,6 +23,11 @@
       # https://github.com/xremap/nix-flake/blob/2c55335d6509702b0d337b8da697d7048e36123d/flake.nix#L6
       inputs.nixpkgs.follows = "edge-nixpkgs";
     };
+    selfup = {
+      url = "github:kachick/selfup/v1.1.6";
+      # https://github.com/kachick/selfup/blob/991afc21e437a449c9bd4237b4253f8da407f569/flake.nix#L8
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -103,7 +108,8 @@
                 treefmt2
                 markdownlint-cli2
               ])
-              ++ (with homemade-pkgs; [ nix-hash-url ]);
+              ++ (with homemade-pkgs; [ nix-hash-url ])
+              ++ [ inputs.selfup.packages.${system}.default ];
           };
         }
       );

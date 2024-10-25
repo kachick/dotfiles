@@ -470,7 +470,29 @@
         "home-manager": "home-manager",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
+        "selfup": "selfup",
         "xremap-flake": "xremap-flake"
+      }
+    },
+    "selfup": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1729058896,
+        "narHash": "sha256-JdVC3/Agrc8vijReztNHyggEHRp6PAijp7ymVmYB+nU=",
+        "owner": "kachick",
+        "repo": "selfup",
+        "rev": "19e2cb02d17162faaaa65a9c2d47726fb76add3b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kachick",
+        "ref": "v1.1.6",
+        "repo": "selfup",
+        "type": "github"
       }
     },
     "systems": {
