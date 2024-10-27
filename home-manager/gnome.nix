@@ -149,7 +149,6 @@ in
         search = [ "<Alt>space" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
@@ -157,13 +156,6 @@ in
         name = "Terminal";
         binding = "<Super>t";
         command = lib.getExe pkgs.kitty;
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-        name = "Resource Monitor - TUI";
-        binding = "<Super><Shift>r";
-        # https://askubuntu.com/questions/5172/running-a-desktop-file-in-the-terminal
-        command = "gtk-launch btop.desktop";
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
