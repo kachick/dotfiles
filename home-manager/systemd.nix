@@ -1,4 +1,9 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  edge-pkgs,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
@@ -10,6 +15,21 @@
       sessionVariables = {
         # GNOME clock respects LC_TIME. And does not support displaying iso-8601 format even if set en_DK
         LC_TIME = "ja_JP.UTF-8";
+
+        # 'force' ignores $DISPLAY. 'prefer' is not enough
+        SSH_ASKPASS_REQUIRE = "force";
+        SSH_ASKPASS = pkgs.lib.getExe (
+          pkgs.writeShellApplication {
+            name = "ssh-ask-pass";
+            text = "gopass show ssh-pass";
+            meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
+            runtimeInputs = (with pkgs; [ gopass ]) ++ (with edge-pkgs; [ sequoia-chameleon-gnupg ]);
+            runtimeEnv = {
+              GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+            };
+          }
+        );
+
       };
 
       services.podman = {
