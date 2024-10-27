@@ -62,6 +62,8 @@
     };
   };
 
+  services.logind.killUserProcesses = true; # See GH-755 and GH-890
+
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
   # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
