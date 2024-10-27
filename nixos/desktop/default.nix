@@ -119,6 +119,8 @@
       homemade-pkgs.zed
 
       edge-pkgs.podman-desktop
+
+      edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
     ]
     ++ (with pkgs; [
       firefox
