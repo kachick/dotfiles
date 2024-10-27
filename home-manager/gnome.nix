@@ -87,10 +87,6 @@ in
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
       };
 
-      "org/gnome/desktop/wm/preferences" = {
-        num-workspaces = 3;
-      };
-
       "org/gnome/desktop/wm/keybindings" = {
         activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
 
@@ -150,8 +146,7 @@ in
         www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
-        search = [ "<Super>f" ];
+        search = [ "<Alt>space" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
@@ -166,7 +161,7 @@ in
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
         name = "Resource Monitor - TUI";
-        binding = "<Super>r";
+        binding = "<Super><Shift>r";
         # https://askubuntu.com/questions/5172/running-a-desktop-file-in-the-terminal
         command = "gtk-launch btop.desktop";
       };
@@ -188,6 +183,11 @@ in
         experimental-features = [ "scale-monitor-framebuffer" ];
 
         dynamic-workspaces = false;
+
+        # Disable default Super runs GNOME overview with search
+        # https://ubuntuforums.org/showthread.php?t=2405352
+        # The feature is useful, but frustrated when using paperwm or pop-shell shortcuts. Super modifier is mostly used in them
+        overlay-key = "";
       };
 
       "org/gnome/mutter/keybindings" = {
@@ -219,16 +219,25 @@ in
 
       "org/gnome/desktop/wm/preferences" = {
         theme = "Nordic";
+
+        num-workspaces = 3;
+        workspace-names = [
+          "Main"
+          "Sandbox"
+          "Music"
+        ];
       };
 
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
-          "dev.zed.Zed.desktop:2"
-          # TODO: Add vscode here as zed-editor
           "${spotify-pwa-file}:3"
           "${amazon_music-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
+      };
+
+      "org/gnome/shell/extensions/paperwm/keybindings" = {
+        take-window = [ ]; # default: ['<Super>t']
       };
 
       "org/virt-manager/virt-manager/connections" = {
