@@ -64,8 +64,8 @@
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
-  # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that
-  programs.seahorse.enable = false;
+  # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
+  programs.ssh.enableAskPassword = false;
 
   # https://nixos.wiki/wiki/Virt-manager
   #
