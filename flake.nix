@@ -121,7 +121,6 @@
         micro-everforest = homemade-packages.${system}.micro-everforest;
         micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
         envs = homemade-packages.${system}.envs;
-        gnome-session = homemade-packages.${system}.gnome-session;
       });
 
       apps = forAllSystems (
