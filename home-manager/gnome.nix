@@ -213,6 +213,7 @@ in
         theme = "Nordic";
 
         num-workspaces = 3;
+        # This names are might not be persisted with paperwm, it also uses own UUID for that
         workspace-names = [
           "Main"
           "Sandbox"
