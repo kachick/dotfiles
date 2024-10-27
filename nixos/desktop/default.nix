@@ -91,6 +91,7 @@
       evince # document viewer
       gnome-calendar
       gnome-music # does not support flac by defaults
+      gnome-session
     ]);
 
   # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
@@ -124,6 +125,8 @@
       edge-pkgs.podman-desktop
 
       edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
+
+      homemade-pkgs.gnome-session
     ]
     ++ (with pkgs; [
       firefox
@@ -250,6 +253,26 @@
   );
 
   environment.etc."gdm/PreLogin/Default".source = lib.getExe (
+    pkgs.writeShellApplication {
+      name = "reset_home-manager-sourced";
+      text = ''
+        unset __HM_SESS_VARS_SOURCED
+      '';
+      meta.description = "See GH-890 and GH-755";
+    }
+  );
+
+  environment.etc."gdm/PreSession/Default".source = lib.getExe (
+    pkgs.writeShellApplication {
+      name = "reset_home-manager-sourced";
+      text = ''
+        unset __HM_SESS_VARS_SOURCED
+      '';
+      meta.description = "See GH-890 and GH-755";
+    }
+  );
+
+  environment.etc."gdm/PostSession/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "reset_home-manager-sourced";
       text = ''
