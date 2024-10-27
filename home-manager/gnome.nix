@@ -230,6 +230,7 @@ in
 
       "org/gnome/shell/extensions/paperwm/keybindings" = {
         take-window = [ ]; # default: ['<Super>t']
+        open-window-position = 0;
       };
 
       "org/virt-manager/virt-manager/connections" = {
