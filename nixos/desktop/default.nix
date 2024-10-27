@@ -251,16 +251,6 @@
     }
   );
 
-  environment.etc."gdm/PreLogin/Default".source = lib.getExe (
-    pkgs.writeShellApplication {
-      name = "reset_home-manager-sourced";
-      text = ''
-        unset __HM_SESS_VARS_SOURCED
-      '';
-      meta.description = "See GH-890 and GH-755";
-    }
-  );
-
   environment.variables = {
     VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
 
