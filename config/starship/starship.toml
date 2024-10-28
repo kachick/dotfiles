@@ -57,6 +57,7 @@ format = "[$status]($style)"
 
 [git_commit]
 only_detached = false
+tag_disabled = false
 
 [git_branch]
 format = "[$branch]($style)"
@@ -65,7 +66,7 @@ format = "[$branch]($style)"
 style = "242"
 
 [git_status]
-style = "cyan"
+style = "purple"
 
 [git_state]
 style = "bright-black"

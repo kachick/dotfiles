@@ -1,7 +1,7 @@
 {
   pkgs,
   config,
-  homemade-pkgs,
+  edge-pkgs,
   ...
 }:
 
@@ -20,7 +20,7 @@
         iceberg-vim
         fzf-vim
       ])
-      ++ [ homemade-pkgs.kdl-vim ];
+      ++ [ edge-pkgs.vimPlugins.kdl-vim ];
 
     settings = {
       background = "dark";

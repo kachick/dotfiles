@@ -55,10 +55,6 @@
   # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
   nixpkgs.config.allowUnfree = true;
 
-  environment.sessionVariables = {
-    SSH_ASKPASS_REQUIRE = "prefer";
-  };
-
   # TODO: Reconsider to drop this
   services.packagekit = {
     enable = true;

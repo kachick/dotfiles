@@ -34,6 +34,11 @@
     };
   };
 
+  i18n = {
+    # GNOME respects this, I don't know how to realize it only via home-manager
+    defaultLocale = "ja_JP.UTF-8";
+  };
+
   services.xserver = {
     enable = true;
 
@@ -58,6 +63,9 @@
   };
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+
+  # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
+  programs.ssh.enableAskPassword = false;
 
   # https://nixos.wiki/wiki/Virt-manager
   #
@@ -112,6 +120,12 @@
       edge-pkgs.zed-editor
       # Adding for zed instead of zeditor since https://github.com/NixOS/nixpkgs/pull/344193. Also keep original zed-editor package here to add icons for GUI
       homemade-pkgs.zed
+
+      edge-pkgs.podman-desktop
+
+      edge-pkgs.cyme # Frequently updated
+
+      edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
     ]
     ++ (with pkgs; [
       firefox
@@ -126,6 +140,8 @@
       # TODO: Reconsider to drop this
       skk-dicts
       skktools
+
+      lshw
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
@@ -205,17 +221,7 @@
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-
-      # Should be changed from default CSS to another to avoid https://github.com/pop-os/shell/issues/132
-      # https://github.com/pop-os/shell/blob/cfa0c55e84b7ce339e5ce83832f76fee17e99d51/light.css#L20-L24
-      # Apple same color as nord(Nordic) https://github.com/EliverLara/Nordic/blob/5c53654fb6f3e0266ad8c481a099091e92f28274/gnome-shell/_colors.scss#L14-L15
-      (pop-shell.overrideAttrs (prev: {
-        preFixup =
-          prev.preFixup
-          + ''
-            echo '.pop-shell-search-element:select{ background: #8fbcbb !important; color: #fefefe !important; }' >> $out/share/gnome-shell/extensions/pop-shell@system76.com/light.css
-          '';
-      }))
+      paperwm
       clipboard-history
       kimpanel
       just-perfection
@@ -267,6 +273,8 @@
     # https://github.com/NixOS/nixpkgs/issues/22652
     # https://github.com/alacritty/alacritty/issues/6703#issuecomment-2222503206
     XCURSOR_THEME = "Adwaita";
+
+    __HM_SESS_VARS_SOURCED = ""; # Workaround for GH-755 and GH-890
   };
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
