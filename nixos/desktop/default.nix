@@ -64,6 +64,9 @@
 
   services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
+  # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
+  programs.ssh.enableAskPassword = false;
+
   # https://nixos.wiki/wiki/Virt-manager
   #
   # distrobox is a container based solution, not vm. And see https://github.com/89luca89/distrobox/issues/958
@@ -266,6 +269,8 @@
     # https://github.com/NixOS/nixpkgs/issues/22652
     # https://github.com/alacritty/alacritty/issues/6703#issuecomment-2222503206
     XCURSOR_THEME = "Adwaita";
+
+    __HM_SESS_VARS_SOURCED = ""; # Workaround for GH-755 and GH-890
   };
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
