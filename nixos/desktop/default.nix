@@ -271,6 +271,8 @@
     # https://github.com/NixOS/nixpkgs/issues/22652
     # https://github.com/alacritty/alacritty/issues/6703#issuecomment-2222503206
     XCURSOR_THEME = "Adwaita";
+
+    __HM_SESS_VARS_SOURCED = ""; # Workaround for GH-755 and GH-890
   };
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
