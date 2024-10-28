@@ -123,6 +123,8 @@
 
       edge-pkgs.podman-desktop
 
+      edge-pkgs.cyme # Frequently updated
+
       edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
     ]
     ++ (with pkgs; [
