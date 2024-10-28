@@ -139,6 +139,8 @@
       skk-dicts
       skktools
 
+      lshw
+
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       # Add LSP global for zed-editor. Prefer external package for helix
