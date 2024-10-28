@@ -22,6 +22,7 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  # Required to reboot if you want to apply changes
   # Prevent GH-894
   # https://askubuntu.com/a/1446653
   services.udev.extraRules = lib.mkAfter ''
