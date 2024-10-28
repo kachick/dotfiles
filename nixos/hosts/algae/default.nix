@@ -21,4 +21,14 @@
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];
+
+  powerManagement = {
+    enable = true;
+
+    # Prevent GH-894
+    powerDownCommands = ''
+      echo 'enabled' > '/sys/bus/usb/devices/usb3/power/wakeup'
+    '';
+  };
+
 }
