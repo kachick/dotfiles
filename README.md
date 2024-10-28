@@ -150,31 +150,35 @@ Check [traps](./windows/Multi-booting.md)
 
 ## Following steps
 
-1. Restore GPG secret from STDIN
+1. Restore vaults
+
+   Avoid circular references.
 
    ```bash
-   gpg --import
+   git clone 'https://example.com/password-store.git' "$PASSWORD_STORE_DIR"
+   git clone 'git@example.org:secrets.git' "$PASSAGE_DIR"
    ```
 
-1. Restore SSH secret from STDIN
+1. Extract several secrets from the vaults
 
    ```bash
-   touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   hx ~/.ssh/id_ed25519
+   passage show gpg | gpg --import
+
+   passage show ssh > ~/.ssh/id_ed25519
+   chmod 400 ~/.ssh/id_ed25519
    ssh-add ~/.ssh/id_ed25519
+
+   rclone config touch
+   passage show rclone > "$(rclone config file | tail -1)"
    ```
 
-1. Restore encrepted secrets from private git repository
+1. Restore shell history - [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
+
+1. Do not keep whole vaults in local
 
    ```bash
-   git clone 'git@example.com:password-store.git' "$PASSWORD_STORE_DIR"
+   rm -rf "$PASSAGE_DIR"
    ```
-
-1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
-
-1. Restore shell history
-
-   [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
 
 ## Note
 
