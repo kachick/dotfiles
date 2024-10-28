@@ -29,7 +29,7 @@
     # Enable USB port 3 wakeup
     ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="2109", ATTRS{idProduct}=="2817", ATTRS{busnum}=="3", ATTR{power/wakeup}="enabled"
     # Disable USB Switcher wakeup
-    ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="5411", ATTR{power/wakeup}="enabled"
+    ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="5411", ATTR{power/wakeup}="disabled"
     # Enable trackball - "Kensington SlimBlade Pro Trackball(Wired)" wakeup
     ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="047d", ATTRS{idProduct}=="80d7", ATTR{power/wakeup}="enabled"
     # Enable keyboard - "REALFORCE 87 US" wakeup
