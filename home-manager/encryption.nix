@@ -5,38 +5,8 @@
   ...
 }:
 
-# # FAQ
-#
-# ## sequoia-sq and gpg
-#
-# See GH-830
-#
-# If you faced to decrypt error with gpg-sq, check it with `sq decrypt`. It displays error details.
-# For example, `1: AEAD Encrypted Data Packet v1 is not considered secure`
-# This is caused by encrypted non configured gpg for the AEAD. Disable it with showpref/setpref if you still use gpg.
-#
-# ## sequoia-sq
-#
-# TODO: <UPDATE ME>
-#
-# ## GPG
-#
-# - How to list keys?
-#   - 1. `gpg --list-secret-keys --keyid-format=long` # The `sec` first section displays same text as `pub` by `gpg --list-keys --keyid-format=long`
-# - How to add subkey?
-#   - 1. `gpg --edit-key PUBKEY`
-#   - 2. `addkey`
-#   - 3. `save`
-# - How to revoke subkey?
-#   - 1. `gpg --edit-key PUBKEY`
-#   - 2. `key n` n is the index of subkey
-#   - 3. `revkey`
-#   - 4. `save`
-#   - 5. Replace uploaded pubkey with new one, see https://github.com/kachick/dotfiles/pull/311#issuecomment-1715812324 for detail
-# - How to get pubkey to upload?
-#   - `gpg --armor --export PUBKEY | clip.exe`
-# - How to backup private key?
-#   - `gpg --export-secret-keys --armor > gpg-private.keys.bak`
+# See https://github.com/kachick/dotfiles/wiki/Encryption for the extracted comments
+
 let
   # All gpg-agent timeouts numbers should be specified with the `seconds`
   day = 60 * 60 * 24;

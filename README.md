@@ -150,38 +150,7 @@ Check [traps](./windows/Multi-booting.md)
 
 ## How to setup secrets
 
-1. Restore vaults
-
-   ```bash
-   git clone 'https://private.example.com/password-store.git' "$PASSWORD_STORE_DIR"
-   git clone 'git@private.example.org:passage-store.git' "$PASSAGE_DIR"
-   hx "$PASSAGE_IDENTITIES_FILE" # Make sure the editor is not enabling backup features
-
-   # Saved with: `gpg --export-secret-subkeys --armor '9BE4016A38165CCB' | age --encrypt --passphrase --armor --identity "$PASSAGE_IDENTITIES_FILE" --output 'pgp-sub-9BE4016A38165CCB.age'`
-   # Don't include this in passage store to avoid circular references
-   age --decrypt --identity "$PASSAGE_IDENTITIES_FILE" 'pgp-sub-9BE4016A38165CCB.age' | gpg-sq --import
-   ```
-
-1. Load minimum secrets from the vaults
-
-   ```bash
-   passage show 'ssh' > ~/.ssh/id_ed25519
-   chmod 400 ~/.ssh/id_ed25519
-   ssh-add ~/.ssh/id_ed25519
-
-   rclone config touch
-   passage show 'rclone' > "$(rclone config file | tail -1)"
-   ```
-
-1. Restore shell history - [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
-
-1. Remove used vaults from local
-
-   ```bash
-   # Don't trust `shred --remove` and `srm` when using SSD. Use tomb, rclone or OS provided solution to encrypt the disk
-   rm -rf "$PASSAGE_DIR"
-   rm "$PASSAGE_IDENTITIES_FILE"
-   ```
+Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Vault)
 
 ## Note
 
