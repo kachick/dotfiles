@@ -150,17 +150,19 @@ Check [traps](./windows/Multi-booting.md)
 
 ## Following steps
 
-1. Restore vaults. Avoid circular references.
+1. Restore vaults.
 
    ```bash
    git clone 'https://private.example.com/password-store.git' "$PASSWORD_STORE_DIR"
    git clone 'git@private.example.org:passage-store.git' "$PASSAGE_DIR"
+   hx "$PASSAGE_IDENTITIES_FILE"
    ```
 
 1. Load minimum secrets from the vaults
 
    ```bash
    # Saved with: `gpg --export-secret-subkeys --armor '9BE4016A38165CCB' | passage insert 'gpg/sub/9BE4016A38165CCB'`
+   # TODO: Avoid circular references
    passage show 'gpg/sub/9BE4016A38165CCB' | gpg-sq --import
 
    passage show 'ssh' > ~/.ssh/id_ed25519
@@ -173,11 +175,12 @@ Check [traps](./windows/Multi-booting.md)
 
 1. Restore shell history - [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
 
-1. Do not keep whole vaults in local
+1. Remove used vaults from local
 
    ```bash
    # Don't trust `shred --remove` and `srm` when using SSD. Use tomb, rclone or OS provided solution to encrypt the disk
    rm -rf "$PASSAGE_DIR"
+   rm "$PASSAGE_IDENTITIES_FILE"
    ```
 
 ## Note

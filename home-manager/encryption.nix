@@ -40,6 +40,7 @@
 let
   # All gpg-agent timeouts numbers should be specified with the `seconds`
   day = 60 * 60 * 24;
+  passage_identity_dir = "${config.xdg.configHome}/passage";
 in
 {
   # Don't set $SEQUOIA_HOME, it unified config and data, cache to one directory as same as gpg era.
@@ -66,10 +67,17 @@ in
   home.sessionVariables = rec {
     GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
 
+    # Do NOT include the identity here
     PASSAGE_DIR = "${config.xdg.dataHome}/passage/store";
+
+    # Create with: `age-keygen | age --passphrase --armor`
+    PASSAGE_IDENTITIES_FILE = "${passage_identity_dir}/identities.age";
+
+    # Create with: `age --decrypt "$PASSAGE_IDENTITIES_FILE" | age-keygen -y`
     PASSAGE_RECIPIENTS_FILE = "${PASSAGE_DIR}/.age-recipients";
-    PASSAGE_IDENTITIES_FILE = "${config.xdg.configHome}/passage/identities";
   };
+
+  home.file."${passage_identity_dir}/.keep".text = "Keep this directory because of passage and age does not create the file if directory is missing";
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
   programs.gpg = {
