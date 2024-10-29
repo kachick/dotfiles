@@ -150,7 +150,7 @@ Check [traps](./windows/Multi-booting.md)
 
 ## How to setup secrets
 
-Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Vault)
+Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
 ## Note
 
