@@ -51,7 +51,8 @@
   # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
   gopass # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
 
-  passage # Age fork of `pass`, also supports rage with $PASSAGE_AGE
+  # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
+  edge-pkgs.passage # Use latest to apply https://github.com/NixOS/nixpkgs/pull/339113
 
   # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
   # See following issues
