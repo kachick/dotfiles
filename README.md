@@ -148,33 +148,9 @@ Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml)
 
 Check [traps](./windows/Multi-booting.md)
 
-## Following steps
+## How to setup secrets
 
-1. Restore GPG secret from STDIN
-
-   ```bash
-   gpg --import
-   ```
-
-1. Restore SSH secret from STDIN
-
-   ```bash
-   touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   hx ~/.ssh/id_ed25519
-   ssh-add ~/.ssh/id_ed25519
-   ```
-
-1. Restore encrepted secrets from private git repository
-
-   ```bash
-   git clone 'git@example.com:password-store.git' "$PASSWORD_STORE_DIR"
-   ```
-
-1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
-
-1. Restore shell history
-
-   [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
+Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Vault)
 
 ## Note
 

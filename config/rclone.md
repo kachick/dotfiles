@@ -26,14 +26,8 @@ See [rclone with Google Drive](https://rclone.org/drive) for detail.
 
 ## Restore Config
 
-Assume you encrypted the config
-
-```bash
-rclone config touch
-hx "$(rclone config file | tail -1)"
-```
-
-Don't save the file in this repository even if it is encrypted with agenix or sops-nix.
+Don't save the file in this repository even if it is encrypted with agenix or sops-nix.\
+See <https://github.com/kachick/dotfiles/wiki/Encryption> for the detail.
 
 ## Decrypt the config in a session
 
