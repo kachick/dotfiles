@@ -1,18 +1,18 @@
 {
   lib,
-  stdenv,
+  stdenvNoCC,
   fetchFromGitHub,
 }:
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation rec {
   pname = "micro-kdl";
-  version = "unstable-2024-08-15";
+  version = "0.1.0";
 
   src = fetchFromGitHub {
     owner = "kachick";
     repo = "micro-kdl";
-    rev = "fa014198284ede791afc36ccec5d24c0c7201256";
-    hash = "sha256-wS1Ldrhn8dKTXdLM23glDdFrKxAex4aZJSxgYaHN/uA=";
+    rev = "v${version}";
+    hash = "sha256-vWI7VbcPM2mgNj32txf2tNKgEi+Bbj0+wEjQRz2uu1E=";
   };
 
   buildPhase = ''
@@ -24,11 +24,11 @@ stdenv.mkDerivation {
     cp kdl.* $out
   '';
 
-  meta = with lib; {
+  meta = {
     description = "Micro editor syntax highlighting for KDL";
     homepage = "https://github.com/kachick/micro-kdl";
-    license = licenses.mit;
+    license = lib.licenses.mit;
     mainProgram = "micro-kdl";
-    platforms = platforms.all;
+    platforms = lib.platforms.all;
   };
 }

@@ -8,8 +8,7 @@
 # Prefer stable pkgs as possible, if you want to use edge pkgs
 #   - Keep zero or tiny config in home-manager layer
 #   - Set `mod-name.package = edge-pkgs.the-one;`
-with pkgs;
-[
+(with pkgs; [
   # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
   # bash
   # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
@@ -43,8 +42,17 @@ with pkgs;
   gh
   ghq
 
-  # GPG
-  gnupg
+  edge-pkgs.sequoia-sq # Alt `gpg` - nixos-24.05 does not backport recent versions and the older requires to rebuild. https://github.com/NixOS/nixpkgs/pull/331099
+  edge-pkgs.sequoia-chameleon-gnupg
+  gnupg # Also keep original GPG for now. sequoia-chameleon-gnupg does not support some crucial toolset. etc: `gpg --edit-key`, `gpgconf`
+
+  age # Candidates: rage
+
+  # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
+  gopass # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
+
+  # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
+  edge-pkgs.passage # Use latest to apply https://github.com/NixOS/nixpkgs/pull/339113
 
   # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
   # See following issues
@@ -61,17 +69,17 @@ with pkgs;
   edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
   ripgrep # `rg`
   bat # alt cat
+  mdcat # pipe friendly markdown viewer rather than glow
   hexyl # hex viewer
   dysk # alt df
   fd # alt find
   du-dust # `dust`, alt du
   procs
+  btop # alt top
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   yazi # prefer the shell wrapper `yy`
-
-  alacritty
 
   typos
   hyperfine
@@ -95,7 +103,6 @@ with pkgs;
   # - Enable special module for Nix OS.
   # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
   #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
-  # - In darwin, this package will be used for podman-remote, you should manually install podman-desktop for the engine
   podman
   podman-tui
   docker-compose
@@ -112,7 +119,7 @@ with pkgs;
   translate-shell # `echo "$text" | trans en:ja`
 
   zk # Support Zettelkasten method
-]
+])
 ++ (with homemade-pkgs; [
   la
   lat
@@ -124,44 +131,11 @@ with pkgs;
   p
   g
   walk
+  envs
   ir
   updeps
   bench_shells
   archive-home-files
-  prs
   gredit
-])
-++ (lib.optionals stdenv.isLinux [
-  # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
-  glibc
-
-  # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
-  openssh
-
-  iputils # `ping` etc
-
-  # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
-  edge-pkgs.iw # replacement of wireless-tools(iwconfig)
-
-  # Alt w3m
-  # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
-  # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-  chawan # `cha`
-])
-++ (lib.optionals stdenv.isDarwin [
-  # https://github.com/NixOS/nixpkgs/issues/240819
-  pinentry_mac
-
-  # - You can use major Nerd Fonts as `pkgs.nerdfonts.override ...`
-  # - Should have at least 1 composite font that includes Monospace + Japanese + Nerd fonts,
-  #   because of alacritty does not have the fallback font feature. https://github.com/alacritty/alacritty/issues/957
-  # - Keep fewer nerd fonts to reduce disk space
-
-  # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
-  # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-  plemoljp-nf
-  ibm-plex # For sans-serif, use plemoljp for developing
-
-  source-han-code-jp # Includes many definitions, useful for fallback
-  inconsolata
+  preview
 ])

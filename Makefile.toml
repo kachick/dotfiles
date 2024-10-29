@@ -78,6 +78,20 @@ args = [
 ]
 
 [tasks.test-go]
+dependencies = [
+  'test-cmd',
+  'test-pkg-reponame',
+]
+
+[tasks.test-cmd]
+command = 'go'
+args = [
+  'test',
+  './...',
+]
+
+[tasks.test-pkg-reponame]
+cwd = "./pkgs/reponame"
 command = 'go'
 args = [
   'test',

@@ -26,25 +26,12 @@ See [rclone with Google Drive](https://rclone.org/drive) for detail.
 
 ## Restore Config
 
-Assume you encrypted the config
+Don't save the file in this repository even if it is encrypted with agenix or sops-nix.\
+See <https://github.com/kachick/dotfiles/wiki/Encryption> for the detail.
 
-```bash
-rclone config touch
-hx "$(rclone config file | tail -1)"
-```
+## Decrypt the config in a session
 
-Don't save the file in this repository even if it is encrypted with agenix or sops-nix.
-
-## Persist the token in a session
-
-Always need the token when modifying config is too annoy.\
-Now it reads from `RCLONE_PASSWORD_COMMAND`.\
-Or directly set `RCLONE_CONFIG_PASS` as this.\
-(`read -s` does not work in zsh)
-
-```bash
-export RCLONE_CONFIG_PASS="$(hx)"
-```
+The token should be injected with `RCLONE_PASSWORD_COMMAND`.
 
 ## Mount
 

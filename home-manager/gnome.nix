@@ -1,16 +1,12 @@
-{
-  config,
-  lib,
-  pkgs,
-  edge-pkgs,
-  ...
-}:
+{ lib, pkgs, ... }:
 
 let
   spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
+  amazon_music-pwa-file = "chrome-dojpeppajphepagdhclblkkjnoaeamee-Profile_1.desktop";
 in
 {
   xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
+  xdg.dataFile."applications/${amazon_music-pwa-file}".source = ../config/pwa/amazon_music.desktop;
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
   dconf = {
@@ -27,8 +23,8 @@ in
           with pkgs.gnomeExtensions;
           [
             appindicator
-            blur-my-shell
-            pop-shell
+            # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
+            paperwm
             clipboard-history
             kimpanel
             removable-drive-menu
@@ -41,20 +37,26 @@ in
             just-perfection
             dash-to-dock
             # color-picker # Don't enable by default. It conflicts with clipboard-history
+            xremap
           ]
         );
 
         favorite-apps = [
-          "Alacritty.desktop"
+          "kitty.desktop"
           "dev.zed.Zed.desktop"
-          "org.gnome.Nautilus.desktop"
           "firefox.desktop"
+          "google-chrome.desktop"
+          "podman-desktop.desktop"
+          "io.gitlab.news_flash.NewsFlash.desktop"
+          amazon_music-pwa-file
+          "org.gnome.Rhythmbox3.desktop"
+          "org.gnome.Nautilus.desktop"
         ];
       };
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.alacritty;
+        exec = lib.getExe pkgs.kitty;
         # exec-arg="";
       };
 
@@ -83,10 +85,6 @@ in
         open-new-window-application-9 = [ ];
 
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
-      };
-
-      "org/gnome/desktop/wm/preferences" = {
-        num-workspaces = 3;
       };
 
       "org/gnome/desktop/wm/keybindings" = {
@@ -145,40 +143,19 @@ in
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        # control-center = [ "<Super>comma" ]; # I set this because of inspired by vscode, but disable to avoid conflict of pop-shell minimizerr
-        www = [ "<Super>w" ]; # Prefer w even through pop-shell recommends to Super+b
+        www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        # terminal = [ "<Super>t" ]; I don't know why this won't work. So use cosutom keybinding
-        search = [ "<Super>f" ]; # pop-shell sets to file manager, but replace to overview
+        search = [ "<Alt>space" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
-        name = "Alacritty";
+        name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.alacritty;
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-        name = "Resource Monitor - TUI";
-        binding = "<Super>r";
-        command = "${lib.getExe pkgs.alacritty} --command=${lib.getExe pkgs.bottom} --title='Resource Monitor(btm)'";
-      };
-
-      # https://github.com/pop-os/shell/blob/master_noble/schemas/org.gnome.shell.extensions.pop-shell.gschema.xml
-      "org/gnome/shell/extensions/pop-shell" = {
-        tile-by-default = true;
-
-        # Keybindings: https://github.com/pop-os/shell/blob/master_noble/scripts/configure.sh
-
-        # https://www.reddit.com/r/pop_os/comments/mt5kgf/how_to_change_default_keybind_for/
-        activate-launcher = [ "<Alt>space" ];
-
-        active-hint = true;
+        command = lib.getExe pkgs.kitty;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
@@ -201,7 +178,7 @@ in
 
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
-        # The feature is useful, but frustrated when using pop-shell shortcuts. Super modifier is mostly used now
+        # The feature is useful, but frustrated when using paperwm or pop-shell shortcuts. Super modifier is mostly used in them
         overlay-key = "";
       };
 
@@ -234,13 +211,32 @@ in
 
       "org/gnome/desktop/wm/preferences" = {
         theme = "Nordic";
+
+        num-workspaces = 3;
+        # This names are might not be persisted with paperwm, it also uses own UUID for that
+        workspace-names = [
+          "Main"
+          "Sandbox"
+          "Music"
+        ];
       };
 
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
           "${spotify-pwa-file}:3"
+          "${amazon_music-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
+      };
+
+      "org/gnome/shell/extensions/paperwm/keybindings" = {
+        take-window = [ ]; # default: ['<Super>t']
+        open-window-position = 0;
+      };
+
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = [ "qemu:///system" ];
+        uris = [ "qemu:///system" ];
       };
     };
   };

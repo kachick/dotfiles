@@ -102,5 +102,6 @@
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "workbench.colorTheme": "Blueberry Brackets dark theme",
   "stylua.searchBinaryInPATH": true,
+  "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5
 }

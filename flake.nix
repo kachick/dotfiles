@@ -12,9 +12,22 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-wsl.url = "github:nix-community/NixOS-WSL/2405.5.4";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/2405.5.4";
+      # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
-    xremap-flake.url = "github:xremap/nix-flake";
+    xremap-flake = {
+      url = "github:xremap/nix-flake";
+      # https://github.com/xremap/nix-flake/blob/2c55335d6509702b0d337b8da697d7048e36123d/flake.nix#L6
+      inputs.nixpkgs.follows = "edge-nixpkgs";
+    };
+    selfup = {
+      url = "github:kachick/selfup/v1.1.6";
+      # https://github.com/kachick/selfup/blob/991afc21e437a449c9bd4237b4253f8da407f569/flake.nix#L8
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -23,18 +36,12 @@
       nixpkgs,
       edge-nixpkgs,
       home-manager,
-      nixos-wsl,
-      xremap-flake,
+      ...
     }@inputs:
     let
       inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "x86_64-darwin"
-        # I don't have M1+ mac, providing this for macos-14 free runner https://github.com/actions/runner-images/issues/9741
-        "aarch64-darwin"
-      ];
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
 
       mkApp = pkg: {
         type = "app";
@@ -65,14 +72,16 @@
         in
         {
           default = pkgs.mkShellNoCC {
+            # Realize nixd pkgs version inlay hints for stable channel instead of latest
+            NIX_PATH = "nixpkgs=${pkgs.path}";
+
+            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
+
             buildInputs =
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 nixfmt-rfc-style
-                # TODO: Consider to replace nil with nixd: https://github.com/oxalica/nil/issues/111
-                nil # Used in vscode Nix extension
-                nixd # Used in zed Nix extension
                 nixpkgs-lint-community
                 nix-init
                 nurl
@@ -85,21 +94,34 @@
                 dprint
                 stylua
                 typos
-                typos-lsp
-                go_1_22
+                typos-lsp # For zed-editor typos extension
+                go_1_23
                 goreleaser
                 trivy
+
+                (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
               ++ (with edge-pkgs; [
+                nixd
                 # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
                 # https://github.com/numtide/treefmt/pull/250
                 treefmt2
                 markdownlint-cli2
               ])
-              ++ (with homemade-pkgs; [ nix-hash-url ]);
+              ++ (with homemade-pkgs; [ nix-hash-url ])
+              ++ [ inputs.selfup.packages.${system}.default ];
           };
         }
       );
+
+      packages = forAllSystems (system: {
+        cozette = homemade-packages.${system}.cozette;
+        micro-kdl = homemade-packages.${system}.micro-kdl;
+        micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
+        micro-everforest = homemade-packages.${system}.micro-everforest;
+        micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+        envs = homemade-packages.${system}.envs;
+      });
 
       apps = forAllSystems (
         system:
@@ -113,21 +135,27 @@
               "bump_completions"
               "bump_gomod"
               "check_no_dirty_xz_in_nix_store"
+              "check_nixf"
               "bench_shells"
               "walk"
               "ir"
               "todo"
               "la"
               "lat"
+              "zed"
               "ghqf"
               "git-delete-merged-branches"
               "git-log-fzf"
               "git-log-simple"
               "git-resolve-conflict"
-              "prs"
+              "gh-prs"
+              "envs"
               "nix-hash-url"
-              "trim-github-user-prefix-for-reponame"
+              "reponame"
               "gredit"
+              "renmark"
+              "preview"
+              "p"
             ]
           )
           ++ [
@@ -144,7 +172,6 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          pkgs = import nixpkgs { inherit system; };
           edge-pkgs = import edge-nixpkgs {
             inherit system;
             config = {
@@ -154,22 +181,6 @@
           homemade-pkgs = homemade-packages.${system};
           shared = {
             inherit system;
-            modules = [
-              ./nixos/configuration.nix
-              home-manager.nixosModules.home-manager
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  backupFileExtension = "backup";
-                  # FIXME: Apply gnome.nix in #680
-                  users.kachick = import ./home-manager/kachick.nix;
-                  extraSpecialArgs = {
-                    inherit homemade-pkgs edge-pkgs;
-                  };
-                };
-              }
-            ];
             specialArgs = {
               inherit
                 inputs
@@ -181,15 +192,9 @@
           };
         in
         {
-          "moss" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/moss ]; }
-          );
-
-          "algae" = nixpkgs.lib.nixosSystem (
-            shared // { modules = shared.modules ++ [ ./nixos/hosts/algae ]; }
-          );
-
-          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = shared.modules ++ [ ./nixos/hosts/wsl ]; });
+          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
+          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =
@@ -202,24 +207,45 @@
             };
           };
 
-          x86-macOS = {
-            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.x86_64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+          x86-macOS =
+            let
+              system = "x86_64-darwin";
+            in
+            {
+              pkgs = nixpkgs.legacyPackages.${system};
+              extraSpecialArgs = {
+                homemade-pkgs = homemade-packages.${system};
+                edge-pkgs = import edge-nixpkgs {
+                  inherit system;
+                  config = {
+                    # Atleast required for following
+                    # signal-desktop: https://github.com/NixOS/nixpkgs/pull/348165/files#diff-05921dc46b537c59c8a76dfc3c3e9a3a1fd93345ee5bff8573aae36dedf719bcR49
+                    # android-studio: https://github.com/NixOS/nixpkgs/blob/3490095db7c455272ee96c1d99d424d029bdf576/pkgs/applications/editors/android-studio/common.nix#L281
+                    allowUnfree = true;
+                  };
+                };
+              };
             };
-          };
 
-          aarch64-macOS = {
-            pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.aarch64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
+          aarch64-macOS =
+            let
+              system = "aarch64-darwin";
+            in
+            {
+              pkgs = nixpkgs.legacyPackages.${system};
+              extraSpecialArgs = {
+                homemade-pkgs = homemade-packages.${system};
+                edge-pkgs = import edge-nixpkgs {
+                  inherit system;
+                  config = {
+                    allowUnfree = true;
+                  };
+                };
+              };
             };
-          };
         in
         {
-          "kachick@linux-gui" = home-manager.lib.homeManagerConfiguration (
+          "kachick@desktop" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -269,7 +295,7 @@
             }
           );
 
-          "github-actions@macos-14" = home-manager.lib.homeManagerConfiguration (
+          "github-actions@macos-15" = home-manager.lib.homeManagerConfiguration (
             aarch64-macOS
             // {
               # Prefer "kachick" over "common" only here.

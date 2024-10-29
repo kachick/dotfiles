@@ -3,9 +3,18 @@
   lib,
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   ...
 }:
 
+# NOTE:
+# Most frustrated part of zsh is how to keep speed with the slow completions.
+# See https://github.com/zsh-users/zsh/blob/zsh-5.9/Completion/compinit for the options.
+
+let
+  ZCOMPDUMP_CACHE_DIR = "${config.xdg.cacheHome}/zsh";
+  ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
+in
 {
   services.gpg-agent.enableZshIntegration = true;
   programs.starship.enableZshIntegration = true;
@@ -14,6 +23,13 @@
   programs.fzf.enableZshIntegration = true;
   # Avoid nested zellij in host and remote login as container
   programs.zellij.enableZshIntegration = false;
+
+  home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
+    if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then
+      # Enforcing to clear old cache, because of just omitting -C kept the command names
+      ${lib.getBin pkgs.coreutils}/bin/rm '${ZCOMPDUMP_CACHE_PATH}'
+    fi
+  '';
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
@@ -26,6 +42,15 @@
     # zsh manager always append $HOME as the prefix, so you can NOT write as `"${config.xdg.configHome}/zsh"`
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
     dotDir = ".config/zsh";
+
+    localVariables = {
+      inherit ZCOMPDUMP_CACHE_DIR ZCOMPDUMP_CACHE_PATH;
+
+      # This is a minimum note for home-manager dead case such as https://github.com/kachick/dotfiles/issues/680#issuecomment-2353820508
+      PROMPT = ''
+        %~ %? %#
+        > '';
+    };
 
     history = {
       # in memory
@@ -120,19 +145,19 @@
       # speed - https://gist.github.com/ctechols/ca1035271ad134841284
       # both - https://github.com/kachick/dotfiles/pull/155
       _compinit_with_interval() {
-        local -r dump_dir="${config.xdg.cacheHome}/zsh"
-        local -r dump_path="$dump_dir/zcompdump-$ZSH_VERSION"
         # seconds * minutes * hours
         local -r threshold="$((60 * 60 * 3))"
 
-        if [ -e "$dump_path" ] && [ "$(_elapsed_seconds_for "$dump_path")" -le "$threshold" ]; then
+        if [ -e "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
           # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
           # -C omit to check new functions
-          compinit -C -d "$dump_path"
+          compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
         else
-          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$dump_dir"
-          compinit -d "$dump_path"
-          ${lib.getBin pkgs.coreutils}/bin/touch "$dump_path" # Ensure to update timestamp
+          # For refreshing the cache
+
+          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
+          compinit -d "$ZCOMPDUMP_CACHE_PATH"
+          ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
         fi
       }
     '';
@@ -207,7 +232,7 @@
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
       # cargo-make recommends to use bash completions for zsh
-      source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
+      source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh
@@ -254,7 +279,6 @@
       }
 
       source "${../dependencies/dprint/completions.zsh}"
-      source "${../dependencies/goldwarden/completions.zsh}"
 
       # Disable `Ctrl + S(no output tty)`
       ${lib.getBin pkgs.coreutils}/bin/stty stop undef
@@ -268,6 +292,10 @@
       source_sh "${homemade-pkgs.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
+        # Avoid Tofu
+        export LANG=C
+        export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
+
         disable_blinking_cursor
       fi
 
@@ -281,19 +309,6 @@
       fi
     '';
 
-    # Use one of profileExtra or loginExtra. Not both
-    profileExtra = ''
-      # TODO: Switch to pkgs.zsh from current zsh in darwin
-
-      if [[ "$OSTYPE" == darwin* ]]; then
-        # TODO: May move to sessionVariables
-        export BROWSER='open'
-
-        # Microsoft recommends this will be written in ~/.zprofile,
-        if [ -x '/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' ]; then
-          export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
-        fi
-      fi
-    '';
+    # Useable one of profileExtra or loginExtra. Do not specify both.
   };
 }

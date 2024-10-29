@@ -1,17 +1,15 @@
-{ inputs, ... }:
+{ lib, ... }:
 
 {
   networking.hostName = "moss";
 
   imports = [
     ../../configuration.nix
-    ../../gui.nix
+    ../../hardware.nix
+    ../../desktop
 
     ./hardware-configuration.nix
     ./fingerprint.nix
-
-    inputs.xremap-flake.nixosModules.default
-    ../../xremap.nix
   ];
 
   # Apply better fonts for non X consoles
@@ -20,8 +18,13 @@
 
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 42;
+    configurationLimit = 20;
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];
+
+  services.udev.extraHwdb = lib.mkAfter ''
+    evdev:name:AT Translated Set 2 keyboard:*
+      KEYBOARD_KEY_3a=leftctrl # original: capslock
+  '';
 }

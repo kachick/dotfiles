@@ -7,21 +7,75 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Base16 Oxocarbon Dark",
+  "theme": "Base16 iA Dark",
   "telemetry": {
     "metrics": false
   },
   "auto_update": false,
   "soft_wrap": "editor_width",
   "ui_font_family": "PlemolJP Console NF",
-  "ui_font_size": 16,
+  "ui_font_size": 14,
   "buffer_font_family": "PlemolJP Console NF",
-  "buffer_font_size": 16,
+  "buffer_font_size": 14,
+  "tabs": {
+    "file_icons": true
+  },
+  // FIXME: Actually not working...
+  "lsp": {
+    "vscode-json-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
+    },
+    "json-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/vscode-json-language-server",
+        "arguments": ["--stdio"]
+      }
+    },
+    "bash-language-server": {
+      "binary": {
+        "path": "/run/current-system/sw/bin/bash-language-server",
+        "arguments": ["start"]
+      }
+    }
+  },
+  "languages": {
+    "JSON": {
+      // "enable_language_server": false, // Didn't disable with this option
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+    },
+    "JSONC": {
+      // "enable_language_server": false, // Didn't disable with this option
+      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+    },
+    "YAML": {
+      "enable_language_server": false
+    },
+    "Shell Script": {
+      "enable_language_server": false
+    }
+  },
+  "terminal": {
+    "shell": {
+      "program": "zsh"
+    },
+    "copy_on_select": true // Looks not working.
+    // TODO: Track https://github.com/zed-industries/zed/issues/18507
+    // "cursor_shape": "bar"
+  },
   "auto_install_extensions": {
     "nix": true,
     "toml": true,
+    "typos": true,
+    "ruby": true,
     "lua": true,
+    "kdl": true,
     "basher": true,
-    "base16": true
+    "powershell": true,
+    "fish": true,
+    "base16": true,
+    "iceberg": true
   }
 }

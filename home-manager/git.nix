@@ -1,8 +1,8 @@
 {
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   lib,
-  config,
   ...
 }:
 
@@ -58,9 +58,11 @@
       };
 
       gpg = {
-        # I prefer GPG sign rather than SSH key to consider revocation and expiration usecase.
+        # I prefer PGP sign rather than SSH key to consider revocation and expiration usecase.
         # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
+
+        program = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq"; # GH-830
       };
 
       commit = {
@@ -136,6 +138,9 @@
     enable = true;
 
     settings = {
+      # Without this, gh prefer $VISUAL
+      editor = lib.getExe pkgs.helix;
+
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
         setup = ''
@@ -168,5 +173,7 @@
         "https://gist.github.com"
       ];
     };
+
+    extensions = (with pkgs; [ gh-poi ]) ++ (with homemade-pkgs; [ gh-prs ]);
   };
 }

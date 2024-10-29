@@ -4,7 +4,14 @@
 
 Basically following codes will be done in PowerShell
 
-1. Download the windows helper binaries from [GitHub releases](https://github.com/kachick/dotfiles/releases) or uploaded artifacts in [each workflow](https://github.com/kachick/dotfiles/actions/workflows/windows.yml) summary
+1. Enable `Sudo` features in Windows. Windows tells us how to enable it at first use
+1. Set `$env.XDG_CONFIG_HOME` in Windows system wide. At least, nushell respects it ([Not all of "XDG Base Directory"](https://github.com/nushell/nushell/issues/10100))
+
+   ```pwsh
+   sudo pwsh --command '[Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", "$HOME\.config", "Machine")'
+   ```
+
+1. Download windows helper binary from [artifacts](https://github.com/kachick/dotfiles/actions/workflows/windows.yml)
 1. New session of pwsh
 
    ```pwsh
@@ -34,8 +41,6 @@ Basically following codes will be done in PowerShell
    ```
 
 1. Remove needless pre-installed tools. Pick up from [bulk-uninstall.ps](./winget/bulk-uninstall.ps1)
-1. If you are still using Dropbox, Change Dropbox storage path from `C:\Users`, default path made problems in System Restore.\
-   See <https://zmzlz.blogspot.com/2014/10/windows-dropbox.html> for detail
 1. Enable Bitlocker and backup the restore key
 
 ## I forgot to backup Bitlocker restore key 😋

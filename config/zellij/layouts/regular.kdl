@@ -10,7 +10,7 @@ layout {
             plugin location="zellij:compact-bar"
         }
         pane split_direction="horizontal" {
-            pane size="80%" command="yazi" {
+            pane size="80%" command="yazi" close_on_exit=false {
 
             }
             pane size="20%" {
@@ -55,7 +55,7 @@ layout {
         //     plugin location="zellij:compact-bar"
         // }
         pane size=1 borderless=true {
-            plugin location="zellij:tab-bar"
+            plugin location="zellij:compact-bar"
         }
         pane
         pane size=2 borderless=true {

@@ -72,6 +72,8 @@ func provisioners() []provisioner {
 	// As I understand it, unix like permission masks will work even in windows...
 	const dirPerm = 0750
 
+	// TODO: Replace `filepath.Join(homePath, ".config"...` code with "$env.XDG_CONFIG_HOME" era even through Windows
+
 	err = os.MkdirAll(filepath.Join(homePath, ".config", "alacritty", "themes"), dirPerm)
 	if err != nil {
 		log.Fatalf("Failed to create alacritty dotfiles directory: %+v", err)
@@ -80,9 +82,10 @@ func provisioners() []provisioner {
 	if err != nil {
 		log.Fatalf("Failed to create path that will have alacritty.toml: %+v", err)
 	}
-	err = os.MkdirAll(filepath.Join(homePath, ".config", "whkd"), dirPerm)
+
+	err = os.MkdirAll(filepath.Join(homePath, ".config", "nushell"), dirPerm)
 	if err != nil {
-		log.Fatalf("Failed to create whkd dotfiles directory: %+v", err)
+		log.Fatalf("Failed to create nushell dotfiles directory: %+v", err)
 	}
 
 	return []provisioner{
@@ -93,6 +96,9 @@ func provisioners() []provisioner {
 		// TODO: Copy all TOMLs under themes
 		newProvisioner([]string{"config", "alacritty", "themes", "iceberg-dark.toml"}, []string{homePath, ".config", "alacritty", "themes", "iceberg-dark.toml"}),
 		newProvisioner([]string{"config", "alacritty", "alacritty-windows.toml"}, []string{appdataPath, "alacritty", "alacritty.toml"}),
+
+		newProvisioner([]string{"config", "nushell", "config.nu"}, []string{homePath, ".config", "nushell", "config.nu"}),
+		newProvisioner([]string{"config", "nushell", "env.nu"}, []string{homePath, ".config", "nushell", "env.nu"}),
 
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),

@@ -14,7 +14,7 @@
 # How to stop blinking cursor in Linux console?
 # => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
 let
-  trim-github-user-prefix-for-reponame = pkgs.callPackage ../trim-github-user-prefix-for-reponame { };
+  reponame = pkgs.callPackage ../reponame { };
   ghqf = pkgs.callPackage ../ghqf { };
   fzf-bind-posix-shell-history-to-git-commit-message =
     pkgs.callPackage ../fzf-bind-posix-shell-history-to-git-commit-message
@@ -23,7 +23,7 @@ in
 pkgs.writeText "posix_shared_functions.sh" (
   ''
     cdrepo() {
-      local -r query_repoonly="$(echo "$1" | ${lib.getExe trim-github-user-prefix-for-reponame})"
+      local -r query_repoonly="$(echo "$1" | ${lib.getExe reponame})"
       local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
       if [ -n "$repo" ]; then
         cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
@@ -53,7 +53,7 @@ pkgs.writeText "posix_shared_functions.sh" (
       fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
     }
 
-    yy() {
+    y() {
       local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
       ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
       if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then

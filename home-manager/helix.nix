@@ -132,7 +132,6 @@ in
           formatter = mkDprint "md";
           language-servers = [
             "marksman"
-            "markdown-oxide"
             "typos"
           ];
         }
@@ -209,7 +208,7 @@ in
       rust-analyzer
 
       # Looks like required to enable gopls
-      go_1_22
+      go_1_23
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
       gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
@@ -221,7 +220,10 @@ in
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
       lua-language-server
 
-      ## Not helpful. Didin't activated?
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
+      vscode-langservers-extracted
+
+      ## Not helpful. Didn't activated?
       #
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
       # nodePackages.yaml-language-server

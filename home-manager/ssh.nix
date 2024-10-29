@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  pkgs,
+  edge-pkgs,
+  config,
+  ...
+}:
 
 let
   # SSH files cannot use XDG Base Directory.
@@ -17,6 +22,22 @@ in
 {
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
   services.ssh-agent.enable = pkgs.stdenv.isLinux;
+
+  home.sessionVariables = {
+    # 'force' ignores $DISPLAY. 'prefer' is not enough
+    SSH_ASKPASS_REQUIRE = "force";
+    SSH_ASKPASS = pkgs.lib.getExe (
+      pkgs.writeShellApplication {
+        name = "ssh-ask-pass";
+        text = "gopass show ssh-pass";
+        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
+        runtimeInputs = (with pkgs; [ gopass ]) ++ (with edge-pkgs; [ sequoia-chameleon-gnupg ]);
+        runtimeEnv = {
+          GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+        };
+      }
+    );
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
   programs.ssh = {

@@ -9,6 +9,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@44c470ffc35caa8b1eb3e8012ca53c2f9bea4eb5 # v2.3.6
+      - uses: gitleaks/gitleaks-action@83373cf2f8c4db6e24b41c1a9b086bb9619e9cd3 # v2.3.7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Without this env uses hardcoded old version.
+          # https://github.com/gitleaks/gitleaks-action/blob/2ec8b9f617b48c888d0653fb5925820e0de9c674/README.md?plain=1#L59C4-L59C20
+          GITLEAKS_VERSION: 'latest'
+          # action README says it will respect `gitleaks.toml`, however ths CLI respects only `.gitleaks.toml`
+          # I don't know which is correct or just a typo, so clarifying the path here
+          # https://github.com/gitleaks/gitleaks/blob/e93a7c0d2604fd1bcc43ac9cac6144a62387a8a4/cmd/root.go#L33C18-L33C27
+          # https://github.com/gitleaks/gitleaks-action/blob/2ec8b9f617b48c888d0653fb5925820e0de9c674/README.md?plain=1#L56
+          GITLEAKS_CONFIG: '.gitleaks.toml'

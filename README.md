@@ -38,7 +38,7 @@ For example
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.05#git' \
   --command sudo nixos-rebuild switch \
-  --flake 'github:kachick/dotfiles#moss' \
+  --flake "github:kachick/dotfiles#$(hostname)" \
   --show-trace
 sudo reboot now
 ```
@@ -48,6 +48,15 @@ List defined hostnames
 ```bash
 nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
 ```
+
+This repository intentionally reverts the home-manager NixOS module.\
+So, you should activate the user dotfiles with standalone home-manager even though NixOS.
+
+```bash
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@desktop'
+```
+
+See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
 
 ## Ubuntu
 
@@ -78,7 +87,12 @@ nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | key
 
    Candidates
    - `user@linux-cli` # Used in container
-   - `kachick@linux-gui`
+
+1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
+
+   ```bash
+   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
+   ```
 
 ### Podman on Ubuntu
 
@@ -123,7 +137,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## macOS
 
-Activate `kachick@macbook` as Linux and [manually setup some packages](./darwin/README.md).
+Activate `kachick@macbook` as Linux and [manually setup some packages](https://github.com/kachick/dotfiles/wiki/macOS).
 
 ## Windows
 
@@ -134,33 +148,23 @@ Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml)
 
 Check [traps](./windows/Multi-booting.md)
 
-## Following steps
+## How to setup secrets
 
-1. Restore GPG secret from STDIN
-
-   ```bash
-   gpg --import
-   ```
-
-1. Restore SSH secret from STDIN
-
-   ```bash
-   touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   hx ~/.ssh/id_ed25519
-   ```
-
-1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
-
-1. Restore shell history
-
-   [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
+Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
 ## Note
 
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply user@linux-cli
+makers apply 'kachick@wsl'
+```
+
+For NixOS
+
+```bash
+sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
+    makers apply 'kachick@desktop'
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
