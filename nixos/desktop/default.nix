@@ -310,4 +310,9 @@
       fcitx5.waylandFrontend = true;
     };
   };
+
+  # https://nixos.org/manual/nixos/stable/options#opt-services.forgejo.enable
+  services.forgejo = {
+    enable = true;
+  };
 }
