@@ -8,13 +8,13 @@
 # https://github.com/NixOS/nixpkgs/blob/41d21a82c38e226e234e16f4ff213b3fcf85e6e9/pkgs/data/fonts/cozette/default.nix#L1C1-L33C2
 stdenvNoCC.mkDerivation rec {
   pname = "cozette";
-  version = "1.25.1";
+  version = "1.25.2";
 
   src = fetchzip {
     url = "https://github.com/slavfox/Cozette/releases/download/v.${version}/CozetteFonts-v-${
       builtins.replaceStrings [ "." ] [ "-" ] version
     }.zip";
-    hash = "sha256-Cnl7DTPcZmCRM06qe7WXfZorok3uUNYcB9bR/auzCao=";
+    hash = "sha256-LtZHbsma9EuegS349gQo4W+ZT8x+Vb3CD/5vRKjwkzc=";
   };
 
   installPhase = ''

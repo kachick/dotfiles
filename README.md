@@ -88,6 +88,12 @@ See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
    Candidates
    - `user@linux-cli` # Used in container
 
+1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
+
+   ```bash
+   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
+   ```
+
 ### Podman on Ubuntu
 
 1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
@@ -142,34 +148,9 @@ Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml)
 
 Check [traps](./windows/Multi-booting.md)
 
-## Following steps
+## How to setup secrets
 
-1. Restore GPG secret from STDIN
-
-   ```bash
-   gpg --import
-   ```
-
-1. Restore SSH secret from STDIN
-
-   ```bash
-   touch ~/.ssh/id_ed25519 && chmod 400 ~/.ssh/id_ed25519
-   hx ~/.ssh/id_ed25519
-   gpg-connect-agent updatestartuptty /bye
-   ssh-add ~/.ssh/id_ed25519
-   ```
-
-1. Restore encrepted secrets from private git repository
-
-   ```bash
-   git clone 'git@example.com:password-store.git' "$PASSWORD_STORE_DIR"
-   ```
-
-1. [Restore encrypted rclone.conf from STDIN](config/rclone.md)
-
-1. Restore shell history
-
-   [Work in Progress](https://github.com/kachick/dotfiles/pull/266)
+Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
 ## Note
 

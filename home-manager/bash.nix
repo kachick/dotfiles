@@ -3,6 +3,7 @@
   lib,
   pkgs,
   homemade-pkgs,
+  edge-pkgs,
   ...
 }:
 
@@ -122,7 +123,9 @@
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/bash-completion/completions/podman"
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
-        source "${homemade-pkgs.cargo-make-completions}/share/bash-completion/completions/makers-completion.bash"
+
+        # Adding only in devshell is not enough
+        source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
 
@@ -132,6 +135,10 @@
         source "${homemade-pkgs.posix_shared_functions}"
 
         if [ 'linux' = "$TERM" ]; then
+          # Avoid Tofu
+          export LANG=C
+          export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
+
           disable_blinking_cursor
         fi
       ''

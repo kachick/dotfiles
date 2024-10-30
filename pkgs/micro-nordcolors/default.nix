@@ -1,6 +1,10 @@
-{ stdenv, fetchFromGitHub }:
+{
+  lib,
+  stdenvNoCC,
+  fetchFromGitHub,
+}:
 
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "micro-nordcolors";
   src = fetchFromGitHub {
     owner = "KiranWells";
@@ -19,4 +23,9 @@ stdenv.mkDerivation {
     cp -rf ./colorschemes $out/colorschemes
     cp -rf ./help $out/help
   '';
+
+  meta = {
+    # https://github.com/KiranWells/micro-nord-tc-colors/blob/f63c855735f755704c25c958abe45f12a4b2c8d3/LICENSE
+    license = lib.licenses.mit;
+  };
 }

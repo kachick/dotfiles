@@ -1,0 +1,27 @@
+# Mostly for DeterminateSystems/magic-nix-cache-action
+name: 👋 caches in merged PRs
+on:
+  pull_request:
+    types:
+      - closed
+  schedule:
+    # Every 12:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Intentionally cover all merged PRs to keep simple logics. See https://github.com/kachick/times_kachick/issues/311
+      - name: Cleanup
+        run: |
+          gh pr list --state merged --json number --jq '.[].number' --limit 2000 | \
+            xargs --no-run-if-empty -I '{}' gh cache list --sort size_in_bytes --order desc --json id --jq '.[].id' --limit 100 --ref 'refs/pull/{}/merge' | \
+            xargs --no-run-if-empty --max-lines=1 gh cache delete
+        env:
+          GH_TOKEN: ${{ github.token }}

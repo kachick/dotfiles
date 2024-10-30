@@ -12,9 +12,22 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-wsl.url = "github:nix-community/NixOS-WSL/2405.5.4";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL/2405.5.4";
+      # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
-    xremap-flake.url = "github:xremap/nix-flake";
+    xremap-flake = {
+      url = "github:xremap/nix-flake";
+      # https://github.com/xremap/nix-flake/blob/2c55335d6509702b0d337b8da697d7048e36123d/flake.nix#L6
+      inputs.nixpkgs.follows = "edge-nixpkgs";
+    };
+    selfup = {
+      url = "github:kachick/selfup/v1.1.6";
+      # https://github.com/kachick/selfup/blob/991afc21e437a449c9bd4237b4253f8da407f569/flake.nix#L8
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -85,6 +98,8 @@
                 go_1_23
                 goreleaser
                 trivy
+
+                (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
               ++ (with edge-pkgs; [
                 nixd
@@ -93,13 +108,19 @@
                 treefmt2
                 markdownlint-cli2
               ])
-              ++ (with homemade-pkgs; [ nix-hash-url ]);
+              ++ (with homemade-pkgs; [ nix-hash-url ])
+              ++ [ inputs.selfup.packages.${system}.default ];
           };
         }
       );
 
       packages = forAllSystems (system: {
         cozette = homemade-packages.${system}.cozette;
+        micro-kdl = homemade-packages.${system}.micro-kdl;
+        micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
+        micro-everforest = homemade-packages.${system}.micro-everforest;
+        micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
+        envs = homemade-packages.${system}.envs;
       });
 
       apps = forAllSystems (
@@ -127,7 +148,8 @@
               "git-log-fzf"
               "git-log-simple"
               "git-resolve-conflict"
-              "prs"
+              "gh-prs"
+              "envs"
               "nix-hash-url"
               "reponame"
               "gredit"
@@ -185,21 +207,42 @@
             };
           };
 
-          x86-macOS = {
-            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.x86_64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
+          x86-macOS =
+            let
+              system = "x86_64-darwin";
+            in
+            {
+              pkgs = nixpkgs.legacyPackages.${system};
+              extraSpecialArgs = {
+                homemade-pkgs = homemade-packages.${system};
+                edge-pkgs = import edge-nixpkgs {
+                  inherit system;
+                  config = {
+                    # Atleast required for following
+                    # signal-desktop: https://github.com/NixOS/nixpkgs/pull/348165/files#diff-05921dc46b537c59c8a76dfc3c3e9a3a1fd93345ee5bff8573aae36dedf719bcR49
+                    # android-studio: https://github.com/NixOS/nixpkgs/blob/3490095db7c455272ee96c1d99d424d029bdf576/pkgs/applications/editors/android-studio/common.nix#L281
+                    allowUnfree = true;
+                  };
+                };
+              };
             };
-          };
 
-          aarch64-macOS = {
-            pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.aarch64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
+          aarch64-macOS =
+            let
+              system = "aarch64-darwin";
+            in
+            {
+              pkgs = nixpkgs.legacyPackages.${system};
+              extraSpecialArgs = {
+                homemade-pkgs = homemade-packages.${system};
+                edge-pkgs = import edge-nixpkgs {
+                  inherit system;
+                  config = {
+                    allowUnfree = true;
+                  };
+                };
+              };
             };
-          };
         in
         {
           "kachick@desktop" = home-manager.lib.homeManagerConfiguration (

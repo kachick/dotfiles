@@ -48,22 +48,23 @@
   git-hooks-commit-msg = import ./git-hooks-commit-msg { inherit pkgs; };
   git-hooks-pre-push = import ./git-hooks-pre-push { inherit pkgs; };
 
-  prs = import ./prs { inherit pkgs; };
+  gh-prs = import ./gh-prs { inherit pkgs; };
+
+  envs = import ./envs { inherit pkgs; };
 
   reponame = import ./reponame { inherit pkgs; };
 
   beedii = pkgs.callPackage ./beedii { };
   cozette = pkgs.callPackage ./cozette { };
+  maccy = pkgs.callPackage ./maccy { };
 
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 
   micro-fzfinder = pkgs.callPackage ./micro-fzfinder { };
   micro-kdl = pkgs.callPackage ./micro-kdl { };
   micro-nordcolors = pkgs.callPackage ./micro-nordcolors { };
-
-  cargo-make-completions = pkgs.callPackage ./cargo-make-completions { };
-
-  kdl-vim = pkgs.callPackage ./kdl.vim { };
+  micro-everforest = pkgs.callPackage ./micro-everforest { };
+  micro-catppuccin = pkgs.callPackage ./micro-catppuccin { };
 
   nix-hash-url = pkgs.callPackage ./nix-hash-url { };
 

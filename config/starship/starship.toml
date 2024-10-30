@@ -3,13 +3,14 @@
 format = """
 $username\
 $hostname\
+$os\
+$container\
 $shlvl\
 $directory\
 $git_branch\
 $git_commit\
 $git_state\
 $git_status\
-$direnv\
 $crystal\
 $elm\
 $haskell\
@@ -19,12 +20,12 @@ $ruby\
 $python\
 $deno\
 $nodejs\
-$cmd_duration\
-$os\
-$container\
+$direnv\
 $nix_shell\
 $shell\
+$jobs\
 $time\
+$cmd_duration\
 $status\
 $line_break\
 $character"""
@@ -38,6 +39,11 @@ style = "blue"
 
 [direnv]
 disabled = false
+# https://github.com/direnv/direnv-logo/blob/0949c12bafa532da0b23482a1bb042cf41b654fc/direnv-logo.png
+symbol = '📁'
+loaded_msg = '🍃'
+unloaded_msg = '🍂'
+format = '[$symbol$loaded]($style) '
 
 [character]
 success_symbol = "[>](bold green)"
@@ -51,6 +57,7 @@ format = "[$status]($style)"
 
 [git_commit]
 only_detached = false
+tag_disabled = false
 
 [git_branch]
 format = "[$branch]($style)"
@@ -59,27 +66,14 @@ format = "[$branch]($style)"
 style = "242"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "cyan"
-conflicted = "​"
-untracked = "​"
-modified = "​"
-staged = "​"
-renamed = "​"
-deleted = "​"
-stashed = "≡"
+style = "purple"
 
 [git_state]
-format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "bright-black"
 
 [cmd_duration]
 format = "[$duration]($style) "
 style = "yellow"
-
-[python]
-format = "[$virtualenv]($style) "
-style = "bright-black"
 
 [shell]
 disabled = false
@@ -90,3 +84,8 @@ disabled = false
 
 [os]
 disabled = false
+
+[nix_shell]
+# Set another character with NixOS and keep short
+symbol = '☃️ '
+format = '[$symbol]($style) '
