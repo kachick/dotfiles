@@ -87,6 +87,9 @@
         },
         {
           "PackageIdentifier": "sxyazi.yazi"
+        },
+        {
+          "PackageIdentifier": "tailscale.tailscale"
         }
       ],
       "SourceDetails": {
