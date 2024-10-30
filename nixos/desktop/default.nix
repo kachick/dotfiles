@@ -310,4 +310,7 @@
       fcitx5.waylandFrontend = true;
     };
   };
+
+  # TODO: Consider to use headscale
+  services.tailscale.enable = true;
 }
