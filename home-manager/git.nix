@@ -61,18 +61,18 @@ in
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
       pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
 
-      pre-merge-commit = mkPassthruHook "pre-merge-commit";
-      pre-applypatch = mkPassthruHook "pre-applypatch";
-      post-update = mkPassthruHook "post-update";
-      pre-receive = mkPassthruHook "pre-receive";
-      push-to-checkout = mkPassthruHook "push-to-checkout";
-      pre-commit = mkPassthruHook "pre-commit";
-      prepare-commit-msg = mkPassthruHook "prepare-commit-msg";
-      fsmonitor-watchman = mkPassthruHook "fsmonitor-watchman";
-      update = mkPassthruHook "update";
-      applypatch-msg = mkPassthruHook "applypatch-msg";
-      pre-rebase = mkPassthruHook "pre-rebase";
-      sendemail-validate = mkPassthruHook "sendemail-validate";
+      pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
+      pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
+      post-update = lib.getExe (mkPassthruHook "post-update");
+      pre-receive = lib.getExe (mkPassthruHook "pre-receive");
+      push-to-checkout = lib.getExe (mkPassthruHook "push-to-checkout");
+      pre-commit = lib.getExe (mkPassthruHook "pre-commit");
+      prepare-commit-msg = lib.getExe (mkPassthruHook "prepare-commit-msg");
+      fsmonitor-watchman = lib.getExe (mkPassthruHook "fsmonitor-watchman");
+      update = lib.getExe (mkPassthruHook "update");
+      applypatch-msg = lib.getExe (mkPassthruHook "applypatch-msg");
+      pre-rebase = lib.getExe (mkPassthruHook "pre-rebase");
+      sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
     };
 
     extraConfig = {
