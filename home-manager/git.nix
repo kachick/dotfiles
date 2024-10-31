@@ -10,6 +10,19 @@
 #
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
+let
+  mkPassthruHook = (
+    hook_name:
+    pkgs.writeShellApplication {
+      name = "passthru-hook-for-the-local-hook";
+      text = ''
+        run_local_hook '${hook_name}' "$@"
+      '';
+      meta.description = "GH-545";
+      runtimeInputs = [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
+    }
+  );
+in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
@@ -40,12 +53,26 @@
       resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
     };
 
-    # TODO: They will be overridden by local hooks, Fixes in #545
+    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
+    # Candidates: https://github.com/git/git/tree/v2.44.1/templates
     hooks = {
       commit-msg = lib.getExe homemade-pkgs.git-hooks-commit-msg;
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
       pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
+
+      pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
+      pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
+      post-update = lib.getExe (mkPassthruHook "post-update");
+      pre-receive = lib.getExe (mkPassthruHook "pre-receive");
+      push-to-checkout = lib.getExe (mkPassthruHook "push-to-checkout");
+      pre-commit = lib.getExe (mkPassthruHook "pre-commit");
+      prepare-commit-msg = lib.getExe (mkPassthruHook "prepare-commit-msg");
+      fsmonitor-watchman = lib.getExe (mkPassthruHook "fsmonitor-watchman");
+      update = lib.getExe (mkPassthruHook "update");
+      applypatch-msg = lib.getExe (mkPassthruHook "applypatch-msg");
+      pre-rebase = lib.getExe (mkPassthruHook "pre-rebase");
+      sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
     };
 
     extraConfig = {
