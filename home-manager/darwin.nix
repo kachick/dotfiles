@@ -55,8 +55,6 @@ lib.mkMerge [
 
         edge-pkgs.podman-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/343648
 
-        edge-pkgs.signal-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/348165
-
         homemade-pkgs.maccy
       ];
     };
