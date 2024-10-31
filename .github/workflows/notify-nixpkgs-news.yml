@@ -1,0 +1,36 @@
+name: 📰❄️
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/notify-nixpkgs-news.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/notify-nixpkgs-news.yml'
+  schedule:
+    # Every 3rd hour
+    # https://crontab.guru/#0_*/3_*_*_*
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-24.04
+    steps:
+      # Make it possible to use gh command easy
+      # - uses: actions/checkout@v4
+      #   with:
+      #     fetch-depth: 0
+      - name: Checkout and fetch minimum commits in nixpkgs
+        shell: 'bash -euxo pipefail {0}'
+        run: |
+          since="$(date --rfc-3339='date' --date='-1 day')"
+          git clone --branch 'nixos-unstable' --single-branch --shallow-since="$since" --filter='blob:none' 'git@github.com:NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
+      - name: Notify with comment
+        working-directory: '${{ runner.temp }}/nixpkgs'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git branch --contains '67d8538ef6a8b6933de55c09dfcad679a5618868' && \
+            gh issue comment '902' --body '🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable merged https://github.com/NixOS/nixpkgs/commit/67d8538ef6a8b6933de55c09dfcad679a5618868'
