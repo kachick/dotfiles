@@ -11,18 +11,17 @@
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
 let
-  passthruHook = pkgs.writeShellApplication {
-    name = "passthru-hook-for-the-local-hook";
-    text = ''
-      run_local_hook "$(basename "$0")" "$@"
-    '';
-    meta.description = "GH-545";
-    runtimeInputs =
-      (with pkgs; [
-        coreutils # basename
-      ])
-      ++ [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
-  };
+  mkPassthruHook = (
+    hook_name:
+    pkgs.writeShellApplication {
+      name = "passthru-hook-for-the-local-hook";
+      text = ''
+        run_local_hook '${hook_name}' "$@"
+      '';
+      meta.description = "GH-545";
+      runtimeInputs = [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
+    }
+  );
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -62,18 +61,18 @@ in
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
       pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
 
-      pre-merge-commit = passthruHook;
-      pre-applypatch = passthruHook;
-      post-update = passthruHook;
-      pre-receive = passthruHook;
-      push-to-checkout = passthruHook;
-      pre-commit = passthruHook;
-      prepare-commit-msg = passthruHook;
-      fsmonitor-watchman = passthruHook;
-      update = passthruHook;
-      applypatch-msg = passthruHook;
-      pre-rebase = passthruHook;
-      sendemail-validate = passthruHook;
+      pre-merge-commit = mkPassthruHook "pre-merge-commit";
+      pre-applypatch = mkPassthruHook "pre-applypatch";
+      post-update = mkPassthruHook "post-update";
+      pre-receive = mkPassthruHook "pre-receive";
+      push-to-checkout = mkPassthruHook "push-to-checkout";
+      pre-commit = mkPassthruHook "pre-commit";
+      prepare-commit-msg = mkPassthruHook "prepare-commit-msg";
+      fsmonitor-watchman = mkPassthruHook "fsmonitor-watchman";
+      update = mkPassthruHook "update";
+      applypatch-msg = mkPassthruHook "applypatch-msg";
+      pre-rebase = mkPassthruHook "pre-rebase";
+      sendemail-validate = mkPassthruHook "sendemail-validate";
     };
 
     extraConfig = {
