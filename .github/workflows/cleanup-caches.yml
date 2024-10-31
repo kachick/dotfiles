@@ -1,6 +1,8 @@
 # Mostly for DeterminateSystems/magic-nix-cache-action
-name: 👋 caches in merged PRs
+name: 👋 caches
 on:
+  push:
+    branches: [main]
   pull_request:
     types:
       - closed
@@ -18,10 +20,21 @@ jobs:
         with:
           fetch-depth: 0
       # Intentionally cover all merged PRs to keep simple logics. See https://github.com/kachick/times_kachick/issues/311
-      - name: Cleanup
+      - name: Cleanup caches in merged PRs
+        shell: bash -euxo pipefail {0}
         run: |
           gh pr list --state merged --json number --jq '.[].number' --limit 2000 | \
             xargs --no-run-if-empty -I '{}' gh cache list --sort size_in_bytes --order desc --json id --jq '.[].id' --limit 100 --ref 'refs/pull/{}/merge' | \
+            xargs --no-run-if-empty --max-lines=1 gh cache delete
+        env:
+          GH_TOKEN: ${{ github.token }}
+      # 10Gib limit is too small even if focused on default branch
+      - name: Cleanup caches in main branch
+        shell: bash -euxo pipefail {0}
+        run: |
+          # We can lexicographical sort RFC3399 formatted timestamp
+          threshold="$(date --rfc-3339='date' --date='-4 days')"
+          gh cache list --limit 2000 --ref 'refs/heads/main' --sort last_accessed_at --order asc --json 'id,lastAccessedAt,sizeInBytes' --jq ".[] | select(.lastAccessedAt < \"$threshold\") | .id" | \
             xargs --no-run-if-empty --max-lines=1 gh cache delete
         env:
           GH_TOKEN: ${{ github.token }}
