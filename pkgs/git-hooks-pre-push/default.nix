@@ -6,6 +6,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     typos
     coreutils # `basename`
+    (import ../run_local_hook { inherit pkgs; })
   ];
   runtimeEnv = {
     TYPOS_CONFIG_PATH = "${../../typos.toml}";

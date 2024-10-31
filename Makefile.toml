@@ -12,7 +12,7 @@ script = [
 [tasks.setup]
 dependencies = ['build']
 script = [
-  "git config --local core.hooksPath .githooks",
+  "cp .githooks/* .git/hooks/",
   "git config --local core.whitespace cr-at-eol",
 ]
 

@@ -40,7 +40,6 @@
       resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
     };
 
-    # TODO: They will be overridden by local hooks, Fixes in #545
     hooks = {
       commit-msg = lib.getExe homemade-pkgs.git-hooks-commit-msg;
 

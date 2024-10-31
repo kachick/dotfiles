@@ -4,3 +4,5 @@ while read -r _local_ref _local_oid remote_ref _remote_oid; do
 	# https://github.com/crate-ci/typos/issues/758
 	basename "$remote_ref" | typos --config "$TYPOS_CONFIG_PATH" -
 done
+
+run_local_hook 'pre-push' "$@"
