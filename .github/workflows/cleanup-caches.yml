@@ -12,8 +12,15 @@ on:
     - cron: '42 3 * * *'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: 'bash -euxo pipefail {0}'
+
+# Take care all jobs do not scope same reference. If then, the steps should be in one job and runs sequential
 jobs:
-  cleanup:
+  prs:
+    concurrency:
+      group: '${{ github.workflow }}-${{ github.job }}'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -21,16 +28,22 @@ jobs:
           fetch-depth: 0
       # Intentionally cover all merged PRs to keep simple logics. See https://github.com/kachick/times_kachick/issues/311
       - name: Cleanup caches in merged PRs
-        shell: bash -euxo pipefail {0}
         run: |
           gh pr list --state merged --json number --jq '.[].number' --limit 2000 | \
             xargs --no-run-if-empty -I '{}' gh cache list --sort size_in_bytes --order desc --json id --jq '.[].id' --limit 100 --ref 'refs/pull/{}/merge' | \
             xargs --no-run-if-empty --max-lines=1 gh cache delete
         env:
           GH_TOKEN: ${{ github.token }}
+  main:
+    concurrency:
+      group: '${{ github.workflow }}-${{ github.job }}'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       # 10Gib limit is too small even if focused on default branch
       - name: Cleanup caches in main branch
-        shell: bash -euxo pipefail {0}
         run: |
           # We can lexicographical sort RFC3399 formatted timestamp
           threshold="$(date --rfc-3339='date' --date='-4 days')"
