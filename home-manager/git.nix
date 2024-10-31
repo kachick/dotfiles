@@ -10,6 +10,20 @@
 #
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
+let
+  passthruHook = pkgs.writeShellApplication {
+    name = "passthru-hook-for-the-local-hook";
+    text = ''
+      run_local_hook "$(basename "$0")" "$@"
+    '';
+    meta.description = "GH-545";
+    runtimeInputs =
+      (with pkgs; [
+        coreutils # basename
+      ])
+      ++ [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
+  };
+in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
@@ -40,11 +54,26 @@
       resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
     };
 
+    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
+    # Candidates: https://github.com/git/git/tree/v2.44.1/templates
     hooks = {
       commit-msg = lib.getExe homemade-pkgs.git-hooks-commit-msg;
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
       pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
+
+      pre-merge-commit = passthruHook;
+      pre-applypatch = passthruHook;
+      post-update = passthruHook;
+      pre-receive = passthruHook;
+      push-to-checkout = passthruHook;
+      pre-commit = passthruHook;
+      prepare-commit-msg = passthruHook;
+      fsmonitor-watchman = passthruHook;
+      update = passthruHook;
+      applypatch-msg = passthruHook;
+      pre-rebase = passthruHook;
+      sendemail-validate = passthruHook;
     };
 
     extraConfig = {
