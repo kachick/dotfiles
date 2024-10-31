@@ -26,7 +26,7 @@ jobs:
         shell: 'bash -euxo pipefail {0}'
         run: |
           since="$(date --rfc-3339='date' --date='-1 day')"
-          git clone --branch 'nixos-unstable' --single-branch --shallow-since="$since" --filter='blob:none' 'git@github.com:NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
+          git clone --branch 'nixos-unstable' --single-branch --shallow-since="$since" --filter='blob:none' 'https://github.com/NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
       - name: Notify with comment
         working-directory: '${{ runner.temp }}/nixpkgs'
         env:
