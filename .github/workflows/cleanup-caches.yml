@@ -20,7 +20,7 @@ defaults:
 jobs:
   prs:
     concurrency:
-      group: '${{ github.workflow }}-${{ github.job }}'
+      group: '${{ github.workflow }}-prs' # Dont' use  ${{ github.job }} here
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -36,7 +36,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
   main:
     concurrency:
-      group: '${{ github.workflow }}-${{ github.job }}'
+      group: '${{ github.workflow }}-main' # Dont' use  ${{ github.job }} here
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
