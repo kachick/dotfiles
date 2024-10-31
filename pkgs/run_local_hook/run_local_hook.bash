@@ -6,9 +6,12 @@ shift
 repository_path="$(git rev-parse --show-toplevel)"
 readonly repository_path
 
+# Avoiding -o error only at here: https://stackoverflow.com/a/7832158
+TRUST_PATH=${GIT_HOOKS_TRUST_REPOS:-}
+
 if [[ -x "${repository_path}/.git/hooks/${hook_name}" ]]; then
 	# Why using `case`: https://unix.stackexchange.com/a/32054
-	case ":$GIT_HOOKS_TRUST_REPOS:" in
+	case ":$TRUST_PATH:" in
 	*:$repository_path:*)
 		exec "${repository_path}/.git/hooks/${hook_name}" "$@"
 		;;
