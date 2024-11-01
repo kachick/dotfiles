@@ -31,11 +31,36 @@ jobs:
           set +e # Avoid grep error for not found
 
           # Passing example for test
-          git grep --quiet --fixed-string -e 'installShellCompletion' pkgs/by-name/ca/cargo-make/package.nix && \
-            echo 'GH-846=true' | tee --append "$GITHUB_OUTPUT"
+          git grep --quiet --fixed-string -e 'installShellCompletion' pkgs/by-name/ca/cargo-make/package.nix
+          result_846=$?
 
-          git grep --quiet --fixed-string -e 'platforms = lib.platforms.linux ++ lib.platforms.darwin' pkgs/by-name/ze/zed-editor/package.nix && \
+          case "$result_846" in
+          0)
+            echo 'GH-846=true' | tee --append "$GITHUB_OUTPUT"
+            ;;
+          1)
+            echo 'GH-846 related commit is not yet merged'
+            ;;
+          *)
+            exit "$result_846"
+            ;;
+          esac
+
+          git grep --quiet --fixed-string -e 'platforms = lib.platforms.linux ++ lib.platforms.darwin' pkgs/by-name/ze/zed-editor/package.nix
+          result_902=$?
+
+          case "$result_902" in
+          0)
             echo 'GH-902=true' | tee --append "$GITHUB_OUTPUT"
+            ;;
+          1)
+            echo 'GH-902 related commit is not yet merged'
+            ;;
+          *)
+            exit "$result_902"
+            ;;
+          esac
+
   notify:
     needs: [detect]
     env:
