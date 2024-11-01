@@ -19,18 +19,32 @@ defaults:
 # Take care all jobs do not scope same reference. If then, the steps should be in one job and runs sequential
 jobs:
   prs:
+    # Basically skip to avoid rate limit with the N+1
+    if: github.event_name == 'workflow_dispatch'
     concurrency:
       group: '${{ github.workflow }}-prs' # Dont' use  ${{ github.job }} here
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       # Intentionally cover all merged PRs to keep simple logics. See https://github.com/kachick/times_kachick/issues/311
       - name: Cleanup caches in merged PRs
         run: |
           gh pr list --state merged --json number --jq '.[].number' --limit 2000 | \
             xargs --no-run-if-empty -I '{}' gh cache list --sort size_in_bytes --order desc --json id --jq '.[].id' --limit 100 --ref 'refs/pull/{}/merge' | \
+            xargs --no-run-if-empty --max-lines=1 gh cache delete
+        env:
+          GH_TOKEN: ${{ github.token }}
+  pr:
+    if: github.event_name == 'pull_request'
+    concurrency:
+      group: '${{ github.workflow }}-pr-${{ github.event.pull_request.number }}' # Dont' use  ${{ github.job }} here
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      # Intentionally cover all merged PRs to keep simple logics. See https://github.com/kachick/times_kachick/issues/311
+      - name: Cleanup caches in the PR
+        run: |
+          gh cache list --sort size_in_bytes --order desc --json id --jq '.[].id' --limit 100 --ref 'refs/pull/${{ github.event.pull_request.number }}/merge' | \
             xargs --no-run-if-empty --max-lines=1 gh cache delete
         env:
           GH_TOKEN: ${{ github.token }}
@@ -40,8 +54,6 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       # 10Gib limit is too small even if focused on default branch
       - name: Cleanup caches in main branch
         run: |
