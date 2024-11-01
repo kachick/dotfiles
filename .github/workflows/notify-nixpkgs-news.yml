@@ -22,6 +22,7 @@ env:
   # TODO: Make it possible matrix run for the SHA1 list. And takes them from dispatch and merging with fixed list
   COMMIT_SHA: '67d8538ef6a8b6933de55c09dfcad679a5618868'
   TRACK_BRANCH: 'nixos-unstable'
+  NOTIFY_ISSUE: '902'
 
 jobs:
   notify:
@@ -45,4 +46,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           git branch --contains "$COMMIT_SHA" && \
-            gh issue comment '902' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
+            gh issue comment "$NOTIFY_ISSUE" --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
