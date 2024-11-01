@@ -20,6 +20,8 @@ defaults:
 
 jobs:
   notify:
+    env:
+      GH_TOKEN: ${{ github.token }}
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -29,8 +31,6 @@ jobs:
       - name: Make sure target repository in gh command
         run: 'gh repo set-default --view'
       - name: Notify with issue comment
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
           set +e # Avoid grep error for not found
 
