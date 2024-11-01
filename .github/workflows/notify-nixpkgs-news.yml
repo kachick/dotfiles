@@ -14,23 +14,34 @@ on:
     - cron: '0 */3 * * *'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: 'bash -euxo pipefail {0}'
+
+env:
+  # TODO: Make it possible matrix run for the SHA1 list. And takes them from dispatch and merging with fixed list
+  COMMIT_SHA: '67d8538ef6a8b6933de55c09dfcad679a5618868'
+  TRACK_BRANCH: 'nixos-unstable'
+
 jobs:
   notify:
     runs-on: ubuntu-24.04
     steps:
       # Make it possible to use gh command easy
       # - uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
       - name: Checkout and fetch minimum commits in nixpkgs
-        shell: 'bash -euxo pipefail {0}'
         run: |
-          since="$(date --rfc-3339='date' --date='-1 day')"
-          git clone --branch 'nixos-unstable' --single-branch --shallow-since="$since" --filter='blob:none' 'https://github.com/NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
+          git clone --branch "$TRACK_BRANCH" --single-branch --depth='1' --filter='blob:none' 'https://github.com/NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
+      - name: Notify with comment
+        working-directory: '${{ runner.temp }}/nixpkgs'
+        run: |
+          git fetch --depth='1' origin "$COMMIT_SHA"
+          since="$(git log --date=short --format='%cd' -1 "$COMMIT_SHA"..)"
+          git fetch --shallow-since="$since" 'origin' "refs/heads/$TRACK_BRANCH"
       - name: Notify with comment
         working-directory: '${{ runner.temp }}/nixpkgs'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git branch --contains '67d8538ef6a8b6933de55c09dfcad679a5618868' && \
-            gh issue comment '902' --body '🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable merged https://github.com/NixOS/nixpkgs/commit/67d8538ef6a8b6933de55c09dfcad679a5618868'
+          git branch --contains "$COMMIT_SHA" && \
+            gh issue comment '902' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
