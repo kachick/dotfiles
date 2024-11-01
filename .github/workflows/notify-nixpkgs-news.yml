@@ -35,7 +35,7 @@ jobs:
       - name: Checkout and fetch minimum commits in nixpkgs
         run: |
           git clone --branch "$TRACK_BRANCH" --single-branch --depth='1' --filter='blob:none' 'https://github.com/NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
-      - name: Notify with comment
+      - name: Fetch minimum commits
         working-directory: '${{ runner.temp }}/nixpkgs'
         run: |
           git fetch --depth='1' origin "$COMMIT_SHA"
