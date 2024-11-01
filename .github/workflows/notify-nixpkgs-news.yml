@@ -40,7 +40,7 @@ jobs:
         run: |
           git fetch --depth='1' origin "$COMMIT_SHA"
           # TODO: Make sure committer date is correct for shallow-since?
-          since="$(git log --date=short --format='%cd' -1 "$COMMIT_SHA"..)"
+          since="$(git log --date=short --format='%cd' "$COMMIT_SHA")"
           git fetch --shallow-since="$since" 'origin' "refs/heads/$TRACK_BRANCH"
       - name: Notify with comment
         working-directory: '${{ runner.temp }}/nixpkgs'
