@@ -26,6 +26,8 @@ jobs:
         with:
           repository: 'NixOS/nixpkgs'
           ref: nixos-unstable
+      - name: Make sure target repository in gh command
+        run: 'gh repo set-default --view'
       - name: Notify with issue comment
         env:
           GH_TOKEN: ${{ github.token }}
