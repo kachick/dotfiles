@@ -29,7 +29,10 @@ jobs:
           repository: 'NixOS/nixpkgs'
           ref: nixos-unstable
       - name: Make sure target repository in gh command
-        run: 'gh repo set-default --view'
+        run: |
+          gh repo set-default --view
+          gh repo set-default '${{ github.repository }}'
+          gh repo set-default --view
       - name: Notify with issue comment
         run: |
           set +e # Avoid grep error for not found
