@@ -42,7 +42,7 @@ jobs:
           # TODO: Make sure committer date is correct for shallow-since?
           since="$(git log --date=short --format='%cd' "$COMMIT_SHA")"
           git fetch --shallow-since="$since" 'origin' "refs/heads/$TRACK_BRANCH"
-      - name: Notify with comment
+      - name: Notify if required
         working-directory: '${{ runner.temp }}/nixpkgs'
         env:
           GH_TOKEN: ${{ github.token }}
