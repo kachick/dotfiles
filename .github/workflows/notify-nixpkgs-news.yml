@@ -45,5 +45,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git branch --contains "$COMMIT_SHA" | grep --fixed-string "$TRACK_BRANCH" --silent && \
+          if [[ "$(git branch --contains "$COMMIT_SHA" "$TRACK_BRANCH")" == *"nixos-unstable" ]]; then
             gh issue comment "$NOTIFY_ISSUE" --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
+          else
+            echo "Not yet merged in the $TRACK_BRANCH"
+          fi
