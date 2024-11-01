@@ -18,7 +18,6 @@ jobs:
   detect:
     runs-on: ubuntu-24.04
     outputs:
-      GH-846: ${{ steps.find.outputs.GH-846 }}
       GH-902: ${{ steps.find.outputs.GH-902 }}
     steps:
       - uses: actions/checkout@v4
@@ -29,22 +28,6 @@ jobs:
         id: find
         run: |
           set +e # Avoid grep error for not found
-
-          # Passing example for test
-          git grep --quiet --fixed-string -e 'installShellCompletion' pkgs/by-name/ca/cargo-make/package.nix
-          result_846=$?
-
-          case "$result_846" in
-          0)
-            echo 'GH-846=true' | tee --append "$GITHUB_OUTPUT"
-            ;;
-          1)
-            echo 'GH-846 related commit is not yet merged'
-            ;;
-          *)
-            exit "$result_846"
-            ;;
-          esac
 
           git grep --quiet --fixed-string -e 'platforms = lib.platforms.linux ++ lib.platforms.darwin' pkgs/by-name/ze/zed-editor/package.nix
           result_902=$?
@@ -71,11 +54,6 @@ jobs:
       - name: Notify with issue comment
         run: |
           set -x
-
-          # Passing example for test
-          if [[ '${{ needs.detect.outputs.GH-846 }}' == 'true' ]]; then
-            gh issue comment '846' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable looks like merged https://github.com/NixOS/nixpkgs/commit/3137334d7556e24e3f582681142e505b4d7915a8"
-          fi
 
           if [[ '${{ needs.detect.outputs.GH-902 }}' == 'true' ]]; then
             gh issue comment '902' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable looks like merged https://github.com/NixOS/nixpkgs/commit/67d8538ef6a8b6933de55c09dfcad679a5618868"
