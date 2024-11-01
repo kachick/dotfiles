@@ -18,37 +18,23 @@ defaults:
   run:
     shell: 'bash -euxo pipefail {0}'
 
-env:
-  # TODO: Make it possible matrix run for the SHA1 list. And takes them from dispatch and merging with fixed list
-  # COMMIT_SHA: '67d8538ef6a8b6933de55c09dfcad679a5618868'
-  COMMIT_SHA: '3137334d7556e24e3f582681142e505b4d7915a8' # Test
-  TRACK_BRANCH: 'nixos-unstable'
-  # NOTIFY_ISSUE: '902'
-  NOTIFY_ISSUE: '846' # Test
-
 jobs:
   notify:
     runs-on: ubuntu-24.04
     steps:
-      # Make it possible to use gh command easy
-      # - uses: actions/checkout@v4
-      - name: Checkout and fetch minimum commits in nixpkgs
-        run: |
-          git clone --branch "$TRACK_BRANCH" --single-branch --depth='1' --filter='blob:none' 'https://github.com/NixOS/nixpkgs.git' "$RUNNER_TEMP/nixpkgs"
-      - name: Fetch minimum commits
-        working-directory: '${{ runner.temp }}/nixpkgs'
-        run: |
-          git fetch --depth='1' origin "$COMMIT_SHA"
-          # TODO: Make sure committer date is correct for shallow-since?
-          since="$(git log --date=short --format='%cd' "$COMMIT_SHA")"
-          git fetch --shallow-since="$since" 'origin' "refs/heads/$TRACK_BRANCH"
-      - name: Notify if required
-        working-directory: '${{ runner.temp }}/nixpkgs'
+      - uses: actions/checkout@v4
+        with:
+          repository: 'NixOS/nixpkgs'
+          ref: nixos-unstable
+      - name: Notify with issue comment
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ "$(git branch --contains "$COMMIT_SHA" "$TRACK_BRANCH")" == *"nixos-unstable" ]]; then
-            gh issue comment "$NOTIFY_ISSUE" --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
-          else
-            echo "Not yet merged in the $TRACK_BRANCH"
-          fi
+          set +e # Avoid grep error for not found
+
+          # Passing example for test
+          git grep --quiet --fixed-string -e 'installShellCompletion' pkgs/by-name/ca/cargo-make/package.nix && \
+            gh issue comment '846' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable looks like merged https://github.com/NixOS/nixpkgs/commit/3137334d7556e24e3f582681142e505b4d7915a8"
+
+          git grep --quiet --fixed-string -e 'platforms = lib.platforms.linux ++ lib.platforms.darwin' pkgs/by-name/ze/zed-editor/package.nix && \
+            gh issue comment '902' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable looks like merged https://github.com/NixOS/nixpkgs/commit/67d8538ef6a8b6933de55c09dfcad679a5618868"
