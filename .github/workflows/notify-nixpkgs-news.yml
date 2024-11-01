@@ -45,5 +45,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git branch --contains "$COMMIT_SHA" && \
+          git branch --contains "$COMMIT_SHA" && | grep -F "$TRACK_BRANCH" \
             gh issue comment "$NOTIFY_ISSUE" --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/$TRACK_BRANCH merged https://github.com/NixOS/nixpkgs/commit/$COMMIT_SHA"
