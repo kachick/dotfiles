@@ -1,3 +1,7 @@
+# Backup file for next use of GH-846
+
+```yaml
+# This file is intentionally backed up for next use
 name: 📰❄️
 on:
   push:
@@ -58,3 +62,4 @@ jobs:
           if [[ '${{ needs.detect.outputs.GH-902 }}' == 'true' ]]; then
             gh issue comment '902' --body "🤖(GH-846): https://github.com/NixOS/nixpkgs/tree/nixos-unstable looks like merged https://github.com/NixOS/nixpkgs/commit/67d8538ef6a8b6933de55c09dfcad679a5618868"
           fi
+```
