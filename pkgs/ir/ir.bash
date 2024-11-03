@@ -7,4 +7,7 @@ $_.gsub!(
 RUBY
 command "$EDITOR" "$tmprb"
 
-fd --type file --hidden --exclude .git --exec-batch ruby -i -pn "$tmprb"
+# TODO: grep takes the "before" if given then via CLI
+fd --type file --hidden --exclude .git |
+	xargs grep --binary-files=without-match -l --fixed-strings -e '' |
+	xargs ruby -i -pn "$tmprb"

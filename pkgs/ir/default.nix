@@ -11,6 +11,9 @@ pkgs.writeShellApplication rec {
     #   - sad: Too much for filter
     ruby_3_3
 
+    findutils # xargs
+    gnugrep
+
     coreutils # cat
     mktemp
   ];
