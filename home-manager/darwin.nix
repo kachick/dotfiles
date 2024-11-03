@@ -12,8 +12,7 @@ lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
     home = {
       sessionVariables = {
-        # * Do not specify Nix store path for zed and vscode in macOS
-        #   * zed is broken https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
+        # * Do not specify Nix store path for vscode in macOS
         #   * vscode is unfree and heavy when no binary cache
         # * `cli: install` action installs into this path in macOS
         VISUAL = "code --wait";
@@ -50,9 +49,7 @@ lib.mkMerge [
         source-han-code-jp # Includes many definitions, useful for fallback
         inconsolata
 
-        # Don't add zed in macOS with nixpkgs
-        # https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
-        # edge-pkgs.zed-editor
+        edge-pkgs.zed-editor # Useable since https://github.com/NixOS/nixpkgs/pull/329653
 
         edge-pkgs.podman-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/343648
 
