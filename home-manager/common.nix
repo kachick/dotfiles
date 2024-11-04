@@ -51,9 +51,11 @@
       MANROFFOPT = "-c";
 
       # NOTE: Original comments in zsh
-      # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
-      # Remove -X and -F (exit if the content fits on one screen) to enable it.
-      LESS = "-F -g -i -M -R -S -w -X -z-4";
+      # - Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
+      # - Remove -X and -F (exit if the content fits on one screen) to enable it.
+      # 
+      # Don't add -S to enable wrap
+      LESS = "-F -g -i -M -R -w -X -z-4";
 
       # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
       LESSCHARSET = "utf-8";
