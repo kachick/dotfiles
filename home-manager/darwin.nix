@@ -15,7 +15,7 @@ lib.mkMerge [
 
       sessionVariables = {
         # * Do not specify Nix store path for zed and vscode in macOS
-        #   * zed is broken https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
+        #   * zed is fixed in https://github.com/NixOS/nixpkgs/pull/329653, however https://github.com/NixOS/nixpkgs/issues/107466 and GH-754 is the blocker with the build-time
         #   * vscode is unfree and heavy when no binary cache
         # * `cli: install` action installs into this path in macOS
         VISUAL = "code --wait";
