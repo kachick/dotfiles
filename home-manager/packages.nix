@@ -99,13 +99,6 @@
   # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
-  # - Enable special module for Nix OS.
-  # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
-  #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
-  podman
-  podman-tui
-  docker-compose
-
   # `tldr` rust client, tealdeer is another candidate.
   tlrc
 

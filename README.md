@@ -151,7 +151,7 @@ I basically [give up to maintain macOS environment](https://github.com/kachick/d
 1. Add minimum packages with home-manager. Apply home-manager with `kachick@macbook`
 2. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154)(default Ubuntu guest) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
 3. In the lima as `limactl start`, apply home-manager with `kachick@lima`
-4. You can run containers as `lima nerdctl run --rm hello-world` or podman after avobe `Podman on Ubuntu` setups
+4. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
 
 ## How to setup secrets
 
