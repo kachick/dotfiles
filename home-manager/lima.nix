@@ -1,5 +1,5 @@
-{ config, lib, ... }:
+{ config, ... }:
 
 {
-  home.homeDirectory = lib.mkDefault "/home/${config.home.username}.local";
+  home.homeDirectory = "/home/${config.home.username}.local";
 }
