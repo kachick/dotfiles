@@ -93,10 +93,6 @@ jobs:
           zsh -c 'irb --version'
           zsh -c 'ssh -V'
           zsh -c 'hx --health'
-      - name: Make sure macos dependencies
-        if: runner.os == 'macOS'
-        run: |
-          zsh -c 'command -v maccy'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

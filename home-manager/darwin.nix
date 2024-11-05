@@ -1,7 +1,6 @@
 {
   pkgs,
   # Don't depend on edge-pkgs as possible until realize https://github.com/NixOS/nixpkgs/issues/107466,
-  homemade-pkgs,
   lib,
   config,
   ...
@@ -56,8 +55,6 @@ lib.mkMerge [
 
         source-han-code-jp # Includes many definitions, useful for fallback
         inconsolata
-
-        homemade-pkgs.maccy
       ];
     };
 
