@@ -137,7 +137,11 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## macOS
 
-Activate `kachick@macbook` as Linux and [manually setup some packages](https://github.com/kachick/dotfiles/wiki/macOS).
+I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [lima](https://github.com/lima-vm/lima) as WSL2 in Windows
+
+1. Add minimum packages with home-manager. Apply home-manager with `kachick@macbook`
+2. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
+3. In the lima as `limactl start`, apply home-manager with `kachick@lima`
 
 ## Windows
 

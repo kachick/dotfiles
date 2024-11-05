@@ -5,6 +5,7 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
+    # TODO: Use nixpkgs-24.05-darwin only in macOS. See GH-910
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
@@ -247,6 +248,16 @@
 
           "kachick@macbook" = home-manager.lib.homeManagerConfiguration (
             x86-macOS // { modules = [ ./home-manager/kachick.nix ]; }
+          );
+
+          "kachick@lima" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/lima.nix
+              ];
+            }
           );
 
           "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration (

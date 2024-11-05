@@ -11,6 +11,8 @@
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
     home = {
+      homeDirectory = "/Users/${config.home.username}";
+
       sessionVariables = {
         # * Do not specify Nix store path for zed and vscode in macOS
         #   * zed is broken https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
@@ -28,6 +30,11 @@ lib.mkMerge [
       ];
 
       packages = with pkgs; [
+        # for lima. However don't add lima in this dependencies.
+        # It should be installed without nix.
+        # See https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154
+        qemu
+
         # https://github.com/NixOS/nixpkgs/issues/240819
         pinentry_mac
 
