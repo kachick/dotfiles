@@ -1,7 +1,6 @@
 {
   pkgs,
-  edge-pkgs,
-  homemade-pkgs,
+  # Don't depend on edge-pkgs as possible until realize https://github.com/NixOS/nixpkgs/issues/107466,
   lib,
   config,
   ...
@@ -11,9 +10,11 @@
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
     home = {
+      homeDirectory = "/Users/${config.home.username}";
+
       sessionVariables = {
         # * Do not specify Nix store path for zed and vscode in macOS
-        #   * zed is broken https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
+        #   * zed is fixed in https://github.com/NixOS/nixpkgs/pull/329653, however https://github.com/NixOS/nixpkgs/issues/107466 and GH-754 is the blocker with the build-time
         #   * vscode is unfree and heavy when no binary cache
         # * `cli: install` action installs into this path in macOS
         VISUAL = "code --wait";
@@ -28,6 +29,11 @@ lib.mkMerge [
       ];
 
       packages = with pkgs; [
+        # for lima. However don't add lima in this dependencies.
+        # It should be installed without nix.
+        # See https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154
+        qemu
+
         # https://github.com/NixOS/nixpkgs/issues/240819
         pinentry_mac
 
@@ -49,16 +55,15 @@ lib.mkMerge [
 
         source-han-code-jp # Includes many definitions, useful for fallback
         inconsolata
-
-        # Don't add zed in macOS with nixpkgs
-        # https://github.com/NixOS/nixpkgs/blob/bba8dffd3135f35810e9112c40ee621f4ede7cca/pkgs/by-name/ze/zed-editor/package.nix#L217-L219
-        # edge-pkgs.zed-editor
-
-        edge-pkgs.podman-desktop # Useable since https://github.com/NixOS/nixpkgs/pull/343648
-
-        homemade-pkgs.maccy
       ];
     };
+
+    programs.ssh.includes = [
+      # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
+      # * adding this as `ssh -F` makes it possible to use ssh login, it is required for `ms-vscode-remote.remote-ssh`
+      # * the content of file will be changed for each instance creation
+      "${config.home.homeDirectory}/.lima/default/ssh.config"
+    ];
 
     xdg = {
       configFile = {

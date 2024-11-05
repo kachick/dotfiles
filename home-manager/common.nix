@@ -24,9 +24,6 @@
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
-  # TODO: How to cover lima? The default is /home/kachick.local
-  home.homeDirectory =
-    if pkgs.stdenv.isDarwin then "/Users/${config.home.username}" else "/home/${config.home.username}";
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
   xdg.enable = true;
@@ -53,7 +50,7 @@
       # NOTE: Original comments in zsh
       # - Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
       # - Remove -X and -F (exit if the content fits on one screen) to enable it.
-      # 
+      #
       # Don't add -S to enable wrap
       LESS = "-F -g -i -M -R -w -X -z-4";
 

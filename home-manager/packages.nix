@@ -39,7 +39,7 @@
   dig # Alt and raw-data oriented nslookup. TODO: Consider another candidate: dug - https://eng-blog.iij.ad.jp/archives/27527
 
   git
-  gh
+  # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
   ghq
 
   edge-pkgs.sequoia-sq # Alt `gpg` - nixos-24.05 does not backport recent versions and the older requires to rebuild. https://github.com/NixOS/nixpkgs/pull/331099
@@ -66,7 +66,6 @@
   curl
   wget
   jq
-  edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
   ripgrep # `rg`
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
@@ -99,13 +98,6 @@
   # fontconfig by nix: `fc-list : family style`
   # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
-
-  # - Enable special module for Nix OS.
-  # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
-  #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
-  podman
-  podman-tui
-  docker-compose
 
   # `tldr` rust client, tealdeer is another candidate.
   tlrc

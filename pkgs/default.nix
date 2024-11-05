@@ -56,7 +56,6 @@
 
   beedii = pkgs.callPackage ./beedii { };
   cozette = pkgs.callPackage ./cozette { };
-  maccy = pkgs.callPackage ./maccy { };
 
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 
