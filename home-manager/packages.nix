@@ -66,7 +66,6 @@
   curl
   wget
   jq
-  edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
   ripgrep # `rg`
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
