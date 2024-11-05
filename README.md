@@ -135,14 +135,6 @@ echo '
 systemd=true' | sudo tee /etc/wsl.conf
 ```
 
-## macOS
-
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [lima](https://github.com/lima-vm/lima) as WSL2 in Windows
-
-1. Add minimum packages with home-manager. Apply home-manager with `kachick@macbook`
-2. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-3. In the lima as `limactl start`, apply home-manager with `kachick@lima`
-
 ## Windows
 
 After installing [WSL2](windows/WSL/README.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
@@ -151,6 +143,15 @@ Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml)
 ## Multi-booting on Windows and Linux
 
 Check [traps](./windows/Multi-booting.md)
+
+## macOS
+
+I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [lima](https://github.com/lima-vm/lima) for development tasks as use of WSL2 in Windows
+
+1. Add minimum packages with home-manager. Apply home-manager with `kachick@macbook`
+2. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154)(default Ubuntu guest) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
+3. In the lima as `limactl start`, apply home-manager with `kachick@lima`
+4. You can run containers as `lima nerdctl run --rm hello-world` or podman after avobe `Podman on Ubuntu` setups
 
 ## How to setup secrets
 
