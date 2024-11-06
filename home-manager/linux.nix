@@ -38,6 +38,8 @@ lib.mkMerge [
 
         kubectl
         kind
+        stern
+        k9s
 
         edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
 
