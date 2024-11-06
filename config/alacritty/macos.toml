@@ -6,5 +6,5 @@ option_as_alt = "Both"
 
 # - macOS has newer zsh by default
 # - bash is installed, but the version is too old 3.x by default
-# [shell]
+# [terminal.shell]
 # So no config will work
