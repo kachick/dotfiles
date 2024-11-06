@@ -47,7 +47,6 @@ jobs:
           go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS" | gh-action-escape -name=matrix | tee -a "$GITHUB_OUTPUT"
   home-manager:
     needs: [generate_matrix]
-    if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
     timeout-minutes: 60
     strategy:
       fail-fast: false
