@@ -237,11 +237,22 @@
             }
           );
 
-          "kachick@wsl" = home-manager.lib.homeManagerConfiguration (
+          "kachick@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/wsl.nix
+              ];
+            }
+          );
+
+          "nixos@wsl-nixos" = home-manager.lib.homeManagerConfiguration (
+            x86-Linux
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                { home.username = "nixos"; }
                 ./home-manager/wsl.nix
               ];
             }

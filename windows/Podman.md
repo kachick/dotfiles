@@ -66,7 +66,7 @@ And create the new podman-machine-default
 Track the [official discussion](https://github.com/containers/podman/discussions/13537), but there are no simple solutions for now.\
 This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
 
-1. Ubuntu: Activate the home-manager with `--flake '.#kachick@wsl'`.
+1. Ubuntu: Activate the home-manager with `--flake '.#kachick@wsl-ubuntu'`.
 2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
 3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
 4. Ubuntu: `cdg project_path`

@@ -137,8 +137,9 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## Windows
 
-After installing [WSL2](windows/WSL/README.md), you can activate home-manager and [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).\
-Read [Windows README](windows/README.md) and [CI](.github/workflows/windows.yml) for further detail.
+1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
+1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
+1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further detail.
 
 ## Multi-booting on Windows and Linux
 
@@ -162,7 +163,7 @@ Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply 'kachick@wsl'
+makers apply 'kachick@wsl-ubuntu'
 ```
 
 For NixOS
