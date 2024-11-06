@@ -36,6 +36,8 @@ lib.mkMerge [
         podman-tui
         docker-compose
 
+        kind
+
         edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
 
         # Alt w3m
