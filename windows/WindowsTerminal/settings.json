@@ -32,7 +32,7 @@
   ],
   "copyFormatting": "none",
   "copyOnSelect": true,
-  "defaultProfile": "{47302f9c-1ac4-566c-aa3e-8cf29889d6ab}",
+  "defaultProfile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
   "newTabMenu": [
     {
       "type": "remainingProfiles"
@@ -101,12 +101,6 @@
         "icon": "C:\\Tools\\7c162f0a-1b4e-4c72-b6c7-1428a7346656.png",
         "name": "NixOS",
         "startingDirectory": "~"
-      },
-      {
-        "guid": "{8ab8e6f6-35c6-5b46-8419-3e1568105476}",
-        "hidden": false,
-        "name": "podman-machine-default",
-        "source": "Windows.Terminal.Wsl"
       },
       {
         "guid": "{58ad8b0c-3ef8-5f4d-bc6f-13e4c00f2530}",
