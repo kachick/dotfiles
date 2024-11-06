@@ -148,7 +148,7 @@ in
         # seconds * minutes * hours
         local -r threshold="$((60 * 60 * 3))"
 
-        if [ -e "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
+        if [ -f "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
           # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
           # -C omit to check new functions
           compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
@@ -185,7 +185,7 @@ in
 
         # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
         # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
-        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
           . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
         fi
 
@@ -195,11 +195,11 @@ in
       # https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=3401477#gistcomment-3401477
       skip_global_compinit=1
 
-      if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
+      if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
 
       # Put the special config in each machine if you want to avoid symlinks by Nix
       # https://github.com/nix-community/home-manager/issues/3090#issue-1303753447
-      if [ -e '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
+      if [ -f '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
         source '${config.xdg.configHome}/zsh/.zshenv.local'
       fi
     '';
@@ -304,7 +304,7 @@ in
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
 
       # Same as .zshenv.local
-      if [ -e '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+      if [ -f '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
         source '${config.xdg.configHome}/zsh/.zshrc.local'
       fi
     '';
