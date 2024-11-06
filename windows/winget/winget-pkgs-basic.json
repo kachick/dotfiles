@@ -90,6 +90,9 @@
         },
         {
           "PackageIdentifier": "tailscale.tailscale"
+        },
+        {
+          "PackageIdentifier": "calibre.calibre"
         }
       ],
       "SourceDetails": {
