@@ -57,6 +57,20 @@ lib.mkMerge [
       };
 
       configFile = {
+        "zsh/.zshrc.linux".text = ''
+          if [ 'linux' = "$TERM" ]; then
+            # Avoid Tofu
+            export LANG=C
+            export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
+
+            disable_blinking_cursor
+          fi
+
+          source "${pkgs.podman}/share/zsh/site-functions/_podman"
+          # cargo-make recommends to use bash completions for zsh
+          source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+        '';
+
         "hypr/hyprland.conf".source = ../config/hyprland/hyprland.conf;
 
         # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861

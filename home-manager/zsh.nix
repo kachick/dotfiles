@@ -230,9 +230,6 @@ in
       precmd_functions+=(set_win_title)
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      source "${pkgs.podman}/share/zsh/site-functions/_podman"
-      # cargo-make recommends to use bash completions for zsh
-      source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh
@@ -291,17 +288,14 @@ in
 
       source_sh "${homemade-pkgs.posix_shared_functions}"
 
-      if [ 'linux' = "$TERM" ]; then
-        # Avoid Tofu
-        export LANG=C
-        export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
-
-        disable_blinking_cursor
-      fi
-
       # https://superuser.com/a/902508/120469
       # https://github.com/zsh-users/zsh-autosuggestions/issues/259
       zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+      # For avoiding to build needless packages in darwin especially for loading only completions
+      if [ -f '${config.xdg.configHome}/zsh/.zshrc.linux' ]; then
+        source '${config.xdg.configHome}/zsh/.zshrc.linux'
+      fi
 
       # Same as .zshenv.local
       if [ -f '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
