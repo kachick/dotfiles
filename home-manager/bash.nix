@@ -123,6 +123,7 @@
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         source "${pkgs.podman}/share/bash-completion/completions/podman"
         source "${pkgs.kubectl}/share/bash-completion/completions/kubectl.bash"
+        source "${pkgs.kind}/share/bash-completion/completions/kind.bash"
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
 
         # Adding only in devshell is not enough
