@@ -5,6 +5,7 @@ $username\
 $hostname\
 $os\
 $container\
+$kubernetes\
 $shlvl\
 $directory\
 $git_branch\
@@ -80,6 +81,9 @@ disabled = false
 bash_indicator = 'bash'
 
 [container]
+disabled = false
+
+[kubernetes]
 disabled = false
 
 [os]
