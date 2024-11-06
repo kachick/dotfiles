@@ -93,6 +93,9 @@
         },
         {
           "PackageIdentifier": "calibre.calibre"
+        },
+        {
+          "PackageIdentifier": "SumatraPDF.SumatraPDF"
         }
       ],
       "SourceDetails": {
