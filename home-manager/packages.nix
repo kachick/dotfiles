@@ -59,7 +59,7 @@
   # - https://github.com/kachick/dotfiles/issues/280
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
-  micro # alt nano
+  micro
 
   tree
   eza # alt ls

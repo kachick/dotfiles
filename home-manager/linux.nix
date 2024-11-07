@@ -41,6 +41,8 @@ lib.mkMerge [
         stern
         k9s
 
+        edge-pkgs.ox # modeless editor. Use edge because of stable channel is too old
+
         edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
 
         # Alt w3m
