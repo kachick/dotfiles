@@ -187,7 +187,7 @@ in
               cd "$1" && \
                 gh setup && \
                   ${pkgs.direnv}/bin/direnv allow && \
-                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdg $1"
+                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdrepo $1"
         '';
       };
     };
