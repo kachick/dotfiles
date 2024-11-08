@@ -126,6 +126,8 @@
       edge-pkgs.cyme # Frequently updated
 
       edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
+
+      edge-pkgs.alacritty # Use latest schema as Windows. GH-918
     ]
     ++ (with pkgs; [
       firefox
@@ -133,7 +135,6 @@
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
-      alacritty
       foot
       kitty
 

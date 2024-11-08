@@ -37,7 +37,7 @@ lib.mkMerge [
         # https://github.com/NixOS/nixpkgs/issues/240819
         pinentry_mac
 
-        alacritty
+        # alacritty # Don't install macOS alacritty with nixpkgs. Alacritty often changes schema and I'm negative to use latest until https://github.com/NixOS/nixpkgs/issues/107466
         kitty
         # foot is only provided for Linux wayland
 
