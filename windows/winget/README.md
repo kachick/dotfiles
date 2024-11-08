@@ -3,7 +3,7 @@
 ## How to export winget list?
 
 ```pwsh
-winget export --output "\\wsl.localhost\Ubuntu-24.04\home\kachick\repos\github.com\kachick\dotfiles\windows\winget\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
+winget export --include-versions --output "\\wsl.localhost\Ubuntu-24.04\home\kachick\repos\github.com\kachick\dotfiles\windows\winget\winget-pkgs-$(Get-Date -UFormat '%F')-raw.json"
 ```
 
 It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEdition`.
