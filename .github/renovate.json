@@ -6,18 +6,31 @@
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
-  "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix", "regex", "dockerfile"],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "enabledManagers": [
+    "nix",
+    "custom.regex",
+    "dockerfile"
+  ],
   "nix": {
     "enabled": true
   },
   "packageRules": [
     {
-      "extends": ["schedule:weekly"],
-      "matchPackagePrefixes": ["dprint"]
+      "extends": [
+        "schedule:weekly"
+      ],
+      "matchPackageNames": [
+        "dprint{/,}**"
+      ]
     },
     {
-      "matchPackageNames": ["kachick/dprint-plugin-kdl"],
+      "matchPackageNames": [
+        "kachick/dprint-plugin-kdl"
+      ],
       "allowedVersions": "<0.2.0"
     }
   ]
