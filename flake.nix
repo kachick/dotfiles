@@ -226,14 +226,6 @@
               edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
             };
           };
-
-          aarch64-macOS = {
-            pkgs = nixpkgs-darwin.legacyPackages.aarch64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.aarch64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
-            };
-          };
         in
         {
           "kachick@desktop" = home-manager-linux.lib.homeManagerConfiguration (
@@ -297,18 +289,6 @@
 
           "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration (
             x86-macOS
-            // {
-              # Prefer "kachick" over "common" only here.
-              # Using values as much as possible as actual values to create a robust CI
-              modules = [
-                ./home-manager/kachick.nix
-                { home.username = "runner"; }
-              ];
-            }
-          );
-
-          "github-actions@macos-15" = home-manager-darwin.lib.homeManagerConfiguration (
-            aarch64-macOS
             // {
               # Prefer "kachick" over "common" only here.
               # Using values as much as possible as actual values to create a robust CI
