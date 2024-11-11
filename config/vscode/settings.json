@@ -33,9 +33,6 @@
   "[elm]": {
     "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
   },
-  "[fish]": {
-    "editor.defaultFormatter": "bmalehorn.vscode-fish"
-  },
   "workbench.editor.enablePreview": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "diffEditor.ignoreTrimWhitespace": true,

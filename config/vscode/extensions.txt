@@ -1,4 +1,3 @@
-bmalehorn.vscode-fish
 cocopon.iceberg-theme
 crystal-lang-tools.crystal-lang
 denoland.vscode-deno
