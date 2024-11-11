@@ -5,9 +5,9 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    # TODO: Use nixpkgs-24.05-darwin only in macOS. See GH-910
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Unfit for darwin, might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager = {
       url = "github:nix-community/home-manager/release-24.05";
@@ -36,6 +36,7 @@
       self,
       nixpkgs,
       edge-nixpkgs,
+      nixpkgs-darwin,
       home-manager,
       ...
     }@inputs:
@@ -51,6 +52,7 @@
 
       homemade-packages = forAllSystems (
         system:
+        # FIXME: Use nixpkgs-darwin for darwin
         (nixpkgs.legacyPackages.${system}.callPackage ./pkgs {
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
         })
@@ -210,7 +212,7 @@
           };
 
           x86-macOS = {
-            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+            pkgs = nixpkgs-darwin.legacyPackages.x86_64-darwin;
             extraSpecialArgs = {
               homemade-pkgs = homemade-packages.x86_64-darwin;
               edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
@@ -218,7 +220,7 @@
           };
 
           aarch64-macOS = {
-            pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+            pkgs = nixpkgs-darwin.legacyPackages.aarch64-darwin;
             extraSpecialArgs = {
               homemade-pkgs = homemade-packages.aarch64-darwin;
               edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
