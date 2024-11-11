@@ -2,7 +2,7 @@
 
 - Tiny tools by me, they may be rewritten with another language.
 - Nix packages that are not yet included in [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs)
-- Aliases across multiple shells
+- Aliases across multiple shells if it unfits for native shell alias
 
 ## Do not
 

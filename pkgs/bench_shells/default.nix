@@ -6,6 +6,5 @@ pkgs.writeShellApplication rec {
     hyperfine
     zsh
     bashInteractive
-    fish
   ];
 }

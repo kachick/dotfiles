@@ -2,9 +2,7 @@
 pkgs.writeShellApplication rec {
   name = "nix-hash-url";
   text = builtins.readFile ./${name}.bash;
-  runtimeInputs = with pkgs; [
-    nix # Includes nix-prefetch-url
-  ];
+  # nix includes `nix-prefetch-url`
   meta = {
     # References
     # - https://ryantm.github.io/nixpkgs/builders/fetchers/

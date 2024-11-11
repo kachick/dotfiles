@@ -1,7 +1,7 @@
 { pkgs, edge-pkgs, ... }:
 
 {
-  bump_completions = import ./bump_completions { inherit pkgs edge-pkgs; };
+  bump_completions = import ./bump_completions { inherit pkgs; };
 
   bump_gomod = import ./bump_gomod { inherit pkgs; };
 
@@ -18,17 +18,11 @@
 
   lat = import ./lat { inherit pkgs; };
 
-  zed = import ./zed { inherit pkgs edge-pkgs; };
-
   walk = import ./walk { inherit pkgs; };
 
   ir = pkgs.callPackage ./ir { };
 
-  zj = import ./zj { inherit pkgs; };
-
   p = import ./p { inherit pkgs; };
-
-  g = import ./g { inherit pkgs; };
 
   git-delete-merged-branches = import ./git-delete-merged-branches { inherit pkgs; };
 

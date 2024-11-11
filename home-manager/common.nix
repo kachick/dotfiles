@@ -11,7 +11,6 @@
   imports = [
     ./bash.nix
     ./zsh.nix
-    ./fish.nix
     ./encryption.nix
     ./ssh.nix
     ./git.nix
@@ -85,6 +84,15 @@
       # systemd config overrides this value in gnome-shell, however this will be used in Linux VT console
       time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
+
+    # Prefer this rather than adding wrapped script to make zsh possible to complete
+    # Take care if I you adding nushell in the Unix dependencies again
+    shellAliases = {
+      "g" = "git";
+
+      # https://github.com/NixOS/nixpkgs/pull/344193
+      "zed" = "zed-editor";
+    };
   };
 
   # Let Home Manager install and manage itself.
@@ -133,17 +141,6 @@
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
   programs.starship = {
     enable = true;
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/yazi.nix
-  # TODO: Use shell integrations for `y` after release-24.11. 24.05 is using fixed old `ya`
-  programs.yazi = {
-    enable = true;
-    settings = {
-      manager = {
-        sort_dir_first = true;
-      };
-    };
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix

@@ -153,7 +153,6 @@
               "todo"
               "la"
               "lat"
-              "zed"
               "ghqf"
               "git-delete-merged-branches"
               "git-log-fzf"

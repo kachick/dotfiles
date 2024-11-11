@@ -15,7 +15,6 @@
   bashInteractive
   # readline # needless and using it does not fix bash problems
   zsh
-  fish
   starship
   direnv
 
@@ -78,7 +77,6 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  yazi # prefer the shell wrapper `yy`
 
   typos
   hyperfine
@@ -86,7 +84,6 @@
   gnumake
   go-task # Installing for enabling shell completion easy
   gitleaks
-  deno
   ruby_3_3
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
@@ -117,9 +114,7 @@
   git-delete-merged-branches
   todo
   ghqf
-  zj
   p
-  g
   walk
   envs
   ir
