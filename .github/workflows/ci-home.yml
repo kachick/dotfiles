@@ -53,7 +53,7 @@ jobs:
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v14
+      - uses: DeterminateSystems/nix-installer-action@v15
       # Don't use DeterminateSystems/magic-nix-cache-action for Linux until https://github.com/DeterminateSystems/magic-nix-cache-action/issues/26 is supported
       - uses: DeterminateSystems/magic-nix-cache-action@v8
         # Always slow. Especially since GH-924
