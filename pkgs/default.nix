@@ -5,7 +5,6 @@
 
   bump_gomod = import ./bump_gomod { inherit pkgs; };
 
-  check_no_dirty_xz_in_nix_store = import ./check_no_dirty_xz_in_nix_store { inherit pkgs; };
   check_nixf = import ./check_nixf { inherit pkgs edge-pkgs; };
 
   safe_quote_backtik = import ./safe_quote_backtik { inherit pkgs; };

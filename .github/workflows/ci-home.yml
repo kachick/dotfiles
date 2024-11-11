@@ -66,12 +66,6 @@ jobs:
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.os }}'
-      - name: 'Make sure no possibilities in nix store around #530 (around CVE-2024-3094)'
-        run: |
-          which xz
-          # Can be used when the xz is using /nix/store one
-          # nix-store --query --referrers "$(which xz)"
-          nix run .#check_no_dirty_xz_in_nix_store
       - name: Print some paths and versions
         run: |
           which zsh

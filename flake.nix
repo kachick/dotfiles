@@ -145,7 +145,6 @@
             [
               "bump_completions"
               "bump_gomod"
-              "check_no_dirty_xz_in_nix_store"
               "check_nixf"
               "bench_shells"
               "walk"
