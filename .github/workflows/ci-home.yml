@@ -84,8 +84,8 @@ jobs:
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          zsh --command 'starship --version'
           zsh -c zsh -c 'which la; which p'
+          zsh -c 'starship --version'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
           zsh -c 'ssh -V'
