@@ -86,7 +86,7 @@
     };
 
     # Prefer this rather than adding wrapped script to make zsh possible to complete
-    # Take care if I add nushell in the Unix dependencies again
+    # Take care if I you adding nushell in the Unix dependencies again
     shellAliases = {
       "g" = "git";
 
