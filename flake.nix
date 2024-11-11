@@ -5,13 +5,17 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    # TODO: Use nixpkgs-24.05-darwin only in macOS. See GH-910
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Unfit for darwin, might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
-    home-manager = {
+    home-manager-linux = {
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    home-manager-darwin = {
+      url = "github:nix-community/home-manager/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/2405.5.4";
@@ -36,7 +40,9 @@
       self,
       nixpkgs,
       edge-nixpkgs,
-      home-manager,
+      nixpkgs-darwin,
+      home-manager-linux,
+      home-manager-darwin,
       ...
     }@inputs:
     let
@@ -51,9 +57,12 @@
 
       homemade-packages = forAllSystems (
         system:
-        (nixpkgs.legacyPackages.${system}.callPackage ./pkgs {
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
+        (
+          (if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs)
+          .legacyPackages.${system}.callPackage
+          ./pkgs
+          { edge-pkgs = edge-nixpkgs.legacyPackages.${system}; }
+        )
       );
     in
     {
@@ -164,7 +173,8 @@
             # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
             {
               name = "home-manager";
-              value = mkApp home-manager.defaultPackage.${system};
+              # FIXME: Use home-manager-darwin in macOS
+              value = mkApp home-manager-linux.defaultPackage.${system};
             }
           ]
         )
@@ -209,23 +219,15 @@
           };
 
           x86-macOS = {
-            pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+            pkgs = nixpkgs-darwin.legacyPackages.x86_64-darwin;
             extraSpecialArgs = {
               homemade-pkgs = homemade-packages.x86_64-darwin;
               edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
             };
           };
-
-          aarch64-macOS = {
-            pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.aarch64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.aarch64-darwin;
-            };
-          };
         in
         {
-          "kachick@desktop" = home-manager.lib.homeManagerConfiguration (
+          "kachick@desktop" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -236,7 +238,7 @@
             }
           );
 
-          "kachick@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration (
+          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -246,7 +248,7 @@
             }
           );
 
-          "nixos@wsl-nixos" = home-manager.lib.homeManagerConfiguration (
+          "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -257,11 +259,11 @@
             }
           );
 
-          "kachick@macbook" = home-manager.lib.homeManagerConfiguration (
+          "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration (
             x86-macOS // { modules = [ ./home-manager/kachick.nix ]; }
           );
 
-          "kachick@lima" = home-manager.lib.homeManagerConfiguration (
+          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
@@ -271,7 +273,7 @@
             }
           );
 
-          "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration (
+          "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               # Prefer "kachick" over "common" only here.
@@ -284,7 +286,7 @@
             }
           );
 
-          "github-actions@macos-13" = home-manager.lib.homeManagerConfiguration (
+          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration (
             x86-macOS
             // {
               # Prefer "kachick" over "common" only here.
@@ -296,19 +298,7 @@
             }
           );
 
-          "github-actions@macos-15" = home-manager.lib.homeManagerConfiguration (
-            aarch64-macOS
-            // {
-              # Prefer "kachick" over "common" only here.
-              # Using values as much as possible as actual values to create a robust CI
-              modules = [
-                ./home-manager/kachick.nix
-                { home.username = "runner"; }
-              ];
-            }
-          );
-
-          "user@linux-cli" = home-manager.lib.homeManagerConfiguration (
+          "user@linux-cli" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [

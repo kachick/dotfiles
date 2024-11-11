@@ -27,7 +27,6 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-15 # Apple Silicon. Doesn't match for my Intel Mac, but preferring with the speed.
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
