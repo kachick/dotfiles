@@ -54,7 +54,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v14
-      # Don't use DeterminateSystems/magic-nix-cache-action in this workflow until https://github.com/DeterminateSystems/magic-nix-cache-action/issues/26 is supported
+      # Don't use DeterminateSystems/magic-nix-cache-action for Linux until https://github.com/DeterminateSystems/magic-nix-cache-action/issues/26 is supported
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+        # Always slow. Especially since GH-924
+        if: runner.os == 'macOS'
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
