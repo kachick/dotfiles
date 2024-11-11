@@ -115,7 +115,6 @@
   todo
   ghqf
   p
-  g
   walk
   envs
   ir
