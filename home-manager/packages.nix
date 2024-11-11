@@ -117,7 +117,6 @@
   git-delete-merged-branches
   todo
   ghqf
-  zj
   p
   g
   walk

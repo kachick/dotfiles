@@ -24,8 +24,6 @@
 
   ir = pkgs.callPackage ./ir { };
 
-  zj = import ./zj { inherit pkgs; };
-
   p = import ./p { inherit pkgs; };
 
   g = import ./g { inherit pkgs; };
