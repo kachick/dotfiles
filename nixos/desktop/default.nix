@@ -13,7 +13,6 @@
     (import ./font.nix { inherit pkgs homemade-pkgs; })
     inputs.xremap-flake.nixosModules.default
     ./xremap.nix
-    inputs.home-manager.nixosModules.home-manager
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
