@@ -52,10 +52,12 @@
 
       homemade-packages = forAllSystems (
         system:
-        # FIXME: Use nixpkgs-darwin for darwin
-        (nixpkgs.legacyPackages.${system}.callPackage ./pkgs {
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
+        (
+          (if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs)
+          .legacyPackages.${system}.callPackage
+          ./pkgs
+          { edge-pkgs = edge-nixpkgs.legacyPackages.${system}; }
+        )
       );
     in
     {
