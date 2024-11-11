@@ -9,6 +9,30 @@
 Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
+```mermaid
+block-beta
+    columns 3
+
+    block:os:3
+        nixos(("❄")) macos(("🍎"))   windows(("🪟"))
+    end
+
+    block:vm:3
+        lima("Lima")   wsl2("WSL2")    
+    end
+
+    block:container:3
+        podman("🦭") k8s("☸️") 
+    end
+
+    nixos --> lima
+    macos --> lima
+    windows --> wsl2
+
+    vm --> container
+    nixos --> container
+```
+
 ## For visitors
 
 If you are using [Podman](https://podman.io/), you can test the pre-built [ubuntu container-image](containers) as follows.
@@ -57,6 +81,8 @@ nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'gith
 ```
 
 See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
+
+NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for several issues.
 
 ## Ubuntu
 
@@ -147,12 +173,15 @@ Check [traps](./windows/Multi-booting.md)
 
 ## macOS
 
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [lima](https://github.com/lima-vm/lima) for development tasks as use of WSL2 in Windows
+Apply home-manager with `kachick@macbook` for minimum packages.
 
-1. Add minimum packages with home-manager. Apply home-manager with `kachick@macbook`
-2. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154)(default Ubuntu guest) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-3. In the lima as `limactl start`, apply home-manager with `kachick@lima`
-4. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
+I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [Lima](#lima) for development tasks.
+
+## [Lima](https://github.com/lima-vm/lima)
+
+1. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154)(default Ubuntu guest) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
+1. In the lima as `limactl start`, apply home-manager with `kachick@lima`
+1. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
 
 ## How to setup secrets
 

@@ -166,6 +166,8 @@
 
       nordic
 
+      lima
+
       ## Unfree packages
 
       # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
