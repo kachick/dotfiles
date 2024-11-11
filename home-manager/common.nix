@@ -89,6 +89,8 @@
     # Take care if I add nushell in the Unix dependencies again
     shellAliases = {
       "g" = "git";
+
+      # https://github.com/NixOS/nixpkgs/pull/344193
       "zed" = "zed-editor";
     };
   };
