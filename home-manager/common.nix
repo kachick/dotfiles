@@ -135,17 +135,6 @@
     enable = true;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/yazi.nix
-  # TODO: Use shell integrations for `y` after release-24.11. 24.05 is using fixed old `ya`
-  programs.yazi = {
-    enable = true;
-    settings = {
-      manager = {
-        sort_dir_first = true;
-      };
-    };
-  };
-
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
   programs.bat = {
     enable = true;

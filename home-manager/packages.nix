@@ -78,7 +78,6 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  yazi # prefer the shell wrapper `yy`
 
   typos
   hyperfine

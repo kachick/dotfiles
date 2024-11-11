@@ -52,15 +52,6 @@ pkgs.writeText "posix_shared_functions.sh" (
     gch() {
       fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
     }
-
-    y() {
-      local tmp="$(${pkgs.coreutils}/bin/mktemp -t "yazi-cwd.XXXXXX")"
-      ${lib.getExe pkgs.yazi} "$@" --cwd-file="$tmp"
-      if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-        builtin cd -- "$cwd"
-      fi
-      ${pkgs.coreutils}/bin/rm -f -- "$tmp"
-    }
   ''
   + (builtins.readFile ./non_nix.bash)
 )
