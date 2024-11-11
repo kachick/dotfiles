@@ -7,9 +7,6 @@
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
-  "[fish]": {
-    "editor.defaultFormatter": "bmalehorn.vscode-fish"
-  },
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },

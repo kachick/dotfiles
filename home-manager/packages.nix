@@ -15,7 +15,6 @@
   bashInteractive
   # readline # needless and using it does not fix bash problems
   zsh
-  fish
   starship
   direnv
 

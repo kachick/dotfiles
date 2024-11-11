@@ -71,7 +71,6 @@ jobs:
           nix run .#check_no_dirty_xz_in_nix_store
       - name: Print some paths and versions
         run: |
-          which fish
           which zsh
           which bash
           which ruby
@@ -81,12 +80,11 @@ jobs:
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-          [[ "$(fish -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          fish --command 'starship --version'
+          zsh --command 'starship --version'
           zsh -c zsh -c 'which la; which p'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
