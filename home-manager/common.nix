@@ -91,7 +91,7 @@
       "g" = "git";
 
       # https://github.com/NixOS/nixpkgs/pull/344193
-      "zed" = "zed-editor";
+      "zed" = "zeditor";
     };
   };
 
