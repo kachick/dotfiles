@@ -84,6 +84,13 @@
       # systemd config overrides this value in gnome-shell, however this will be used in Linux VT console
       time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
+
+    # Prefer this rather than adding wrapped script to make zsh possible to complete
+    # Take care if I add nushell in the Unix dependencies again
+    shellAliases = {
+      "g" = "git";
+      "zed" = "zed-editor";
+    };
   };
 
   # Let Home Manager install and manage itself.
