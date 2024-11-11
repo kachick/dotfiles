@@ -27,8 +27,6 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - macos-15 # Apple Silicon. Doesn't match for my Intel Mac, but preferring with the speed.
-          - macos-13
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
@@ -38,9 +36,6 @@ jobs:
         run: |
           </etc/nix/nix.conf
           ls -alh ~
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
-        # Always slow. Especially since GH-924
-        if: runner.os == 'macOS' && runner.arch == 'X64'
       - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - run: nix flake show
       - run: nix flake check
