@@ -7,7 +7,7 @@ sandbox() {
 	# shellcheck disable=SC2064
 	trap "podman kill '$container_id'" EXIT ERR
 	sleep 1 # Wait for the systemd to be ready
-	podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh'
+	podman exec --user=user --workdir='/home/user' -eTERM -it "$container_id" '/home/user/.nix-profile/bin/zsh'
 }
 
 sandbox

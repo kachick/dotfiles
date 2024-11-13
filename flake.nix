@@ -226,11 +226,12 @@
           };
         in
         {
-          "kachick@desktop" = home-manager-linux.lib.homeManagerConfiguration (
+          "kachick@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration (
             x86-Linux
             // {
               modules = [
                 ./home-manager/kachick.nix
+                { targets.genericLinux.enable = false; }
                 ./home-manager/systemd.nix
                 ./home-manager/gnome.nix
               ];
@@ -242,6 +243,7 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/genericLinux.nix
                 ./home-manager/wsl.nix
               ];
             }
@@ -252,7 +254,10 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
-                { home.username = "nixos"; }
+                {
+                  home.username = "nixos";
+                  targets.genericLinux.enable = false;
+                }
                 ./home-manager/wsl.nix
               ];
             }
@@ -267,6 +272,7 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/genericLinux.nix
                 ./home-manager/lima.nix
               ];
             }
@@ -280,6 +286,7 @@
               modules = [
                 ./home-manager/kachick.nix
                 { home.username = "runner"; }
+                ./home-manager/genericLinux.nix
                 ./home-manager/systemd.nix
               ];
             }
@@ -303,6 +310,7 @@
               modules = [
                 ./home-manager/common.nix
                 { home.username = "user"; }
+                ./home-manager/genericLinux.nix
                 ./home-manager/systemd.nix
               ];
             }

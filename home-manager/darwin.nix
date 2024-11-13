@@ -9,6 +9,8 @@
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
+    targets.genericLinux.enable = false;
+
     home = {
       homeDirectory = "/Users/${config.home.username}";
 
