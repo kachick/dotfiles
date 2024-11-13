@@ -75,6 +75,17 @@
       inherit homemade-pkgs;
     };
 
+    # https://github.com/NixOS/nixpkgs/blob/fe0ab2747612f6df8091438bb3bac0fcee942853/doc/packages/locales.section.md?plain=1#L5C223-L5C237
+    # https://github.com/nix-community/home-manager/blob/60bb110917844d354f3c18e05450606a435d2d10/modules/config/i18n.nix#L40-L63
+    i18n.glibcLocales = pkgs.glibcLocales.override {
+      allLocales = false;
+      locales = [
+        "en_US.UTF-8/UTF-8"
+        "en_DK.UTF-8/UTF-8"
+        "ja_JP.UTF-8/UTF-8"
+      ];
+    };
+
     # You can check the candidates in `locale -a`
     # pkgs.glibc installs many candidates, but it does not support darwin
     # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
