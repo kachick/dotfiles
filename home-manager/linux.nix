@@ -40,6 +40,8 @@ lib.mkMerge [
         kind
         stern
         k9s
+        # Make it possible to handle "xterm-kitty" in SSH remotes or lima guest VM with tiny filesize and setups. See GH-932
+        kitty.terminfo
 
         edge-pkgs.ox # modeless editor. Use edge because of stable channel is too old
 

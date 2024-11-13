@@ -106,9 +106,6 @@
   #  - argos-translate - can be closed in offline, but not yet enough accuracy
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
-
-  # Make it possible to handle "xterm-kitty" in SSH remotes or lima guest VM with tiny filesize and setups. See GH-932
-  kitty.terminfo
 ])
 ++ (with homemade-pkgs; [
   la
