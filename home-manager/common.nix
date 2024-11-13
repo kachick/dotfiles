@@ -17,9 +17,6 @@
     ./editors.nix
     ./terminals.nix
     ./fzf.nix
-    ./firefox.nix
-    ./linux.nix
-    ./darwin.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
