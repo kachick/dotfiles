@@ -77,7 +77,7 @@ This repository intentionally reverts the home-manager NixOS module.\
 So, you should activate the user dotfiles with standalone home-manager even though NixOS.
 
 ```bash
-nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@desktop'
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@nixos-desktop'
 ```
 
 See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
@@ -199,7 +199,7 @@ For NixOS
 
 ```bash
 sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    makers apply 'kachick@desktop'
+    makers apply 'kachick@nixos-desktop'
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).

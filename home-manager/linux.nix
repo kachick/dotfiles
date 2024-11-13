@@ -10,17 +10,8 @@
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isLinux {
-    # This also changes xdg? Official manual sed this config is better for non NixOS Linux
-    # https://github.com/nix-community/home-manager/blob/559856748982588a9eda6bfb668450ebcf006ccd/modules/targets/generic-linux.nix#L16
-    targets.genericLinux.enable = true;
-
     home = {
       homeDirectory = lib.mkDefault "/home/${config.home.username}";
-
-      sessionVariables = {
-        # Make it possible to handle "xterm-kitty" in SSH remotes or lima guest VM with tiny filesize and setups. See GH-932
-        TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo";
-      };
 
       packages = with pkgs; [
         # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
