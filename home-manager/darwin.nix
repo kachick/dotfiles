@@ -9,6 +9,8 @@
 # https://github.com/nix-community/home-manager/issues/414#issuecomment-427163925
 lib.mkMerge [
   (lib.mkIf pkgs.stdenv.isDarwin {
+    imports = [ ./lima-host.nix ];
+
     targets.genericLinux.enable = false;
 
     home = {
@@ -59,13 +61,6 @@ lib.mkMerge [
         inconsolata
       ];
     };
-
-    programs.ssh.includes = [
-      # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
-      # * adding this as `ssh -F` makes it possible to use ssh login, it is required for `ms-vscode-remote.remote-ssh`
-      # * the content of file will be changed for each instance creation
-      "${config.home.homeDirectory}/.lima/default/ssh.config"
-    ];
 
     xdg = {
       configFile = {

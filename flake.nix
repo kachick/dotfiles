@@ -232,6 +232,7 @@
               modules = [
                 ./home-manager/kachick.nix
                 { targets.genericLinux.enable = false; }
+                ./home-manager/lima-host.nix
                 ./home-manager/systemd.nix
                 ./home-manager/gnome.nix
               ];
@@ -273,7 +274,7 @@
               modules = [
                 ./home-manager/kachick.nix
                 ./home-manager/genericLinux.nix
-                ./home-manager/lima.nix
+                ./home-manager/lima-guest.nix
               ];
             }
           );
