@@ -152,7 +152,7 @@ command = './containers/sandbox.bash'
 [tasks.sandbox-cr]
 command = './containers/sandbox-with-ghcr.bash'
 args = [
-  'latest',
+  '${@}',
 ]
 
 [tasks.workspace]
