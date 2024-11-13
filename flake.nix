@@ -231,10 +231,12 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/linux.nix
                 { targets.genericLinux.enable = false; }
                 ./home-manager/lima-host.nix
                 ./home-manager/systemd.nix
                 ./home-manager/gnome.nix
+                ./home-manager/firefox.nix
               ];
             }
           );
@@ -244,6 +246,7 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/linux.nix
                 ./home-manager/genericLinux.nix
                 ./home-manager/wsl.nix
               ];
@@ -255,6 +258,7 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/linux.nix
                 {
                   home.username = "nixos";
                   targets.genericLinux.enable = false;
@@ -265,7 +269,13 @@
           );
 
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration (
-            x86-macOS // { modules = [ ./home-manager/kachick.nix ]; }
+            x86-macOS
+            // {
+              modules = [
+                ./home-manager/kachick.nix
+                ./home-manager/darwin.nix
+              ];
+            }
           );
 
           "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration (
@@ -273,6 +283,7 @@
             // {
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/linux.nix
                 ./home-manager/genericLinux.nix
                 ./home-manager/lima-guest.nix
               ];
@@ -286,6 +297,7 @@
               # Using values as much as possible as actual values to create a robust CI
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/linux.nix
                 { home.username = "runner"; }
                 ./home-manager/genericLinux.nix
                 ./home-manager/systemd.nix
@@ -300,6 +312,7 @@
               # Using values as much as possible as actual values to create a robust CI
               modules = [
                 ./home-manager/kachick.nix
+                ./home-manager/darwin.nix
                 { home.username = "runner"; }
               ];
             }
@@ -311,6 +324,7 @@
               modules = [
                 ./home-manager/common.nix
                 { home.username = "user"; }
+                ./home-manager/linux.nix
                 ./home-manager/genericLinux.nix
                 ./home-manager/systemd.nix
               ];
