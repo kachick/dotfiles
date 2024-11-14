@@ -112,6 +112,17 @@
 
   services.blueman.enable = true;
 
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.epson-escpr ];
+  };
+
+  # To setup a wireless printer
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+  };
+
   environment.systemPackages =
     [
       # version in nixos-24.05 does not enable IME
