@@ -47,6 +47,7 @@
     }@inputs:
     let
       inherit (self) outputs;
+
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
@@ -55,19 +56,21 @@
         ] nixpkgs.lib.systems.flakeExposed
       );
 
-      mkApp = pkg: {
-        type = "app";
-        program = nixpkgs.lib.getExe pkg;
-      };
+      mkNixpkgs =
+        system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
+
+      mkApp =
+        { system, pkg }:
+        {
+          type = "app";
+          program = (mkNixpkgs system).lib.getExe pkg;
+        };
 
       homemade-packages = forAllSystems (
         system:
-        (
-          (if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs)
-          .legacyPackages.${system}.callPackage
-          ./pkgs
-          { edge-pkgs = edge-nixpkgs.legacyPackages.${system}; }
-        )
+        ((mkNixpkgs system).legacyPackages.${system}.callPackage ./pkgs {
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        })
       );
     in
     {
