@@ -25,6 +25,8 @@
         "wheel"
         "input" # For finger print in GDM
         "libvirtd" # For virt-manager
+        "scanner"
+        "lp" # For scanner
       ];
       packages = [
         # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
@@ -61,7 +63,10 @@
     };
   };
 
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
+  services.udev.packages = with pkgs; [
+    gnome.gnome-settings-daemon
+    sane-airscan
+  ];
 
   # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
   programs.ssh.enableAskPassword = false;

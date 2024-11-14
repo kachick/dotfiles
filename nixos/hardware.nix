@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   services.udev = {
     enable = true;
@@ -15,5 +15,12 @@
       evdev:name:Lenovo ThinkPad Compact USB Keyboard with TrackPoint:* # Both US and JIS have same name
         KEYBOARD_KEY_70039=leftctrl # original: capslock, Both US and JIS have same keycode for capslock
     '';
+  };
+
+  # http://www.sane-project.org/sane-mfgs.html#Z-EPSON
+  # Apple AirScan supported devices: https://support.apple.com/ja-jp/HT201311
+  hardware.sane = {
+    enable = true;
+    extraBackends = [ pkgs.sane-airscan ];
   };
 }
