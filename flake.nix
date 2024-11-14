@@ -47,6 +47,7 @@
     }@inputs:
     let
       inherit (self) outputs;
+
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
@@ -55,19 +56,28 @@
         ] nixpkgs.lib.systems.flakeExposed
       );
 
-      mkApp = pkg: {
-        type = "app";
-        program = nixpkgs.lib.getExe pkg;
-      };
+      mkNixpkgs =
+        system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
+
+      mkHomeManager =
+        system:
+        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then
+          home-manager-darwin
+        else
+          home-manager-linux;
+
+      mkApp =
+        { system, pkg }:
+        {
+          type = "app";
+          program = (mkNixpkgs system).lib.getExe pkg;
+        };
 
       homemade-packages = forAllSystems (
         system:
-        (
-          (if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs)
-          .legacyPackages.${system}.callPackage
-          ./pkgs
-          { edge-pkgs = edge-nixpkgs.legacyPackages.${system}; }
-        )
+        ((mkNixpkgs system).legacyPackages.${system}.callPackage ./pkgs {
+          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
+        })
       );
     in
     {
@@ -76,12 +86,12 @@
       # - https://github.com/NixOS/nixfmt/issues/129
       # - https://github.com/NixOS/rfcs/pull/166
       # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: (mkNixpkgs system).legacyPackages.${system}.nixfmt-rfc-style);
 
       devShells = forAllSystems (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.${system};
+          pkgs = (mkNixpkgs system).legacyPackages.${system};
           edge-pkgs = edge-nixpkgs.legacyPackages.${system};
           homemade-pkgs = homemade-packages.${system};
         in
@@ -145,7 +155,10 @@
           (map
             (name: {
               inherit name;
-              value = mkApp homemade-packages.${system}.${name};
+              value = mkApp {
+                system = system;
+                pkg = homemade-packages.${system}.${name};
+              };
             })
             [
               "bump_completions"
@@ -177,8 +190,10 @@
             # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
             {
               name = "home-manager";
-              # FIXME: Use home-manager-darwin in macOS
-              value = mkApp home-manager-linux.defaultPackage.${system};
+              value = mkApp {
+                system = system;
+                pkg = (mkHomeManager system).defaultPackage.${system};
+              };
             }
           ]
         )
