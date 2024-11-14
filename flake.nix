@@ -48,7 +48,12 @@
     let
       inherit (self) outputs;
       # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
-      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
+      forAllSystems = nixpkgs.lib.genAttrs (
+        nixpkgs.lib.intersectLists [
+          "x86_64-linux"
+          "x86_64-darwin"
+        ] nixpkgs.lib.systems.flakeExposed
+      );
 
       mkApp = pkg: {
         type = "app";
