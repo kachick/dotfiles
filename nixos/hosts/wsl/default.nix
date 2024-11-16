@@ -19,6 +19,5 @@
   # Required to run VSCode Remote server
   programs.nix-ld = {
     enable = true;
-    package = pkgs.nix-ld-rs; # TODO: Remove since NixOS 24.11
   };
 }

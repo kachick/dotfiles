@@ -104,7 +104,7 @@ in
           };
           language-servers = [
             "nil"
-            # "nixd" # TODO: Enable since NixOS 24.11(Helix 24.07+)
+            "nixd"
             "typos"
           ];
         }
