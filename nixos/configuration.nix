@@ -54,7 +54,8 @@
   nixpkgs.config.allowUnfree = true;
 
   # https://github.com/NixOS/nixpkgs/blob/8e5e5a6add04c7f1e38e76f59ada6732947f1e55/nixos/doc/manual/release-notes/rl-2411.section.md?plain=1#L69-L76
-  systemd.enableStrictShellChecks = true;
+  # Disabling to avoid `SC2174` in for '/nix/store/h93h6srxzslr8kyv13klrq63zd6ymhxy-unit-script-cups-pre-start.drv'
+  systemd.enableStrictShellChecks = false;
 
   # TODO: Reconsider to drop this
   services.packagekit = {
