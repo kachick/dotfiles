@@ -1,6 +1,5 @@
 {
   pkgs,
-  edge-pkgs,
   config,
   ...
 }:
@@ -31,7 +30,10 @@ in
         name = "ssh-ask-pass";
         text = "gopass show ssh-pass";
         meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
-        runtimeInputs = (with pkgs; [ gopass ]) ++ (with edge-pkgs; [ sequoia-chameleon-gnupg ]);
+        runtimeInputs = with pkgs; [
+          gopass
+          sequoia-chameleon-gnupg
+        ];
         runtimeEnv = {
           GOPASS_GPG_BINARY = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
         };
