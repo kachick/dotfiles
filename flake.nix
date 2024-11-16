@@ -7,7 +7,7 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11"; # TODO: Update to nixos-24.11 if it will be introduced
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Unfit for darwin, might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin"; # TODO: Update to nixpkgs-24.11-darwin if it will be introduced
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Pin to nixpkgs-24.11-darwin if it will be introduced
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager-linux = {
       url = "github:nix-community/home-manager/master"; # TODO: Update to release-24.11 if it will be introduced
