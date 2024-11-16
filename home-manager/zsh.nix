@@ -3,7 +3,6 @@
   lib,
   pkgs,
   homemade-pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -235,7 +234,7 @@ in
       source "${pkgs.kind}/share/zsh/site-functions/_kind"
       # cargo-make recommends to use bash completions for zsh
       # Update after intoducing https://github.com/sagiegurari/cargo-make/pull/1182
-      source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+      source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh

@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -35,7 +34,7 @@ in
   };
 
   home.sessionVariables = rec {
-    GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+    GOPASS_GPG_BINARY = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
 
     # Do NOT include the identity here
     PASSAGE_DIR = "${config.xdg.dataHome}/passage/store";
@@ -52,7 +51,7 @@ in
   # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
   programs.gpg = {
     enable = true;
-    # package = edge-pkgs.sequoia-chameleon-gnupg; # Also will be respected in gpg-agent: https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/services/gpg-agent.nix#L8C3-L8C9
+    # package = pkgs.sequoia-chameleon-gnupg; # Also will be respected in gpg-agent: https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/services/gpg-agent.nix#L8C3-L8C9
     # However I prefer original gnupg for now, sequoia-chameleon-gnupg does not support crucial features for GPG toolset (etc. `gpg --edit-key`, `gpgconf`)
 
     # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples

@@ -3,7 +3,6 @@
   lib,
   pkgs,
   homemade-pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -127,7 +126,7 @@
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
 
         # Adding only in devshell is not enough
-        source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+        source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
 

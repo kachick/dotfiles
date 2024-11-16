@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  edge-pkgs,
   homemade-pkgs,
   ...
 }:
@@ -21,7 +20,7 @@
       iputils # `ping` etc
 
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
-      edge-pkgs.iw # replacement of wireless-tools(iwconfig)
+      iw # replacement of wireless-tools(iwconfig)
 
       # - Enable special module for Nix OS.
       # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
@@ -35,9 +34,9 @@
       stern
       k9s
 
-      edge-pkgs.ox # modeless editor. Use edge because of stable channel is too old
+      ox # modeless editor
 
-      edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
+      jnv # interactive jq
 
       # Alt w3m
       # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82

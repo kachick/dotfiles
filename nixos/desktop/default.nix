@@ -2,7 +2,6 @@
   config,
   inputs,
   pkgs,
-  edge-pkgs,
   homemade-pkgs,
   lib,
   ...
@@ -129,20 +128,7 @@
   };
 
   environment.systemPackages =
-    [
-      # version in nixos-24.05 does not enable IME
-      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      edge-pkgs.zed-editor
-
-      edge-pkgs.podman-desktop
-
-      edge-pkgs.cyme # Frequently updated
-
-      edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
-
-      edge-pkgs.alacritty # Use latest schema as Windows. GH-918
-    ]
-    ++ (with pkgs; [
+    (with pkgs; [
       firefox
 
       # https://github.com/NixOS/nixpkgs/issues/33282
@@ -151,7 +137,15 @@
       foot
       kitty
 
+      cyme
       lshw
+
+      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
+      zed-editor
+
+      gdm-settings
+
+      alacritty
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
@@ -179,6 +173,8 @@
       nordic
 
       lima
+
+      podman-desktop
 
       ## Unfree packages
 
@@ -252,7 +248,7 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
+    VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
 
     XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
 

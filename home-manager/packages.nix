@@ -1,13 +1,9 @@
 {
   pkgs,
-  edge-pkgs,
   homemade-pkgs,
   ...
 }:
 
-# Prefer stable pkgs as possible, if you want to use edge pkgs
-#   - Keep zero or tiny config in home-manager layer
-#   - Set `mod-name.package = edge-pkgs.the-one;`
 (with pkgs; [
   # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
   # bash
@@ -41,8 +37,8 @@
   # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
   ghq
 
-  edge-pkgs.sequoia-sq # Alt `gpg` - nixos-24.05 does not backport recent versions and the older requires to rebuild. https://github.com/NixOS/nixpkgs/pull/331099
-  edge-pkgs.sequoia-chameleon-gnupg
+  sequoia-sq # Alt `gpg`
+  sequoia-chameleon-gnupg
   gnupg # Also keep original GPG for now. sequoia-chameleon-gnupg does not support some crucial toolset. etc: `gpg --edit-key`, `gpgconf`
 
   age # Candidates: rage
@@ -51,7 +47,7 @@
   gopass # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
-  edge-pkgs.passage # Use latest to apply https://github.com/NixOS/nixpkgs/pull/339113
+  passage
 
   # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
   # See following issues

@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  edge-pkgs,
   ...
 }:
 
@@ -15,12 +14,11 @@
     # Enabling this may cause colisions. Do not add in packages list
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
-    plugins =
-      (with pkgs.vimPlugins; [
-        iceberg-vim
-        fzf-vim
-      ])
-      ++ [ edge-pkgs.vimPlugins.kdl-vim ];
+    plugins = with pkgs.vimPlugins; [
+      iceberg-vim
+      fzf-vim
+      kdl-vim
+    ];
 
     settings = {
       background = "dark";
