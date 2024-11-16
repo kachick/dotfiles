@@ -5,20 +5,20 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11"; # TODO: Update to nixos-24.11 if it will be introduced
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Unfit for darwin, might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin"; # TODO: Update to nixpkgs-24.11-darwin if it will be introduced
     # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/master"; # TODO: Update to release-24.11 if it will be introduced
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/master"; # TODO: Update to release-24.11 if it will be introduced
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/2405.5.4";
+      url = "github:nix-community/NixOS-WSL/2405.5.4"; # TODO: Update to ???? if 24.11 conpat channel will be introduced
       # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
