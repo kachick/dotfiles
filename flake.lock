@@ -640,7 +640,7 @@
         "home-manager": "home-manager",
         "hyprland": "hyprland",
         "nixpkgs": [
-          "edge-nixpkgs"
+          "nixpkgs"
         ],
         "treefmt-nix": "treefmt-nix",
         "xremap": "xremap"
