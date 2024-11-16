@@ -33,7 +33,7 @@ in
         meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
         runtimeInputs = (with pkgs; [ gopass ]) ++ (with edge-pkgs; [ sequoia-chameleon-gnupg ]);
         runtimeEnv = {
-          GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+          GOPASS_GPG_BINARY = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
         };
       }
     );
