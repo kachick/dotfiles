@@ -11,7 +11,6 @@
 }:
 {
   imports = [
-    ./modules/cloudflare-warp.nix
     (import ./console.nix { inherit homemade-pkgs; })
   ];
 
@@ -82,8 +81,7 @@
 
   services.cloudflare-warp = {
     enable = true;
-    # Use newer version to break down issues such as GH-749
-    package = edge-pkgs.cloudflare-warp;
+    package = pkgs.cloudflare-warp;
   };
 
   environment.variables = {
