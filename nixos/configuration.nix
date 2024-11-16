@@ -4,7 +4,6 @@
 
 {
   pkgs,
-  edge-pkgs,
   homemade-pkgs,
   lib,
   ...
