@@ -55,12 +55,14 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
+  ox # modeless editor. TODO: Consider to use edge-pkgs version because of it is frequentry updated
 
   tree
   eza # alt ls
   curl
   wget
   jq
+  jnv # interactive jq
   ripgrep # `rg`
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
