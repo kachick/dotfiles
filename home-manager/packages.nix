@@ -55,7 +55,7 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
-  ox # modeless editor. TODO: Consider to use edge-pkgs version because of it is frequentry updated
+  ox # modeless editor. TODO: Consider to use edge-pkgs version because of it is frequently updated
 
   tree
   eza # alt ls
