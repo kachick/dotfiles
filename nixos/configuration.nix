@@ -53,6 +53,9 @@
   # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
   nixpkgs.config.allowUnfree = true;
 
+  # https://github.com/NixOS/nixpkgs/blob/8e5e5a6add04c7f1e38e76f59ada6732947f1e55/nixos/doc/manual/release-notes/rl-2411.section.md?plain=1#L69-L76
+  systemd.enableStrictShellChecks = true;
+
   # TODO: Reconsider to drop this
   services.packagekit = {
     enable = true;
