@@ -52,7 +52,7 @@
     desktopManager.gnome = {
       enable = true;
       # https://github.com/NixOS/nixpkgs/issues/114514
-      extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+      extraGSettingsOverridePackages = [ pkgs.mutter ];
     };
 
     # Configure keymap in X11
@@ -63,7 +63,7 @@
   };
 
   services.udev.packages = with pkgs; [
-    gnome.gnome-settings-daemon
+    gnome-settings-daemon
     sane-airscan
   ];
 
@@ -83,18 +83,15 @@
     gnome-terminal.enable = true;
   };
 
-  environment.gnome.excludePackages =
-    (with pkgs; [
-      gnome-tour
-      gnome-connections
-    ])
-    ++ (with pkgs.gnome; [
-      epiphany # web browser
-      geary # email reader
-      evince # document viewer
-      gnome-calendar
-      gnome-music # does not support flac by defaults
-    ]);
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
+    gnome-connections
+    epiphany # web browser
+    geary # email reader
+    evince # document viewer
+    gnome-calendar
+    gnome-music # does not support flac by defaults
+  ];
 
   # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
   # https://wiki.gnupg.org/GnomeKeyring
@@ -164,8 +161,8 @@
 
       calibre
 
-      gnome.dconf-editor
-      gnome.gnome-boxes
+      dconf-editor
+      gnome-boxes
 
       # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
       pop-launcher
