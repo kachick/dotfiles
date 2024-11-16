@@ -82,7 +82,6 @@
 
   services.cloudflare-warp = {
     enable = true;
-    package = pkgs.cloudflare-warp;
   };
 
   environment.variables = {
