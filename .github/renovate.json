@@ -26,12 +26,6 @@
       "matchPackageNames": [
         "dprint{/,}**"
       ]
-    },
-    {
-      "matchPackageNames": [
-        "kachick/dprint-plugin-kdl"
-      ],
-      "allowedVersions": "<0.2.0"
     }
   ]
 }
