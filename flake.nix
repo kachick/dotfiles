@@ -18,7 +18,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/2405.5.4"; # TODO: Update to ???? if 24.11 conpat channel will be introduced
+      url = "github:nix-community/NixOS-WSL/main"; # TODO: Pin to 2411.?.? if 24.11 conpat channel will be introduced
       # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
