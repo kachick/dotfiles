@@ -21,7 +21,7 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -101,7 +101,7 @@
 
   programs.lesspipe.enable = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/direnv.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
 
@@ -135,12 +135,12 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -154,7 +154,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

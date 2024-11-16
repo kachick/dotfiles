@@ -25,7 +25,7 @@ in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -159,7 +159,7 @@ in
   # If you encounter .config/gh/config.yml readonly permission errors, attempt after `rm -rf ~/.config/gh`
   # https://github.com/cli/cli/pull/5378#issuecomment-2252558180
   #
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 

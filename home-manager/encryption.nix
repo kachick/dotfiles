@@ -15,7 +15,7 @@ in
   # Don't set $SEQUOIA_HOME, it unified config and data, cache to one directory as same as gpg era.
   # Use default $HOME instead, it respects XDG Base Directory Specification
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/gpg-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/gpg-agent.nix
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
 
@@ -48,7 +48,7 @@ in
 
   home.file."${passage_identity_dir}/.keep".text = "Keep this directory because of passage and age does not create the file if directory is missing";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gpg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gpg.nix
   programs.gpg = {
     enable = true;
     # package = pkgs.sequoia-chameleon-gnupg; # Also will be respected in gpg-agent: https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/services/gpg-agent.nix#L8C3-L8C9
@@ -71,7 +71,7 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/password-store.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/password-store.nix
   programs.password-store = {
     enable = true;
     package = pkgs.gopass; # Setting package is not a aliasing command, however I would try this for now. https://github.com/gopasspw/gopass/blob/70c56f9102999661b54e28c28fa2d63fa5fc813b/docs/setup.md?plain=1#L292-L298

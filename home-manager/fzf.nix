@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/fzf.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/fzf.nix
   # https://github.com/junegunn/fzf/blob/master/README.md
   programs.fzf = rec {
     enable = true;

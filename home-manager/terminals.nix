@@ -14,7 +14,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/kitty.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/kitty.nix
   programs.kitty = {
     enable = true;
     package = pkgs.emptyDirectory;

@@ -19,7 +19,7 @@ in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = pkgs.stdenv.isLinux;
 
   home.sessionVariables = {
@@ -41,7 +41,7 @@ in
     );
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 

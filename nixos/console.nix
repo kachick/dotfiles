@@ -1,6 +1,6 @@
 { homemade-pkgs, ... }:
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/config/console.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/console.nix
   # https://wiki.archlinux.org/title/Linux_console
   console = {
     earlySetup = true;

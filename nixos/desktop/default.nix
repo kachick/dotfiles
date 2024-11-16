@@ -44,9 +44,9 @@
 
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/gdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/gdm.nix
     displayManager.gdm.enable = true;
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/lightdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
@@ -77,7 +77,7 @@
   programs.virt-manager.enable = true;
 
   programs = {
-    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
     # For lanching with command looks like better than alacritty
     gnome-terminal.enable = true;
@@ -181,7 +181,7 @@
       # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # TODO: Consider using vscodium again
       # Don't use unstable channel. It frequently backported to stable channel
-      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
+      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       (vscode.override (prev: {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
@@ -196,14 +196,14 @@
       }))
 
       # Don't use unstable channel. It frequently backported to stable channel
-      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/by-name/go/google-chrome/package.nix
+      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix
       #  - Actually unstable is/was broken. See GH-776
       #
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
       (google-chrome.override (prev: {
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-        # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+        # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
           "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
@@ -283,7 +283,7 @@
     VIDEOS=Videos
   '';
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
     languagePacks = [

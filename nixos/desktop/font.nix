@@ -35,7 +35,7 @@
 
     # Same as home-manager module?
     # https://github.com/nix-community/home-manager/issues/605
-    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/fontconfig.nix
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/fontconfig.nix
     fontconfig = {
       enable = true;
       hinting.enable = true;
