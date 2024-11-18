@@ -108,38 +108,35 @@
                 gitleaks
                 cargo-make
               ])
-              ++ (
-                pkgs.lib.optionals pkgs.stdenv.isLinux (
-                  with pkgs;
-                  [
-                    nixfmt-rfc-style
-                    nixd
-                    nixpkgs-lint-community
-                    nix-init
-                    nurl
-                    hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
+              ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
+                (with pkgs; [
+                  nixfmt-rfc-style
+                  nixd
+                  nixpkgs-lint-community
+                  nix-init
+                  nurl
+                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
 
-                    shellcheck
-                    shfmt
+                  shellcheck
+                  shfmt
 
-                    # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                    # https://github.com/numtide/treefmt/pull/250
-                    treefmt2
-                    dprint
-                    stylua
-                    typos
-                    typos-lsp # For zed-editor typos extension
-                    go_1_23
-                    goreleaser
-                    trivy
-                    markdownlint-cli2
+                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                  # https://github.com/numtide/treefmt/pull/250
+                  treefmt2
+                  dprint
+                  stylua
+                  typos
+                  typos-lsp # For zed-editor typos extension
+                  go_1_23
+                  goreleaser
+                  trivy
+                  markdownlint-cli2
 
-                    (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
-                  ]
-                )
+                  (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
+                ])
                 ++ (with homemade-pkgs; [ nix-hash-url ])
                 ++ [ inputs.selfup.packages.${system}.default ]
-              );
+              ));
           };
         }
       );
