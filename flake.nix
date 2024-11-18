@@ -92,7 +92,6 @@
         system:
         let
           pkgs = (mkNixpkgs system).legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
           homemade-pkgs = homemade-packages.${system};
         in
         {
@@ -114,6 +113,7 @@
                   with pkgs;
                   [
                     nixfmt-rfc-style
+                    nixd
                     nixpkgs-lint-community
                     nix-init
                     nurl
@@ -122,6 +122,9 @@
                     shellcheck
                     shfmt
 
+                    # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                    # https://github.com/numtide/treefmt/pull/250
+                    treefmt2
                     dprint
                     stylua
                     typos
@@ -129,17 +132,11 @@
                     go_1_23
                     goreleaser
                     trivy
+                    markdownlint-cli2
 
                     (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
                   ]
                 )
-                ++ (with edge-pkgs; [
-                  nixd
-                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                  # https://github.com/numtide/treefmt/pull/250
-                  treefmt2
-                  markdownlint-cli2
-                ])
                 ++ (with homemade-pkgs; [ nix-hash-url ])
                 ++ [ inputs.selfup.packages.${system}.default ]
               );
