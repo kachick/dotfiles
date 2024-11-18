@@ -43,3 +43,6 @@ jobs:
         # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
         if: runner.os == 'Linux'
       - run: nix develop --command makers ci-dev
+        if: runner.os == 'Linux'
+      - run: nix develop --command makers ci-darwin
+        if: runner.os == 'macOS'

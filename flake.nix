@@ -106,36 +106,43 @@
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                nixfmt-rfc-style
-                nixpkgs-lint-community
-                nix-init
-                nurl
-                hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
-
-                shellcheck
-                shfmt
                 gitleaks
                 cargo-make
-
-                dprint
-                stylua
-                typos
-                typos-lsp # For zed-editor typos extension
-                go_1_23
-                goreleaser
-                trivy
-
-                (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
-              ++ (with edge-pkgs; [
-                nixd
-                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                # https://github.com/numtide/treefmt/pull/250
-                treefmt2
-                markdownlint-cli2
-              ])
-              ++ (with homemade-pkgs; [ nix-hash-url ])
-              ++ [ inputs.selfup.packages.${system}.default ];
+              ++ (
+                pkgs.lib.optionals pkgs.stdenv.isLinux (
+                  with pkgs;
+                  [
+                    nixfmt-rfc-style
+                    nixpkgs-lint-community
+                    nix-init
+                    nurl
+                    hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
+
+                    shellcheck
+                    shfmt
+
+                    dprint
+                    stylua
+                    typos
+                    typos-lsp # For zed-editor typos extension
+                    go_1_23
+                    goreleaser
+                    trivy
+
+                    (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
+                  ]
+                )
+                ++ (with edge-pkgs; [
+                  nixd
+                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                  # https://github.com/numtide/treefmt/pull/250
+                  treefmt2
+                  markdownlint-cli2
+                ])
+                ++ (with homemade-pkgs; [ nix-hash-url ])
+                ++ [ inputs.selfup.packages.${system}.default ]
+              );
           };
         }
       );
