@@ -18,7 +18,7 @@
   programs.kitty = {
     enable = true;
     package = pkgs.emptyDirectory;
-    theme = "zenwritten_dark";
+    themeFile = "zenwritten_dark"; # basename in a file of https://github.com/kovidgoyal/kitty-themes/tree/master/themes
     settings = {
       shell = lib.getExe pkgs.zsh;
       cursor_shape = "beam";
