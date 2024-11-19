@@ -137,7 +137,7 @@
       lshw
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      zed-editor
+      unstable.zed-editor # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/pull/356459 included
 
       gdm-settings
 
@@ -158,7 +158,7 @@
 
       newsflash # RSS reader # TODO: Manage config (sqlite?) or Backup the exported OPML
 
-      calibre
+      unstable.calibre # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/pull/355885 included
 
       dconf-editor
       gnome-boxes
