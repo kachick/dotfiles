@@ -12,7 +12,8 @@
     #       - zed-editor: https://github.com/NixOS/nixpkgs/pull/356459
     #       - calibre: https://github.com/NixOS/nixpkgs/pull/355885
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # Better than nixos-unstable until using darwin, however still not enough and might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
+    # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Prefer nixos-unstable after https://github.com/NixOS/nixpkgs/pull/356590 included
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
