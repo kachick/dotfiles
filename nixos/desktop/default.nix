@@ -294,7 +294,7 @@
       type = "fcitx5";
 
       fcitx5.addons = [
-        pkgs.fcitx5-mozc
+        pkgs.unstable.fcitx5-mozc # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/pull/356590 included
         pkgs.fcitx5-gtk
       ];
 
