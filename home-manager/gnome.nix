@@ -162,6 +162,7 @@ in
         history-size = 100;
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
         cache-only-favorites = true;
+        display-mode = 0;
       };
 
       "org/gnome/shell/extensions/just-perfection" = {
