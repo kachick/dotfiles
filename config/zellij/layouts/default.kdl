@@ -50,7 +50,6 @@ layout {
         }
     }
     BPS focus=true name="BPS"
-    Filer name="Filer"
     Side-by-Side name="Side-by-Side"
     Plain name="Plain"
     Help name="Help"
