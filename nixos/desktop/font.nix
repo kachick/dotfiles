@@ -1,4 +1,4 @@
-{ pkgs, homemade-pkgs, ... }:
+{ pkgs, ... }:
 {
   fonts = {
     enableDefaultPackages = true;
@@ -30,7 +30,7 @@
       ])
       ++ [
         # emoji
-        homemade-pkgs.beedii
+        pkgs.my.beedii
       ];
 
     # Same as home-manager module?

@@ -2,8 +2,6 @@
   config,
   pkgs,
   lib,
-  edge-pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -68,8 +66,6 @@
 
     packages = import ./packages.nix {
       inherit pkgs;
-      inherit edge-pkgs;
-      inherit homemade-pkgs;
     };
 
     # You can check the candidates in `locale -a`

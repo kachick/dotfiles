@@ -2,7 +2,6 @@
   config,
   pkgs,
   lib,
-  homemade-pkgs,
   ...
 }:
 
@@ -39,7 +38,7 @@
       # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
       chawan # `cha`
 
-      homemade-pkgs.renmark # Depend on chawan
+      pkgs.my.renmark # Depend on chawan
     ];
   };
 

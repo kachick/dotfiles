@@ -2,14 +2,13 @@
   config,
   inputs,
   pkgs,
-  homemade-pkgs,
   lib,
   ...
 }:
 
 {
   imports = [
-    (import ./font.nix { inherit pkgs homemade-pkgs; })
+    (import ./font.nix { inherit pkgs; })
     inputs.xremap-flake.nixosModules.default
     ./xremap.nix
   ];

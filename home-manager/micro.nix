@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -13,14 +12,14 @@
   # For temporal use
   xdg.configFile."micro/colorschemes/.keep".text = "";
 
-  xdg.configFile."micro/plug/fzfinder".source = homemade-pkgs.micro-fzfinder;
-  xdg.configFile."micro/plug/kdl".source = homemade-pkgs.micro-kdl;
-  xdg.configFile."micro/plug/nordcolors".source = homemade-pkgs.micro-nordcolors;
+  xdg.configFile."micro/plug/fzfinder".source = pkgs.my.micro-fzfinder;
+  xdg.configFile."micro/plug/kdl".source = pkgs.my.micro-kdl;
+  xdg.configFile."micro/plug/nordcolors".source = pkgs.my.micro-nordcolors;
   xdg.configFile."micro/colorschemes" = {
-    source = "${homemade-pkgs.micro-catppuccin}/colorschemes";
+    source = "${pkgs.my.micro-catppuccin}/colorschemes";
     recursive = true;
   };
-  xdg.configFile."micro/colorschemes/everforest.micro".source = "${homemade-pkgs.micro-everforest}/colorschemes/everforest.micro";
+  xdg.configFile."micro/colorschemes/everforest.micro".source = "${pkgs.my.micro-everforest}/colorschemes/everforest.micro";
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
   xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;

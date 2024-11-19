@@ -1,6 +1,5 @@
 {
-  pkgs,
-  # Don't depend on edge-pkgs as possible until realize https://github.com/NixOS/nixpkgs/issues/107466,
+  pkgs, # Don't depend on edge-pkgs as possible until realize https://github.com/NixOS/nixpkgs/issues/107466,
   config,
   ...
 }:

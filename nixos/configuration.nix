@@ -4,13 +4,13 @@
 
 {
   pkgs,
-  homemade-pkgs,
   lib,
+  overlays,
   ...
 }:
 {
   imports = [
-    (import ./console.nix { inherit homemade-pkgs; })
+    (import ./console.nix { inherit pkgs; })
   ];
 
   nix.settings.experimental-features = [
@@ -49,9 +49,13 @@
   # TODO: Reconsider to set UTC for servers
   time.timeZone = "Asia/Tokyo";
 
-  # Allow unfree packages
-  # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    inherit overlays;
+
+    # Allow unfree packages
+    # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
+    config.allowUnfree = true;
+  };
 
   # https://github.com/NixOS/nixpkgs/blob/8e5e5a6add04c7f1e38e76f59ada6732947f1e55/nixos/doc/manual/release-notes/rl-2411.section.md?plain=1#L69-L76
   # Disabling to avoid `SC2174` in for '/nix/store/h93h6srxzslr8kyv13klrq63zd6ymhxy-unit-script-cups-pre-start.drv'

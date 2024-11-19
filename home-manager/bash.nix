@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -133,7 +132,7 @@
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
-        source "${homemade-pkgs.posix_shared_functions}"
+        source "${pkgs.my.posix_shared_functions}"
 
         if [ 'linux' = "$TERM" ]; then
           # Avoid Tofu

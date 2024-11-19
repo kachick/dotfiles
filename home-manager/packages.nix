@@ -1,6 +1,5 @@
 {
   pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -55,7 +54,7 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
-  ox # modeless editor. TODO: Consider to use edge-pkgs version because of it is frequently updated
+  unstable.ox # modeless editor.
 
   tree
   eza # alt ls
@@ -105,7 +104,7 @@
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
 ])
-++ (with homemade-pkgs; [
+++ (with pkgs.my; [
   la
   lat
   fzf-bind-posix-shell-history-to-git-commit-message
