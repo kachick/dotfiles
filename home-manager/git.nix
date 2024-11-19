@@ -1,7 +1,5 @@
 {
   pkgs,
-  homemade-pkgs,
-  edge-pkgs,
   lib,
   ...
 }:
@@ -26,7 +24,7 @@ in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/git.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/git.nix
   # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
   programs.git = {
     enable = true;
@@ -42,7 +40,7 @@ in
       upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
       refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
       all = "!git refresh && git-delete-merged-branches";
-      lf = "!${lib.getExe homemade-pkgs.git-log-fzf}";
+      lf = "!${lib.getExe pkgs.my.git-log-fzf}";
       reset-main = ''
         !git fetch origin && \
           git switch main && \
@@ -50,16 +48,16 @@ in
           git checkout origin/main && \
           git checkout -b main
       '';
-      resolve-conflict = "!${lib.getExe homemade-pkgs.git-resolve-conflict}";
+      resolve-conflict = "!${lib.getExe pkgs.my.git-resolve-conflict}";
     };
 
     # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
     # Candidates: https://github.com/git/git/tree/v2.44.1/templates
     hooks = {
-      commit-msg = lib.getExe homemade-pkgs.git-hooks-commit-msg;
+      commit-msg = lib.getExe pkgs.my.git-hooks-commit-msg;
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-      pre-push = lib.getExe homemade-pkgs.git-hooks-pre-push;
+      pre-push = lib.getExe pkgs.my.git-hooks-pre-push;
 
       pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
       pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
@@ -89,7 +87,7 @@ in
         # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
 
-        program = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq"; # GH-830
+        program = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq"; # GH-830
       };
 
       commit = {
@@ -160,7 +158,7 @@ in
   # If you encounter .config/gh/config.yml readonly permission errors, attempt after `rm -rf ~/.config/gh`
   # https://github.com/cli/cli/pull/5378#issuecomment-2252558180
   #
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 
@@ -201,6 +199,6 @@ in
       ];
     };
 
-    extensions = (with pkgs; [ gh-poi ]) ++ (with homemade-pkgs; [ gh-prs ]);
+    extensions = (with pkgs; [ gh-poi ]) ++ (with pkgs.my; [ gh-prs ]);
   };
 }

@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-  homemade-pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -33,7 +31,7 @@ in
 
   # https://nixos.wiki/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zsh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;
@@ -235,7 +233,7 @@ in
       source "${pkgs.kind}/share/zsh/site-functions/_kind"
       # cargo-make recommends to use bash completions for zsh
       # Update after intoducing https://github.com/sagiegurari/cargo-make/pull/1182
-      source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+      source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh
@@ -292,7 +290,7 @@ in
         . "$@"
       }
 
-      source_sh "${homemade-pkgs.posix_shared_functions}"
+      source_sh "${pkgs.my.posix_shared_functions}"
 
       if [ 'linux' = "$TERM" ]; then
         # Avoid Tofu

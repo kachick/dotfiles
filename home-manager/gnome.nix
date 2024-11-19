@@ -8,7 +8,7 @@ in
   xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
   xdg.dataFile."applications/${amazon_music-pwa-file}".source = ../config/pwa/amazon_music.desktop;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix
   dconf = {
     enable = true;
     settings = {

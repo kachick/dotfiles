@@ -18,7 +18,7 @@ block-beta
     end
 
     block:vm:3
-        lima("Lima")   wsl2("WSL2")    
+        lima("Lima")   wsl2("WSL2")
     end
 
     block:container:3
@@ -173,13 +173,15 @@ Check [traps](./windows/Multi-booting.md)
 
 ## macOS
 
-Apply home-manager with `kachick@macbook` for minimum packages.
+I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911).
 
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911). Use [Lima](#lima) for development tasks.
+1. Apply home-manager with `kachick@macbook` for minimum packages.
+1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
+1. Use [Lima](#lima) for development tasks.
 
-## [Lima](https://github.com/lima-vm/lima)
+## Lima
 
-1. Manually setup [lima](https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154)(default Ubuntu guest) and [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
+1. Setup [Lima](https://github.com/lima-vm/lima) with default Ubuntu guest
 1. In the lima as `limactl start`, apply home-manager with `kachick@lima`
 1. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
 

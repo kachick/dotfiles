@@ -2,15 +2,13 @@
   config,
   inputs,
   pkgs,
-  edge-pkgs,
-  homemade-pkgs,
   lib,
   ...
 }:
 
 {
   imports = [
-    (import ./font.nix { inherit pkgs homemade-pkgs; })
+    (import ./font.nix { inherit pkgs; })
     inputs.xremap-flake.nixosModules.default
     ./xremap.nix
   ];
@@ -45,15 +43,15 @@
 
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/gdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/gdm.nix
     displayManager.gdm.enable = true;
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/x11/display-managers/lightdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
       enable = true;
       # https://github.com/NixOS/nixpkgs/issues/114514
-      extraGSettingsOverridePackages = [ pkgs.gnome.mutter ];
+      extraGSettingsOverridePackages = [ pkgs.mutter ];
     };
 
     # Configure keymap in X11
@@ -64,7 +62,7 @@
   };
 
   services.udev.packages = with pkgs; [
-    gnome.gnome-settings-daemon
+    gnome-settings-daemon
     sane-airscan
   ];
 
@@ -78,24 +76,21 @@
   programs.virt-manager.enable = true;
 
   programs = {
-    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/dconf.nix#L39-L42
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
     # For lanching with command looks like better than alacritty
     gnome-terminal.enable = true;
   };
 
-  environment.gnome.excludePackages =
-    (with pkgs; [
-      gnome-tour
-      gnome-connections
-    ])
-    ++ (with pkgs.gnome; [
-      epiphany # web browser
-      geary # email reader
-      evince # document viewer
-      gnome-calendar
-      gnome-music # does not support flac by defaults
-    ]);
+  environment.gnome.excludePackages = with pkgs; [
+    gnome-tour
+    gnome-connections
+    epiphany # web browser
+    geary # email reader
+    evince # document viewer
+    gnome-calendar
+    gnome-music # does not support flac by defaults
+  ];
 
   # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
   # https://wiki.gnupg.org/GnomeKeyring
@@ -129,20 +124,7 @@
   };
 
   environment.systemPackages =
-    [
-      # version in nixos-24.05 does not enable IME
-      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      edge-pkgs.zed-editor
-
-      edge-pkgs.podman-desktop
-
-      edge-pkgs.cyme # Frequently updated
-
-      edge-pkgs.gdm-settings # Useable since https://github.com/NixOS/nixpkgs/pull/335233
-
-      edge-pkgs.alacritty # Use latest schema as Windows. GH-918
-    ]
-    ++ (with pkgs; [
+    (with pkgs; [
       firefox
 
       # https://github.com/NixOS/nixpkgs/issues/33282
@@ -151,11 +133,15 @@
       foot
       kitty
 
-      # TODO: Reconsider to drop this
-      skk-dicts
-      skktools
-
+      cyme
       lshw
+
+      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
+      zed-editor
+
+      gdm-settings
+
+      alacritty
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
@@ -174,8 +160,8 @@
 
       calibre
 
-      gnome.dconf-editor
-      gnome.gnome-boxes
+      dconf-editor
+      gnome-boxes
 
       # https://github.com/NixOS/nixpkgs/issues/174353 - Super + / runs launcher by default
       pop-launcher
@@ -184,12 +170,14 @@
 
       lima
 
+      podman-desktop
+
       ## Unfree packages
 
       # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
       # TODO: Consider using vscodium again
       # Don't use unstable channel. It frequently backported to stable channel
-      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/applications/editors/vscode/vscode.nix
+      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       (vscode.override (prev: {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
@@ -204,14 +192,14 @@
       }))
 
       # Don't use unstable channel. It frequently backported to stable channel
-      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.05/pkgs/by-name/go/google-chrome/package.nix
+      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix
       #  - Actually unstable is/was broken. See GH-776
       #
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
       (google-chrome.override (prev: {
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-        # Similar as https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/chromium.nix
+        # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = (prev.commandLineArgs or [ ]) ++ [
           "--enable-features=UseOzonePlatform"
           "--ozone-platform=wayland"
@@ -248,7 +236,7 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
-      runtimeInputs = with edge-pkgs; [ cloudflare-warp ];
+      runtimeInputs = with pkgs; [ cloudflare-warp ];
       text = ''
         warp-cli connect
       '';
@@ -256,7 +244,7 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe edge-pkgs.zed-editor} --wait";
+    VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
 
     XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
 
@@ -291,7 +279,7 @@
     VIDEOS=Videos
   '';
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/programs/firefox.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
     languagePacks = [
@@ -302,10 +290,11 @@
 
   i18n = {
     inputMethod = {
-      enabled = "fcitx5";
+      enable = true;
+      type = "fcitx5";
 
       fcitx5.addons = [
-        pkgs.fcitx5-mozc
+        pkgs.unstable.fcitx5-mozc # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/pull/356590 included
         pkgs.fcitx5-gtk
       ];
 

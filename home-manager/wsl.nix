@@ -5,7 +5,7 @@ let
 in
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/systemd.nix#L161-L173
   # Originally "system" should be better than "user", but it is not a home-manager role
   systemd.user = commonSystemd.systemd.user // {
     # - This name should be same of Mount.Where. Do not use `-` except path separator

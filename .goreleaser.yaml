@@ -65,5 +65,6 @@ git:
   # Templates: allowed
   ignore_tags:
     - nixos-24.05-release
+    - nixos-24.11-release
 
   # I can't use ignore_tag_prefixes, it is GoReleaser Pro only feature :<

@@ -1,11 +1,11 @@
-{ pkgs, edge-pkgs, ... }:
+{ pkgs, ... }:
 
 {
   bump_completions = import ./bump_completions { inherit pkgs; };
 
   bump_gomod = import ./bump_gomod { inherit pkgs; };
 
-  check_nixf = import ./check_nixf { inherit pkgs edge-pkgs; };
+  check_nixf = import ./check_nixf { inherit pkgs; };
 
   safe_quote_backtik = import ./safe_quote_backtik { inherit pkgs; };
 

@@ -1,6 +1,5 @@
 {
   pkgs,
-  edge-pkgs,
   config,
   ...
 }:
@@ -20,7 +19,7 @@ in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/ssh-agent.nix
   services.ssh-agent.enable = pkgs.stdenv.isLinux;
 
   home.sessionVariables = {
@@ -31,15 +30,18 @@ in
         name = "ssh-ask-pass";
         text = "gopass show ssh-pass";
         meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
-        runtimeInputs = (with pkgs; [ gopass ]) ++ (with edge-pkgs; [ sequoia-chameleon-gnupg ]);
+        runtimeInputs = with pkgs; [
+          gopass
+          sequoia-chameleon-gnupg
+        ];
         runtimeEnv = {
-          GOPASS_GPG_BINARY = "${pkgs.lib.getBin edge-pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+          GOPASS_GPG_BINARY = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
         };
       }
     );
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 

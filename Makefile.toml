@@ -143,6 +143,13 @@ dependencies = [
   'fmt',
 ]
 
+# Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+[tasks.ci-darwin]
+command = 'makers'
+args = [
+  '--version',
+]
+
 [tasks.build-container]
 command = './containers/build.bash'
 

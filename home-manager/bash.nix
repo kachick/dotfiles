@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-  homemade-pkgs,
-  edge-pkgs,
   ...
 }:
 
@@ -17,7 +15,7 @@
   programs.zellij.enableBashIntegration = false;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/readline.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/readline.nix
   programs.readline = {
     enable = true;
     variables = {
@@ -39,7 +37,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bash.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bash.nix
   programs.bash = {
     enable = true;
 
@@ -107,7 +105,7 @@
     '';
 
     # For interactive shells. In .bashrc and after early return
-    # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bash.nix#L221-L222
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bash.nix#L221-L222
     # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc
     #
     # Extracting because embedded here requires complex escape with nix multiline.
@@ -127,14 +125,14 @@
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
 
         # Adding only in devshell is not enough
-        source "${edge-pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+        source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
 
         source "${../dependencies/dprint/completions.bash}"
 
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
-        source "${homemade-pkgs.posix_shared_functions}"
+        source "${pkgs.my.posix_shared_functions}"
 
         if [ 'linux' = "$TERM" ]; then
           # Avoid Tofu

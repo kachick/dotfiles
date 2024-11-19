@@ -2,8 +2,6 @@
   config,
   pkgs,
   lib,
-  edge-pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -21,7 +19,7 @@
       iputils # `ping` etc
 
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
-      edge-pkgs.iw # replacement of wireless-tools(iwconfig)
+      iw # replacement of wireless-tools(iwconfig)
 
       # - Enable special module for Nix OS.
       # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
@@ -35,22 +33,18 @@
       stern
       k9s
 
-      edge-pkgs.ox # modeless editor. Use edge because of stable channel is too old
-
-      edge-pkgs.jnv # interactive jq - Use unstable because it is a fresh tool
-
       # Alt w3m
       # Do not install in dawin yet: https://github.com/NixOS/nixpkgs/blob/b4b293ec6c61e846d69224ea0637411283e2ad39/pkgs/by-name/ch/chawan/package.nix#L82
       # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
       chawan # `cha`
 
-      homemade-pkgs.renmark # Depend on chawan
+      pkgs.my.renmark # Depend on chawan
     ];
   };
 
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
   # Check your `~/.config/user-dirs.dirs` if you faced any trouble
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg-user-dirs.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-user-dirs.nix
   xdg = {
     userDirs = {
       enable = true;

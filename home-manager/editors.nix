@@ -9,7 +9,7 @@
     ./vim.nix
   ];
 
-  # TODO: Update since release-24.11 https://github.com/nix-community/home-manager/pull/5455
+  # TODO: Use https://github.com/nix-community/home-manager/pull/5455 to define the JSON
   xdg.configFile."zed/settings.json".source = ../config/zed/settings.json;
 
   home = {

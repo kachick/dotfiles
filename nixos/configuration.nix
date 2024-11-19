@@ -4,15 +4,13 @@
 
 {
   pkgs,
-  edge-pkgs,
-  homemade-pkgs,
   lib,
+  overlays,
   ...
 }:
 {
   imports = [
-    ./modules/cloudflare-warp.nix
-    (import ./console.nix { inherit homemade-pkgs; })
+    (import ./console.nix { inherit pkgs; })
   ];
 
   nix.settings.experimental-features = [
@@ -29,7 +27,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05"; # Did you read the comment?
+  system.stateVersion = "24.11"; # Did you read the comment?
 
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -37,11 +35,11 @@
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix
   networking.networkmanager = {
     enable = true;
 
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/services/networking/networkmanager.nix#L261-L289
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix#L261-L289
     wifi = {
       # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
       powersave = false;
@@ -51,9 +49,17 @@
   # TODO: Reconsider to set UTC for servers
   time.timeZone = "Asia/Tokyo";
 
-  # Allow unfree packages
-  # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs = {
+    inherit overlays;
+
+    # Allow unfree packages
+    # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
+    config.allowUnfree = true;
+  };
+
+  # https://github.com/NixOS/nixpkgs/blob/8e5e5a6add04c7f1e38e76f59ada6732947f1e55/nixos/doc/manual/release-notes/rl-2411.section.md?plain=1#L69-L76
+  # Disabling to avoid `SC2174` in for '/nix/store/h93h6srxzslr8kyv13klrq63zd6ymhxy-unit-script-cups-pre-start.drv'
+  systemd.enableStrictShellChecks = false;
 
   # TODO: Reconsider to drop this
   services.packagekit = {
@@ -64,7 +70,6 @@
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
   # Enable sound with pipewire.
-  sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
@@ -82,8 +87,6 @@
 
   services.cloudflare-warp = {
     enable = true;
-    # Use newer version to break down issues such as GH-749
-    package = edge-pkgs.cloudflare-warp;
   };
 
   environment.variables = {

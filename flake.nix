@@ -1,32 +1,39 @@
 {
+  description = "kachick's dotfiles that can be placed in the public repository";
+
   inputs = {
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable"; # Unfit for darwin, might be broken. See https://github.com/NixOS/nixpkgs/issues/107466
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
-    # https://github.com/nix-community/home-manager/blob/release-24.05/docs/manual/nix-flakes.md
+    # TODO: Pin to nixos-24.11 after applied following crucial patches
+    #       - fcitx5-mozc: https://github.com/NixOS/nixpkgs/pull/356590
+    #       - zed-editor: https://github.com/NixOS/nixpkgs/pull/356459
+    #       - calibre: https://github.com/NixOS/nixpkgs/pull/355885
+    nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
+    # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Prefer nixos-unstable after https://github.com/NixOS/nixpkgs/pull/356590 included
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
+    # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/2405.5.4";
+      url = "github:nix-community/NixOS-WSL/main"; # TODO: Pin to 2411.?.? if 24.11 conpat channel will be introduced
       # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
     # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
+    # TODO: Prefer nixpkgs version after https://github.com/NixOS/nixpkgs/pull/283278 merged
     xremap-flake = {
       url = "github:xremap/nix-flake";
-      # https://github.com/xremap/nix-flake/blob/2c55335d6509702b0d337b8da697d7048e36123d/flake.nix#L6
-      inputs.nixpkgs.follows = "edge-nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
       url = "github:kachick/selfup/v1.1.6";
@@ -48,7 +55,7 @@
     let
       inherit (self) outputs;
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.05/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.11/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
@@ -58,6 +65,14 @@
 
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
+
+      overlays = import ./overlays { inherit edge-nixpkgs; };
+
+      mkPkgs =
+        system:
+        import (mkNixpkgs system) {
+          inherit system overlays;
+        };
 
       mkHomeManager =
         system:
@@ -72,13 +87,6 @@
           type = "app";
           program = (mkNixpkgs system).lib.getExe pkg;
         };
-
-      homemade-packages = forAllSystems (
-        system:
-        ((mkNixpkgs system).legacyPackages.${system}.callPackage ./pkgs {
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-        })
-      );
     in
     {
       # nixfmt will be official
@@ -86,14 +94,12 @@
       # - https://github.com/NixOS/nixfmt/issues/129
       # - https://github.com/NixOS/rfcs/pull/166
       # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
-      formatter = forAllSystems (system: (mkNixpkgs system).legacyPackages.${system}.nixfmt-rfc-style);
+      formatter = forAllSystems (system: (mkPkgs system).nixfmt-rfc-style);
 
       devShells = forAllSystems (
         system:
         let
-          pkgs = (mkNixpkgs system).legacyPackages.${system};
-          edge-pkgs = edge-nixpkgs.legacyPackages.${system};
-          homemade-pkgs = homemade-packages.${system};
+          pkgs = mkPkgs system;
         in
         {
           default = pkgs.mkShellNoCC {
@@ -106,48 +112,57 @@
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                nixfmt-rfc-style
-                nixpkgs-lint-community
-                nix-init
-                nurl
-                hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
-
-                shellcheck
-                shfmt
                 gitleaks
                 cargo-make
-
-                dprint
-                stylua
-                typos
-                typos-lsp # For zed-editor typos extension
-                go_1_23
-                goreleaser
-                trivy
-
-                (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
               ])
-              ++ (with edge-pkgs; [
-                nixd
-                # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                # https://github.com/numtide/treefmt/pull/250
-                treefmt2
-                markdownlint-cli2
-              ])
-              ++ (with homemade-pkgs; [ nix-hash-url ])
-              ++ [ inputs.selfup.packages.${system}.default ];
+              ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
+                (with pkgs; [
+                  nixfmt-rfc-style
+                  nixd
+                  nixf # `nixf-tidy`
+                  nixpkgs-lint-community
+                  nix-init
+                  nurl
+                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
+
+                  shellcheck
+                  shfmt
+
+                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
+                  # https://github.com/numtide/treefmt/pull/250
+                  treefmt2
+                  dprint
+                  stylua
+                  typos
+                  typos-lsp # For zed-editor typos extension
+                  go_1_23
+                  goreleaser
+                  trivy
+                  markdownlint-cli2
+
+                  (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
+                ])
+                ++ (with pkgs.my; [ nix-hash-url ])
+                ++ [ inputs.selfup.packages.${system}.default ]
+              ));
           };
         }
       );
 
-      packages = forAllSystems (system: {
-        cozette = homemade-packages.${system}.cozette;
-        micro-kdl = homemade-packages.${system}.micro-kdl;
-        micro-nordcolors = homemade-packages.${system}.micro-nordcolors;
-        micro-everforest = homemade-packages.${system}.micro-everforest;
-        micro-catppuccin = homemade-packages.${system}.micro-catppuccin;
-        envs = homemade-packages.${system}.envs;
-      });
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = mkPkgs system;
+        in
+        {
+          cozette = pkgs.my.cozette;
+          micro-kdl = pkgs.my.micro-kdl;
+          micro-nordcolors = pkgs.my.micro-nordcolors;
+          micro-everforest = pkgs.my.micro-everforest;
+          micro-catppuccin = pkgs.my.micro-catppuccin;
+          envs = pkgs.my.envs;
+        }
+      );
 
       apps = forAllSystems (
         system:
@@ -157,7 +172,7 @@
               inherit name;
               value = mkApp {
                 system = system;
-                pkg = homemade-packages.${system}.${name};
+                pkg = (mkPkgs system).my.${name};
               };
             })
             [
@@ -202,21 +217,13 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          edge-pkgs = import edge-nixpkgs {
-            inherit system;
-            config = {
-              allowUnfree = true;
-            };
-          };
-          homemade-pkgs = homemade-packages.${system};
           shared = {
             inherit system;
             specialArgs = {
               inherit
                 inputs
                 outputs
-                homemade-pkgs
-                edge-pkgs
+                overlays
                 ;
             };
           };
@@ -229,127 +236,98 @@
 
       homeConfigurations =
         let
-          x86-Linux = {
-            pkgs = nixpkgs.legacyPackages.x86_64-linux;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.x86_64-linux;
-              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-linux;
-            };
-          };
-
-          x86-macOS = {
-            pkgs = nixpkgs-darwin.legacyPackages.x86_64-darwin;
-            extraSpecialArgs = {
-              homemade-pkgs = homemade-packages.x86_64-darwin;
-              edge-pkgs = edge-nixpkgs.legacyPackages.x86_64-darwin;
-            };
-          };
+          x86-Linux-pkgs = mkPkgs "x86_64-linux";
+          x86-macOS-pkgs = mkPkgs "x86_64-darwin";
         in
         {
-          "kachick@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/linux.nix
-                { targets.genericLinux.enable = false; }
-                ./home-manager/lima-host.nix
-                ./home-manager/systemd.nix
-                ./home-manager/gnome.nix
-                ./home-manager/firefox.nix
-              ];
-            }
-          );
+          "kachick@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              { targets.genericLinux.enable = false; }
+              ./home-manager/lima-host.nix
+              ./home-manager/systemd.nix
+              ./home-manager/gnome.nix
+              ./home-manager/firefox.nix
+            ];
+          };
 
-          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/linux.nix
-                ./home-manager/genericLinux.nix
-                ./home-manager/wsl.nix
-              ];
-            }
-          );
+          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              ./home-manager/genericLinux.nix
+              ./home-manager/wsl.nix
+            ];
+          };
 
-          "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/linux.nix
-                {
-                  home.username = "nixos";
-                  targets.genericLinux.enable = false;
-                }
-                ./home-manager/wsl.nix
-              ];
-            }
-          );
+          "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              {
+                home.username = "nixos";
+                targets.genericLinux.enable = false;
+              }
+              ./home-manager/wsl.nix
+            ];
+          };
 
-          "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration (
-            x86-macOS
-            // {
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/darwin.nix
-              ];
-            }
-          );
+          "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
+            pkgs = x86-macOS-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/darwin.nix
+            ];
+          };
 
-          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/linux.nix
-                ./home-manager/genericLinux.nix
-                ./home-manager/lima-guest.nix
-              ];
-            }
-          );
+          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              ./home-manager/genericLinux.nix
+              ./home-manager/lima-guest.nix
+            ];
+          };
 
-          "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              # Prefer "kachick" over "common" only here.
-              # Using values as much as possible as actual values to create a robust CI
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/linux.nix
-                { home.username = "runner"; }
-                ./home-manager/genericLinux.nix
-                ./home-manager/systemd.nix
-              ];
-            }
-          );
+          "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            # Prefer "kachick" over "common" only here.
+            # Using values as much as possible as actual values to create a robust CI
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              { home.username = "runner"; }
+              ./home-manager/genericLinux.nix
+              ./home-manager/systemd.nix
+            ];
+          };
 
-          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration (
-            x86-macOS
-            // {
-              # Prefer "kachick" over "common" only here.
-              # Using values as much as possible as actual values to create a robust CI
-              modules = [
-                ./home-manager/kachick.nix
-                ./home-manager/darwin.nix
-                { home.username = "runner"; }
-              ];
-            }
-          );
+          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
+            pkgs = x86-macOS-pkgs;
+            # Prefer "kachick" over "common" only here.
+            # Using values as much as possible as actual values to create a robust CI
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/darwin.nix
+              { home.username = "runner"; }
+            ];
+          };
 
-          "user@linux-cli" = home-manager-linux.lib.homeManagerConfiguration (
-            x86-Linux
-            // {
-              modules = [
-                ./home-manager/common.nix
-                { home.username = "user"; }
-                ./home-manager/linux.nix
-                ./home-manager/genericLinux.nix
-                ./home-manager/systemd.nix
-              ];
-            }
-          );
+          "user@linux-cli" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/common.nix
+              { home.username = "user"; }
+              ./home-manager/linux.nix
+              ./home-manager/genericLinux.nix
+              ./home-manager/systemd.nix
+            ];
+          };
         };
     };
 }

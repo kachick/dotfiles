@@ -2,8 +2,6 @@
   config,
   pkgs,
   lib,
-  edge-pkgs,
-  homemade-pkgs,
   ...
 }:
 
@@ -21,7 +19,7 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -33,7 +31,7 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-    stateVersion = "24.05";
+    stateVersion = "24.11";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
@@ -68,8 +66,6 @@
 
     packages = import ./packages.nix {
       inherit pkgs;
-      inherit edge-pkgs;
-      inherit homemade-pkgs;
     };
 
     # You can check the candidates in `locale -a`
@@ -101,7 +97,7 @@
 
   programs.lesspipe.enable = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/direnv.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
 
@@ -135,12 +131,12 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -154,7 +150,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 

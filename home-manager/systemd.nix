@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/systemd.nix#L161-L173
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/systemd.nix#L161-L173
   systemd = {
     user = {
       # Enable locale for GNOME and terminals in the gnome-shell. Linux VT console respects home.sessionVariables instead

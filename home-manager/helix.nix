@@ -17,7 +17,7 @@ let
   };
 in
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.05/modules/programs/helix.nix
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {
     # Enabling this may cause colisions. Do not add in packages list
@@ -104,7 +104,7 @@ in
           };
           language-servers = [
             "nil"
-            # "nixd" # TODO: Enable since NixOS 24.11(Helix 24.07+)
+            "nixd"
             "typos"
           ];
         }

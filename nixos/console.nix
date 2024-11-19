@@ -1,14 +1,14 @@
-{ homemade-pkgs, ... }:
+{ pkgs, ... }:
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.05/nixos/modules/config/console.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/console.nix
   # https://wiki.archlinux.org/title/Linux_console
   console = {
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "${homemade-pkgs.cozette}/share/consolefonts/cozette_hidpi.psf";
+    font = "${pkgs.my.cozette}/share/consolefonts/cozette_hidpi.psf";
 
-    packages = with homemade-pkgs; [ cozette ];
+    packages = with pkgs.my; [ cozette ];
     keyMap = "us";
 
     # Applying iceberg for 16(0-15) console colors
