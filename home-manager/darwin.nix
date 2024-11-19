@@ -29,10 +29,7 @@
     ];
 
     packages = with pkgs; [
-      # for lima. However don't add lima in this dependencies.
-      # It should be installed without nix.
-      # See https://github.com/kachick/dotfiles/issues/146#issuecomment-2453430154
-      qemu
+      lima # includes qemu
 
       # https://github.com/NixOS/nixpkgs/issues/240819
       pinentry_mac
