@@ -176,7 +176,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --list-different --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --config --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -572,7 +572,7 @@ _dprint() {
             return 0
             ;;
         dprint__fmt)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --stdin --diff --allow-no-files --skip-stable-format --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --config --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -994,7 +994,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__file__paths)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --staged --config --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1040,7 +1040,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__format__times)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --allow-no-files --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --allow-no-files --staged --config --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1156,4 +1156,8 @@ _dprint() {
     esac
 }
 
-complete -F _dprint -o nosort -o bashdefault -o default dprint
+if [[ "${BASH_VERSINFO[0]}" -eq 4 && "${BASH_VERSINFO[1]}" -ge 4 || "${BASH_VERSINFO[0]}" -gt 4 ]]; then
+    complete -F _dprint -o nosort -o bashdefault -o default dprint
+else
+    complete -F _dprint -o bashdefault -o default dprint
+fi

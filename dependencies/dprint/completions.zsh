@@ -60,6 +60,7 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--diff[Outputs a check-like diff of every formatted file.]' \
+'--staged[Format only the staged files.]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--skip-stable-format[Whether to skip formatting a file multiple times until the output is stable]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -81,6 +82,7 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
+'--staged[Format only the staged files.]' \
 '--list-different[Only outputs file paths that aren'\''t formatted and doesn'\''t output diffs.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
@@ -194,6 +196,7 @@ _arguments "${_arguments_options[@]}" \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
+'--staged[Format only the staged files.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -224,6 +227,7 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
+'--staged[Format only the staged files.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
