@@ -191,6 +191,11 @@
         ];
       }))
 
+      # NOTE: Google might extract chrome from themself with `Antitrust` penalties
+      #       https://edition.cnn.com/2024/11/20/business/google-sell-chrome-justice-department/
+      #
+      # Don't use chromium, it does not provide built-in cloud translations
+      #
       # Don't use unstable channel. It frequently backported to stable channel
       #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix
       #  - Actually unstable is/was broken. See GH-776
@@ -279,6 +284,7 @@
     VIDEOS=Videos
   '';
 
+  # Require add-on for built-in Japanese translations and multiple containers. It is a disadvantage than Chrome
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;

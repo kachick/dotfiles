@@ -247,7 +247,7 @@
               { targets.genericLinux.enable = false; }
               ./home-manager/lima-host.nix
               ./home-manager/systemd.nix
-              ./home-manager/gnome.nix
+              ./home-manager/desktop.nix
               ./home-manager/firefox.nix
             ];
           };

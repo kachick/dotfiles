@@ -44,7 +44,6 @@ in
         favorite-apps = [
           "kitty.desktop"
           "dev.zed.Zed.desktop"
-          "firefox.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
