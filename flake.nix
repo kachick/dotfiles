@@ -8,12 +8,11 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     # TODO: Pin to nixos-24.11 after applied following crucial patches
-    #       - fcitx5-mozc: https://github.com/NixOS/nixpkgs/pull/356590
     #       - zed-editor: https://github.com/NixOS/nixpkgs/pull/356459
     #       - calibre: https://github.com/NixOS/nixpkgs/pull/355885
     nixpkgs.url = "github:NixOS/nixpkgs/release-24.11";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Prefer nixos-unstable after https://github.com/NixOS/nixpkgs/pull/356590 included
+    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
