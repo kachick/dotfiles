@@ -14,6 +14,9 @@
 
       evdev:name:Lenovo ThinkPad Compact USB Keyboard with TrackPoint:* # Both US and JIS have same name
         KEYBOARD_KEY_70039=leftctrl # original: capslock, Both US and JIS have same keycode for capslock
+
+      evdev:name:Lenovo Wireless KB Keyboard:* # JIS
+        KEYBOARD_KEY_70039=leftctrl # original: capslock
     '';
   };
 
