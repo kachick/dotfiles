@@ -1,8 +1,10 @@
+working_dir="$PWD"
 # `modRoot` in buildGoModule did not fit for this purpose
 # https://github.com/NixOS/nixpkgs/blob/086b448a5d54fd117f4dc2dee55c9f0ff461bdc1/pkgs/build-support/go/module.nix#L12-L13
 for dir in "$@"; do
 	cd "$dir" || exit
 	go get "go@$(go version | grep -oP '(?<=go)\d\S+')"
+	cd "$working_dir" || exit
 done
 
 git ls-files '**go.mod' '**go.sum' | xargs git add
