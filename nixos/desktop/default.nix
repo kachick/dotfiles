@@ -148,7 +148,7 @@
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
       vscode-langservers-extracted
-      nodePackages.bash-language-server
+      bash-language-server
 
       # gnome-music does not support flac.
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.

@@ -202,7 +202,7 @@ in
       # nixd
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
-      nodePackages.bash-language-server
+      bash-language-server
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
       rust-analyzer
@@ -226,7 +226,7 @@ in
       ## Not helpful. Didn't activated?
       #
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
-      # nodePackages.yaml-language-server
+      # yaml-language-server
 
       # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
       # taplo
@@ -234,7 +234,7 @@ in
       ## Keep minimum for global use. Inject in each project repositories if you need these
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
-      # nodePackages.typescript-language-server
+      # typescript-language-server
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
       # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
