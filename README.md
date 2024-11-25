@@ -114,12 +114,6 @@ NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for 
    Candidates
    - `user@linux-cli` # Used in container
 
-1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
-
-   ```bash
-   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
-   ```
-
 ### Podman on Ubuntu
 
 1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
