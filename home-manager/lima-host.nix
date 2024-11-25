@@ -14,9 +14,17 @@
 
   home = {
     activation = {
-      registerStartingLimaService = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        run ${lib.getBin pkgs.lima}/bin/limactl start-at-login --enabled
-      '';
+      # Required to avoid missing systemctl in NixOS
+      # https://github.com/lima-vm/lima/blob/9248baf14a3208249ed38179cdd018ec288d1ef5/pkg/autostart/autostart.go#L91-L92
+      registerStartingLima =
+        if pkgs.stdenv.hostPlatform.isLinux then
+          (lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
+            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getBin pkgs.lima}/bin/limactl start-at-login --enabled
+          '')
+        else
+          (lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            run ${lib.getBin pkgs.lima}/bin/limactl start-at-login --enabled
+          '');
     };
   };
 }
