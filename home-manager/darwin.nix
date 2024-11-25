@@ -29,8 +29,6 @@
     ];
 
     packages = with pkgs; [
-      lima # includes qemu
-
       # https://github.com/NixOS/nixpkgs/issues/240819
       pinentry_mac
 

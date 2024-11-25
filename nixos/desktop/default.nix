@@ -169,8 +169,6 @@
 
       nordic
 
-      lima
-
       podman-desktop
 
       ## Unfree packages
