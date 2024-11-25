@@ -29,6 +29,13 @@
               url = "https://github.com/lima-vm/lima/commit/071c3d7ab33237610eed0311249308b169f5ca5f.patch";
               hash = "sha256-bCHZv1qctr39PTRJ60SPnXLArXGl4/FV45G+5nDxMFY=";
             })
+
+            (prev.fetchpatch {
+              # https://github.com/kachick/lima/pull/1
+              name = "lima-suppress-gssapi-warning.patch";
+              url = "https://patch-diff.githubusercontent.com/raw/kachick/lima/pull/1.patch";
+              hash = prev.lib.fakeHash;
+            })
           ];
         }
       else
