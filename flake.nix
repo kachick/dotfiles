@@ -62,7 +62,7 @@
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
-      overlays = import ./overlays { inherit edge-nixpkgs; };
+      overlays = import ./overlays { inherit edge-nixpkgs nixpkgs; };
 
       mkPkgs =
         system:

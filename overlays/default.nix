@@ -1,5 +1,6 @@
 {
   edge-nixpkgs,
+  nixpkgs,
   ...
 }:
 [
@@ -33,6 +34,22 @@
             .${prev.stdenv.hostPlatform.system}
               or (throw "Unsupported system: ${prev.stdenv.hostPlatform.system}");
         };
+      }
+    );
+  })
+]
+++ nixpkgs.lib.optionals nixpkgs.lib.stdenv.hostPlatform.isLinux [
+  (final: prev: {
+    lima = prev.lima.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        patches = [
+          (prev.fetchpatch {
+            # https://github.com/lima-vm/lima/pull/2943
+            name = "lima-fix-systemd-target.patch";
+            url = "https://github.com/lima-vm/lima/commit/071c3d7ab33237610eed0311249308b169f5ca5f.patch";
+            hash = "sha256-bCHZv1qctr39PTRJ60SPnXLArXGl4/FV45G+5nDxMFY=";
+          })
+        ];
       }
     );
   })
