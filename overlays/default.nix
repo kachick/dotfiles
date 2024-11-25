@@ -34,7 +34,7 @@
               # https://github.com/kachick/lima/pull/1
               name = "lima-suppress-gssapi-warning.patch";
               url = "https://patch-diff.githubusercontent.com/raw/kachick/lima/pull/1.patch";
-              hash = prev.lib.fakeHash;
+              hash = "sha256-QTEYorN+nj66WMlMz+hsoZUWPnlGPDCw0VSsqsiayls=";
             })
           ];
         }
