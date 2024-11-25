@@ -16,6 +16,8 @@
   })
 
   # Pacthed packages
+
+  # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/358952 introduced in one of depending channels
   (final: prev: {
     cloudflare-warp = prev.cloudflare-warp.overrideAttrs (
       finalAttrs: previousAttrs: rec {
