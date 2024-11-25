@@ -13,6 +13,10 @@
   ];
 
   home = {
+    packages = with pkgs; [
+      lima # includes qemu
+    ];
+
     activation = {
       # Required to avoid missing systemctl in NixOS
       # https://github.com/lima-vm/lima/blob/9248baf14a3208249ed38179cdd018ec288d1ef5/pkg/autostart/autostart.go#L91-L92
