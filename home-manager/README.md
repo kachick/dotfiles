@@ -5,7 +5,7 @@ Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
 ## How to get sha256 without `lib.fakeHash`?
 
 ```bash
-nurl https://github.com/kachick/selfup v1.1.6
+nurl https://github.com/kachick/selfup v1.1.7
 nix-hash-url https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_2024.6.497-1_amd64.deb
 ```
 

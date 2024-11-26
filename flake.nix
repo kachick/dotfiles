@@ -32,8 +32,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
-      url = "github:kachick/selfup/v1.1.6";
-      # https://github.com/kachick/selfup/blob/991afc21e437a449c9bd4237b4253f8da407f569/flake.nix#L8
+      url = "github:kachick/selfup/v1.1.7";
+      # https://github.com/kachick/selfup/blob/v1.1.7/flake.nix#L8
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
