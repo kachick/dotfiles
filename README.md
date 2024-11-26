@@ -114,6 +114,13 @@ NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for 
    Candidates
    - `user@linux-cli` # Used in container
 
+1. [home-manager installed OpenSSH disabled GSSAPI by default](https://github.com/kachick/dotfiles/issues/950).\
+   So suppress `/etc/ssh/ssh_config line 53: Unsupported option "gssapiauthentication"` with following command
+
+   ```bash
+   sudo chmod -r /etc/ssh/ssh_config
+   ```
+
 1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
 
    ```bash
