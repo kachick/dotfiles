@@ -19,6 +19,7 @@ func main() {
 		{Path: "stylua", Args: []string{"--version"}},
 		{Path: "nixpkgs-lint", Args: []string{"--version"}},
 		{Path: "goreleaser", Args: []string{"--version"}},
+		{Path: "selfup", Args: []string{"-version"}},
 
 		// Even if nixfmt returns old version as v0.5.0, the actual code is latest
 		// https://github.com/NixOS/nixpkgs/pull/292625/files#diff-cf53ba433c9a367969e739cd32bc5a6fb9be271ed0ec604c34a3542a54ff1f5fR9-R12

@@ -28,6 +28,7 @@ func main() {
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
 		{Path: "markdownlint-cli2", Args: markdownPaths},
+		// Add selfup as `git ls-files | xargs selfup list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
 	}
 
 	if *allFlag {
