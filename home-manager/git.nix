@@ -142,7 +142,7 @@ in
       pager = {
         diff = riff;
         show = riff;
-        log = riff;
+        # log = riff; # Don't set this. It makes much slow in large repositories such as NixOS/nixpkgs
       };
 
       interactive = {
