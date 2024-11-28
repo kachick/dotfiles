@@ -104,6 +104,9 @@
   #  - Apertium - does not support Japanese
   translate-shell # `echo "$text" | trans en:ja`
 ])
+++ (with pkgs.unstable; [
+  gurk-rs # Require https://github.com/NixOS/nixpkgs/pull/356353 to link
+])
 ++ (with pkgs.my; [
   la
   lat
