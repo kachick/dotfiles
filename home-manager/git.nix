@@ -20,6 +20,8 @@ let
       runtimeInputs = [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
     }
   );
+  # TODO: Update after introduced https://github.com/nix-community/home-manager/pull/5748 since 25.05 or later
+  riff = lib.getExe pkgs.riffdiff;
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -134,6 +136,17 @@ in
 
       log = {
         date = "iso-local";
+      };
+
+      # For `git log --patch`
+      pager = {
+        diff = riff;
+        show = riff;
+        log = riff;
+      };
+
+      interactive = {
+        diffFilter = "${riff} --color=on";
       };
 
       url = {

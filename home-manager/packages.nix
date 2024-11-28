@@ -78,6 +78,7 @@
   typos
   hyperfine
   difftastic # `difft`
+  riffdiff # `riff`
   gnumake
   go-task # Installing for enabling shell completion easy
   gitleaks

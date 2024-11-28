@@ -11,6 +11,7 @@ pkgs.writeShellApplication rec {
       gh
       colorized-logs
       bat
+      riffdiff
       (import ../git-log-simple { inherit pkgs; })
     ]
     ++ (lib.optionals stdenv.isLinux [
