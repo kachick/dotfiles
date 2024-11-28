@@ -129,8 +129,6 @@
       podman-tui
       docker-compose
 
-      chawan
-
       dmidecode # `sudo dmidecode -s bios-version`
     ]
   );
