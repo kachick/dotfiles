@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   networking.hostName = "algae";
@@ -10,6 +10,10 @@
 
     ./hardware-configuration.nix
   ];
+
+  # Workaround to fix GH-959
+  # TODO: Remove after NixOS stable using kernel 6.12 or later. Basically it should be 25.05
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
