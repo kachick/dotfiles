@@ -64,4 +64,6 @@
   git-resolve-conflict = pkgs.callPackage ./git-resolve-conflict { };
   renmark = pkgs.callPackage ./renmark { };
   preview = pkgs.callPackage ./preview { };
+
+  memreserver = pkgs.callPackage ./memreserver { };
 }

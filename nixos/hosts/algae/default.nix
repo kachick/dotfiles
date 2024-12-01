@@ -37,4 +37,7 @@
     # Enable keyboard - "ThinkPad Compact USB Keyboard with TrackPoint" wakeup
     ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="17ef", ATTRS{idProduct}=="6047", ATTR{power/wakeup}="enabled"
   '';
+
+  # GH-959
+  hardware.memreserver.enable = true;
 }

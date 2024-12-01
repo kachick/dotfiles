@@ -27,4 +27,7 @@
     evdev:name:AT Translated Set 2 keyboard:*
       KEYBOARD_KEY_3a=leftctrl # original: capslock
   '';
+
+  # GH-959
+  hardware.memreserver.enable = true;
 }

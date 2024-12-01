@@ -159,6 +159,7 @@
           pkgs = mkPkgs system;
         in
         {
+          memreserver = pkgs.my.memreserver;
           cozette = pkgs.my.cozette;
           micro-kdl = pkgs.my.micro-kdl;
           micro-nordcolors = pkgs.my.micro-nordcolors;
