@@ -160,6 +160,7 @@
         in
         {
           cozette = pkgs.my.cozette;
+          inconsolata-psf = pkgs.my.inconsolata-psf;
           micro-kdl = pkgs.my.micro-kdl;
           micro-nordcolors = pkgs.my.micro-nordcolors;
           micro-everforest = pkgs.my.micro-everforest;

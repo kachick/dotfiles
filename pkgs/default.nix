@@ -49,6 +49,7 @@
 
   beedii = pkgs.callPackage ./beedii { };
   cozette = pkgs.callPackage ./cozette { };
+  inconsolata-psf = pkgs.callPackage ./inconsolata-psf { };
 
   posix_shared_functions = pkgs.callPackage ./posix_shared_functions { };
 
