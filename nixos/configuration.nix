@@ -11,6 +11,7 @@
 {
   imports = [
     (import ./console.nix { inherit pkgs; })
+    ./modules/hardware/memreserver.nix
   ];
 
   nix.settings.experimental-features = [
