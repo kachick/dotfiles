@@ -501,6 +501,26 @@
         "type": "github"
       }
     },
+    "psfeditor": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1732821736,
+        "narHash": "sha256-6esLwimoXf/ehVtfuilkXoehTv0WP2YKrBJoRv/TUJc=",
+        "owner": "ideras",
+        "repo": "PSFEditor",
+        "rev": "10457179aa8bed402134ea7f4e04746f5338c125",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ideras",
+        "repo": "PSFEditor",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "edge-nixpkgs": "edge-nixpkgs",
@@ -509,6 +529,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-darwin": "nixpkgs-darwin",
+        "psfeditor": "psfeditor",
         "selfup": "selfup",
         "xremap-flake": "xremap-flake"
       }

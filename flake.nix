@@ -36,6 +36,11 @@
       # https://github.com/kachick/selfup/blob/v1.1.7/flake.nix#L8
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    psfeditor = {
+      # https://github.com/ideras/PSFEditor/pull/1
+      url = "github:ideras/PSFEditor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -139,7 +144,10 @@
                   (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
-                ++ [ inputs.selfup.packages.${system}.default ]
+                ++ [
+                  inputs.selfup.packages.${system}.default
+                  inputs.psfeditor.packages.${system}.default
+                ]
               ));
           };
         }
