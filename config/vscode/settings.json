@@ -39,7 +39,7 @@
   "typescript.preferences.importModuleSpecifier": "non-relative",
   "editor.suggestSelection": "first",
   "editor.tabSize": 2,
-  "editor.renderWhitespace": "all",
+  "editor.renderWhitespace": "trailing",
   "editor.wordWrap": "on",
   "editor.minimap.enabled": true,
   "go.toolsManagement.autoUpdate": true,
@@ -97,8 +97,9 @@
   "editor.tabCompletion": "on",
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
-  "workbench.colorTheme": "Blueberry Brackets dark theme",
+  "workbench.colorTheme": "Base16 Dark Ashes",
   "stylua.searchBinaryInPATH": true,
   "shellformat.useEditorConfig": true,
-  "editor.cursorSurroundingLines": 5
+  "editor.cursorSurroundingLines": 5,
+  "redhat.telemetry.enabled": false
 }
