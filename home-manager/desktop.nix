@@ -26,4 +26,12 @@
       };
     };
   };
+
+  # Extracted from encryption.nix to avoid dbus error in GitHub hosted runner
+  #
+  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/pass-secret-service.nix
+  # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
+  #
+  # Alternative candidates: https://github.com/grimsteel/pass-secret-service
+  services.pass-secret-service.enable = true;
 }
