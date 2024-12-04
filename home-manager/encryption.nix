@@ -14,7 +14,6 @@ in
 {
   # Don't set $SEQUOIA_HOME, it unified config and data, cache to one directory as same as gpg era.
   # Use default $HOME instead, it respects XDG Base Directory Specification
-
   services = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/gpg-agent.nix
     gpg-agent = {
@@ -33,12 +32,6 @@ in
 
       enableSshSupport = false;
     };
-
-    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/pass-secret-service.nix
-    # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
-    #
-    # Alternative candidates: https://github.com/grimsteel/pass-secret-service
-    pass-secret-service.enable = pkgs.stdenv.isLinux;
   };
 
   home.sessionVariables = rec {
