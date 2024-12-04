@@ -17,6 +17,10 @@
       lima # includes qemu
     ];
 
+    # Lima and the yaml config does not have importing feature. However it prefers some files to realize overriding.
+    # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for detail
+    file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
+
     activation = {
       # /tmp/lima will be writable shared by default of lima. However lima does not create the directory, and home-manager file module does not fit under /tmp.
       ensureLimaSharedTempdir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
