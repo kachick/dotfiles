@@ -15,22 +15,30 @@ in
   # Don't set $SEQUOIA_HOME, it unified config and data, cache to one directory as same as gpg era.
   # Use default $HOME instead, it respects XDG Base Directory Specification
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/gpg-agent.nix
-  services.gpg-agent = {
-    enable = pkgs.stdenv.isLinux;
+  services = {
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/gpg-agent.nix
+    gpg-agent = {
+      enable = pkgs.stdenv.isLinux;
 
-    # Update [darwin.nix](darwin.nix) if changed this section
+      # Update [darwin.nix](darwin.nix) if changed this section
+      #
+      # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
+      defaultCacheTtl = day * 7;
+      # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
+      # ssh-agent sets it as infinite by default. So I can relax here (maybe)
+      defaultCacheTtlSsh = day * 30;
+      maxCacheTtl = day * 7;
+
+      pinentryPackage = pkgs.pinentry-tty;
+
+      enableSshSupport = false;
+    };
+
+    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/services/pass-secret-service.nix
+    # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
     #
-    # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
-    defaultCacheTtl = day * 7;
-    # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
-    # ssh-agent sets it as infinite by default. So I can relax here (maybe)
-    defaultCacheTtlSsh = day * 30;
-    maxCacheTtl = day * 7;
-
-    pinentryPackage = pkgs.pinentry-tty;
-
-    enableSshSupport = false;
+    # Alternative candidates: https://github.com/grimsteel/pass-secret-service
+    pass-secret-service.enable = pkgs.stdenv.isLinux;
   };
 
   home.sessionVariables = rec {
