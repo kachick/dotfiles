@@ -50,6 +50,13 @@
   },
   "security.workspace.trust.untrustedFiles": "open",
   "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "args": ["-l"], // Delegate to zsh/fish/nushell after bash. See GH-452
+      "icon": "terminal-bash"
+    }
+  },
   "window.title": "${activeEditorMedium}${separator}${rootName}",
   "files.watcherExclude": {
     "**.log": true,
