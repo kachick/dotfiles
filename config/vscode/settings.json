@@ -108,5 +108,6 @@
   "stylua.searchBinaryInPATH": true,
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "update.mode": "none" // NixOS: flake, Windows: winget, macOS: Manually
 }
