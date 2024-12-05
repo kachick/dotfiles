@@ -13,18 +13,11 @@
 #
 # How to stop blinking cursor in Linux console?
 # => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
-let
-  reponame = pkgs.callPackage ../reponame { };
-  ghqf = pkgs.callPackage ../ghqf { };
-  fzf-bind-posix-shell-history-to-git-commit-message =
-    pkgs.callPackage ../fzf-bind-posix-shell-history-to-git-commit-message
-      { };
-in
 pkgs.writeText "posix_shared_functions.sh" (
   ''
     cdrepo() {
-      local -r query_repoonly="$(echo "$1" | ${lib.getExe reponame})"
-      local -r repo="$(${lib.getExe ghqf} "$query_repoonly")"
+      local -r query_repoonly="$(echo "$1" | ${lib.getExe pkgs.my.reponame})"
+      local -r repo="$(${lib.getExe pkgs.my.ghqf} "$query_repoonly")"
       if [ -n "$repo" ]; then
         cd "$(${lib.getExe pkgs.ghq} list --full-path --exact "$repo")"
       fi
@@ -50,7 +43,7 @@ pkgs.writeText "posix_shared_functions.sh" (
     }
 
     gch() {
-      fc -nrl 1 | ${lib.getExe fzf-bind-posix-shell-history-to-git-commit-message}
+      fc -nrl 1 | ${lib.getExe pkgs.my.fzf-bind-posix-shell-history-to-git-commit-message}
     }
   ''
   + (builtins.readFile ./non_nix.bash)
