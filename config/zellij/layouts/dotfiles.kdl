@@ -9,7 +9,10 @@ layout {
             }
             pane split_direction="horizontal" size="30%" {
                 pane
-                pane
+                pane name="repl" start_suspended=true command="nix" close_on_exit=false {
+                    args "repl" "."
+                    start_suspended true
+                }
             }
         }
     }
