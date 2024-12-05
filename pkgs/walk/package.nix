@@ -7,5 +7,5 @@ pkgs.writeShellApplication rec {
       fzf
       fd
     ])
-    ++ [ (import ../preview { inherit pkgs; }) ];
+    ++ [ (import ../preview/package.nix { inherit pkgs; }) ];
 }

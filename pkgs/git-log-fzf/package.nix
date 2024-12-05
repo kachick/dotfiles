@@ -1,20 +1,20 @@
 { pkgs, ... }:
 pkgs.writeShellApplication rec {
-  name = "gh-prs";
+  name = "git-log-fzf";
   text = builtins.readFile ./${name}.bash;
   runtimeInputs =
     with pkgs;
     [
-      coreutils
       fzf
+      coreutils
+      git
       gh
-      (import ../wait-and-squashmerge { inherit pkgs; })
+      colorized-logs
+      bat
+      riffdiff
+      (import ../git-log-simple/package.nix { inherit pkgs; })
     ]
     ++ (lib.optionals stdenv.isLinux [
       wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
     ]);
-  derivationArgs = {
-    # Required in https://github.com/nix-community/home-manager/blob/346973b338365240090eded0de62f7edce4ce3d1/modules/programs/gh.nix#L160
-    pname = name;
-  };
 }

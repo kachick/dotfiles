@@ -17,7 +17,7 @@ let
         run_local_hook '${hook_name}' "$@"
       '';
       meta.description = "GH-545";
-      runtimeInputs = [ (import ../pkgs/run_local_hook { inherit pkgs; }) ];
+      runtimeInputs = [ (import ../pkgs/run_local_hook/package.nix { inherit pkgs; }) ];
     }
   );
   # TODO: Update after introduced https://github.com/nix-community/home-manager/pull/5748 since 25.05 or later

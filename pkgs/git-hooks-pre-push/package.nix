@@ -1,11 +1,12 @@
 { pkgs, ... }:
 pkgs.writeShellApplication rec {
-  name = "commit-msg";
+  name = "pre-push";
   text = builtins.readFile ./${name}.bash;
-  meta.description = "#325";
+  meta.description = "#540";
   runtimeInputs = with pkgs; [
     typos
-    (import ../run_local_hook { inherit pkgs; })
+    coreutils # `basename`
+    (import ../run_local_hook/package.nix { inherit pkgs; })
   ];
   runtimeEnv = {
     TYPOS_CONFIG_PATH = "${../../typos.toml}";
