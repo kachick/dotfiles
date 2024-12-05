@@ -158,7 +158,9 @@
         let
           pkgs = mkPkgs system;
         in
-        pkgs.my
+        {
+          default = pkgs.my;
+        }
       );
 
       apps = forAllSystems (
