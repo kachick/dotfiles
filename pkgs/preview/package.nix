@@ -8,19 +8,16 @@ pkgs.writeShellApplication rec {
   #   https://github.com/helix-editor/helix/discussions/9245
   # - micro https://github.com/kachick/micro-kdl
   # - vim https://github.com/imsnif/kdl.vim
-  runtimeInputs =
-    (with pkgs; [
-      file # Detect file/mime type
-      coreutils # For `basename`
-      bat # code
-      hexyl # binary
-      less # Pager for hexyl. See https://github.com/sharkdp/hexyl/issues/40
-      # libsixel
-      mdcat # markdown - Avoid renmark to keep compatibility in darwin
-    ])
-    ++ [
-      (import ../la { inherit pkgs; }) # directory
-    ];
+  runtimeInputs = with pkgs; [
+    file # Detect file/mime type
+    coreutils # For `basename`
+    bat # code
+    hexyl # binary
+    less # Pager for hexyl. See https://github.com/sharkdp/hexyl/issues/40
+    # libsixel
+    mdcat # markdown - Avoid renmark to keep compatibility in darwin
+    my.la # directory
+  ];
   # Especially provided for fzf: https://github.com/junegunn/fzf/issues/2855#issuecomment-1164015794
   meta.description = "Run preview commands that are suitable for the file type";
 }

@@ -158,14 +158,7 @@
         let
           pkgs = mkPkgs system;
         in
-        {
-          cozette = pkgs.my.cozette;
-          micro-kdl = pkgs.my.micro-kdl;
-          micro-nordcolors = pkgs.my.micro-nordcolors;
-          micro-everforest = pkgs.my.micro-everforest;
-          micro-catppuccin = pkgs.my.micro-catppuccin;
-          envs = pkgs.my.envs;
-        }
+        pkgs.lib.filterAttrs (n: v: n != "default") pkgs.my
       );
 
       apps = forAllSystems (
