@@ -158,7 +158,7 @@
         let
           pkgs = mkPkgs system;
         in
-        pkgs.lib.filterAttrs (n: v: n != "default") pkgs.my
+        pkgs.my
       );
 
       apps = forAllSystems (
