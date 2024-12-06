@@ -4,8 +4,9 @@
 }:
 [
   (final: _prev: {
-    my = import ../pkgs {
-      pkgs = final.pkgs;
+    my = final.lib.packagesFromDirectoryRecursive {
+      inherit (final) callPackage;
+      directory = ../pkgs;
     };
   })
 
