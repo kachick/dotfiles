@@ -90,11 +90,7 @@
         };
     in
     {
-      # nixfmt will be official
-      # - https://github.com/NixOS/nixfmt/issues/153
-      # - https://github.com/NixOS/nixfmt/issues/129
-      # - https://github.com/NixOS/rfcs/pull/166
-      # - https://github.com/NixOS/nixfmt/blob/a81f922a2b362f347a6cbecff5fb14f3052bc25d/README.md#L19
+      # Useable with filepaths. Don't use `nix fmt` and use `treefmt`. See https://github.com/NixOS/nixfmt/commit/ba0c3fa3da27a2815026bc4ea0216e10f1c50542
       formatter = forAllSystems (system: (mkPkgs system).nixfmt-rfc-style);
 
       devShells = forAllSystems (
