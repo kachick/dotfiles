@@ -4,6 +4,9 @@
   lib,
   ...
 }:
+let
+  lima = pkgs.patched.lima;
+in
 {
   programs.ssh.includes = [
     # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
@@ -13,7 +16,7 @@
   ];
 
   home = {
-    packages = with pkgs; [
+    packages = [
       lima # includes qemu
     ];
 
@@ -34,11 +37,11 @@
       registerStartingLima =
         if pkgs.stdenv.hostPlatform.isLinux then
           (lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
-            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getBin pkgs.lima}/bin/limactl start-at-login --enabled
+            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getBin lima}/bin/limactl start-at-login --enabled
           '')
         else
           (lib.hm.dag.entryBefore [ "setupLaunchAgents" ] ''
-            PATH="$PATH:/bin" run ${lib.getBin pkgs.lima}/bin/limactl start-at-login --enabled
+            PATH="$PATH:/bin" run ${lib.getBin lima}/bin/limactl start-at-login --enabled
           '');
     };
   };
