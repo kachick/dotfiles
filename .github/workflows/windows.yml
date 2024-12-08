@@ -113,7 +113,7 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           install-only: true
-          version: 'v2.4.4' # selfup { "extract": "\\d[^']+", "replacer": ["bash", "-c", "goreleaser --version | grep 'GitVersion:'"], "nth": 2 }
+          version: 'v2.4.8' # selfup { "extract": "\\d[^']+", "replacer": ["bash", "-c", "goreleaser --version | grep 'GitVersion:'"], "nth": 2 }
       - name: List files - before build
         run: Get-ChildItem
       - name: Build winit-*
