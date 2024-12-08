@@ -128,7 +128,6 @@
                   # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
                   # https://github.com/numtide/treefmt/pull/250
                   treefmt2
-                  dprint
                   stylua
                   typos
                   typos-lsp # For zed-editor typos extension
@@ -138,6 +137,10 @@
                   markdownlint-cli2
 
                   (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
+                ])
+                ++ (with pkgs.unstable; [
+                  # https://github.com/NixOS/nixpkgs/pull/362139
+                  dprint
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
@@ -169,7 +172,6 @@
               };
             })
             [
-              "bump_completions"
               "bump_gomod"
               "check_nixf"
               "bench_shells"

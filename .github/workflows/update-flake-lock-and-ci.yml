@@ -22,7 +22,6 @@ jobs:
       dry-run: ${{ github.event_name == 'pull_request' }}
       pr-title: 'Bump flake.lock and related dependencies'
       optional-run: |
-        nix run .#bump_completions
         nix run .#bump_gomod -- . pkgs/reponame
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

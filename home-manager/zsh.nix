@@ -231,6 +231,8 @@ in
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
       source "${pkgs.kubectl}/share/zsh/site-functions/_kubectl"
       source "${pkgs.kind}/share/zsh/site-functions/_kind"
+      # https://github.com/NixOS/nixpkgs/pull/362139
+      source "${pkgs.unstable.dprint}/share/zsh/site-functions/_dprint"
       # cargo-make recommends to use bash completions for zsh
       # Update after intoducing https://github.com/sagiegurari/cargo-make/pull/1182
       source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
@@ -278,8 +280,6 @@ in
       _fzf_complete_task_post() {
         ${lib.getExe pkgs.ripgrep} --regexp='(\S+?): ' --replace='$1'
       }
-
-      source "${../dependencies/dprint/completions.zsh}"
 
       # Disable `Ctrl + S(no output tty)`
       ${lib.getBin pkgs.coreutils}/bin/stty stop undef

@@ -5,7 +5,7 @@ let
   #   - https://github.com/dprint/dprint/issues/355
   #   - https://github.com/dprint/dprint-vscode/issues/13
   mkDprint = extension: {
-    command = lib.getExe pkgs.dprint;
+    command = lib.getExe pkgs.unstable.dprint;
     args = [
       "fmt"
       "--config"
