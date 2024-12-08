@@ -30,7 +30,8 @@
       ])
       ++ [
         # emoji
-        pkgs.my.beedii
+        # https://github.com/NixOS/nixpkgs/pull/349097
+        pkgs.unstable.beedii
       ];
 
     # Same as home-manager module?
