@@ -19,7 +19,8 @@
     source = "${pkgs.my.micro-catppuccin}/colorschemes";
     recursive = true;
   };
-  xdg.configFile."micro/colorschemes/everforest.micro".source = "${pkgs.my.micro-everforest}/colorschemes/everforest.micro";
+  xdg.configFile."micro/colorschemes/everforest.micro".source =
+    "${pkgs.my.micro-everforest}/colorschemes/everforest.micro";
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
   xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;

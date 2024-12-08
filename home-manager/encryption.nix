@@ -46,7 +46,8 @@ in
     PASSAGE_RECIPIENTS_FILE = "${PASSAGE_DIR}/.age-recipients";
   };
 
-  home.file."${passage_identity_dir}/.keep".text = "Keep this directory because of passage and age does not create the file if directory is missing";
+  home.file."${passage_identity_dir}/.keep".text =
+    "Keep this directory because of passage and age does not create the file if directory is missing";
 
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gpg.nix
   programs.gpg = {

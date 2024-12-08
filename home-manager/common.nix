@@ -125,7 +125,8 @@
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
-  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source = ../config/powershell/Profile.ps1;
+  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
+    ../config/powershell/Profile.ps1;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
