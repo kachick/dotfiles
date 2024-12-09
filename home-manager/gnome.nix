@@ -187,6 +187,19 @@ in
         toggle-tiled-right = [ ];
       };
 
+      "org/gnome/desktop/input-sources" = {
+        sources = with lib.hm.gvariant; [
+          (mkTuple [
+            "xkb"
+            "us"
+          ])
+          (mkTuple [
+            "xkb"
+            "jp"
+          ])
+        ];
+      };
+
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
         enable-hot-corners = false;
