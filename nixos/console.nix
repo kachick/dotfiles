@@ -6,9 +6,9 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "${pkgs.my.cozette}/share/consolefonts/cozette_hidpi.psf";
+    font = "${pkgs.patched.cozette}/share/consolefonts/cozette_hidpi.psf";
 
-    packages = with pkgs.my; [ cozette ];
+    packages = with pkgs.patched; [ cozette ];
     keyMap = "us"; # Cannot use multiple such as `us,ja`
 
     # Applying iceberg for 16(0-15) console colors
