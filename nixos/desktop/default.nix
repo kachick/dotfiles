@@ -38,6 +38,7 @@
     defaultLocale = "ja_JP.UTF-8";
   };
 
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/xserver.nix
   services.xserver = {
     enable = true;
 
@@ -56,9 +57,12 @@
 
     # Configure keymap in X11
     xkb = {
-      layout = "us";
+      layout = "us,jp"; # multiple specifier is available
       variant = "";
     };
+
+    # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
+    exportConfiguration = true;
   };
 
   services.udev.packages = with pkgs; [
