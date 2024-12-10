@@ -38,6 +38,19 @@
           { }
       );
 
+      # Require unstable to apply https://github.com/NixOS/nixpkgs/pull/355534
+      kind = prev.unstable.kind.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          patches = previousAttrs.patches ++ [
+            (prev.fetchpatch2 {
+              # https://github.com/kubernetes-sigs/kind/pull/3814
+              url = "https://patch-diff.githubusercontent.com/raw/kubernetes-sigs/kind/pull/3814.patch";
+              hash = "sha256-zoS+C16lURnxSgnbxwIfBoJOWPIamOtmS3HKxGuWkYI=";
+            })
+          ];
+        }
+      );
+
       # TODO: Remove after merging https://github.com/NixOS/nixpkgs/pull/301440
       cozette = prev.cozette.overrideAttrs (
         finalAttrs: previousAttrs: {
