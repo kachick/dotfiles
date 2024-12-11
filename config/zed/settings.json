@@ -7,7 +7,7 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "theme": "Base16 iA Dark",
+  "theme": "One Dark",
   "telemetry": {
     "metrics": false
   },
@@ -73,8 +73,8 @@
     "lua": true,
     "kdl": true,
     "basher": true,
-    "powershell": true,
-    "base16": true,
-    "iceberg": true
+    "powershell": true
+    // "base16": true, // Do NOT install this extension to avboid https://github.com/zed-industries/zed/issues/13188
+    // "iceberg": true
   }
 }
