@@ -153,6 +153,8 @@
 
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
+      nil
+      nixd
       vscode-langservers-extracted
       bash-language-server
 
