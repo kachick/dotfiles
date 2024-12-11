@@ -244,6 +244,7 @@ in
 
       "org/gnome/shell/extensions/paperwm/keybindings" = {
         take-window = [ ]; # default: ['<Super>t']
+        center-vertically = [ ]; # default: ['<Super>v']
         open-window-position = 0;
       };
 
