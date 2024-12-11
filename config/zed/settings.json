@@ -59,11 +59,14 @@
   },
   "terminal": {
     "shell": {
-      "program": "zsh"
+      "with_arguments": {
+        "program": "bash",
+        "args": ["--login"]
+      }
     },
-    "copy_on_select": true // Looks not working.
-    // TODO: Track https://github.com/zed-industries/zed/issues/18507
-    // "cursor_shape": "bar"
+    "copy_on_select": true,
+    "cursor_shape": "bar",
+    "blinking": "off"
   },
   "auto_install_extensions": {
     "nix": true,
