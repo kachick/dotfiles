@@ -49,6 +49,10 @@ in
   home.file."${passage_identity_dir}/.keep".text =
     "Keep this directory because of passage and age does not create the file if directory is missing";
 
+  home.shellAliases = {
+    "pass" = "gopass";
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gpg.nix
   programs.gpg = {
     enable = true;
