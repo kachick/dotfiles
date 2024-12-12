@@ -39,6 +39,13 @@
         "path": "/run/current-system/sw/bin/bash-language-server",
         "arguments": ["start"]
       }
+    },
+    "rubocop": {
+      "binary": {
+        "path": "bundle",
+        // https://github.com/zed-extensions/ruby/blob/aea50804463b702f97c2f40c61e42e7a0c8c1f5e/src/language_servers/rubocop.rs#L26C55-L26C60
+        "arguments": ["exec", "rubocop", "--lsp"]
+      }
     }
   },
   "languages": {
@@ -55,6 +62,13 @@
     },
     "Shell Script": {
       "enable_language_server": false
+    },
+    "Ruby": {
+      "language_servers": [
+        "!ruby-lsp", // Might support RBS in future: https://github.com/Shopify/ruby-lsp/issues/1206
+        "rubocop", // https://github.com/kachick/times_kachick/issues/209#issuecomment-1650238573
+        "!solargraph"
+      ]
     }
   },
   "terminal": {
