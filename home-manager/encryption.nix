@@ -50,6 +50,7 @@ in
     "Keep this directory because of passage and age does not create the file if directory is missing";
 
   home.shellAliases = {
+    # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
     "pass" = "gopass";
   };
 
@@ -79,6 +80,6 @@ in
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/password-store.nix
   programs.password-store = {
     enable = true;
-    package = pkgs.gopass; # Setting package is not a aliasing command, however I would try this for now. https://github.com/gopasspw/gopass/blob/70c56f9102999661b54e28c28fa2d63fa5fc813b/docs/setup.md?plain=1#L292-L298
+    package = pkgs.unstable.gopass; # Setting package is not a aliasing command, however I would try this for now. https://github.com/gopasspw/gopass/blob/70c56f9102999661b54e28c28fa2d63fa5fc813b/docs/setup.md?plain=1#L292-L298
   };
 }

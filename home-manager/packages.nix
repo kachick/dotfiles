@@ -43,7 +43,7 @@
   age # Candidates: rage
 
   # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
-  gopass # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
+  unstable.gopass # Use unstable to apply https://github.com/NixOS/nixpkgs/pull/360950
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
