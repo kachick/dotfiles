@@ -118,7 +118,7 @@
 
   services.printing = {
     enable = true;
-    drivers = [ pkgs.epson-escpr ];
+    drivers = [ pkgs.epson-escpr2 ];
   };
 
   # To setup a wireless printer
