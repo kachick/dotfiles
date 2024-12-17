@@ -15,7 +15,8 @@
           (defsrc)
           (deflayermap (base)
             caps (tap-hold-press 200 200 caps lctl)
-            lalt (tap-hold-press 200 200 lalt muhenkan)
+            lalt (tap-hold-press 200 200 muhenkan lalt)
+            ralt (tap-hold-press 200 200 henkan ralt)
           )
         '';
       };
