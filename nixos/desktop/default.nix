@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   pkgs,
   lib,
   ...
@@ -9,8 +8,7 @@
 {
   imports = [
     (import ./font.nix { inherit pkgs; })
-    inputs.xremap-flake.nixosModules.default
-    ./xremap.nix
+    ./kanata.nix
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -234,7 +232,6 @@
       just-perfection
       dash-to-dock
       color-picker
-      xremap
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput

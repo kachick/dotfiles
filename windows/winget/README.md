@@ -10,7 +10,7 @@ It may be better to remove some packages such as `Mozilla.Firefox.DeveloperEditi
 
 ## Which programs excluded winget-pkgs are needed?
 
-- <https://github.com/karakaram/alt-ime-ahk>
+- <https://github.com/karakaram/alt-ime-ahk> or <https://github.com/jtroo/kanata>
 - <https://github.com/yuru7/PlemolJP>
 - <https://www.realforce.co.jp/support/download/>
 - <https://www.kensington.com/ja-jp/software/kensingtonworks/#download> # [winget cannot support v3.1.8+](https://github.com/microsoft/winget-pkgs/pull/136817)

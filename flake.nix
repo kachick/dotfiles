@@ -25,12 +25,6 @@
       # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # https://github.com/xremap/nix-flake/blob/master/docs/HOWTO.md
-    # TODO: Prefer nixpkgs version after https://github.com/NixOS/nixpkgs/pull/283278 merged
-    xremap-flake = {
-      url = "github:xremap/nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     selfup = {
       url = "github:kachick/selfup/v1.1.7";
       # https://github.com/kachick/selfup/blob/v1.1.7/flake.nix#L8
