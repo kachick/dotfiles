@@ -5,7 +5,7 @@
     # Settings keyremap in raw layer than X. See GH-784 and GH-963 for background. And see https://github.com/kachick/dotfiles/wiki/Key-Remapper for the guide
     #
     # - Specify hardware names even if `evdev:input:*` working for mostcase. I should care both US and JIS layout
-    # - You can get the devicename, scancode and keycode with evtest. So kill xremap and run `evtest` with no arguments. Interactively choose the device
+    # - You can get the devicename, scancode and keycode with evtest. So kill keyremappers and run `evtest` with no arguments. Interactively choose the device
     extraHwdb = lib.mkBefore ''
       evdev:name:Topre REALFORCE 87 US:*
         KEYBOARD_KEY_70039=leftctrl # original: capslock

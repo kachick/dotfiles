@@ -28,9 +28,6 @@ A: `xdg-settings get default-web-browser`
 Q: [Broken cursor as white square](https://github.com/NixOS/nixpkgs/issues/140505#issuecomment-1637341617)\
 A: `dconf reset /org/gnome/desktop/interface/cursor-theme`
 
-Q: IME cannot be toggled in GNOME launcher with xremap shortcuts\
-A: Since enabling recommended [kimpanel](https://extensions.gnome.org/extension/261/kimpanel/). Execute terminal and toggle once, it triggers to enable switchers. (I don't know why...)
-
 ## KDE
 
 The shortcut of Meta+Q conflicts to Hyprland exec terminal. Disable from system settings.\
