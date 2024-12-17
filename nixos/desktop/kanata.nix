@@ -13,10 +13,18 @@
       all = {
         config = ''
           (defsrc)
+
+          (defvar
+            tap-timeout   10
+            hold-timeout 200
+            tt $tap-timeout
+            ht $hold-timeout
+          )
+
           (deflayermap (base)
-            caps (tap-hold-press 200 200 caps lctl)
-            lalt (tap-hold-press 200 200 muhenkan lalt)
-            ralt (tap-hold-press 200 200 henkan ralt)
+            caps (tap-hold-press $tt $ht caps lctl)
+            lalt (tap-hold-press $tt $ht muhenkan lalt)
+            ralt (tap-hold-press $tt $ht henkan ralt)
           )
         '';
       };
