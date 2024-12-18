@@ -18,4 +18,4 @@ Cons for Microsoft IME
 
 ## How to toggle with US keyboard?
 
-- Currently <https://github.com/karakaram/alt-ime-ahk>, might be replaced to kanata
+- Using kanata. See [keyboard section](../config/keyboards/README.md)

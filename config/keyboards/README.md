@@ -4,6 +4,21 @@
 
 TODO: UPDATE ME with extracting from NixOS Config
 
+## Kanata
+
+## NixOS
+
+It generates whole config from [partial config file](kanata.kbd).
+
+## Windows
+
+I have replaced "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) and [alt-ime-ahk](https://github.com/karakaram/alt-ime-ahk)" with [kanata](https://github.com/jtroo/kanata).
+
+Use [partial config file](kanata.kbd) with comment-out the `defcfg` line.\
+Download the `kanata_gui.exe` from [release page](https://github.com/jtroo/kanata/releases) and put it in same folder of config.\
+And executing and registered in tray.\
+I don't know why, the _gui does not respect `C:\Users\<Name>\.config\kanata.kbd` atleast in v1.7.0.
+
 ## QMK
 
 ### How to

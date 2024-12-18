@@ -1,3 +1,5 @@
+;; (defcfg) ;; Enable this line except use via nix
+
 ;; Required to specify keys which should be considered in tap-hold-press (=spc, tab for alt-spc, alt-tab)
 ;; See https://github.com/jtroo/kanata/blob/fc850fab9da7d0bf377e215f0b923062e037ff64/docs/config.adoc?plain=1#L142-L143
 (defsrc caps lalt ralt spc tab)
@@ -10,7 +12,9 @@
 )
 
 (deflayermap (base)
-  caps (tap-hold-press $tt $ht caps lctl)
+  ;; Avoiding tap-hold for caps to make stable behavior
+  ;; TODO: Add escape hatch for use of caps. See GH-963
+  caps lctl
   lalt (tap-hold-press $tt $ht muhenkan lalt)
   ralt (tap-hold-press $tt $ht henkan ralt)
 )
