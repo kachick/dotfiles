@@ -13,6 +13,9 @@
   "[lua]": {
     "editor.defaultFormatter": "JohnnyMorganz.stylua"
   },
+  "[kanata]": {
+    "editor.defaultFormatter": "rszyma.vscode-kanata"
+  },
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
   "gopls": {
