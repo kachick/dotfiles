@@ -13,7 +13,6 @@ jobs:
       # So simply uses the pre-built CLI here.
       - name: Install
         # TODO: Add checksum
-        # TODO: Add cache
         run: |
           curl -OL https://github.com/gitleaks/gitleaks/releases/download/v${{ env.CLI_VERSION }}/gitleaks_${{ env.CLI_VERSION }}_linux_x64.tar.gz
           tar zxvf gitleaks_${{ env.CLI_VERSION }}_linux_x64.tar.gz
