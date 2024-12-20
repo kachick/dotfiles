@@ -28,4 +28,4 @@ jobs:
       - name: Run
         run: |
           gitleaks version
-          gitleaks git .
+          gitleaks git . --redact=100
