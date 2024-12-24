@@ -151,6 +151,7 @@
         let
           pkgs = mkPkgs system;
         in
+        # pkgs.my // pkgs.patched # TODO: Adding another name space will fail, and nix flake check fails if it including unfree
         pkgs.my
       );
 
