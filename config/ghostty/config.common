@@ -9,3 +9,10 @@ shell-integration-features = no-cursor
 
 # Looks not appeared in Linux. Why? However I can omit this trivial thing.
 background-opacity = 0.85
+
+# How to list
+# - `ghostty +list-themes`
+# - https://iterm2colorschemes.com/
+# ghostty can set both dark and light. However always use dark for terminals
+# theme = dark:ForestBlue,light:iTerm2 Tango Light
+theme = ForestBlue
