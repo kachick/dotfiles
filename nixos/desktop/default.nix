@@ -143,6 +143,8 @@
 
       gdm-settings
 
+      # unstable.ghostty # TODO: Enable after introducing https://github.com/NixOS/nixpkgs/pull/368404
+
       alacritty
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode

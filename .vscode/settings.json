@@ -22,5 +22,8 @@
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
   "stylua.searchBinaryInPATH": true,
-  "shellformat.useEditorConfig": true
+  "shellformat.useEditorConfig": true,
+  "shellcheck.ignorePatterns": {
+    "config/ghostty/config*": true
+  }
 }

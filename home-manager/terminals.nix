@@ -3,6 +3,12 @@
 {
   xdg = {
     configFile = {
+      "ghostty/config".txt = ''
+        ${builtins.readFile ../config/ghostty/config.common}
+
+        ${if pkgs.stdenv.isLinux then (builtins.readFile ../config/ghostty/config.linux) else ""}
+      '';
+
       "alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
       "alacritty/unix.toml".source =
         if pkgs.stdenv.isDarwin then ../config/alacritty/macos.toml else ../config/alacritty/linux.toml;
