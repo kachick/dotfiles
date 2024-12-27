@@ -3,7 +3,7 @@
 {
   xdg = {
     configFile = {
-      "ghostty/config".txt = ''
+      "ghostty/config".text = ''
         ${builtins.readFile ../config/ghostty/config.common}
 
         ${if pkgs.stdenv.isLinux then (builtins.readFile ../config/ghostty/config.linux) else ""}
