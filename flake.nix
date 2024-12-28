@@ -130,7 +130,7 @@
                   trivy
                   markdownlint-cli2
 
-                  (ruby_3_3.withPackages (ps: with ps; [ rubocop ]))
+                  (ruby_3_4.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.unstable; [
                   # https://github.com/NixOS/nixpkgs/pull/362139

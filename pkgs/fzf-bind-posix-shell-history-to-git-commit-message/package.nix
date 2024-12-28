@@ -6,7 +6,7 @@ pkgs.writeShellApplication rec {
     my.safe_quote_backtik
     git
     fzf
-    ruby_3_3
+    ruby_3_4
   ];
   meta = {
     description = "Used in git alias";

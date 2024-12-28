@@ -82,7 +82,7 @@
   gnumake
   go-task # Installing for enabling shell completion easy
   gitleaks
-  ruby_3_3
+  ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   pastel

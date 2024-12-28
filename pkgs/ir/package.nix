@@ -9,7 +9,7 @@ pkgs.writeShellApplication rec {
     #   - sed: Always forgot how to use
     #   - sd: Inactive
     #   - sad: Too much for filter
-    ruby_3_3
+    ruby_3_4
 
     findutils # xargs
     gnugrep
