@@ -12,7 +12,7 @@
 
   (final: _prev: {
     unstable = import edge-nixpkgs {
-      system = final.system;
+      inherit (final) system config;
     };
   })
 
