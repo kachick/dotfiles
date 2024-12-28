@@ -69,33 +69,6 @@
           '';
         }
       );
-
-      # TODO: Write script and put into nixpkgs, updating this is an annoy task :<
-      # References
-      # https://github.com/NixOS/nixpkgs/pull/358952
-      # https://github.com/cloudflare/cloudflare-docs/pull/18927/files#diff-8fefe770ff52ff199e5f0716f65605428839371afac5d0007c5cc9da64d29278R28-R42
-      cloudflare-warp = prev.cloudflare-warp.overrideAttrs (
-        finalAttrs: previousAttrs: rec {
-          version = "2024.12.554";
-          suffix =
-            {
-              aarch64-linux = "arm64";
-              x86_64-linux = "amd64";
-            }
-            .${final.stdenv.hostPlatform.system}
-              or (throw "Unsupported system: ${final.stdenv.hostPlatform.system}");
-          src = final.fetchurl {
-            url = "https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_${version}.0_${suffix}.deb";
-            hash =
-              {
-                aarch64-linux = "sha256-FdT7C5ltqCXdVToIFdEgMKVpvCf6PVcvTpvMTCJj5vc=";
-                x86_64-linux = "sha256-8FMDVUoAYInXVJ5mwpPpUxECAN8safiHetM03GJTmTg=";
-              }
-              .${final.stdenv.hostPlatform.system}
-                or (throw "Unsupported system: ${final.stdenv.hostPlatform.system}");
-          };
-        }
-      );
     };
   })
 ]

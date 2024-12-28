@@ -252,7 +252,7 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
-      runtimeInputs = with pkgs; [ patched.cloudflare-warp ];
+      runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
       text = ''
         warp-cli connect
       '';
