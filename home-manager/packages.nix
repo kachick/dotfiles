@@ -1,5 +1,7 @@
 {
   pkgs,
+  # Don't use unstable for darwin ub this file.
+  # TODO: Add linter to warn unstable packages
   ...
 }:
 
@@ -42,8 +44,10 @@
 
   age # Candidates: rage
 
-  # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
-  unstable.gopass # Use unstable to apply https://github.com/NixOS/nixpkgs/pull/360950
+  # Alt `pass` for password-store.
+  # Candidates: gopass, prs.
+  # Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
+  gopass
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
@@ -53,15 +57,14 @@
   # - https://github.com/kachick/dotfiles/issues/280
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
+  # helix # Do not add here to avoid conflict of helix module
   micro
-  unstable.ox # modeless editor.
 
   tree
   eza # alt ls
   curl
   wget
   jq
-  jnv # interactive jq
   ripgrep # `rg`
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
@@ -75,17 +78,13 @@
   xh # alt HTTPie
   zellij
 
-  typos
   hyperfine
   difftastic # `difft`
   riffdiff # `riff`
   gnumake
-  go-task # Installing for enabling shell completion easy
   gitleaks
   ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
-
-  pastel
 
   rclone
 
@@ -98,15 +97,6 @@
   tlrc
 
   fastfetch # active replacement of neofetch
-
-  # Alternative candidates
-  #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
-  #  - argos-translate - can be closed in offline, but not yet enough accuracy
-  #  - Apertium - does not support Japanese
-  translate-shell # `echo "$text" | trans en:ja`
-])
-++ (with pkgs.unstable; [
-  gurk-rs # Require https://github.com/NixOS/nixpkgs/pull/356353 to link
 ])
 ++ (with pkgs.my; [
   la

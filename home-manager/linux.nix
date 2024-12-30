@@ -28,12 +28,29 @@
       podman-tui
       docker-compose
 
+      unstable.ox # modeless editor. Use unstable because of it is active and I'm tracking the changes.
+
       kubectl
       stern
       unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
 
       # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
       chawan # `cha`
+
+      gurk-rs
+
+      typos
+      go-task # Installing for enabling shell completion easy
+
+      jnv # interactive jq
+
+      pastel
+
+      # Alternative candidates
+      #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
+      #  - argos-translate - can be closed in offline, but not yet enough accuracy
+      #  - Apertium - does not support Japanese
+      translate-shell # `echo "$text" | trans en:ja`
 
       my.renmark # Depend on chawan
     ];
