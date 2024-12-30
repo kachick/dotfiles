@@ -132,9 +132,6 @@
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
-      foot
-      kitty
-
       cyme
       lshw
 
@@ -143,7 +140,7 @@
 
       gdm-settings
 
-      # unstable.ghostty # TODO: Enable after introducing https://github.com/NixOS/nixpkgs/pull/368404
+      unstable.ghostty
 
       alacritty
 

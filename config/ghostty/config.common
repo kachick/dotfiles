@@ -3,9 +3,11 @@
 #   macOS: cmd+shift+,
 
 # See also 899be8e51cb288fe0ae91267f495ade7bfb80bc9
-# FIXME: ghostty 1.0.1 Looks not to disable the blinking even if setting both.
+# This disbling does not work on `nix run`. Installed in nixos and ran from launcher worked (from shell or gnome difference?.
 cursor-style-blink = false
+# See https://github.com/ghostty-org/ghostty/discussions/2812
 shell-integration-features = no-cursor
+cursor-style = bar
 
 # Looks not appeared in Linux. Why? However I can omit this trivial thing.
 background-opacity = 0.85
@@ -16,3 +18,10 @@ background-opacity = 0.85
 # ghostty can set both dark and light. However always use dark for terminals
 # theme = dark:ForestBlue,light:iTerm2 Tango Light
 theme = ForestBlue
+# Avoid the ligatures in "JetBrains Mono" by default
+font-family = "PlemolJP Console NF"
+
+# ghostty documents said setting true by default in Linux but macOS disabled.
+# However keeping same behaviors should be useful if I use same tool in multuple environments.
+# And just setting `true` did not work on my GNOME
+copy-on-select = clipboard

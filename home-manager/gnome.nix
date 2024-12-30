@@ -40,8 +40,9 @@ in
           ]
         );
 
+        # Might be needed to reboot to enable icons
         favorite-apps = [
-          "kitty.desktop"
+          "com.mitchellh.ghostty.desktop"
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
@@ -54,7 +55,7 @@ in
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.kitty;
+        exec = lib.getExe pkgs.unstable.ghostty;
         # exec-arg="";
       };
 
@@ -153,7 +154,7 @@ in
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.kitty;
+        command = lib.getExe pkgs.unstable.ghostty;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
