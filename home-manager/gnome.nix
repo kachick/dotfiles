@@ -42,6 +42,7 @@ in
 
         favorite-apps = [
           "kitty.desktop"
+          "com.mitchellh.ghostty.desktop"
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
