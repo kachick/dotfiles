@@ -40,8 +40,9 @@ in
           ]
         );
 
+        # Might be needed to reboot to enable icons
         favorite-apps = [
-          "com.mitchellh.ghostty.desktop" # FIXME: No icon
+          "com.mitchellh.ghostty.desktop"
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
