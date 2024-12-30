@@ -230,7 +230,6 @@ in
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
       source "${pkgs.kubectl}/share/zsh/site-functions/_kubectl"
-      source "${pkgs.kind}/share/zsh/site-functions/_kind"
       # https://github.com/NixOS/nixpkgs/pull/362139
       source "${pkgs.unstable.dprint}/share/zsh/site-functions/_dprint"
       # cargo-make recommends to use bash completions for zsh

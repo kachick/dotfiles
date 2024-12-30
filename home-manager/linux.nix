@@ -29,7 +29,6 @@
       docker-compose
 
       kubectl
-      patched.kind # https://github.com/kubernetes-sigs/kind/pull/3814
       stern
       unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
 
