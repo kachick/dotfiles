@@ -24,7 +24,7 @@ func main() {
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
 		// No git makes 4x+ faster
-		{Path: "gitleaks", Args: []string{"dir", "."}},
+		// {Path: "gitleaks", Args: []string{"dir", "."}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
 		{Path: "markdownlint-cli2", Args: markdownPaths},

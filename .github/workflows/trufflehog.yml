@@ -1,0 +1,31 @@
+name: 🍄 🐽
+on: [pull_request, push, workflow_dispatch]
+jobs:
+  trufflehog:
+    timeout-minutes: 15
+    # name: gitleaks
+    # runs-on: ubuntu-24.04
+    # env:
+    #   CLI_VERSION: '8.21.2' # selfup {"extract":"\\d[^']+","replacer":["gitleaks", "version"]}
+    # steps:
+    #   # gitleaks-action is unfree since v2, Don't refer the code even if used in personal repositories
+    #   # However I also don't use nixpkgs version here. The Nix footprint is much annoy for this purpose.
+    #   # So simply uses the pre-built CLI here.
+    #   - name: Install
+    #     # TODO: Add checksum
+    #     run: |
+    #       curl -OL https://github.com/gitleaks/gitleaks/releases/download/v${{ env.CLI_VERSION }}/gitleaks_${{ env.CLI_VERSION }}_linux_x64.tar.gz
+    #       tar zxvf gitleaks_${{ env.CLI_VERSION }}_linux_x64.tar.gz
+    #       mkdir --parents /home/runner/.gitleaks/bin
+    #       mv gitleaks /home/runner/.gitleaks/bin
+    #       echo '/home/runner/.gitleaks/bin' >> $GITHUB_PATH
+    #     working-directory: ${{ runner.temp }}
+    #     env:
+    #       GH_TOKEN: ${{ github.token }}
+    #   - uses: actions/checkout@v4
+    #     with:
+    #       fetch-depth: 0 # Getting all refs for git mode
+    #   - name: Run
+    #     run: |
+    #       gitleaks version
+    #       gitleaks git . --redact=100

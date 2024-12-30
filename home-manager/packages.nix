@@ -81,7 +81,7 @@
   riffdiff # `riff`
   gnumake
   go-task # Installing for enabling shell completion easy
-  gitleaks
+  unstable.trufflehog
   ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
 

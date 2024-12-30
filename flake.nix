@@ -103,7 +103,6 @@
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                gitleaks
                 cargo-make
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
@@ -133,6 +132,7 @@
                   (ruby_3_4.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.unstable; [
+                  trufflehog
                   # https://github.com/NixOS/nixpkgs/pull/362139
                   dprint
                 ])
