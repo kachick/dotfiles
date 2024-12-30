@@ -1,6 +1,7 @@
 {
   pkgs,
-  # Don't use unstable for darwin ub this file.
+  # Don't use unstable in this file to keep lightweight darwin.
+  # However several tools might be enabled in services. Please take care or drop your macOS.
   # TODO: Add linter to warn unstable packages
   ...
 }:
@@ -47,7 +48,7 @@
   # Alt `pass` for password-store.
   # Candidates: gopass, prs.
   # Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
-  gopass
+  # Don't add the tool if it is specified in password-store.package to avoid conflict
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
