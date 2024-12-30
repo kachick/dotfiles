@@ -22,5 +22,6 @@ theme = ForestBlue
 font-family = "PlemolJP Console NF"
 
 # ghostty documents said setting true by default in Linux but macOS disabled.
-# However it looks not enabled in Linux behaviors. And keeping same behaviors should be useful if I use same tool in multuple environments.
-copy-on-select = true
+# However keeping same behaviors should be useful if I use same tool in multuple environments.
+# And just setting `true` did not work on my GNOME
+copy-on-select = clipboard
