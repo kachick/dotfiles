@@ -34,7 +34,6 @@
 
       # alacritty # Don't install macOS alacritty with nixpkgs. Alacritty often changes schema and I'm negative to use latest until https://github.com/NixOS/nixpkgs/issues/107466
       kitty
-      # foot is only provided for Linux wayland
 
       # Don't install firefox via nixpkgs for darwin, it is broken https://github.com/NixOS/nixpkgs/blob/bac526a0fe6da6b10cfe2454f62a0defdbf1d898/pkgs/applications/networking/browsers/firefox/packages.nix#L23
 
