@@ -38,14 +38,6 @@
           "arguments": ["--language-dialect", "bash", "-"]
         }
       }
-    },
-    "Lua": {
-      "formatter": {
-        "external": {
-          "command": "stylua",
-          "arguments": ["-"]
-        }
-      }
     }
   }
 }

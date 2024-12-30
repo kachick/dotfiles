@@ -27,9 +27,6 @@
   "[ruby]": {
     "editor.defaultFormatter": "rubocop.vscode-rubocop"
   },
-  "[lua]": {
-    "editor.defaultFormatter": "JohnnyMorganz.stylua"
-  },
   "[elm]": {
     "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
   },

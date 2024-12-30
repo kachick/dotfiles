@@ -9,7 +9,6 @@ foxundermoon.shell-format
 github.vscode-github-actions
 golang.go
 jnoortheen.nix-ide
-johnnymorganz.stylua
 ms-azuretools.vscode-docker
 ms-ceintl.vscode-language-pack-ja
 rubocop.vscode-rubocop

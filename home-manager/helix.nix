@@ -175,18 +175,6 @@ in
           formatter = mkDprint "kdl";
           language-servers = [ "typos" ];
         }
-        {
-          name = "lua";
-          auto-format = true;
-          formatter = {
-            command = lib.getExe pkgs.stylua;
-            args = [ "-" ];
-          };
-          language-servers = [
-            "lua-language-server"
-            "typos"
-          ];
-        }
       ];
     };
 
