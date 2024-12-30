@@ -28,7 +28,7 @@ func main() {
 		paths = rest
 		line = strings.TrimSuffix(line, "\r")
 
-		if strings.Contains(line, "darwin") || line == "home-manager/packages.nix" || line == "flake.nix" {
+		if strings.Contains(line, "darwin") || line == ".github/workflows/ci-home.yml" || line == "home-manager/packages.nix" || line == "flake.nix" {
 			higherMacOSPossibility = true
 		}
 	}
