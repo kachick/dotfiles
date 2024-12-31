@@ -15,7 +15,7 @@ func main() {
 		{Path: "shellcheck", Args: []string{"--version"}},
 		{Path: "shfmt", Args: []string{"--version"}},
 		{Path: "typos", Args: []string{"--version"}},
-		// {Path: "gitleaks", Args: []string{"version"}},
+		{Path: "trufflehog", Args: []string{"--version"}},
 		{Path: "stylua", Args: []string{"--version"}},
 		{Path: "nixpkgs-lint", Args: []string{"--version"}},
 		{Path: "goreleaser", Args: []string{"--version"}},
