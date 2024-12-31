@@ -85,6 +85,9 @@
 
       # https://github.com/NixOS/nixpkgs/pull/344193
       "zed" = "zeditor";
+
+      # I can't remember the spells...
+      "hog" = "trufflehog";
     };
   };
 

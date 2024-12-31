@@ -20,11 +20,10 @@ func main() {
 	bashPaths := walker.GetAllBash()
 	markdownPaths := walker.GetAllMarkdown()
 
+	// Don't add secrets scanner here. It should be done in pre-push hook now.
 	cmds := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
-		// No git makes 4x+ faster
-		{Path: "gitleaks", Args: []string{"dir", "."}},
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
 		{Path: "markdownlint-cli2", Args: markdownPaths},
