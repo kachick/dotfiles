@@ -51,6 +51,18 @@
       ]);
   };
 
+  programs = {
+    bash.initExtra = ''
+      source "${pkgs.podman}/share/bash-completion/completions/podman"
+      source "${pkgs.kubectl}/share/bash-completion/completions/kubectl.bash"
+    '';
+
+    zsh.initExtra = ''
+      source "${pkgs.podman}/share/zsh/site-functions/_podman"
+      source "${pkgs.kubectl}/share/zsh/site-functions/_kubectl"
+    '';
+  };
+
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
   # Check your `~/.config/user-dirs.dirs` if you faced any trouble
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-user-dirs.nix
