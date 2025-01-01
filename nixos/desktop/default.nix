@@ -92,6 +92,7 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
+    gnome-online-accounts # See GH-1015
   ];
 
   # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
