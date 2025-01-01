@@ -69,7 +69,6 @@
   fd # alt find
   du-dust # `dust`, alt du
   procs
-  btop # alt top
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
