@@ -3,19 +3,16 @@ on:
   push:
     tags:
       - 'v*'
-    branches:
-      - main
-    paths:
-      - '.github/workflows/container.yml'
-      - 'containers/**'
-      - '.containerignore'
-      - 'flake.*'
-      - 'home-manager/**'
-      - 'config/**'
-      - '!**.md'
+    # Don't add branch trigger, this workflow is heavy and required to consider concurrency
+    # branches:
+    #   - main
   pull_request:
     types:
       - labeled
+  schedule:
+    # Every 11:42 and 23:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 2,14 * * *'
   workflow_dispatch:
 
 jobs:
