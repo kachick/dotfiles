@@ -90,7 +90,7 @@ jobs:
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
       - name: Backup generated config
         run: |
-          zsh -c 'archive-home-files home-manager-generation-home-files'
+          nix run .#archive-home-files home-manager-generation-home-files
       - name: Upload artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:

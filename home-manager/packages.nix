@@ -30,7 +30,7 @@
   diffutils
   gnugrep
   netcat # `nc`
-  dig # Alt and raw-data oriented nslookup. TODO: Consider another candidate: dug - https://eng-blog.iij.ad.jp/archives/27527
+  dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
 
   git
   # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
@@ -61,7 +61,6 @@
   curl
   wget
   jq
-  jnv # interactive jq
   ripgrep # `rg`
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
@@ -77,7 +76,6 @@
 
   typos
   hyperfine
-  difftastic # `difft`
   riffdiff # `riff`
   gnumake
   go-task # Installing for enabling shell completion easy
@@ -96,12 +94,6 @@
   tlrc
 
   fastfetch # active replacement of neofetch
-
-  # Alternative candidates
-  #  - deep-translator - not active - https://github.com/nidhaloff/deep-translator/issues/240
-  #  - argos-translate - can be closed in offline, but not yet enough accuracy
-  #  - Apertium - does not support Japanese
-  translate-shell # `echo "$text" | trans en:ja`
 ])
 ++ (with pkgs.unstable; [
   gurk-rs # Require https://github.com/NixOS/nixpkgs/pull/356353 to link
@@ -119,7 +111,6 @@
   ir
   updeps
   bench_shells
-  archive-home-files
   gredit
   preview
 ])
