@@ -9,34 +9,47 @@
   home = {
     homeDirectory = lib.mkDefault "/home/${config.home.username}";
 
-    packages = with pkgs; [
-      # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
-      glibc
+    sessionVariables = {
+      # Don't add needless quotation in the arguments. For example `gopass show 'rclone'` does not work. It should be `gopass show rclone`.
+      RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
+    };
 
-      # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
-      openssh
+    packages =
+      with pkgs;
+      [
+        # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
+        glibc
 
-      iputils # `ping` etc
+        # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+        openssh
 
-      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
-      iw # replacement of wireless-tools(iwconfig)
+        iputils # `ping` etc
 
-      # - Enable special module for Nix OS.
-      # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
-      #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
-      podman
-      podman-tui
-      docker-compose
+        # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
+        iw # replacement of wireless-tools(iwconfig)
 
-      kubectl
-      stern
-      unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
+        rclone
 
-      # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-      chawan # `cha`
+        # - Enable special module for Nix OS.
+        # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
+        #   https://github.com/NixOS/nixpkgs/blob/194846768975b7ad2c4988bdb82572c00222c0d7/pkgs/applications/virtualization/podman/default.nix#L112-L116
+        podman
+        podman-tui
+        docker-compose
 
-      my.renmark # Depend on chawan
-    ];
+        kubectl
+        stern
+        unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
+
+        # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
+        chawan # `cha`
+      ]
+      ++ (with pkgs.my; [
+        renmark # Depend on chawan
+        rclone-list-mounted
+        rclone-mount
+        rclone-fzf
+      ]);
   };
 
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.

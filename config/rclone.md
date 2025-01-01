@@ -51,10 +51,11 @@ rclone mount google-drive-Foo-Vault: "$mount_to" --vfs-cache-mode writes --log-l
 ```
 
 I don't use systemd in these operations to avoid the saving secrets in this repository.\
-So use helper scripts.
+So use helper script `rclone-fzf` which is introduced in GH-1016.
 
-- rclone-fzf
-- rclone-list-mounted
+### macOS
+
+I don't use rclone in macOS. See GH-1016 and GH-911.
 
 ## GUI on Linux
 
