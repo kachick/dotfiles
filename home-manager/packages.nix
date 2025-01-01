@@ -124,4 +124,6 @@
   archive-home-files
   gredit
   preview
+  rclone-list-mounted
+  rclone-fzf
 ])
