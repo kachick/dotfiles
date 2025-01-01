@@ -25,6 +25,6 @@ rclone listremotes | fzf --query "$query" --border-label '☁️ Rclone Remotes'
 	--border-label-pos=2 \
 	--color='header:italic:underline,label:blue' \
 	--header $'Alt-M (Mount) / Alt-A (Inspect)\n\n' \
-	--bind 'alt-m:become(rclone-mount {})' \
+	--bind 'ctrl-/:become(rclone-mount {})' \
 	--bind 'alt-a:become(rclone about {})' \
 	--bind 'enter:become(echo {})'
