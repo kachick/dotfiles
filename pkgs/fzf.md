@@ -9,5 +9,6 @@
 ## Traps
 
 - Cannot copy from preview window
+- `become` with `export -f the_func` is broken in darwin. Create another command and inejct it
 - [No feature to output only nth](https://github.com/junegunn/fzf/issues/1323)
 - [No multiple modifiers for binding](https://github.com/junegunn/fzf/pull/3996)

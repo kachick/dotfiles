@@ -1,11 +1,9 @@
 { pkgs, ... }:
 pkgs.writeShellApplication rec {
-  name = "rclone-fzf";
+  name = "rclone-mount";
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
-    fzf
+    coreutils # `mktemp`
     rclone
-    my.rclone-mount
-    my.rclone-list-mounted
   ];
 }
