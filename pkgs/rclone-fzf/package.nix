@@ -6,5 +6,6 @@ pkgs.writeShellApplication rec {
     fzf
     coreutils # `mktemp`
     rclone
+    my.rclone-list-mounted
   ];
 }
