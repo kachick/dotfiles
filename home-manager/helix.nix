@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  stdenv,
+  ...
+}:
 
 let
   # Alternative global dprint
@@ -196,70 +201,75 @@ in
       ".node_modules/"
     ];
 
-    extraPackages = with pkgs; [
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
-      nil
-      # nixd
+    extraPackages =
+      if stdenv.hostplatform.isLinux then
+        (with pkgs; [
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+          nil
+          # nixd
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
-      bash-language-server
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
+          bash-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
-      rust-analyzer
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
+          rust-analyzer
 
-      # Looks like required to enable gopls
-      go_1_23
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
-      gopls
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
-      golangci-lint-langserver
+          # Looks like required to enable gopls
+          go_1_23
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
+          gopls
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
+          golangci-lint-langserver
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
-      marksman
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
+          marksman
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
-      lua-language-server
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
+          lua-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
-      vscode-langservers-extracted
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
+          vscode-langservers-extracted
 
-      ## Not helpful. Didn't activated?
-      #
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
-      # yaml-language-server
+          ## Not helpful. Didn't activated?
+          #
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
+          # yaml-language-server
 
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
-      # taplo
+          # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
+          # taplo
 
-      ## Keep minimum for global use. Inject in each project repositories if you need these
+          ## Keep minimum for global use. Inject in each project repositories if you need these
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
-      # typescript-language-server
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+          # typescript-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
-      # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
-      # nodePackages.dockerfile-language-server-nodejs
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
+          # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
+          # nodePackages.dockerfile-language-server-nodejs
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
-      # nodePackages.graphql-language-service-cli
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
+          # nodePackages.graphql-language-service-cli
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
-      # crystalline
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
+          # crystalline
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
-      # solargraph # Can we prefer steep here?
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
+          # solargraph # Can we prefer steep here?
 
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
-      # nu-lsp
+          # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
+          # nu-lsp
 
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
-      # elm-language-server
+          # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
+          # elm-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
-      # haskell-language-server
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
+          # haskell-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
-      # zls
-    ];
+          # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
+          # zls
+        ])
+      else
+        # Don't install LSP to keep lightweight darwin. I should develop on Linux VM
+        [ ];
   };
 }
