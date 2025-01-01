@@ -4,7 +4,6 @@
   pkgs,
   ...
 }:
-
 {
   services.gpg-agent.enableBashIntegration = true;
   programs.starship.enableBashIntegration = true;
@@ -119,8 +118,6 @@
         starship_precmd_user_func="set_win_title"
 
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-        source "${pkgs.podman}/share/bash-completion/completions/podman"
-        source "${pkgs.kubectl}/share/bash-completion/completions/kubectl.bash"
         source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
 
         # https://github.com/NixOS/nixpkgs/pull/362139
