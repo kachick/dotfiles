@@ -10,6 +10,7 @@
   bashInteractive
   # readline # needless and using it does not fix bash problems
   zsh
+  nushell # TODO: Install the dotfiles which is used in Windows
   starship
   direnv
 
@@ -68,7 +69,6 @@
   dysk # alt df
   fd # alt find
   du-dust # `dust`, alt du
-  procs
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
