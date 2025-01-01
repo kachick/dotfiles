@@ -15,8 +15,7 @@
     };
 
     packages =
-      with pkgs;
-      [
+      (with pkgs; [
         # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
         glibc
 
@@ -43,7 +42,7 @@
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         chawan # `cha`
-      ]
+      ])
       ++ (with pkgs.my; [
         renmark # Depend on chawan
         rclone-list-mounted
