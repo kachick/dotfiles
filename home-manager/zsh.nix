@@ -228,11 +228,11 @@ in
       precmd_functions+=(set_win_title)
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      # https://github.com/NixOS/nixpkgs/pull/362139
-      source "${pkgs.unstable.dprint}/share/zsh/site-functions/_dprint"
-      # cargo-make recommends to use bash completions for zsh
-      # Update after intoducing https://github.com/sagiegurari/cargo-make/pull/1182
-      source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+
+      # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
+      for file in ${../dependencies/zsh}/*; do
+          source "$file"
+      done
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh
