@@ -229,7 +229,10 @@ in
 
       source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
-      source ${../dependencies/zsh}/*
+      # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
+      for file in ${../dependencies/zsh}/*; do
+          source "$file"
+      done
 
       # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
       # So currently injecting only in zsh
