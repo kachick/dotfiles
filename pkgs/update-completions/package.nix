@@ -13,6 +13,9 @@ pkgs.writeShellApplication (
     ];
 
     text = ''
+      rm -f ${bashDir}/*
+      rm -f ${zshDir}/*
+
       cp -f "${pkgs.zellij}/share/bash-completion/completions/zellij.bash" ${bashDir}
 
       # https://github.com/NixOS/nixpkgs/pull/362139
