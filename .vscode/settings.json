@@ -24,6 +24,7 @@
   "stylua.searchBinaryInPATH": true,
   "shellformat.useEditorConfig": true,
   "shellcheck.ignorePatterns": {
+    "dependencies/**": true,
     "config/ghostty/config*": true
   }
 }

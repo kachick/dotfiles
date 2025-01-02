@@ -117,14 +117,7 @@
         # shellcheck disable=SC2034
         starship_precmd_user_func="set_win_title"
 
-        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-        source "${pkgs.zellij}/share/bash-completion/completions/zellij.bash"
-
-        # https://github.com/NixOS/nixpkgs/pull/362139
-        source "${pkgs.unstable.dprint}/share/bash-completion/completions/dprint.bash"
-
-        # Adding only in devshell is not enough
-        source "${pkgs.cargo-make}/share/bash-completion/completions/makers-completion.bash"
+        source ${../dependencies/bash}/*
 
         # Disable `Ctrl + S(no output tty)`
         ${lib.getBin pkgs.coreutils}/bin/stty stop undef
