@@ -26,5 +26,9 @@
   "shellcheck.ignorePatterns": {
     "dependencies/**": true,
     "config/ghostty/config*": true
+  },
+  "search.exclude": {
+    ".direnv/**": true,
+    "dependencies/*sh/": true
   }
 }
