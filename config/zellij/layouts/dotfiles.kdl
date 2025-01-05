@@ -1,8 +1,15 @@
 layout {
-    tab name="BPS" {
+    default_tab_template {
         pane size=1 borderless=true {
-            plugin location="zellij:compact-bar"
+            plugin location="compact-bar"
         }
+        children
+        // size affects for the new UI or not
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab name="BPS" {
         pane split_direction="vertical" {
             pane size="70%" {
 
@@ -17,9 +24,6 @@ layout {
         }
     }
     tab name="dconf" {
-        pane size=1 borderless=true {
-            plugin location="zellij:compact-bar"
-        }
         // Don't use edit pane. close_on_exit is only available in command panes
         pane name="edit" command="hx" size="70%" close_on_exit=false {
             args "home-manager/gnome.nix"
@@ -30,15 +34,6 @@ layout {
                 start_suspended true
             }
             pane name="blank" command="zsh" close_on_exit=false
-        }
-    }
-    tab name="Help" {
-        pane size=1 borderless=true {
-            plugin location="zellij:compact-bar"
-        }
-        pane
-        pane size=2 borderless=true {
-            plugin location="zellij:status-bar"
         }
     }
 }
