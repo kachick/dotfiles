@@ -1,23 +1,5 @@
-// candidates: https://github.com/zellij-org/zellij/tree/v0.39.2/zellij-utils/assets/themes
-theme "nord-contrast"
-themes {
-    // Modified from original nord theme.
-    nord-contrast {
-        fg 216 222 233 // #D8DEE9
-        // See #295 for the detail
-        // bg 46 52 64 // #2E3440
-        bg 0 95 95 // #005f5f
-        black 59 66 82 // #3B4252
-        red 191 97 106 // #BF616A
-        green 163 190 140 // #A3BE8C
-        yellow 235 203 139 // #EBCB8B
-        blue 129 161 193 // #81A1C1
-        magenta 180 142 173 // #B48EAD
-        cyan 136 192 208 // #88C0D0
-        white 229 233 240 // #E5E9F0
-        orange 208 135 112 // #D08770
-    }
-}
+// candidates: https://github.com/zellij-org/zellij/tree/v0.41.1/zellij-utils/assets/themes
+theme "iceberg-dark"
 // Extracted from 0.41.2 tutorial generated non-colliding keybindings.
 // It cannot be getting with another method, see https://github.com/zellij-org/zellij/issues/3724#issuecomment-2456468487
 keybinds clear-defaults=true {
