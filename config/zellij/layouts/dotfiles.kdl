@@ -15,6 +15,9 @@ layout {
                 }
             }
         }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
     }
     tab name="dconf" {
         pane size=1 borderless=true {
@@ -31,13 +34,7 @@ layout {
             }
             pane name="blank" command="zsh" close_on_exit=false
         }
-    }
-    tab name="Help" {
         pane size=1 borderless=true {
-            plugin location="compact-bar"
-        }
-        pane
-        pane size=2 borderless=true {
             plugin location="status-bar"
         }
     }
