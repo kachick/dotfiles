@@ -11,7 +11,6 @@ on:
       - 'windows**'
       - '**.go'
       - 'go.*'
-      - '.goreleaser.yaml'
       - 'config'
       - '!**.md'
   pull_request:
@@ -20,7 +19,6 @@ on:
       - 'windows**'
       - '**.go'
       - 'go.*'
-      - '.goreleaser.yaml'
       - 'config'
       - '!**.md'
   workflow_dispatch:
@@ -101,34 +99,30 @@ jobs:
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
       - uses: actions/checkout@v4
         with:
-          # KEEP fetch-depth for goreleaser
-          # https://github.com/goreleaser/goreleaser-action/blob/696b757ee8f3742e68b261173b9eeeb96306a57f/README.md?plain=1#L77
+          # KEEP fetch-depth for gh command
           fetch-depth: 0
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
-      - name: Install goreleaser
-        uses: goreleaser/goreleaser-action@v6
-        with:
-          install-only: true
-          version: 'v2.4.8' # selfup { "extract": "\\d[^']+", "replacer": ["bash", "-c", "goreleaser --version | grep 'GitVersion:'"], "nth": 2 }
       - name: List files - before build
         run: Get-ChildItem
       - name: Build winit-*
-        run: goreleaser build --snapshot --clean
+        # unnecessary to build wsl-* here, it should be done in linux runners
+        run: |
+          go build -o dist ./cmd/winit-reg
+          go build -o dist ./cmd/winit-conf
       - name: List files - after build
         run: |
           Get-ChildItem
           Get-ChildItem -Recurse .\dist
-      # https://github.com/goreleaser/goreleaser-action/tree/5fdedb94abba051217030cc86d4523cf3f02243d#upload-artifacts
       - name: Upload artifact
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: winit
-          path: dist/**/*.exe
+          path: dist
       - name: Download the artifact to make sure we can actually use it
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -166,20 +160,22 @@ jobs:
       # - note: https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Rebel against unacceptable default
         run: |
-          .\dist\winit-reg_windows_amd64_v1\winit-reg.exe list
-          .\dist\winit-reg_windows_amd64_v1\winit-reg.exe run --all
+          .\dist\winit-reg.exe list
+          .\dist\winit-reg.exe run --all
       # This logics can be finished even if tools are not installed
       - name: Put config files around terminals
         run: |
           Write-Host "$PROFILE"
-          .\dist\winit-conf_windows_amd64_v1\winit-conf.exe run
+          .\dist\winit-conf.exe run
           Install-Module -Force -Name PSFzfHistory
-          .\dist\winit-conf_windows_amd64_v1\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
+          .\dist\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
       - name: Make sure it correctly copied some config files
         run: |
           Test-Path "$PROFILE"
           Get-Content "$PROFILE"
       - name: Release the product
         if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          goreleaser release --clean
+          gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" dist/*.exe
