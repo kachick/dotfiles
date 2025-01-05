@@ -547,6 +547,40 @@ SwitchToMode "pane"
         }
     }
 }
-default_mode "locked"
 // $SHELL is now bash since #452
 default_shell "zsh"
+plugins {
+    compact-bar location="zellij:compact-bar"
+    configuration location="zellij:configuration"
+    filepicker location="zellij:strider" {
+        cwd "/"
+    }
+    plugin-manager location="zellij:plugin-manager"
+    session-manager location="zellij:session-manager"
+    status-bar location="zellij:status-bar"
+    strider location="zellij:strider"
+    tab-bar location="zellij:tab-bar"
+    welcome-screen location="zellij:session-manager" {
+        welcome_screen true
+    }
+}
+// Plugins to load in the background when a new session starts
+// eg. "file:/path/to/my-plugin.wasm"
+// eg. "https://example.com/my-plugin.wasm"
+load_plugins {
+
+}
+// Use a simplified UI without special fonts (arrow glyphs)
+// Options:
+//   - true
+//   - false (Default)
+//
+// simplified_ui true
+// Choose the theme that is specified in the themes section.
+// Default: default
+//
+// theme "dracula"
+// Choose the base input mode of zellij.
+// Default: normal
+//
+default_mode "locked"
