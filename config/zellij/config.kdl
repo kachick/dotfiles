@@ -1,5 +1,8 @@
-// candidates: https://github.com/zellij-org/zellij/tree/v0.41.1/zellij-utils/assets/themes
-theme "iceberg-dark"
+// Candidates: https://github.com/zellij-org/zellij/tree/v0.41.1/zellij-utils/assets/themes
+// Take care of the selection highlight. Much of themes have too low contrast. See GH-295
+// Acceptable: f75c11c109968becfe60a07998e73a451f4ccf92, catppuccin-frappe, onedark
+// Broken: icebrg-dark, nord
+theme "catppuccin-frappe"
 // Extracted from 0.41.2 tutorial generated non-colliding keybindings.
 // It cannot be getting with another method, see https://github.com/zellij-org/zellij/issues/3724#issuecomment-2456468487
 keybinds clear-defaults=true {
