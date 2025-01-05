@@ -111,8 +111,8 @@ jobs:
       - name: Build winit-*
         # unnecessary to build wsl-* here, it should be done in linux runners
         run: |
-          go build -o dist ./cmd/winit-reg
-          go build -o dist ./cmd/winit-conf
+          go build -o 'dist/' ./cmd/winit-reg
+          go build -o 'dist/' ./cmd/winit-conf
       - name: List files - after build
         run: |
           Get-ChildItem
