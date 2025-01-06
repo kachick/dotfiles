@@ -154,54 +154,12 @@
         pkgs.my
       );
 
-      apps = forAllSystems (
-        system:
-        builtins.listToAttrs (
-          (map
-            (name: {
-              inherit name;
-              value = mkApp {
-                system = system;
-                pkg = (mkPkgs system).my.${name};
-              };
-            })
-            [
-              "bump_gomod"
-              "check_nixf"
-              "bench_shells"
-              "walk"
-              "ir"
-              "todo"
-              "la"
-              "lat"
-              "ghqf"
-              "git-delete-merged-branches"
-              "git-log-fzf"
-              "git-log-simple"
-              "git-resolve-conflict"
-              "gh-prs"
-              "envs"
-              "nix-hash-url"
-              "reponame"
-              "gredit"
-              "renmark"
-              "preview"
-              "p"
-            ]
-          )
-          ++ [
-            # example: `nix run .#home-manager -- switch -n -b backup --flake .#user@linux-cli`
-            # https://github.com/NixOS/nix/issues/6448#issuecomment-1132855605
-            {
-              name = "home-manager";
-              value = mkApp {
-                system = system;
-                pkg = (mkHomeManager system).defaultPackage.${system};
-              };
-            }
-          ]
-        )
-      );
+      apps = forAllSystems (system: {
+        home-manager = mkApp {
+          inherit system;
+          pkg = (mkHomeManager system).defaultPackage.${system};
+        };
+      });
 
       nixosConfigurations =
         let
