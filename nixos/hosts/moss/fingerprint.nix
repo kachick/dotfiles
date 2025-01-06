@@ -10,7 +10,7 @@
       enable = true;
       # This select is a bit different of https://github.com/ramaureirac/thinkpad-e14-linux/blob/7539f51b1c29d116a549265f992032aa9642d4a5/tweaks/fingerprint/README.md#L19
       # You should check actual vendor with `lsusb | grep FingerPrint`
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/development/libraries/libfprint-2-tod1-goodix-550a/default.nix#L9
+      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/li/libfprint-2-tod1-goodix-550a/package.nix
       driver = pkgs.libfprint-2-tod1-goodix-550a;
     };
 

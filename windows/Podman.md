@@ -8,35 +8,6 @@ See <https://github.com/containers/buildah/issues/3726#issuecomment-1171146242>
 sudo mount --make-rshared /
 ```
 
-## How to install
-
-Use one of following.
-
-- Directly Install podman into the debian family # Now using. The whole steps are written in [README](../README.md) and [WSL](WSL/README.md)
-- [Install podman-desktop](./Podman-Remote.md), it easy to install but requires annoy setups with another WSL instance. # Old way, Written in this file
-
-It needs special WSL distribution. How to run it from standard WSL ubuntu is written in [this document](https://podman-desktop.io/docs/podman/accessing-podman-from-another-wsl-instance).\
-Make sure you are using podman binary as podman-remote, nixpkgs product does not satisfy.\
-This repository aliases podman command to mise installed binary.
-
-This is an worked example
-
-```bash
-# WSL - Ubuntu
-
-podman system connection add --default podman-machine-default-user unix:///mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
-
-# Since Ubuntu 24.04, you may need to update the usergroup of socket file
-sudo chgrp "$(whoami)" /mnt/wsl/podman-sockets/podman-machine-default/podman-user.sock
-
-# See wsl.nix for detail
-# TODO: Update cmd/wsl-init
-sudo systemctl enable ~/.config/systemd/user/mnt-wsl-instances-ubuntu24.mount --now
-
-cdrepo irb-power_assert
-podman run --volume /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir --workdir /workdir -it ghcr.io/ruby/ruby:master-dev-jammy-amd64-da66abc584a9a33693d1b5bbf70881a008b0935d
-```
-
 ## After updating podman from 4.x -> 5.0.0, cannot do any operation even if the setup VM
 
 ```plaintext
@@ -67,7 +38,7 @@ Track the [official discussion](https://github.com/containers/podman/discussions
 This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
 
 1. Ubuntu: Activate the home-manager with `--flake '.#kachick@wsl-ubuntu'`.
-2. Look the [definitions](../../home-manager/wsl.nix), it includes how to mount with systemd.
+2. Look the [definitions](../home-manager/wsl.nix), it includes how to mount with systemd.
 3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
 4. Ubuntu: `cdrepo project_path`
 5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
