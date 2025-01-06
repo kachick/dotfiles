@@ -61,6 +61,10 @@ jobs:
           mv lychee /home/runner/.lychee/bin
           echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
       - name: Run
+        env:
+          # Not GH_TOKEN for lychee.
+          # https://github.com/lycheeverse/lychee/blob/fc006bddc5a63067895799b83cbb9a4cbcabca6a/lychee-bin/src/options.rs#L459-L462
+          GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
           git ls-files '*.md' '*.nix' | xargs lychee --
