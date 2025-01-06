@@ -28,7 +28,6 @@ stdenvNoCC.mkDerivation rec {
     description = "Micro editor syntax highlighting for KDL";
     homepage = "https://github.com/kachick/micro-kdl";
     license = lib.licenses.mit;
-    mainProgram = "micro-kdl";
     platforms = lib.platforms.all;
   };
 }
