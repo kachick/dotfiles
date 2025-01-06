@@ -110,6 +110,5 @@
   ir
   updeps
   bench_shells
-  gredit
   preview
 ])
