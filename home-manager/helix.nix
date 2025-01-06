@@ -175,18 +175,6 @@ in
           formatter = mkDprint "kdl";
           language-servers = [ "typos" ];
         }
-        {
-          name = "lua";
-          auto-format = true;
-          formatter = {
-            command = lib.getExe pkgs.stylua;
-            args = [ "-" ];
-          };
-          language-servers = [
-            "lua-language-server"
-            "typos"
-          ];
-        }
       ];
     };
 
@@ -218,7 +206,7 @@ in
       marksman
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
-      lua-language-server
+      # lua-language-server
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
       vscode-langservers-extracted

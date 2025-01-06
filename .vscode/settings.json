@@ -10,9 +10,6 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
-  "[lua]": {
-    "editor.defaultFormatter": "JohnnyMorganz.stylua"
-  },
   "[kanata]": {
     "editor.defaultFormatter": "rszyma.vscode-kanata"
   },
@@ -21,7 +18,6 @@
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
-  "stylua.searchBinaryInPATH": true,
   "shellformat.useEditorConfig": true,
   "shellcheck.ignorePatterns": {
     "dependencies/**": true,

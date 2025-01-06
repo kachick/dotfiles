@@ -121,7 +121,6 @@
                   # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
                   # https://github.com/numtide/treefmt/pull/250
                   treefmt2
-                  stylua
                   typos
                   typos-lsp # For zed-editor typos extension
                   go_1_23

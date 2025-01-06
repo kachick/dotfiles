@@ -27,9 +27,6 @@
   "[ruby]": {
     "editor.defaultFormatter": "rubocop.vscode-rubocop"
   },
-  "[lua]": {
-    "editor.defaultFormatter": "JohnnyMorganz.stylua"
-  },
   "[elm]": {
     "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
   },
@@ -105,7 +102,6 @@
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "workbench.colorTheme": "Base16 Dark Ashes",
-  "stylua.searchBinaryInPATH": true,
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,

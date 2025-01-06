@@ -34,18 +34,6 @@ jobs:
             .github
             .vscode
 
-  stylua:
-    timeout-minutes: 15
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      # Pinning because of needed the GITHUB_TOKEN
-      - uses: JohnnyMorganz/stylua-action@b6661824b86c9c33121bed87a778b660ba90cf77 # v4.0.0
-        with:
-          token: ${{ github.token }}
-          version: '0.20.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["stylua", "--version"], "nth": 2}
-          args: --check .
-
   # Don't use lycheeverse/lychee-action. There is no benefit rather than using the CLI for my use. And considering the targets should be simple with `git ls-files` rather than built-in glob
   link-checker:
     runs-on: ubuntu-24.04

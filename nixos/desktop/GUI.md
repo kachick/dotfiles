@@ -1,11 +1,5 @@
 # GUI
 
-Started from KDE for the battery-included and stable behaviors.\
-However I need tilling window manager for several reasons, especially unstable wezterm and zelliji cannot define multiple modifier.\
-So I started to using Hyprland. This maybe the note.
-
-=> And switched to GNOME
-
 ## GNOME
 
 Q: How to reload GNOME on wayland settings without reboot?\
