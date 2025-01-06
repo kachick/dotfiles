@@ -10,4 +10,7 @@ pkgs.writeShellApplication rec {
     ncurses # `reset` for broken terminal after killing xargs
     # TODO: Add zellij layouts to easy killing xargs with special pane
   ];
+  meta = {
+    description = "Repolaced by 824455c30300aae2d3182930a9526c92bd480c67"; # TODO: Remove
+  };
 }

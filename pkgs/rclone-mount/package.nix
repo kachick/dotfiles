@@ -6,6 +6,9 @@ pkgs.writeShellApplication rec {
     coreutils # `mktemp`
     rclone
   ];
-  # Didn't work on Darwin. It might work when disabling --daemon or replacing the default NFS with FUSE. However, I'm very tired to consider Darwin.
-  meta.platforms = lib.platforms.linux;
+  meta = {
+    description = "Mount rclone to tempdir";
+    # Didn't work on Darwin. It might work when disabling --daemon or replacing the default NFS with FUSE. However, I'm very tired to consider Darwin.
+    platforms = lib.platforms.linux;
+  };
 }

@@ -9,4 +9,7 @@ pkgs.writeShellApplication rec {
   runtimeEnv = {
     RUBY_SCRIPT_PATH = "${./${name}.rb}";
   };
+  meta = {
+    description = "List environment variables";
+  };
 }

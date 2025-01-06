@@ -7,4 +7,7 @@ pkgs.writeShellApplication rec {
     coreutils
     findutils
   ];
+  meta = {
+    description = "Remove merged branches from local";
+  };
 }

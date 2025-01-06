@@ -10,4 +10,7 @@ pkgs.writeShellApplication rec {
     findutils # `xargs`
     ncurses # `reset` for broken terminal after killing xargs
   ];
+  meta = {
+    description = "Bulk edit git conflicts";
+  };
 }

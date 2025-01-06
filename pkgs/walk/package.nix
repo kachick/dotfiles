@@ -7,4 +7,7 @@ pkgs.writeShellApplication rec {
     fd
     my.preview
   ];
+  meta = {
+    description = "Fuzzy finder for file path";
+  };
 }

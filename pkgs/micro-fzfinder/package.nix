@@ -29,7 +29,6 @@ stdenvNoCC.mkDerivation rec {
     homepage = "https://github.com/MuratovAS/micro-fzfinder";
     # https://github.com/MuratovAS/micro-fzfinder/blob/7be0adb25d72b557eab9fea5aceaff18d47bff52/LICENSE
     license = lib.licenses.mit;
-    mainProgram = "micro-fzfinder";
     platforms = lib.platforms.all;
   };
 }
