@@ -25,7 +25,7 @@
         "lp" # For scanner
       ];
       packages = [
-        # Don't install spotify, it does not activate IME and no binary cache with the unfree license.
+        # Don't install unfree packages such as spotify.
         # Use Web Player or PWA
       ];
     };
