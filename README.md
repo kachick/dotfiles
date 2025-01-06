@@ -50,7 +50,7 @@ nix run 'github:kachick/dotfiles#todo'
 List them
 
 ```bash
-nix flake show 'github:kachick/dotfiles' --json | jq '.apps | ."x86_64-linux" | keys[]'
+nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
 ```
 
 ## NixOS
@@ -70,7 +70,7 @@ sudo reboot now
 List defined hostnames
 
 ```bash
-nix flake show 'github:kachick/dotfiles' --json | jq '.nixosConfigurations | keys[]'
+nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.nixosConfigurations | keys[]'
 ```
 
 This repository intentionally reverts the home-manager NixOS module.\
