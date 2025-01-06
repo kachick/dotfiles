@@ -43,7 +43,3 @@ options = [
   "--write",
 ]
 includes = ["*.sh", "*.bash", "*.envrc"]
-
-[formatter.stylua]
-command = "stylua"
-includes = ["*.lua"]
