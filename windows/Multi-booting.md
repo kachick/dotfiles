@@ -7,8 +7,8 @@ Here is a note for me.
 
   Problems
 
-  - [Unstable Wifi](/../../issues/663)
-  - [Wrong timestamp on dmesg](/../../issues/664)
+  - [Unstable Wifi](https://github.com/kachick/dotfiles/issues/663)
+  - [Wrong timestamp on dmesg](https://github.com/kachick/dotfiles/issues/664)
 
   Solutions
 

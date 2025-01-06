@@ -7,7 +7,7 @@
 1. Modify config with `about:preferences`
 1. Open `about:config` again
 
-And <https://github.com/yokoffing/Betterfox/blob/> helps to know the overview.
+And <https://github.com/yokoffing/Betterfox/> helps to know the overview.
 
 ## How to change finder in page position from bottom to top?
 

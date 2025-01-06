@@ -31,6 +31,7 @@ func main() {
 	}
 
 	if *allFlag {
+		// FIXME: Adding lychee here making Network error
 		cmds = append(cmds, runner.Cmd{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}})
 		cmds = append(cmds, runner.Cmd{Path: "nix", Args: []string{"run", ".#check_nixf"}})
 	}
