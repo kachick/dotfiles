@@ -1,4 +1,4 @@
-# It returns 403 error agains lychee requests for each word
+# It returns 403 error against lychee requests for each word
 https://www.collinsdictionary.com/dictionary/
 
 # False positve detection and hard to debug by https://github.com/lycheeverse/lychee/issues/1304
