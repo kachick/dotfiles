@@ -1,9 +1,0 @@
-#!/usr/bin/env xdg-open
-[Desktop Entry]
-Version=1.0
-Terminal=false
-Type=Application
-Name=Amazon Music
-Exec=google-chrome-stable "--profile-directory=Default" --app-id=dojpeppajphepagdhclblkkjnoaeamee
-Icon=chrome-dojpeppajphepagdhclblkkjnoaeamee-Default
-StartupWMClass=crx_dojpeppajphepagdhclblkkjnoaeamee

@@ -1,13 +1,6 @@
 { lib, pkgs, ... }:
 
-let
-  spotify-pwa-file = "chrome-pjibgclleladliembfgfagdaldikeohf-Default.desktop";
-  amazon_music-pwa-file = "chrome-dojpeppajphepagdhclblkkjnoaeamee-Profile_1.desktop";
-in
 {
-  xdg.dataFile."applications/${spotify-pwa-file}".source = ../config/pwa/spotify.desktop;
-  xdg.dataFile."applications/${amazon_music-pwa-file}".source = ../config/pwa/amazon_music.desktop;
-
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix
   dconf = {
     enable = true;
@@ -40,14 +33,14 @@ in
           ]
         );
 
-        # Might be needed to reboot to enable icons
+        # - Might be needed to reboot to enable icons
+        # - Using fixed profile shortcut is difficult in chrome. So don't add PWA here. See GH-813 and GH-968 for detail.
         favorite-apps = [
           "com.mitchellh.ghostty.desktop"
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
-          amazon_music-pwa-file
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
         ];
@@ -236,8 +229,6 @@ in
 
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
-          "${spotify-pwa-file}:3"
-          "${amazon_music-pwa-file}:3"
           "org.gnome.Rhythmbox3.desktop:3"
         ];
       };
