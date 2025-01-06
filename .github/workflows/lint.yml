@@ -1,9 +1,15 @@
 name: 👕
+# Keep lightweght to run on every events.
+# See https://github.com/kachick/selfup/blob/c53aad349e3577295a68b1b78ee4cb0eddc4e2b9/README.md#L97-L103 for the motivation
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
 
 jobs:
   dprint:
@@ -39,3 +45,13 @@ jobs:
           token: ${{ github.token }}
           version: '0.20.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["stylua", "--version"], "nth": 2}
           args: --check .
+
+  link-checker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Link Checker
+        id: lychee
+        uses: lycheeverse/lychee-action@f796c8b7d468feb9b8c0a46da3fac0af6874d374 #v2.2.0
+        with:
+          lycheeVersion: 'v0.18.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}

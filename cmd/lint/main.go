@@ -33,6 +33,8 @@ func main() {
 	if *allFlag {
 		cmds = append(cmds, runner.Cmd{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}})
 		cmds = append(cmds, runner.Cmd{Path: "nix", Args: []string{"run", ".#check_nixf"}})
+		// `lychee .` only detects markdown not for nix. And using glob ignores gitignore. So using `git ls-files` should be stable
+		cmds = append(cmds, runner.Cmd{Path: "bash", Args: []string{"-c", "git ls-files '*.md' '*.nix' | xargs lychee --"}})
 	}
 
 	cmds.ParallelRun()

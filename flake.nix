@@ -134,6 +134,7 @@
                   trufflehog
                   # https://github.com/NixOS/nixpkgs/pull/362139
                   dprint
+                  lychee
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
