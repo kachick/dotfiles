@@ -17,4 +17,7 @@ pkgs.writeShellApplication rec {
     ++ (lib.optionals stdenv.isLinux [
       wslu # WSL helpers like `wslview`. It is used in open browser features in gh command
     ]);
+  meta = {
+    description = "Faster git log searcher for large repositories(e.g NixOS/nixpkgs)";
+  };
 }

@@ -11,7 +11,7 @@ pkgs.buildGo123Module rec {
   CGO_ENABLED = 0;
 
   meta = {
-    description = "kachick/dotfiles => dotfiles, dotfiles => dotfiles";
+    description = "OWNER/REPO => REPO, REPO => REPO";
     mainProgram = pname;
   };
 }

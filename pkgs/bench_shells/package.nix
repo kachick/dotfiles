@@ -7,4 +7,7 @@ pkgs.writeShellApplication rec {
     zsh
     bashInteractive
   ];
+  meta = {
+    description = "Measure speed of shells with the interactive mode";
+  };
 }

@@ -9,4 +9,7 @@ pkgs.writeShellApplication rec {
     coreutils # `cat`
     # unnecessary to specify an editor. Both helix and micro supports `exe {1}:{2}:{3}` style.
   ];
+  meta = {
+    description = "Incremental full-text search";
+  };
 }

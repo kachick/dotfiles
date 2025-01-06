@@ -44,5 +44,9 @@ pkgs.writeShellApplication (
       git update-index -q --really-refresh
       git diff-index --quiet HEAD || git commit -m 'Bump shell completions'
     '';
+
+    meta = {
+      description = "Putting intermediate files for stable shell completions";
+    };
   }
 )

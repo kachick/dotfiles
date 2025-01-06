@@ -17,4 +17,7 @@ pkgs.writeShellApplication rec {
     coreutils # cat
     mktemp
   ];
+  meta = {
+    description = "Inline replacer with Ruby regex";
+  };
 }

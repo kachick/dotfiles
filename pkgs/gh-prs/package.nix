@@ -17,4 +17,7 @@ pkgs.writeShellApplication rec {
     # Required in https://github.com/nix-community/home-manager/blob/346973b338365240090eded0de62f7edce4ce3d1/modules/programs/gh.nix#L160
     pname = name;
   };
+  meta = {
+    description = "A gh extension to list and operate PRs";
+  };
 }

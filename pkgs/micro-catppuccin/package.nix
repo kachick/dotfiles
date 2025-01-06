@@ -22,6 +22,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
+    description = "A theme for micro-editor";
     # https://github.com/catppuccin/micro/blob/2802b32308e5b1a827689c095f11ae604bbc85e6/LICENSE
     license = lib.licenses.mit;
   };

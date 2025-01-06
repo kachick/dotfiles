@@ -25,6 +25,7 @@ stdenvNoCC.mkDerivation {
   '';
 
   meta = {
+    description = "A theme for micro-editor";
     # https://github.com/KiranWells/micro-nord-tc-colors/blob/f63c855735f755704c25c958abe45f12a4b2c8d3/LICENSE
     license = lib.licenses.mit;
   };

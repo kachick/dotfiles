@@ -8,4 +8,7 @@ pkgs.writeShellApplication rec {
     my.rclone-mount
     my.rclone-list-mounted
   ];
+  meta = {
+    description = "List and operate rclone remotes";
+  };
 }
