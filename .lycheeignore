@@ -3,3 +3,6 @@ https://www.collinsdictionary.com/dictionary/
 
 # False positve detection and hard to debug by https://github.com/lycheeverse/lychee/issues/1304
 user:password
+
+# reddit often rejects request from GitHub Actions
+www.reddit.com/
