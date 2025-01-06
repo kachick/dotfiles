@@ -46,12 +46,21 @@ jobs:
           version: '0.20.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["stylua", "--version"], "nth": 2}
           args: --check .
 
+  # Don't use lycheeverse/lychee-action. There is no benefit rather than using the CLI for my use. And considering the targets should be simple with `git ls-files` rather than built-in glob
   link-checker:
     runs-on: ubuntu-24.04
+    env:
+      CLI_VERSION: '0.18.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
     steps:
       - uses: actions/checkout@v4
-      - name: Link Checker
-        id: lychee
-        uses: lycheeverse/lychee-action@f796c8b7d468feb9b8c0a46da3fac0af6874d374 #v2.2.0
-        with:
-          lycheeVersion: 'v0.18.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
+      - name: Install
+        run: |
+          curl -OL 'https://github.com/lycheeverse/lychee/releases/download/lychee-v${{ env.CLI_VERSION }}/lychee-x86_64-unknown-linux-gnu.tar.gz'
+          tar zxvf lychee-x86_64-unknown-linux-gnu.tar.gz
+          mkdir --parents /home/runner/.lychee/bin
+          mv lychee /home/runner/.lychee/bin
+          echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
+      - name: Run
+        # Don't use glob. It often ignores .gitignore (why?)
+        run: |
+          git ls-files '*.md' '*.nix' | xargs lychee --
