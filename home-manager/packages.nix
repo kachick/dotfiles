@@ -105,6 +105,7 @@
   ghqf
   p
   walk
+  rg-fzf
   envs
   ir
   updeps
