@@ -48,8 +48,8 @@ in
     # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
     hashKnownHosts = false;
 
-    # TODO: Generate the file instead of readonly symlink to realize local specific list
-    userKnownHostsFile = "${../config/ssh/known_hosts}";
+    # It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
+    userKnownHostsFile = "${../config/ssh/known_hosts} ${sshDir}/known_hosts.local";
 
     # unit: seconds
     serverAliveInterval = 60;
