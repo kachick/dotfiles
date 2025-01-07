@@ -58,6 +58,11 @@ in
 
     controlMaster = "auto";
     controlPersist = "10m";
+    # Used %r by default. And it makes `ControlPath too long` especially using upterm.
+    # See following resources and GH-1030
+    # https://github.com/nix-community/home-manager/blob/20665c6efa83d71020c8730f26706258ba5c6b2a/modules/programs/ssh.nix#L424-L430
+    # https://github.com/owenthereal/upterm/issues/283#issuecomment-2508582116
+    controlPath = "~/.ssh/master-%C@%n:%p";
 
     addKeysToAgent = "yes";
 
