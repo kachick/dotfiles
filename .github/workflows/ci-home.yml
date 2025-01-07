@@ -97,10 +97,3 @@ jobs:
           name: 'home-files-${{ github.sha }}-${{ matrix.os }}'
           path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'
-      - name: Setup upterm session
-        # This action always use latest CLI
-        # https://github.com/owenthereal/action-upterm/blob/4f618b2f5a28013279fff3413093e31d83c9b074/src/index.ts#L20
-        uses: owenthereal/action-upterm@5501233b996152ba43e22e8c73c39640f9ae2b3c # v1
-        with:
-          # Mandatory restrict it
-          limit-access-to-users: '${{ github.repository_owner }}'

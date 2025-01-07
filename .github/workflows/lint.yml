@@ -20,6 +20,13 @@ jobs:
       - uses: dprint/check@v2.2
         with:
           dprint-version: '0.48.0' # selfup {"extract":"\\d[^']+","replacer":["dprint", "--version"], "nth": 2}
+      - name: Setup upterm session
+        # This action always use latest CLI
+        # https://github.com/owenthereal/action-upterm/blob/4f618b2f5a28013279fff3413093e31d83c9b074/src/index.ts#L20
+        uses: owenthereal/action-upterm@5501233b996152ba43e22e8c73c39640f9ae2b3c # v1
+        with:
+          # Mandatory restrict it
+          limit-access-to-users: '${{ github.repository_owner }}'
 
   typos:
     timeout-minutes: 15
