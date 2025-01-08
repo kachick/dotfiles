@@ -232,7 +232,9 @@
       just-perfection
       dash-to-dock
       color-picker
-      switcher
+    ])
+    ++ (with pkgs.unstable.gnomeExtensions; [
+      switcher # in nixos-24.11 does not support GNOME 47
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
