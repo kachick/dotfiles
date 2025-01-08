@@ -239,6 +239,20 @@
         open-window-position = 0;
       };
 
+      # https://github.com/paperwm/PaperWM/pull/550
+      "org/gnome/shell/extensions/paperwm" = {
+        winprops = [
+          (
+            let
+              entry = ''
+                {"wm_class":"*","preferredWidth":"50%"}
+              '';
+            in
+            entry
+          )
+        ];
+      };
+
       "org/virt-manager/virt-manager/connections" = {
         autoconnect = [ "qemu:///system" ];
         uris = [ "qemu:///system" ];
