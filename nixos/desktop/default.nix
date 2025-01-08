@@ -232,6 +232,7 @@
       just-perfection
       dash-to-dock
       color-picker
+      switcher
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
