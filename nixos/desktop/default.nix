@@ -234,7 +234,7 @@
       color-picker
     ])
     ++ (with pkgs.unstable.gnomeExtensions; [
-      switcher # in nixos-24.11 does not support GNOME 47
+      switcher # in nixos-24.11 does not support GNOME 47. Require https://github.com/NixOS/nixpkgs/commit/d729de868927d78589fe7bb2db733b131626d117#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR796
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
