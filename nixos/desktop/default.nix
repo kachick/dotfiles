@@ -92,7 +92,6 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
-    gnome-online-accounts # See GH-1015
   ];
 
   # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
@@ -322,4 +321,11 @@
     enable = true;
     extraUpFlags = [ "--ssh" ];
   };
+
+  # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
+  #
+  # Prefer NixOS module rather than home-manager one for making it possible to use gnome-online-accounts. See GH-1015
+  #
+  # Alternative candidates: https://github.com/grimsteel/pass-secret-service
+  services.pass-secret-service.enable = true;
 }
