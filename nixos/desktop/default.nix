@@ -327,5 +327,5 @@
   # Prefer NixOS module rather than home-manager one for making it possible to use gnome-online-accounts. See GH-1015
   #
   # Alternative candidates: https://github.com/grimsteel/pass-secret-service
-  services.pass-secret-service.enable = true;
+  services.passSecretService.enable = true;
 }
