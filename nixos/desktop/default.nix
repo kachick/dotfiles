@@ -102,7 +102,7 @@
   # https://github.com/NixOS/nixpkgs/issues/101616
   #
   # Using mkforce for https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-  services.gnome.gnome-keyring.enable = lib.mkForce false;
+  # services.gnome.gnome-keyring.enable = lib.mkForce false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
