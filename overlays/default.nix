@@ -16,8 +16,23 @@
     };
   })
 
-  # Pacthed packages
+  # Keep minimum patches as possible. Because of they can not use official binary cache. See GH-754
 
+  # Patched and override existing name because of it is not cofigurable
+  (final: prev: {
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/gn/gnome-keyring/package.nix
+    # To disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
+    #
+    # And it should be override the package it self, the module is not configurable for the package. https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/desktops/gnome/gnome-keyring.nix
+    gnome-keyring = prev.gnome-keyring.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        # https://github.com/NixOS/nixpkgs/issues/140824#issuecomment-2573660493
+        configureFlags = final.lib.lists.remove "--enable-ssh-agent" previousAttrs.configureFlags;
+      }
+    );
+  })
+
+  # Pacthed packages
   (final: prev: {
     patched = {
       # TODO: Replace to stable since nixos-25.05, stable 24.11 does not include https://github.com/NixOS/nixpkgs/pull/361378

@@ -6,3 +6,6 @@ user:password
 
 # reddit often rejects request from GitHub Actions
 www.reddit.com/
+
+# The server is unstable
+ubuntuforums.org
