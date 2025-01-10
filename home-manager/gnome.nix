@@ -30,6 +30,7 @@
             just-perfection
             dash-to-dock
             # color-picker # Don't enable by default. It conflicts with clipboard-history
+            switcher
           ]
         );
 
@@ -135,7 +136,7 @@
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        www = [ "<Super>w" ];
+        www = [ "<Super>b" ]; # "<Super>w" is used in switcher
         home = [ ];
         email = [ ];
         search = [ "<Alt>space" ];
