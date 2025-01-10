@@ -3,6 +3,9 @@
 {
   xdg = {
     configFile = {
+      # Make sure to enable the NixOS module with empty file. See xdg.terminal-exec for detail
+      "xdg-terminals.list".text = "";
+
       "ghostty/config".text = ''
         ${builtins.readFile ../config/ghostty/config.common}
 
