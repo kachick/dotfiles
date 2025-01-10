@@ -92,7 +92,6 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
-    gnome-online-accounts # See GH-1015
   ];
 
   # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
