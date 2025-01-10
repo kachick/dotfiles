@@ -26,7 +26,7 @@ rustPlatform.buildRustPackage rec {
   '';
 
   postInstall = ''
-    install -Dm0644 'systemd/org.freedesktop.secrets.service' -t "$out/lib/systemd/user"
+    install -Dm0644 'systemd/org.freedesktop.secrets.service' -t "$out/share/dbus-1/services"
     install -Dm0644 'systemd/pass-secret-service.service' -t "$out/lib/systemd/user"
   '';
 

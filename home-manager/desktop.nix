@@ -26,26 +26,49 @@
       };
     };
 
-    configFile =
-      let
-        pass-secret-service-service = pkgs.writeText "pass-secret-service-service" ''
-          [Install]
-          WantedBy=default.target
+    # configFile =
+    #   let
+    #     pass-secret-service-service = pkgs.writeText "pass-secret-service-service" ''
+    #       [Install]
+    #       WantedBy=default.target
 
-          ${builtins.readFile "${pkgs.my.pass-secret-service-rs}/share/systemd/user/pass-secret-service.service"}
-        '';
-      in
-      {
-        # Might be simplified if https://github.com/nix-community/home-manager/pull/4990 resolved
-        "systemd/user/pass-secret-service.service".source = pass-secret-service-service;
-        "systemd/user/default.target.wants/pass-secret-service.service".source =
-          pass-secret-service-service;
-      };
+    #       ${builtins.readFile "${pkgs.my.pass-secret-service-rs}/share/systemd/user/pass-secret-service.service"}
+    #     '';
+    #   in
+    #   {
+    #     # Might be simplified if https://github.com/nix-community/home-manager/pull/4990 resolved
+    #     "systemd/user/pass-secret-service.service".source = pass-secret-service-service;
+    #     "systemd/user/default.target.wants/pass-secret-service.service".source =
+    #       pass-secret-service-service;
+    #   };
 
     # https://github.com/nix-community/home-manager/blob/d4aebb947a301b8da8654a804979a738c5c5da50/modules/services/pass-secret-service.nix#L67
     dataFile = {
       "dbus-1/services/org.freedesktop.secrets.service".source =
-        "${pkgs.my.pass-secret-service-rs}/share/systemd/user/org.freedesktop.secrets.service";
+        "${pkgs.my.pass-secret-service-rs}/share/share/dbus-1/services/org.freedesktop.secrets.service";
     };
   };
+
+  systemd.user.services.pass-secret-service =
+    let
+      busName = "org.freedesktop.secrets";
+      binPath = lib.getExe pkgs.my.pass-secret-service-rs;
+    in
+    {
+      Unit = {
+        AssertFileIsExecutable = "${binPath}";
+        Description = "org.freedesktop.secrets agent for pass";
+        Documentation = "https://github.com/grimsteel/pass-secret-service";
+        PartOf = [ "graphical-session.target" ];
+      };
+
+      Service = {
+        Type = "dbus";
+        ExecStart = binPath;
+        BusName = busName;
+        # Environment = [ "GNUPGHOME=${config.programs.gpg.homedir}" ];
+      };
+
+      Install.WantedBy = [ "graphical-session.target" ];
+    };
 }
