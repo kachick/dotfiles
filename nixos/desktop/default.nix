@@ -9,6 +9,7 @@
   imports = [
     (import ./font.nix { inherit pkgs; })
     ./kanata.nix
+    ../modules/pass-secret-service-rs.nix
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -342,10 +343,6 @@
     };
   };
 
-  # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
-  #
-  # Prefer NixOS module rather than home-manager one for making it possible to use gnome-online-accounts. See GH-1015
-  #
-  # Alternative candidates: https://github.com/grimsteel/pass-secret-service
-  services.passSecretService.enable = true;
+  # Using this libsecret implementation to fix GH-814 and GH-1015
+  services.passSecretServiceRs.enable = true;
 }
