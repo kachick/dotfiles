@@ -9,7 +9,7 @@
   imports = [
     (import ./font.nix { inherit pkgs; })
     ./kanata.nix
-    ../modules/pass-secret-service-rs.nix
+    # ../modules/pass-secret-service-rs.nix
   ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -344,5 +344,8 @@
   };
 
   # Using this libsecret implementation to fix GH-814 and GH-1015
-  services.passSecretServiceRs.enable = true;
+  # services.passSecretServiceRs = {
+  #   enable = true;
+  #   package = pkgs.my.pass-secret-service-rs;
+  # };
 }
