@@ -6,3 +6,6 @@ user:password
 
 # reddit often rejects request from GitHub Actions
 www.reddit.com/
+
+# It might be nix placeholder
+releases/tag/
