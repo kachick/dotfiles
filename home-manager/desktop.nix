@@ -17,7 +17,7 @@
   xdg = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-mime-apps.nix - different of  https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/mime.nix
     mimeApps = {
-      enable = true;
+      enable = true; # Required to enable even though it is alerting `bin/xdg-mime: line 1002: hm_mimeapps.list.new: Read-only file system`
       defaultApplications = {
         "application/pdf" = [
           "google-chrome.desktop"
