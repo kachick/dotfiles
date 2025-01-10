@@ -35,7 +35,6 @@
   # Pacthed packages
   (final: prev: {
     patched = {
-
       # TODO: Replace to stable since nixos-25.05, stable 24.11 does not include https://github.com/NixOS/nixpkgs/pull/361378
       lima = prev.unstable.lima.overrideAttrs (
         finalAttrs: previousAttrs:
