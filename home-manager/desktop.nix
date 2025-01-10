@@ -59,7 +59,10 @@
         AssertFileIsExecutable = "${binPath}";
         Description = "org.freedesktop.secrets agent for pass";
         Documentation = "https://github.com/grimsteel/pass-secret-service";
-        PartOf = [ "graphical-session.target" ];
+        PartOf = [
+          "graphical-session.target"
+          # "default.target"
+        ];
       };
 
       Service = {
@@ -69,6 +72,9 @@
         # Environment = [ "GNUPGHOME=${config.programs.gpg.homedir}" ];
       };
 
-      Install.WantedBy = [ "graphical-session.target" ];
+      Install.WantedBy = [
+        "graphical-session.target"
+        # "default.target"
+      ];
     };
 }
