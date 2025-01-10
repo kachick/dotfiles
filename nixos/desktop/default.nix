@@ -326,4 +326,20 @@
     enable = true;
     extraUpFlags = [ "--ssh" ];
   };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
+  # https://gitlab.gnome.org/GNOME/glib/-/issues/338
+  #
+  # NOTE:
+  #   This section actually generating /etc/xdg/xdg-terminals.list, however ~/.config/xdg-terminals.list will be prefferred if exists.
+  xdg.terminal-exec = {
+    enable = true;
+    # https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/5276
+    settings = {
+      default = [
+        "com.mitchellh.ghostty.desktop"
+        "Alacritty.desktop"
+      ];
+    };
+  };
 }
