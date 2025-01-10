@@ -40,9 +40,12 @@
         "systemd/user/pass-secret-service.service".source = pass-secret-service-service;
         "systemd/user/default.target.wants/pass-secret-service.service".source =
           pass-secret-service-service;
-
-        "dbus-1/services/org.freedesktop.secrets.service".source =
-          "${pkgs.my.pass-secret-service-rs}/share/systemd/user/org.freedesktop.secrets.service";
       };
+
+    # https://github.com/nix-community/home-manager/blob/d4aebb947a301b8da8654a804979a738c5c5da50/modules/services/pass-secret-service.nix#L67
+    dataFile = {
+      "dbus-1/services/org.freedesktop.secrets.service".source =
+        "${pkgs.my.pass-secret-service-rs}/share/systemd/user/org.freedesktop.secrets.service";
+    };
   };
 }
