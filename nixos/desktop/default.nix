@@ -231,6 +231,10 @@
       just-perfection
       dash-to-dock
       color-picker
+    ])
+    ++ (with pkgs.unstable.gnomeExtensions; [
+      switcher # in nixos-24.11 does not support GNOME 47. Require https://github.com/NixOS/nixpkgs/commit/d729de868927d78589fe7bb2db733b131626d117#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR796
+      # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/commit/f2d1969a05958821ca07a7df7c36639d6477d8fb applied in nixos-24.11
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
@@ -320,6 +324,22 @@
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
+  };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
+  # https://gitlab.gnome.org/GNOME/glib/-/issues/338
+  #
+  # NOTE:
+  #   This section actually generating /etc/xdg/xdg-terminals.list, however ~/.config/xdg-terminals.list will be prefferred if exists.
+  xdg.terminal-exec = {
+    enable = true;
+    # https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/5276
+    settings = {
+      default = [
+        "com.mitchellh.ghostty.desktop"
+        "Alacritty.desktop"
+      ];
+    };
   };
 
   # Make it possible to use libsecret which is required in vscode GitHub authentication(--password-store="gnome-libsecret"), without gnome-keyring(GH-814).
