@@ -21,7 +21,7 @@
   # Patched and override existing name because of it is not cofigurable
   (final: prev: {
     # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/gn/gnome-keyring/package.nix
-    # To disable SSH_AUTH_SOCK by gnome-keyring
+    # To disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
     #
     # And it should be override the package it self, the module is not configurable for the package. https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/desktops/gnome/gnome-keyring.nix
     gnome-keyring = prev.gnome-keyring.overrideAttrs (
