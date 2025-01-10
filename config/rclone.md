@@ -1,7 +1,7 @@
 # Rclone
 
 Rclone enables an OSS vault on several Cloud Storages.\
-And it makes it possible to use [Google Drive on Linux](https://abevoelker.github.io/how-long-since-google-said-a-google-drive-linux-client-is-coming/).
+And it makes it possible to use [Google Drive on Linux](https://abevoelker.github.io/how-long-since-google-said-a-google-drive-linux-client-is-coming/) without gnome-online-accounts.
 
 ## Setup
 

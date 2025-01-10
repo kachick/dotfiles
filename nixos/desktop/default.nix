@@ -95,14 +95,15 @@
     gnome-online-accounts # See GH-1015
   ];
 
-  # Recommended to be uninstalled by gnupg. I prefer this way, even though disabling gpg-agent ssh integrations.
+  # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
   # https://wiki.gnupg.org/GnomeKeyring
   #
-  # And enabling this makes $SSH_AUTH_SOCK overriding even through enabled gpg-agent in home-manager
-  # https://github.com/NixOS/nixpkgs/issues/101616
-  #
-  # Using mkforce for https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-  # services.gnome.gnome-keyring.enable = lib.mkForce false;
+  # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
+  services.gnome.gnome-keyring.enable = true;
+  # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
+  # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. So I should stop the first flag here.
+  # This workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
+  security.pam.sshAgentAuth.enable = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
