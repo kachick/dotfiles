@@ -283,6 +283,8 @@
     XCURSOR_THEME = "Adwaita";
 
     __HM_SESS_VARS_SOURCED = ""; # Workaround for GH-755 and GH-890
+
+    TERMINAL = lib.getExe pkgs.unstable.ghostty;
   };
 
   # https://github.com/NixOS/nixpkgs/issues/33282#issuecomment-523572259
