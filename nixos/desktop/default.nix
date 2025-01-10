@@ -101,9 +101,8 @@
   # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
   services.gnome.gnome-keyring.enable = true;
   # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
-  # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. So I should stop the first flag here.
-  # This workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
-  security.pam.sshAgentAuth.enable = lib.mkForce false; # Require mkforce if you want to disable.
+  # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. But just disabling security.pam.sshAgentAuth does not resolve it. It should be done in package build phase.
+  # The workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
