@@ -34,13 +34,6 @@
 
           ${builtins.readFile "${pkgs.my.pass-secret-service-rs}/share/systemd/user/pass-secret-service.service"}
         '';
-
-        dbus-pass-secret-service-service = pkgs.writeText "dbus-pass-secret-service-service" ''
-          [Install]
-          WantedBy=default.target
-
-          ${builtins.readFile "${pkgs.my.pass-secret-service-rs}/share/systemd/user/org.freedesktop.secrets.service"}
-        '';
       in
       {
         # Might be simplified if https://github.com/nix-community/home-manager/pull/4990 resolved
@@ -48,9 +41,8 @@
         "systemd/user/default.target.wants/pass-secret-service.service".source =
           pass-secret-service-service;
 
-        "systemd/user/org.freedesktop.secrets.service".source = dbus-pass-secret-service-service;
-        "systemd/user/default.target.wants/org.freedesktop.secrets.service".source =
-          dbus-pass-secret-service-service;
+        "dbus-1/services/org.freedesktop.secrets.service".source =
+          "${pkgs.my.pass-secret-service-rs}/share/systemd/user/org.freedesktop.secrets.service";
       };
   };
 }
