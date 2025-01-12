@@ -20,7 +20,6 @@
         "networkmanager"
         "wheel"
         "input" # For finger print in GDM
-        "libvirtd" # For virt-manager
         "scanner"
         "lp" # For scanner
       ];
@@ -70,12 +69,6 @@
 
   # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
   programs.ssh.enableAskPassword = false;
-
-  # https://nixos.wiki/wiki/Virt-manager
-  #
-  # distrobox is a container based solution, not vm. And see https://github.com/89luca89/distrobox/issues/958
-  virtualisation.libvirtd.enable = true;
-  programs.virt-manager.enable = true;
 
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
