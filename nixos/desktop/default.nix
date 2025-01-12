@@ -173,6 +173,9 @@
 
       podman-desktop
 
+      papers # pdf reader. successor of evince
+      loupe # image viewer
+
       ## Unfree packages
 
       # TODO: Consider using vscodium again
