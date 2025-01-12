@@ -167,7 +167,6 @@
       calibre
 
       dconf-editor
-      gnome-boxes
 
       nordic
 
