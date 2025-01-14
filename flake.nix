@@ -26,8 +26,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
-      url = "github:kachick/selfup/v1.1.7";
-      # https://github.com/kachick/selfup/blob/v1.1.7/flake.nix#L8
+      url = "github:kachick/selfup/v1.1.9";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     psfeditor = {
