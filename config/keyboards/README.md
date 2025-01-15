@@ -2,7 +2,7 @@
 
 ## HWDB
 
-TODO: UPDATE ME with extracting from NixOS Config
+See [the definitions](https://github.com/search?q=repo%3Akachick%2Fdotfiles+extraHwdb&type=code)
 
 ## Kanata
 
