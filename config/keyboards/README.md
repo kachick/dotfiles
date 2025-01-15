@@ -2,9 +2,22 @@
 
 ## HWDB
 
-TODO: UPDATE ME with extracting from NixOS Config
+See [the definitions](https://github.com/search?q=repo%3Akachick%2Fdotfiles+extraHwdb&type=code)
 
 ## Kanata
+
+Force exiting if I have faced to similar problems like GH-963
+
+`Left Control` + `Space` + `Esc`
+
+Then the process will die. You can restart it with `systemctl start kanata-all`.
+Not just the `kanata`. You can check it with `systemctl list-unit-files "kanata*`.
+
+```console
+> systemctl list-unit-files "kanata*"
+UNIT FILE STATE PRESET
+kanata-all.service enabled ignored
+```
 
 ## NixOS
 
