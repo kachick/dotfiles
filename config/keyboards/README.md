@@ -19,6 +19,8 @@ UNIT FILE STATE PRESET
 kanata-all.service enabled ignored
 ```
 
+And I added an escape hatch for caps lock. Which is only useable when keeping `F6` and `c + a + p`.
+
 ## Windows
 
 I have replaced "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) and [alt-ime-ahk](https://github.com/karakaram/alt-ime-ahk)" with [kanata](https://github.com/jtroo/kanata).

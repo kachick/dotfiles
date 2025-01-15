@@ -2,7 +2,7 @@
 
 ;; Required to specify keys which should be considered in tap-hold-press (=spc, tab for alt-spc, alt-tab)
 ;; See https://github.com/jtroo/kanata/blob/fc850fab9da7d0bf377e215f0b923062e037ff64/docs/config.adoc?plain=1#L142-L143
-(defsrc caps lalt ralt spc tab f1 a c)
+(defsrc caps lalt ralt spc tab f6 a c p)
 
 (defvar
   tap-timeout  200
@@ -16,10 +16,15 @@
   caps lctl
   lalt (tap-hold-press $tt $ht muhenkan lalt)
   ralt (tap-hold-press $tt $ht henkan ralt)
+  f6 (layer-while-held help)
 )
 
-;; Escape hatch for use of caps. See GH-963
+(deflayermap (help)
+)
+
+;; Escape hatch for use of caps. See GH-963.
+;; Should be disabled on default layer with the last argument. For example, if using "a" in the combination, "main" will be "mian"
 (defchordsv2-experimental
   ;; Don't use caps for inputs combination
-  (f1 c a) caps 500 all-released ()
+  (c a p) caps 500 all-released (base)
 )
