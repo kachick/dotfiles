@@ -172,4 +172,9 @@
       "!.git"
     ];
   };
+
+  xdg.configFile."television" = {
+    source = ../config/television;
+    recursive = true;
+  };
 }
