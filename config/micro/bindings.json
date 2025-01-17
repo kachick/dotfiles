@@ -1,3 +1,5 @@
 {
-  "Ctrl-t": "command:fzfinder"
+  "Ctrl-t": "command:fzfinder",
+  "Ctrl-g": "None",
+  "F1": "ToggleHelp"
 }
