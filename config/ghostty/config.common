@@ -8,6 +8,7 @@ cursor-style-blink = false
 # See https://github.com/ghostty-org/ghostty/discussions/2812
 shell-integration-features = no-cursor
 cursor-style = bar
+adjust-cursor-thickness = 400%
 
 # Looks not appeared in Linux. Why? However I can omit this trivial thing.
 background-opacity = 0.85
