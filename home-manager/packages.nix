@@ -13,6 +13,7 @@
   nushell # TODO: Install the dotfiles which is used in Windows
   starship
   direnv
+  unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
 
   fzf # History: CTRL+R, Walker: CTRL+T
   # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
