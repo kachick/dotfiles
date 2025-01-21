@@ -9,9 +9,9 @@ EnumerateBackwardKeys=
 EnumerateSkipFirst=False
 
 [Hotkey/TriggerKeys]
-# 0=Control+space # Disabled to avoid conflict with https://github.com/curlpipe/ox/issues/194#issuecomment-2581274641
-0=Zenkaku_Hankaku
-1=Hangul
+0=Control+space
+1=Zenkaku_Hankaku
+2=Hangul
 
 [Hotkey/AltTriggerKeys]
 0=Shift_L
