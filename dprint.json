@@ -11,6 +11,11 @@
   },
   "toml": {
   },
+  "stylua": {
+    "associations": [
+      "config/ox/.oxrc"
+    ]
+  },
   "excludes": [
     ".git",
     ".direnv",
@@ -23,6 +28,7 @@
     "https://plugins.dprint.dev/markdown-0.17.8.wasm",
     "https://plugins.dprint.dev/toml-0.6.4.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm",
-    "https://plugins.dprint.dev/kachick/kdl-0.2.1.wasm"
+    "https://plugins.dprint.dev/kachick/kdl-0.2.1.wasm",
+    "https://github.com/lizclipse/dprint-plugin-stylua/releases/download/v0.3.0-lizclipse/dprint_plugin_stylua.wasm"
   ]
 }

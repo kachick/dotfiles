@@ -1,24 +1,23 @@
 -- Configuration generated for Ox 0.7.6 by the configuration assistant --
 
 -- Pallette --
-black = 'black'
-darkgrey = 'darkgrey'
-red = 'red'
-darkred = 'darkred'
-green = 'green'
-darkgreen = 'darkgreen'
-yellow = 'yellow'
-darkyellow = 'darkyellow'
-blue = 'blue'
-darkblue = 'darkblue'
-magenta = 'magenta'
-darkmagenta = 'darkmagenta'
-cyan = 'cyan'
-darkcyan = 'darkcyan'
-white = 'white'
-grey = 'grey'
-transparent = 'transparent'
-
+black = "black"
+darkgrey = "darkgrey"
+red = "red"
+darkred = "darkred"
+green = "green"
+darkgreen = "darkgreen"
+yellow = "yellow"
+darkyellow = "darkyellow"
+blue = "blue"
+darkblue = "darkblue"
+magenta = "magenta"
+darkmagenta = "darkmagenta"
+cyan = "cyan"
+darkcyan = "darkcyan"
+white = "white"
+grey = "grey"
+transparent = "transparent"
 
 -- Configure Colours --
 colors.editor_bg = black
@@ -66,37 +65,37 @@ colors.file_tree_brown = darkred
 colors.file_tree_grey = grey
 
 -- Configure Syntax Highlighting Colours --
-syntax:set("string", green)  -- Strings, bright green
-syntax:set("comment", darkgrey)  -- Comments, light purple/gray
-syntax:set("digit", red)  -- Digits, cyan
-syntax:set("keyword", darkmagenta)  -- Keywords, vibrant pink
-syntax:set("attribute", blue)  -- Attributes, cyan
-syntax:set("character", darkblue)  -- Characters, cyan
-syntax:set("type", yellow)  -- Types, light purple
-syntax:set("function", darkblue)  -- Function names, light purple
-syntax:set("header", blue)  -- Headers, cyan
-syntax:set("macro", red)  -- Macros, red
-syntax:set("namespace", darkblue)  -- Namespaces, light purple
-syntax:set("struct", magenta)  -- Structs, classes, and enums, light purple
-syntax:set("operator", grey)  -- Operators, light purple/gray
-syntax:set("boolean", green)  -- Booleans, bright green
-syntax:set("table", darkmagenta)  -- Tables, light purple
-syntax:set("reference", magenta)  -- References, vibrant pink
-syntax:set("tag", darkblue)  -- Tags (e.g. HTML tags), cyan
-syntax:set("heading", darkmagenta)  -- Headings, light purple
-syntax:set("link", magenta)  -- Links, vibrant pink
-syntax:set("key", magenta)  -- Keys, vibrant pink
-syntax:set("quote", grey)  -- Quotes, light purple/gray
-syntax:set("bold", red)  -- Bold text, cyan
-syntax:set("italic", darkyellow)  -- Italic text, cyan
-syntax:set("block", blue)  -- Code blocks, cyan
-syntax:set("image", blue)  -- Images in markup languages, cyan
-syntax:set("list", green)  -- Lists, bright green
-syntax:set("insertion", green)  -- Insertions (e.g. diff highlight), bright green
-syntax:set("deletion", red)  -- Deletions (e.g. diff highlight), red
+syntax:set("string", green) -- Strings, bright green
+syntax:set("comment", darkgrey) -- Comments, light purple/gray
+syntax:set("digit", red) -- Digits, cyan
+syntax:set("keyword", darkmagenta) -- Keywords, vibrant pink
+syntax:set("attribute", blue) -- Attributes, cyan
+syntax:set("character", darkblue) -- Characters, cyan
+syntax:set("type", yellow) -- Types, light purple
+syntax:set("function", darkblue) -- Function names, light purple
+syntax:set("header", blue) -- Headers, cyan
+syntax:set("macro", red) -- Macros, red
+syntax:set("namespace", darkblue) -- Namespaces, light purple
+syntax:set("struct", magenta) -- Structs, classes, and enums, light purple
+syntax:set("operator", grey) -- Operators, light purple/gray
+syntax:set("boolean", green) -- Booleans, bright green
+syntax:set("table", darkmagenta) -- Tables, light purple
+syntax:set("reference", magenta) -- References, vibrant pink
+syntax:set("tag", darkblue) -- Tags (e.g. HTML tags), cyan
+syntax:set("heading", darkmagenta) -- Headings, light purple
+syntax:set("link", magenta) -- Links, vibrant pink
+syntax:set("key", magenta) -- Keys, vibrant pink
+syntax:set("quote", grey) -- Quotes, light purple/gray
+syntax:set("bold", red) -- Bold text, cyan
+syntax:set("italic", darkyellow) -- Italic text, cyan
+syntax:set("block", blue) -- Code blocks, cyan
+syntax:set("image", blue) -- Images in markup languages, cyan
+syntax:set("list", green) -- Lists, bright green
+syntax:set("insertion", green) -- Insertions (e.g. diff highlight), bright green
+syntax:set("deletion", red) -- Deletions (e.g. diff highlight), red
 
 -- Document Configuration --
-document.indentation = 'spaces'
+document.indentation = "spaces"
 document.tab_width = 2
 
 -- Greeting Message Configuration --

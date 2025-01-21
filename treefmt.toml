@@ -22,6 +22,8 @@ includes = [
   "*.yaml",
   "*.yml",
   "*.kdl",
+  "*.lua",
+  "*.oxrc",
 ]
 
 [formatter.nixfmt-rfc-style]
