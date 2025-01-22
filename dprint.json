@@ -12,9 +12,6 @@
   "toml": {
   },
   "stylua": {
-    "associations": [
-      "config/ox/.oxrc"
-    ]
   },
   "excludes": [
     ".git",

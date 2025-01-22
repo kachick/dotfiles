@@ -1,6 +1,6 @@
 -- Configuration generated for Ox 0.7.6 by the configuration assistant --
 
--- Pallette --
+-- Palette --
 black = "black"
 darkgrey = "darkgrey"
 red = "red"
