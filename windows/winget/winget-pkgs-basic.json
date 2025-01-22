@@ -17,6 +17,9 @@
           "PackageIdentifier": "Mozilla.Firefox.DeveloperEdition.ja"
         },
         {
+          "PackageIdentifier": "Mozilla.Firefox"
+        },
+        {
           "PackageIdentifier": "Microsoft.PowerToys"
         },
         {
