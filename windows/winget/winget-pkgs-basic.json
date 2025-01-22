@@ -44,6 +44,9 @@
           "PackageIdentifier": "sharkdp.bat"
         },
         {
+          "PackageIdentifier": "eza-community.eza"
+        },
+        {
           "PackageIdentifier": "Helix.Helix"
         },
         {

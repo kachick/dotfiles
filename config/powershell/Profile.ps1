@@ -15,7 +15,8 @@ Set-PSReadlineOption -AddToHistoryHandler {
 }
 
 function la {
-    Get-ChildItem -Force @Args
+    # Removed no-permissions and no-octal to adjust for Windows
+    eza --long --all --group-directories-first --time-style=iso --color=always --no-user --sort=modified @Args
 }
 
 # https://github.com/microsoft/winget-cli/issues/2498#issuecomment-1553863082
