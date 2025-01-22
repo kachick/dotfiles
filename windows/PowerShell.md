@@ -45,6 +45,10 @@ I didn't try disabling defenders, but using nushell might be better for the Wind
 - <https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md>
 - <https://github.com/kachick/learn_PowerShell>
 
+## How to delegate arguments like bash's `"@"`?
+
+[`@Args`](https://learn.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.4#splatting-command-parameters)
+
 ## History substring search in major shells for Windows
 
 - PowerShell: Using <https://github.com/kelleyma49/PSFzf> made much slow, prefer <https://github.com/kachick/PSFzfHistory>

@@ -15,7 +15,7 @@ Set-PSReadlineOption -AddToHistoryHandler {
 }
 
 function la {
-    Get-ChildItem -Force
+    Get-ChildItem -Force @Args
 }
 
 # https://github.com/microsoft/winget-cli/issues/2498#issuecomment-1553863082
