@@ -14,6 +14,9 @@
           "PackageIdentifier": "Google.Chrome.EXE"
         },
         {
+          "PackageIdentifier": "Mozilla.Firefox.DeveloperEdition.ja"
+        },
+        {
           "PackageIdentifier": "Microsoft.PowerToys"
         },
         {
