@@ -418,7 +418,7 @@ $env.config = {
         }
         {
             name: history_menu
-            modifier: control_shift # Changed from original ctrol to avoid conflict with fzf integration
+            modifier: control_shift # Changed from original control to avoid conflict with fzf integration
             keycode: char_r
             mode: [emacs, vi_insert, vi_normal]
             event: { send: menu name: history_menu }
@@ -432,7 +432,7 @@ $env.config = {
           event: [
             {
               send: ExecuteHostCommand
-              cmd: "commandline edit --insert (
+              cmd: "commandline edit (
                 history
                   | get command
                   | reverse
