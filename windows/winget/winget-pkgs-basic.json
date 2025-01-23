@@ -62,6 +62,9 @@
           "PackageIdentifier": "Balena.Etcher"
         },
         {
+          "PackageIdentifier": "tuna-f1sh.cyme"
+        },
+        {
           "PackageIdentifier": "Microsoft.WindowsTerminal"
         },
         {
