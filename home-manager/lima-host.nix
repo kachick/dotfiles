@@ -17,7 +17,7 @@ in
 
   home = {
     packages = [
-      # lima pakcgae includes qemu in the PATH.
+      # lima package includes qemu in the PATH.
       # But required to specify qemu in your Linux. See GH-1049 and NixOS config for detail.
       # As far as I know, not required the global qemu in darwin.
       lima
