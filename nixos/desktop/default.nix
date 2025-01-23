@@ -137,6 +137,11 @@
 
       alacritty
 
+      # Ensure existing qemu-img with lima for use of systemd.
+      # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
+      # See GH-1049 for detail.
+      qemu
+
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       mission-center
