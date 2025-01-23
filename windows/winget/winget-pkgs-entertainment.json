@@ -5,6 +5,9 @@
     {
       "Packages": [
         {
+          "PackageIdentifier": "sunfish-shogi.shogihome"
+        },
+        {
           "PackageIdentifier": "Valve.Steam"
         },
         {
