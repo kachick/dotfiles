@@ -23,6 +23,9 @@
           "PackageIdentifier": "Microsoft.PowerToys"
         },
         {
+          "PackageIdentifier": "jtroo.kanata_gui"
+        },
+        {
           "PackageIdentifier": "Cloudflare.Warp"
         },
         {

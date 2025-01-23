@@ -40,6 +40,11 @@ Basically following codes will be done in PowerShell
    winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
 
+1. Setup key remapper.
+   1. Copy `kanata.kbd` into `$env:LOCALAPPDATA\Microsoft\WinGet\Packages\jtroo.kanata_gui_Microsoft.Winget.Source_8wekyb3d8bbwe`.\
+      This should be addressed after winget task.
+   1. Register the shortcut in path of `shell:common startup`
+
 1. Remove needless pre-installed tools. Pick up from [bulk-uninstall.ps](./winget/bulk-uninstall.ps1)
 1. Enable Bitlocker and backup the restore key
 
