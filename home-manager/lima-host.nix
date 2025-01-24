@@ -5,15 +5,62 @@
   ...
 }:
 let
-  lima = pkgs.patched.lima;
+  lima = pkgs.unstable.lima;
 in
 {
   programs.ssh.includes = [
-    # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
-    # * adding this as `ssh -F` makes it possible to use ssh login, it is required for `ms-vscode-remote.remote-ssh`
-    # * the content of file will be changed for each instance creation
-    "${config.home.homeDirectory}/.lima/default/ssh.config"
+    "${config.home.homeDirectory}/.lima/default/gssapi-considered-ssh.config"
   ];
+
+  systemd.user = {
+    paths.trim-gssapi-entry-in-ssh = {
+      Unit = {
+        Description = ''
+          # See GH-950 and NixOS/nixpkgs#30739 for detail
+
+          ## Why SSH is required?
+
+          Lima can generate ssh config and adding it as `ssh -F` makes it possible to use ssh login.
+          And we also use the shell as `lima` without ssh.
+          However It is not enough for use of `ms-vscode-remote.remote-ssh`.
+
+          ## Why patching is required?
+
+          The content of lima generated file will be changed for each instance creation,
+          and it have unneccesarry gssapi entry, it makes annoy warnings at every ssh use since NixOS 24.11
+        '';
+      };
+      Path = {
+        # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
+        PathChanged = "${config.home.homeDirectory}/.lima/default/ssh.config";
+        Unit = "trim-gssaapi-entry-in-ssh.service";
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
+
+    services.trim-gssapi-entry-in-ssh = {
+      Unit = {
+        Description = "Trim GSSAPIAuthentication entry in SSH config";
+      };
+      Service = {
+        WorkingDirectory = "${config.home.homeDirectory}/.lima/default";
+        ExecStart = pkgs.writeShellApplication {
+          runtimeInputs = with pkgs; [
+            coreutils
+            gnugrep
+          ];
+          text = ''
+            rm ./gssapi-considered-ssh.config
+            grep --invert-match 'GSSAPIAuthentication' \
+              '${config.home.homeDirectory}/.lima/default/ssh.config' \
+              > ./gssapi-considered-ssh.config
+          '';
+        };
+      };
+    };
+  };
 
   home = {
     packages = [
