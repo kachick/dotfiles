@@ -50,12 +50,17 @@ in
               gnugrep
             ];
             text = ''
+              origin='ssh.config'
               trimmed='./gssapi-considered-ssh.config'
-              touch "$trimmed" # Make sure exists before removing
+
+               # Make sure exists before removing
+              touch "$origin"
+              touch "$trimmed"
+
               rm "$trimmed" # Make sure none before redirect
+
               grep --invert-match 'GSSAPIAuthentication' \
-                '${config.home.homeDirectory}/.lima/default/ssh.config' \
-                > "$trimmed"
+                "$origin" > "$trimmed"
             '';
             meta.description = "GH-950";
           }
