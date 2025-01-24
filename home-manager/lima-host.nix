@@ -47,6 +47,7 @@ in
       Service = {
         WorkingDirectory = "${config.home.homeDirectory}/.lima/default";
         ExecStart = pkgs.writeShellApplication {
+          name = "trim-gssapi-entry-in-ssh";
           runtimeInputs = with pkgs; [
             coreutils
             gnugrep
@@ -57,6 +58,7 @@ in
               '${config.home.homeDirectory}/.lima/default/ssh.config' \
               > ./gssapi-considered-ssh.config
           '';
+          meta.description = "GH-950";
         };
       };
     };
