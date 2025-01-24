@@ -36,6 +36,7 @@ in
       };
     };
 
+    # systemctl --user status trim-gssapi-entry-in-ssh.service
     services.trim-gssapi-entry-in-ssh = {
       Unit = {
         Description = "Trim GSSAPIAuthentication entry in SSH config";
@@ -65,6 +66,7 @@ in
             meta.description = "GH-950";
           }
         );
+        Restart = "on-failure";
       };
     };
   };
