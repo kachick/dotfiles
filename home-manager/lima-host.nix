@@ -42,20 +42,22 @@ in
       };
       Service = {
         WorkingDirectory = "${config.home.homeDirectory}/.lima/default";
-        ExecStart = pkgs.writeShellApplication {
-          name = "trim-gssapi-entry-in-ssh";
-          runtimeInputs = with pkgs; [
-            coreutils
-            gnugrep
-          ];
-          text = ''
-            rm ./gssapi-considered-ssh.config
-            grep --invert-match 'GSSAPIAuthentication' \
-              '${config.home.homeDirectory}/.lima/default/ssh.config' \
-              > ./gssapi-considered-ssh.config
-          '';
-          meta.description = "GH-950";
-        };
+        ExecStart = lib.getExe (
+          pkgs.writeShellApplication {
+            name = "trim-gssapi-entry-in-ssh";
+            runtimeInputs = with pkgs; [
+              coreutils
+              gnugrep
+            ];
+            text = ''
+              rm ./gssapi-considered-ssh.config
+              grep --invert-match 'GSSAPIAuthentication' \
+                '${config.home.homeDirectory}/.lima/default/ssh.config' \
+                > ./gssapi-considered-ssh.config
+            '';
+            meta.description = "GH-950";
+          }
+        );
       };
     };
   };
