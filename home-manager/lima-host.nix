@@ -15,20 +15,16 @@ in
   systemd.user = {
     paths.trim-gssapi-entry-in-ssh = {
       Unit = {
-        Description = ''
-          # See GH-950 and NixOS/nixpkgs#30739 for detail
-
-          ## Why SSH is required?
-
-          Lima can generate ssh config and adding it as `ssh -F` makes it possible to use ssh login.
-          And we also use the shell as `lima` without ssh.
-          However It is not enough for use of `ms-vscode-remote.remote-ssh`.
-
-          ## Why patching is required?
-
-          The content of lima generated file will be changed for each instance creation,
-          and it have unneccesarry gssapi entry, it makes annoy warnings at every ssh use since NixOS 24.11
-        '';
+        # ## Why SSH is required
+        #
+        # Lima can generate ssh config and adding it as `ssh -F` makes it possible to use ssh login.
+        # And we also use the shell as `lima` without ssh.
+        # However It is not enough for use of `ms-vscode-remote.remote-ssh`.
+        #
+        # ## Why patching is required?
+        # The content of lima generated file will be changed for each instance creation,
+        # and it have unneccesarry gssapi entry, it makes annoy warnings at every ssh use since NixOS 24.11
+        Description = "See GH-950 and NixOS/nixpkgs#30739 for detail";
       };
       Path = {
         # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
