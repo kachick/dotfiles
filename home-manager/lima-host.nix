@@ -32,7 +32,7 @@ in
         Unit = "trim-gssaapi-entry-in-ssh.service";
       };
       Install = {
-        WantedBy = [ "default.target" ];
+        WantedBy = [ "paths.target" ];
       };
     };
 
