@@ -1,5 +1,7 @@
 # See https://git-scm.com/docs/gitignore for the syntaxes
 
+.env
+
 # Don't include any history files! It might make an accident... :scream:
 *hist*
 # https://stackoverflow.com/questions/5533050/gitignore-exclude-folder-but-include-specific-subfolder

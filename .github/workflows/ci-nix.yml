@@ -7,13 +7,13 @@ on:
       - '.github/workflows/ci-nix.yml'
       - '**.nix'
       - 'flake.*'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   pull_request:
     paths:
       - '.github/workflows/ci-nix.yml'
       - '**.nix'
       - 'flake.*'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

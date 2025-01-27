@@ -2,11 +2,118 @@
 
 version: '3'
 
-vars:
-  GREETING: Hello, World!
+silent: false
 
 tasks:
   default:
+    deps:
+      - help
+
+  apply:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - nix run .#home-manager -- switch -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+
+  test:
+    deps:
+      - test-go
+    cmds:
+      # -n = dry-run
+      - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+
+  test-go:
+    cmds:
+      - go test ./...
+      - cd ./pkgs/reponame && go test ./...
+
+  setup:
+    deps:
+      - build
+    cmds:
+      - cp .githooks/* .git/hooks/
+      - git config --local core.whitespace cr-at-eol
+      - mkdir -p dist/race
+
+  fmt:
+    cmds:
+      - treefmt
+
+  build:
+    cmds:
+      - go build -v -o dist ./...
+
+  build-lint:
+    cmds:
+      - go build -v -o dist/lint ./cmd/lint
+    sources:
+      - internal/fileutils/*.go
+      - ./cmd/lint/*.go
+    generates:
+      - dist/lint
+
+  lint:
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint
+
+  lint-all:
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint -all
+
+  check:
+    deps:
+      - 'build'
+      - 'test'
+      - 'lint-all'
+      - 'build-go-race-as-the-race-test'
+
+  update:
+    cmds:
+      - nix flake update --commit-lock-file
+
+  help:
+    cmds:
+      - task --list-all
+
+  workspace:
+    cmds:
+      - zellij --layout ./config/zellij/layouts/dotfiles.kdl
+
+  sandbox:
+    cmds:
+      - ./containers/sandbox.bash
+
+  sandbox-cr-*:
+    vars:
+      TAG: '{{index .MATCH 0}}'
+    cmds:
+      - './containers/sandbox-with-ghcr.bash {{.TAG}}'
+
+  build-container:
+    cmds:
+      - './containers/build.bash'
+
+  build-go-race-as-the-race-test:
+    cmds:
+      - go build -v -race -o dist/race ./...
+
+  # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+  ci-dev:
+    deps: [
+      'default',
+      'setup',
+      'deps',
+      'build',
+      # 'test', # Needs home-manager, so needless in Nix-CI
+      'lint-all',
+      'test-go',
+      'build-go-race-as-the-race-test',
+      'fmt',
+    ]
+
+  # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+  ci-darwin:
+    cmds:
+      - task --version
