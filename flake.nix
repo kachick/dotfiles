@@ -103,6 +103,7 @@
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
                 cargo-make
+                go-task
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
