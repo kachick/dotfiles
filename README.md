@@ -196,9 +196,16 @@ I basically [give up to maintain macOS environment](https://github.com/kachick/d
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
-## Note
+## Develop
 
-If you are developing this repository, the simple reactivation is as follows.
+If you are developing this repository, putting `.env` makes easy reactivations.
+
+```bash
+echo 'NIX_DEVICE_SPECIFIER=wsl-ubuntu' > .env
+direnv allow .
+```
+
+Then you can apply home-manager with
 
 ```bash
 task apply
@@ -210,5 +217,3 @@ For NixOS
 sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
     task apply
 ```
-
-If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
