@@ -201,14 +201,14 @@ Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 If you are developing this repository, the simple reactivation is as follows.
 
 ```bash
-makers apply 'kachick@wsl-ubuntu'
+task apply
 ```
 
 For NixOS
 
 ```bash
 sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    makers apply 'kachick@nixos-desktop'
+    task apply
 ```
 
 If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).

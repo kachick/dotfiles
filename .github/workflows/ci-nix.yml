@@ -45,7 +45,7 @@ jobs:
       - run: nix flake check
         # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
         if: runner.os == 'Linux'
-      - run: nix develop --command makers ci-dev
+      - run: nix develop --command task ci-dev
         if: runner.os == 'Linux'
-      - run: nix develop --command makers ci-darwin
+      - run: nix develop --command task ci-darwin
         if: runner.os == 'macOS'

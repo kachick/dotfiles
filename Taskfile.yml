@@ -21,6 +21,8 @@ tasks:
       - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
 
   test-go:
+    sources:
+      - '**.go'
     cmds:
       - go test ./...
       - cd ./pkgs/reponame && go test ./...
@@ -38,6 +40,11 @@ tasks:
       - treefmt
 
   build:
+    sources:
+      - ./cmd/**.go
+    generates:
+      - dist/**
+    # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
     cmds:
       - go build -v -o dist ./...
 
@@ -95,9 +102,11 @@ tasks:
     cmds:
       - './containers/build.bash'
 
-  build-go-race-as-the-race-test:
+  deps:
+    deps:
+      - build
     cmds:
-      - go build -v -race -o dist/race ./...
+      - ./dist/deps
 
   # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
   ci-dev:
@@ -109,7 +118,6 @@ tasks:
       # 'test', # Needs home-manager, so needless in Nix-CI
       'lint-all',
       'test-go',
-      'build-go-race-as-the-race-test',
       'fmt',
     ]
 
