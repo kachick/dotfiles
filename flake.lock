@@ -39,15 +39,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1736373539,
-        "narHash": "sha256-dinzAqCjenWDxuy+MqUQq0I4zUSfaCvN9rzuCmgMZJY=",
-        "owner": "nix-community",
+        "lastModified": 1737954034,
+        "narHash": "sha256-TbjPf48Z85zgOZjBXLmx+elczAUM7c/Ik7oTDcZc6mY=",
+        "owner": "kachick",
         "repo": "home-manager",
-        "rev": "bd65bc3cde04c16755955630b344bc9e35272c56",
+        "rev": "f33926dadd874bb4e7b46e5ee9bb5102842b6665",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "kachick",
         "ref": "release-24.11",
         "repo": "home-manager",
         "type": "github"
@@ -60,15 +60,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1736373539,
-        "narHash": "sha256-dinzAqCjenWDxuy+MqUQq0I4zUSfaCvN9rzuCmgMZJY=",
-        "owner": "nix-community",
+        "lastModified": 1737954034,
+        "narHash": "sha256-TbjPf48Z85zgOZjBXLmx+elczAUM7c/Ik7oTDcZc6mY=",
+        "owner": "kachick",
         "repo": "home-manager",
-        "rev": "bd65bc3cde04c16755955630b344bc9e35272c56",
+        "rev": "f33926dadd874bb4e7b46e5ee9bb5102842b6665",
         "type": "github"
       },
       "original": {
-        "owner": "nix-community",
+        "owner": "kachick",
         "ref": "release-24.11",
         "repo": "home-manager",
         "type": "github"
