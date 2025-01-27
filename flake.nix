@@ -13,7 +13,7 @@
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
-      # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 for syable channel
+      # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
       # See https://github.com/kachick/dotfiles/issues/1051 for detail
       url = "github:kachick/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
