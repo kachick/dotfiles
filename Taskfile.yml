@@ -28,12 +28,13 @@ tasks:
       - cd ./pkgs/reponame && go test ./...
 
   mkdir:
+    internal: true
     cmds:
       - mkdir -p dist/race
 
   setup:
     deps:
-      - build
+      - build-cmd
     cmds:
       - cp .githooks/* .git/hooks/
       - git config --local core.whitespace cr-at-eol
@@ -42,7 +43,8 @@ tasks:
     cmds:
       - treefmt
 
-  build:
+  build-cmd:
+    internal: true
     deps:
       - mkdir
     sources:
@@ -54,6 +56,7 @@ tasks:
       - go build -v -o dist ./...
 
   build-lint:
+    internal: true
     deps:
       - mkdir
     cmds:
@@ -78,10 +81,9 @@ tasks:
 
   check:
     deps:
-      - 'build'
+      - 'build-cmd'
       - 'test'
       - 'lint-all'
-      - 'build-go-race-as-the-race-test'
 
   update:
     cmds:
@@ -99,7 +101,7 @@ tasks:
     cmds:
       - ./containers/sandbox.bash
 
-  sandbox-cr-*:
+  ghcr-*:
     vars:
       TAG: '{{index .MATCH 0}}'
     cmds:
@@ -111,22 +113,21 @@ tasks:
 
   deps:
     deps:
-      - build
+      - build-cmd
     cmds:
       - ./dist/deps
 
   # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
   ci-dev:
-    deps: [
-      'default',
-      'setup',
-      'deps',
-      'build',
+    deps:
+      - 'default'
+      - 'setup'
+      - 'deps'
+      - 'build'
       # 'test', # Needs home-manager, so needless in Nix-CI
-      'lint-all',
-      'test-go',
-      'fmt',
-    ]
+      - 'lint-all'
+      - 'test-go'
+      - 'fmt'
 
   # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
   ci-darwin:
