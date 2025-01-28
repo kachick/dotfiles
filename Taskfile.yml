@@ -10,10 +10,13 @@ tasks:
       - help
 
   apply:
+    # TODO: Includes NixOS itself
+    desc: Enable the home-manager config
     cmds:
       - nix run .#home-manager -- switch -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
 
   test:
+    desc: Make sure home-manager will work
     deps:
       - test-go
     cmds:
@@ -34,7 +37,9 @@ tasks:
       - mkdir -p dist/race
 
   setup:
+    desc: You should run this task just after cloned
     deps:
+      - help
       - build-cmd
     cmds:
       - cp .githooks/* .git/hooks/
@@ -75,6 +80,7 @@ tasks:
       - ./dist/lint
 
   lint-all:
+    desc: Includes heavy linters
     deps:
       - build-lint
     cmds:
@@ -87,22 +93,29 @@ tasks:
       - 'lint-all'
 
   update:
+    # Includes selfup
+    desc: Bump dependencies
     cmds:
       - nix flake update --commit-lock-file
 
   help:
+    desc: If forgot anything
     cmds:
       - task --list-all
 
   workspace:
+    desc: Open Terminal Multiplexer that configured to maintain this repository
     cmds:
       - zellij --layout ./config/zellij/layouts/dotfiles.kdl
 
+  # TODO: Rename to playground
   sandbox:
+    desc: Run container
     cmds:
       - ./containers/sandbox.bash
 
   ghcr-*:
+    desc: Run container which is built and registered via GitHub Actions
     vars:
       TAG: '{{index .MATCH 0}}'
     cmds:
@@ -113,13 +126,15 @@ tasks:
       - './containers/build.bash'
 
   deps:
+    desc: Print some dependency versions
     deps:
       - build-cmd
     cmds:
       - ./dist/deps
 
-  # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
   ci-dev:
+    desc: Provided for CI
+    internal: true
     deps:
       - 'default'
       - 'setup'
@@ -128,7 +143,8 @@ tasks:
       - 'lint-all'
       - 'fmt'
 
-  # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
   ci-darwin:
+    desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+    internal: true
     cmds:
       - task --version
