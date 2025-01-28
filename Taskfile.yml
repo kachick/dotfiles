@@ -21,6 +21,7 @@ tasks:
       - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
 
   test-go:
+    internal: true
     sources:
       - '**.go'
     cmds:
@@ -123,10 +124,8 @@ tasks:
       - 'default'
       - 'setup'
       - 'deps'
-      - 'build'
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
-      - 'test-go'
       - 'fmt'
 
   # Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
