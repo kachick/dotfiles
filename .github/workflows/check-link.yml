@@ -1,0 +1,40 @@
+name: 🔗
+# Extracted from other linters.
+# This action is bit slow and much unstable because of depending to external resources.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-link.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/check-link.yml'
+  workflow_dispatch:
+  schedule:
+    # Every 10:42 on Tuesday JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * 2'
+
+jobs:
+  # Don't use lycheeverse/lychee-action. There is no benefit rather than using the CLI for my use. And considering the targets should be simple with `git ls-files` rather than built-in glob
+  lychee:
+    runs-on: ubuntu-24.04
+    env:
+      CLI_VERSION: '0.18.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install
+        run: |
+          curl -OL 'https://github.com/lycheeverse/lychee/releases/download/lychee-v${{ env.CLI_VERSION }}/lychee-x86_64-unknown-linux-gnu.tar.gz'
+          tar zxvf lychee-x86_64-unknown-linux-gnu.tar.gz
+          mkdir --parents /home/runner/.lychee/bin
+          mv lychee /home/runner/.lychee/bin
+          echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
+      - name: Run
+        env:
+          # Not GH_TOKEN for lychee.
+          # https://github.com/lycheeverse/lychee/blob/fc006bddc5a63067895799b83cbb9a4cbcabca6a/lychee-bin/src/options.rs#L459-L462
+          GITHUB_TOKEN: ${{ github.token }}
+        # Don't use glob. It often ignores .gitignore (why?)
+        run: |
+          git ls-files '*.md' '*.nix' | xargs lychee --
