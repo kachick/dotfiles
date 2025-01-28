@@ -27,19 +27,24 @@ tasks:
       - go test ./...
       - cd ./pkgs/reponame && go test ./...
 
+  mkdir:
+    cmds:
+      - mkdir -p dist/race
+
   setup:
     deps:
       - build
     cmds:
       - cp .githooks/* .git/hooks/
       - git config --local core.whitespace cr-at-eol
-      - mkdir -p dist/race
 
   fmt:
     cmds:
       - treefmt
 
   build:
+    deps:
+      - mkdir
     sources:
       - ./cmd/**.go
     generates:
@@ -49,6 +54,8 @@ tasks:
       - go build -v -o dist ./...
 
   build-lint:
+    deps:
+      - mkdir
     cmds:
       - go build -v -o dist/lint ./cmd/lint
     sources:
