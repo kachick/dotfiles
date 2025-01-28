@@ -24,7 +24,6 @@ tasks:
       - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
 
   test-go:
-    internal: true
     sources:
       - '**.go'
     cmds:
@@ -50,7 +49,6 @@ tasks:
       - treefmt
 
   build-cmd:
-    internal: true
     deps:
       - mkdir
     sources:
@@ -134,7 +132,6 @@ tasks:
 
   ci-dev:
     desc: Provided for CI
-    internal: true
     deps:
       - 'default'
       - 'setup'
@@ -145,6 +142,5 @@ tasks:
 
   ci-darwin:
     desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
-    internal: true
     cmds:
       - task --version
