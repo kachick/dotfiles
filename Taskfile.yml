@@ -106,7 +106,6 @@ tasks:
     cmds:
       - zellij --layout ./config/zellij/layouts/dotfiles.kdl
 
-  # TODO: Rename to playground
   sandbox:
     desc: Run container
     cmds:
