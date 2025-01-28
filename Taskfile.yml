@@ -1,0 +1,145 @@
+# https://taskfile.dev
+
+version: '3'
+
+silent: false
+
+tasks:
+  default:
+    deps:
+      - help
+
+  apply:
+    # TODO: Includes NixOS itself
+    desc: Enable the home-manager config
+    cmds:
+      - nix run .#home-manager -- switch -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+
+  test:
+    desc: Make sure home-manager will work
+    deps:
+      - test-go
+    cmds:
+      # -n = dry-run
+      - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+
+  test-go:
+    sources:
+      - '**.go'
+    cmds:
+      - go test ./...
+      - cd ./pkgs/reponame && go test ./...
+
+  mkdir:
+    internal: true
+    cmds:
+      - mkdir -p dist/race
+
+  setup:
+    desc: You should run this task just after cloned
+    deps:
+      - help
+      - build-cmd
+    cmds:
+      - cp .githooks/* .git/hooks/
+      - git config --local core.whitespace cr-at-eol
+
+  fmt:
+    cmds:
+      - treefmt
+
+  build-cmd:
+    deps:
+      - mkdir
+    sources:
+      - ./cmd/**.go
+    generates:
+      - dist/**
+    # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
+    cmds:
+      - go build -v -o dist ./...
+
+  build-lint:
+    internal: true
+    deps:
+      - mkdir
+    cmds:
+      - go build -v -o dist/lint ./cmd/lint
+    sources:
+      - internal/fileutils/*.go
+      - ./cmd/lint/*.go
+    generates:
+      - dist/lint
+
+  lint:
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint
+
+  lint-all:
+    desc: Includes heavy linters
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint -all
+
+  check:
+    deps:
+      - 'build-cmd'
+      - 'test'
+      - 'lint-all'
+
+  update:
+    # Includes selfup
+    desc: Bump dependencies
+    cmds:
+      - nix flake update --commit-lock-file
+
+  help:
+    desc: If forgot anything
+    cmds:
+      - task --list-all
+
+  workspace:
+    desc: Open Terminal Multiplexer that configured to maintain this repository
+    cmds:
+      - zellij --layout ./config/zellij/layouts/dotfiles.kdl
+
+  sandbox:
+    desc: Run container
+    cmds:
+      - ./containers/sandbox.bash
+
+  ghcr-*:
+    desc: Run container which is built and registered via GitHub Actions
+    vars:
+      TAG: '{{index .MATCH 0}}'
+    cmds:
+      - './containers/sandbox-with-ghcr.bash {{.TAG}}'
+
+  build-container:
+    cmds:
+      - './containers/build.bash'
+
+  deps:
+    desc: Print some dependency versions
+    deps:
+      - build-cmd
+    cmds:
+      - ./dist/deps
+
+  ci-dev:
+    desc: Provided for CI
+    deps:
+      - 'default'
+      - 'setup'
+      - 'deps'
+      # 'test', # Needs home-manager, so needless in Nix-CI
+      - 'lint-all'
+      - 'fmt'
+
+  ci-darwin:
+    desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+    cmds:
+      - task --version

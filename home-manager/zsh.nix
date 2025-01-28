@@ -162,9 +162,6 @@ in
     completionInit = ''
       # `autoload` enable to use compinit
       autoload -Uz compinit && _compinit_with_interval
-      # for cargo-make
-      # AFAIK, it does not take path options. And fast for now, so needless to be cached
-      autoload -U +X bashcompinit && bashcompinit
     '';
 
     # Setting bindkey
@@ -251,19 +248,6 @@ in
       }
 
       _fzf_complete_zellij_post() {
-        ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
-      }
-
-      # Do not use absolute path for makers to respect current version in each repository
-      # No need adding for `cargo-make`, it requires subcommand as `cargo-make make`. I'm avoiding the style
-      _fzf_complete_makers() {
-        _fzf_complete --multi --reverse --prompt="makers> " --nth 1 -- "$@" < <(
-          # Don't use `--output-format autocomplete`, it truncates task description
-          makers --list-all-steps | ${lib.getExe pkgs.ripgrep} --regexp='^\w+ -'
-        )
-      }
-
-      _fzf_complete_makers_post() {
         ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
       }
 
