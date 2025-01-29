@@ -127,8 +127,6 @@
                   go_1_23
                   trivy
                   markdownlint-cli2
-
-                  (ruby_3_4.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.unstable; [
                   trufflehog
