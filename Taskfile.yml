@@ -10,18 +10,16 @@ tasks:
       - help
 
   apply:
-    # TODO: Includes NixOS itself
-    desc: Enable the home-manager config
+    desc: Enable NixOS and/or home-manager config for current user and device
     cmds:
-      - nix run .#home-manager -- switch -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+      - ./scripts/apply.bash
 
   test:
-    desc: Make sure home-manager will work
+    desc: Make sure NixOS and/or home-manager will work for current user and device
     deps:
       - test-go
     cmds:
-      # -n = dry-run
-      - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+      - ./scripts/dry.bash
 
   test-go:
     sources:

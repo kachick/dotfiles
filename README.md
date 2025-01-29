@@ -196,24 +196,16 @@ I basically [give up to maintain macOS environment](https://github.com/kachick/d
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
-## Develop
+## Shorthand
 
 If you are developing this repository, putting `.env` makes easy reactivations.
 
 ```bash
-echo 'NIX_DEVICE_SPECIFIER=wsl-ubuntu' > .env
-direnv allow .
+echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
 ```
 
-Then you can apply home-manager with
+Then you can enable configurations with
 
 ```bash
 task apply
-```
-
-For NixOS
-
-```bash
-sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    task apply
 ```
