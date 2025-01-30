@@ -74,6 +74,7 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  sad
 
   typos
   hyperfine
