@@ -54,7 +54,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v16
-      # Don't use DeterminateSystems/magic-nix-cache-action until https://github.com/DeterminateSystems/magic-nix-cache-action/issues/26 is supported
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
