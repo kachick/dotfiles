@@ -129,11 +129,11 @@
       lshw
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      zed-editor
+      unstable.zed-editor
 
       gdm-settings
 
-      unstable.ghostty
+      ghostty # ghostty package now always be backported. TODO: Prefer `unstable` since nixos-25.05
 
       alacritty
 
