@@ -15,6 +15,7 @@ tasks:
       - '.env'
       - 'flake.*'
       - 'nixos/**'
+      - 'overlays/**'
       - 'config/**'
     cmds:
       - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
@@ -28,6 +29,7 @@ tasks:
       - '.env'
       - 'flake.*'
       - 'home-manager/**'
+      # - 'overlays/**' # Not needed for home-manager for now
       - 'config/**'
     deps:
       - 'nixos'
