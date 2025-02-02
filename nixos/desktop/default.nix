@@ -319,6 +319,9 @@
     enable = true;
     extraUpFlags = [ "--ssh" ];
   };
+  # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
+  # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
+  systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338
