@@ -260,13 +260,6 @@
 
   environment.variables = {
     VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
-
-    XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
-
-    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-    # Don't set these in KDE, but should set in GNOME https://discuss.kde.org/t/kde-plasma-wayland/9014
-    QT_IM_MODULE = "fcitx";
-    GTK_IM_MODULE = "fcitx";
   };
 
   environment.sessionVariables = {
@@ -309,12 +302,15 @@
       enable = true;
       type = "fcitx5";
 
-      fcitx5.addons = [
-        pkgs.fcitx5-mozc
-        pkgs.fcitx5-gtk
-      ];
+      fcitx5 = {
+        # https://github.com/NixOS/nixpkgs/pull/278765
+        waylandFrontend = true;
 
-      fcitx5.waylandFrontend = true;
+        addons = [
+          pkgs.fcitx5-mozc
+          pkgs.fcitx5-gtk
+        ];
+      };
     };
   };
 
