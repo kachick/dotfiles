@@ -1,5 +1,5 @@
 # Don't use absolute path even if used in NixOS. To share same config in Windows
-$env.EDITOR = ["hx"]
+$env.EDITOR = "hx"
 if $nu.os-info.name == "linux" {
   $env.VISUAL = ["zeditor", "--wait"]
 } else {
