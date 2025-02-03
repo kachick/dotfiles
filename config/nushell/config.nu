@@ -50,3 +50,10 @@ if $nu.os-info.name == "windows" {
     eza --long --all --group-directories-first --time-style=iso --color=always --no-user --sort=modified ...$paths
   }
 }
+
+alias g = git
+
+# https://github.com/NixOS/nixpkgs/pull/344193
+alias zed = zeditor
+
+alias hog = trufflehog
