@@ -11,7 +11,7 @@ on:
       - 'windows**'
       - '**.go'
       - 'go.*'
-      - 'config'
+      - 'config/**'
       - '!**.md'
   pull_request:
     paths:
@@ -19,7 +19,7 @@ on:
       - 'windows**'
       - '**.go'
       - 'go.*'
-      - 'config'
+      - 'config/**'
       - '!**.md'
   workflow_dispatch:
 

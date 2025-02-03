@@ -128,6 +128,14 @@
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
     ../config/powershell/Profile.ps1;
 
+  # Don't use nushell Nix modules. Because of the interface and API is much unstable
+  # I prefer to use stable home-manager channel. So nushell integration should be done manually
+  #
+  # Don't use `recursive` here. We can't expect any nushell changes for now
+  xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
+  xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
+  xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";

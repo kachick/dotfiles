@@ -97,7 +97,8 @@
     "lua": true,
     "kdl": true,
     "basher": true,
-    "powershell": true
+    "powershell": true,
+    "nu": true
     // "base16": true, // Do NOT install this extension to avboid https://github.com/zed-industries/zed/issues/13188
     // "iceberg": true
   }
