@@ -30,6 +30,7 @@ tasks:
       - '.env'
       - 'flake.*'
       - 'home-manager/**/*'
+      - 'pkgs/**/*'
       - 'config/**/*'
     deps:
       - 'nixos'
