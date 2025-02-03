@@ -135,6 +135,18 @@ tasks:
     cmds:
       - ./containers/sandbox.bash
 
+  get-ghcr-token:
+    desc: Get public token. You can use as `task get-ghcr-token >> .env`
+    # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
+    cmds:
+      - echo "GHCR_READONLY_TOKEN=$(curl https://ghcr.io/token\?scope\="repository:kachick/home:pull" | jq .token)"
+
+  ghcr:
+    desc: Run container with selecting the tag with fuzzy finder
+    cmds:
+      - |
+          curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
+
   ghcr-*:
     desc: Run container which is built and registered via GitHub Actions
     vars:
