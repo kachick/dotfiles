@@ -5,8 +5,9 @@
 rm -f /tmp/rg-fzf-{r,f}
 RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
 INITIAL_QUERY="${*:-}"
+# Use reverse for same order of list and preview
 # shellcheck disable=SC2016
-fzf --ansi --disabled --query "$INITIAL_QUERY" \
+fzf --reverse --ansi --disabled --query "$INITIAL_QUERY" \
 	--bind "start:reload:$RG_PREFIX {q}" \
 	--bind "change:reload:sleep 0.1; $RG_PREFIX {q} || true" \
 	--bind 'ctrl-t:transform:[[ ! $FZF_PROMPT =~ ripgrep ]] &&
