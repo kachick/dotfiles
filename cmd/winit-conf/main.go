@@ -99,6 +99,7 @@ func provisioners() []provisioner {
 
 		newProvisioner([]string{"config", "nushell", "config.nu"}, []string{homePath, ".config", "nushell", "config.nu"}),
 		newProvisioner([]string{"config", "nushell", "env.nu"}, []string{homePath, ".config", "nushell", "env.nu"}),
+		newProvisioner([]string{"config", "nushell", "windows_config.nu"}, []string{homePath, ".config", "nushell", "windows_config.nu"}),
 
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
