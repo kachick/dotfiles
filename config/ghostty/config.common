@@ -18,7 +18,17 @@ background-opacity = 0.85
 # - https://iterm2colorschemes.com/
 # ghostty can set both dark and light. However always use dark for terminals
 # theme = dark:ForestBlue,light:iTerm2 Tango Light
-theme = ForestBlue
+# Candidates
+#   - Guezwhoz
+#   - IC_Green_PPL
+#   - iceberg-dark
+#   - kanagawabones
+#   - kurokula
+#   - rose-pine
+#   - wilmersdorf
+#   - Adventure
+theme = iceberg-dark
+
 # Avoid the ligatures in "JetBrains Mono" by default
 font-family = "PlemolJP Console NF"
 
