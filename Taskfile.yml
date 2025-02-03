@@ -4,6 +4,7 @@ version: '3'
 
 silent: false
 
+# Don't use negate glob patterns. It often made much slow hashing
 tasks:
   default:
     deps:
@@ -14,9 +15,9 @@ tasks:
     sources:
       - '.env'
       - 'flake.*'
-      - 'nixos/**'
-      - 'overlays/**'
-      - 'config/keyboards/kanata*'
+      - 'nixos/**/*'
+      - 'overlays/**/*'
+      - 'config/keyboards/kanata.kbd'
     cmds:
       - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
 
@@ -28,9 +29,8 @@ tasks:
     sources:
       - '.env'
       - 'flake.*'
-      - 'home-manager/**'
-      # - 'overlays/**' # Not needed for home-manager for now
-      - 'config/**'
+      - 'home-manager/**/*'
+      - 'config/**/*'
     deps:
       - 'nixos'
     cmds:
