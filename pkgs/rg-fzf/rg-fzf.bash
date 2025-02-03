@@ -19,4 +19,4 @@ fzf --reverse --ansi --disabled --query "$INITIAL_QUERY" \
 	--header 'CTRL-T: Switch between ripgrep/fzf' \
 	--preview 'bat --color=always {1} --highlight-line {2}' \
 	--preview-window 'up,60%,border-bottom,+{2}+3/3,~3' \
-	--bind 'enter:become(command "$EDITOR" {1}:{2}:{3})'
+	--bind 'enter:become("$EDITOR" {1}:{2}:{3})'
