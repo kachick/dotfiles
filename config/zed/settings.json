@@ -20,6 +20,13 @@
   "tabs": {
     "file_icons": true
   },
+  // https://github.com/zed-industries/zed/issues/7121#issuecomment-1918611074
+  "collaboration_panel": {
+    "button": false
+  },
+  "chat_panel": {
+    "button": false
+  },
   // FIXME: Actually not working...
   "lsp": {
     "vscode-json-language-server": {
