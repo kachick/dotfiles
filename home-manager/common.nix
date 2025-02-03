@@ -134,6 +134,7 @@
   # Don't use `recursive` here. We can't expect any nushell changes for now
   xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
   xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
+  xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 

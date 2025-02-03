@@ -44,14 +44,17 @@ $env.config = {
     ]
 }
 
+# https://github.com/nushell/nushell/issues/7988
+const WINDOWS_CONFIG = "windows_config.nu"
+const WINDOWS_CONFIG = "unix_config.nu"
 
-
-if $nu.os-info.name == "windows" {
-  # nushell and handling dir symlink looks strange. Might be broken. And adjusted to same results with other environments
-  def la [...paths: string] {
-    eza --long --all --group-directories-first --time-style=iso --color=always --no-user --sort=modified ...$paths
-  }
+const OS_SPECIFIC_CONFIG = if $nu.os-info.name == "windows" {
+  $WINDOWS_CONFIG
+} else {
+  ""
 }
+
+source $OS_SPECIFIC_CONFIG
 
 def --env cdtemp [] {
   cd (mktemp --directory)
