@@ -46,12 +46,12 @@ $env.config = {
 
 # https://github.com/nushell/nushell/issues/7988
 const WINDOWS_CONFIG = "windows_config.nu"
-const WINDOWS_CONFIG = "unix_config.nu"
+const UNIX_CONFIG = "unix_config.nu"
 
 const OS_SPECIFIC_CONFIG = if $nu.os-info.name == "windows" {
   $WINDOWS_CONFIG
 } else {
-  ""
+  $UNIX_CONFIG
 }
 
 source $OS_SPECIFIC_CONFIG
