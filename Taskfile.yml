@@ -142,6 +142,9 @@ tasks:
       - echo "GHCR_READONLY_TOKEN=$(curl https://ghcr.io/token\?scope\="repository:kachick/home:pull" | jq .token)"
 
   ghcr:
+    # It looks like no paging and sorting API. So keep feawest than last 50 images
+    # You can manually delete them with https://github.com/kachick/dotfiles/actions/workflows/cleanup-packages.yml
+    # TODO: Automatically remove old 50+ images
     desc: Run container with selecting the tag with fuzzy finder
     cmds:
       - |
