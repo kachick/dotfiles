@@ -19,7 +19,7 @@ tasks:
       - 'overlays/**/*'
       - 'config/keyboards/kanata.kbd'
     cmds:
-      - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
+      - if [ -f '/etc/NIXOS' ]; then sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace; fi
 
   home-manager:
     aliases:
