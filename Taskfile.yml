@@ -16,7 +16,7 @@ tasks:
       - 'flake.*'
       - 'nixos/**'
       - 'overlays/**'
-      - 'config/**'
+      - 'config/keyboards/kanata*'
     cmds:
       - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
 
