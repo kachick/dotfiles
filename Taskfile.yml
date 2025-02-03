@@ -47,7 +47,8 @@ tasks:
 
   test-go:
     sources:
-      - '**.go'
+      - '**/*.go'
+      - 'config/**/*'
     cmds:
       - go test ./...
       - cd ./pkgs/reponame && go test ./...
