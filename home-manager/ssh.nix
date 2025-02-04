@@ -81,6 +81,10 @@ in
 
         # https://serverfault.com/a/1109184/112217
         CheckHostIP no
+
+        # Workaround for GH-950
+        # See https://github.com/NixOS/nixops/issues/395#issuecomment-2632428059
+        IgnoreUnknown gssapikexalgorithms,gssapiauthentication,gssapidelegatecredentials
       ''
       + (
         # `UseKeychain` only provided by darwin ssh agent, in Linux and pkgs.openssh, it isn't
@@ -92,11 +96,6 @@ in
 
     # No problem to register the same *.pub in different services
     matchBlocks = {
-      # Workaround for GH-950
-      # See https://github.com/NixOS/nixops/issues/395#issuecomment-2632428059
-      "*".extraOptions.IgnoreUnknown =
-        "gssapikexalgorithms,gssapiauthentication,gssapidelegatecredentials";
-
       # ANYONE can access the registered public key at https://github.com/kachick.keys
       "github.com" = sharedConfig;
 
