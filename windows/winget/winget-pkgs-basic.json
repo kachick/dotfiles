@@ -38,6 +38,9 @@
           "PackageIdentifier": "junegunn.fzf"
         },
         {
+          "PackageIdentifier": "alexpasmantier.television"
+        },
+        {
           "PackageIdentifier": "sharkdp.fd"
         },
         {
