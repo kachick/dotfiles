@@ -5,13 +5,17 @@
   ...
 }:
 let
-  lima = pkgs.patched.lima;
+  # TODO: Replace to stable since nixos-25.05, stable 24.11 does not include https://github.com/NixOS/nixpkgs/pull/361378
+  lima = pkgs.unstable.lima;
 in
 {
   programs.ssh.includes = [
-    # * lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
-    # * adding this as `ssh -F` makes it possible to use ssh login, it is required for `ms-vscode-remote.remote-ssh`
-    # * the content of file will be changed for each instance creation
+    # * Why SSH is required
+    #     Lima can generate ssh config and adding it as `ssh -F` makes it possible to use ssh login.
+    #     And we also use the shell as `lima` without ssh.
+    #     However It is not enough for use of `ms-vscode-remote.remote-ssh`.
+    # * Why put under .lima
+    #   lima does not support XDG spec. https://github.com/lima-vm/lima/discussions/2745#discussioncomment-10958677
     "${config.home.homeDirectory}/.lima/default/ssh.config"
   ];
 
