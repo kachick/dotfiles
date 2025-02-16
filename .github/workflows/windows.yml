@@ -157,10 +157,13 @@ jobs:
       # - windows-2025 definitely enable it by default
       # - proposal: https://github.com/actions/runner-images/issues/910
       # - note: https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
-      - name: Inspect tool versions
+      - name: Inspect built-in tool versions
         run: |
           winget --version
           wsl --version
+      - name: Install tools which is called in profile
+        run: |
+          winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
       - name: Rebel against unacceptable default
         run: |
           .\dist\winit-reg.exe list
