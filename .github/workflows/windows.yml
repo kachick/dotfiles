@@ -41,7 +41,7 @@ defaults:
 
 jobs:
   inspect_runner:
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
       - name: Print some variables which is applied in GH-617
         run: |
@@ -53,7 +53,7 @@ jobs:
   #
   # Not Terraform :)
   terraform:
-    runs-on: windows-2022
+    runs-on: windows-2025
     steps:
       - name: Prepare Windows Defender
         # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
@@ -153,11 +153,17 @@ jobs:
       #     name: MpCmdRun-logs
       #     path: MpCmdRun-logs/**
       #
-      # Do not write depending winget logcs for now
+      # Do not write depending winget logics until windows-2025 officially supports it
       # - windows-2025 definitely enable it by default
-      # - windows-2022 may realize with the action: https://github.com/microsoft/winget-cli/issues/3872
       # - proposal: https://github.com/actions/runner-images/issues/910
       # - note: https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
+      - name: Inspect built-in tool versions
+        run: |
+          winget --version
+          wsl --version
+      - name: Install tools which is called in profile
+        run: |
+          winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
       - name: Rebel against unacceptable default
         run: |
           .\dist\winit-reg.exe list
