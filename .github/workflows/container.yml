@@ -165,7 +165,7 @@ jobs:
         id: inspect-package
         if: ${{ github.actor == github.repository_owner }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: | # shell
           #
           set -euxo pipefail
@@ -188,7 +188,7 @@ jobs:
       - name: Post comments
         if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           (
           cat <<'EOF'

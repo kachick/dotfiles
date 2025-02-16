@@ -125,7 +125,7 @@ jobs:
           path: dist
       - name: Download the artifact to make sure we can actually use it
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" `
             repos/${{ github.repository }}/actions/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}/zip > distributed-artifact.zip
