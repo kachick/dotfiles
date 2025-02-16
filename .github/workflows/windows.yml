@@ -152,11 +152,6 @@ jobs:
       #   with:
       #     name: MpCmdRun-logs
       #     path: MpCmdRun-logs/**
-      #
-      # Do not write depending winget logics until windows-2025 officially supports it
-      # - windows-2025 definitely enable it by default
-      # - proposal: https://github.com/actions/runner-images/issues/910
-      # - note: https://github.com/microsoft/winget-cli/blob/b07d2ebb7d865f95320e2bc708a2d1efb2152c5a/README.md#L14
       - name: Inspect built-in tool versions
         run: |
           winget --version
