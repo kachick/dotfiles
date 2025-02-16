@@ -83,8 +83,6 @@ jobs:
           podman version
           crun --version
           buildah version
-      - name: Install gh-action-escape
-        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
       - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
@@ -168,17 +166,24 @@ jobs:
         if: ${{ github.actor == github.repository_owner }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+        run: | # shell
+          #
           set -euxo pipefail
 
           echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"
 
-          gh api --paginate \
+          {
+            echo 'json<<JSON'
+
+            gh api --paginate \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             /users/${{ github.repository_owner }}/packages/container/home/versions \
             --jq '.[] | select(.name == "${{ steps.push-to-ghcr.outputs.digest }}")' | \
-              jq | gh-action-escape -name=json | tee -a "$GITHUB_OUTPUT"
+              jq
+
+            echo 'JSON'
+          } | tee --append "$GITHUB_OUTPUT"
 
       - name: Post comments
         if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
