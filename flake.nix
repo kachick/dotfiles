@@ -23,8 +23,8 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Pin to 2411.?.? if 24.11 compat channel will be introduced
-      # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
+      url = "github:nix-community/NixOS-WSL/2411.6.0";
+      # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
