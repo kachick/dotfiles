@@ -14,7 +14,8 @@ tasks:
     desc: Enable NixOS config for current device
     sources:
       - '.env'
-      - 'flake.*'
+      - 'flake.nix'
+      - 'flake.lock'
       - 'nixos/**/*'
       - 'overlays/**/*'
       - 'config/keyboards/kanata.kbd'
@@ -28,7 +29,8 @@ tasks:
     desc: Enable home-manager config for current user and device
     sources:
       - '.env'
-      - 'flake.*'
+      - 'flake.nix'
+      - 'flake.lock'
       - 'home-manager/**/*'
       - 'pkgs/**/*'
       - 'config/**/*'
