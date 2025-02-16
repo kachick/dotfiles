@@ -1,0 +1,186 @@
+# https://taskfile.dev
+
+version: '3'
+
+silent: false
+
+# Don't use negate glob patterns. It often made much slow hashing
+tasks:
+  default:
+    deps:
+      - help
+
+  nixos:
+    desc: Enable NixOS config for current device
+    sources:
+      - '.env'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'nixos/**/*'
+      - 'overlays/**/*'
+      - 'config/keyboards/kanata.kbd'
+    cmds:
+      - if [ -f '/etc/NIXOS' ]; then sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace; fi
+
+  home-manager:
+    aliases:
+      - hm
+      - apply # Don't extract to specific task. To run dependency sequentially and no duplications
+    desc: Enable home-manager config for current user and device
+    sources:
+      - '.env'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'home-manager/**/*'
+      - 'pkgs/**/*'
+      - 'config/**/*'
+    deps:
+      - 'nixos'
+    cmds:
+      # Using hostname simplify flake option, see https://discourse.nixos.org/t/get-hostname-in-home-manager-flake-for-host-dependent-user-configs/18859/2
+      # However prefer to use special ENV here for my current use. It is useful if sharing same config for similar env but on different devices
+      - nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#${USER}@${HM_HOST_SLUG}"
+
+  test:
+    desc: Make sure NixOS and/or home-manager will work for current user and device
+    deps:
+      - test-go
+    cmds:
+      - ./scripts/dry.bash
+
+  test-go:
+    sources:
+      - '**/*.go'
+      - 'config/**/*'
+    cmds:
+      - go test ./...
+      - cd ./pkgs/reponame && go test ./...
+
+  mkdir:
+    internal: true
+    cmds:
+      - mkdir -p dist/race
+
+  setup:
+    desc: You should run this task just after cloned
+    deps:
+      - help
+      - build-cmd
+    cmds:
+      - cp .githooks/* .git/hooks/
+      - git config --local core.whitespace cr-at-eol
+
+  fmt:
+    cmds:
+      - treefmt
+
+  build-cmd:
+    deps:
+      - mkdir
+    sources:
+      - ./cmd/**.go
+    generates:
+      - dist/**
+    # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
+    cmds:
+      - go build -v -o dist ./...
+
+  build-lint:
+    internal: true
+    deps:
+      - mkdir
+    cmds:
+      - go build -v -o dist/lint ./cmd/lint
+    sources:
+      - internal/fileutils/*.go
+      - ./cmd/lint/*.go
+    generates:
+      - dist/lint
+
+  lint:
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint
+
+  lint-all:
+    desc: Includes heavy linters
+    deps:
+      - build-lint
+    cmds:
+      - ./dist/lint -all
+
+  check:
+    deps:
+      - 'build-cmd'
+      - 'test'
+      - 'lint-all'
+
+  update:
+    # Includes selfup
+    desc: Bump dependencies
+    cmds:
+      - nix flake update --commit-lock-file
+
+  help:
+    desc: If forgot anything
+    cmds:
+      - task --list-all
+
+  workspace:
+    desc: Open Terminal Multiplexer that configured to maintain this repository
+    cmds:
+      - zellij --layout ./config/zellij/layouts/dotfiles.kdl
+
+  sandbox:
+    desc: Run container
+    cmds:
+      - ./containers/sandbox.bash
+
+  get-ghcr-token:
+    desc: Get public token. You can use as `task get-ghcr-token >> .env`
+    # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
+    cmds:
+      - echo "GHCR_READONLY_TOKEN=$(curl https://ghcr.io/token\?scope\="repository:kachick/home:pull" | jq .token)"
+
+  ghcr:
+    # It looks like no paging and sorting API. So keep feawest than last 50 images
+    # You can manually delete them with https://github.com/kachick/dotfiles/actions/workflows/cleanup-packages.yml
+    # TODO: Automatically remove old 50+ images
+    desc: Run container with selecting the tag with fuzzy finder
+    cmds:
+      - |
+          curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
+
+  ghcr-*:
+    desc: Run container which is built and registered via GitHub Actions
+    vars:
+      TAG: '{{index .MATCH 0}}'
+    cmds:
+      - './containers/sandbox-with-ghcr.bash {{.TAG}}'
+
+  build-container:
+    cmds:
+      - './containers/build.bash'
+
+  deps:
+    desc: Print some dependency versions
+    deps:
+      - build-cmd
+    cmds:
+      - ./dist/deps
+
+  ci-dev:
+    desc: Provided for CI
+    deps:
+      - 'default'
+      - 'setup'
+      - 'deps'
+      # 'test', # Needs home-manager, so needless in Nix-CI
+      - 'lint-all'
+      - 'fmt'
+
+  ci-darwin:
+    desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
+    cmds:
+      - task --version

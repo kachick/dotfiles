@@ -129,13 +129,18 @@
       lshw
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      zed-editor
+      unstable.zed-editor
 
       gdm-settings
 
-      unstable.ghostty
+      ghostty # ghostty package now always be backported. TODO: Prefer `unstable` since nixos-25.05
 
       alacritty
+
+      # Ensure existing qemu-img with lima for use of systemd.
+      # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
+      # See GH-1049 for detail.
+      qemu
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
@@ -255,13 +260,6 @@
 
   environment.variables = {
     VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
-
-    XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
-
-    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-    # Don't set these in KDE, but should set in GNOME https://discuss.kde.org/t/kde-plasma-wayland/9014
-    QT_IM_MODULE = "fcitx";
-    GTK_IM_MODULE = "fcitx";
   };
 
   environment.sessionVariables = {
@@ -304,12 +302,15 @@
       enable = true;
       type = "fcitx5";
 
-      fcitx5.addons = [
-        pkgs.fcitx5-mozc
-        pkgs.fcitx5-gtk
-      ];
+      fcitx5 = {
+        # https://github.com/NixOS/nixpkgs/pull/278765
+        waylandFrontend = true;
 
-      fcitx5.waylandFrontend = true;
+        addons = [
+          pkgs.fcitx5-mozc
+          pkgs.fcitx5-gtk
+        ];
+      };
     };
   };
 
@@ -318,6 +319,9 @@
     enable = true;
     extraUpFlags = [ "--ssh" ];
   };
+  # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
+  # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
+  systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338

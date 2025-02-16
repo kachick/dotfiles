@@ -52,7 +52,7 @@ jobs:
               ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
               xargs --no-run-if-empty --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
       - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
         with:
@@ -67,7 +67,7 @@ jobs:
       - name: Post comments to the PR
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           (
           cat <<'EOF'

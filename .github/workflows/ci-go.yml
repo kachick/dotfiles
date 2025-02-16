@@ -10,14 +10,14 @@ on:
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   pull_request:
     paths:
       - '.github/workflows/ci-go.yml'
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   workflow_dispatch:
 
 jobs:

@@ -10,11 +10,13 @@
     # https://github.com/NixOS/nixpkgs/pull/354894
     # https://github.com/NixOS/nixpkgs/pull/351675#issuecomment-2440047546
     package = pkgs.unstable.kanata; # TODO: Use stable since nixos-25.05
+
     keyboards = {
       # Intentionally setting alt to henkan and muhenkan even in JIS layouts to consider my mis-typing
       # tap-hold-press: tap-next in kmonad. See https://github.com/jtroo/kanata/issues/7#issuecomment-1196236726
       all = {
-        config = builtins.readFile ../../config/keyboards/kanata.kbd;
+        # Don't use extraDefCfg to share same config with Windows and darwin
+        configFile = ../../config/keyboards/kanata.kbd;
       };
     };
   };

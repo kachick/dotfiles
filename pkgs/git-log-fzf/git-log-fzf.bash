@@ -9,7 +9,7 @@ fi
 _fzf_git_fzf() {
 	local -r query="$1"
 
-	fzf-tmux --query "$query" -p80%,60% -- \
+	fzf --query "$query" \
 		--layout=reverse --multi --height=85% --min-height=20 --border \
 		--border-label-pos=2 \
 		--color='header:italic:underline,label:blue' \

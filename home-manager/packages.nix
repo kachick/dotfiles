@@ -10,15 +10,17 @@
   bashInteractive
   # readline # needless and using it does not fix bash problems
   zsh
-  nushell # TODO: Install the dotfiles which is used in Windows
+  unstable.nushell # Use unstable to apply https://github.com/nushell/nushell/commit/4ed25b63a6fc3444bb870dd6fa2c5a9abb936b00 # TODO: Use stable since nixos-25.05
   starship
   direnv
+  unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
 
   fzf # History: CTRL+R, Walker: CTRL+T
   # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
   # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
   fzf-git-sh # CTRL-G CTRL-{} keybinds for git
   # Use same nixpkgs channel as same as fzf
+  television # `tv`. Alt fzf
   zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
@@ -72,6 +74,7 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
 
   typos
   hyperfine

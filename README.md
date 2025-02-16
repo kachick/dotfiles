@@ -196,19 +196,16 @@ I basically [give up to maintain macOS environment](https://github.com/kachick/d
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
-## Note
+## Shorthand
 
-If you are developing this repository, the simple reactivation is as follows.
-
-```bash
-makers apply 'kachick@wsl-ubuntu'
-```
-
-For NixOS
+If you are developing this repository, putting `.env` makes easy reactivations.
 
 ```bash
-sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    makers apply 'kachick@nixos-desktop'
+echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
 ```
 
-If you encounter any errors in the above steps, Check and update CI and [wiki](https://github.com/kachick/dotfiles/wiki).
+Then you can enable configurations with
+
+```bash
+task apply
+```

@@ -14,7 +14,16 @@
           "PackageIdentifier": "Google.Chrome.EXE"
         },
         {
+          "PackageIdentifier": "Mozilla.Firefox.DeveloperEdition.ja"
+        },
+        {
+          "PackageIdentifier": "Mozilla.Firefox"
+        },
+        {
           "PackageIdentifier": "Microsoft.PowerToys"
+        },
+        {
+          "PackageIdentifier": "jtroo.kanata_gui"
         },
         {
           "PackageIdentifier": "Cloudflare.Warp"
@@ -29,6 +38,9 @@
           "PackageIdentifier": "junegunn.fzf"
         },
         {
+          "PackageIdentifier": "alexpasmantier.television"
+        },
+        {
           "PackageIdentifier": "sharkdp.fd"
         },
         {
@@ -38,13 +50,22 @@
           "PackageIdentifier": "sharkdp.bat"
         },
         {
+          "PackageIdentifier": "eza-community.eza"
+        },
+        {
           "PackageIdentifier": "Helix.Helix"
         },
         {
           "PackageIdentifier": "zyedidia.micro"
         },
         {
+          "PackageIdentifier": "curlpipe.ox"
+        },
+        {
           "PackageIdentifier": "Balena.Etcher"
+        },
+        {
+          "PackageIdentifier": "tuna-f1sh.cyme"
         },
         {
           "PackageIdentifier": "Microsoft.WindowsTerminal"

@@ -6,6 +6,7 @@ pkgs.writeShellApplication rec {
     hyperfine
     zsh
     bashInteractive
+    unstable.nushell
   ];
   meta = {
     description = "Measure speed of shells with the interactive mode";

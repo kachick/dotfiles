@@ -15,7 +15,19 @@ Set-PSReadlineOption -AddToHistoryHandler {
 }
 
 function la {
-    Get-ChildItem -Force
+    # Removed no-permissions and no-octal to adjust for Windows
+    eza --long --all --group-directories-first --time-style=iso --color=always --no-user --sort=modified @Args
+}
+
+# New-TemporaryFile does not support directory creation. So copied from https://stackoverflow.com/a/34559554
+function New-TemporaryDirectory {
+    $parent = [System.IO.Path]::GetTempPath()
+    $name = [System.IO.Path]::GetRandomFileName()
+    New-Item -ItemType Directory -Path (Join-Path $parent $name)
+}
+
+function cdtemp {
+    cd "$(New-TemporaryDirectory)"
 }
 
 # https://github.com/microsoft/winget-cli/issues/2498#issuecomment-1553863082

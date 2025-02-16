@@ -17,7 +17,10 @@ in
 
   home = {
     packages = [
-      lima # includes qemu
+      # lima package includes qemu in the PATH.
+      # But required to specify qemu in your Linux. See GH-1049 and NixOS config for detail.
+      # As far as I know, not required the global qemu in darwin.
+      lima
     ];
 
     # Lima and the yaml config does not have importing feature. However it prefers some files to realize overriding.

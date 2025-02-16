@@ -12,7 +12,7 @@
 # https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
 #
 # How to stop blinking cursor in Linux console?
-# => https://web-archive-org.translate.goog/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/?_x_tr_sl=auto&_x_tr_tl=ja&_x_tr_hl=ja
+# => https://web.archive.org/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/
 pkgs.writeText "posix_shared_functions.sh" (
   ''
     cdrepo() {

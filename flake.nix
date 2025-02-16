@@ -13,16 +13,18 @@
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
     # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-24.11";
+      # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
+      # See https://github.com/kachick/dotfiles/issues/1051 for detail
+      url = "github:kachick/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:kachick/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Pin to 2411.?.? if 24.11 compat channel will be introduced
-      # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
+      url = "github:nix-community/NixOS-WSL/2411.6.0";
+      # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
@@ -102,7 +104,7 @@
               (with pkgs; [
                 # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
                 bashInteractive
-                cargo-make
+                go-task
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
@@ -125,8 +127,6 @@
                   go_1_23
                   trivy
                   markdownlint-cli2
-
-                  (ruby_3_4.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.unstable; [
                   trufflehog

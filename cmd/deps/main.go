@@ -9,7 +9,7 @@ import (
 func main() {
 	cmds := runner.Commands{
 		{Path: "go", Args: []string{"version"}},
-		{Path: "makers", Args: []string{"--version"}},
+		{Path: "task", Args: []string{"--version"}},
 		{Path: "nix", Args: []string{"--version"}},
 		{Path: "dprint", Args: []string{"--version"}},
 		{Path: "shellcheck", Args: []string{"--version"}},

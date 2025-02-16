@@ -22,26 +22,28 @@ in
       # Don't use `xdg-settings set default-web-browser`.
       # https://github.com/nix-community/home-manager/issues/96#issuecomment-343650659 is old. Using both made errors such as https://github.com/kachick/dotfiles/pull/1038#discussion_r1910360832
       # So use only xdg.mimeApps
-      defaultApplications = (lib.genAttrs [
-        "text/html"
-        "x-scheme-handler/http"
-        "x-scheme-handler/https"
-        "x-scheme-handler/about"
-        "x-scheme-handler/unknown"
-        "application/pdf" # I prefer to open PDF with reader, editor is not frequently used. And native readers Papers is much heavy than browsers
-      ] (_: defaultBrowser)) // (lib.genAttrs [
-        # Supported mime-types: https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build
+      defaultApplications =
+        (lib.genAttrs [
+          "text/html"
+          "x-scheme-handler/http"
+          "x-scheme-handler/https"
+          "x-scheme-handler/about"
+          "x-scheme-handler/unknown"
+          "application/pdf" # I prefer to open PDF with reader, editor is not frequently used. And native readers Papers is much heavy than browsers
+        ] (_: defaultBrowser))
+        // (lib.genAttrs [
+          # Supported mime-types: https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build
 
-        "image/jpeg"
-        "image/png"
-        "image/gif"
-        "image/webp"
-        "image/tiff"
-        "image/bmp"
-        "image/vnd.microsoft.icon"
-        "image/svg+xml"
-        "image/svg+xml-compressed"
-      ] (_: imageViewer) );
+          "image/jpeg"
+          "image/png"
+          "image/gif"
+          "image/webp"
+          "image/tiff"
+          "image/bmp"
+          "image/vnd.microsoft.icon"
+          "image/svg+xml"
+          "image/svg+xml-compressed"
+        ] (_: imageViewer));
     };
   };
 }

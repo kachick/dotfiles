@@ -99,6 +99,7 @@ func provisioners() []provisioner {
 
 		newProvisioner([]string{"config", "nushell", "config.nu"}, []string{homePath, ".config", "nushell", "config.nu"}),
 		newProvisioner([]string{"config", "nushell", "env.nu"}, []string{homePath, ".config", "nushell", "env.nu"}),
+		newProvisioner([]string{"config", "nushell", "windows_config.nu"}, []string{homePath, ".config", "nushell", "windows_config.nu"}),
 
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-basic.json"}, []string{tmpdirPath, "winget-pkgs-basic.json"}),
 		newProvisioner([]string{"windows", "winget", "winget-pkgs-entertainment.json"}, []string{tmpdirPath, "winget-pkgs-entertainment.json"}),
@@ -106,6 +107,10 @@ func provisioners() []provisioner {
 
 		// You may need to custom the memory size
 		newProvisioner([]string{"windows", "WSL", ".wslconfig"}, []string{homePath, ".wslconfig"}),
+
+		// Other paths didn't work even if written in the 0.7.6 docs.
+		// See https://github.com/kachick/dotfiles/commit/f6fb452941e55567cc82cdd6f5ba00f56112180f#diff-6193b17cf583f3ff8e1d4743acf2915057558aaaae25109e2e45b32bb6731061R33-R36 for detail
+		newProvisioner([]string{"config", "ox", "rc.lua"}, []string{homePath, ".oxrc"}),
 	}
 }
 
