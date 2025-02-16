@@ -28,14 +28,18 @@ jobs:
     outputs:
       matrix: ${{ steps.generator.outputs.matrix }}
     steps:
-      - name: Install gh-action-escape
-        run: curl -fsSL https://raw.githubusercontent.com/kachick/gh-action-escape/main/scripts/install-in-github-action.sh | sh -s v0.2.0
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Get changed paths
-        run: |
-          git diff origin/main --name-only | gh-action-escape -name=CHANGED_PATHS | tee --append "$GITHUB_ENV"
+        run: | # shell
+          {
+            echo 'CHANGED_PATHS<<EOF'
+
+            git diff origin/main --name-only
+
+            echo 'EOF'
+          } | tee --append "$GITHUB_ENV"
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -43,8 +47,14 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: Generate Matrix
         id: generator
-        run: |
-          go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS" | gh-action-escape -name=matrix | tee -a "$GITHUB_OUTPUT"
+        run: | # shell
+          {
+            echo 'matrix<<JSON'
+
+            go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS"
+
+            echo 'JSON'
+          } | tee --append "$GITHUB_OUTPUT"
   home-manager:
     needs: [generate_matrix]
     timeout-minutes: 60
