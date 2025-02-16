@@ -10,7 +10,7 @@ pkgs.writeShellApplication rec {
     #   - sd: Inactive
     #   - fastmod: Does not fit for list based preview
     #   - srgn: Much options, but I don't know how to use that
-    sad
+    unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
 
     unstable.fzf # Require latest to enable new options. e.g `--input-label` # TODO: Prefer stable since nixos-25.05
     riffdiff

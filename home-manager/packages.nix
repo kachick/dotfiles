@@ -74,7 +74,7 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  sad
+  unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
 
   typos
   hyperfine
