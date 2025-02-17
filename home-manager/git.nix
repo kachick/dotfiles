@@ -46,7 +46,7 @@ in
       reset-main = ''
         !git fetch origin && \
           git switch main && \
-          git branch -m "backup-main-$(${lib.getBin pkgs.ruby_3_4}/bin/ruby -r 'securerandom' -e 'puts SecureRandom.uuid')" && \
+          git branch -m "backup-main-$(${lib.getExe pkgs.nushell} --commands 'random uuid')" && \
           git checkout origin/main && \
           git checkout -b main
       '';
