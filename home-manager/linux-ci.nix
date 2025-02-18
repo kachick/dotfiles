@@ -1,5 +1,6 @@
 {
   pkgs,
+  ...
 }:
 
 # This file is provided for CI use.
