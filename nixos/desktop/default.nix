@@ -118,6 +118,7 @@
     nssmdns4 = true;
   };
 
+  # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
     (with pkgs; [
       firefox
@@ -251,6 +252,8 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
+      # Requires unstable package because of it is not a OSS project and highly depends on their service.
+      # However it does not take longer build time, it is just a wqraper for their binary. So okay to use unstable.
       runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
       text = ''
         warp-cli connect

@@ -38,7 +38,7 @@
 
         kubectl
         stern
-        unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
+        k9s
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         chawan # `cha`

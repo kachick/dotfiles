@@ -247,6 +247,7 @@
             modules = [
               ./home-manager/kachick.nix
               ./home-manager/linux.nix
+              ./home-manager/linux-ci.nix
               { home.username = "runner"; }
               ./home-manager/genericLinux.nix
               ./home-manager/systemd.nix
