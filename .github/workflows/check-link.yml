@@ -20,7 +20,7 @@ jobs:
   lychee:
     runs-on: ubuntu-24.04
     env:
-      CLI_VERSION: '0.18.1' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
+      CLI_VERSION: '0.18.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
     steps:
       - uses: actions/checkout@v4
       - name: Install
