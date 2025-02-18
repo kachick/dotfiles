@@ -252,8 +252,8 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
-      # Requires unstable package because of it is not a OSS project and highly depends on their service.
-      # However it does not take longer build time, it is just a wqraper for their binary. So okay to use unstable.
+      # Requires unstable package because of it is not an OSS project and highly depends on their service.
+      # However it does not take longer build time, it is just a wrapper for their binary. So okay to use unstable.
       runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
       text = ''
         warp-cli connect
