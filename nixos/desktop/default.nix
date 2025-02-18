@@ -262,7 +262,7 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
+    VISUAL = "${lib.getExe pkgs.unstable.zed-editor} --wait";
   };
 
   environment.sessionVariables = {
