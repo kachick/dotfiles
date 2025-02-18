@@ -100,7 +100,7 @@ in
       core = {
         # Helix considers git commit message 50/72 convention by default
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1569
-        editor = lib.getExe pkgs.helix;
+        editor = pkgs.helix.meta.mainProgram;
         quotepath = false;
 
         # To avoid conflicting with markdown headers
@@ -109,7 +109,7 @@ in
 
       # Affect in rebase -i
       sequence = {
-        editor = lib.getExe pkgs.helix;
+        editor = pkgs.helix.meta.mainProgram;
       };
 
       init = {
@@ -177,7 +177,7 @@ in
 
     settings = {
       # Without this, gh prefer $VISUAL
-      editor = lib.getExe pkgs.helix;
+      editor = pkgs.helix.meta.mainProgram;
 
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat

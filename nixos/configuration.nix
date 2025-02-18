@@ -4,7 +4,6 @@
 
 {
   pkgs,
-  lib,
   overlays,
   ...
 }:
@@ -99,8 +98,8 @@
   };
 
   environment.variables = {
-    EDITOR = lib.getExe pkgs.helix;
-    SYSTEMD_EDITOR = lib.getExe pkgs.helix;
+    EDITOR = pkgs.helix.meta.mainProgram;
+    SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
 
   # List packages installed in system profile. To search, run:

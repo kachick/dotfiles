@@ -262,7 +262,8 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe pkgs.unstable.zed-editor} --wait";
+    # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
+    VISUAL = "${pkgs.unstable.zed-editor.meta.mainProgram} --wait";
   };
 
   environment.sessionVariables = {
