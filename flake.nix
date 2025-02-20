@@ -114,7 +114,6 @@
                   nixpkgs-lint-community
                   nix-init
                   nurl
-                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
 
                   shellcheck
                   shfmt
@@ -129,6 +128,7 @@
                   markdownlint-cli2
                 ])
                 ++ (with pkgs.unstable; [
+                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   trufflehog
                   # https://github.com/NixOS/nixpkgs/pull/362139
                   dprint
