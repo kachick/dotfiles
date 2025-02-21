@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   config,
   ...
 }:
@@ -69,21 +70,31 @@ in
     # Enable custom or temporary config without `home-manager switch`
     includes = [ "${sshDir}/config.local" ];
 
+    # Workaround for GH-950
+    extraOptionOverrides = {
+      # https://github.com/sul-dlss/DeveloperPlaybook/blob/32b384111f7f6a79ec21f305cf4bdd10e8292f5c/best-practices/ssh_configuration.md?plain=1#L14-L15
+      IgnoreUnknown = "GSSAPI*";
+    };
+
     # https://www.clear-code.com/blog/2023/4/3/recommended-ssh-config.html
     # https://gitlab.com/clear-code/ssh.d/-/blob/main/global.conf?ref_type=heads
-    extraConfig = ''
-      PasswordAuthentication no
+    extraConfig =
+      ''
+        PasswordAuthentication no
 
-      # default: "ask"
-      StrictHostKeyChecking yes
+        # default: "ask"
+        StrictHostKeyChecking yes
 
-      # https://serverfault.com/a/1109184/112217
-      CheckHostIP no
-
-      # `UseKeychain` only provided by darwin ssh agent, in Linux and pkgs.openssh, it isn't
-      IgnoreUnknown UseKeychain
-      UseKeychain yes
-    '';
+        # https://serverfault.com/a/1109184/112217
+        CheckHostIP no
+      ''
+      + (
+        # `UseKeychain` only provided by darwin ssh agent, in Linux and pkgs.openssh, it isn't
+        lib.strings.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+          IgnoreUnknown UseKeychain
+          UseKeychain yes
+        ''
+      );
 
     # No problem to register the same *.pub in different services
     matchBlocks = {
