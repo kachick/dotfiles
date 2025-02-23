@@ -70,7 +70,7 @@ sudo reboot now
 List defined hostnames
 
 ```bash
-nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.nixosConfigurations | keys[]'
+nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.attrNames' | jq '.[]'
 ```
 
 This repository intentionally reverts the home-manager NixOS module.\
@@ -83,6 +83,14 @@ nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'gith
 See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
 
 NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for several issues.
+
+## home-manager
+
+List definitions
+
+```bash
+nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.attrNames' | jq '.[]'
+```
 
 ## Ubuntu
 
@@ -105,14 +113,11 @@ NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for 
    bash
    ```
 
-1. Apply dotfiles for each use
+1. Apply dotfiles
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux-cli'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
-
-   Candidates
-   - `user@linux-cli` # Used in container
 
 1. [home-manager installed OpenSSH disabled GSSAPI by default](https://github.com/kachick/dotfiles/issues/950).\
    So suppress `/etc/ssh/ssh_config line 53: Unsupported option "gssapiauthentication"` with following command
