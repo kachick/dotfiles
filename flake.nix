@@ -265,7 +265,7 @@
             ];
           };
 
-          "user@linux-cli" = home-manager-linux.lib.homeManagerConfiguration {
+          "user@container" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/common.nix
