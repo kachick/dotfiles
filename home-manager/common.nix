@@ -35,6 +35,8 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
+      DO_NOT_TRACK = "1";
+
       PAGER = "less";
 
       # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219

@@ -98,6 +98,7 @@
   };
 
   environment.variables = {
+    DO_NOT_TRACK = "1";
     EDITOR = pkgs.helix.meta.mainProgram;
     SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
