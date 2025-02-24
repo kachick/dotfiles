@@ -123,7 +123,6 @@
                   treefmt2
                   typos
                   typos-lsp # For zed-editor typos extension
-                  go_1_23
                   trivy
                   markdownlint-cli2
                 ])
@@ -133,6 +132,7 @@
                   # https://github.com/NixOS/nixpkgs/pull/362139
                   dprint
                   lychee
+                  go_1_24
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
