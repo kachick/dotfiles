@@ -196,7 +196,7 @@ in
       rust-analyzer
 
       # Looks like required to enable gopls
-      go_1_23
+      unstable.go_1_24
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
       gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
