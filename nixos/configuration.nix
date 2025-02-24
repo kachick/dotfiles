@@ -156,7 +156,12 @@
 
   # programs.nix-ld.enable = false;
 
-  # Don't use podman NixOS module. It works under rootful mode.
+  # Don't use podman NixOS module. It works under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
+  # https://github.com/NixOS/nixpkgs/blob/24.05/nixos/modules/virtualisation/containers.nix
+  virtualisation.containers = {
+    enable = true;
+    policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
+  };
 
   i18n = {
     extraLocaleSettings = {
