@@ -7,6 +7,7 @@ on:
       - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
+      - 'pkgs/**'
       - 'Taskfile.yml'
   pull_request:
     paths:
@@ -14,6 +15,7 @@ on:
       - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
+      - 'pkgs/**'
       - 'Taskfile.yml'
   schedule:
     # Every 10:42 JST
