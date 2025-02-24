@@ -19,6 +19,7 @@
       extraGroups = [
         "networkmanager"
         "wheel"
+        "podman" # Allow to access for socket
         "input" # For finger print in GDM
         "scanner"
         "lp" # For scanner
