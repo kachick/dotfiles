@@ -135,9 +135,6 @@
 
       # Use stable packages even for GUI apps, because of using home-manager stable channel
 
-      podman-tui
-      docker-compose
-
       dmidecode # `sudo dmidecode -s bios-version`
     ]
   );
@@ -159,19 +156,7 @@
 
   # programs.nix-ld.enable = false;
 
-  # https://nixos.wiki/wiki/Podman
-  virtualisation = {
-    containers.enable = true;
-    podman = {
-      enable = true;
-
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
-      dockerCompat = true;
-
-      # Required for containers under podman-compose to be able to talk to each other.
-      defaultNetwork.settings.dns_enabled = true;
-    };
-  };
+  # Don't use podman NixOS module. It works under rootful mode.
 
   i18n = {
     extraLocaleSettings = {
