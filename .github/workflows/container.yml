@@ -208,3 +208,9 @@ jobs:
           This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
           EOF
           ) | gh pr comment ${{ github.event.number }} --body-file -
+
+  remove-old-images:
+    needs: [build_and_push]
+    uses: ./.github/workflows/cleanup-packages.yml
+    with:
+      keep-latest-items: 50 # 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior
