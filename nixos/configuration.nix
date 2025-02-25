@@ -94,7 +94,7 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/cloudflare-warp.nix
   services.cloudflare-warp = {
     enable = true;
-    package = pkgs.unstable.cloudflare-warp;
+    package = pkgs.patched.cloudflare-warp;
   };
 
   environment.variables = {

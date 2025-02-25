@@ -35,6 +35,17 @@
   # Pacthed packages
   (final: prev: {
     patched = {
+      # TODO: Update with https://github.com/NixOS/nixpkgs/pull/385014 progress
+      cloudflare-warp = prev.unstable.cloudflare-warp.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          version = "2025.1.861";
+          src = final.fetchurl {
+            url = "https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_${finalAttrs.version}.0_amd64.deb";
+            hash = "sha256-9Y1mBKS74x1F3OEusqvm7W8RoJnfBHnXTtwbFVfhjc4=";
+          };
+        }
+      );
+
       # TODO: Replace to stable since nixos-25.05, stable 24.11 does not include https://github.com/NixOS/nixpkgs/pull/361378
       lima = prev.unstable.lima.overrideAttrs (
         finalAttrs: previousAttrs:
