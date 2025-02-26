@@ -59,6 +59,7 @@ See https://learn.microsoft.com/ja-jp/windows/wsl/systemd for further detail
 func main() {
 	// wsl.exe returns non English even in called on the VM https://github.com/microsoft/WSL/issues/9242
 	// And always having non ASCII, annoy to depend with the output :<
+	//exhaustruct:ignore
 	uname := unix.Utsname{}
 	err := unix.Uname(&uname)
 	if err != nil {

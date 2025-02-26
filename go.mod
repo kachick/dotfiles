@@ -8,4 +8,12 @@ require (
 	golang.org/x/sys v0.30.0
 )
 
-require github.com/go-ole/go-ole v1.2.6 // indirect
+require (
+	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
+	golang.org/x/mod v0.23.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
+)
+
+tool github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct
