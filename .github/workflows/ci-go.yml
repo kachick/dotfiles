@@ -49,4 +49,5 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: check format
         run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
+      - run: go tool
       - run: go vet -vettool "$(go tool -n exhaustruct)" ./...
