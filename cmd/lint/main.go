@@ -19,7 +19,7 @@ func getExhaustructPath() string {
 	cmd := func() *exec.Cmd { return exec.Command("go", []string{"tool", "-n", "exhaustruct"}...) }
 	err := cmd().Run()
 	if err != nil {
-		log.Fatalf("Failed to run exhaustruct: %+v", err)
+		log.Fatalf("Failed to run `go tool -n`: %+v", err)
 	}
 
 	exhaustructResult, err := cmd().CombinedOutput()
