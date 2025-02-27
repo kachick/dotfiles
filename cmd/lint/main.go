@@ -16,13 +16,13 @@ import (
 func getExhaustructPath() string {
 	// It downloads dependencies and outputs them in first run.
 	// And getting only last line made messy result. I didn't get the actual root cause of this problem... :<
-	cmd := func() *exec.Cmd { return exec.Command("go", []string{"tool", "-n", "exhaustruct"}...) }
-	err := cmd().Run()
+	goToolN := func() *exec.Cmd { return exec.Command("go", []string{"tool", "-n", "exhaustruct"}...) }
+	err := goToolN().Run()
 	if err != nil {
 		log.Fatalf("Failed to run `go tool -n`: %+v", err)
 	}
 
-	exhaustructResult, err := cmd().CombinedOutput()
+	exhaustructResult, err := goToolN().CombinedOutput()
 	if err != nil {
 		log.Fatalf("Missing exhaustruct as a vettool: %+v", err)
 	}
