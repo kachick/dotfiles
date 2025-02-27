@@ -10,8 +10,8 @@ while read -r local_ref _local_oid remote_ref _remote_oid; do
 		trufflehog git "file://${PWD}" --results='verified,unknown' --branch "$local_ref" --fail
 	fi
 
-	# Git ref is not a file path, but avoiding a typos bug for slash
-	# https://github.com/crate-ci/typos/issues/758
+	# Git ref is not a file path, but avoiding a typos limitation for slash
+	# See https://github.com/crate-ci/typos/issues/758 for detail
 	basename "$remote_ref" | typos --config "$TYPOS_CONFIG_PATH" -
 done
 
