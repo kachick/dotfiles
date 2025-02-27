@@ -14,17 +14,20 @@ import (
 )
 
 func getExhaustructPath() string {
-	exhaustructResult, err := exec.Command("go", []string{"tool", "-n", "exhaustruct"}...).CombinedOutput()
+	// It downloads dependencies and outputs them in first run.
+	// And getting only last line made messy result. I didn't get the actual root cause of this problem... :<
+	cmd := func() *exec.Cmd { return exec.Command("go", []string{"tool", "-n", "exhaustruct"}...) }
+	err := cmd().Run()
+	if err != nil {
+		log.Fatalf("Failed to run exhaustruct: %+v", err)
+	}
+
+	exhaustructResult, err := cmd().CombinedOutput()
 	if err != nil {
 		log.Fatalf("Missing exhaustruct as a vettool: %+v", err)
 	}
 
-	// It downloads dependencies and outputs them in first run. So getting only last line here such as tail command
-	var last string
-	for line := range strings.Lines(string(exhaustructResult)) {
-		last = line
-	}
-	return strings.TrimSpace(last)
+	return strings.TrimSpace(string(exhaustructResult))
 }
 
 func main() {
