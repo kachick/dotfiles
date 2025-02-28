@@ -254,7 +254,7 @@
       name = "connect_cloudflare-warp";
       # Requires unstable package because of it is not an OSS project and highly depends on their service.
       # However it does not take longer build time, it is just a wrapper for their binary. So okay to use unstable.
-      runtimeInputs = with pkgs; [ patched.cloudflare-warp ];
+      runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
       text = ''
         warp-cli connect
       '';
