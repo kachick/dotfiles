@@ -63,7 +63,7 @@ jobs:
     if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
     uses: ./.github/workflows/minimize-staging-deploy-comments.yml
     with:
-      pr-number: ${{ github.event.number }}
+      pr-number: ${{ github.event_name == 'pull_request' && github.event.number || 0 }}
   build_and_push:
     # Do not set `cancel-in-progress: true` in main branch, it displays failure badges
     # https://github.com/orgs/community/discussions/8336
