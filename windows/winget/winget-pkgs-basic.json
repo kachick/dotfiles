@@ -62,6 +62,9 @@
           "PackageIdentifier": "curlpipe.ox"
         },
         {
+          "PackageIdentifier": "WerWolv.ImHex"
+        },
+        {
           "PackageIdentifier": "Balena.Etcher"
         },
         {
