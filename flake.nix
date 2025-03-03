@@ -177,6 +177,7 @@
         {
           "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
           "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "reboulia" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/reboulia ]; });
           "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
@@ -192,6 +193,19 @@
               ./home-manager/kachick.nix
               ./home-manager/linux.nix
               { targets.genericLinux.enable = false; }
+              ./home-manager/lima-host.nix
+              ./home-manager/systemd.nix
+              ./home-manager/desktop.nix
+              ./home-manager/firefox.nix
+            ];
+          };
+
+          "user@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/common.nix
+              { home.username = "user"; }
+              ./home-manager/linux.nix
               ./home-manager/lima-host.nix
               ./home-manager/systemd.nix
               ./home-manager/desktop.nix
