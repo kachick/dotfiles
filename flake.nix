@@ -204,7 +204,10 @@
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/common.nix
-              { home.username = "user"; }
+              {
+                home.username = "user";
+                targets.genericLinux.enable = false;
+              }
               ./home-manager/linux.nix
               ./home-manager/lima-host.nix
               ./home-manager/systemd.nix
