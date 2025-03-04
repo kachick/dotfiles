@@ -90,7 +90,7 @@ So, you should activate the user dotfiles with standalone home-manager even thou
 
 ```bash
 passwd user
-su user
+su - user
 nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@nixos-desktop'
 ```
 
