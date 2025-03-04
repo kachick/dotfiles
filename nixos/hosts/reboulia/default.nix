@@ -8,7 +8,9 @@
     ../../hardware.nix
     ../../desktop
 
-    ./hardware-configuration.nix
+    # Don't save the hardware-configuration.nix in this repository for abstracted use-case in several devices even after GH-712.
+    # So you should activate impure mode for this host
+    /etc/nixos/hardware-configuration.nix
   ];
 
   boot.loader.systemd-boot = {
@@ -16,9 +18,4 @@
     # https://discourse.nixos.org/t/no-space-left-on-boot/24019/20
     configurationLimit = 10;
   };
-
-  # services.udev.extraHwdb = lib.mkAfter ''
-  #   evdev:name:AT Translated Set 2 keyboard:*
-  #     KEYBOARD_KEY_3a=leftctrl # original: capslock
-  # '';
 }
