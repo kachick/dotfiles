@@ -80,7 +80,7 @@
   hyperfine
   riffdiff # `riff`
   gnumake
-  unstable.trufflehog
+  unstable.gitleaks
   ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
