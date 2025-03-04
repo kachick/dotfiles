@@ -62,7 +62,7 @@
           "PackageIdentifier": "curlpipe.ox"
         },
         {
-          "PackageIdentifier": "Balena.Etcher"
+          "PackageIdentifier": "Rufus.Rufus"
         },
         {
           "PackageIdentifier": "tuna-f1sh.cyme"
