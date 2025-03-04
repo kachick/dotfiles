@@ -11,25 +11,6 @@
     ./kanata.nix
   ];
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    kachick = {
-      isNormalUser = true;
-      description = "An admin";
-      extraGroups = [
-        "networkmanager"
-        "wheel"
-        "input" # For finger print in GDM
-        "scanner"
-        "lp" # For scanner
-      ];
-      packages = [
-        # Don't install unfree packages such as spotify.
-        # Use Web Player or PWA
-      ];
-    };
-  };
-
   i18n = {
     # GNOME respects this, I don't know how to realize it only via home-manager
     defaultLocale = "ja_JP.UTF-8";

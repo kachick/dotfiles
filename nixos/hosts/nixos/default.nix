@@ -7,6 +7,7 @@
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop
+    ../../desktop/genericUsers.nix
 
     # Don't save the hardware-configuration.nix in this repository for abstracted use-case in several devices even after GH-712.
     # So you should activate impure mode for this host
