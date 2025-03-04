@@ -177,7 +177,7 @@
         {
           "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
           "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
-          "reboulia" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/reboulia ]; });
+          "nixos" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/nixos ]; });
           "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 

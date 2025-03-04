@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  networking.hostName = "reboulia";
+  networking.hostName = "nixos";
 
   imports = [
     ../../configuration.nix
