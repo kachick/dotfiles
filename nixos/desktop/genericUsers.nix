@@ -3,7 +3,7 @@
 }:
 
 let
-  mkUser = ./mkUser.nix;
+  mkUser = import ./mkUser.nix;
 in
 {
   users.users = {
