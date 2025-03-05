@@ -62,6 +62,9 @@
           "PackageIdentifier": "curlpipe.ox"
         },
         {
+          "PackageIdentifier": "bztsrc.usbimager.wo"
+        },
+        {
           "PackageIdentifier": "Rufus.Rufus"
         },
         {
