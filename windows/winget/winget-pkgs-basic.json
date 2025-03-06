@@ -110,6 +110,9 @@
           "PackageIdentifier": "tailscale.tailscale"
         },
         {
+          "PackageIdentifier": "btpf.Alexandria"
+        },
+        {
           "PackageIdentifier": "calibre.calibre"
         },
         {
