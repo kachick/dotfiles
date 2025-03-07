@@ -226,16 +226,11 @@
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-      paperwm
       clipboard-history
       kimpanel
       just-perfection
       dash-to-dock
       color-picker
-    ])
-    ++ (with pkgs.unstable.gnomeExtensions; [
-      switcher # in nixos-24.11 does not support GNOME 47. Require https://github.com/NixOS/nixpkgs/commit/d729de868927d78589fe7bb2db733b131626d117#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR796
-      # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/commit/f2d1969a05958821ca07a7df7c36639d6477d8fb applied in nixos-24.11
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
