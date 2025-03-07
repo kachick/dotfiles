@@ -7,10 +7,10 @@ on:
   schedule:
     # Every Monday 9:17 JST
     - cron: '17 0 * * 1'
-    # Every Wednesday 9:17 JST
-    - cron: '17 0 * * 3'
-    # Every Friday 9:17 JST
-    - cron: '17 0 * * 5'
+    # # Every Wednesday 9:17 JST
+    # - cron: '17 0 * * 3'
+    # # Every Friday 9:17 JST
+    # - cron: '17 0 * * 5'
   workflow_dispatch:
 
 jobs:
