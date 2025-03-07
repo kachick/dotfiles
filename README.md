@@ -14,11 +14,11 @@ block-beta
     columns 3
 
     block:os:3
-        nixos(("❄")) macos(("🍎"))   windows(("🪟"))
+        nixos(("❄")) macos(("🍎")) windows(("🪟"))
     end
 
     block:vm:3
-        lima("Lima")   wsl2("WSL2")
+        lima("Lima") quickemu("Quickemu") wsl2("WSL2")
     end
 
     block:container:3
@@ -26,6 +26,7 @@ block-beta
     end
 
     nixos --> lima
+    nixos --> quickemu
     macos --> lima
     windows --> wsl2
 

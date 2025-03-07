@@ -11,8 +11,11 @@
 
 {
   home = {
-    packages = with pkgs; [
-      unstable.zed-editor
+    packages = with pkgs.unstable; [
+      zed-editor
+
+      quickemu
+      quickgui
     ];
   };
 }
