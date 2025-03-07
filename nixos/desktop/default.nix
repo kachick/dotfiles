@@ -143,8 +143,10 @@
       # See GH-1049 for detail.
       qemu
 
-      quickemu
-      quickgui
+      # Use latest to apply patches such as https://github.com/quickemu-project/quickemu/issues/1528
+      # Especially quickget requires latest definitions
+      unstable.quickemu
+      unstable.quickgui
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
