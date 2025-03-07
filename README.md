@@ -56,29 +56,49 @@ nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.packages | ."
 
 ## NixOS
 
-Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
-
-For example
-
-```bash
-nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.11#git' \
-  --command sudo nixos-rebuild switch \
-  --flake "github:kachick/dotfiles#$(hostname)" \
-  --show-trace
-sudo reboot now
-```
-
 List defined hostnames
 
 ```bash
 nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.attrNames' | jq '.[]'
 ```
 
+Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
+
+For example
+
+**NOTICE: This drops all existing users except which defined in configurations.**
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.11#git' \
+  --command sudo nixos-rebuild switch \
+  --flake "github:kachick/dotfiles#$(hostname)" \
+  --show-trace
+```
+
+If you are experimenting to setup NixOS just after installing from their installer, the hostname is `nixos` by default.\
+And putting the [hardware-configuration.nix](/etc/nixos/hardware-configuration.nix) into this repository is much annoy for each bootstrapping of the device.\
+So you can enable abstracted config with `--impure` mode.
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.11#git' \
+  --command sudo nixos-rebuild --impure switch \
+  --flake 'github:kachick/dotfiles#nixos' \
+  --show-trace
+```
+
 This repository intentionally reverts the home-manager NixOS module.\
 So, you should activate the user dotfiles with standalone home-manager even though NixOS.
 
 ```bash
-nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#kachick@nixos-desktop'
+passwd user
+su - user
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@nixos-desktop'
+```
+
+And reboot
+
+```bash
+sudo reboot now
 ```
 
 See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
