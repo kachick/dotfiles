@@ -165,7 +165,7 @@
 
   i18n = {
     extraLocaleSettings = {
-      # FIXME: Disabling this because it is unstable. One device correctly handling this, however another one always display English timer in GNOME. So I prefer Japanese for now.
+      # FIXME: Don't set LC_TIME here, it makes strange and unstable behaviors. Correctly overridable in user systemd on algae and not working in moss. Even if both device have almost same config...
       # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
       # LC_TIME = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
