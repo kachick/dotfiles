@@ -4,7 +4,7 @@
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/systemd.nix#L161-L173
   systemd = {
     user = {
-      # GNOME and wayland display managers respect this `environment.d` values
+      # GNOME and other DE respect this `environment.d` values
       sessionVariables = {
         # Enable locale for GNOME and terminals in the gnome-shell. Linux VT console respects home.sessionVariables instead
         # https://superuser.com/a/1841368
