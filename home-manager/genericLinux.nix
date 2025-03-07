@@ -13,7 +13,5 @@
       # - Don't remove termnfo even if it is outdated
       TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo:${pkgs.unstable.ghostty.terminfo}/share/terminfo";
     };
-
-    packages = with pkgs; [ quickemu ];
   };
 }
