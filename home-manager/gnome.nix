@@ -220,6 +220,10 @@
         ];
       };
 
+      "org/gnome/shell/extensions/workspace-indicator" = {
+        embed-previews = false;
+      };
+
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
           "org.gnome.Rhythmbox3.desktop:3"
