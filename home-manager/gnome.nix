@@ -41,6 +41,7 @@
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
+          "quickgui.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
