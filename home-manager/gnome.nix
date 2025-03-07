@@ -17,7 +17,7 @@
           [
             appindicator
             # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
-            paperwm
+            # paperwm # Don't use this extension, it might made crashes. See GH-1114
             clipboard-history
             kimpanel
             removable-drive-menu
@@ -30,7 +30,6 @@
             just-perfection
             dash-to-dock
             # color-picker # Don't enable by default. It conflicts with clipboard-history
-            switcher
           ]
         );
 
@@ -136,7 +135,7 @@
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        www = [ "<Super>b" ]; # "<Super>w" is used in switcher
+        www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
         search = [ "<Alt>space" ];
@@ -170,10 +169,10 @@
 
         dynamic-workspaces = false;
 
+        # Disable overlay-key if using paperwm or pop-shell. Super modifier is mostly used in them
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
-        # The feature is useful, but frustrated when using paperwm or pop-shell shortcuts. Super modifier is mostly used in them
-        overlay-key = "";
+        # overlay-key = "";
       };
 
       "org/gnome/mutter/keybindings" = {
@@ -220,7 +219,6 @@
         theme = "Nordic";
 
         num-workspaces = 3;
-        # This names are might not be persisted with paperwm, it also uses own UUID for that
         workspace-names = [
           "Main"
           "Sandbox"
@@ -231,26 +229,6 @@
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
           "org.gnome.Rhythmbox3.desktop:3"
-        ];
-      };
-
-      "org/gnome/shell/extensions/paperwm/keybindings" = {
-        take-window = [ ]; # default: ['<Super>t']
-        center-vertically = [ ]; # default: ['<Super>v']
-        open-window-position = 0;
-      };
-
-      # https://github.com/paperwm/PaperWM/pull/550
-      "org/gnome/shell/extensions/paperwm" = {
-        winprops = [
-          (
-            let
-              entry = ''
-                {"wm_class":"*","preferredWidth":"50%"}
-              '';
-            in
-            entry
-          )
         ];
       };
     };
