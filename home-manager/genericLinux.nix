@@ -13,10 +13,5 @@
       # - Don't remove termnfo even if it is outdated
       TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo:${pkgs.unstable.ghostty.terminfo}/share/terminfo";
     };
-
-    locale = {
-      time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-
-    };
   };
 }
