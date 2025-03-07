@@ -27,7 +27,7 @@
             workspace-indicator
             applications-menu
             auto-move-windows
-            just-perfection
+            # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
             # color-picker # Don't enable by default. It conflicts with clipboard-history
           ]
@@ -156,13 +156,6 @@
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
         cache-only-favorites = true;
         display-mode = 0;
-      };
-
-      "org/gnome/shell/extensions/just-perfection" = {
-        startup-status = 0;
-
-        clock-menu-position = 1;
-        clock-menu-position-offset = 15;
       };
 
       "org/gnome/mutter" = {

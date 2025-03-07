@@ -233,7 +233,6 @@
       appindicator
       clipboard-history
       kimpanel
-      just-perfection
       dash-to-dock
       color-picker
     ]);
