@@ -149,8 +149,8 @@
         let
           pkgs = mkPkgs system;
         in
-        # pkgs.my // pkgs.patched # TODO: Adding another name space will fail, and nix flake check fails if it including unfree
-        pkgs.my
+        # Don't include unfree packages, it will fail in `nix flake check`
+        pkgs.lib.recursiveUpdate pkgs.patched pkgs.my
       );
 
       apps = forAllSystems (system: {
