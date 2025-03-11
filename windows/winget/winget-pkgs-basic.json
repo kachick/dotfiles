@@ -26,9 +26,6 @@
           "PackageIdentifier": "jtroo.kanata_gui"
         },
         {
-          "PackageIdentifier": "Cloudflare.Warp"
-        },
-        {
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
