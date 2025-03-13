@@ -91,6 +91,22 @@ in
             hash = "sha256-BH//RZsuRVa4QoxAiL55iOEVftNYCljbsDjFLIZLIjs=";
           }}";
         };
+
+      spotify-pwa =
+        let
+          app-id = "pjibgclleladliembfgfagdaldikeohf";
+        in
+        {
+          exec = ''
+            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
+          '';
+          name = "Spotify";
+          # It might be unstable with the their CDN URL
+          icon = "${pkgs.fetchurl {
+            url = "https://open.spotifycdn.com/cdn/images/icons/Spotify_512.7e07796d.png";
+            hash = "sha256-fgd5bZ+qDCkeJQYNLRQJo1WKUBHGaoufVhlkC8PLR+0=";
+          }}";
+        };
     };
   };
 }
