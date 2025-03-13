@@ -53,6 +53,10 @@ in
     #   See https://askubuntu.com/questions/117341/how-can-i-find-desktop-files
     #
     # What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
+    #
+    # Chrome originally sets the icon like `Icon=chrome-${app_id}-${profile_index (replaced space with _)}`, however it will not fit for managing by home-manager
+    # So manually setting the icon here
+    # Icons are defined in PWA manifest, it is specified in their <link> tag. https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons
     desktopEntries = {
       youtube-music-pwa =
         let
@@ -63,8 +67,14 @@ in
             ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
           '';
           name = "YouTube Music";
+          # https://music.youtube.com/manifest.webmanifest
+          icon = "${pkgs.fetchurl {
+            url = "https://www.gstatic.com/youtube/media/ytm/images/applauncher/cairo/music_icon_512x512.png";
+            hash = "sha256-h51FhG7ouDqaz03Q6SK/Qs2XRhpIOQL/SwkltjmrnYQ=";
+          }}";
         };
 
+      # Amazon Music does not officially support PWA. However it is almost working.
       amazon-music-pwa =
         let
           app-id = "dojpeppajphepagdhclblkkjnoaeamee";
@@ -74,6 +84,11 @@ in
             ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
           '';
           name = "Amazon Music";
+          icon = "${pkgs.fetchurl {
+            # Using different domain. However this URL was got from <link> tag in https://music.amazon.co.jp
+            url = "https://d5fx445wy2wpk.cloudfront.net/icons/amznMusic_favicon.png";
+            hash = "sha256-BH//RZsuRVa4QoxAiL55iOEVftNYCljbsDjFLIZLIjs=";
+          }}";
         };
     };
   };
