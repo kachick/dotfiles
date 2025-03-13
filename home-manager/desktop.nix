@@ -53,6 +53,7 @@ in
     #
     # - Required to install PWA itself from browser even if activated these shortcuts. However this definition is also required to share the desktop file in all NixOS device
     # - Required to log-out from GNOME to apply in overview
+    # - Duplicate icons will be listed in overview for the original PWA and this wrapper. So adding in dock would be better to avoid confusions
     #
     # - What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
     #

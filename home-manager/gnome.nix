@@ -42,6 +42,9 @@
           "podman-desktop.desktop"
           "quickgui.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
+          "youtube-music-pwa.desktop"
+          "amazon-music-pwa.desktop"
+          "spotify-pwa.desktop"
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
         ];
@@ -257,6 +260,9 @@
       "org/gnome/shell/extensions/auto-move-windows" = {
         application-list = [
           "org.gnome.Rhythmbox3.desktop:3"
+          "youtube-music-pwa.desktop:3"
+          "amazon-music-pwa.desktop:3"
+          "spotify-pwa.desktop:3"
         ];
       };
 
