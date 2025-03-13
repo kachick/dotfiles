@@ -94,6 +94,19 @@
           "<Alt>F4"
         ];
 
+        cycle-windows = [
+          "<Super>Right"
+        ];
+
+        cycle-windows-backward = [
+          "<Super>Left"
+        ];
+
+        panel-run-dialog = [
+          "<Alt>F2" # default
+          "<Super>r"
+        ];
+
         switch-to-workspace-down = [
           "<Primary><Super>Down"
           "<Primary><Super>j"
@@ -145,7 +158,7 @@
         www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        search = [ "<Alt>space" ];
+        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Prefer overlay-key
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
         ];
@@ -172,7 +185,7 @@
         # Disable overlay-key if using paperwm or pop-shell. Super modifier is mostly used in them
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
-        # overlay-key = "";
+        overlay-key = "Super_R"; # Avoid default Super_L for mistyping. And this option does not accept combo like the Alt+Space
       };
 
       "org/gnome/mutter/keybindings" = {
