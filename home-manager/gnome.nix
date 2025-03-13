@@ -29,6 +29,7 @@
             auto-move-windows
             # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
+            user-themes # the package name is not the `user-theme`, required `s` suffix
           ]
         );
 
@@ -229,6 +230,10 @@
         application-list = [
           "org.gnome.Rhythmbox3.desktop:3"
         ];
+      };
+
+      "org/gnome/shell/extensions/user-theme" = {
+        name = "Nordic";
       };
     };
   };
