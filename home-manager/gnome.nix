@@ -258,12 +258,17 @@
       };
 
       "org/gnome/shell/extensions/auto-move-windows" = {
-        application-list = [
-          "org.gnome.Rhythmbox3.desktop:3"
-          "youtube-music-pwa.desktop:3"
-          "amazon-music-pwa.desktop:3"
-          "spotify-pwa.desktop:3"
-        ];
+        application-list =
+          let
+            music = "3";
+          in
+          [
+            "org.gnome.Rhythmbox3.desktop:${music}"
+            # FIXME: Not working
+            "youtube-music-pwa.desktop:${music}"
+            "amazon-music-pwa.desktop:${music}"
+            "spotify-pwa.desktop:${music}"
+          ];
       };
 
       "org/gnome/shell/extensions/user-theme" = {
