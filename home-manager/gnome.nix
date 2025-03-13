@@ -83,6 +83,8 @@
       "org/gnome/desktop/wm/keybindings" = {
         activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
 
+        show-desktop = [ "<Super>d" ];
+
         close = [
           "<Super>q"
           "<Alt>F4"
