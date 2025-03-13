@@ -53,6 +53,10 @@
         # exec-arg="";
       };
 
+      "org/gnome/desktop/background" = {
+        picture-uri-dark = "file://${pkgs.nordic}/share/wallpapers/Nordic/nordic-wall.jpg";
+      };
+
       # gsettings list-recursively | grep -F "<Super>"
       # Disabling defaults to enable Suprt+num family will be used to switch workspaces
       # https://github.com/pop-os/shell/issues/142
@@ -197,6 +201,8 @@
         clock-show-weekday = true;
 
         gtk-theme = "Nordic";
+
+        color-scheme = "prefer-dark"; # Nordic is a dark theme
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
