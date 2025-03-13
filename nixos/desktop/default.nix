@@ -182,6 +182,8 @@
 
       loupe # image viewer
 
+      contrast # Check two color contrast. Also using as a color-picker
+
       ## Unfree packages
 
       # TODO: Consider using vscodium again
@@ -234,7 +236,6 @@
       clipboard-history
       kimpanel
       dash-to-dock
-      color-picker
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput

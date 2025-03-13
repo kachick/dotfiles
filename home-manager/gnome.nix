@@ -29,7 +29,6 @@
             auto-move-windows
             # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
-            # color-picker # Don't enable by default. It conflicts with clipboard-history
           ]
         );
 
