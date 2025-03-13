@@ -185,7 +185,14 @@
         # Disable overlay-key if using paperwm or pop-shell. Super modifier is mostly used in them
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
-        overlay-key = "Super_R"; # Avoid default Super_L for mistyping. And this option does not accept combo like the Alt+Space
+        # However just removing is not enough. Search feature cannot toggle. Providing an overlay-key is still better than none.
+        # This option does not accept combo like the "<Alt>Space"
+        #
+        # Why this value?
+        # - Avoid default Super_L for mistyping.
+        # - Alt_R is using for IME switcher
+        # - Super_R is missing in my laptop, however it is just ignored in the device
+        overlay-key = "Super_R";
       };
 
       "org/gnome/mutter/keybindings" = {
