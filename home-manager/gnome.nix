@@ -207,6 +207,8 @@
         custom-theme-shrink = true;
 
         multi-monitor = true;
+
+        scroll-action = "switch-workspace";
       };
 
       "org/gnome/desktop/wm/preferences" = {
