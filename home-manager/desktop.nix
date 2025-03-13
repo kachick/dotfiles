@@ -49,10 +49,11 @@ in
     # - Related Modules:
     #   - https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/build-support/make-desktopitem/default.nix
     #   - https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-desktop-entries.nix
-    # - Put in ~/.local/share/applications
-    #   See https://askubuntu.com/questions/117341/how-can-i-find-desktop-files
+    #   - Such as files in ~/.local/share/applications by GNOME default as written in https://askubuntu.com/questions/117341/how-can-i-find-desktop-files, however this module does not put on there
     #
-    # What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
+    # - Required to log-out from GNOME to apply in overview
+    #
+    # - What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
     #
     # Chrome originally sets the icon like `Icon=chrome-${app_id}-${profile_index (replaced space with _)}`, however it will not fit for managing by home-manager
     # So manually setting the icon here
