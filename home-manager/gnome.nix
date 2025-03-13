@@ -237,6 +237,14 @@
       "org/gnome/shell/extensions/user-theme" = {
         name = "Nordic";
       };
+
+      "org/gnome/nautilus/list-view" = {
+        use-tree-view = true;
+      };
+
+      "org/gnome/nautilus/preferences" = {
+        show-create-link = true;
+      };
     };
   };
 }
