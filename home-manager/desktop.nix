@@ -51,6 +51,7 @@ in
     #   - https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-desktop-entries.nix
     #   - Such as files in ~/.local/share/applications by GNOME default as written in https://askubuntu.com/questions/117341/how-can-i-find-desktop-files, however this module does not put on there
     #
+    # - Required to install PWA itself from browser even if activated these shortcuts. However this definition is also required to share the desktop file in all NixOS device
     # - Required to log-out from GNOME to apply in overview
     #
     # - What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
