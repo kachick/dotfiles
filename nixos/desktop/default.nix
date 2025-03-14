@@ -153,6 +153,8 @@
 
       mission-center
 
+      walker # Replacing gnome overview in my use
+
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
       nil
