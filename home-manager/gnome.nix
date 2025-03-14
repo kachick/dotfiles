@@ -42,9 +42,6 @@
           "podman-desktop.desktop"
           "quickgui.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
-          # "youtube-music-pwa.desktop"
-          # "amazon-music-pwa.desktop"
-          # "spotify-pwa.desktop"
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
         ];
@@ -264,10 +261,6 @@
           in
           [
             "org.gnome.Rhythmbox3.desktop:${music}"
-            # # FIXME: Not working
-            # "youtube-music-pwa.desktop:${music}"
-            # "amazon-music-pwa.desktop:${music}"
-            # "spotify-pwa.desktop:${music}"
           ];
       };
 
