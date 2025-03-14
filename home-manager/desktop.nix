@@ -60,16 +60,21 @@ in
     # Chrome originally sets the icon like `Icon=chrome-${app_id}-${profile_index (replaced space with _)}`, however it will not fit for managing by home-manager
     # So manually setting the icon here
     # Icons are defined in PWA manifest, it is specified in their <link> tag. https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons
+    #
+    # Prefer url(app) instead of PWA(app-id) to avoid chrome profile number problem
     desktopEntries = {
       youtube-music-pwa =
         let
-          app-id = "cinhimbnkkaeohfgghhklpknlkffjgod";
+          name = "YouTube Music";
         in
         {
           exec = ''
-            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
+            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app='https://music.youtube.com/'
           '';
           name = "YouTube Music";
+          settings = {
+            StartupWMClass = name;
+          };
           # https://music.youtube.com/manifest.webmanifest
           icon = "${pkgs.fetchurl {
             url = "https://www.gstatic.com/youtube/media/ytm/images/applauncher/cairo/music_icon_512x512.png";
@@ -80,13 +85,16 @@ in
       # Amazon Music does not officially support PWA. However it is almost working.
       amazon-music-pwa =
         let
-          app-id = "dojpeppajphepagdhclblkkjnoaeamee";
+          name = "Amazon Music";
         in
         {
           exec = ''
-            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
+            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app='https://music.amazon.co.jp/'
           '';
           name = "Amazon Music";
+          settings = {
+            StartupWMClass = name;
+          };
           icon = "${pkgs.fetchurl {
             # Using different domain. However this URL was got from <link> tag in https://music.amazon.co.jp
             url = "https://d5fx445wy2wpk.cloudfront.net/icons/amznMusic_favicon.png";
