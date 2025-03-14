@@ -187,17 +187,16 @@
 
       ## Unfree packages
 
-      # Don't use unstable channel. It frequently backported to stable channel
+      # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
+      # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
       (
-        (vscode.override {
+        (unstable.vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
           # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
           commandLineArgs = [
-            "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
-            # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
-
+            "--wayland-text-input-version=3"
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/vs/platform/encryption/common/encryptionService.ts#L28-L71
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/main.ts#L244-L253
             "--password-store=gnome-libsecret" # Required for GitHub Authentication. For example gnome-keyring, kwallet5, KeepassXC, pass-secret-service
@@ -226,7 +225,7 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = [
-          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
+          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced, it should be introduced in nixos-25.05
           "--wayland-text-input-version=3"
         ];
       })
