@@ -1,4 +1,4 @@
-# Unti patterns:
+# Anti-pattern:
 #   - No option: It might match for this script itself. For pname. And Nis store path is much longer
 #   - --exact: It only support less than 15 chars
 #   - Injecting full path with nix: It is required in both killing and executing. And might be kept in updating.
