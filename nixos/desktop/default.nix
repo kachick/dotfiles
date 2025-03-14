@@ -122,7 +122,6 @@
   environment.systemPackages =
     (with pkgs; [
       firefox
-      floorp # Only installing for PWA use, for now. Chrome PWA with considering the profile number is annoy in nix and home-manager configurations. See GH-968
 
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
