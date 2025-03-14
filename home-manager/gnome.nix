@@ -19,7 +19,7 @@
             # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
             # paperwm # Don't use this extension, it might made crashes. See GH-1114
             clipboard-history
-            kimpanel
+            # kimpanel # Temporary disabling, might be related to GH-1114. Repository is https://github.com/wengxt/gnome-shell-extension-kimpanel
             removable-drive-menu
             # system-monitor
             places-status-indicator
