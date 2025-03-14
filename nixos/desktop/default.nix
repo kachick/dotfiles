@@ -80,7 +80,7 @@
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
     gnome-connections
-    # epiphany # web browser # Required for better PWA experience in GNOME. To avoid chrome profile number and Firefox does not support PWAS/SSB for now
+    epiphany # web browser
     geary # email reader
     evince # document viewer
     gnome-calendar
@@ -164,7 +164,7 @@
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.
       rhythmbox
 
-      evtest # To debug keyremapper as GH-786fepiphany
+      evtest # To debug keyremapper as GH-786
       psmisc # e.g. `fuser -v /dev/input/event17` when want to know event17 is grabbed by which process
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
