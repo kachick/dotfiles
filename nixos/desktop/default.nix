@@ -133,6 +133,7 @@
       unstable.zed-editor
 
       gdm-settings
+      desktop-file-utils # `desktop-file-validate`
 
       ghostty # ghostty package now always be backported. TODO: Prefer `unstable` since nixos-25.05
 
@@ -230,6 +231,8 @@
           "--wayland-text-input-version=3"
         ];
       })
+
+      my.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator

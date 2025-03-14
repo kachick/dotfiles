@@ -255,9 +255,13 @@
       };
 
       "org/gnome/shell/extensions/auto-move-windows" = {
-        application-list = [
-          "org.gnome.Rhythmbox3.desktop:3"
-        ];
+        application-list =
+          let
+            music = "3";
+          in
+          [
+            "org.gnome.Rhythmbox3.desktop:${music}"
+          ];
       };
 
       "org/gnome/shell/extensions/user-theme" = {
