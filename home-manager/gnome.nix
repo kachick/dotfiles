@@ -161,6 +161,7 @@
         # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Prefer overlay-key
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
@@ -168,6 +169,12 @@
         name = "Terminal";
         binding = "<Super>t";
         command = lib.getExe pkgs.unstable.ghostty;
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        name = "Toggle Launcher";
+        binding = "<Alt>space";
+        command = lib.getExe pkgs.my.toggle-wofi;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
