@@ -153,7 +153,7 @@
 
       mission-center
 
-      walker # Replacing gnome overview in my use
+      # walker # Don't install this package. It does not support GNOME on Wayland. See https://github.com/abenz1267/walker/issues/180#issuecomment-2540630523
 
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
