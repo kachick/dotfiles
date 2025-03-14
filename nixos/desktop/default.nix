@@ -187,7 +187,6 @@
 
       ## Unfree packages
 
-      # TODO: Consider using vscodium again
       # Don't use unstable channel. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
