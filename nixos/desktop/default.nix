@@ -231,6 +231,8 @@
           "--wayland-text-input-version=3"
         ];
       })
+
+      my.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
