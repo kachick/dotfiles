@@ -56,67 +56,61 @@ in
     # - Duplicate icons will be listed in overview for the original PWA and this wrapper. So adding in dock would be better to avoid confusions
     #
     # - What is the StartupWMClass?: https://askubuntu.com/questions/367396/what-does-the-startupwmclass-field-of-a-desktop-file-represent
+    # - How to get WM_CLASS on wayland?: Use lg(Looking Glass). See https://askubuntu.com/a/1468539
     #
     # Chrome originally sets the icon like `Icon=chrome-${app_id}-${profile_index (replaced space with _)}`, however it will not fit for managing by home-manager
     # So manually setting the icon here
     # Icons are defined in PWA manifest, it is specified in their <link> tag. https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/icons
     #
     # Prefer url(app) instead of PWA(app-id) to avoid chrome profile number problem
+    #
+    # Don't quotate with 'content' in the desktop entry. Use "content"
     desktopEntries = {
-      youtube-music-pwa =
-        let
-          name = "YouTube Music";
-        in
-        {
-          exec = ''
-            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app='https://music.youtube.com/'
-          '';
-          name = "YouTube Music";
-          settings = {
-            StartupWMClass = name;
-          };
-          # https://music.youtube.com/manifest.webmanifest
-          icon = "${pkgs.fetchurl {
-            url = "https://www.gstatic.com/youtube/media/ytm/images/applauncher/cairo/music_icon_512x512.png";
-            hash = "sha256-h51FhG7ouDqaz03Q6SK/Qs2XRhpIOQL/SwkltjmrnYQ=";
-          }}";
+      youtube-music-pwa = rec {
+        exec = ''
+          ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app="https://music.youtube.com/"
+        '';
+        name = "YouTube_Music";
+        settings = {
+          StartupWMClass = name;
         };
+        # https://music.youtube.com/manifest.webmanifest
+        icon = "${pkgs.fetchurl {
+          url = "https://www.gstatic.com/youtube/media/ytm/images/applauncher/cairo/music_icon_512x512.png";
+          hash = "sha256-h51FhG7ouDqaz03Q6SK/Qs2XRhpIOQL/SwkltjmrnYQ=";
+        }}";
+      };
 
       # Amazon Music does not officially support PWA. However it is almost working.
-      amazon-music-pwa =
-        let
-          name = "Amazon Music";
-        in
-        {
-          exec = ''
-            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app='https://music.amazon.co.jp/'
-          '';
-          name = "Amazon Music";
-          settings = {
-            StartupWMClass = name;
-          };
-          icon = "${pkgs.fetchurl {
-            # Using different domain. However this URL was got from <link> tag in https://music.amazon.co.jp
-            url = "https://d5fx445wy2wpk.cloudfront.net/icons/amznMusic_favicon.png";
-            hash = "sha256-BH//RZsuRVa4QoxAiL55iOEVftNYCljbsDjFLIZLIjs=";
-          }}";
+      amazon-music-pwa = rec {
+        exec = ''
+          ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app="https://music.amazon.co.jp/"
+        '';
+        name = "Amazon_Music";
+        settings = {
+          StartupWMClass = name;
         };
+        icon = "${pkgs.fetchurl {
+          # Using different domain. However this URL was got from <link> tag in https://music.amazon.co.jp
+          url = "https://d5fx445wy2wpk.cloudfront.net/icons/amznMusic_favicon.png";
+          hash = "sha256-BH//RZsuRVa4QoxAiL55iOEVftNYCljbsDjFLIZLIjs=";
+        }}";
+      };
 
-      spotify-pwa =
-        let
-          app-id = "pjibgclleladliembfgfagdaldikeohf";
-        in
-        {
-          exec = ''
-            ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app-id=${app-id}
-          '';
-          name = "Spotify";
-          # It might be unstable with the their CDN URL
-          icon = "${pkgs.fetchurl {
-            url = "https://open.spotifycdn.com/cdn/images/icons/Spotify_512.7e07796d.png";
-            hash = "sha256-fgd5bZ+qDCkeJQYNLRQJo1WKUBHGaoufVhlkC8PLR+0=";
-          }}";
+      spotify-pwa = rec {
+        exec = ''
+          ${lib.getExe pkgs.my.chrome-with-profile-by-name} personal --app="https://open.spotify.com/"
+        '';
+        name = "Spotify";
+        settings = {
+          StartupWMClass = name;
         };
+        # It might be unstable with the their CDN URL
+        icon = "${pkgs.fetchurl {
+          url = "https://open.spotifycdn.com/cdn/images/icons/Spotify_512.7e07796d.png";
+          hash = "sha256-fgd5bZ+qDCkeJQYNLRQJo1WKUBHGaoufVhlkC8PLR+0=";
+        }}";
+      };
     };
   };
 }
