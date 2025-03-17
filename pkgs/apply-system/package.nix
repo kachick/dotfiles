@@ -13,7 +13,7 @@ pkgs.writeShellApplication rec {
       mkdir --parents /etc/tmp # test
       mkdir --parents /etc/containers
       ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
-      ln --symbolic --force '${pkgs.tailscale}/lib/systemd/system/tailscaled.service' /etc/systemd/system/
+      ln --symbolic --force '${pkgs.my.tailscaled-service}' '/etc/systemd/system/tailscaled.service'
       systemctl enable tailscaled.service
     '';
   runtimeInputs = with pkgs; [
