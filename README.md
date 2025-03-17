@@ -120,17 +120,10 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
-1. [home-manager installed OpenSSH disabled GSSAPI by default](https://github.com/kachick/dotfiles/issues/950).\
-   So suppress `/etc/ssh/ssh_config line 53: Unsupported option "gssapiauthentication"` with following command
+1. Apply system level dotfiles
 
    ```bash
-   sudo chmod -r /etc/ssh/ssh_config
-   ```
-
-1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
-
-   ```bash
-   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
+   sudo -s "$(command -v nix)" run 'github:kachick/dotfiles#apply-system'
    ```
 
 ### Podman on Ubuntu
@@ -141,14 +134,6 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
    ```bash
    sudo apt-get install --assume-yes uidmap
-   ```
-
-1. Make sure putting /etc/containers/policy.json, it is not a home-manager role
-
-   ```bash
-   sudo mkdir -p /etc/containers
-   cd /etc/containers
-   sudo curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
    ```
 
 1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)

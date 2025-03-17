@@ -1,0 +1,26 @@
+{ pkgs, ... }:
+pkgs.writeShellApplication rec {
+  name = "apply-system";
+  # - Required to remove `errexit` for `||` operator
+  # Don't add `xtrace` here, it displays much long `export`. Add it in code if you want
+  bashOptions = [
+    "nounset"
+    "pipefail"
+  ];
+  text =
+    (builtins.readFile ./${name}.bash)
+    + ''
+      mkdir --parents /etc/tmp # test
+      mkdir --parents /etc/containers
+      ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
+    '';
+  runtimeInputs = with pkgs; [
+    coreutils # `uname`, `ln`, `mkdir`
+  ];
+  meta = {
+    description = ''
+      System level activation script for non NixOS Linux.
+      Required to run with sudo. e.g. `sudo -s "$(command -v nix)" run .#apply-system`
+    '';
+  };
+}
