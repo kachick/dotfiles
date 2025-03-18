@@ -19,7 +19,6 @@
             # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
             # paperwm # Don't use this extension, it might made crashes. See GH-1114
             clipboard-history
-            # kimpanel # Temporary disabling, might be related to GH-1114. Repository is https://github.com/wengxt/gnome-shell-extension-kimpanel
             removable-drive-menu
             # system-monitor
             places-status-indicator
@@ -29,7 +28,8 @@
             auto-move-windows
             # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
-            user-themes # the package name is not the `user-theme`, required `s` suffix
+            # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for detail
+            # user-themes # the package name is not the `user-theme`, required `s` suffix
           ]
         );
 
@@ -54,7 +54,7 @@
       };
 
       "org/gnome/desktop/background" = {
-        picture-uri-dark = "file://${pkgs.nordic}/share/wallpapers/Nordic/nordic-wall.jpg";
+        picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/drool-l.svg";
       };
 
       # gsettings list-recursively | grep -F "<Super>"
@@ -209,15 +209,16 @@
 
       "org/gnome/desktop/input-sources" = {
         sources = with lib.hm.gvariant; [
+          # Don't add multiple sources such as adding `('xkb', 'us')`
+          # Since IBus 1.5, it always enabled and switched on the IME
+          # So use direct input on mozc layer
           (mkTuple [
-            "xkb"
-            "us"
-          ])
-          (mkTuple [
-            "xkb"
-            "jp"
+            "ibus"
+            "mozc-jp"
           ])
         ];
+
+        per-window = true;
       };
 
       "org/gnome/desktop/interface" = {
@@ -226,10 +227,6 @@
 
         # https://unix.stackexchange.com/questions/327975/how-to-change-the-gnome-panel-time-format
         clock-show-weekday = true;
-
-        gtk-theme = "Nordic";
-
-        color-scheme = "prefer-dark"; # Nordic is a dark theme
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
@@ -247,8 +244,6 @@
       };
 
       "org/gnome/desktop/wm/preferences" = {
-        theme = "Nordic";
-
         num-workspaces = 3;
         workspace-names = [
           "Main"
@@ -269,10 +264,6 @@
           [
             "org.gnome.Rhythmbox3.desktop:${music}"
           ];
-      };
-
-      "org/gnome/shell/extensions/user-theme" = {
-        name = "Nordic";
       };
 
       "org/gnome/nautilus/list-view" = {

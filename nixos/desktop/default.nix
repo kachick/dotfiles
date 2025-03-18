@@ -178,8 +178,6 @@
 
       dconf-editor
 
-      nordic
-
       podman-desktop
 
       # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
@@ -238,7 +236,6 @@
     ++ (with pkgs.gnomeExtensions; [
       appindicator
       clipboard-history
-      kimpanel
       dash-to-dock
     ]);
 
@@ -310,17 +307,11 @@
   i18n = {
     inputMethod = {
       enable = true;
-      type = "fcitx5";
+      # Don't use fcitx5. It always made systemd-coredump. See GH-1114
+      type = "ibus";
 
-      fcitx5 = {
-        # https://github.com/NixOS/nixpkgs/pull/278765
-        waylandFrontend = true;
-
-        addons = [
-          pkgs.fcitx5-mozc
-          pkgs.fcitx5-gtk
-        ];
-      };
+      # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
+      ibus.engines = with pkgs.ibus-engines; [ mozc ];
     };
   };
 
