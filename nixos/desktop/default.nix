@@ -236,7 +236,6 @@
     ++ (with pkgs.gnomeExtensions; [
       appindicator
       clipboard-history
-      kimpanel
       dash-to-dock
     ]);
 
