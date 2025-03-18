@@ -308,20 +308,11 @@
   i18n = {
     inputMethod = {
       enable = true;
+      # Don't use fcitx5. It always made systemd-coredump. See GH-1114
       type = "ibus";
 
       # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
       ibus.engines = with pkgs.ibus-engines; [ mozc ];
-
-      # fcitx5 = {
-      #   # https://github.com/NixOS/nixpkgs/pull/278765
-      #   waylandFrontend = true;
-
-      #   addons = [
-      #     pkgs.fcitx5-mozc
-      #     pkgs.fcitx5-gtk
-      #   ];
-      # };
     };
   };
 

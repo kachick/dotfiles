@@ -89,11 +89,6 @@
         X-KDE-autostart-phase=1
       '';
 
-      # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
-      fcitx5 = {
-        source = ../config/fcitx5;
-      };
-
       # mozc_tool can be run with `/run/current-system/sw/lib/mozc/mozc_tool --mode=config_dialog` on NixOS
       #
       # You should run `ibus write-cache; ibus restart` after changed the ibus config
