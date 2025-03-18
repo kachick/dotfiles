@@ -86,8 +86,6 @@
 
   pastel
 
-  tailscale # Frequently backported to stable channel
-
   # How to get the installed font names
   # fontconfig by nix: `fc-list : family style`
   # darwin: system_profiler SPFontsDataType
