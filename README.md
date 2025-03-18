@@ -126,6 +126,12 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    sudoc nix run 'github:kachick/dotfiles#apply-system'
    ```
 
+1. Enable tailscale ssh if required
+
+   ```bash
+   sudoc tailscale up --ssh
+   ```
+
 ### Podman on Ubuntu
 
 1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
