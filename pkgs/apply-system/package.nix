@@ -23,7 +23,7 @@ pkgs.writeShellApplication rec {
   meta = {
     description = ''
       System level activation script for non NixOS Linux.
-      Required to run with sudo. e.g. `sudo -s "$(command -v nix)" run .#apply-system`
+      Required to run with sudo. e.g. `sudoc nix run .#apply-system`
     '';
   };
 }

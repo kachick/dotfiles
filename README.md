@@ -120,10 +120,10 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
-1. Apply system level dotfiles
+1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
 
    ```bash
-   sudo -s "$(command -v nix)" run 'github:kachick/dotfiles#apply-system'
+   sudoc nix run 'github:kachick/dotfiles#apply-system'
    ```
 
 ### Podman on Ubuntu
