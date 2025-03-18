@@ -178,8 +178,6 @@
 
       dconf-editor
 
-      nordic
-
       podman-desktop
 
       # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
