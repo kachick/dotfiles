@@ -74,6 +74,8 @@ jobs:
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.os }}'
+      - run: zsh --interactive -c 'sudoc nix run ".#apply-system"'
+        if: runner.os == 'Linux'
       - name: Print some paths and versions
         run: |
           which zsh
