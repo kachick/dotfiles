@@ -10,7 +10,6 @@ pkgs.writeShellApplication rec {
   text =
     (builtins.readFile ./${name}.bash)
     + ''
-      mkdir --parents /etc/tmp # test
       mkdir --parents /etc/containers
       ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
       ln --symbolic --force '${../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
