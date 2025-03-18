@@ -209,15 +209,16 @@
 
       "org/gnome/desktop/input-sources" = {
         sources = with lib.hm.gvariant; [
+          # Don't add multiple sources such as adding `('xkb', 'us')`
+          # Since IBus 1.5, it always enabled and switched on the IME
+          # So use direct input on mozc layer
           (mkTuple [
-            "xkb"
-            "us"
-          ])
-          (mkTuple [
-            "xkb"
-            "jp"
+            "ibus"
+            "mozc-jp"
           ])
         ];
+
+        per-window = true;
       };
 
       "org/gnome/desktop/interface" = {
