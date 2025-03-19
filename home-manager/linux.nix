@@ -75,8 +75,6 @@
     };
 
     configFile = {
-      "hypr/hyprland.conf".source = ../config/hyprland/hyprland.conf;
-
       # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
       "autostart/userdirs.desktop".text = ''
         [Desktop Entry]
