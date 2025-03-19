@@ -102,6 +102,13 @@
           "<Super>Left"
         ];
 
+        lower = [
+          # Like Windows
+          # https://superuser.com/a/189235/120469
+          # https://unix.stackexchange.com/a/718284
+          "<Alt>Escape"
+        ];
+
         panel-run-dialog = [
           "<Alt>F2" # default
           "<Super>r"
