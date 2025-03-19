@@ -11,7 +11,7 @@
       # - Don't set this in NixOS desktop. It has own value
       # - Don't include `pkgs.ANYTTY` to avoid the build and or download large package. Use `pkgs.ANYTTY.terminfo`
       # - Don't remove termnfo even if it is outdated
-      TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo:${pkgs.unstable.ghostty.terminfo}/share/terminfo";
+      TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo:${pkgs.ghostty.terminfo}/share/terminfo";
     };
   };
 }

@@ -49,7 +49,7 @@
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.unstable.ghostty;
+        exec = lib.getExe pkgs.ghostty;
         # exec-arg="";
       };
 
@@ -168,7 +168,7 @@
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.unstable.ghostty;
+        command = lib.getExe pkgs.ghostty;
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {

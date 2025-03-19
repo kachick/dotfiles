@@ -135,7 +135,7 @@
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
 
-      ghostty # ghostty package now always be backported. TODO: Prefer `unstable` since nixos-25.05
+      ghostty # ghostty package now always be backported.
 
       alacritty
 
