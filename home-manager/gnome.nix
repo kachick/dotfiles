@@ -84,6 +84,7 @@
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
       };
 
+      # Some keybindings should be put in org/gnome/mutter/keybindings instead
       "org/gnome/desktop/wm/keybindings" = {
         activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
 
@@ -94,13 +95,16 @@
           "<Alt>F4"
         ];
 
-        cycle-windows = [
-          "<Super>Right"
-        ];
+        # Avoid confusion with harf resize bindings
+        # And these are not useful since dropping pop-shell :<
+        #
+        # cycle-windows = [
+        #   "<Super>Right"
+        # ];
 
-        cycle-windows-backward = [
-          "<Super>Left"
-        ];
+        # cycle-windows-backward = [
+        #   "<Super>Left"
+        # ];
 
         lower = [
           # Like Windows
@@ -210,8 +214,13 @@
       };
 
       "org/gnome/mutter/keybindings" = {
-        toggle-tiled-left = [ ];
-        toggle-tiled-right = [ ];
+        toggle-tiled-right = [
+          "<Shift><Super>Right"
+        ];
+
+        toggle-tiled-left = [
+          "<Shift><Super>Left"
+        ];
       };
 
       "org/gnome/desktop/input-sources" = {
