@@ -38,12 +38,8 @@
   networking.networkmanager = {
     enable = true;
 
-    # Fixing unstable WiFi on laptop. See GH-663 for detail
     # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix#L261-L289
     wifi = {
-      # https://www.reddit.com/r/NixOS/comments/ikjpyb/wifi_network_manager_vs_wpa_supplicant/
-      # https://nixos.wiki/wiki/Iwd
-      backend = "iwd";
       # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
       powersave = false;
     };
