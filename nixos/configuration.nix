@@ -38,11 +38,13 @@
   networking.networkmanager = {
     enable = true;
 
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix#L261-L289
-    wifi = {
-      # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
-      powersave = false;
-    };
+    # Avoiding conflict with wpa_supplicant
+    # Because of only using networkmanager does not fix stable WiFi on laptop even if using lwd for the backend
+    unmanaged = [
+      "*"
+      "except:type:wwan"
+      "except:type:gsm"
+    ];
   };
 
   # TODO: Reconsider to set UTC for servers
