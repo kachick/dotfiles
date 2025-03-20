@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
   networking.hostName = "nixos";
@@ -19,10 +19,4 @@
     # https://discourse.nixos.org/t/no-space-left-on-boot/24019/20
     configurationLimit = 10;
   };
-
-  # i7-7500U: Intel 7th Core
-  hardware.graphics.extraPackages = with pkgs; [
-    vaapiIntel
-    intel-media-driver
-  ];
 }
