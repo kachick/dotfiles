@@ -204,8 +204,8 @@
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/common.nix
+              ./home-manager/genericUser.nix
               {
-                home.username = "user";
                 targets.genericLinux.enable = false;
               }
               ./home-manager/linux.nix
@@ -285,8 +285,7 @@
           "user@container" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
-              ./home-manager/common.nix
-              { home.username = "user"; }
+              ./home-manager/genericUser.nix
               ./home-manager/linux.nix
               ./home-manager/genericLinux.nix
               ./home-manager/systemd.nix
