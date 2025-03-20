@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   ...
 }:
 
@@ -233,17 +232,12 @@
   # '';
 
   # https://askubuntu.com/a/88947
-  environment.etc."gdm/PostLogin/Default".source = lib.getExe (
-    pkgs.writeShellApplication {
-      name = "connect_cloudflare-warp";
-      # Requires unstable package because of it is not an OSS project and highly depends on their service.
-      # However it does not take longer build time, it is just a wrapper for their binary. So okay to use unstable.
-      runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
-      text = ''
-        warp-cli connect
-      '';
-    }
-  );
+  # Don't add unstable or long or waiting(interactive) CLI here such as warp-cli.
+  # See GH-1110 for detail
+  # environment.etc."gdm/PostLogin/Default".source = lib.getExe (
+  #   pkgs.writeShellApplication {
+  #   }
+  # );
 
   environment.variables = {
     # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
