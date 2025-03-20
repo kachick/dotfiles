@@ -7,6 +7,6 @@ let
 in
 {
   users.users.kachick = mkUser {
-    description = ":)";
+    description = "foolish";
   };
 }
