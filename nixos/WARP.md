@@ -1,8 +1,7 @@
 # Cloudflare WARP
 
-Basically connecting when you login with GDM, and GNOME shows the status badge that will be active if you connected to WARP.
-
-If not, or if you want to disconnect, follow <https://developers.cloudflare.com/warp-client/get-started/linux/> steps
+Don't add warp-cli into "gdm/PostLogin", the first execution requires agreement for their policy with y/n interactive mode.\
+It blocks the starting GNOME with black screen with white and frozen cursor after login via GDM.
 
 ## First connections
 
@@ -10,6 +9,8 @@ If not, or if you want to disconnect, follow <https://developers.cloudflare.com/
 warp-cli registration new
 warp-cli connect
 ```
+
+GNOME shows the status badge that will be active if you connected to WARP.
 
 ## Make sure the connection status
 
