@@ -28,28 +28,9 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-  networking.wireless.enable = true; # Enables wireless support via wpa_supplicant. Should keep for stable WiFi even if enabling networkmanager
-
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
-
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix
-  networking.networkmanager = {
-    enable = true;
-
-    # Avoiding conflict with wpa_supplicant
-    # Because of only using networkmanager or using lwd for backend made unstable WiFi on laptop
-    # Then it made much of these logs
-    # wlp3s0: Limiting TX power to 30 (30 - 0) dBm as advertised by ...
-    #
-    # You can get the interface-name with `iw dev`. ref: https://wiki.archlinux.org/title/Network_configuration/Wireless#Get_the_name_of_the_interface
-    # Set it in each host.
-    #
-    # unmanaged = [
-    #   "except:interface-name:wlp3s0"
-    # ];
-  };
 
   # TODO: Reconsider to set UTC for servers
   time.timeZone = "Asia/Tokyo";
