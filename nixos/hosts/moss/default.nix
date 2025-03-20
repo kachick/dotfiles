@@ -24,6 +24,12 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  networking.networkmanager = {
+    unmanaged = [
+      "except:interface-name:wlp3s0"
+    ];
+  };
+
   services.udev.extraHwdb = lib.mkAfter ''
     evdev:name:AT Translated Set 2 keyboard:*
       KEYBOARD_KEY_3a=leftctrl # original: capslock
