@@ -151,6 +151,8 @@
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
+      imhex
+
       mission-center
 
       # Don't use launchers such as walker which depend on gtk-layer-shell or gtk4-layer-shell. They does not support GNOME on Wayland. See https://github.com/abenz1267/walker/issues/180#issuecomment-2540630523
