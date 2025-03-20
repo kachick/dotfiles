@@ -1,4 +1,7 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  ...
+}:
 
 {
   # Don't add unfree packages like vscode here for using in containers
@@ -16,7 +19,7 @@
     sessionVariables = {
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
-      EDITOR = lib.getExe pkgs.helix;
+      EDITOR = pkgs.helix.meta.mainProgram;
     };
 
     # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1

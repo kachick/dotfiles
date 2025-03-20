@@ -17,20 +17,19 @@
           [
             appindicator
             # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
-            paperwm
+            # paperwm # Don't use this extension, it might made crashes. See GH-1114
             clipboard-history
-            kimpanel
             removable-drive-menu
             # system-monitor
             places-status-indicator
-            # window-list
+            window-list
             workspace-indicator
             applications-menu
             auto-move-windows
-            just-perfection
+            # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
-            # color-picker # Don't enable by default. It conflicts with clipboard-history
-            switcher
+            # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for detail
+            # user-themes # the package name is not the `user-theme`, required `s` suffix
           ]
         );
 
@@ -41,6 +40,7 @@
           "dev.zed.Zed.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
+          "quickgui.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
@@ -49,8 +49,12 @@
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.unstable.ghostty;
+        exec = lib.getExe pkgs.ghostty;
         # exec-arg="";
+      };
+
+      "org/gnome/desktop/background" = {
+        picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/drool-l.svg";
       };
 
       # gsettings list-recursively | grep -F "<Super>"
@@ -80,12 +84,38 @@
         toggle-message-tray = [ "<Shift><Super>m" ]; # default: ['<Super>v', '<Super>m'], `"disable"` restore default. So added annoy modifier to prevent trigger
       };
 
+      # Some keybindings should be put in org/gnome/mutter/keybindings instead
       "org/gnome/desktop/wm/keybindings" = {
         activate-window-menu = [ ]; # Disabling default `<Alt>space` to run launchers
+
+        show-desktop = [ "<Super>d" ];
 
         close = [
           "<Super>q"
           "<Alt>F4"
+        ];
+
+        # Avoid confusion with harf resize bindings
+        # And these are not useful since dropping pop-shell :<
+        #
+        # cycle-windows = [
+        #   "<Super>Right"
+        # ];
+
+        # cycle-windows-backward = [
+        #   "<Super>Left"
+        # ];
+
+        lower = [
+          # Like Windows
+          # https://superuser.com/a/189235/120469
+          # https://unix.stackexchange.com/a/718284
+          "<Alt>Escape"
+        ];
+
+        panel-run-dialog = [
+          "<Alt>F2" # default
+          "<Super>r"
         ];
 
         switch-to-workspace-down = [
@@ -136,19 +166,26 @@
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        www = [ "<Super>b" ]; # "<Super>w" is used in switcher
+        www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        search = [ "<Alt>space" ];
+        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Prefer overlay-key
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.unstable.ghostty;
+        command = lib.getExe pkgs.ghostty;
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
+        name = "Toggle Launcher";
+        binding = "<Alt>space";
+        command = lib.getExe pkgs.my.toggle-wofi;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
@@ -158,40 +195,46 @@
         display-mode = 0;
       };
 
-      "org/gnome/shell/extensions/just-perfection" = {
-        startup-status = 0;
-
-        clock-menu-position = 1;
-        clock-menu-position-offset = 15;
-      };
-
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" ];
 
         dynamic-workspaces = false;
 
+        # Disable overlay-key if using paperwm or pop-shell. Super modifier is mostly used in them
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
-        # The feature is useful, but frustrated when using paperwm or pop-shell shortcuts. Super modifier is mostly used in them
-        overlay-key = "";
+        # However just removing is not enough. Search feature cannot toggle. Providing an overlay-key is still better than none.
+        # This option does not accept combo like the "<Alt>Space"
+        #
+        # Why this value?
+        # - Avoid default Super_L for mistyping.
+        # - Alt_R is using for IME switcher
+        # - Super_R is missing in my laptop, however it is just ignored in the device
+        overlay-key = "Super_R";
       };
 
       "org/gnome/mutter/keybindings" = {
-        toggle-tiled-left = [ ];
-        toggle-tiled-right = [ ];
+        toggle-tiled-right = [
+          "<Shift><Super>Right"
+        ];
+
+        toggle-tiled-left = [
+          "<Shift><Super>Left"
+        ];
       };
 
       "org/gnome/desktop/input-sources" = {
         sources = with lib.hm.gvariant; [
+          # Don't add multiple sources such as adding `('xkb', 'us')`
+          # Since IBus 1.5, it always enabled and switched on the IME
+          # So use direct input on mozc layer
           (mkTuple [
-            "xkb"
-            "us"
-          ])
-          (mkTuple [
-            "xkb"
-            "jp"
+            "ibus"
+            "mozc-jp"
           ])
         ];
+
+        per-window = true;
       };
 
       "org/gnome/desktop/interface" = {
@@ -200,8 +243,6 @@
 
         # https://unix.stackexchange.com/questions/327975/how-to-change-the-gnome-panel-time-format
         clock-show-weekday = true;
-
-        gtk-theme = "Nordic";
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
@@ -214,13 +255,12 @@
         custom-theme-shrink = true;
 
         multi-monitor = true;
+
+        scroll-action = "switch-workspace";
       };
 
       "org/gnome/desktop/wm/preferences" = {
-        theme = "Nordic";
-
         num-workspaces = 3;
-        # This names are might not be persisted with paperwm, it also uses own UUID for that
         workspace-names = [
           "Main"
           "Sandbox"
@@ -228,30 +268,26 @@
         ];
       };
 
+      "org/gnome/shell/extensions/workspace-indicator" = {
+        embed-previews = false;
+      };
+
       "org/gnome/shell/extensions/auto-move-windows" = {
-        application-list = [
-          "org.gnome.Rhythmbox3.desktop:3"
-        ];
+        application-list =
+          let
+            music = "3";
+          in
+          [
+            "org.gnome.Rhythmbox3.desktop:${music}"
+          ];
       };
 
-      "org/gnome/shell/extensions/paperwm/keybindings" = {
-        take-window = [ ]; # default: ['<Super>t']
-        center-vertically = [ ]; # default: ['<Super>v']
-        open-window-position = 0;
+      "org/gnome/nautilus/list-view" = {
+        use-tree-view = true;
       };
 
-      # https://github.com/paperwm/PaperWM/pull/550
-      "org/gnome/shell/extensions/paperwm" = {
-        winprops = [
-          (
-            let
-              entry = ''
-                {"wm_class":"*","preferredWidth":"50%"}
-              '';
-            in
-            entry
-          )
-        ];
+      "org/gnome/nautilus/preferences" = {
+        show-create-link = true;
       };
     };
   };

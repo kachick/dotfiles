@@ -4,28 +4,54 @@ version: '3'
 
 silent: false
 
+# Don't use negate glob patterns. It often made much slow hashing
 tasks:
   default:
     deps:
       - help
 
-  apply:
-    # TODO: Includes NixOS itself
-    desc: Enable the home-manager config
+  nixos:
+    desc: Enable NixOS config for current device
+    sources:
+      - '.env'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'nixos/**/*'
+      - 'overlays/**/*'
+      - 'config/keyboards/kanata.kbd'
     cmds:
-      - nix run .#home-manager -- switch -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+      - if [ -f '/etc/NIXOS' ]; then sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace; fi
+
+  home-manager:
+    aliases:
+      - hm
+      - apply # Don't extract to specific task. To run dependency sequentially and no duplications
+    desc: Enable home-manager config for current user and device
+    sources:
+      - '.env'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'home-manager/**/*'
+      - 'pkgs/**/*'
+      - 'config/**/*'
+    deps:
+      - 'nixos'
+    cmds:
+      # Using hostname simplify flake option, see https://discourse.nixos.org/t/get-hostname-in-home-manager-flake-for-host-dependent-user-configs/18859/2
+      # However prefer to use special ENV here for my current use. It is useful if sharing same config for similar env but on different devices
+      - nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#${USER}@${HM_HOST_SLUG}"
 
   test:
-    desc: Make sure home-manager will work
+    desc: Make sure NixOS and/or home-manager will work for current user and device
     deps:
       - test-go
     cmds:
-      # -n = dry-run
-      - nix run .#home-manager -- switch -n -b backup --show-trace --flake .#$USER@$NIX_DEVICE_SPECIFIER
+      - ./scripts/dry.bash
 
   test-go:
     sources:
-      - '**.go'
+      - '**/*.go'
+      - 'config/**/*'
     cmds:
       - go test ./...
       - cd ./pkgs/reponame && go test ./...
@@ -110,6 +136,20 @@ tasks:
     desc: Run container
     cmds:
       - ./containers/sandbox.bash
+
+  get-ghcr-token:
+    desc: Get public token. You can use as `task get-ghcr-token >> .env`
+    # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
+    cmds:
+      - echo "GHCR_READONLY_TOKEN=$(curl https://ghcr.io/token\?scope\="repository:kachick/home:pull" | jq .token)"
+
+  ghcr:
+    # It looks like no paging and sorting API. So keep feawest than last 50 images
+    # Now it is cared in deployment workflow, it triggers https://github.com/kachick/dotfiles/actions/workflows/cleanup-packages.yml
+    desc: Run container with selecting the tag with fuzzy finder
+    cmds:
+      - |
+          curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
 
   ghcr-*:
     desc: Run container which is built and registered via GitHub Actions

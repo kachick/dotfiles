@@ -35,6 +35,8 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
+      DO_NOT_TRACK = "1";
+
       PAGER = "less";
 
       # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
@@ -71,8 +73,8 @@
     # https://github.com/nix-community/home-manager/blob/fe56302339bb28e3471632379d733547caec8103/modules/home-environment.nix#L11
     language = {
       base = "ja_JP.UTF-8";
-      # systemd config overrides this value in gnome-shell, however this will be used in Linux VT console
-      time = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+      # Don't set another locale such as time here, it makes unstable behaviors even if I set it in environment.d
+      # So if required them, it should be specified in each shell rc files. See GH-1116 for detail
     };
 
     # Prefer this rather than adding wrapped script to make zsh possible to complete
@@ -83,8 +85,8 @@
       # https://github.com/NixOS/nixpkgs/pull/344193
       "zed" = "zeditor";
 
-      # I can't remember the spells...
-      "hog" = "trufflehog";
+      # https://www.reddit.com/r/NixOS/comments/yr3jje/comment/ivswbex/
+      "sudoc" = "sudo --preserve-env=PATH env";
     };
   };
 
@@ -127,6 +129,14 @@
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
     ../config/powershell/Profile.ps1;
+
+  # Don't use nushell Nix modules. Because of the interface and API is much unstable
+  # I prefer to use stable home-manager channel. So nushell integration should be done manually
+  #
+  # Don't use `recursive` here. We can't expect any nushell changes for now
+  xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
+  xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
+  xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 

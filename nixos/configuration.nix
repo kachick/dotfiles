@@ -4,7 +4,6 @@
 
 {
   pkgs,
-  lib,
   overlays,
   ...
 }:
@@ -99,8 +98,9 @@
   };
 
   environment.variables = {
-    EDITOR = lib.getExe pkgs.helix;
-    SYSTEMD_EDITOR = lib.getExe pkgs.helix;
+    DO_NOT_TRACK = "1";
+    EDITOR = pkgs.helix.meta.mainProgram;
+    SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
 
   # List packages installed in system profile. To search, run:
@@ -135,9 +135,6 @@
 
       # Use stable packages even for GUI apps, because of using home-manager stable channel
 
-      podman-tui
-      docker-compose
-
       dmidecode # `sudo dmidecode -s bios-version`
     ]
   );
@@ -159,24 +156,18 @@
 
   # programs.nix-ld.enable = false;
 
-  # https://nixos.wiki/wiki/Podman
-  virtualisation = {
-    containers.enable = true;
-    podman = {
-      enable = true;
-
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
-      dockerCompat = true;
-
-      # Required for containers under podman-compose to be able to talk to each other.
-      defaultNetwork.settings.dns_enabled = true;
-    };
+  # Don't use podman NixOS module. It works under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
+  # https://github.com/NixOS/nixpkgs/blob/24.05/nixos/modules/virtualisation/containers.nix
+  virtualisation.containers = {
+    enable = true;
+    policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
   };
 
   i18n = {
     extraLocaleSettings = {
+      # FIXME: Don't set LC_TIME here, it makes strange and unstable behaviors. Correctly overridable in user systemd on algae and not working in moss. Even if both device have almost same config...
       # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
-      LC_TIME = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+      # LC_TIME = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
     };
   };
 }

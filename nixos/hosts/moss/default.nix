@@ -18,7 +18,8 @@
 
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 20;
+    # https://discourse.nixos.org/t/no-space-left-on-boot/24019/20
+    configurationLimit = 10;
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];

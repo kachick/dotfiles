@@ -24,31 +24,4 @@ A: `dconf reset /org/gnome/desktop/interface/cursor-theme`
 
 ## KDE
 
-The shortcut of Meta+Q conflicts to Hyprland exec terminal. Disable from system settings.\
 The definition will be recorded in `~/.config/kglobalshortcutsrc`, however editing and managing by hand is a hard thing.
-
-## Hyprland
-
-Simple and reminderable keybinds, but empty config by default. We should set many things.
-
-How to execute
-
-```bash
-Hyprland
-```
-
-Config
-
-`~/.config/hypr/hyprland.conf`
-
-Enabling by NixOS module is required, but setting by home-manager should be considered.
-
-waybar is another tool, we should seprately install
-
-For Nix managing configurations, seprarwly having local file should be helpful for develop.
-
-```bash
-touch ~/.config/hypr/local.conf
-```
-
-And comment-out the `source = ~/.config/hypr/local.conf` in your config

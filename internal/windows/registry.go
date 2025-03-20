@@ -4,6 +4,7 @@ package windows
 
 import (
 	"log"
+	"strings"
 
 	"golang.org/x/sys/windows/registry"
 )
@@ -41,6 +42,13 @@ func DisableBeeps() {
 }
 
 func RegainVerboseContextMenu() {
+	caption := mustGetCaption()
+
+	if strings.Contains(caption, "Server 2025") {
+		log.Printf("You are running `RegainVerboseContextMenu` on unsupported windows version `%s`. So skipped the execution.\n", caption)
+		return
+	}
+
 	key, err := registry.OpenKey(registry.CURRENT_USER, `Software\Classes\CLSID`, registry.CREATE_SUB_KEY)
 	if err != nil {
 		log.Fatalf("Failed to open registry key: %+v", err)

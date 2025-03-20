@@ -23,8 +23,8 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Pin to 2411.?.? if 24.11 compat channel will be introduced
-      # https://github.com/nix-community/NixOS-WSL/blob/5a965cb108fb1f30b29a26dbc29b473f49e80b41/flake.nix#L5
+      url = "github:nix-community/NixOS-WSL/2411.6.0";
+      # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
     selfup = {
@@ -114,7 +114,6 @@
                   nixpkgs-lint-community
                   nix-init
                   nurl
-                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
 
                   shellcheck
                   shfmt
@@ -124,17 +123,16 @@
                   treefmt2
                   typos
                   typos-lsp # For zed-editor typos extension
-                  go_1_23
                   trivy
                   markdownlint-cli2
-
-                  (ruby_3_4.withPackages (ps: with ps; [ rubocop ]))
                 ])
                 ++ (with pkgs.unstable; [
-                  trufflehog
+                  hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   # https://github.com/NixOS/nixpkgs/pull/362139
+                  gitleaks # TODO: Consider to replace to stable since nixos-25.05. nixos-24.11 including version makes false-positive error now
                   dprint
                   lychee
+                  go_1_24
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
@@ -151,8 +149,8 @@
         let
           pkgs = mkPkgs system;
         in
-        # pkgs.my // pkgs.patched # TODO: Adding another name space will fail, and nix flake check fails if it including unfree
-        pkgs.my
+        # Don't include unfree packages, it will fail in `nix flake check`
+        pkgs.lib.recursiveUpdate pkgs.patched pkgs.my
       );
 
       apps = forAllSystems (system: {
@@ -249,6 +247,7 @@
             modules = [
               ./home-manager/kachick.nix
               ./home-manager/linux.nix
+              ./home-manager/linux-ci.nix
               { home.username = "runner"; }
               ./home-manager/genericLinux.nix
               ./home-manager/systemd.nix
@@ -266,7 +265,7 @@
             ];
           };
 
-          "user@linux-cli" = home-manager-linux.lib.homeManagerConfiguration {
+          "user@container" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/common.nix

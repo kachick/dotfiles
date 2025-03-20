@@ -38,7 +38,9 @@
 
         kubectl
         stern
-        unstable.k9s # https://github.com/NixOS/nixpkgs/pull/356238, https://github.com/NixOS/nixpkgs/pull/360993
+        k9s
+
+        tailscale # Frequently backported to stable channel
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         chawan # `cha`
@@ -73,8 +75,6 @@
     };
 
     configFile = {
-      "hypr/hyprland.conf".source = ../config/hyprland/hyprland.conf;
-
       # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
       "autostart/userdirs.desktop".text = ''
         [Desktop Entry]
@@ -87,10 +87,13 @@
         X-KDE-autostart-phase=1
       '';
 
-      # Should sync with the directory instead of each file. See https://github.com/nix-community/home-manager/issues/3090#issuecomment-1799268943
-      fcitx5 = {
-        source = ../config/fcitx5;
-      };
+      # mozc_tool can be run with `/run/current-system/sw/lib/mozc/mozc_tool --mode=config_dialog` on NixOS
+      #
+      # You should run `ibus write-cache; ibus restart` after changed the ibus config
+      # See https://github.com/google/mozc/blob/2.31.5712.102/docs/configurations.md for detail
+      "mozc/ibus_config.textproto".source = ../config/mozc/ibus_config.textproto;
+      # You should manually load the custom keymap if changed. Because of mozc_tool does not support CLI and rc files
+      "mozc/keymap-after.txt".source = ../config/mozc/keymap-msime-customized.txt;
     };
   };
 }

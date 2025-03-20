@@ -1,5 +1,9 @@
 # One CLI to format the code tree - https://github.com/numtide/treefmt
 
+# https://github.com/numtide/treefmt/blob/36dd785a73f40215abdfb7b37ba1c59324d835e8/docs/content/guides/unmatched-formatters.md
+# https://github.com/numtide/treefmt/issues/317
+on-unmatched = "info"
+
 [global]
 # "/*" means recursive
 excludes = [

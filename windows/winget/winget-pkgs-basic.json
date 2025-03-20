@@ -26,9 +26,6 @@
           "PackageIdentifier": "jtroo.kanata_gui"
         },
         {
-          "PackageIdentifier": "Cloudflare.Warp"
-        },
-        {
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
@@ -36,6 +33,9 @@
         },
         {
           "PackageIdentifier": "junegunn.fzf"
+        },
+        {
+          "PackageIdentifier": "alexpasmantier.television"
         },
         {
           "PackageIdentifier": "sharkdp.fd"
@@ -62,7 +62,10 @@
           "PackageIdentifier": "WerWolv.ImHex"
         },
         {
-          "PackageIdentifier": "Balena.Etcher"
+          "PackageIdentifier": "bztsrc.usbimager.wo"
+        },
+        {
+          "PackageIdentifier": "Rufus.Rufus"
         },
         {
           "PackageIdentifier": "tuna-f1sh.cyme"
@@ -105,6 +108,9 @@
         },
         {
           "PackageIdentifier": "tailscale.tailscale"
+        },
+        {
+          "PackageIdentifier": "btpf.Alexandria"
         },
         {
           "PackageIdentifier": "calibre.calibre"

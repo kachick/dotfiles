@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Minimize old deploy comments
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         # Applied reason will be different caused on GitHub bug, See https://github.com/orgs/community/discussions/19865
         run: |
           gh api -H "Accept: application/vnd.github+json" \

@@ -21,6 +21,9 @@ tmp/
 # Nix
 result
 
+# Windows
+*.exe
+
 # macOS
 **/AppSupport
 .DS_Store

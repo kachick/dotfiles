@@ -5,19 +5,23 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     fd
 
-    # Don't use these candidates
-    #   - sed: Always forgot how to use
+    # Why not other candidates?
+    #   - sed: Always forgot how to use. And the regex is much classic
     #   - sd: Inactive
-    #   - sad: Too much for filter
-    ruby_3_4
+    #   - fastmod: Does not fit for list based preview
+    #   - srgn: Much options, but I don't know how to use that
+    unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
 
-    findutils # xargs
-    gnugrep
-
-    coreutils # cat
-    mktemp
+    unstable.fzf # Require latest to enable new options. e.g `--input-label` # TODO: Prefer stable since nixos-25.05
+    riffdiff
   ];
+  runtimeEnv = {
+    GIT_PAGER = "riff --color=on";
+  };
   meta = {
-    description = "Inline replacer with Ruby regex";
+    description = ''
+      Inline replacer with a preview UI.
+      This is also a note on how to use "sad" with external dependencies.
+    '';
   };
 }

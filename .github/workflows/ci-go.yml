@@ -27,7 +27,7 @@ jobs:
       matrix:
         os:
           - ubuntu-24.04
-          - windows-latest
+          - windows-2025
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -49,4 +49,6 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: check format
         run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
-      - run: go vet ./...
+      - name: 'Ensure installing go tool is done. Without this step, `go: downloading ...` logs appears in the extracting command path'
+        run: go tool -n exhaustruct
+      - run: go vet -vettool "$(go tool -n exhaustruct)" ./...

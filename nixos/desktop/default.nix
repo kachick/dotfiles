@@ -118,6 +118,7 @@
     nssmdns4 = true;
   };
 
+  # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
     (with pkgs; [
       firefox
@@ -129,11 +130,12 @@
       lshw
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      zed-editor
+      unstable.zed-editor
 
       gdm-settings
+      desktop-file-utils # `desktop-file-validate`
 
-      unstable.ghostty
+      ghostty # ghostty package now always be backported.
 
       alacritty
 
@@ -142,9 +144,17 @@
       # See GH-1049 for detail.
       qemu
 
+      # Use latest to apply patches such as https://github.com/quickemu-project/quickemu/issues/1528
+      # Especially quickget requires latest definitions
+      unstable.quickemu
+      unstable.quickgui
+
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       mission-center
+
+      # Don't use launchers such as walker which depend on gtk-layer-shell or gtk4-layer-shell. They does not support GNOME on Wayland. See https://github.com/abenz1267/walker/issues/180#issuecomment-2540630523
+      wofi
 
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
@@ -162,11 +172,11 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
+      alexandria
+
       calibre
 
       dconf-editor
-
-      nordic
 
       podman-desktop
 
@@ -174,20 +184,20 @@
 
       loupe # image viewer
 
+      contrast # Check two color contrast. Also using as a color-picker
+
       ## Unfree packages
 
-      # TODO: Consider using vscodium again
-      # Don't use unstable channel. It frequently backported to stable channel
+      # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
+      # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
       (
-        (vscode.override {
+        (unstable.vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
           # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
           commandLineArgs = [
-            "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
-            # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
-
+            "--wayland-text-input-version=3"
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/vs/platform/encryption/common/encryptionService.ts#L28-L71
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/main.ts#L244-L253
             "--password-store=gnome-libsecret" # Required for GitHub Authentication. For example gnome-keyring, kwallet5, KeepassXC, pass-secret-service
@@ -216,23 +226,17 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = [
-          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
+          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced, it should be introduced in nixos-25.05
           "--wayland-text-input-version=3"
         ];
       })
+
+      my.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-      paperwm
       clipboard-history
-      kimpanel
-      just-perfection
       dash-to-dock
-      color-picker
-    ])
-    ++ (with pkgs.unstable.gnomeExtensions; [
-      switcher # in nixos-24.11 does not support GNOME 47. Require https://github.com/NixOS/nixpkgs/commit/d729de868927d78589fe7bb2db733b131626d117#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR796
-      # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/commit/f2d1969a05958821ca07a7df7c36639d6477d8fb applied in nixos-24.11
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
@@ -251,6 +255,8 @@
   environment.etc."gdm/PostLogin/Default".source = lib.getExe (
     pkgs.writeShellApplication {
       name = "connect_cloudflare-warp";
+      # Requires unstable package because of it is not an OSS project and highly depends on their service.
+      # However it does not take longer build time, it is just a wrapper for their binary. So okay to use unstable.
       runtimeInputs = with pkgs; [ unstable.cloudflare-warp ];
       text = ''
         warp-cli connect
@@ -259,14 +265,8 @@
   );
 
   environment.variables = {
-    VISUAL = "${lib.getExe pkgs.zed-editor} --wait";
-
-    XMODIFIERS = "@im=fcitx"; # Required in both GNOME and KDE
-
-    # https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-    # Don't set these in KDE, but should set in GNOME https://discuss.kde.org/t/kde-plasma-wayland/9014
-    QT_IM_MODULE = "fcitx";
-    GTK_IM_MODULE = "fcitx";
+    # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
+    VISUAL = "${pkgs.unstable.zed-editor.meta.mainProgram} --wait";
   };
 
   environment.sessionVariables = {
@@ -307,14 +307,11 @@
   i18n = {
     inputMethod = {
       enable = true;
-      type = "fcitx5";
+      # Don't use fcitx5. It always made systemd-coredump. See GH-1114
+      type = "ibus";
 
-      fcitx5.addons = [
-        pkgs.fcitx5-mozc
-        pkgs.fcitx5-gtk
-      ];
-
-      fcitx5.waylandFrontend = true;
+      # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
+      ibus.engines = with pkgs.ibus-engines; [ mozc ];
     };
   };
 
@@ -323,6 +320,9 @@
     enable = true;
     extraUpFlags = [ "--ssh" ];
   };
+  # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
+  # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
+  systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338

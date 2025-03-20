@@ -28,7 +28,14 @@ pkgs.writeText "posix_shared_functions.sh" (
     }
 
     cdtemp() {
-      cd "$(${pkgs.coreutils}/bin/mktemp --directory)"
+      local word
+      if [ $# -lt 1 ]; then
+        word="$(${lib.getExe pkgs.gopass} pwgen --xkcd --sep '-' --one-per-line 2 | head -1)"
+      else
+        word="$1"
+      fi
+
+      cd "$(${pkgs.coreutils}/bin/mktemp --tmpdir --directory "cdtemp.$word.XXX")"
     }
 
     cdnix() {

@@ -10,7 +10,7 @@
   bashInteractive
   # readline # needless and using it does not fix bash problems
   zsh
-  nushell # TODO: Install the dotfiles which is used in Windows
+  unstable.nushell # Use unstable to apply https://github.com/nushell/nushell/commit/4ed25b63a6fc3444bb870dd6fa2c5a9abb936b00 # TODO: Use stable since nixos-25.05
   starship
   direnv
   unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
@@ -74,12 +74,13 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
+  unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
 
   typos
   hyperfine
   riffdiff # `riff`
   gnumake
-  unstable.trufflehog
+  unstable.gitleaks
   ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
 

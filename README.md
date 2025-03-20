@@ -14,11 +14,11 @@ block-beta
     columns 3
 
     block:os:3
-        nixos(("❄")) macos(("🍎"))   windows(("🪟"))
+        nixos(("❄")) macos(("🍎")) windows(("🪟"))
     end
 
     block:vm:3
-        lima("Lima")   wsl2("WSL2")
+        lima("Lima") quickemu("Quickemu") wsl2("WSL2")
     end
 
     block:container:3
@@ -26,6 +26,7 @@ block-beta
     end
 
     nixos --> lima
+    nixos --> quickemu
     macos --> lima
     windows --> wsl2
 
@@ -70,7 +71,7 @@ sudo reboot now
 List defined hostnames
 
 ```bash
-nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.nixosConfigurations | keys[]'
+nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.attrNames' | jq '.[]'
 ```
 
 This repository intentionally reverts the home-manager NixOS module.\
@@ -83,6 +84,14 @@ nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'gith
 See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
 
 NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for several issues.
+
+## home-manager
+
+List definitions
+
+```bash
+nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.attrNames' | jq '.[]'
+```
 
 ## Ubuntu
 
@@ -105,26 +114,22 @@ NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for 
    bash
    ```
 
-1. Apply dotfiles for each use
+1. Apply dotfiles
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@linux-cli'
+   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
-   Candidates
-   - `user@linux-cli` # Used in container
-
-1. [home-manager installed OpenSSH disabled GSSAPI by default](https://github.com/kachick/dotfiles/issues/950).\
-   So suppress `/etc/ssh/ssh_config line 53: Unsupported option "gssapiauthentication"` with following command
+1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
 
    ```bash
-   sudo chmod -r /etc/ssh/ssh_config
+   sudoc nix run 'github:kachick/dotfiles#apply-system'
    ```
 
-1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
+1. Enable tailscale ssh if required
 
    ```bash
-   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
+   sudoc tailscale up --ssh
    ```
 
 ### Podman on Ubuntu
@@ -135,14 +140,6 @@ NixOS is often difficult for beginners like me. So I also use [Lima](#lima) for 
 
    ```bash
    sudo apt-get install --assume-yes uidmap
-   ```
-
-1. Make sure putting /etc/containers/policy.json, it is not a home-manager role
-
-   ```bash
-   sudo mkdir -p /etc/containers
-   cd /etc/containers
-   sudo curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
    ```
 
 1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
@@ -196,24 +193,16 @@ I basically [give up to maintain macOS environment](https://github.com/kachick/d
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 
-## Develop
+## Shorthand
 
 If you are developing this repository, putting `.env` makes easy reactivations.
 
 ```bash
-echo 'NIX_DEVICE_SPECIFIER=wsl-ubuntu' > .env
-direnv allow .
+echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
 ```
 
-Then you can apply home-manager with
+Then you can enable configurations with
 
 ```bash
 task apply
-```
-
-For NixOS
-
-```bash
-sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace && \
-    task apply
 ```

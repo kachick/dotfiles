@@ -6,7 +6,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     typos
     coreutils # `basename`
-    unstable.trufflehog
+    unstable.gitleaks
     my.run_local_hook
   ];
   runtimeEnv = {

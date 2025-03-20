@@ -41,6 +41,8 @@ in
     );
   };
 
+  home.file."${sshDir}/control/.keep".text = "Make ControlPath shorter";
+
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
@@ -62,7 +64,9 @@ in
     # See following resources and GH-1030
     # https://github.com/nix-community/home-manager/blob/20665c6efa83d71020c8730f26706258ba5c6b2a/modules/programs/ssh.nix#L424-L430
     # https://github.com/owenthereal/upterm/issues/283#issuecomment-2508582116
-    controlPath = "~/.ssh/master-%C@%n:%p";
+    # And just avoiding %r is not enough for `tailscale ssh`. So, only use %C to avoid it.
+    # https://gist.github.com/andyvanee/bcf95b1044b80e72b4a42933549a079b
+    controlPath = "~/.ssh/control/%C";
 
     addKeysToAgent = "yes";
 

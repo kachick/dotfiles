@@ -10,4 +10,4 @@ fi
 
 # shellcheck disable=SC2016
 fd --type f --hidden --follow --exclude .git . "$@" |
-	fzf --query "$query" --preview 'preview {}' --preview-window '~3' --bind 'enter:become(command "$EDITOR" {})'
+	fzf --query "$query" --preview 'preview {}' --preview-window '~3' --bind 'enter:become("$EDITOR" {})'
