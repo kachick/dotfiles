@@ -14,11 +14,11 @@ block-beta
     columns 3
 
     block:os:3
-        nixos(("❄")) macos(("🍎"))   windows(("🪟"))
+        nixos(("❄")) macos(("🍎")) windows(("🪟"))
     end
 
     block:vm:3
-        lima("Lima")   wsl2("WSL2")
+        lima("Lima") quickemu("Quickemu") wsl2("WSL2")
     end
 
     block:container:3
@@ -26,6 +26,7 @@ block-beta
     end
 
     nixos --> lima
+    nixos --> quickemu
     macos --> lima
     windows --> wsl2
 
@@ -139,17 +140,16 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
-1. [home-manager installed OpenSSH disabled GSSAPI by default](https://github.com/kachick/dotfiles/issues/950).\
-   So suppress `/etc/ssh/ssh_config line 53: Unsupported option "gssapiauthentication"` with following command
+1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
 
    ```bash
-   sudo chmod -r /etc/ssh/ssh_config
+   sudoc nix run 'github:kachick/dotfiles#apply-system'
    ```
 
-1. If you faced to lcoale errors such as `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
+1. Enable tailscale ssh if required
 
    ```bash
-   sudo localedef -f UTF-8 -i en_DK en_DK.UTF-8
+   sudoc tailscale up --ssh
    ```
 
 ### Podman on Ubuntu
@@ -160,14 +160,6 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
    ```bash
    sudo apt-get install --assume-yes uidmap
-   ```
-
-1. Make sure putting /etc/containers/policy.json, it is not a home-manager role
-
-   ```bash
-   sudo mkdir -p /etc/containers
-   cd /etc/containers
-   sudo curl -OL https://raw.githubusercontent.com/kachick/dotfiles/main/config/containers/policy.json
    ```
 
 1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)

@@ -114,8 +114,9 @@
       unstable.zed-editor
 
       gdm-settings
+      desktop-file-utils # `desktop-file-validate`
 
-      ghostty # ghostty package now always be backported. TODO: Prefer `unstable` since nixos-25.05
+      ghostty # ghostty package now always be backported.
 
       alacritty
 
@@ -124,9 +125,17 @@
       # See GH-1049 for detail.
       qemu
 
+      # Use latest to apply patches such as https://github.com/quickemu-project/quickemu/issues/1528
+      # Especially quickget requires latest definitions
+      unstable.quickemu
+      unstable.quickgui
+
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       mission-center
+
+      # Don't use launchers such as walker which depend on gtk-layer-shell or gtk4-layer-shell. They does not support GNOME on Wayland. See https://github.com/abenz1267/walker/issues/180#issuecomment-2540630523
+      wofi
 
       # Add LSP global for zed-editor. Prefer external package for helix
       typos-lsp
@@ -144,11 +153,11 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
+      alexandria
+
       calibre
 
       dconf-editor
-
-      nordic
 
       podman-desktop
 
@@ -156,20 +165,20 @@
 
       loupe # image viewer
 
+      contrast # Check two color contrast. Also using as a color-picker
+
       ## Unfree packages
 
-      # TODO: Consider using vscodium again
-      # Don't use unstable channel. It frequently backported to stable channel
+      # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
+      # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
       (
-        (vscode.override {
+        (unstable.vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
           # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
           commandLineArgs = [
-            "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
-            # TODO: Add `"--wayland-text-input-version=3"` after vscode updates the Electron to 33.0.0 or higher. See GH-689 for detail.
-
+            "--wayland-text-input-version=3"
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/vs/platform/encryption/common/encryptionService.ts#L28-L71
             # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/main.ts#L244-L253
             "--password-store=gnome-libsecret" # Required for GitHub Authentication. For example gnome-keyring, kwallet5, KeepassXC, pass-secret-service
@@ -198,23 +207,17 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = [
-          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced. At least nixos-25.05
+          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced, it should be introduced in nixos-25.05
           "--wayland-text-input-version=3"
         ];
       })
+
+      my.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-      paperwm
       clipboard-history
-      kimpanel
-      just-perfection
       dash-to-dock
-      color-picker
-    ])
-    ++ (with pkgs.unstable.gnomeExtensions; [
-      switcher # in nixos-24.11 does not support GNOME 47. Require https://github.com/NixOS/nixpkgs/commit/d729de868927d78589fe7bb2db733b131626d117#diff-984008ceb2d09a8ffb4d27373f96d2eb8e07d3ec172198ef5d5fcd85b90922daR796
-      # TODO: Prefer stable after https://github.com/NixOS/nixpkgs/commit/f2d1969a05958821ca07a7df7c36639d6477d8fb applied in nixos-24.11
     ]);
 
   # Make it natural scroll on KDE, not enough only in libinput
@@ -285,17 +288,11 @@
   i18n = {
     inputMethod = {
       enable = true;
-      type = "fcitx5";
+      # Don't use fcitx5. It always made systemd-coredump. See GH-1114
+      type = "ibus";
 
-      fcitx5 = {
-        # https://github.com/NixOS/nixpkgs/pull/278765
-        waylandFrontend = true;
-
-        addons = [
-          pkgs.fcitx5-mozc
-          pkgs.fcitx5-gtk
-        ];
-      };
+      # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
+      ibus.engines = with pkgs.ibus-engines; [ mozc ];
     };
   };
 

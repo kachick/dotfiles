@@ -1,4 +1,7 @@
-{ lib, ... }:
+{
+  lib,
+  ...
+}:
 
 let
   defaultBrowser = [

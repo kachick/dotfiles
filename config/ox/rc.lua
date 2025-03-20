@@ -109,7 +109,7 @@ load_plugin("autoindent.lua")
 load_plugin("pairs.lua")
 load_plugin("quickcomment.lua")
 
--- Change file-tree keybindings for avoiding conflict with fcitx5
+-- Change file-tree keybindings for avoiding conflict with fcitx5. I didn't check compatibility since using IBus
 -- See https://github.com/curlpipe/ox/issues/194#issuecomment-2602440667
 event_mapping["ctrl_space"] = nil
 -- ctrl_b is adjusted to vscode

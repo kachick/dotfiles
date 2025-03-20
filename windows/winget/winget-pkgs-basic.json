@@ -26,9 +26,6 @@
           "PackageIdentifier": "jtroo.kanata_gui"
         },
         {
-          "PackageIdentifier": "Cloudflare.Warp"
-        },
-        {
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
         },
         {
@@ -60,6 +57,12 @@
         },
         {
           "PackageIdentifier": "curlpipe.ox"
+        },
+        {
+          "PackageIdentifier": "WerWolv.ImHex"
+        },
+        {
+          "PackageIdentifier": "bztsrc.usbimager.wo"
         },
         {
           "PackageIdentifier": "Rufus.Rufus"
@@ -105,6 +108,9 @@
         },
         {
           "PackageIdentifier": "tailscale.tailscale"
+        },
+        {
+          "PackageIdentifier": "btpf.Alexandria"
         },
         {
           "PackageIdentifier": "calibre.calibre"
