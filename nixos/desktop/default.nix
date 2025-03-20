@@ -30,7 +30,7 @@
     };
   };
 
-  # `wpa_gui`, `wpa_cli`
+  # `wpa_cli`. I don't know what is the `wpa_gui`
   networking.wireless.userControlled.enable = true;
 
   i18n = {

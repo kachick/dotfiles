@@ -28,7 +28,7 @@
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "24.11"; # Did you read the comment?
 
-  networking.wireless.enable = true; # Enables wireless support via wpa_supplicant
+  networking.wireless.enable = true; # Enables wireless support via wpa_supplicant. Should keep for stable WiFi even if enabling networkmanager
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -39,7 +39,10 @@
     enable = true;
 
     # Avoiding conflict with wpa_supplicant
-    # Because of only using networkmanager does not fix stable WiFi on laptop even if using lwd for the backend
+    # Because of only using networkmanager or using lwd for backend made unstable WiFi on laptop
+    # Then it made much of these logs
+    # wlp3s0: Limiting TX power to 30 (30 - 0) dBm as advertised by ...
+    # You can get the interface-name name with `iw dev`. ref: https://wiki.archlinux.org/title/Network_configuration/Wireless#Get_the_name_of_the_interface
     unmanaged = [
       "except:interface-name:wlp3s0"
     ];
