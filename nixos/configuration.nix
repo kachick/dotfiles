@@ -43,10 +43,8 @@
     # Then it made much of these logs
     # wlp3s0: Limiting TX power to 30 (30 - 0) dBm as advertised by ...
     #
-    # You can get the interface-name name with `iw dev`. ref: https://wiki.archlinux.org/title/Network_configuration/Wireless#Get_the_name_of_the_interface
+    # You can get the interface-name with `iw dev`. ref: https://wiki.archlinux.org/title/Network_configuration/Wireless#Get_the_name_of_the_interface
     # Set it in each host.
-    #
-    # For example
     #
     # unmanaged = [
     #   "except:interface-name:wlp3s0"
