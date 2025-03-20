@@ -41,9 +41,7 @@
     # Avoiding conflict with wpa_supplicant
     # Because of only using networkmanager does not fix stable WiFi on laptop even if using lwd for the backend
     unmanaged = [
-      "*"
-      "except:type:wwan"
-      "except:type:gsm"
+      "except:interface-name:wlp3s0"
     ];
   };
 
