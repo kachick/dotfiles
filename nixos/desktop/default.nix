@@ -18,10 +18,10 @@
       description = "An admin";
       extraGroups = [
         "networkmanager"
-        "wheel" # WiFi
-        "input" # Finger print in GDM
+        "wheel"
+        "input" # For finger print in GDM
         "scanner"
-        "lp" # Scanner
+        "lp" # For scanner
       ];
       packages = [
         # Don't install unfree packages such as spotify.
@@ -29,9 +29,6 @@
       ];
     };
   };
-
-  # `wpa_gui`, `wpa_cli`
-  networking.wireless.userControlled.enable = true;
 
   i18n = {
     # GNOME respects this, I don't know how to realize it only via home-manager
