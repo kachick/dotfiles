@@ -35,7 +35,7 @@
 
   networking.networkmanager = lib.mkDefault {
     unmanaged = [
+      "except:interface-name:wlp3s0"
     ];
   };
-
 }
