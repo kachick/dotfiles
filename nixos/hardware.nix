@@ -17,6 +17,15 @@
     # unmanaged = [
     #   "except:interface-name:wlp3s0"
     # ];
+
+    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
+    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix#L261-L289
+    wifi = {
+      # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
+      powersave = false;
+    };
   };
 
   services.udev = {
