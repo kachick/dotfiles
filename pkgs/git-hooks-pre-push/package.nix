@@ -4,6 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   meta.description = "GH-540 and GH-699";
   runtimeInputs = with pkgs; [
+    git
     typos
     coreutils # `basename`
     unstable.gitleaks
