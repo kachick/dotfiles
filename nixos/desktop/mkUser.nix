@@ -4,10 +4,10 @@ overrideAttrs:
   description = "Generic user";
   extraGroups = [
     "networkmanager"
-    "wheel"
-    "input" # For finger print in GDM
+    "wheel" # WiFi
+    "input" # Finger print in GDM
     "scanner"
-    "lp" # For scanner
+    "lp" # Scanner
   ];
   packages = [
     # Don't install unfree packages such as spotify.

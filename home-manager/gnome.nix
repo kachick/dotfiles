@@ -22,7 +22,7 @@
             removable-drive-menu
             # system-monitor
             places-status-indicator
-            window-list
+            # window-list # Unnecessary since customized dock
             workspace-indicator
             applications-menu
             auto-move-windows
@@ -249,10 +249,17 @@
         # Should be disabled to avoid conflicting keybinds against <Super>Number workspace switcher
         hot-keys = false;
 
-        dock-position = "LEFT";
+        dock-position = "BOTTOM";
 
         dock-fixed = true;
+        icon-size-fixed = true;
+        dash-max-icon-size = 24;
+        extend-height = true;
+        always-center-icons = true;
         custom-theme-shrink = true;
+        show-show-apps-button = true;
+        apply-custom-theme = true; # The description `uses built-in theme`. Confised with the option name...
+        click-action = "previews"; # Most similar behavior like Windows. Without this, using window-list might be better
 
         multi-monitor = true;
 

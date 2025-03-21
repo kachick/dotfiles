@@ -10,6 +10,9 @@
     ./kanata.nix
   ];
 
+  # `wpa_cli`. I don't know what is the `wpa_gui`
+  networking.wireless.userControlled.enable = true;
+
   i18n = {
     # GNOME respects this, I don't know how to realize it only via home-manager
     defaultLocale = "ja_JP.UTF-8";
