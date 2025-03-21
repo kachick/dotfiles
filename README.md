@@ -73,9 +73,7 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
   --show-trace
 ```
 
-If you are experimenting to setup NixOS just after installing from their installer, the hostname is `nixos` by default.\
-And putting the [hardware-configuration.nix](/etc/nixos/hardware-configuration.nix) into this repository is much annoy for each bootstrapping of the device.\
-Although it requires impure mode. So I'm putting [small flake template](nixos/hosts/nixos/flake.example.nix) for the purpose.
+If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode, copying [small flake template](nixos/hosts/nixos) might be an workaround.
 
 This repository intentionally reverts the home-manager NixOS module.\
 So, you should activate the user dotfiles with standalone home-manager even though NixOS.
