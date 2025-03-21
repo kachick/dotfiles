@@ -4,7 +4,10 @@ Putting the [hardware-configuration.nix](/etc/nixos/hardware-configuration.nix) 
 Although it requires impure mode. So I'm putting these files for the purpose.
 
 ```bash
-sudoc cp ./*.nix /etc/nixos/
+cd this_repo
+sudo cp /etc/nixos/configuration.nix /etc/nixos/configuration.nix.bakup
+sudo cp ./nixos/hosts/nixos/flake.nix /etc/nixos/
+sudo cp ./nixos/hosts/nixos/configuration.nix /etc/nixos/
 cd /etc/nixos/
 nix-shell --packages git zsh --command zsh
 ```
