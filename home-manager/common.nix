@@ -87,6 +87,8 @@
 
       # https://www.reddit.com/r/NixOS/comments/yr3jje/comment/ivswbex/
       "sudoc" = "sudo --preserve-env=PATH env";
+
+      "gH" = "git show HEAD";
     };
   };
 
