@@ -28,6 +28,13 @@
     configurationLimit = 10;
   };
 
+  systemd = {
+    services.systemd-suspend.environment = {
+      # TODO: Remove this customization since using nixos-25.05
+      SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "true";
+    };
+  };
+
   services.xserver.videoDrivers = [ "amdgpu" ];
 
   networking.networkmanager = {
