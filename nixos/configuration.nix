@@ -4,6 +4,7 @@
 
 {
   pkgs,
+  lib,
   overlays,
   ...
 }:
@@ -50,7 +51,7 @@
     services.systemd-suspend.environment = {
       # Apply workaround as https://github.com/systemd/systemd/issues/33083#issuecomment-2142473011 to fix GH-959
       # TODO: Check again after systemd 257 or later. At least updating to nixos-25.05
-      SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = "false";
+      SYSTEMD_SLEEP_FREEZE_USER_SESSIONS = lib.mkDefault "false";
     };
   };
 

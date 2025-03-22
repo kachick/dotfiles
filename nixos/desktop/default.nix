@@ -131,6 +131,7 @@
 
       cyme
       lshw
+      pciutils # `lspci`
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       unstable.zed-editor
