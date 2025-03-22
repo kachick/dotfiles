@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 
 {
   networking.hostName = "moss";
@@ -11,6 +11,12 @@
     ./hardware-configuration.nix
     ./fingerprint.nix
   ];
+
+  # Use 6.13 or higher to apply 2 commits for using RTL8852CE
+  #   - https://github.com/torvalds/linux/commit/0e5210217768625b43f099bcaafe627b098655d5
+  #   - https://github.com/torvalds/linux/commit/1f3de77752a7bf0d1beb44603f048eb46948b9fe
+  # TODO: Remove this customization since using nixos-25.05
+  boot.kernelPackages = pkgs.linuxPackages_6_13;
 
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
