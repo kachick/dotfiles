@@ -18,9 +18,11 @@
   # TODO: Remove this customization since using nixos-25.05
   boot.kernelPackages = pkgs.linuxPackages_6_13;
   # https://wiki.archlinux.org/title/Network_configuration/Wireless
+  # https://github.com/lwfinger/rtw89/blob/d1fced1b8a741dc9f92b47c69489c24385945f6e/README.md#L122-L181
   # https://github.com/NixOS/nixos-hardware/blob/380ed15bcd6440606c6856db44a99140d422b46f/lenovo/yoga/6/13ALC6/default.nix#L20-L23
+  # https://bugs.launchpad.net/ubuntu/+source/linux-firmware/+bug/1971656
   boot.extraModprobeConfig = ''
-    options rtw89_pci disable_aspm_l1=y disable_aspm_l1ss
+    options rtw89_pci disable_clkreq=y disable_aspm_l1=y disable_aspm_l1ss=y
   '';
 
   # Apply better fonts for non X consoles
