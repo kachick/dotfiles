@@ -6,6 +6,9 @@
   networking.networkmanager = {
     enable = true;
 
+    # If your WiFi is unstable, you should check the driver support for your device
+    # You can get the adapter name with `lspci`
+
     # Avoiding conflict with wpa_supplicant
     # Because of only using networkmanager or using lwd for backend made unstable WiFi on laptop
     # Then it made much of these logs
