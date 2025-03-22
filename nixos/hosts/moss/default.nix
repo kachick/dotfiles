@@ -16,22 +16,19 @@
   #   - https://github.com/torvalds/linux/commit/0e5210217768625b43f099bcaafe627b098655d5
   #   - https://github.com/torvalds/linux/commit/1f3de77752a7bf0d1beb44603f048eb46948b9fe
   # TODO: Remove this customization since using nixos-25.05
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  # boot.kernelPatches = [
-  #   {
-  #     # https://github.com/torvalds/linux/blob/88d324e69ea9f3ae1c1905ea75d717c08bdb8e15/drivers/net/wireless/realtek/rtw89/Kconfig#L87-L96
-  #     name = "enable-rtw89_8852ce-config";
-  #     patch = null;
-  #     # Also requires RTW89 first. And the ancsetors... https://github.com/NixOS/nixpkgs/issues/82951#issuecomment-602031597
-  #     # Can I set these more simply?
-  #     extraConfig = ''
-  #       MAC80211 y
-  #       CFG80211 y
-  #       RTW89 y
-  #       RTW89_8852CE y
-  #     '';
-  #   }
-  # ];
+  boot.kernelPackages = pkgs.linuxPackages_6_13;
+  boot.kernelPatches = [
+    {
+      # https://github.com/torvalds/linux/blob/88d324e69ea9f3ae1c1905ea75d717c08bdb8e15/drivers/net/wireless/realtek/rtw89/Kconfig#L87-L96
+      name = "enable-rtw89_8852ce-config";
+      patch = null;
+      # Also requires RTW89 first. https://github.com/NixOS/nixpkgs/issues/82951#issuecomment-602031597
+      extraConfig = ''
+        RTW89 y
+        RTW89_8852CE y
+      '';
+    }
+  ];
 
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
