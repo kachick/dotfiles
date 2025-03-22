@@ -17,18 +17,11 @@
   #   - https://github.com/torvalds/linux/commit/1f3de77752a7bf0d1beb44603f048eb46948b9fe
   # TODO: Remove this customization since using nixos-25.05
   boot.kernelPackages = pkgs.linuxPackages_6_13;
-  boot.kernelPatches = [
-    {
-      # https://github.com/torvalds/linux/blob/88d324e69ea9f3ae1c1905ea75d717c08bdb8e15/drivers/net/wireless/realtek/rtw89/Kconfig#L87-L96
-      name = "enable-rtw89_8852ce-config";
-      patch = null;
-      # Also requires RTW89 first. https://github.com/NixOS/nixpkgs/issues/82951#issuecomment-602031597
-      extraConfig = ''
-        RTW89 y
-        RTW89_8852CE y
-      '';
-    }
-  ];
+  # https://wiki.archlinux.org/title/Network_configuration/Wireless
+  # https://github.com/NixOS/nixos-hardware/blob/380ed15bcd6440606c6856db44a99140d422b46f/lenovo/yoga/6/13ALC6/default.nix#L20-L23
+  boot.extraModprobeConfig = ''
+    options rtw89_pci disable_aspm_l1=y disable_aspm_l1ss
+  '';
 
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
