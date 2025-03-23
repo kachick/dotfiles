@@ -1,34 +1,13 @@
 { lib, pkgs, ... }:
 {
-  networking.wireless.enable = true; # Enables wireless support via wpa_supplicant. Should keep for stable WiFi even if enabling networkmanager
+  # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant. Bascically prefer networkmanager, enable this if unstable
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix
   networking.networkmanager = {
     enable = true;
 
-    # If your WiFi is unstable, you should check the driver support for your device
-    # You can get the adapter name with `lspci`
-
-    # Avoiding conflict with wpa_supplicant
-    # Because of only using networkmanager or using lwd for backend made unstable WiFi on laptop
-    # Then it made much of these logs
-    # wlp3s0: Limiting TX power to 30 (30 - 0) dBm as advertised by ...
-    #
-    # You can get the interface-name with `iw dev`. ref: https://wiki.archlinux.org/title/Network_configuration/Wireless#Get_the_name_of_the_interface
-    # Set it in each host.
-    #
-    # unmanaged = [
-    #   "except:interface-name:wlp3s0"
-    # ];
-
     # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
     # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
-
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/networking/networkmanager.nix#L261-L289
-    wifi = {
-      # https://github.com/kachick/dotfiles/issues/663#issuecomment-2262189168
-      powersave = false;
-    };
   };
 
   services.udev = {
