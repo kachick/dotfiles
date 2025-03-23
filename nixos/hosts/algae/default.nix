@@ -22,12 +22,6 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
-  networking.networkmanager = {
-    unmanaged = [
-      "except:interface-name:wlp2s0"
-    ];
-  };
-
   # Required to reboot if you want to apply changes
   # Prevent GH-894
   # https://askubuntu.com/a/1446653
