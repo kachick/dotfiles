@@ -17,7 +17,7 @@
     # - We can't partially run flake check. See https://github.com/NixOS/nix/issues/8881
   ];
 
-  boot.loader.systemd-boot = {
+  boot.loader.systemd-boot = lib.mkDefault {
     enable = true;
     # https://discourse.nixos.org/t/no-space-left-on-boot/24019/20
     configurationLimit = 10;

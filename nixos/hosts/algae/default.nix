@@ -1,12 +1,17 @@
-{ lib, ... }:
+{ lib, outputs, ... }:
 
 {
   networking.hostName = "algae";
 
+  modules = [
+    outputs.nixosModules.default
+    outputs.nixosModules.desktop
+  ];
+
   imports = [
-    ../../configuration.nix
-    ../../hardware.nix
-    ../../desktop
+    # ../../configuration.nix
+    # ../../hardware.nix
+    # ../../desktop
     ../../desktop/kachick.nix
 
     ./hardware-configuration.nix
