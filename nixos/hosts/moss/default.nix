@@ -1,6 +1,8 @@
 { lib, ... }:
 
 {
+  # ThinkPad E14 Gen 5 (AMD),
+  # but replaced unstable RTL8852CE with AX210NGW. See GH-663
   networking.hostName = "moss";
 
   imports = [
