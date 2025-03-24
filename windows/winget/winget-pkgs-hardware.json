@@ -5,16 +5,16 @@
     {
       "Packages": [
         {
-          "PackageIdentifier": "Rclone.Rclone"
+          "PackageIdentifier": "jtroo.kanata_gui"
         },
         {
-          "PackageIdentifier": "WinFsp.WinFsp"
+          "PackageIdentifier": "bztsrc.usbimager.wo"
         },
         {
-          "PackageIdentifier": "Microsoft.OneDrive"
+          "PackageIdentifier": "Rufus.Rufus"
         },
         {
-          "PackageIdentifier": "Google.GoogleDrive"
+          "PackageIdentifier": "tuna-f1sh.cyme"
         }
       ],
       "SourceDetails": {
