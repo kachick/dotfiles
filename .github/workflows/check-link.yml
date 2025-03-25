@@ -6,9 +6,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/check-link.yml'
+      - '.lycheeignore'
   pull_request:
     paths:
       - '.github/workflows/check-link.yml'
+      - '.lycheeignore'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST
