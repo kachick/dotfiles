@@ -9,6 +9,7 @@
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop
+    ../../desktop/kachick.nix
 
     ./hardware-configuration.nix
     ./fingerprint.nix
