@@ -32,10 +32,4 @@
   };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-
-  networking.networkmanager = lib.mkDefault {
-    unmanaged = [
-      "except:interface-name:wlp3s0"
-    ];
-  };
 }
