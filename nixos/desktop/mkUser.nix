@@ -1,4 +1,4 @@
-overrideAttrs:
+extraAttrs:
 {
   isNormalUser = true;
   description = "Generic user";
@@ -14,4 +14,4 @@ overrideAttrs:
     # Use Web Player or PWA
   ];
 }
-// overrideAttrs
+// extraAttrs
