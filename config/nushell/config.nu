@@ -66,3 +66,4 @@ alias g = git
 alias zed = zeditor
 
 alias gH = git show HEAD
+
