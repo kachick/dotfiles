@@ -8,7 +8,6 @@
   imports = [
     (import ./font.nix { inherit pkgs; })
     ./kanata.nix
-    ./hardware.nix
   ];
 
   # `wpa_cli`. I don't know what is the `wpa_gui`

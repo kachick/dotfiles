@@ -160,45 +160,27 @@
         };
       });
 
-      nixosModules = rec {
-        default = import ./nixos/configuration.nix { };
-
-        desktop = default // {
-          imports = [ ./nixos/desktop ];
-        };
-      };
+      nixosModules.default = import ./nixos/hosts/nixos;
 
       nixosConfigurations =
         let
-          specialArgs = {
-            inherit
-              inputs
-              outputs
-              overlays
-              ;
+          system = "x86_64-linux";
+          shared = {
+            inherit system;
+            specialArgs = {
+              inherit
+                inputs
+                outputs
+                overlays
+                ;
+            };
           };
         in
         {
-          "moss" = nixpkgs.lib.nixosSystem {
-            inherit specialArgs;
-            system = "x86_64-linux";
-            modules = [ ./nixos/hosts/moss ];
-          };
-          "algae" = nixpkgs.lib.nixosSystem {
-            inherit specialArgs;
-            system = "x86_64-linux";
-            modules = [ ./nixos/hosts/algae ];
-          };
-          # "nixos" = nixpkgs.lib.nixosSystem {
-          #   inherit specialArgs;
-          #   system = "x86_64-linux";
-          #   modules = [ self.nixosModules.default ];
-          # };
-          "wsl" = nixpkgs.lib.nixosSystem {
-            inherit specialArgs;
-            system = "x86_64-linux";
-            modules = [ ./nixos/hosts/wsl ];
-          };
+          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
+          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
+          "nixos" = nixpkgs.lib.nixosSystem (shared // { modules = [ self.nixosModules.default ]; });
+          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 
       homeConfigurations =
