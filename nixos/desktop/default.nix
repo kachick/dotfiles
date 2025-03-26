@@ -311,6 +311,7 @@
   };
 
   i18n = {
+    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/i18n/input-method/ibus.nix
     inputMethod = {
       enable = true;
       # Don't use fcitx5. It always made systemd-coredump. See GH-1114
@@ -319,6 +320,13 @@
       # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
       ibus.engines = with pkgs.ibus-engines; [ mozc ];
     };
+  };
+
+  # Workaround for https://discourse.nixos.org/t/unsetting-gtk-im-module-environment-variable/49331/
+  # Replace with https://github.com/NixOS/nixpkgs/pull/384689 if merged to a stable channel. TODO: Update this or this config or comment since nixos-25.05
+  environment.variables = {
+    GTK_IM_MODULE = lib.mkForce ""; # Make better experience in FireFox even if QT_IM_MODULE cannot be updated
+    QT_IM_MODULE = lib.mkForce ""; # FIXME: Did not work even through applied in /etc/set-environment, and cannot be override in home-manager systemd module.
   };
 
   # TODO: Consider to use headscale
