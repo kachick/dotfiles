@@ -89,6 +89,9 @@
       "sudoc" = "sudo --preserve-env=PATH env";
 
       "gH" = "git show HEAD";
+
+      # GH-897
+      "ddis" = "direnv disallow";
     };
   };
 
