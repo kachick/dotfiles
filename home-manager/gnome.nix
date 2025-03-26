@@ -240,7 +240,7 @@
           ])
         ];
 
-        per-window = true;
+        per-window = false;
       };
 
       "org/gnome/desktop/interface" = {
