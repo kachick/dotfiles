@@ -11,10 +11,6 @@
         # https://github.com/nix-community/home-manager/blob/5ec753a1fc4454df9285d8b3ec0809234defb975/modules/systemd.nix#L92-L96
         # GNOME clock respects LC_TIME. And does not support displaying iso-8601 format even if set en_DK
         LC_TIME = "ja_JP.UTF-8";
-
-        # TODO: Update this since nixos-25.05
-        # I don't know why https://discourse.nixos.org/t/unsetting-gtk-im-module-environment-variable/49331/ does not work only for QT_IM_MODULE :<
-        QT_IM_MODULE = "";
       };
 
       services.podman = {
