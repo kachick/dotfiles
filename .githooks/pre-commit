@@ -2,4 +2,7 @@
 
 set -euxo pipefail
 
+# global hook runs gitleaks. See GH-1109
+
 task fmt
+task lint
