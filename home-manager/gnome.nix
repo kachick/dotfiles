@@ -163,6 +163,10 @@
         # move-to-workspace-7 = [ "<Super><Shift>7" ];
         # move-to-workspace-8 = [ "<Super><Shift>8" ];
         # move-to-workspace-9 = [ "<Super><Shift>9" ];
+
+        # Intentioanlly specifies same values as default. Because of it is flaky removed if using default.
+        switch-input-source = [ "<Super>space" ];
+        switch-input-source-backward = [ "<Shift><Super>space" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
@@ -223,18 +227,24 @@
         ];
       };
 
+      # TODO: Display current keyboard layout on GNOME
+      # AFAIK, There is no reasonable indicatoor for displaying current xkb layouts on Wayland and ibus
+      # And I dropped fcitx5 in GH-1128 ...
+      # https://github.com/zen-tools/gxkb made segfault
+      # switch-input-source keybindings does not help this, indicator should be better and the launcher truncate mozc names
       "org/gnome/desktop/input-sources" = {
         sources = with lib.hm.gvariant; [
-          # Don't add multiple sources such as adding `('xkb', 'us')`
-          # Since IBus 1.5, it always enabled and switched on the IME
-          # So use direct input on mozc layer
           (mkTuple [
             "ibus"
-            "mozc-jp"
+            "mozc-jp-ansi"
+          ])
+          (mkTuple [
+            "ibus"
+            "mozc-jp-jis"
           ])
         ];
 
-        per-window = true;
+        per-window = false;
       };
 
       "org/gnome/desktop/interface" = {

@@ -1,4 +1,27 @@
 # `ibus write-cache; ibus restart` might be necessary to apply changes.
+# Guide of options
+# Don't use truncated words, it makes unreadable replacement like `...`
+# longname: Keep shorter, it will be prefixed "Japanese" and truncated the specified word in inputs switcher
+# symbol: Keep 1..3 characters. More will be truncated in inputs switcher
+engines {
+  name : "mozc-jp-ansi"
+  longname : "ANSI"
+  layout : "us" # ANSI INCITS 154-1988
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "ANS" # ANSI is longer than 3
+}
+engines {
+  name : "mozc-jp-jis"
+  longname : "JIS"
+  layout : "jp" # OADG 109A
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "JIS"
+}
+# Below engines are defined by default
 engines {
   name : "mozc-jp"
   longname : "Mozc"

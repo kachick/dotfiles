@@ -1,6 +1,8 @@
 { lib, ... }:
 
 {
+  # ThinkPad E14 Gen 5 (AMD),
+  # but replaced unstable RTL8852CE with AX210NGW. See GH-663
   networking.hostName = "moss";
 
   imports = [
@@ -24,12 +26,6 @@
   };
 
   services.xserver.videoDrivers = [ "amdgpu" ];
-
-  networking.networkmanager = {
-    unmanaged = [
-      "except:interface-name:wlp3s0"
-    ];
-  };
 
   services.udev.extraHwdb = lib.mkAfter ''
     evdev:name:AT Translated Set 2 keyboard:*
