@@ -321,6 +321,13 @@
     };
   };
 
+  # Workaround for https://discourse.nixos.org/t/unsetting-gtk-im-module-environment-variable/49331/
+  # Replace with https://github.com/NixOS/nixpkgs/pull/384689 if merged to a stable channel. TODO: Update this or this config or comment since nixos-25.05
+  environment.variables = {
+    GTK_IM_MODULE = lib.mkForce "";
+    QT_IM_MODULE = lib.mkForce "";
+  };
+
   # TODO: Consider to use headscale
   services.tailscale = {
     enable = true;
