@@ -11,25 +11,6 @@
     ./kanata.nix
   ];
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users = {
-    kachick = {
-      isNormalUser = true;
-      description = "An admin";
-      extraGroups = [
-        "networkmanager"
-        "wheel" # WiFi
-        "input" # Finger print in GDM
-        "scanner"
-        "lp" # Scanner
-      ];
-      packages = [
-        # Don't install unfree packages such as spotify.
-        # Use Web Player or PWA
-      ];
-    };
-  };
-
   # `wpa_cli`. I don't know what is the `wpa_gui`
   networking.wireless.userControlled.enable = true;
 
