@@ -23,13 +23,7 @@
           "PackageIdentifier": "Microsoft.PowerToys"
         },
         {
-          "PackageIdentifier": "jtroo.kanata_gui"
-        },
-        {
           "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
-        },
-        {
-          "PackageIdentifier": "GnuPG.Gpg4win"
         },
         {
           "PackageIdentifier": "junegunn.fzf"
@@ -65,15 +59,6 @@
           "PackageIdentifier": "WerWolv.ImHex"
         },
         {
-          "PackageIdentifier": "bztsrc.usbimager.wo"
-        },
-        {
-          "PackageIdentifier": "Rufus.Rufus"
-        },
-        {
-          "PackageIdentifier": "tuna-f1sh.cyme"
-        },
-        {
           "PackageIdentifier": "Microsoft.WindowsTerminal"
         },
         {
@@ -89,19 +74,10 @@
           "PackageIdentifier": "Starship.Starship"
         },
         {
-          "PackageIdentifier": "GoLang.Go"
-        },
-        {
           "PackageIdentifier": "Microsoft.VisualStudioCode"
         },
         {
           "PackageIdentifier": "ajeetdsouza.zoxide"
-        },
-        {
-          "PackageIdentifier": "Rclone.Rclone"
-        },
-        {
-          "PackageIdentifier": "WinFsp.WinFsp"
         },
         {
           "PackageIdentifier": "Fastfetch-cli.Fastfetch"
@@ -114,12 +90,6 @@
         },
         {
           "PackageIdentifier": "btpf.Alexandria"
-        },
-        {
-          "PackageIdentifier": "calibre.calibre"
-        },
-        {
-          "PackageIdentifier": "SumatraPDF.SumatraPDF"
         }
       ],
       "SourceDetails": {

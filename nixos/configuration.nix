@@ -84,6 +84,9 @@
     package = pkgs.unstable.cloudflare-warp;
   };
 
+  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/shells-environment.nix
+  # The final definition will be put on /etc/set-environment
+  # And you can custom it with /etc/profile.local and/or /etc/bashrc.local
   environment.variables = {
     DO_NOT_TRACK = "1";
     EDITOR = pkgs.helix.meta.mainProgram;

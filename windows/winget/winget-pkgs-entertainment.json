@@ -12,6 +12,9 @@
         },
         {
           "PackageIdentifier": "TrackerSoftware.PDF-XChangeEditor"
+        },
+        {
+          "PackageIdentifier": "calibre.calibre"
         }
       ],
       "SourceDetails": {
