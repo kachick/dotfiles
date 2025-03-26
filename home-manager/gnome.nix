@@ -227,7 +227,7 @@
       # AFAIK, There is no reasonable indicatoor for displaying current xkb layouts on Wayland and ibus
       # And I dropped fcitx5 in GH-1128 ...
       # https://github.com/zen-tools/gxkb made segfault
-      # switch-input-source keybindings does not help this, indicator should be better and the launcher trancate mozc names
+      # switch-input-source keybindings does not help this, indicator should be better and the launcher truncate mozc names
       "org/gnome/desktop/input-sources" = {
         sources = with lib.hm.gvariant; [
           (mkTuple [
