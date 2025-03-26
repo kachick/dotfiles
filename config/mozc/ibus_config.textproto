@@ -1,5 +1,24 @@
 # `ibus write-cache; ibus restart` might be necessary to apply changes.
 engines {
+  name : "mozc-jp-ansi"
+  longname : "Mozc ANSI"
+  layout : "us" # ANSI INCITS 154-1988
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "あ ANSI"
+}
+engines {
+  name : "mozc-jp-jis"
+  longname : "Mozc JIS"
+  layout : "jp" # OADG 109A
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "あ JIS"
+}
+# Below engines are defined by default
+engines {
   name : "mozc-jp"
   longname : "Mozc"
   layout : "default"
