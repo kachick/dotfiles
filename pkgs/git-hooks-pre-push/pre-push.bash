@@ -13,6 +13,8 @@ while read -r local_ref _local_oid remote_ref _remote_oid; do
 		gitleaks git --log-opts="$REMOTE_DEFAULT_BRANCH..$local_ref"
 	fi
 
+	git log --patch "$REMOTE_DEFAULT_BRANCH..$local_ref" | typos --config "$TYPOS_CONFIG_PATH" -
+
 	# Git ref is not a file path, but avoiding a typos limitation for slash
 	# See https://github.com/crate-ci/typos/issues/758 for detail
 	basename "$remote_ref" | typos --config "$TYPOS_CONFIG_PATH" -
