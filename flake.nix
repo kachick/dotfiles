@@ -93,9 +93,9 @@
         let
           pkgs = mkPkgs system;
           # Keeping latest would be better with below reasons
-          # - typos-lsp is a third-party tool, it might have different releases with typos-cli even in same Nix channel.
+          # - typos-lsp is a third-party tool, it might have different releases with typos-cli even if both are defined in same nixpkgs channel.
           #   See https://github.com/kachick/dotfiles/commit/11bd10a13196d87f74f9464964d34f6ce33fa669#commitcomment-154399068 for detail.
-          # - It will not be used in CI, it dont not block workflows even if typos upstream introduced false-positive detection
+          # - It will not be used in CI, it doesn't block workflows even if typos upstream introduced false-positive detection.
           typos-lsp = pkgs.unstable.typos-lsp;
         in
         {
