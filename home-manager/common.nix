@@ -176,6 +176,16 @@
     source = ../config/zellij;
     recursive = true;
   };
+  xdg.configFile."zellij/simplified-ui.kdl" = {
+    text =
+      builtins.readFile ../config/zellij/config.kdl
+      + ''
+        // Use a simplified UI without special fonts (arrow glyphs)
+        // This is necessary on Linux VT to avoid Tofu
+        // Or you can run zellij with `zellij options --simplified-ui true`
+        simplified_ui true
+      '';
+  };
 
   # TODO: Switch to raw config file and shared in Windows
   programs.ripgrep = {

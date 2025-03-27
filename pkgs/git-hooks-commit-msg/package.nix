@@ -4,6 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     typos
+    unstable.gitleaks
     my.run_local_hook
   ];
   runtimeEnv = {

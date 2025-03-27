@@ -67,7 +67,7 @@ in
         # Helix cannot set common LSP. https://github.com/helix-editor/helix/discussions/8850
         # So required to manually merge language-servers for each language
         typos = {
-          command = lib.getExe pkgs.typos-lsp;
+          command = lib.getExe pkgs.unstable.typos-lsp;
           config.config = "${../typos.toml}";
         };
       };

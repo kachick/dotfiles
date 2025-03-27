@@ -134,11 +134,7 @@
         export LC_TIME='en_DK.UTF-8'
 
         if [ 'linux' = "$TERM" ]; then
-          # Avoid Tofu
-          export LANG=C
-          export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
-
-          disable_blinking_cursor
+          adjust_to_linux_vt
         fi
       ''
       + builtins.readFile ./initExtra.bash;

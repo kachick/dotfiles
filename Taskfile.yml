@@ -92,7 +92,7 @@ tasks:
     cmds:
       - go build -v -o dist/lint ./cmd/lint
     sources:
-      - internal/fileutils/*.go
+      - internal/**/*.go
       - ./cmd/lint/*.go
     generates:
       - dist/lint
