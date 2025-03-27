@@ -92,13 +92,18 @@
         system:
         let
           pkgs = mkPkgs system;
+          # Keeping latest would be better with below reasons
+          # - typos-lsp is a third-party tool, it might have different releases with typos-cli even in same Nix channel.
+          #   See https://github.com/kachick/dotfiles/commit/11bd10a13196d87f74f9464964d34f6ce33fa669#commitcomment-154399068 for detail.
+          # - It will not be used in CI, it dont not block workflows even if typos upstream introduced false-positive detection
+          typos-lsp = pkgs.unstable.typos-lsp;
         in
         {
           default = pkgs.mkShellNoCC {
             # Realize nixd pkgs version inlay hints for stable channel instead of latest
             NIX_PATH = "nixpkgs=${pkgs.path}";
 
-            TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
+            TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
 
             buildInputs =
               (with pkgs; [
@@ -122,7 +127,6 @@
                   # https://github.com/numtide/treefmt/pull/250
                   treefmt2
                   typos
-                  typos-lsp # For zed-editor typos extension
                   trivy
                   markdownlint-cli2
                 ])
@@ -136,6 +140,7 @@
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
+                  typos-lsp # For zed-editor typos extension
                   inputs.selfup.packages.${system}.default
                   inputs.psfeditor.packages.${system}.default
                 ]
