@@ -144,7 +144,7 @@
       wofi
 
       # Add LSP global for zed-editor. Prefer external package for helix
-      typos-lsp
+      unstable.typos-lsp
       nil
       nixd
       vscode-langservers-extracted
