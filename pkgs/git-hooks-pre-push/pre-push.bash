@@ -10,7 +10,7 @@ REMOTE_DEFAULT_BRANCH="$(git symbolic-ref 'refs/remotes/origin/HEAD')"
 while read -r local_ref _local_oid remote_ref _remote_oid; do
 	if [[ "$SKIP_HOOK" != "gitleaks" ]]; then
 		# TODO: Might be better to skip if author is another person in nixpkgs
-		gitleaks git --log-opts="$REMOTE_DEFAULT_BRANCH..$local_ref"
+		gitleaks --verbose git --log-opts="$REMOTE_DEFAULT_BRANCH..$local_ref"
 	fi
 
 	git log --patch "$REMOTE_DEFAULT_BRANCH..$local_ref" | typos --config "$TYPOS_CONFIG_PATH" -
