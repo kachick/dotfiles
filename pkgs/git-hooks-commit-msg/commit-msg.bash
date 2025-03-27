@@ -1,14 +1,14 @@
-declare -A SKIP_HOOKS=([gitleaks]='false' [typos]='false')
-while IFS=, read -r target; do
-	[ -z "$target" ] && continue
-	SKIP_HOOKS["$target"]='true'
+declare -A want=([gitleaks]='true' [typos]='true')
+while IFS=, read -r tool; do
+	[ -z "$tool" ] && continue
+	want["$tool"]='false'
 done < <(echo "${SKIP:-}")
 
-if [[ "${SKIP_HOOKS[typos]}" != 'true' ]]; then
+if [[ "${want[typos]}" == 'true' ]]; then
 	typos --config "$TYPOS_CONFIG_PATH" "$1"
 fi
 
-if [[ "${SKIP_HOOKS[gitleaks]}" != 'true' ]]; then
+if [[ "${want[gitleaks]}" == 'true' ]]; then
 	gitleaks --verbose stdin <"$1"
 fi
 
