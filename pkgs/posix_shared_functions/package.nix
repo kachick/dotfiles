@@ -52,6 +52,12 @@ pkgs.writeText "posix_shared_functions.sh" (
     gch() {
       fc -nrl 1 | ${lib.getExe pkgs.my.fzf-bind-posix-shell-history-to-git-commit-message}
     }
+
+    avoid_tofu() {
+      export LANG=C
+      export STARSHIP_CONFIG='${pkgs.starship}/share/starship/presets/plain-text-symbols.toml'
+      export ZELLIJ_CONFIG_FILE="$XDG_CONFIG_HOME/zellij/simplified-ui.kdl"
+    }
   ''
   + (builtins.readFile ./non_nix.bash)
 )

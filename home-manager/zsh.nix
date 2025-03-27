@@ -278,12 +278,7 @@ in
       export LC_TIME='en_DK.UTF-8'
 
       if [ 'linux' = "$TERM" ]; then
-        # Avoid Tofu
-        export LANG=C
-        export STARSHIP_CONFIG='${pkgs.starship}/share/starship/presets/plain-text-symbols.toml'
-        export ZELLIJ_CONFIG_FILE='${config.xdg.configHome}/zellij/simplified-ui.kdl'
-
-        disable_blinking_cursor
+        adjust_to_linux_vt
       fi
 
       # https://superuser.com/a/902508/120469

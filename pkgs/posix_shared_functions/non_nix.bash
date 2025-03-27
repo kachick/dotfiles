@@ -4,6 +4,11 @@ disable_blinking_cursor() {
 	echo -en '\033[?16;5;140c'
 }
 
+adjust_to_linux_vt() {
+	avoid_tofu
+	disable_blinking_cursor
+}
+
 cdwin() {
 	if ! command -v wslpath &>/dev/null; then
 		# TODO: Consider inject only in WSL environment
