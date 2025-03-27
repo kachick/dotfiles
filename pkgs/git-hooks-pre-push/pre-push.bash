@@ -12,7 +12,6 @@ REMOTE_DEFAULT_BRANCH="$(git symbolic-ref 'refs/remotes/origin/HEAD')"
 # list of arguments: https://git-scm.com/docs/githooks#_pre_push
 while read -r local_ref _local_oid remote_ref _remote_oid; do
 	if [[ "${want[gitleaks]}" == 'true' ]]; then
-		# TODO: Might be better to skip if author is another person in nixpkgs
 		gitleaks --verbose git --log-opts="$REMOTE_DEFAULT_BRANCH..$local_ref"
 	fi
 
