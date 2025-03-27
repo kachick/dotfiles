@@ -5,6 +5,8 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+
+	"github.com/mattn/go-runewidth"
 )
 
 type Cmd struct {
@@ -21,7 +23,7 @@ func (cmds Commands) ParallelRun() {
 		go func(cmd Cmd) {
 			defer wg.Done()
 			output, err := exec.Command(cmd.Path, cmd.Args...).CombinedOutput()
-			log.Printf("%s %s\n%s\n", cmd.Path, strings.Join(cmd.Args, " "), string(output))
+			log.Printf("%s %s\n%s\n", cmd.Path, runewidth.Truncate(strings.Join(cmd.Args, " "), 60, "..."), string(output))
 			if err != nil {
 				log.Fatalln(err)
 			}
@@ -33,7 +35,7 @@ func (cmds Commands) ParallelRun() {
 func (cmds Commands) SequentialRun() {
 	for _, cmd := range cmds {
 		output, err := exec.Command(cmd.Path, cmd.Args...).CombinedOutput()
-		log.Printf("%s %s\n%s\n", cmd.Path, strings.Join(cmd.Args, " "), string(output))
+		log.Printf("%s %s\n%s\n", cmd.Path, runewidth.Truncate(strings.Join(cmd.Args, " "), 60, ""), string(output))
 		if err != nil {
 			log.Fatalln(err)
 		}

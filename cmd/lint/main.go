@@ -35,6 +35,8 @@ func main() {
 
 	flag.Parse()
 
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
