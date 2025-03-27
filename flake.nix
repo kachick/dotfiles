@@ -165,7 +165,7 @@
         };
       });
 
-      nixosModules.default = import ./nixos/hosts/nixos;
+      nixosModules.default = import ./nixos/hosts/generic;
 
       nixosConfigurations =
         let

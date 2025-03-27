@@ -73,7 +73,7 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
   --show-trace
 ```
 
-If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode, copying [small flake template](nixos/hosts/nixos) might be an workaround.
+If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode, copying [small flake template](nixos/hosts/generic) might be an workaround.
 
 This repository intentionally reverts the home-manager NixOS module.\
 So, you should activate the user dotfiles with standalone home-manager even though NixOS.
