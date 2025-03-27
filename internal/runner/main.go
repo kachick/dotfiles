@@ -35,7 +35,7 @@ func (cmds Commands) ParallelRun() {
 func (cmds Commands) SequentialRun() {
 	for _, cmd := range cmds {
 		output, err := exec.Command(cmd.Path, cmd.Args...).CombinedOutput()
-		log.Printf("%s %s\n%s\n", cmd.Path, runewidth.Truncate(strings.Join(cmd.Args, " "), 60, ""), string(output))
+		log.Printf("%s %s\n%s\n", cmd.Path, runewidth.Truncate(strings.Join(cmd.Args, " "), 60, "..."), string(output))
 		if err != nil {
 			log.Fatalln(err)
 		}
