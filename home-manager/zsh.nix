@@ -280,7 +280,8 @@ in
       if [ 'linux' = "$TERM" ]; then
         # Avoid Tofu
         export LANG=C
-        export STARSHIP_CONFIG="${pkgs.starship}/share/starship/presets/plain-text-symbols.toml"
+        export STARSHIP_CONFIG='${pkgs.starship}/share/starship/presets/plain-text-symbols.toml'
+        export ZELLIJ_CONFIG_FILE='${config.xdg.configHome}/zellij/simplified-ui.kdl'
 
         disable_blinking_cursor
       fi
