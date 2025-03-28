@@ -13,9 +13,6 @@ rclone.conf
 *local*
 !*local_hook*
 
-# Comment-out only in your new device
-nixos/hosts/generic/hardware-configuration.nix
-
 dist/
 tmp/
 

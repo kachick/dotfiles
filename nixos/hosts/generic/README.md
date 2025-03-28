@@ -6,7 +6,7 @@ Although it requires impure mode. So I'm putting these files for the purpose.
 ```bash
 cp /etc/nixos/hardware-configuration.nix ./nixos/hosts/generic/
 
-# Comment-in-ont about hardware-configuration.nix around this device. Typically in this repo and .gitignore on root dir of this repository
+# Comment-in-ont about hardware-configuration.nix in this directory.
 
 nix-shell --packages git zsh --command zsh
 git init
