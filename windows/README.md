@@ -1,8 +1,14 @@
 # Windows
 
-## Installation
+## WSL2
 
-Basically following codes will be done in PowerShell
+1. Install [WSL2](WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
+1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
+
+## Provision
+
+Basically following codes written in PowerShell.\
+Also check [CI](.github/workflows/windows.yml) steps if you faced any error.
 
 1. Enable `Sudo` features in Windows. Windows tells us how to enable it at first use
 1. Set `$env.XDG_CONFIG_HOME` in Windows system wide. At least, nushell respects it ([Not all of "XDG Base Directory"](https://github.com/nushell/nushell/issues/10100))
@@ -51,3 +57,7 @@ Basically following codes will be done in PowerShell
 ## I forgot to backup Bitlocker restore key 😋
 
 <https://account.microsoft.com/devices/recoverykey> may help
+
+## Multi-booting on Windows and Linux
+
+Check [traps](./Multi-booting.md)

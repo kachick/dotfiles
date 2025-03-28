@@ -1,5 +1,13 @@
 # Containers
 
+You can test the pre-built [ubuntu container-image](../containers) with [Podman](https://podman.io/).
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
+```
+
+## Build
+
 Base images are maintained in [another repository](https://github.com/kachick/containers)
 
 ## How to build and test in local
