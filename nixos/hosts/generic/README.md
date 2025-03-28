@@ -20,3 +20,5 @@ nixos-rebuild build --flake .#generic
 # Apply it
 sudo nixos-rebuild switch --flake .#generic
 ```
+
+If you want to use `task apply`, you might require rebooting to apply new hostname.
