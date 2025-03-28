@@ -165,8 +165,6 @@
         };
       });
 
-      nixosModules.default = import ./nixos/hosts/generic;
-
       nixosConfigurations =
         let
           system = "x86_64-linux";
@@ -184,7 +182,7 @@
         {
           "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
           "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
-          "nixos" = nixpkgs.lib.nixosSystem (shared // { modules = [ self.nixosModules.default ]; });
+          "generic" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/generic ]; });
           "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
         };
 

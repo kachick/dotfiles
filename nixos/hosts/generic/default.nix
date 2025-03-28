@@ -4,7 +4,7 @@
   networking.hostName = lib.mkDefault "nixos";
 
   imports = [
-    ../../configuration.nix
+    # ./hardware-configuration.nix # Comment-in only in your new device
     ../../hardware.nix
     ../../desktop
     ../../desktop/genericUsers.nix

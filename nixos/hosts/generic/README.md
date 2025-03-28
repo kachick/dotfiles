@@ -1,15 +1,13 @@
-# A small flake template for bootstrapping
+# What of this config?
 
 Putting the [hardware-configuration.nix](/etc/nixos/hardware-configuration.nix) into this repository is much annoy for each bootstrapping of the device.\
 Although it requires impure mode. So I'm putting these files for the purpose.
 
 ```bash
-# Avoiding /etc/nixos to reduce much of sudo
-mkdir ~/.config
-cp this_repo/../this_dir ~/.config/nixos-config
-sudo cp /etc/nixos/hardware-configuration.nix ~/.config/nixos-config/
+cp /etc/nixos/hardware-configuration.nix ./nixos/hosts/generic/
 
-cd ~/.config/nixos-config
+# Comment-in-ont about hardware-configuration.nix around this device. Typically in this repo and .gitignore on root dir of this repository
+
 nix-shell --packages git zsh --command zsh
 git init
 git add .
