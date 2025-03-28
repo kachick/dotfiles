@@ -1,7 +1,8 @@
 { lib, ... }:
 
 {
-  networking.hostName = lib.mkDefault "nixos";
+  # Keep same name with flake outputs
+  networking.hostName = lib.mkDefault "generic";
 
   imports = [
     ../../configuration.nix
