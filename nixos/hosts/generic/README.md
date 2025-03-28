@@ -7,17 +7,16 @@ Although it requires impure mode. So I'm putting these files for the purpose.
 cp /etc/nixos/hardware-configuration.nix ./nixos/hosts/generic/
 
 # Comment-in-ont about hardware-configuration.nix in this directory.
+git grep 'UPDATEME' ./nixos/hosts/generic
 
-nix-shell --packages git zsh --command zsh
-git init
 git add .
 ```
 
 ```zsh
-nixos-rebuild build --flake .#this_host_name
+nixos-rebuild build --flake .#generic
 
 # Make sure result of above step
 
 # Apply it
-sudo nixos-rebuild switch --flake .#this_host_name
+sudo nixos-rebuild switch --flake .#generic
 ```

@@ -9,7 +9,7 @@
     ../../desktop
     ../../desktop/genericUsers.nix
 
-    # ./hardware-configuration.nix # Comment-in only in your new device
+    # ./hardware-configuration.nix # UPDATEME: Comment-in only in your new device
   ];
 
   boot.loader.systemd-boot = {
