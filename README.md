@@ -73,7 +73,7 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
   --show-trace
 ```
 
-If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode,
+If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode,\
 See [generic configuration](nixos/hosts/generic) for my current workaround.
 
 This repository intentionally reverts the home-manager NixOS module.\
