@@ -13,7 +13,8 @@ var (
 	TyposConfigPath string
 )
 
-// Spec of Git: Content of commit message will be written in a tempfile. The filepath will be given with $1
+// Spec of Git: https://git-scm.com/docs/githooks#_commit_msg
+// Summarizing for me, content of commit message will be written in a tempfile which is typically be .git/COMMIT_EDITMSG. The filepath will be given with $1.
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
