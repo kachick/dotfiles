@@ -74,9 +74,9 @@ func main() {
 
 	if !slices.Contains(skips, "localhook") {
 		log.Println("run local hook")
-		args := append([]string{"commit-msg"}, os.Args[1:]...)
+		// args := append([]string{"commit-msg"}, os.Args[1:]...)
 		// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
-		out, err := exec.Command("run_local_hook", args...).CombinedOutput()
+		out, err := exec.Command("run_local_hook", "commit-msg", msgPath).CombinedOutput()
 		log.Println(string(out))
 		if err != nil {
 			log.Fatalf("failed to run local hook %w", err)
