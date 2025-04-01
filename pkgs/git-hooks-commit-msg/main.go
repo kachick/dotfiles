@@ -23,7 +23,7 @@ type Linter struct {
 func main() {
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
-	if !(len(os.Args) > 1) {
+	if len(os.Args) < 2 {
 		log.Fatalln("Body of commit message is not given with $1")
 	}
 	msgPath := os.Args[1]
