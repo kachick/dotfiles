@@ -1,16 +1,25 @@
 { pkgs, ... }:
-pkgs.writeShellApplication rec {
-  name = "commit-msg";
-  text = builtins.readFile ./${name}.bash;
+pkgs.unstable.buildGo124Module (finalAttrs: {
+  pname = "git-hooks-commit-msg";
+  version = "0.0.1";
   runtimeInputs = with pkgs; [
     typos
     unstable.gitleaks
     my.run_local_hook
   ];
-  runtimeEnv = {
-    TYPOS_CONFIG_PATH = "${../../typos.toml}";
-  };
+  vendorHash = null;
+  src = ./.;
+
+  env.CGO_ENABLED = 0;
+
+  ldflags = [
+    "-s"
+    "-w"
+    "-X main.TyposConfigPath=${../../typos.toml}"
+  ];
+
   meta = {
-    description = "GH-325. Typo checker for commit-msg git hook";
+    description = "Git hook for commit-msg. See GH-325";
+    mainProgram = finalAttrs.pname;
   };
-}
+})
