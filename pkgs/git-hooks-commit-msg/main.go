@@ -22,55 +22,55 @@ func main() {
 	}
 	msgPath := os.Args[1]
 
-	cmds := Scenarios{}
-
+	// `SKIP` is adjusted for pre-commit convention. See https://github.com/gitleaks/gitleaks/blob/v8.24.0/README.md?plain=1#L121-L127
 	// Unnecessary to consider strict CSV spec such as https://pre-commit.com/
 	skips := strings.Split(os.Getenv("SKIP"), ",")
-	// Unnecessary to consider large slugs. So multiple iterations does not make problem
-	if !slices.Contains(skips, "typos") {
-		cmds = append(cmds, func() Scenario {
-			return Scenario{cmd: exec.Command("typos", "--config", TyposConfigPath, msgPath), cleanup: func() {}}
-		}())
-	}
-	if !slices.Contains(skips, "gitleaks") {
-		cmds = append(cmds, func() Scenario {
+
+	linters := map[string]Linter{
+		"prevent secrets in the message": Linter{Tag: "gitleaks", Script: func() error {
 			cmd := exec.Command("gitleaks", "--verbose", "stdin", msgPath)
 			f, err := os.Open(msgPath)
 			if err != nil {
 				log.Fatalf("%w", err)
 			}
+			defer f.Close()
 			cmd.Stdin = f
-			return Scenario{cmd: cmd, cleanup: func() { f.Close() }}
-		}())
+			log.Println(strings.Join(cmd.Args, " "))
+			out, err := cmd.CombinedOutput()
+			log.Println(string(out))
+			return err
+		}},
+		"prevent typos in the message": Linter{Tag: "typos", Script: func() error {
+			cmd := exec.Command("typos", "--config", TyposConfigPath, msgPath)
+			out, err := cmd.CombinedOutput()
+			log.Println(strings.Join(cmd.Args, " "))
+			log.Println(string(out))
+			return err
+		}},
 	}
 
-	cmds.ParallelRun()
+	wg := &sync.WaitGroup{}
+	for desc, linter := range linters {
+		// Unnecessary to consider large slice is given. So nested iterations do not make problem here
+		if !slices.Contains(skips, linter.Tag) {
+			wg.Add(1)
+			go func(linter Linter) {
+				defer wg.Done()
+				log.Println(desc)
+				err := linter.Script()
+				if err != nil {
+					log.Fatalln(err)
+				}
+			}(linter)
+		}
+	}
+	wg.Wait()
 
+	// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
 	exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
 }
 
-type Scenario struct {
-	cmd     *exec.Cmd
-	cleanup func()
-}
-
-type Scenarios []Scenario
-
-func (cmds Scenarios) ParallelRun() {
-	wg := &sync.WaitGroup{}
-	for _, cmd := range cmds {
-		wg.Add(1)
-		go func(scenario Scenario) {
-			defer wg.Done()
-			defer scenario.cleanup()
-			cmd := scenario.cmd
-			output, err := cmd.CombinedOutput()
-			log.Println(strings.Join(cmd.Args, " "))
-			log.Println(string(output))
-			if err != nil {
-				log.Fatalln(err)
-			}
-		}(cmd)
-	}
-	wg.Wait()
+type Linter struct {
+	Tag    string
+	Script func() error
 }

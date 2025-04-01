@@ -60,6 +60,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
 	// FIXME: It should process for same STDIN in both local and global hook. So delegating "$@" is not enough
 	exec.Command("run_local_hook", append([]string{"pre-push"}, os.Args[1:]...)...).CombinedOutput()
 }
@@ -82,7 +83,9 @@ func processLine(line string, remoteBranch string) (map[string]Linter, error) {
 
 	return map[string]Linter{
 		"prevent secrets in log and diff": Linter{Tag: "gitleaks", Script: func() error {
-			out, err := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=%s..%s", remoteBranch, localRef)).CombinedOutput()
+			cmd := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=%s..%s", remoteBranch, localRef))
+			out, err := cmd.CombinedOutput()
+			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
 			return err
 		}},
