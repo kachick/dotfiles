@@ -38,6 +38,7 @@ func main() {
 
 	wg := &sync.WaitGroup{}
 	scanner := bufio.NewScanner(os.Stdin)
+	localHooks := []Linter{}
 	for scanner.Scan() {
 		line := scanner.Text()
 		linters, err := processLine(line, remoteDefaultBranch)
@@ -45,6 +46,11 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 		for desc, linter := range linters {
+			if linter.Tag == "localhook" {
+				localHooks = append(localHooks, linter)
+				continue
+			}
+
 			// Unnecessary to consider large slice is given. So nested iterations do not make problem here
 			if !slices.Contains(skips, linter.Tag) {
 				wg.Add(1)
@@ -64,6 +70,16 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		fmt.Println("Error reading input:", err)
 		os.Exit(1)
+	}
+
+	// Don't include localhooks into above parallel tasks, because of we don't assume local hooks are not having any side-effect
+	if !slices.Contains(skips, "localhook") {
+		for _, localhook := range localHooks {
+			err := localhook.Script()
+			if err != nil {
+				log.Fatalln(err)
+			}
+		}
 	}
 }
 
@@ -103,8 +119,7 @@ func processLine(line string, remoteBranch string) (map[string]Linter, error) {
 			log.Println(string(out))
 			return err
 		}},
-		// TODO: Ideally this should not to be included in global parallel tasks, because of we don't assume local hooks do not have any side-effect
-		"delegate to local hook": Linter{Tag: "localhook", Script: func() error {
+		"run local hook": Linter{Tag: "localhook", Script: func() error {
 			cmd := exec.Command("run_local_hook", append([]string{"pre-push"}, os.Args[1:]...)...)
 			out, err := cmd.CombinedOutput()
 			log.Println(string(out))

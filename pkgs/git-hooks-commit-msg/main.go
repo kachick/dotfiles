@@ -72,10 +72,13 @@ func main() {
 	}
 	wg.Wait()
 
-	// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
-	out, err := exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
-	log.Println(string(out))
-	if err != nil {
-		log.Fatalf("failed to run local hook %w")
+	if !slices.Contains(skips, "localhook") {
+		log.Println("run local hook")
+		// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
+		out, err := exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
+		log.Println(string(out))
+		if err != nil {
+			log.Fatalf("failed to run local hook %w", err)
+		}
 	}
 }
