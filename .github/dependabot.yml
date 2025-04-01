@@ -18,3 +18,11 @@ updates:
     directory: '/pkgs/reponame'
     schedule:
       interval: 'weekly'
+  - package-ecosystem: 'gomod'
+    directory: '/pkgs/git-hooks-commit-msg'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'gomod'
+    directory: '/pkgs/git-hooks-pre-push'
+    schedule:
+      interval: 'weekly'

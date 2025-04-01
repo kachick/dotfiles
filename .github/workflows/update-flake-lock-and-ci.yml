@@ -23,6 +23,8 @@ jobs:
       pr-title: 'Bump flake.lock and related dependencies'
       optional-run: |
         nix run .#bump_gomod -- . pkgs/reponame
+        nix run .#bump_gomod -- . pkgs/git-hooks-commit-msg
+        nix run .#bump_gomod -- . pkgs/git-hooks-pre-push
         nix run .#update-completions
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
