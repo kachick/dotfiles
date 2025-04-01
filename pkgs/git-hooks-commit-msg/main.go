@@ -13,6 +13,11 @@ var (
 	TyposConfigPath string
 )
 
+type Linter struct {
+	Tag    string
+	Script func() error
+}
+
 // Spec of Git: https://git-scm.com/docs/githooks#_commit_msg
 // Summarizing for me, content of commit message will be written in a tempfile which is typically be .git/COMMIT_EDITMSG. The filepath will be given with $1.
 func main() {
@@ -68,10 +73,9 @@ func main() {
 	wg.Wait()
 
 	// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
-	exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
-}
-
-type Linter struct {
-	Tag    string
-	Script func() error
+	out, err := exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
+	log.Println(string(out))
+	if err != nil {
+		log.Fatalf("failed to run local hook %w")
+	}
 }
