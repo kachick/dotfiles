@@ -60,22 +60,23 @@ func main() {
 		// Unnecessary to consider large slice is given. So nested iterations do not make problem here
 		if !slices.Contains(skips, linter.Tag) {
 			wg.Add(1)
-			go func(linter Linter) {
+			go func(desc string, linter Linter) {
 				defer wg.Done()
 				log.Println(desc)
 				err := linter.Script()
 				if err != nil {
 					log.Fatalln(err)
 				}
-			}(linter)
+			}(desc, linter)
 		}
 	}
 	wg.Wait()
 
 	if !slices.Contains(skips, "localhook") {
 		log.Println("run local hook")
+		args := append([]string{"commit-msg"}, os.Args[1:]...)
 		// Don't include in above parallel tasks, because of we don't assume local hooks do not have any side-effect
-		out, err := exec.Command("run_local_hook", append([]string{"commit-msg"}, os.Args[1:]...)...).CombinedOutput()
+		out, err := exec.Command("run_local_hook", args...).CombinedOutput()
 		log.Println(string(out))
 		if err != nil {
 			log.Fatalf("failed to run local hook %w", err)

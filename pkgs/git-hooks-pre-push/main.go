@@ -54,14 +54,14 @@ func main() {
 			// Unnecessary to consider large slice is given. So nested iterations do not make problem here
 			if !slices.Contains(skips, linter.Tag) {
 				wg.Add(1)
-				go func(linter Linter) {
+				go func(desc string, linter Linter) {
 					defer wg.Done()
 					log.Println(desc)
 					err := linter.Script()
 					if err != nil {
 						log.Fatalln(err)
 					}
-				}(linter)
+				}(desc, linter)
 			}
 		}
 	}
