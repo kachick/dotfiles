@@ -3,9 +3,6 @@
 readonly hook_name="$1"
 shift
 
-# Make sure which hook has been run. Some hooks might be executed together and it will be hard to debug
-echo "$hook_name"
-
 repository_path="$(git rev-parse --show-toplevel)"
 readonly repository_path
 
@@ -16,7 +13,7 @@ if [[ -x "${repository_path}/.git/hooks/${hook_name}" ]]; then
 	# Why using `case`: https://unix.stackexchange.com/a/32054
 	case ":$TRUST_PATH:" in
 	*:$repository_path:*)
-		"${repository_path}/.git/hooks/${hook_name}" "$@"
+		"${repository_path}/.git/hooks/${hook_name}" "$@" < <(cat)
 		;;
 	*)
 		cat <<'EOF'
