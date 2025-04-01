@@ -1,0 +1,138 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"path"
+	"slices"
+	"strings"
+	"sync"
+
+	pipeline "github.com/mattn/go-pipeline"
+)
+
+var (
+	TyposConfigPath string
+)
+
+type Linter struct {
+	Tag    string
+	Script func() error
+}
+
+// Spec of Git: https://git-scm.com/docs/githooks#_pre_push
+func main() {
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	remoteDefaultBranch, err := getRemoteDefaultBranch()
+	if err != nil {
+		log.Fatalln("Can't get default branch of the remote repository")
+	}
+
+	// `SKIP` is adjusted for pre-commit convention. See https://github.com/gitleaks/gitleaks/blob/v8.24.0/README.md?plain=1#L121-L127
+	// Unnecessary to consider strict CSV spec such as https://pre-commit.com/
+	skips := strings.Split(os.Getenv("SKIP"), ",")
+
+	wg := &sync.WaitGroup{}
+	scanner := bufio.NewScanner(os.Stdin)
+	localHooks := []Linter{}
+	for scanner.Scan() {
+		line := scanner.Text()
+		linters, err := processLine(line, remoteDefaultBranch)
+		if err != nil {
+			fmt.Println("Error:", err)
+		}
+		for desc, linter := range linters {
+			if linter.Tag == "localhook" {
+				localHooks = append(localHooks, linter)
+				continue
+			}
+
+			// Unnecessary to consider large slice is given. So nested iterations do not make problem here
+			if !slices.Contains(skips, linter.Tag) {
+				wg.Add(1)
+				go func(desc string, linter Linter) {
+					defer wg.Done()
+					log.Println(desc)
+					err := linter.Script()
+					if err != nil {
+						log.Fatalln(err)
+					}
+				}(desc, linter)
+			}
+		}
+	}
+	wg.Wait()
+
+	if err := scanner.Err(); err != nil {
+		fmt.Println("Error reading input:", err)
+		os.Exit(1)
+	}
+
+	// Don't include localhooks into above parallel tasks, because of we don't assume local hooks are not having any side-effect
+	if !slices.Contains(skips, "localhook") {
+		for _, localhook := range localHooks {
+			err := localhook.Script()
+			if err != nil {
+				log.Fatalln(err)
+			}
+		}
+	}
+}
+
+func processLine(line string, remoteBranch string) (map[string]Linter, error) {
+	fields := strings.Fields(line)
+	if len(fields) != 4 {
+		return nil, fmt.Errorf("parsing error for given line: %s", line)
+	}
+
+	localRef := fields[0]
+	// localOid := fields[1]
+	remoteRef := fields[2]
+	// remoteOid := fields[3]
+
+	return map[string]Linter{
+		"prevent secrets in log and diff": Linter{Tag: "gitleaks", Script: func() error {
+			cmd := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=%s..%s", remoteBranch, localRef))
+			out, err := cmd.CombinedOutput()
+			log.Println(strings.Join(cmd.Args, " "))
+			log.Println(string(out))
+			return err
+		}},
+		"prevent typos in log and diff": Linter{Tag: "typos", Script: func() error {
+			out, err := pipeline.CombinedOutput(
+				[]string{"git", "log", "--patch", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
+				[]string{"typos", "--config", TyposConfigPath, "-"},
+			)
+			log.Println(string(out))
+			return err
+		}},
+		"prevent typos in branch name": Linter{Tag: "typos", Script: func() error {
+			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
+			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
+			// See https://github.com/crate-ci/typos/issues/758 for detail
+			cmd.Stdin = strings.NewReader(path.Base(remoteRef))
+			out, err := cmd.CombinedOutput()
+			log.Println(string(out))
+			return err
+		}},
+		"run local hook": Linter{Tag: "localhook", Script: func() error {
+			cmd := exec.Command("run_local_hook", append([]string{"pre-push"}, os.Args[1:]...)...)
+			out, err := cmd.CombinedOutput()
+			log.Println(string(out))
+			return err
+		}},
+	}, nil
+}
+
+func getRemoteDefaultBranch() (string, error) {
+	cmd := exec.Command("git", "symbolic-ref", "refs/remotes/origin/HEAD")
+	out, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get remote default branch: %w", err)
+	}
+	return strings.TrimSpace(string(out)), nil
+}
