@@ -1,8 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication rec {
-  name = "pre-push";
-  text = builtins.readFile ./${name}.bash;
-  meta.description = "GH-540 and GH-699";
+pkgs.unstable.buildGo124Module (finalAttrs: {
+  pname = "git-hooks-pre-push";
+  version = "0.0.1";
   runtimeInputs = with pkgs; [
     git
     typos
@@ -10,7 +9,19 @@ pkgs.writeShellApplication rec {
     unstable.gitleaks
     my.run_local_hook
   ];
-  runtimeEnv = {
-    TYPOS_CONFIG_PATH = "${../../typos.toml}";
+  vendorHash = "sha256-Y7DufJ0l+IZ/l2/LPmFRJevc+MCPqGxnESn7RWmSatg=";
+  src = ./.;
+
+  env.CGO_ENABLED = 0;
+
+  ldflags = [
+    "-s"
+    "-w"
+    "-X main.TyposConfigPath=${../../typos.toml}"
+  ];
+
+  meta = {
+    description = "GH-540 and GH-699";
+    mainProgram = finalAttrs.pname;
   };
-}
+})
