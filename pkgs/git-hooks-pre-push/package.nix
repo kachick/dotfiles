@@ -5,7 +5,6 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
   runtimeInputs = with pkgs; [
     git
     typos
-    coreutils # `basename`
     unstable.gitleaks
     my.run_local_hook
   ];

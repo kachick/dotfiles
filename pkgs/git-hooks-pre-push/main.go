@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path"
 	"slices"
 	"strings"
 	"sync"
@@ -98,10 +99,11 @@ func processLine(line string, remoteBranch string) (map[string]Linter, error) {
 			return err
 		}},
 		"prevent typos in branch name": Linter{Tag: "typos", Script: func() error {
-			out, err := pipeline.CombinedOutput(
-				[]string{"basename", remoteRef}, // Rewrite with go
-				[]string{"typos", "--config", TyposConfigPath, "-"},
-			)
+			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
+			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
+			// See https://github.com/crate-ci/typos/issues/758 for detail
+			cmd.Stdin = strings.NewReader(path.Base(remoteRef))
+			out, err := cmd.CombinedOutput()
 			log.Println(string(out))
 			return err
 		}},
