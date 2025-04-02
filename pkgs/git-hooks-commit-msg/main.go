@@ -1,23 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
-	"slices"
 	"strings"
-	"sync"
+
+	"github.com/kachick/dotfiles/internal/githooks"
 )
 
 var (
 	TyposConfigPath string
 )
 
-type Linter struct {
-	Tag    string
-	Script func() error
-}
+// type Linter struct {
+// 	Tag    string
+// 	Script func() error
+// }
 
 // Spec of Git: https://git-scm.com/docs/githooks#_commit_msg
 // Summarizing for me, content of commit message will be written in a tempfile which is typically be .git/COMMIT_EDITMSG. The filepath will be given with $1.
@@ -29,10 +28,10 @@ func main() {
 	}
 	msgPath := os.Args[1]
 
-	shouldSkip := makeSkipChecker()
+	shouldSkip := githooks.MutexakeSkipChecker()
 
 	linters := initializeLinters(msgPath)
-	runLinters(linters, shouldSkip)
+	githooks.RunLinters(linters, shouldSkip)
 
 	if shouldSkip("localhook") {
 		return
@@ -43,48 +42,9 @@ func main() {
 	}
 }
 
-func makeSkipChecker() func(string) bool {
-	// `SKIP` is adjusted for pre-commit convention. See https://github.com/gitleaks/gitleaks/blob/v8.24.0/README.md?plain=1#L121-L127
-	// Unnecessary to consider strict CSV spec such as https://pre-commit.com/
-	skips := strings.Split(os.Getenv("SKIP"), ",")
-
-	return func(tag string) bool {
-		return slices.Contains(skips, tag)
-	}
-}
-
-func runLinters(linters map[string]Linter, shouldSkip func(string) bool) error {
-	var mu sync.Mutex
-	errs := map[string]error{}
-	wg := &sync.WaitGroup{}
-
-	for desc, linter := range linters {
-		if shouldSkip(linter.Tag) {
-			continue
-		}
-
-		wg.Add(1)
-		go func(desc string, linter Linter) {
-			defer wg.Done()
-			log.Println(desc)
-			if err := linter.Script(); err != nil {
-				mu.Lock()
-				errs[desc] = err
-				mu.Unlock()
-			}
-		}(desc, linter)
-	}
-	wg.Wait()
-
-	if len(errs) > 0 {
-		return fmt.Errorf("linter errors: %v", errs)
-	}
-	return nil
-}
-
-func initializeLinters(msgPath string) map[string]Linter {
-	return map[string]Linter{
-		"prevent secrets in the message": Linter{Tag: "gitleaks", Script: func() error {
+func initializeLinters(msgPath string) map[string]githooks.Linter {
+	return map[string]githooks.Linter{
+		"prevent secrets in the message": githooks.Linter{Tag: "gitleaks", Script: func() error {
 			cmd := exec.Command("gitleaks", "--verbose", "stdin", msgPath)
 			f, err := os.Open(msgPath)
 			if err != nil {
@@ -98,7 +58,7 @@ func initializeLinters(msgPath string) map[string]Linter {
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in the message": Linter{Tag: "typos", Script: func() error {
+		"prevent typos in the message": githooks.Linter{Tag: "typos", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, msgPath)
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
