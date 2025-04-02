@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"slices"
 	"strings"
 )
 
@@ -13,6 +14,15 @@ func usage() {
 		"Usage: run_local_hook <hook_name> [args...]",
 		"You should remove local hooks as `git config --local --unset core.hooksPath` to prefer global hooks for the entry point",
 	)
+}
+
+func getRepoPath() (string, error) {
+	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(out)), nil
 }
 
 func main() {
@@ -26,22 +36,19 @@ func main() {
 	hookName := os.Args[1]
 	args := os.Args[2:]
 
-	repoPathCmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	repoPathBytes, err := repoPathCmd.Output()
+	repoPath, err := getRepoPath()
 	if err != nil {
-		fmt.Println("Error getting repository path:", err)
+		fmt.Println("failed to get repository path: %w", err)
 		os.Exit(1)
 	}
-
-	repoPath := strings.TrimSpace(string(repoPathBytes))
-	trustedPaths := os.Getenv("GIT_HOOKS_TRUST_REPOS")
+	trustedPaths := strings.Split(os.Getenv("GIT_HOOKS_TRUST_REPOS"), ":")
 
 	localHookPath := fmt.Sprintf("%s/.git/hooks/%s", repoPath, hookName)
 	if _, err := os.Stat(localHookPath); os.IsNotExist(err) {
 		return
 	}
 
-	if !strings.Contains(":"+trustedPaths+":", ":"+repoPath+":") {
+	if !slices.Contains(trustedPaths, repoPath) {
 		fmt.Println("Found an ignored local hook.")
 		fmt.Println("You can allow it as:")
 		fmt.Printf("export GIT_HOOKS_TRUST_REPOS=\"%s:$PWD\"\n", trustedPaths)
