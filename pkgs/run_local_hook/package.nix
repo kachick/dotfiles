@@ -6,7 +6,7 @@
 pkgs.unstable.buildGo124Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-t11Jl93X0006vxwp1UuHm03lmeaAGbgGFwT98OsLfKw=";
+  vendorHash = "sha256-A6cuG2jPwFsHABTLjgYhOMULTqhdJ4RR1XRro898CxE=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
