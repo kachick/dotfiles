@@ -54,7 +54,6 @@ tasks:
       - 'config/**/*'
     cmds:
       - go test ./...
-      - cd ./pkgs/reponame && go test ./...
 
   mkdir:
     internal: true

@@ -3,6 +3,7 @@ module github.com/kachick/dotfiles
 go 1.24.1
 
 require (
+	github.com/google/go-cmp v0.7.0
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b
 	golang.org/x/sys v0.31.0
