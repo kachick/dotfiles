@@ -27,7 +27,7 @@ func main() {
 
 	linters := initializeLinters(msgPath)
 	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
-		log.Fatalf("Failed to run global hook: %w", err)
+		log.Fatalf("Failed to run global hook: %+v", err)
 	}
 
 	if shouldSkip("localhook") {
@@ -35,7 +35,7 @@ func main() {
 	}
 
 	if err := runLocalHook(msgPath); err != nil {
-		log.Fatalf("Failed to run local hook: %w", err)
+		log.Fatalf("Failed to run local hook: %+v", err)
 	}
 }
 

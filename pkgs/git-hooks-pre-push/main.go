@@ -49,7 +49,7 @@ func main() {
 	}
 
 	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
-		log.Fatalf("Failed to run global hook: %w", err)
+		log.Fatalf("Failed to run global hook: %+v", err)
 	}
 
 	// Don't include localhooks into above parallel tasks, because of we don't assume local hooks are not having any side-effect
@@ -58,7 +58,7 @@ func main() {
 	}
 
 	if err := runLocalHook(); err != nil {
-		log.Fatalf("Failed to run local hook: %w", err)
+		log.Fatalf("Failed to run local hook: %+v", err)
 	}
 }
 
