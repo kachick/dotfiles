@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   ...
 }:
 pkgs.unstable.buildGo124Module (finalAttrs: {
@@ -9,8 +10,14 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
 
-  vendorHash = null;
-  src = ./.;
+  src = lib.fileset.toSource rec {
+    root = ../../.;
+    fileset = lib.fileset.gitTracked root;
+  };
+
+  subPackages = [
+    "pkgs/${finalAttrs.pname}"
+  ];
 
   env.CGO_ENABLED = 0;
 

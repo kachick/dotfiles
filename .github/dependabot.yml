@@ -14,11 +14,3 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-  - package-ecosystem: 'gomod'
-    directory: '/pkgs/reponame'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'gomod'
-    directory: '/pkgs/run_local_hook'
-    schedule:
-      interval: 'weekly'
