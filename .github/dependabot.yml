@@ -22,11 +22,3 @@ updates:
     directory: '/pkgs/run_local_hook'
     schedule:
       interval: 'weekly'
-  - package-ecosystem: 'gomod'
-    directory: '/pkgs/git-hooks-commit-msg'
-    schedule:
-      interval: 'weekly'
-  - package-ecosystem: 'gomod'
-    directory: '/pkgs/git-hooks-pre-push'
-    schedule:
-      interval: 'weekly'
