@@ -27,7 +27,7 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-+LyqOxa6yyHJpxYw644ZI42xFuCxkhgKMuEYjfE2xzM=";
+  vendorHash = "sha256-t11Jl93X0006vxwp1UuHm03lmeaAGbgGFwT98OsLfKw=";
   src = lib.fileset.toSource rec {
     root = ../../.;
     fileset = lib.fileset.gitTracked root;
