@@ -27,8 +27,15 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-Y7DufJ0l+IZ/l2/LPmFRJevc+MCPqGxnESn7RWmSatg=";
-  src = ./.;
+  vendorHash = lib.fakeHash;
+  src = lib.fileset.toSource rec {
+    root = ../../.;
+    fileset = lib.fileset.gitTracked root;
+  };
+
+  subPackages = [
+    "pkgs/${finalAttrs.pname}"
+  ];
 
   env.CGO_ENABLED = 0;
 

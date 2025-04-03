@@ -14,7 +14,7 @@ type Linter struct {
 	Script func() error
 }
 
-func MutexakeSkipChecker() func(string) bool {
+func MakeSkipChecker() func(string) bool {
 	// `SKIP` is adjusted for pre-commit convention. See https://github.com/gitleaks/gitleaks/blob/v8.24.0/README.md?plain=1#L121-L127
 	// Unnecessary to consider strict CSV spec such as https://pre-commit.com/
 	skips := strings.Split(os.Getenv("SKIP"), ",")

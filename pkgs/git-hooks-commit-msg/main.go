@@ -13,11 +13,6 @@ var (
 	TyposConfigPath string
 )
 
-// type Linter struct {
-// 	Tag    string
-// 	Script func() error
-// }
-
 // Spec of Git: https://git-scm.com/docs/githooks#_commit_msg
 // Summarizing for me, content of commit message will be written in a tempfile which is typically be .git/COMMIT_EDITMSG. The filepath will be given with $1.
 func main() {
@@ -28,7 +23,7 @@ func main() {
 	}
 	msgPath := os.Args[1]
 
-	shouldSkip := githooks.MutexakeSkipChecker()
+	shouldSkip := githooks.MakeSkipChecker()
 
 	linters := initializeLinters(msgPath)
 	githooks.RunLinters(linters, shouldSkip)
