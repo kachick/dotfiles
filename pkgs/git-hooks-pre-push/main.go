@@ -29,7 +29,7 @@ func main() {
 	shouldSkip := githooks.MakeSkipChecker()
 
 	scanner := bufio.NewScanner(os.Stdin)
-	var linters map[string]githooks.Linter
+	linters := map[string]githooks.Linter{}
 	lineNumber := 0
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -38,8 +38,8 @@ func main() {
 		if err != nil {
 			fmt.Println("Error:", err)
 		}
-		for desc, l := range lintersForEntry {
-			linters[fmt.Sprintf("%d %s", lineNumber, desc)] = l
+		for desc, linter := range lintersForEntry {
+			linters[fmt.Sprintf("L%d:%s:%s", lineNumber, line, desc)] = linter
 		}
 	}
 
@@ -48,7 +48,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	githooks.RunLinters(linters, shouldSkip)
+	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
+		log.Fatalf("Failed to run global hook: %w", err)
+	}
 
 	// Don't include localhooks into above parallel tasks, because of we don't assume local hooks are not having any side-effect
 	if shouldSkip("localhook") {

@@ -26,7 +26,9 @@ func main() {
 	shouldSkip := githooks.MakeSkipChecker()
 
 	linters := initializeLinters(msgPath)
-	githooks.RunLinters(linters, shouldSkip)
+	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
+		log.Fatalf("Failed to run global hook: %w", err)
+	}
 
 	if shouldSkip("localhook") {
 		return
