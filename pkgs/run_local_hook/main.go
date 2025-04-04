@@ -38,7 +38,7 @@ func main() {
 
 	repoPath, err := getRepoPath()
 	if err != nil {
-		fmt.Println("failed to get repository path: %w", err)
+		log.Fatalf("failed to get repository path: %+v", err)
 		os.Exit(1)
 	}
 	trustedPaths := strings.Split(os.Getenv("GIT_HOOKS_TRUST_REPOS"), ":")
