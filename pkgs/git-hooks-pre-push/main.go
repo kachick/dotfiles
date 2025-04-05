@@ -83,7 +83,10 @@ func initializeLinters(line string, remoteBranch string) (map[string]githooks.Li
 		}},
 		"prevent typos in log and diff": githooks.Linter{Tag: "typos", Script: func() error {
 			out, err := pipeline.CombinedOutput(
-				[]string{"git", "log", "--patch", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
+				// --patch displays diff
+				// --unified=0(-U0) trims excess lines from the diff
+				// ref: https://github.com/gitleaks/gitleaks/blob/4b541044e817274bad3407128bb226740295857c/sources/git.go#L33
+				[]string{"git", "log", "--patch", "--unified=0", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
 				[]string{"typos", "--config", TyposConfigPath, "-"},
 			)
 			log.Println(string(out))
