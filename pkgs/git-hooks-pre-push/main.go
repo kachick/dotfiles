@@ -25,6 +25,10 @@ func main() {
 	if err != nil {
 		log.Fatalln("Can't get default branch of the remote repository")
 	}
+	email, err := getEmail()
+	if err != nil {
+		log.Fatalln("Can't get git email")
+	}
 
 	shouldSkip := githooks.MakeSkipChecker()
 
@@ -34,7 +38,7 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		lineNumber += 1
-		lintersForEntry, err := initializeLinters(line, remoteDefaultBranch)
+		lintersForEntry, err := initializeLinters(line, remoteDefaultBranch, email)
 		if err != nil {
 			fmt.Println("Error:", err)
 		}
@@ -62,7 +66,8 @@ func main() {
 	}
 }
 
-func initializeLinters(line string, remoteBranch string) (map[string]githooks.Linter, error) {
+// Filtering with author email for large repository such as NixOS/nixpkgs
+func initializeLinters(line string, remoteBranch string, email string) (map[string]githooks.Linter, error) {
 	fields := strings.Fields(line)
 	if len(fields) != 4 {
 		return nil, fmt.Errorf("parsing error for given line: %s", line)
@@ -75,7 +80,7 @@ func initializeLinters(line string, remoteBranch string) (map[string]githooks.Li
 
 	return map[string]githooks.Linter{
 		"prevent secrets in log and diff": githooks.Linter{Tag: "gitleaks", Script: func() error {
-			cmd := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=%s..%s", remoteBranch, localRef))
+			cmd := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
@@ -86,7 +91,7 @@ func initializeLinters(line string, remoteBranch string) (map[string]githooks.Li
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
 				// ref: https://github.com/gitleaks/gitleaks/blob/4b541044e817274bad3407128bb226740295857c/sources/git.go#L33
-				[]string{"git", "log", "--patch", "--unified=0", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
+				[]string{"git", "log", "--author=" + email, "--patch", "--unified=0", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
 				[]string{"typos", "--config", TyposConfigPath, "-"},
 			)
 			log.Println(string(out))
@@ -109,6 +114,15 @@ func getRemoteDefaultBranch() (string, error) {
 	out, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("failed to get remote default branch: %w", err)
+	}
+	return strings.TrimSpace(string(out)), nil
+}
+
+func getEmail() (string, error) {
+	cmd := exec.Command("git", "config", "user.email")
+	out, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get git email: %w", err)
 	}
 	return strings.TrimSpace(string(out)), nil
 }
