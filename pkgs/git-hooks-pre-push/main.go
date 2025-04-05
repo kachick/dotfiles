@@ -23,11 +23,11 @@ func main() {
 
 	remoteDefaultBranch, err := getRemoteDefaultBranch()
 	if err != nil {
-		log.Fatalln("Can't get default branch of the remote repository")
+		log.Fatalf("Can't get default branch of the remote repository: %+v", err)
 	}
 	email, err := getEmail()
 	if err != nil {
-		log.Fatalln("Can't get git email")
+		log.Fatalf("Can't get git email: %+v", err)
 	}
 
 	shouldSkip := githooks.MakeSkipChecker()
