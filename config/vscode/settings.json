@@ -105,6 +105,7 @@
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
+  // FIXME: Not working. Looks same as https://github.com/devcontainers/features/issues/299
   "dev.containers": {
     "dockerPath": "podman",
     // ENV might not work. https://github.com/microsoft/vscode-remote-release/issues/10005
