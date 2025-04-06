@@ -105,5 +105,10 @@
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
+  "dev.containers": {
+    "dockerPath": "podman",
+    // ENV might not work. https://github.com/microsoft/vscode-remote-release/issues/10005
+    "dockerSocketPath": "$XDG_RUNTIME_DIR/podman/podman.sock"
+  },
   "update.mode": "none" // NixOS: flake, Windows: winget, macOS: Manually
 }
