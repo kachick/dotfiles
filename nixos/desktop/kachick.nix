@@ -25,6 +25,7 @@ in
         ../../home-manager/systemd.nix
         ../../home-manager/desktop.nix
         ../../home-manager/firefox.nix
+        { home.file."GH-680".text = ":)"; }
       ];
     };
     extraSpecialArgs = {
