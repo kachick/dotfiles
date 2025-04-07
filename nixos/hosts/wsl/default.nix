@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   networking.hostName = "wsl";
@@ -6,6 +6,7 @@
   imports = [
     ../../configuration.nix
     inputs.nixos-wsl.nixosModules.default
+    inputs.home-manager-linux.nixosModules.home-manager
   ];
 
   wsl.enable = true;
@@ -25,21 +26,22 @@
     # useGlobalPkgs = true;
     # useUserPackages = true;
     backupFileExtension = "backup";
-    users.kachick = {
+    users.nixos = {
       imports = [
-        ../../home-manager/kachick.nix
-        ../../home-manager/linux.nix
+        ../../../home-manager/kachick.nix # Hack for now
+        ../../../home-manager/linux.nix
         {
           home.username = "nixos";
           targets.genericLinux.enable = false;
         }
-        ../../home-manager/wsl.nix
+        ../../../home-manager/wsl.nix
       ];
     };
-    # extraSpecialArgs = {
-    #   inherit
-    #     inputs
-    #     ;
-    # };
+    extraSpecialArgs = {
+      inherit
+        inputs
+        pkgs
+        ;
+    };
   };
 }
