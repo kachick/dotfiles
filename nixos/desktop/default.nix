@@ -226,18 +226,6 @@
       dash-to-dock
     ]);
 
-  # Make it natural scroll on KDE, not enough only in libinput
-  # https://github.com/NixOS/nixpkgs/issues/51875#issuecomment-846251880
-  # environment.etc."X11/xorg.conf.d/30-touchpad.conf".text = ''
-  #   Section "InputClass"
-  #           Identifier "libinput touchpad catchall"
-  #           MatchIsTouchpad "on"
-  #           MatchDevicePath "/dev/input/event*"
-  #           Driver "libinput"
-  #           Option "NaturalScrolling" "on"
-  #   EndSection
-  # '';
-
   # https://askubuntu.com/a/88947
   # Don't add unstable or long or waiting(interactive) CLI here such as warp-cli.
   # See GH-1110 for detail
