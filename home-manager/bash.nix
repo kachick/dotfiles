@@ -97,8 +97,13 @@
     # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc
     #
     # Extracting because embedded here requires complex escape with nix multiline.
+    #
+    # Don't put shell delegation code into early phase than interactive check such as profileExtra and bashrcExtra , it blocks applying home.file on NixOS. See GH-680 for details
+    # There is no ideal option in home-manager bash module for realizing first entry of the interactive shell. https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/bash.nix#L227-L240
+    # However initExtra is still better option than profileExtra.
     initExtra =
       ''
+        # Don't put shell delegation code into early phase than interactive check
         # Switch to another shell when bash used as a login shell
         # Used same method as switching to fish
         # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
