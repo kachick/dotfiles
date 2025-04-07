@@ -18,15 +18,15 @@ in
     backupFileExtension = "backup";
     users.user = {
       imports = [
-        ../../../home-manager/genericUser.nix
+        ../../home-manager/genericUser.nix
         {
           targets.genericLinux.enable = false;
         }
-        ../../../home-manager/linux.nix
-        ../../../home-manager/lima-host.nix
-        ../../../home-manager/systemd.nix
-        ../../../home-manager/desktop.nix
-        ../../../home-manager/firefox.nix
+        ../../home-manager/linux.nix
+        ../../home-manager/lima-host.nix
+        ../../home-manager/systemd.nix
+        ../../home-manager/desktop.nix
+        ../../home-manager/firefox.nix
       ];
     };
     extraSpecialArgs = {
