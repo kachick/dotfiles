@@ -20,4 +20,26 @@
   programs.nix-ld = {
     enable = true;
   };
+
+  home-manager = {
+    # useGlobalPkgs = true;
+    # useUserPackages = true;
+    backupFileExtension = "backup";
+    users.kachick = {
+      imports = [
+        ../../home-manager/kachick.nix
+        ../../home-manager/linux.nix
+        {
+          home.username = "nixos";
+          targets.genericLinux.enable = false;
+        }
+        ../../home-manager/wsl.nix
+      ];
+    };
+    # extraSpecialArgs = {
+    #   inherit
+    #     inputs
+    #     ;
+    # };
+  };
 }

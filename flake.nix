@@ -230,18 +230,18 @@
             ];
           };
 
-          "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              {
-                home.username = "nixos";
-                targets.genericLinux.enable = false;
-              }
-              ./home-manager/wsl.nix
-            ];
-          };
+          # "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration {
+          #   pkgs = x86-Linux-pkgs;
+          #   modules = [
+          #     ./home-manager/kachick.nix
+          #     ./home-manager/linux.nix
+          #     {
+          #       home.username = "nixos";
+          #       targets.genericLinux.enable = false;
+          #     }
+          #     ./home-manager/wsl.nix
+          #   ];
+          # };
 
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = x86-macOS-pkgs;
