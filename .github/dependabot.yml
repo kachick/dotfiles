@@ -13,4 +13,4 @@ updates:
   - package-ecosystem: 'gomod'
     directory: '/'
     schedule:
-      interval: 'weekly'
+      interval: 'monthly' # It is annoy to bump vendorHash manually :<
