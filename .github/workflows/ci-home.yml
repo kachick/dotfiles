@@ -9,6 +9,7 @@ on:
       - 'flake.*'
       - 'pkgs/**'
       - 'Taskfile.yml'
+      - 'go.*'
   pull_request:
     paths:
       - '.github/workflows/ci-home.yml'
@@ -17,6 +18,7 @@ on:
       - 'flake.*'
       - 'pkgs/**'
       - 'Taskfile.yml'
+      - 'go.*'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
