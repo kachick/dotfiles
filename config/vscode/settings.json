@@ -18,9 +18,6 @@
   "gopls": {
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
   "[crystal]": {
     "editor.defaultFormatter": "crystal-lang-tools.crystal-lang"
   },

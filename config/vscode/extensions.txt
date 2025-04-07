@@ -5,7 +5,6 @@ dprint.dprint
 eamodio.gitlens
 editorconfig.editorconfig
 elmtooling.elm-ls-vscode
-foxundermoon.shell-format
 github.vscode-github-actions
 golang.go
 jnoortheen.nix-ide
