@@ -35,6 +35,9 @@
           targets.genericLinux.enable = false;
         }
         ../../../home-manager/wsl.nix
+        {
+          home.file."GH-680".text = "If this file is correctly updated, it means GH-680 is working";
+        }
       ];
     };
     extraSpecialArgs = {
