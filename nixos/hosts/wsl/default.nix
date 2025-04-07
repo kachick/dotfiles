@@ -37,7 +37,7 @@
         }
         ../../../home-manager/wsl.nix
         {
-          home.file."GH-680".text = ":) 4 If this file is correctly updated, it means GH-680 is working";
+          home.file."GH-680".text = ":) 5 If this file is correctly updated, it means GH-680 is working";
         }
       ];
     };

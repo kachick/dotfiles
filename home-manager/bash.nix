@@ -92,18 +92,6 @@
       "exit"
     ];
 
-    # Switch to another shell when bash used as a login shell
-    profileExtra = ''
-      # Used same method as switching to fish
-      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-      # if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
-      # then
-      #   shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-      #   exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
-      # fi
-      true
-    '';
-
     # For interactive shells. In .bashrc and after early return
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bash.nix#L221-L222
     # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc
@@ -111,6 +99,15 @@
     # Extracting because embedded here requires complex escape with nix multiline.
     initExtra =
       ''
+        # Switch to another shell when bash used as a login shell
+        # Used same method as switching to fish
+        # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
+        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ''${BASH_EXECUTION_STRING} ]]
+        then
+          shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+          exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+        fi
+
         # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
         function set_win_title() {
         	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
