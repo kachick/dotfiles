@@ -23,8 +23,9 @@
   };
 
   home-manager = {
-    # useGlobalPkgs = true;
-    # useUserPackages = true;
+    # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506/4
+    useGlobalPkgs = true;
+    useUserPackages = true;
     backupFileExtension = "backup";
     users.nixos = {
       imports = [
