@@ -2,7 +2,7 @@
 pkgs.unstable.buildGo124Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
-  vendorHash = "sha256-A6cuG2jPwFsHABTLjgYhOMULTqhdJ4RR1XRro898CxE=";
+  vendorHash = "sha256-UfbZbWvTVbhNVDIVF9osq+mnaIeXAGO6ysdCUV9GZEI=";
   src = lib.fileset.toSource rec {
     root = ../../.;
     fileset = lib.fileset.gitTracked root;
