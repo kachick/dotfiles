@@ -1,9 +1,14 @@
-{ lib, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 
 {
   networking.hostName = "algae";
 
   imports = [
+    inputs.home-manager-linux.nixosModules.home-manager
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop

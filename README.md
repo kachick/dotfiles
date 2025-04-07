@@ -76,16 +76,6 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
 If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode,\
 See [generic configuration](nixos/hosts/generic) for my current workaround.
 
-This repository intentionally reverts the home-manager NixOS module.\
-So, you should activate the user dotfiles with standalone home-manager even though NixOS.\
-See [GH-680](https://github.com/kachick/dotfiles/issues/680) for background
-
-```bash
-passwd user
-su - user
-nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@nixos-desktop'
-```
-
 Finally, reboot the device
 
 ```bash

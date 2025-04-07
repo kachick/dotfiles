@@ -1,10 +1,15 @@
-{ lib, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # Keep same name with flake outputs
   networking.hostName = lib.mkDefault "generic";
 
   imports = [
+    inputs.home-manager-linux.nixosModules.home-manager
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop

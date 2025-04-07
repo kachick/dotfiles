@@ -10,6 +10,16 @@ tasks:
     deps:
       - help
 
+  apply:
+    desc: Shorthand to rebuild NixOS or home-manager
+    cmds:
+      - |
+          if [ -f '/etc/NIXOS' ]; then
+            task nixos
+          else
+            task home-manager
+          fi
+
   nixos:
     desc: Enable NixOS config for current device
     sources:
@@ -18,24 +28,24 @@ tasks:
       - 'flake.lock'
       - 'nixos/**/*'
       - 'overlays/**/*'
-      - 'config/keyboards/kanata.kbd'
+      - 'home-manager/**/*'
+      - 'pkgs/**/*'
+      - 'config/**/*'
     cmds:
-      - if [ -f '/etc/NIXOS' ]; then sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace; fi
+      - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
 
   home-manager:
     aliases:
       - hm
-      - apply # Don't extract to specific task. To run dependency sequentially and no duplications
     desc: Enable home-manager config for current user and device
     sources:
       - '.env'
       - 'flake.nix'
       - 'flake.lock'
+      - 'overlays/**/*'
       - 'home-manager/**/*'
       - 'pkgs/**/*'
       - 'config/**/*'
-    deps:
-      - 'nixos'
     cmds:
       # Using hostname simplify flake option, see https://discourse.nixos.org/t/get-hostname-in-home-manager-flake-for-host-dependent-user-configs/18859/2
       # However prefer to use special ENV here for my current use. It is useful if sharing same config for similar env but on different devices

@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   networking.hostName = "wsl";
@@ -6,6 +6,7 @@
   imports = [
     ../../configuration.nix
     inputs.nixos-wsl.nixosModules.default
+    inputs.home-manager-linux.nixosModules.home-manager
   ];
 
   wsl.enable = true;
@@ -19,5 +20,28 @@
   # Required to run VSCode Remote server
   programs.nix-ld = {
     enable = true;
+  };
+
+  home-manager = {
+    # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506/4
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    backupFileExtension = "backup";
+    users.nixos = {
+      imports = [
+        ../../../home-manager/kachick.nix # Hack for now
+        ../../../home-manager/linux.nix
+        {
+          home.username = "nixos";
+          targets.genericLinux.enable = false;
+        }
+        ../../../home-manager/wsl.nix
+      ];
+    };
+    extraSpecialArgs = {
+      inherit
+        pkgs
+        ;
+    };
   };
 }

@@ -192,57 +192,6 @@
           x86-macOS-pkgs = mkPkgs "x86_64-darwin";
         in
         {
-          "kachick@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              { targets.genericLinux.enable = false; }
-              ./home-manager/lima-host.nix
-              ./home-manager/systemd.nix
-              ./home-manager/desktop.nix
-              ./home-manager/firefox.nix
-            ];
-          };
-
-          "user@nixos-desktop" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/genericUser.nix
-              {
-                targets.genericLinux.enable = false;
-              }
-              ./home-manager/linux.nix
-              ./home-manager/lima-host.nix
-              ./home-manager/systemd.nix
-              ./home-manager/desktop.nix
-              ./home-manager/firefox.nix
-            ];
-          };
-
-          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              ./home-manager/genericLinux.nix
-              ./home-manager/wsl.nix
-            ];
-          };
-
-          "nixos@wsl-nixos" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              {
-                home.username = "nixos";
-                targets.genericLinux.enable = false;
-              }
-              ./home-manager/wsl.nix
-            ];
-          };
-
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = x86-macOS-pkgs;
             modules = [

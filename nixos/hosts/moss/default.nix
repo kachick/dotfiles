@@ -1,4 +1,8 @@
-{ lib, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 
 {
   # ThinkPad E14 Gen 5 (AMD),
@@ -6,6 +10,7 @@
   networking.hostName = "moss";
 
   imports = [
+    inputs.home-manager-linux.nixosModules.home-manager
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop
