@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   ...
 }:
@@ -8,10 +7,6 @@ let
   mkUser = import ./mkUser.nix;
 in
 {
-  imports = [
-    inputs.home-manager-linux.nixosModules.home-manager
-  ];
-
   users.users.kachick = mkUser {
     description = "foolish";
   };
@@ -34,7 +29,6 @@ in
     };
     extraSpecialArgs = {
       inherit
-        inputs
         pkgs
         ;
     };

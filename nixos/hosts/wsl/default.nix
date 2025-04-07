@@ -40,7 +40,6 @@
     };
     extraSpecialArgs = {
       inherit
-        inputs
         pkgs
         ;
     };
