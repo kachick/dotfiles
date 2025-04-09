@@ -9,7 +9,16 @@
     font = "${pkgs.patched.cozette}/share/consolefonts/cozette_hidpi.psf";
 
     packages = with pkgs.patched; [ cozette ];
-    keyMap = "us"; # Cannot use multiple such as `us,ja`
+
+    # You might need to custom this, for example your device is having JIS layout keyboard.
+    # The IDs are not same as X11 definitions. So check the model section in following path.
+    #
+    # ```bash
+    # bat "$(nix build --no-link --print-out-paths github:NixOS/nixpkgs/nixos-24.11#xkeyboard_config)/etc/X11/xkb/rules/base.lst"
+    # ```
+    #
+    # JIS should be "jp106", not "jp"
+    keyMap = pkgs.lib.mkDefault "us"; # Cannot use multiple such as `us,ja`
 
     # Applying iceberg for 16(0-15) console colors
     # Original schema is shared in https://gist.github.com/cocopon/1d481941907d12db7a0df2f8806cfd41
