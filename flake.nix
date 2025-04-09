@@ -192,6 +192,16 @@
           x86-macOS-pkgs = mkPkgs "x86_64-darwin";
         in
         {
+          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
+            pkgs = x86-Linux-pkgs;
+            modules = [
+              ./home-manager/kachick.nix
+              ./home-manager/linux.nix
+              ./home-manager/genericLinux.nix
+              ./home-manager/wsl.nix
+            ];
+          };
+
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = x86-macOS-pkgs;
             modules = [
