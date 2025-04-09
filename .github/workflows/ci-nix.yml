@@ -23,13 +23,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  generate_matrix:
+    timeout-minutes: 5
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.generator.outputs.matrix }}
+    steps:
+      - name: Generate Matrix
+        id: generator
+        run: | # shell
+          {
+            echo 'matrix<<JSON'
+
+            if [[ '${{ github.event_name }}' ==  'push' || '${{ github.event_name }}' ==  'pull_request' ]]; then
+              echo '{"runner": ["ubuntu-24.04"]}'
+            else
+              echo '{"runner": ["ubuntu-24.04", "macos-13"]}'
+            fi
+
+            echo 'JSON'
+          } | tee --append "$GITHUB_OUTPUT"
   inspect:
+    needs: [generate_matrix]
     strategy:
       fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-24.04
-          - macos-13
+      matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -52,12 +70,10 @@ jobs:
     defaults:
       run:
         shell: nix develop --command bash -eu -o pipefail {0}
+    needs: [generate_matrix]
     strategy:
       fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-24.04
-          - macos-13
+      matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
