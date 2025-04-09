@@ -18,7 +18,7 @@
     # ```
     #
     # JIS should be "jp106", not "jp"
-    keyMap = pkgs.lib.mkDefault "us"; # Cannot use multiple such as `us,ja`
+    keyMap = pkgs.lib.mkDefault "us"; # Cannot use multiple such as `us,jp106` in this option
 
     # Applying iceberg for 16(0-15) console colors
     # Original schema is shared in https://gist.github.com/cocopon/1d481941907d12db7a0df2f8806cfd41
