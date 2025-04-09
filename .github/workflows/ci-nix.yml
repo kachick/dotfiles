@@ -22,12 +22,8 @@ on:
     - cron: '42 1 * * *'
   workflow_dispatch:
 
-defaults:
-  run:
-    shell: nix develop --command bash -eu -o pipefail {0}
-
 jobs:
-  tasks:
+  inspect:
     strategy:
       fail-fast: false
       matrix:
@@ -44,8 +40,6 @@ jobs:
         run: |
           </etc/nix/nix.conf
           ls -alh ~
-      - name: Measure nix shell initialization time
-        run: echo 'This step should be done before any other "nix develop" steps'
       - name: Inspect flake outputs
         run: |
           nix flake show
@@ -53,6 +47,24 @@ jobs:
       - run: nix flake check
         # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
         if: runner.os == 'Linux'
+
+  tasks:
+    defaults:
+      run:
+        shell: nix develop --command bash -eu -o pipefail {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - macos-13
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v16
+      - name: Measure nix shell initialization time
+        run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
         if: runner.os == 'Linux'
       - run: task ci-darwin
