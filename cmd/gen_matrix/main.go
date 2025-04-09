@@ -9,7 +9,7 @@ import (
 )
 
 type Matrix struct {
-	Os []string `json:"os"`
+	Runner []string `json:"runner"`
 }
 
 func main() {
@@ -40,13 +40,13 @@ func main() {
 
 	matrix := Matrix{
 		// https://github.com/actions/runner-images/issues/9741#issuecomment-2075259811
-		Os: []string{
+		Runner: []string{
 			"ubuntu-24.04",
 		},
 	}
 
 	if higherMacOSPossibility || eventName != "pull_request" {
-		matrix.Os = append(matrix.Os,
+		matrix.Runner = append(matrix.Runner,
 			// Intel. Correct with the architecture. But basically skipping because of it is much slow to complete.
 			"macos-13",
 		)
