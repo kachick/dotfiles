@@ -22,6 +22,10 @@ on:
     - cron: '42 1 * * *'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: nix develop --command bash -eu -o pipefail {0}
+
 jobs:
   tasks:
     strategy:
@@ -35,11 +39,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
+      - name: Measure nix shell initialization time
+        run: echo 'This step should be done before any other "nix develop" steps'
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
           ls -alh ~
-      - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
       - name: Inspect flake outputs
         run: |
           nix flake show
@@ -47,7 +52,7 @@ jobs:
       - run: nix flake check
         # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
         if: runner.os == 'Linux'
-      - run: nix develop --command task ci-dev
+      - run: task ci-dev
         if: runner.os == 'Linux'
-      - run: nix develop --command task ci-darwin
+      - run: task ci-darwin
         if: runner.os == 'macOS'
