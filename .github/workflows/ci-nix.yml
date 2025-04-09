@@ -39,12 +39,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v16
-      - name: Measure nix shell initialization time
-        run: echo 'This step should be done before any other "nix develop" steps'
       - name: Print some dotfiles overviews
+        shell: bash -eu -o pipefail {0}
         run: |
           </etc/nix/nix.conf
           ls -alh ~
+      - name: Measure nix shell initialization time
+        run: echo 'This step should be done before any other "nix develop" steps'
       - name: Inspect flake outputs
         run: |
           nix flake show
