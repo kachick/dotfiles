@@ -159,6 +159,8 @@ jobs:
       - name: Install tools which is called in profile
         run: |
           winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
+        # GH-1150. Disabling until https://github.com/microsoft/winget-cli/issues/5366 is fixed
+        if: false
       - name: Rebel against unacceptable default
         run: |
           .\dist\winit-reg.exe list
