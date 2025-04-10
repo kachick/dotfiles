@@ -159,7 +159,9 @@ jobs:
       - name: Ensure to use latest winget-cli
         # https://github.com/microsoft/winget-cli/discussions/4406#discussioncomment-9238828
         # Looks not found in https://github.com/microsoft/winget-pkgs/tree/55e2771aecb87120aaa047b1d371762362c6dfdf/manifests/m/Microsoft
+        # https://github.com/microsoft/winget-cli/issues/5368
         run: |
+          Add-AppxPackage https://cdn.winget.microsoft.com/cache/source2.msix
           winget upgrade winget --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
           winget --version
       - name: Ensure to avoid troubles such as GH-1150
