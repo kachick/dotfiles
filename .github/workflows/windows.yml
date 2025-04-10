@@ -156,6 +156,11 @@ jobs:
         run: |
           winget --version
           wsl --version
+      - name: Ensure to use latest winget-cli
+        # https://github.com/microsoft/winget-cli/discussions/4406#discussioncomment-9238828
+        run: |
+          winget upgrade winget
+          winget --version
       - name: Ensure to avoid troubles such as GH-1150
         run: 'winget source update'
       - name: Install tools which is called in profile
