@@ -156,17 +156,11 @@ jobs:
         run: |
           winget --version
           wsl --version
-      - name: Ensure to use latest winget-cli
-        # https://learn.microsoft.com/en-us/windows/package-manager/winget/troubleshooting
-        run: |
-          Install-PackageProvider -Name NuGet -Force | Out-Null
-          Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
-          Repair-WinGetPackageManager -Force -Latest
-      - name: Ensure to avoid troubles such as GH-1150
-        run: 'winget source update'
       - name: Install tools which is called in profile
         run: |
           winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
+        # GH-1150. Disabling until https://github.com/microsoft/winget-cli/issues/5366 is fixed
+        if: false
       - name: Rebel against unacceptable default
         run: |
           .\dist\winit-reg.exe list
