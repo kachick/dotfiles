@@ -156,6 +156,8 @@ jobs:
         run: |
           winget --version
           wsl --version
+      - name: Ensure to avoid troubles such as GH-1150
+        run: 'winget source update'
       - name: Install tools which is called in profile
         run: |
           winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
