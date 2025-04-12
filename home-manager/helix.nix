@@ -44,6 +44,11 @@ in
 
         color-modes = true;
 
+        # like tab
+        # how to move: gn, gp, <space>-b/
+        # Not available with mouse click movement for now. https://github.com/helix-editor/helix/issues/4942
+        bufferline = "always";
+
         file-picker = {
           # This option makes much confusion, actually working `false = show dotfiles but respecting .gitignore`
           hidden = false;
@@ -58,10 +63,16 @@ in
             H = ":toggle lsp.display-inlay-hints";
           };
 
-          # "C-c by default.
           # It is hard to use "C-/" such as vscode, because of it requires Kitty keyboard protocol and Windows Terminal does not support it"
           # See https://github.com/helix-editor/helix/discussions/12899 for detail
-          # "C-/" = "toggle_comments";
+          # "C-/" = "toggle_comments"; # "C-c" by default.
+
+          "C-p" = "file_picker";
+          # "C-S-f" = "global_search"; # "<space>-/" by default. FIXME
+        };
+
+        insert = {
+          "C-p" = "file_picker";
         };
       };
     };
