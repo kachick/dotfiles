@@ -57,6 +57,11 @@ in
             # https://github.com/helix-editor/helix/discussions/7690
             H = ":toggle lsp.display-inlay-hints";
           };
+
+          # "C-c by default.
+          # It is hard to use "C-/" such as vscode, because of it requires Kitty keyboard protocol and Windows Terminal does not support it"
+          # See https://github.com/helix-editor/helix/discussions/12899 for detail
+          # "C-/" = "toggle_comments";
         };
       };
     };
