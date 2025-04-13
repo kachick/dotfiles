@@ -42,14 +42,10 @@
 
         tailscale # Frequently backported to stable channel
 
-        # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-        chawan # `cha`
-
         shellcheck
         shfmt
       ])
       ++ (with pkgs.my; [
-        renmark # Depend on chawan
         rclone-list-mounted
         rclone-mount
         rclone-fzf

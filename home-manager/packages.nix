@@ -84,6 +84,10 @@
   ruby_3_4
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
+  # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
+  # Requiring unstable to apply https://github.com/nixos/nixpkgs/pull/394941
+  unstable.chawan # `cha`
+
   pastel
 
   # How to get the installed font names
@@ -114,4 +118,5 @@
   updeps
   bench_shells
   preview
+  renmark
 ])
