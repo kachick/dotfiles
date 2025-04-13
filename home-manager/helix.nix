@@ -63,16 +63,17 @@ in
             H = ":toggle lsp.display-inlay-hints";
           };
 
-          # refs:
-          #  - https://github.com/helix-editor/helix/issues/1369#issuecomment-1749330353
-          #  - https://github.com/helix-editor/helix/discussions/12899 for detail
-          "C-7" = "toggle_comments"; # Trick for realizing "C-/" such as vscode. "C-c" by default.
+          # "C-c" by helix default. And Using "C-/" is not simple. It requires Kitty keyboard protocol and be different on each terminal.
+          # See https://github.com/helix-editor/helix/discussions/12899
+          "C-/" = "toggle_comments"; # Such as vscode. Simply works on ghostty.
+          "C-7" = "toggle_comments"; # Trick for realizing "C-/" in Windows Terminal. See https://github.com/helix-editor/helix/issues/1369#issuecomment-1749330353. And not working on ghostty.
 
           "C-p" = "file_picker";
           # "C-S-f" = "global_search"; # "<space>-/" by default. FIXME
         };
 
         insert = {
+          "C-/" = "toggle_comments";
           "C-7" = "toggle_comments";
           "C-p" = "file_picker";
         };
