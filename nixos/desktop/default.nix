@@ -173,6 +173,14 @@
 
       contrast # Check two color contrast. Also using as a color-picker
 
+      # Clipboard
+      #
+      # Don't use clipcat, copyq for wayland problem
+      # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
+      # Don't use clipse it made flickers on GNOME
+      #
+      # So prefer clipboard gnome extension except below tools
+      #
       # Don't use `wl-clipboard-rs`, it doesn't work on GNOME.
       #   - "Error: A required Wayland protocol (zwlr_data_control_manager_v1 version 2) is not supported by the compositor"
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342

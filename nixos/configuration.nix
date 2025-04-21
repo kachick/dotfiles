@@ -115,16 +115,6 @@
       ripgrep
       dig
 
-      # Clipboard
-      #
-      # Don't use clipcat, copyq for wayland problem
-      # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-      # Don't use clipse that depending wl-clipboard makes flickers in gnome
-      #
-      # So use a clipboard gnome extension
-
-      # Use stable packages even for GUI apps, because of using home-manager stable channel
-
       dmidecode # `sudo dmidecode -s bios-version`
     ]
   );
