@@ -173,6 +173,11 @@
 
       contrast # Check two color contrast. Also using as a color-picker
 
+      # Don't use `wl-clipboard-rs`, it doesn't work on GNOME.
+      #   - "Error: A required Wayland protocol (zwlr_data_control_manager_v1 version 2) is not supported by the compositor"
+      #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
+      wl-clipboard # `wl-copy` and `wl-paste`
+
       ## Unfree packages
 
       # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
