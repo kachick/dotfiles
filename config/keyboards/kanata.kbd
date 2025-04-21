@@ -24,7 +24,7 @@
 
 ;; Escape hatch for use of caps. See GH-963.
 ;; Should be disabled on default layer with the last argument. For example, if using "a" in the combination, "main" will be "mian"
-(defchordsv2-experimental
+(defchordsv2
   ;; Don't use caps for inputs combination
   (c a p) caps 500 all-released (base)
 )
