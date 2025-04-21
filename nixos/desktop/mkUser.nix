@@ -6,6 +6,7 @@ extraAttrs:
     "networkmanager"
     "wheel" # WiFi
     "input" # Finger print in GDM
+    "uinput" # GH-1156
     "scanner"
     "lp" # Scanner
   ];
