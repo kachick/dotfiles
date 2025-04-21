@@ -42,11 +42,6 @@ Composition	Ctrl Right	MoveCursorToEnd
 Conversion	Ctrl Right	SegmentFocusLast
 Composition	Ctrl s	MoveCursorLeft
 Conversion	Ctrl s	SegmentFocusLeft
-Composition	Ctrl Shift Space	InsertFullSpace
-Conversion	Ctrl Shift Space	InsertFullSpace
-Precomposition	Ctrl Shift Space	InsertFullSpace
-Composition	Ctrl Space	InsertHalfSpace
-Conversion	Ctrl Space	InsertHalfSpace
 Composition	Ctrl t	ConvertToHalfAlphanumeric
 Conversion	Ctrl t	ConvertToHalfAlphanumeric
 Composition	Ctrl u	ConvertToHiragana
@@ -142,6 +137,12 @@ Composition	VirtualLeft	MoveCursorLeft
 Conversion	VirtualLeft	SegmentWidthShrink
 Composition	VirtualRight	MoveCursorRight
 Conversion	VirtualRight	SegmentWidthExpand
+Conversion	Ctrl Space	IMEOff
+Composition	Ctrl Space	IMEOff
+DirectInput	Ctrl Space	IMEOff
+Precomposition	Ctrl Space	IMEOff
+Suggestion	Ctrl Space	IMEOff
+Prediction	Ctrl Space	IMEOff
 Composition	ASCII	InsertCharacter
 Composition	Kanji	IMEOff
 Composition	OFF	IMEOff
