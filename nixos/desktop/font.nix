@@ -40,21 +40,26 @@
     fontconfig = {
       enable = true;
       hinting.enable = true;
+      # Set color emoji font for everywhere, not only for emoji
+      # Without it often made troubles, such as chrome bookmarkbar uses monochrome emojis
       defaultFonts = {
         serif = [
           "IBM Plex Serif"
           "Source Han Serif"
+          "Noto Color Emoji"
         ];
         sansSerif = [
           "IBM Plex Sans"
           "Source Han Sans"
+          "Noto Color Emoji"
         ];
         monospace = [
           "PlemolJP Console NF"
           "Source Han Code JP"
+          "Noto Color Emoji"
         ];
         emoji = [
-          "Beedii"
+          # monochrome fonts such as "Beedii" will be disabled by color fonts even in adjusted order
           "Noto Color Emoji"
         ];
       };
