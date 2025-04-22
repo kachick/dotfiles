@@ -10,7 +10,7 @@
 rclone.conf
 
 # `local` files may have similar problems: https://github.com/github/gitignore/pull/3651
-*local*
+*local
 !*local_hook*
 
 dist/
