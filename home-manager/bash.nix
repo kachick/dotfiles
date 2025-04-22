@@ -132,6 +132,10 @@
 
         source "${pkgs.my.posix_shared_functions}"
 
+        # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+        # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
+        export LC_TIME='en_DK.UTF-8'
+
         if [ 'linux' = "$TERM" ]; then
           adjust_to_linux_vt
         fi

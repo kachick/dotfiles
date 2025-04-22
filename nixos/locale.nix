@@ -15,9 +15,6 @@
       "en_DK.UTF-8/UTF-8"
     ];
 
-    extraLocaleSettings = {
-      # Don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
-      LC_TIME = "en_DK.UTF-8"; # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-    };
+    # Don't set LC_TIME in extraLocaleSettings, overriding by each shell init hooks should be better for that context.
   };
 }
