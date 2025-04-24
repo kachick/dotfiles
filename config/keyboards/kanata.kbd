@@ -1,4 +1,7 @@
-(defcfg concurrent-tap-hold yes)
+(defcfg
+  linux-continue-if-no-devs-found yes ;; Workaround for GH-1156
+  concurrent-tap-hold yes
+)
 
 ;; Required to specify keys which should be considered in tap-hold-press (=spc, tab for alt-spc, alt-tab)
 ;; See https://github.com/jtroo/kanata/blob/fc850fab9da7d0bf377e215f0b923062e037ff64/docs/config.adoc?plain=1#L142-L143
