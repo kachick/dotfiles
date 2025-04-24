@@ -38,6 +38,7 @@
         favorite-apps = [
           "com.mitchellh.ghostty.desktop"
           "dev.zed.Zed.desktop"
+          "org.gnome.TextEditor.desktop"
           "google-chrome.desktop"
           "podman-desktop.desktop"
           "quickgui.desktop"
