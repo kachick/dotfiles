@@ -111,7 +111,7 @@ in
             ];
           };
           language-servers = [
-            "bash-language-server"
+            # "bash-language-server"
             "typos"
           ];
         }
@@ -209,7 +209,7 @@ in
       # nixd
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
-      bash-language-server
+      # bash-language-server
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
       rust-analyzer
