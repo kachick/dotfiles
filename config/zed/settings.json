@@ -60,11 +60,17 @@
   "languages": {
     "JSON": {
       // "enable_language_server": false, // Didn't disable with this option
-      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+      "language_servers": [
+        "vscode-json-language-server",
+        "!json-language-server"
+      ]
     },
     "JSONC": {
       // "enable_language_server": false, // Didn't disable with this option
-      "language_servers": ["vscode-json-language-server", "!json-language-server"]
+      "language_servers": [
+        "vscode-json-language-server",
+        "!json-language-server"
+      ]
     },
     "YAML": {
       "enable_language_server": false
@@ -83,8 +89,8 @@
   "terminal": {
     "shell": {
       "with_arguments": {
-        "program": "bash",
-        "args": ["--login"]
+        "program": "zsh",
+        "args": []
       }
     },
     "copy_on_select": true,
