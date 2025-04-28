@@ -67,7 +67,7 @@ jobs:
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v16
+      - uses: DeterminateSystems/nix-installer-action@v17
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
