@@ -11,13 +11,9 @@
     "renovate"
   ],
   "enabledManagers": [
-    "nix",
     "custom.regex",
     "dockerfile"
   ],
-  "nix": {
-    "enabled": true
-  },
   "packageRules": [
     {
       "extends": [
