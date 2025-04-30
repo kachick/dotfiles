@@ -85,8 +85,8 @@
         };
     in
     {
-      # Useable with filepaths. Don't use `nix fmt` and use `treefmt`. See https://github.com/NixOS/nixfmt/commit/ba0c3fa3da27a2815026bc4ea0216e10f1c50542
-      formatter = forAllSystems (system: (mkPkgs system).nixfmt-rfc-style);
+      # Why not use `nixfmt-rfc-style`: https://github.com/NixOS/nixpkgs/pull/384857
+      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
 
       devShells = forAllSystems (
         system:
@@ -113,24 +113,23 @@
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
-                  nixfmt-rfc-style
+                  nixpkgs-lint-community
                   nixd
                   nixf # `nixf-tidy`
-                  nixpkgs-lint-community
                   nix-init
                   nurl
 
                   shellcheck
                   shfmt
 
-                  # Don't use treefmt(treefmt1) that does not have crucial feature to cover hidden files
-                  # https://github.com/numtide/treefmt/pull/250
-                  treefmt2
                   typos
                   trivy
                   markdownlint-cli2
                 ])
                 ++ (with pkgs.unstable; [
+                  nixfmt-rfc-style
+                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
+                  treefmt
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   # https://github.com/NixOS/nixpkgs/pull/362139
                   gitleaks # TODO: Consider to replace to stable since nixos-25.05. nixos-24.11 including version makes false-positive error now
