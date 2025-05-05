@@ -26,7 +26,7 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-UfbZbWvTVbhNVDIVF9osq+mnaIeXAGO6ysdCUV9GZEI=";
+  vendorHash = "sha256-rIbm+hhJq6+WbI+4Uk8vjFIJd6dMJTRBBQOf0QBqjAc=";
   src =
     with lib.fileset;
     toSource rec {
