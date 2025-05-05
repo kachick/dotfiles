@@ -16,9 +16,7 @@
   unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
 
   fzf # History: CTRL+R, Walker: CTRL+T
-  # https://github.com/junegunn/fzf/blob/d579e335b5aa30e98a2ec046cb782bbb02bc28ad/ADVANCED.md#key-bindings-for-git-objects
-  # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-  fzf-git-sh # CTRL-G CTRL-{} keybinds for git
+  # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
   # Use same nixpkgs channel as same as fzf
   television # `tv`. Alt fzf
   zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`

@@ -5,7 +5,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs =
     with pkgs;
     [
-      fzf
+      unstable.fzf
       coreutils
       git
       gh
