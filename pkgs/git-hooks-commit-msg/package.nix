@@ -27,10 +27,18 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
   '';
 
   vendorHash = "sha256-UfbZbWvTVbhNVDIVF9osq+mnaIeXAGO6ysdCUV9GZEI=";
-  src = lib.fileset.toSource rec {
-    root = ../../.;
-    fileset = lib.fileset.gitTracked root;
-  };
+  src =
+    with lib.fileset;
+    toSource rec {
+      root = ../../.;
+      # Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
+      fileset = intersection (gitTracked root) (unions [
+        ../../go.mod
+        ../../go.sum
+        ../../internal
+        ./.
+      ]);
+    };
 
   subPackages = [
     "pkgs/${finalAttrs.pname}"

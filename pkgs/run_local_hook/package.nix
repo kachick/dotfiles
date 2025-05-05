@@ -11,10 +11,18 @@ pkgs.unstable.buildGo124Module (finalAttrs: {
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
 
-  src = lib.fileset.toSource rec {
-    root = ../../.;
-    fileset = lib.fileset.gitTracked root;
-  };
+  src =
+    with lib.fileset;
+    toSource rec {
+      root = ../../.;
+      # Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
+      fileset = intersection (gitTracked root) (unions [
+        ../../go.mod
+        ../../go.sum
+        ../../internal
+        ./.
+      ]);
+    };
 
   subPackages = [
     "pkgs/${finalAttrs.pname}"
