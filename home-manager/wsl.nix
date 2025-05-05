@@ -38,6 +38,4 @@ in
       };
     };
   };
-
-  home.packages = [ pkgs.wslu ];
 }

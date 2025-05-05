@@ -81,6 +81,13 @@
               url = "https://github.com/kachick/fzf-git.sh/commit/0df3c47685454cf8d4e2fbc5d74db48cf8dff6ec.patch?full_index=1";
               hash = "sha256-IBk555LqUjzM8ikdVlujXr47U0usYNj7UffWOJ3OhPs=";
             })
+
+            # Workaround for https://github.com/junegunn/fzf-git.sh/issues/40 and GH-499
+            (prev.fetchpatch {
+              # https://github.com/junegunn/fzf-git.sh/pull/75
+              url = "https://github.com/kachick/fzf-git.sh/commit/ed98de9ca644175f01c0a3604e753bcf39fe79d2.patch?full_index=1";
+              hash = "sha256-0Rc9gQvgnAQ5ht43AQ5vp6fg282m4d4J1XKCxZqLw0E=";
+            })
           ];
         }
       );
