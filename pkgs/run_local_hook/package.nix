@@ -6,15 +6,23 @@
 pkgs.unstable.buildGo124Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-UfbZbWvTVbhNVDIVF9osq+mnaIeXAGO6ysdCUV9GZEI=";
+  vendorHash = "sha256-rIbm+hhJq6+WbI+4Uk8vjFIJd6dMJTRBBQOf0QBqjAc=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
 
-  src = lib.fileset.toSource rec {
-    root = ../../.;
-    fileset = lib.fileset.gitTracked root;
-  };
+  src =
+    with lib.fileset;
+    toSource rec {
+      root = ../../.;
+      # Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
+      fileset = intersection (gitTracked root) (unions [
+        ../../go.mod
+        ../../go.sum
+        ../../internal
+        ./.
+      ]);
+    };
 
   subPackages = [
     "pkgs/${finalAttrs.pname}"
