@@ -225,8 +225,7 @@ in
       precmd_functions+=(set_win_title)
 
       # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-      # Use unstable to apply https://github.com/NixOS/nixpkgs/pull/401167
-      source "${pkgs.unstable.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      source "${pkgs.patched.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
       # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
       for file in ${../dependencies/zsh}/*; do

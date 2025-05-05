@@ -71,6 +71,19 @@
           '';
         }
       );
+
+      # Based on unstable to apply https://github.com/NixOS/nixpkgs/pull/401167
+      fzf-git-sh = prev.unstable.fzf-git-sh.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          patches = [
+            (prev.fetchpatch {
+              # https://github.com/junegunn/fzf-git.sh/pull/74
+              url = "https://github.com/kachick/fzf-git.sh/commit/0df3c47685454cf8d4e2fbc5d74db48cf8dff6ec.patch?full_index=1";
+              hash = "sha256-IBk555LqUjzM8ikdVlujXr47U0usYNj7UffWOJ3OhPs=";
+            })
+          ];
+        }
+      );
     };
   })
 ]
