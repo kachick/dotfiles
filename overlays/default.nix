@@ -88,6 +88,12 @@
               url = "https://github.com/kachick/fzf-git.sh/commit/ed98de9ca644175f01c0a3604e753bcf39fe79d2.patch?full_index=1";
               hash = "sha256-0Rc9gQvgnAQ5ht43AQ5vp6fg282m4d4J1XKCxZqLw0E=";
             })
+
+            # Update the WSL detection with the feed backs https://github.com/junegunn/fzf-git.sh/pull/75/commits/6d75e04a9c788e078387594c2a6b573efee21bea#r2074902724
+            (prev.fetchpatch {
+              url = "https://github.com/kachick/fzf-git.sh/commit/6d75e04a9c788e078387594c2a6b573efee21bea.patch?full_index=1";
+              hash = "sha256-AOtTLMQaM8UzJkpXX4llps0LQBEteXXVkWSCwphGrZc=";
+            })
           ];
         }
       );
