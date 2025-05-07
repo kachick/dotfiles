@@ -186,8 +186,8 @@
           "--wayland-text-input-version=3"
         ];
       })
-      # Require to download large (700MiB+) evaluation files manually, and setup with USI command or shogihome UI
-      # shogihome does not provide CLI, ENV support and/or config schema for engines: https://github.com/sunfish-shogi/shogihome/issues/1017
+      # Require to download large (700MiB+) [evaluation files](https://bitbucket.org/hiraoka64/apery-evaluation-binaries-2019-06-17/src) manually, and setup with USI command or shogihome UI
+      # shogihome does not provide CLI, ENV and config schema for engines: https://github.com/sunfish-shogi/shogihome/issues/1017
       unstable.apery
 
       ## Unfree packages
