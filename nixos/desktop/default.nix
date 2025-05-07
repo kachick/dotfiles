@@ -181,6 +181,15 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
+      (unstable.shogihome.override {
+        commandLineArgs = [
+          "--wayland-text-input-version=3"
+        ];
+      })
+      # Require to download large (700MiB+) [evaluation files](https://bitbucket.org/hiraoka64/apery-evaluation-binaries-2019-06-17/src) manually, and setup with USI command or shogihome UI
+      # shogihome does not provide CLI, ENV and config schema for engines: https://github.com/sunfish-shogi/shogihome/issues/1017
+      unstable.apery
+
       ## Unfree packages
 
       # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
