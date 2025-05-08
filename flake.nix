@@ -233,8 +233,12 @@
             ];
           };
 
-          # macos-13 is the latest x86-64 runner for darwin and technically the right choice for my old MacBook,
-          # but it's just toooooooooo(10x+) painfully slow (GH-1164) - so I have no choice but to use macos-14 or later. :<
+          # macos-13 is the latest x86-64 runner for darwin and technically the right choice for respecting architecture of my old MacBook,
+          # but it's slow, almost 3x slower than Linux runners - so I prefer macos-14 or later. :<
+          #
+          # From another angle, I do keep my MacBook OS up-to-date, so maybe it's actually more appropriate as a CI environment than macos-13.
+          # Ideally, I guess it would be best to run both macos-13 and "macos-latest or later"(actually not "latest" in GitHub!),
+          # but I spend less than 1% of my time on macOS compared to Linux, so I don't want to make things more complex here.
           "github-actions@macos-15" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "aarch64-darwin";
             # Prefer "kachick" over "common" only here.
