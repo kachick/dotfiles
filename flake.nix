@@ -55,7 +55,8 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin"
+          "x86_64-darwin" # Kept for actual my device
+          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-13 is deadly slow for daily CI
         ] nixpkgs.lib.systems.flakeExposed
       );
 
@@ -188,7 +189,6 @@
       homeConfigurations =
         let
           x86-Linux-pkgs = mkPkgs "x86_64-linux";
-          x86-macOS-pkgs = mkPkgs "x86_64-darwin";
         in
         {
           "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
@@ -202,7 +202,7 @@
           };
 
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = x86-macOS-pkgs;
+            pkgs = mkPkgs "x86_64-darwin";
             modules = [
               ./home-manager/kachick.nix
               ./home-manager/darwin.nix
@@ -233,8 +233,14 @@
             ];
           };
 
-          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = x86-macOS-pkgs;
+          # macos-13 is the latest x86-64 runner for darwin and technically the right choice for respecting architecture of my old MacBook,
+          # but it's slow, almost 3x slower than Linux runners - so I prefer macos-14 or later. :<
+          #
+          # From another angle, I do keep my MacBook OS up-to-date, so maybe it's actually more appropriate as a CI environment than macos-13.
+          # Ideally, I guess it would be best to run both macos-13 and "macos-latest or later"(actually not "latest" in GitHub!),
+          # but I spend less than 1% of my time on macOS compared to Linux, so I don't want to make things more complex here.
+          "github-actions@macos-15" = home-manager-darwin.lib.homeManagerConfiguration {
+            pkgs = mkPkgs "aarch64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
             modules = [

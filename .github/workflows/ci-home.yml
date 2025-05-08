@@ -26,45 +26,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate_matrix:
-    timeout-minutes: 5
-    runs-on: ubuntu-24.04
-    outputs:
-      matrix: ${{ steps.generator.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Get changed paths
-        run: | # shell
-          {
-            echo 'CHANGED_PATHS<<EOF'
-
-            git diff origin/main --name-only
-
-            echo 'EOF'
-          } | tee --append "$GITHUB_ENV"
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: 'go.mod'
-          cache-dependency-path: 'go.sum'
-      - name: Generate Matrix
-        id: generator
-        run: | # shell
-          {
-            echo 'matrix<<JSON'
-
-            go run ./cmd/gen_matrix -event_name '${{ github.event_name }}' -paths "$CHANGED_PATHS"
-
-            echo 'JSON'
-          } | tee --append "$GITHUB_OUTPUT"
   home-manager:
-    needs: [generate_matrix]
     timeout-minutes: 60
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - macos-15
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v17
