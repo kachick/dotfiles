@@ -75,26 +75,15 @@
       # Based on unstable to apply https://github.com/NixOS/nixpkgs/pull/401167
       fzf-git-sh = prev.unstable.fzf-git-sh.overrideAttrs (
         finalAttrs: previousAttrs: {
-          patches = [
-            (prev.fetchpatch {
-              # https://github.com/junegunn/fzf-git.sh/pull/74
-              url = "https://github.com/kachick/fzf-git.sh/commit/0df3c47685454cf8d4e2fbc5d74db48cf8dff6ec.patch?full_index=1";
-              hash = "sha256-IBk555LqUjzM8ikdVlujXr47U0usYNj7UffWOJ3OhPs=";
-            })
+          version = "0-unstable-2025-05-08";
 
-            # Workaround for https://github.com/junegunn/fzf-git.sh/issues/40 and GH-499
-            (prev.fetchpatch {
-              # https://github.com/junegunn/fzf-git.sh/pull/75
-              url = "https://github.com/kachick/fzf-git.sh/commit/ed98de9ca644175f01c0a3604e753bcf39fe79d2.patch?full_index=1";
-              hash = "sha256-0Rc9gQvgnAQ5ht43AQ5vp6fg282m4d4J1XKCxZqLw0E=";
-            })
-
-            # Update the WSL detection with the feed backs https://github.com/junegunn/fzf-git.sh/pull/75/commits/6d75e04a9c788e078387594c2a6b573efee21bea#r2074902724
-            (prev.fetchpatch {
-              url = "https://github.com/kachick/fzf-git.sh/commit/6d75e04a9c788e078387594c2a6b573efee21bea.patch?full_index=1";
-              hash = "sha256-AOtTLMQaM8UzJkpXX4llps0LQBEteXXVkWSCwphGrZc=";
-            })
-          ];
+          src = prev.fetchFromGitHub {
+            owner = "junegunn";
+            repo = "fzf-git.sh";
+            # Apply https://github.com/junegunn/fzf-git.sh/pull/74 and https://github.com/junegunn/fzf-git.sh/pull/75
+            rev = "3ec3e97d1cc75ec97c0ab923ed5aa567aee01a5e";
+            hash = "sha256-hkxbFYCogrIhnAGs3lcqY8Zv51/TAfM6zB9G78UuYSA=";
+          };
         }
       );
     };
