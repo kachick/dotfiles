@@ -202,7 +202,7 @@
           };
 
           "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = "x86_64-darwin";
+            pkgs = mkPkgs "x86_64-darwin";
             modules = [
               ./home-manager/kachick.nix
               ./home-manager/darwin.nix
@@ -236,7 +236,7 @@
           # macos-13 is the latest x86-64 runner for darwin and technically the right choice for my old MacBook,
           # but it's just toooooooooo(10x+) painfully slow (GH-1164) - so I have no choice but to use macos-14 or later. :<
           "github-actions@macos-15" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = "aarch64-darwin";
+            pkgs = mkPkgs "aarch64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
             modules = [
