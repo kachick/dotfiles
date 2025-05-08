@@ -15,11 +15,11 @@
     home-manager-linux = {
       # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
       # See https://github.com/kachick/dotfiles/issues/1051 for detail
-      url = "github:kachick/home-manager/release-24.11";
+      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:kachick/home-manager/release-24.11";
+      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {

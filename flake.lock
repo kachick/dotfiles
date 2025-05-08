@@ -39,16 +39,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1737954034,
-        "narHash": "sha256-TbjPf48Z85zgOZjBXLmx+elczAUM7c/Ik7oTDcZc6mY=",
+        "lastModified": 1746706583,
+        "narHash": "sha256-SMT4U6SFwpYtM0KjzBZYyX6DOR6aFbYxpCdU0pxJMHM=",
         "owner": "kachick",
         "repo": "home-manager",
-        "rev": "f33926dadd874bb4e7b46e5ee9bb5102842b6665",
+        "rev": "1eacbedb191a5be5c3db8acec7792e212cf148a5",
         "type": "github"
       },
       "original": {
         "owner": "kachick",
-        "ref": "release-24.11",
+        "ref": "release-24.11.kachick.2025-05-08",
         "repo": "home-manager",
         "type": "github"
       }
@@ -60,16 +60,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1737954034,
-        "narHash": "sha256-TbjPf48Z85zgOZjBXLmx+elczAUM7c/Ik7oTDcZc6mY=",
+        "lastModified": 1746706583,
+        "narHash": "sha256-SMT4U6SFwpYtM0KjzBZYyX6DOR6aFbYxpCdU0pxJMHM=",
         "owner": "kachick",
         "repo": "home-manager",
-        "rev": "f33926dadd874bb4e7b46e5ee9bb5102842b6665",
+        "rev": "1eacbedb191a5be5c3db8acec7792e212cf148a5",
         "type": "github"
       },
       "original": {
         "owner": "kachick",
-        "ref": "release-24.11",
+        "ref": "release-24.11.kachick.2025-05-08",
         "repo": "home-manager",
         "type": "github"
       }
