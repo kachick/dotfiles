@@ -55,7 +55,8 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin"
+          "x86_64-darwin" # Kept for actual my device
+          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-13 is deadly slow for daily CI
         ] nixpkgs.lib.systems.flakeExposed
       );
 
