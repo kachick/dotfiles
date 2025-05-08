@@ -10,16 +10,16 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/86484f6076aac9141df2bfcddbf7dcfce5e0c6bb"; # The revision is a snapshot of nixpkgs-24.11-darwin. Don't use the channel name to avoid triggering updater. Newer revisions seems not having crucial binary caches. See GH-1157 and GH-1164
     # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
     home-manager-linux = {
       # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
       # See https://github.com/kachick/dotfiles/issues/1051 for detail
-      url = "github:kachick/home-manager/release-24.11";
+      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:kachick/home-manager/release-24.11";
+      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
