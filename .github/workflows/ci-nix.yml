@@ -35,11 +35,7 @@ jobs:
           {
             echo 'matrix<<JSON'
 
-            if [[ '${{ github.event_name }}' ==  'push' || '${{ github.event_name }}' ==  'pull_request' ]]; then
-              echo '{"runner": ["ubuntu-24.04"]}'
-            else
-              echo '{"runner": ["ubuntu-24.04", "macos-13"]}'
-            fi
+            echo '{"runner": ["ubuntu-24.04", "macos-15"]}'
 
             echo 'JSON'
           } | tee --append "$GITHUB_OUTPUT"
