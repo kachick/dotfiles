@@ -61,7 +61,7 @@ jobs:
           } | tee --append "$GITHUB_OUTPUT"
   home-manager:
     needs: [generate_matrix]
-    timeout-minutes: 180 # It takes a long time since https://github.com/kachick/dotfiles/pull/1157#issuecomment-2834599340, especially for macos-13
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.generate_matrix.outputs.matrix) }}

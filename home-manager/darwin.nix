@@ -48,6 +48,8 @@
 
       source-han-code-jp # Includes many definitions, useful for fallback
       inconsolata
+
+      nushell # Intentionally using incorrect version with that config. Because of hydra for dawin is broken. See GH-1164
     ];
   };
 
