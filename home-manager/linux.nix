@@ -14,6 +14,10 @@
       RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
     };
 
+    # Putting files into xdg.userDirs.templates enables new file menu on Nautilus
+    # https://askubuntu.com/a/209669
+    file."Templates/blank.md".text = "";
+
     packages =
       (with pkgs; [
         # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
