@@ -36,7 +36,10 @@ jobs:
         env:
           # Not GH_TOKEN for lychee.
           # https://github.com/lycheeverse/lychee/blob/fc006bddc5a63067895799b83cbb9a4cbcabca6a/lychee-bin/src/options.rs#L459-L462
+          # Even if setting the token as a written in [drocument](https://github.com/lycheeverse/lychee/blob/3a0922757efd1ea5f575db10d44a10bcfbd4f964/docs/TROUBLESHOOTING.md?plain=1#L6-L19), it still fails.
+          # Consider to prefer App tokens or PAT rather than the restricted github.token
+          # Or just accept 429 as following
           GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
-          git ls-files '*.md' '*.nix' | xargs lychee --
+          git ls-files '*.md' '*.nix' | xargs lychee --max-concurrency 10 --accept '200,429' --
