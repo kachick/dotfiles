@@ -42,4 +42,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
-          git ls-files '*.md' '*.nix' | xargs lychee --max-concurrency 10 --accept '200,429' --
+          git ls-files '*.md' '*.nix' | xargs lychee --max-concurrency 3 --accept '200,429' --

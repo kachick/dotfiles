@@ -1,7 +1,7 @@
 # It returns 403 error against lychee requests for each word
 https://www.collinsdictionary.com/dictionary/
 
-# False positve detection and hard to debug by https://github.com/lycheeverse/lychee/issues/1304
+# False positive detection and hard to debug by https://github.com/lycheeverse/lychee/issues/1304
 user:password
 
 # reddit often rejects request from GitHub Actions
@@ -21,3 +21,10 @@ file://
 
 # once failed with 500, always slow, working in CGI
 man.openbsd.org
+
+# These sites often blocks requests from GitHub Actions or lychee with `Network error: Forbidden`
+stackoverflow.com
+stackexchange.com
+superuser.com
+serverfault.com
+askubuntu.com
