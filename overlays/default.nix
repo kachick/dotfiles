@@ -71,21 +71,6 @@
           '';
         }
       );
-
-      # Based on unstable to apply https://github.com/NixOS/nixpkgs/pull/401167
-      fzf-git-sh = prev.unstable.fzf-git-sh.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          version = "0-unstable-2025-05-08";
-
-          src = prev.fetchFromGitHub {
-            owner = "junegunn";
-            repo = "fzf-git.sh";
-            # Apply https://github.com/junegunn/fzf-git.sh/pull/74 and https://github.com/junegunn/fzf-git.sh/pull/75
-            rev = "3ec3e97d1cc75ec97c0ab923ed5aa567aee01a5e";
-            hash = "sha256-hkxbFYCogrIhnAGs3lcqY8Zv51/TAfM6zB9G78UuYSA=";
-          };
-        }
-      );
     };
   })
 ]
