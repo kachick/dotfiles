@@ -155,7 +155,7 @@
       apps = forAllSystems (system: {
         home-manager = mkApp {
           inherit system;
-          pkg = (mkHomeManager system).packages.${system}.activationPackage;
+          pkg = (mkHomeManager system).packages.${system};
         };
       });
 
