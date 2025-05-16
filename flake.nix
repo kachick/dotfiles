@@ -68,7 +68,7 @@
 
       mkHomeManager =
         system:
-        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then
+        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then # ... correct code?
           home-manager-darwin
         else
           home-manager-linux;
@@ -155,7 +155,7 @@
       apps = forAllSystems (system: {
         home-manager = mkApp {
           inherit system;
-          pkg = (mkHomeManager system).defaultPackage.${system};
+          pkg = (mkHomeManager system).packages.${system}.activationPackage;
         };
       });
 
