@@ -50,7 +50,7 @@ in
     "Keep this directory because of passage and age does not create the file if directory is missing";
 
   home.shellAliases = {
-    # They will respect pass comaptibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
+    # They will respect pass compatibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
     "pass" = "gopass";
   };
 
