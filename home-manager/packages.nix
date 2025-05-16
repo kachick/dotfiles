@@ -55,7 +55,7 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
-  unstable.ox # modeless editor.
+  ox # modeless editor.
 
   tree
   eza # alt ls

@@ -1,5 +1,5 @@
 { pkgs, lib, ... }:
-pkgs.unstable.buildGo124Module (finalAttrs: {
+pkgs.buildGo124Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
   vendorHash = "sha256-PSV3nbT1SUxjGvAw98J6PRzNpsxtA1tG6hh0ihT6EA4=";

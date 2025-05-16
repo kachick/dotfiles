@@ -110,9 +110,8 @@
       pciutils # `lspci`
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      # You SHOULD switch to stable channel since nixos-25.05. This package had been  frequently broken the build in updating. See GH-1085 and GH-1134.
-      # You should wait for nixos-25.05 for using stable, because of I added several patches for zed config which requires newer version than nixos-24.11 and these rust projects are basically not to be backported
-      unstable.zed-editor
+      # Don't use unstable. This package had been frequently broken the build in updating. See GH-1085 and GH-1134.
+      zed-editor
 
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
@@ -251,7 +250,7 @@
 
   environment.variables = {
     # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
-    VISUAL = "${pkgs.unstable.zed-editor.meta.mainProgram} --wait";
+    VISUAL = "${pkgs.zed-editor.meta.mainProgram} --wait";
   };
 
   environment.sessionVariables = {
