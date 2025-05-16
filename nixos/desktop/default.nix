@@ -192,12 +192,11 @@
 
       ## Unfree packages
 
-      # TODO: Use stable channel after nixos-25.05. Now mandatory https://github.com/NixOS/nixpkgs/pull/387454 is not yet backported
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
       (
-        (unstable.vscode.override {
+        (vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
           # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
           commandLineArgs = [
@@ -230,7 +229,6 @@
         # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
         # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
         commandLineArgs = [
-          "--enable-wayland-ime=true" # TODO: Remove after https://github.com/NixOS/nixpkgs/pull/361341 introduced, it should be introduced in nixos-25.05
           "--wayland-text-input-version=3"
         ];
       })
@@ -304,7 +302,7 @@
   };
 
   # Workaround for https://discourse.nixos.org/t/unsetting-gtk-im-module-environment-variable/49331/
-  # Replace with https://github.com/NixOS/nixpkgs/pull/384689 if merged to a stable channel. TODO: Update this or this config or comment since nixos-25.05
+  # Replace with https://github.com/NixOS/nixpkgs/pull/384689 if merged to a stable channel. TODO: Update this or this config or comment since nixos-25.11
   environment.variables = {
     GTK_IM_MODULE = lib.mkForce ""; # Make better experience in FireFox even if QT_IM_MODULE cannot be updated
     QT_IM_MODULE = lib.mkForce ""; # FIXME: Did not work even through applied in /etc/set-environment, and cannot be override in home-manager systemd module.

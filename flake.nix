@@ -128,7 +128,7 @@
                   treefmt
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   # https://github.com/NixOS/nixpkgs/pull/362139
-                  gitleaks # TODO: Consider to replace to stable since nixos-25.05. nixos-24.11 including version makes false-positive error now
+                  gitleaks
                   dprint
                   lychee
                   go_1_24

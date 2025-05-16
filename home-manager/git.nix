@@ -20,7 +20,7 @@ let
       runtimeInputs = [ pkgs.my.run_local_hook ];
     }
   );
-  # TODO: Update after introduced https://github.com/nix-community/home-manager/pull/5748 since 25.05 or later
+  # NOTE: Don't use the home-manager module. Enabling it forces to set programs.git.iniContent.pager.log, it makes much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
 in
 {

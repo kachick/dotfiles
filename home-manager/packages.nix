@@ -13,6 +13,7 @@
   starship
   direnv
   unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
+  nushell
 
   fzf # History: CTRL+R, Walker: CTRL+T
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
@@ -70,7 +71,7 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
+  sad
 
   typos
   hyperfine
@@ -81,8 +82,7 @@
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-  # Requiring unstable to apply https://github.com/nixos/nixpkgs/pull/394941
-  unstable.chawan # `cha`
+  chawan # `cha`
 
   pastel
 
