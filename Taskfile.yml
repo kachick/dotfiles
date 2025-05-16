@@ -126,7 +126,6 @@ tasks:
       - 'lint-all'
 
   update:
-    # Includes selfup
     desc: Bump dependencies
     cmds:
       - nix flake update --commit-lock-file

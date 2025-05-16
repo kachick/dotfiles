@@ -46,7 +46,7 @@ func main() {
 	linters := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
-		// Add selfup as `git ls-files | xargs selfup list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
+		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.0 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
 	}
 
 	heavyOrTrivial := runner.Commands{

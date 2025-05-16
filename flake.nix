@@ -27,10 +27,6 @@
       # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    selfup = {
-      url = "github:kachick/selfup/v1.1.9";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     psfeditor = {
       # https://github.com/ideras/PSFEditor/pull/1
       url = "github:ideras/PSFEditor";
@@ -141,7 +137,6 @@
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
-                  inputs.selfup.packages.${system}.default
                   inputs.psfeditor.packages.${system}.default
                 ]
               ));

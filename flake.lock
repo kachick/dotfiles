@@ -156,29 +156,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-darwin": "nixpkgs-darwin",
-        "psfeditor": "psfeditor",
-        "selfup": "selfup"
-      }
-    },
-    "selfup": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1736841604,
-        "narHash": "sha256-iEBjUiwg4H2eCfnPuQf+lXSsVmRHi/RvC6EE798NYy8=",
-        "owner": "kachick",
-        "repo": "selfup",
-        "rev": "78de5a4e1c137f05d5c510c038fe868b49924c46",
-        "type": "github"
-      },
-      "original": {
-        "owner": "kachick",
-        "ref": "v1.1.9",
-        "repo": "selfup",
-        "type": "github"
+        "psfeditor": "psfeditor"
       }
     }
   },
