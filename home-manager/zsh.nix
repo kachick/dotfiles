@@ -61,6 +61,8 @@ in
       ignoreDups = true;
       ignoreAllDups = true;
       ignoreSpace = true;
+      saveNoDups = true;
+      findNoDups = true;
 
       # https://askubuntu.com/questions/999923/syntax-in-history-ignore
       # https://github.com/zsh-users/zsh/blob/aa8e4a02904b3a1c4b3064eb7502d887f7de958b/Src/hist.c#L3006-L3015
@@ -204,6 +206,12 @@ in
             fi
           }
         '';
+
+        # Be aware that `setopt` and `unsetopt` might be silently overridden by recent changes in zsh module behavior.
+        # For example, an option set in https://github.com/kachick/dotfiles/blame/90265811fcbc1b500d14a4b154ab568e90bb7ff2/home-manager/zsh.nix#L211
+        # was silently overridden by changes introduced in:
+        # - https://github.com/nix-community/home-manager/pull/6227
+        # - https://github.com/kachick/dotfiles/pull/1178#issuecomment-2888101460
         generalAfterCompInit = lib.mkOrder 1000 ''
           typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
           typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
@@ -213,7 +221,6 @@ in
           unsetopt BEEP
 
           setopt hist_reduce_blanks
-          setopt hist_save_no_dups
           setopt hist_no_store
           setopt HIST_NO_FUNCTIONS
           # https://apple.stackexchange.com/questions/405246/zsh-comment-character
