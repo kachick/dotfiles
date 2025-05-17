@@ -15,6 +15,7 @@
     ./editors.nix
     ./terminals.nix
     ./fzf.nix
+    ./television.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -196,10 +197,5 @@
       "--glob"
       "!.git"
     ];
-  };
-
-  xdg.configFile."television" = {
-    source = ../config/television;
-    recursive = true;
   };
 }
