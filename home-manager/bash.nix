@@ -121,7 +121,7 @@
         starship_precmd_user_func="set_win_title"
 
         # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-        source "${pkgs.unstable.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
         # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile
         for file in ${../dependencies/bash}/*; do
