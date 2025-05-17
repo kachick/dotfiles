@@ -49,4 +49,7 @@ in
         ] (_: imageViewer));
     };
   };
+
+  # https://github.com/nix-community/home-manager/commit/4c8647b1ed35d0e1822c7997172786dfa18cd7da
+  services.trayscale.enable = true;
 }
