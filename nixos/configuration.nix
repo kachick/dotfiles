@@ -57,8 +57,8 @@
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
-  # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  # Avoid conflicting since using pipewire for enabling sound.
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
