@@ -64,7 +64,7 @@
       source "${pkgs.kubectl}/share/bash-completion/completions/kubectl.bash"
     '';
 
-    zsh.initExtra = ''
+    zsh.initExtra = lib.mkOrder 1001 ''
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
       source "${pkgs.kubectl}/share/zsh/site-functions/_kubectl"
     '';
