@@ -27,7 +27,8 @@
     gnome-keyring = prev.gnome-keyring.overrideAttrs (
       finalAttrs: previousAttrs: {
         # https://github.com/NixOS/nixpkgs/issues/140824#issuecomment-2573660493
-        configureFlags = final.lib.lists.remove "--enable-ssh-agent" previousAttrs.configureFlags;
+        # configureFlags -> mesonFlags: https://github.com/NixOS/nixpkgs/commit/58d1ecc5c3621b56577a9c8f955672ac935c1eba
+        mesonFlags = final.lib.lists.remove "-Dssh-agent=true" previousAttrs.mesonFlags;
       }
     );
   })
