@@ -12,8 +12,6 @@
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Use nixpkgs-25.05-darwin if available
     home-manager-linux = {
-      # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
-      # See https://github.com/kachick/dotfiles/issues/1051 for detail
       url = "github:nix-community/home-manager/master"; # TODO: Use release-25.05 if available
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -28,6 +26,7 @@
     };
     psfeditor = {
       # https://github.com/ideras/PSFEditor/pull/1
+      # Update this if the status of https://github.com/NixOS/nixpkgs/pull/396886 be changed
       url = "github:ideras/PSFEditor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
