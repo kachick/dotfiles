@@ -133,7 +133,8 @@ in
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L325C7-L329
     # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
     # The default is "autoload -U compinit && compinit", I can not accept the path and speed
-    initExtraBeforeCompInit = ''
+    # Replacement of initExtraBeforeCompInit, it looks bit hacky. Track discussion in https://github.com/nix-community/home-manager/pull/6664
+    initContent = lib.mkOrder 550 ''
       _elapsed_seconds_for() {
         local -r target_path="$1"
         echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
