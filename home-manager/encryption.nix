@@ -28,7 +28,7 @@ in
     defaultCacheTtlSsh = day * 30;
     maxCacheTtl = day * 7;
 
-    pinentryPackage = pkgs.pinentry-tty;
+    pinentry.package = pkgs.pinentry-tty;
 
     enableSshSupport = false;
   };
