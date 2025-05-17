@@ -12,7 +12,7 @@
   zsh
   starship
   direnv
-  unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
+  nixfmt-rfc-style
   nushell
 
   fzf # History: CTRL+R, Walker: CTRL+T
@@ -44,7 +44,7 @@
   age # Candidates: rage
 
   # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
-  unstable.gopass # Use unstable to apply https://github.com/NixOS/nixpkgs/pull/360950
+  gopass
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
@@ -95,9 +95,8 @@
   tlrc
 
   fastfetch # active replacement of neofetch
-])
-++ (with pkgs.unstable; [
-  gurk-rs # Require https://github.com/NixOS/nixpkgs/pull/356353 to link
+
+  unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
 ])
 ++ (with pkgs.my; [
   la

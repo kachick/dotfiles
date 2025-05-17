@@ -81,7 +81,7 @@
     in
     {
       # Why not use `nixfmt-rfc-style`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
+      formatter = forAllSystems (system: (mkPkgs system).nixfmt-tree);
 
       devShells = forAllSystems (
         system:
@@ -113,24 +113,25 @@
                   nixf # `nixf-tidy`
                   nix-init
                   nurl
+                  nixfmt-rfc-style
+
+                  go_1_24
 
                   shellcheck
                   shfmt
 
+                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
+                  treefmt
+
                   typos
                   trivy
                   markdownlint-cli2
+                  lychee
                 ])
                 ++ (with pkgs.unstable; [
-                  nixfmt-rfc-style
-                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
-                  treefmt
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
-                  # https://github.com/NixOS/nixpkgs/pull/362139
                   gitleaks
                   dprint
-                  lychee
-                  go_1_24
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
