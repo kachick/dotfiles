@@ -11,28 +11,23 @@
     # ```
     fontDir.enable = true;
 
-    packages =
-      (with pkgs; [
-        ibm-plex
-        plemoljp-nf
-        inconsolata
-        mplus-outline-fonts.githubRelease
-        # sarasa-gothic # Drop this because of the large filesize
+    packages = with pkgs; [
+      ibm-plex
+      plemoljp-nf
+      inconsolata
+      mplus-outline-fonts.githubRelease
+      # sarasa-gothic # Drop this because of the large filesize
 
-        # emoji
-        noto-fonts-color-emoji
-        twemoji-color-font
+      # emoji
+      noto-fonts-color-emoji
+      twemoji-color-font
+      beedii
 
-        # Source Han family includes many definitions, useful for fallback
-        source-han-code-jp
-        source-han-sans-japanese
-        source-han-serif-japanese
-      ])
-      ++ [
-        # emoji
-        # https://github.com/NixOS/nixpkgs/pull/349097
-        pkgs.unstable.beedii
-      ];
+      # Source Han family includes many definitions, useful for fallback
+      source-han-code-jp
+      source-han-sans-japanese
+      source-han-serif-japanese
+    ];
 
     # Same as home-manager module?
     # https://github.com/nix-community/home-manager/issues/605

@@ -12,7 +12,8 @@
   zsh
   starship
   direnv
-  unstable.nixfmt-rfc-style # Always required on Nix Life. It should be stable in all channels
+  nixfmt-rfc-style
+  nushell
 
   fzf # History: CTRL+R, Walker: CTRL+T
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
@@ -43,7 +44,7 @@
   age # Candidates: rage
 
   # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
-  unstable.gopass # Use unstable to apply https://github.com/NixOS/nixpkgs/pull/360950
+  gopass
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
@@ -54,7 +55,7 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
-  unstable.ox # modeless editor.
+  ox # modeless editor.
 
   tree
   eza # alt ls
@@ -70,7 +71,7 @@
   bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
-  unstable.sad # Require 0.4.32 or later to use fzf's `become` # TODO: Prefer stable since nixos-25.05
+  sad
 
   typos
   hyperfine
@@ -81,8 +82,7 @@
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-  # Requiring unstable to apply https://github.com/nixos/nixpkgs/pull/394941
-  unstable.chawan # `cha`
+  chawan # `cha`
 
   pastel
 
@@ -95,9 +95,8 @@
   tlrc
 
   fastfetch # active replacement of neofetch
-])
-++ (with pkgs.unstable; [
-  gurk-rs # Require https://github.com/NixOS/nixpkgs/pull/356353 to link
+
+  unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
 ])
 ++ (with pkgs.my; [
   la

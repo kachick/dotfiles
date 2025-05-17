@@ -22,7 +22,7 @@ pkgs.writeShellApplication (
 
       cp -f "${pkgs.zellij}/share/bash-completion/completions/zellij.bash" ${bashDir}
 
-      cp -f "${pkgs.unstable.tailscale}/share/bash-completion/completions/tailscale.bash" ${bashDir}
+      cp -f "${pkgs.tailscale}/share/bash-completion/completions/tailscale.bash" ${bashDir}
 
       # https://github.com/NixOS/nixpkgs/pull/362139
       cp -f "${pkgs.unstable.dprint}/share/bash-completion/completions/dprint.bash" ${bashDir}
@@ -32,7 +32,7 @@ pkgs.writeShellApplication (
 
       # Begins for zsh
 
-      cp -f "${pkgs.unstable.tailscale}/share/zsh/site-functions/_tailscale" ${zshDir}
+      cp -f "${pkgs.tailscale}/share/zsh/site-functions/_tailscale" ${zshDir}
 
       # https://github.com/NixOS/nixpkgs/pull/362139
       cp -f "${pkgs.unstable.dprint}/share/zsh/site-functions/_dprint" ${zshDir}

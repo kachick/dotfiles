@@ -4,7 +4,7 @@
   makeWrapper,
   ...
 }:
-pkgs.unstable.buildGo124Module (finalAttrs: {
+pkgs.buildGo124Module (finalAttrs: {
   pname = "git-hooks-commit-msg";
   version = "0.0.1";
 

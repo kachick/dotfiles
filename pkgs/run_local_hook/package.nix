@@ -3,7 +3,7 @@
   lib,
   ...
 }:
-pkgs.unstable.buildGo124Module (finalAttrs: {
+pkgs.buildGo124Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
   vendorHash = "sha256-rIbm+hhJq6+WbI+4Uk8vjFIJd6dMJTRBBQOf0QBqjAc=";

@@ -9,15 +9,21 @@
 # So ensure the CI result before merging updates.
 # Providing since GH-1085. It migtht be superseded by GH-642.
 #
-# Limitation: Don't add unfree packages such as vscode
+# Limitation: Don't add unfree packages such as cloudflare-warp, vscode
 
 {
   home = {
     packages = with pkgs.unstable; [
-      zed-editor
+      # zed-editor # Disabling because of it is most flaky in unstable channels
+
+      typos-lsp
+      dprint
 
       quickemu
       quickgui
+
+      shogihome
+      apery
     ];
   };
 }

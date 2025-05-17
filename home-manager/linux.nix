@@ -50,8 +50,6 @@
 
         shellcheck
         shfmt
-
-        unstable.nushell # Use unstable to apply https://github.com/nushell/nushell/commit/4ed25b63a6fc3444bb870dd6fa2c5a9abb936b00 # TODO: Use stable since nixos-25.05
       ])
       ++ (with pkgs.my; [
         rclone-list-mounted
@@ -66,7 +64,7 @@
       source "${pkgs.kubectl}/share/bash-completion/completions/kubectl.bash"
     '';
 
-    zsh.initExtra = ''
+    zsh.initContent = lib.mkOrder 1001 ''
       source "${pkgs.podman}/share/zsh/site-functions/_podman"
       source "${pkgs.kubectl}/share/zsh/site-functions/_kubectl"
     '';

@@ -7,28 +7,26 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05"; # TODO: Use nixos-25.05 if available
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/86484f6076aac9141df2bfcddbf7dcfce5e0c6bb"; # The revision is a snapshot of nixpkgs-24.11-darwin. Don't use the channel name to avoid triggering updater. Newer revisions seems not having crucial binary caches. See GH-1157 and GH-1164
-    # https://github.com/nix-community/home-manager/blob/release-24.11/docs/manual/nix-flakes.md
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Use nixpkgs-25.05-darwin if available
     home-manager-linux = {
-      # Using forked repository because of to apply https://github.com/nix-community/home-manager/pull/6357 in stable channel
-      # See https://github.com/kachick/dotfiles/issues/1051 for detail
-      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
+      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.05 if available
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:kachick/home-manager/release-24.11.kachick.2025-05-08";
+      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.05 if available
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/2411.6.0";
+      url = "github:nix-community/NixOS-WSL/2411.6.0"; # TODO: Use 2505.n.n if available
       # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
     psfeditor = {
       # https://github.com/ideras/PSFEditor/pull/1
+      # Update this if the status of https://github.com/NixOS/nixpkgs/pull/396886 be changed
       url = "github:ideras/PSFEditor";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -69,7 +67,7 @@
 
       mkHomeManager =
         system:
-        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then
+        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then # ... correct code?
           home-manager-darwin
         else
           home-manager-linux;
@@ -83,7 +81,7 @@
     in
     {
       # Why not use `nixfmt-rfc-style`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
+      formatter = forAllSystems (system: (mkPkgs system).nixfmt-tree);
 
       devShells = forAllSystems (
         system:
@@ -115,24 +113,25 @@
                   nixf # `nixf-tidy`
                   nix-init
                   nurl
+                  nixfmt-rfc-style
+
+                  go_1_24
 
                   shellcheck
                   shfmt
 
+                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
+                  treefmt
+
                   typos
                   trivy
                   markdownlint-cli2
+                  lychee
                 ])
                 ++ (with pkgs.unstable; [
-                  nixfmt-rfc-style
-                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
-                  treefmt
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
-                  # https://github.com/NixOS/nixpkgs/pull/362139
-                  gitleaks # TODO: Consider to replace to stable since nixos-25.05. nixos-24.11 including version makes false-positive error now
+                  gitleaks
                   dprint
-                  lychee
-                  go_1_24
                 ])
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
@@ -156,7 +155,7 @@
       apps = forAllSystems (system: {
         home-manager = mkApp {
           inherit system;
-          pkg = (mkHomeManager system).defaultPackage.${system};
+          pkg = (mkHomeManager system).packages.${system}.home-manager;
         };
       });
 

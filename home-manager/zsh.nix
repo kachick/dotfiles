@@ -61,6 +61,8 @@ in
       ignoreDups = true;
       ignoreAllDups = true;
       ignoreSpace = true;
+      saveNoDups = true;
+      findNoDups = true;
 
       # https://askubuntu.com/questions/999923/syntax-in-history-ignore
       # https://github.com/zsh-users/zsh/blob/aa8e4a02904b3a1c4b3064eb7502d887f7de958b/Src/hist.c#L3006-L3015
@@ -130,35 +132,7 @@ in
     # NOTE: enabling without tuning makes much slower zsh as +100~200ms execution time
     #       And the default path is not intended, so you SHOULD update `completionInit`
     enableCompletion = true;
-    # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L325C7-L329
-    # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
-    # The default is "autoload -U compinit && compinit", I can not accept the path and speed
-    initExtraBeforeCompInit = ''
-      _elapsed_seconds_for() {
-        local -r target_path="$1"
-        echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
-      }
 
-      # path - https://stackoverflow.com/a/48057649/1212807
-      # speed - https://gist.github.com/ctechols/ca1035271ad134841284
-      # both - https://github.com/kachick/dotfiles/pull/155
-      _compinit_with_interval() {
-        # seconds * minutes * hours
-        local -r threshold="$((60 * 60 * 3))"
-
-        if [ -f "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
-          # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
-          # -C omit to check new functions
-          compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
-        else
-          # For refreshing the cache
-
-          ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
-          compinit -d "$ZCOMPDUMP_CACHE_PATH"
-          ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
-        fi
-      }
-    '';
     completionInit = ''
       # `autoload` enable to use compinit
       autoload -Uz compinit && _compinit_with_interval
@@ -199,98 +173,141 @@ in
       fi
     '';
 
-    initExtra = ''
-      typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
-      typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-      typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
+    # https://github.com/nix-community/home-manager/blob/ae755329092c87369b9e9a1510a8cf1ce2b1c708/modules/programs/zsh.nix#L513-L527
+    initContent =
+      let
+        # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L325C7-L329
+        # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
+        # The default is "autoload -U compinit && compinit", I can not accept the path and speed
+        # Replacement of initExtraBeforeCompInit, it looks bit hacky. Track discussion in https://github.com/nix-community/home-manager/pull/6664
+        beforeCompInit = lib.mkOrder 550 ''
+          _elapsed_seconds_for() {
+            local -r target_path="$1"
+            echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
+          }
 
-      setopt correct
-      unsetopt BEEP
+          # path - https://stackoverflow.com/a/48057649/1212807
+          # speed - https://gist.github.com/ctechols/ca1035271ad134841284
+          # both - https://github.com/kachick/dotfiles/pull/155
+          _compinit_with_interval() {
+            # seconds * minutes * hours
+            local -r threshold="$((60 * 60 * 3))"
 
-      setopt hist_reduce_blanks
-      setopt hist_save_no_dups
-      setopt hist_no_store
-      setopt HIST_NO_FUNCTIONS
-      # https://apple.stackexchange.com/questions/405246/zsh-comment-character
-      setopt interactivecomments
+            if [ -f "$ZCOMPDUMP_CACHE_PATH" ] && [ "$(_elapsed_seconds_for "$ZCOMPDUMP_CACHE_PATH")" -le "$threshold" ]; then
+              # https://zsh.sourceforge.io/Doc/Release/Completion-System.html#Use-of-compinit
+              # -C omit to check new functions
+              compinit -C -d "$ZCOMPDUMP_CACHE_PATH"
+            else
+              # For refreshing the cache
 
-      # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
-      bindkey ";5C" forward-word
-      bindkey ";5D" backward-word
+              ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
+              compinit -d "$ZCOMPDUMP_CACHE_PATH"
+              ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
+            fi
+          }
+        '';
 
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-        echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
-      }
-      precmd_functions+=(set_win_title)
+        # Be aware that `setopt` and `unsetopt` might be silently overridden by recent changes in zsh module behavior.
+        # For example, an option set in https://github.com/kachick/dotfiles/blame/90265811fcbc1b500d14a4b154ab568e90bb7ff2/home-manager/zsh.nix#L211
+        # was silently overridden by changes introduced in:
+        # - https://github.com/nix-community/home-manager/pull/6227
+        # - https://github.com/kachick/dotfiles/pull/1178#issuecomment-2888101460
+        generalAfterCompInit = lib.mkOrder 1000 ''
+          typeset -g HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='fg=blue,bold'
+          typeset -g HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
+          typeset -g HISTORY_SUBSTRING_SEARCH_FUZZY='true'
 
-      # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
-      source "${pkgs.unstable.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+          setopt correct
+          unsetopt BEEP
 
-      # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
-      for file in ${../dependencies/zsh}/*; do
-          source "$file"
-      done
+          setopt hist_reduce_blanks
+          setopt hist_no_store
+          setopt HIST_NO_FUNCTIONS
+          # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+          setopt interactivecomments
 
-      # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
-      # So currently injecting only in zsh
+          # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871
+          bindkey ";5C" forward-word
+          bindkey ";5D" backward-word
 
-      _fzf_complete_zellij() {
-        local -r subcmd=''${1#* }
-        if [[ "$subcmd" == kill-session* ]]; then
-          _fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
-            ${lib.getExe pkgs.zellij} list-sessions | ${lib.getExe pkgs.ripgrep} --invert-match --fixed-strings -e 'EXITED'
-          )
-        else
-          _fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
-            ${lib.getExe pkgs.zellij} list-sessions
-          )
-        fi
-      }
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          function set_win_title() {
+            echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+          }
+          precmd_functions+=(set_win_title)
 
-      _fzf_complete_zellij_post() {
-        ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
-      }
+          # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
+          source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
-      # Do not use absolute path for go-task to respect current version in each repository
-      _fzf_complete_task() {
-        _fzf_complete --multi --reverse --prompt="task> " -- "$@" < <(
-          task --list-all | ${lib.getExe pkgs.ripgrep} --regexp='^\* (.+)' --replace='$1'
-        )
-      }
+          # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
+          for file in ${../dependencies/zsh}/*; do
+              source "$file"
+          done
 
-      _fzf_complete_task_post() {
-        ${lib.getExe pkgs.ripgrep} --regexp='(\S+?): ' --replace='$1'
-      }
+          # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
+          # So currently injecting only in zsh
 
-      # Disable `Ctrl + S(no output tty)`
-      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+          _fzf_complete_zellij() {
+            local -r subcmd=''${1#* }
+            if [[ "$subcmd" == kill-session* ]]; then
+              _fzf_complete --multi --reverse --prompt="zellij(active)> " --ansi --nth 1 -- "$@" < <(
+                ${lib.getExe pkgs.zellij} list-sessions | ${lib.getExe pkgs.ripgrep} --invert-match --fixed-strings -e 'EXITED'
+              )
+            else
+              _fzf_complete --multi --reverse --prompt="zellij> " --ansi --nth 1 -- "$@" < <(
+                ${lib.getExe pkgs.zellij} list-sessions
+              )
+            fi
+          }
 
-      # https://unix.stackexchange.com/a/3449
-      source_sh () {
-        emulate -LR sh
-        . "$@"
-      }
+          _fzf_complete_zellij_post() {
+            ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
+          }
 
-      source_sh "${pkgs.my.posix_shared_functions}"
+          # Do not use absolute path for go-task to respect current version in each repository
+          _fzf_complete_task() {
+            _fzf_complete --multi --reverse --prompt="task> " -- "$@" < <(
+              task --list-all | ${lib.getExe pkgs.ripgrep} --regexp='^\* (.+)' --replace='$1'
+            )
+          }
 
-      # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-      # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
-      export LC_TIME='en_DK.UTF-8'
+          _fzf_complete_task_post() {
+            ${lib.getExe pkgs.ripgrep} --regexp='(\S+?): ' --replace='$1'
+          }
 
-      if [ 'linux' = "$TERM" ]; then
-        adjust_to_linux_vt
-      fi
+          # Disable `Ctrl + S(no output tty)`
+          ${lib.getBin pkgs.coreutils}/bin/stty stop undef
 
-      # https://superuser.com/a/902508/120469
-      # https://github.com/zsh-users/zsh-autosuggestions/issues/259
-      zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+          # https://unix.stackexchange.com/a/3449
+          source_sh () {
+            emulate -LR sh
+            . "$@"
+          }
 
-      # Same as .zshenv.local
-      if [ -f '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
-        source '${config.xdg.configHome}/zsh/.zshrc.local'
-      fi
-    '';
+          source_sh "${pkgs.my.posix_shared_functions}"
+
+          # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+          # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
+          export LC_TIME='en_DK.UTF-8'
+
+          if [ 'linux' = "$TERM" ]; then
+            adjust_to_linux_vt
+          fi
+
+          # https://superuser.com/a/902508/120469
+          # https://github.com/zsh-users/zsh-autosuggestions/issues/259
+          zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+
+          # Same as .zshenv.local
+          if [ -f '${config.xdg.configHome}/zsh/.zshrc.local' ]; then
+            source '${config.xdg.configHome}/zsh/.zshrc.local'
+          fi
+        '';
+      in
+      lib.mkMerge [
+        beforeCompInit
+        generalAfterCompInit
+      ];
 
     # Useable one of profileExtra or loginExtra. Do not specify both.
   };
