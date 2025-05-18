@@ -189,6 +189,8 @@
       # shogihome does not provide CLI, ENV and config schema for engines: https://github.com/sunfish-shogi/shogihome/issues/1017
       unstable.apery
 
+      patched.signal-desktop
+
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
