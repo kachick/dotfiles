@@ -10,13 +10,13 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # TODO: Use nixpkgs-25.05-darwin if available
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
     home-manager-linux = {
-      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.05 if available
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.05 if available
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
