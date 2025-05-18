@@ -20,6 +20,8 @@
     ./fingerprint.nix
   ];
 
+  system.stateVersion = "24.11"; # NOTE: DON'T update this string even if new versions were enabled. See comments in generic/default.nix for details.
+
   # Apply better fonts for non X consoles
   # https://github.com/NixOS/nixpkgs/issues/219239
   boot.initrd.kernelModules = [ "amdgpu" ];

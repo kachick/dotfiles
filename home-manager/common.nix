@@ -32,7 +32,10 @@
     # You can update Home Manager without changing this value. See
     # the Home Manager release notes for a list of state version
     # changes in each release.
-    stateVersion = "25.05"; # TODO: Update to 25.11 since NixOS and home-manager 25.11 is released
+    #
+    # TODO: Bump to 25.11 *carefully* once both NixOS and Home Manager 25.11 are out.
+    #       This setting is similar to but not identical in purpose to NixOS’s `system.stateVersion`.
+    stateVersion = "25.05";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
