@@ -71,6 +71,30 @@
           '';
         }
       );
+
+      signal-desktop = prev.signal-desktop.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          installPhase = ''
+            runHook preInstall
+
+            mkdir -p $out/share/
+            cp -r dist/*-unpacked/resources $out/share/signal-desktop
+
+            for icon in build/icons/png/*
+            do
+              install -Dm644 $icon $out/share/icons/hicolor/`basename ''${icon%.png}`/apps/signal-desktop.png
+            done
+
+            makeWrapper '${prev.lib.getExe prev.electron_35}' "$out/bin/signal-desktop" \
+              --add-flags "$out/share/signal-desktop/app.asar" \
+              --set-default ELECTRON_FORCE_IS_PACKAGED 1 \
+              --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true}}" \
+              --add-flags ${prev.lib.escapeShellArgs [ "--wayland-text-input-version=3" ]}
+
+            runHook postInstall
+          '';
+        }
+      );
     };
   })
 ]
