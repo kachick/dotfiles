@@ -14,7 +14,7 @@
     # The IDs are not same as X11 definitions. So check the model section in following path.
     #
     # ```bash
-    # bat "$(nix build --no-link --print-out-paths github:NixOS/nixpkgs/nixos-24.11#xkeyboard_config)/etc/X11/xkb/rules/base.lst"
+    # bat "$(nix build --no-link --print-out-paths github:NixOS/nixpkgs/nixos-25.05#xkeyboard_config)/etc/X11/xkb/rules/base.lst"
     # ```
     #
     # JIS should be "jp106", not "jp"

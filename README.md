@@ -67,7 +67,7 @@ Using flake style is disabled in NixOS by default and [you should inject git com
 **NOTICE: This command might drop all existing users except which defined in configurations.**
 
 ```bash
-nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-24.11#git' \
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-25.05#git' \
   --command sudo nixos-rebuild switch \
   --flake "github:kachick/dotfiles#$(hostname)" \
   --show-trace
