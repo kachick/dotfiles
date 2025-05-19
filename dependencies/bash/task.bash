@@ -52,4 +52,5 @@ function _task()
   __ltrim_colon_completions "$cur"
 }
 
-complete -F _task task go-task
+complete -F _task task
+
