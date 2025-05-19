@@ -1,4 +1,4 @@
-#compdef task go-task
+#compdef task
 compdef _task task
 typeset -A opt_args
 
@@ -68,3 +68,4 @@ _task() {
 if [ "$funcstack[1]" = "_task" ]; then
     _task "$@"
 fi
+
