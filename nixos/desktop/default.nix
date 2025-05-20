@@ -153,8 +153,6 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
-      alexandria
-
       calibre
 
       dconf-editor

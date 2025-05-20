@@ -90,9 +90,6 @@
         },
         {
           "PackageIdentifier": "tailscale.tailscale"
-        },
-        {
-          "PackageIdentifier": "btpf.Alexandria"
         }
       ],
       "SourceDetails": {
