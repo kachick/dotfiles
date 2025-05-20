@@ -58,6 +58,12 @@
     }
   },
   "languages": {
+    "Nix": {
+      "language_servers": [
+        "nixd",
+        "!nil"
+      ]
+    },
     "JSON": {
       // "enable_language_server": false, // Didn't disable with this option
       "language_servers": [
