@@ -139,7 +139,6 @@
 
       # Add LSP global for zed-editor. Prefer external package for helix
       unstable.typos-lsp
-      nil
       nixd
       vscode-langservers-extracted
       # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172

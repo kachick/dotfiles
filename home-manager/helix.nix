@@ -81,6 +81,7 @@ in
     };
 
     # https://docs.helix-editor.com/lang-support.html
+    # https://github.com/helix-editor/helix/blob/25.01.1/languages.toml
     languages = {
       language-server = {
         # Helix cannot set common LSP. https://github.com/helix-editor/helix/discussions/8850
@@ -122,7 +123,7 @@ in
             command = lib.getExe pkgs.nixfmt-rfc-style;
           };
           language-servers = [
-            "nil"
+            "nil" # Not using thesedays, however kept with helix default
             "nixd"
             "typos"
           ];
