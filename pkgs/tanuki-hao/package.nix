@@ -54,7 +54,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   meta = {
     description = "Shogi NNUE evaluation file";
-    homepaneg = "https://github.com/nodchip/tanuki-/releases/tag/tanuki-.halfkp_256x2-32-32.2023-05-08";
+    homepage = "https://github.com/nodchip/tanuki-/releases/tag/tanuki-.halfkp_256x2-32-32.2023-05-08";
     # https://github.com/nodchip/tanuki-/blob/e57d67cb596c47ec70745a24e65ed25182a5726a/Copying.txt
     license = lib.licenses.gpl3Only;
   };
