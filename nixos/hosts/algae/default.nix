@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   inputs,
   ...
 }:
@@ -45,4 +46,11 @@
     # Enable keyboard - "ThinkPad Compact USB Keyboard with TrackPoint" wakeup
     ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="17ef", ATTRS{idProduct}=="6047", ATTR{power/wakeup}="enabled"
   '';
+
+  environment.systemPackages = with pkgs; [
+    # Available since https://github.com/NixOS/nixpkgs/pull/406363
+    (unstable.yaneuraou.override {
+      targetLabel = "ZEN2"; # For AMD Ryzen 7 4700GE
+    })
+  ];
 }
