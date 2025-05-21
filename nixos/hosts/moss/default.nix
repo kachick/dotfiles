@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   inputs,
   ...
 }:
@@ -38,4 +39,11 @@
     evdev:name:AT Translated Set 2 keyboard:*
       KEYBOARD_KEY_3a=leftctrl # original: capslock
   '';
+
+  environment.systemPackages = with pkgs; [
+    # Available since https://github.com/NixOS/nixpkgs/pull/406363
+    (unstable.yaneuraou.override {
+      targetLabel = "ZEN3"; # For AMD Ryzen 5 7530U
+    })
+  ];
 }
