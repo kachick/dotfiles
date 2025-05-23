@@ -18,7 +18,8 @@
     "flakes"
   ];
 
-  nix.optimise.automatic = true;
+  # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
+  # nix.settings.auto-optimise-store = true;
 
   nix.gc = {
     automatic = true;
