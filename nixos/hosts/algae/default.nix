@@ -51,7 +51,8 @@
   # However I need to enable this on algae, 1TiB disk is too small for Nix Life
   nix.optimise = {
     automatic = true;
-    dates = [ "17:30" ];
+    # It seems the timezone is handled automatically, so don't manually adjust with +09:00
+    dates = [ "26:30" ];
   };
 
   environment.systemPackages = with pkgs; [
