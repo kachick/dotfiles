@@ -142,7 +142,7 @@ _dprint() {
 
     case "${cmd}" in
         dprint)
-            opts="-c -L -h -V --config --plugins --log-level --verbose --help --version init fmt check config output-file-paths output-resolved-config output-format-times clear-cache upgrade completions license editor-info editor-service lsp help"
+            opts="-c -L -h -V --config --config-discovery --plugins --log-level --verbose --help --version init fmt check config output-file-paths output-resolved-config output-format-times clear-cache upgrade completions license editor-info editor-service lsp help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -153,6 +153,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -176,7 +180,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -206,6 +210,10 @@ _dprint() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --plugins)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -226,7 +234,7 @@ _dprint() {
             return 0
             ;;
         dprint__clear__cache)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -237,6 +245,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -260,7 +272,7 @@ _dprint() {
             return 0
             ;;
         dprint__completions)
-            opts="-c -L -h --config --plugins --log-level --verbose --help bash elvish fish powershell zsh"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help bash elvish fish powershell zsh"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -271,6 +283,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -294,7 +310,7 @@ _dprint() {
             return 0
             ;;
         dprint__config)
-            opts="-c -L -h --config --plugins --log-level --verbose --help init update add help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help init update add help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -305,6 +321,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -328,7 +348,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__add)
-            opts="-c -L -h --config --plugins --log-level --verbose --help [url-or-plugin-name]"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -339,6 +359,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -432,7 +456,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__init)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -443,6 +467,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -466,7 +494,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__update)
-            opts="-y -c -L -h --yes --config --plugins --log-level --verbose --help"
+            opts="-y -c -L -h --yes --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -477,6 +505,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -500,7 +532,7 @@ _dprint() {
             return 0
             ;;
         dprint__editor__info)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -511,6 +543,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -534,7 +570,7 @@ _dprint() {
             return 0
             ;;
         dprint__editor__service)
-            opts="-c -L -h --parent-pid --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --parent-pid --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -549,6 +585,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -572,7 +612,7 @@ _dprint() {
             return 0
             ;;
         dprint__fmt)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -603,6 +643,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -892,7 +936,7 @@ _dprint() {
             return 0
             ;;
         dprint__init)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -903,6 +947,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -926,7 +974,7 @@ _dprint() {
             return 0
             ;;
         dprint__license)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -937,6 +985,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -960,7 +1012,7 @@ _dprint() {
             return 0
             ;;
         dprint__lsp)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -971,6 +1023,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -994,7 +1050,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__file__paths)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --staged --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1017,6 +1073,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1040,7 +1100,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__format__times)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --allow-no-files --staged --config --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --allow-no-files --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1066,6 +1126,10 @@ _dprint() {
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --plugins)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -1086,7 +1150,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__resolved__config)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1097,6 +1161,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -1120,7 +1188,7 @@ _dprint() {
             return 0
             ;;
         dprint__upgrade)
-            opts="-c -L -h --config --plugins --log-level --verbose --help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1131,6 +1199,10 @@ _dprint() {
                     return 0
                     ;;
                 -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
