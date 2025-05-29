@@ -236,7 +236,6 @@ in
           }
           precmd_functions+=(set_win_title)
 
-          # CTRL+O does not open web browser in WSL: https://github.com/kachick/dotfiles/issues/499
           source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
