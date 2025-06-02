@@ -18,9 +18,9 @@ in
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  programs.fzf.enableZshIntegration = true;
-  # Avoid nested zellij in host and remote login as container
-  programs.zellij.enableZshIntegration = false;
+  programs.television.enableZshIntegration = true;
+  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower
+  programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
     if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then

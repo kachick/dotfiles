@@ -9,9 +9,9 @@
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
-  programs.fzf.enableBashIntegration = true;
-  # Intentionally disabled for keeping stable bash
-  programs.zellij.enableBashIntegration = false;
+  programs.television.enableBashIntegration = true;
+  programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower
+  programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/readline.nix
