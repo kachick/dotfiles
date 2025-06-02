@@ -97,6 +97,8 @@
   fastfetch # active replacement of neofetch
 
   unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
+
+  unstable.brush # Use latest as possible because of I'm a package maintainer
 ])
 ++ (with pkgs.my; [
   la
