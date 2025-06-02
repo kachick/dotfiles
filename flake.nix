@@ -114,6 +114,7 @@
                   nix-init
                   nurl
                   nixfmt-rfc-style
+                  nix-update
 
                   go_1_24
 
