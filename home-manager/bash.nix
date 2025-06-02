@@ -9,8 +9,8 @@
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
-  programs.television.enableBashIntegration = true;
-  programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower
+  programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
+  programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
@@ -120,6 +120,7 @@
         # shellcheck disable=SC2034
         starship_precmd_user_func="set_win_title"
 
+        source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
         source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
         # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile

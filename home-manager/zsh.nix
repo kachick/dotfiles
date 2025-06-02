@@ -18,8 +18,8 @@ in
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  programs.television.enableZshIntegration = true;
-  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower
+  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
+  programs.television.enableZshIntegration = false; # Conflict with fzf by default
   programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
@@ -236,6 +236,7 @@ in
           }
           precmd_functions+=(set_win_title)
 
+          source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
           source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
