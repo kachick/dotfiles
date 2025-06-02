@@ -4,7 +4,12 @@
   programs.television = {
     enable = true;
 
-    # Don't enable `enable*shIntegration` options for now, the applied keybindings will conflict with fzf.
+    # - Don't enable `enable*shIntegration` options for now, the applied keybindings will conflict with fzf.
+    # - Clarify the disabling, it enables by default
+    # - It might be changed the keybinding in following settings section, if introducing with it, calc the benchmark of shell startup time
+    enableBashIntegration = false;
+    enableZshIntegration = false;
+    enableFishIntegration = false;
 
     settings = {
       ui = {
