@@ -28,3 +28,6 @@ stackexchange.com
 superuser.com
 serverfault.com
 askubuntu.com
+
+# It seems lychee cannot parse Nix language syntax correctly
+github.com/nodchip/tanuki-/releases/download
