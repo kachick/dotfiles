@@ -14,11 +14,14 @@
       "--walker-skip '.git,node_modules,.direnv,vendor,dist'"
     ];
 
-    # CTRL+T
+    # CTRL+T - such as `pkgs.my.walk`. However, you shouldn't use fzf's `become`. This will be used in shell functions.
     fileWidgetCommand = defaultCommand;
     fileWidgetOptions = [
       "--preview '${pkgs.bat}/bin/bat --color=always {}'"
       "--preview-window '~3'"
+      ''
+        --bind 'enter:execute("$EDITOR" {})'
+      ''
     ];
 
     # ALT-C
