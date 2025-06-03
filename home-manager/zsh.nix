@@ -294,6 +294,27 @@ in
             adjust_to_linux_vt
           fi
 
+          rg-fzf-widget() {
+            "${lib.getExe pkgs.my.rg-fzf}" "$LBUFFER"
+            zle reset-prompt
+          }
+
+          _tv_text_then_edit() {
+            local -r tv_result="$("${lib.getExe pkgs.television}" text --input "$LBUFFER")"
+            if [[ -n "$tv_result" ]]; then
+              "$EDITOR" "$tv_result"
+            fi
+
+            zle reset-prompt
+          }
+
+          # television is much faster than ripgrep + fzf solution especially for full-text search
+          # So consider to prefer it after portrait mode is available
+          zle     -N            rg-fzf-widget
+          bindkey -M emacs '^F' rg-fzf-widget
+          bindkey -M vicmd '^F' rg-fzf-widget
+          bindkey -M viins '^F' rg-fzf-widget
+
           # https://superuser.com/a/902508/120469
           # https://github.com/zsh-users/zsh-autosuggestions/issues/259
           zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
