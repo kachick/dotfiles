@@ -236,6 +236,8 @@
       })
 
       my.chrome-with-profile-by-name
+
+      my.ludii
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator

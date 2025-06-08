@@ -44,7 +44,11 @@ jobs:
         run: |
           nix flake show
           nix flake show . --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
-      - run: nix flake check
+      - run: nix flake check --impure
+        env:
+          # Required to clarify allowing unfree even in check ... :<
+          # This does not make problem only here, because this step does not upload any artifacts.
+          NIXPKGS_ALLOW_UNFREE: '1'
         # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
         if: runner.os == 'Linux'
 
