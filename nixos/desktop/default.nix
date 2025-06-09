@@ -153,6 +153,7 @@
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
       calibre
+      readest # ebook(epub) reader. Prefer this than unstable Alexandria
 
       dconf-editor
 
