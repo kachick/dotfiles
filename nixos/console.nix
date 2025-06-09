@@ -5,10 +5,11 @@
   console = {
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
-    # You can list current glyphs with `showconsolefont`
-    font = "${pkgs.patched.cozette}/share/consolefonts/cozette_hidpi.psf";
+    # You can list current glyphs with `sudo showconsolefont`
+    font = "${pkgs.unstable.cozette}/share/consolefonts/cozette12x26.psfu";
 
-    packages = with pkgs.patched; [ cozette ];
+    # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
+    packages = with pkgs.unstable; [ cozette ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
     # The IDs are not same as X11 definitions. So check the model section in following path.
