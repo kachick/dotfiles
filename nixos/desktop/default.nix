@@ -178,6 +178,14 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
+      # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
+      # Prefer GUI rather than gurk-rs for now, gurk-rs update is stopped. I guess it is hard until merging https://github.com/NixOS/nixpkgs/pull/387337
+      (unstable.signal-desktop.override {
+        commandLineArgs = [
+          "--wayland-text-input-version=3"
+        ];
+      })
+
       ## Shogi packages
 
       # Install yaneuraou for each host with the optimized label if required

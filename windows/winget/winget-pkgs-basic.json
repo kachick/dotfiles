@@ -93,6 +93,9 @@
         },
         {
           "PackageIdentifier": "chrox.Readest"
+        },
+        {
+          "PackageIdentifier": "OpenWhisperSystems.Signal"
         }
       ],
       "SourceDetails": {
