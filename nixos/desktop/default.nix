@@ -195,11 +195,27 @@
 
       # shogihome does not provide configuration schema and ENV, so manually setup the foollowing NNUE evaluation files for the engine
       # Related issue: https://github.com/sunfish-shogi/shogihome/issues/1017
-      (unstable.shogihome.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      })
+      (
+        (unstable.shogihome.override {
+          commandLineArgs = [
+            "--wayland-text-input-version=3"
+          ];
+        }).overrideAttrs
+        (prevAttrs: {
+          desktopItems = [
+            (makeDesktopItem {
+              name = "shogihome";
+              exec = "shogihome %U";
+              icon = "shogihome";
+              desktopName = "ShogiHome";
+              genericName = "Shogi Frontend";
+              comment = prevAttrs.meta.description;
+              categories = [ "Game" ];
+              startupWMClass = "electron-shogi"; # Fixed from nixpkgs
+            })
+          ];
+        })
+      )
 
       my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/eval
 

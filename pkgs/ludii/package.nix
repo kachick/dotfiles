@@ -59,6 +59,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       icon = "ludii";
       exec = "Ludii";
       categories = [ "Game" ];
+      startupWMClass = "app-StartDesktopApp";
     })
   ];
 
