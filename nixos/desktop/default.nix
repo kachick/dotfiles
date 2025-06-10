@@ -186,6 +186,8 @@
         ];
       })
 
+      my.bitsnpicas
+
       ## Shogi packages
 
       # Install yaneuraou for each host with the optimized label if required
