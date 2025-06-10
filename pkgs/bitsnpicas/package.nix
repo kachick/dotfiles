@@ -67,13 +67,16 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   postFixup = lib.optionalString stdenvNoCC.hostPlatform.isLinux ''
     desktop-file-edit "$out/share/applications/bitsnpicas.desktop" \
       --set-key='Exec' --set-value='bitsnpicas edit %F' \
-      --set-key='Icon' --set-value='bitsnpicas'
+      --set-key='Icon' --set-value='bitsnpicas' \
+      --set-key='StartupWMClass' --set-value='com-kreative-bitsnpicas-main-Main'
     desktop-file-edit "$out/share/applications/mapedit.desktop" \
       --set-key='Exec' --set-value='mapedit %F' \
-      --set-key='Icon' --set-value='mapedit'
+      --set-key='Icon' --set-value='mapedit' \
+      --set-key='StartupWMClass' --set-value='com-kreative-mapedit-Main'
     desktop-file-edit "$out/share/applications/keyedit.desktop" \
       --set-key='Exec' --set-value='keyedit %F' \
-      --set-key='Icon' --set-value='keyedit'
+      --set-key='Icon' --set-value='keyedit' \
+      --set-key='StartupWMClass' --set-value='com-kreative-keyedit-Main'
   '';
 
   doInstallCheck = true;
