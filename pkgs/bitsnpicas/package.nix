@@ -8,6 +8,7 @@
   jre,
   zip,
   makeWrapper,
+  desktop-file-utils,
   spleen,
   nix-update-script,
 }:
@@ -23,11 +24,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     hash = "sha256-hw7UuzesqpmnTjgpfikAIYyY70ni7BxjaUtHAPEdkXI=";
   };
 
-  nativeBuildInputs = [
-    jdk
-    zip
-    makeWrapper
-  ];
+  nativeBuildInputs =
+    [
+      jdk
+      zip
+      makeWrapper
+    ]
+    ++ lib.optionals stdenvNoCC.hostPlatform.isLinux [
+      desktop-file-utils
+    ];
 
   sourceRoot = "${finalAttrs.src.name}/main/java/BitsNPicas";
 
@@ -60,15 +65,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     '';
 
   postFixup = lib.optionalString stdenvNoCC.hostPlatform.isLinux ''
-    substituteInPlace "$out/share/applications/bitsnpicas.desktop" \
-      --replace-fail 'Exec=java -jar /usr/local/lib/bitsnpicas.jar' "Exec=$out/bin/bitsnpicas" \
-      --replace-fail 'Icon=/usr/share' "Icon=$out/share"
-    substituteInPlace "$out/share/applications/mapedit.desktop" \
-      --replace-fail 'Exec=java -jar /usr/local/lib/mapedit.jar' "Exec=$out/bin/mapedit" \
-      --replace-fail 'Icon=/usr/share' "Icon=$out/share"
-    substituteInPlace "$out/share/applications/keyedit.desktop" \
-      --replace-fail 'Exec=java -jar /usr/local/lib/keyedit.jar' "Exec=$out/bin/keyedit" \
-      --replace-fail 'Icon=/usr/share' "Icon=$out/share"
+    desktop-file-edit "$out/share/applications/bitsnpicas.desktop" \
+      --set-key='Exec' --set-value='bitsnpicas edit %F' \
+      --set-key='Icon' --set-value='bitsnpicas'
+    desktop-file-edit "$out/share/applications/mapedit.desktop" \
+      --set-key='Exec' --set-value='mapedit %F' \
+      --set-key='Icon' --set-value='mapedit'
+    desktop-file-edit "$out/share/applications/keyedit.desktop" \
+      --set-key='Exec' --set-value='keyedit %F' \
+      --set-key='Icon' --set-value='keyedit'
   '';
 
   doInstallCheck = true;
