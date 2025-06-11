@@ -38,7 +38,7 @@
     patched = {
       # Based on forked version of lima, because of the extracting addiitional guest agents made much faster to build.
       # Mandatory if no binary cache such as this patch
-      # (It will make slower building on macOS, because they don't need need this ssh patch. However testing with latest is better for now.)
+      # (It will make slower building on macOS, because they don't need this ssh patch. However testing with latest is better for now.)
       # ref: https://github.com/NixOS/nixpkgs/pull/415093
       lima = prev.my.lima.overrideAttrs (
         finalAttrs: previousAttrs:
