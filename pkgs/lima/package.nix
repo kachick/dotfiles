@@ -1,4 +1,4 @@
-# Imported https://github.com/NixOS/nixpkgs/pull/415093
+# This file was imported from https://github.com/NixOS/nixpkgs/pull/415093
 
 {
   lib,
@@ -11,9 +11,14 @@
   makeWrapper,
   nix-update-script,
   apple-sdk_15,
+  withAdditionalGuestAgents ? false,
+  pkgs, # Changed from the PR.
   writableTmpDirAsHomeHook,
-  findutils,
-  gzip,
+  testers,
+  writeText,
+  runCommand,
+  lima,
+  jq,
 }:
 
 buildGoModule (finalAttrs: {
@@ -49,11 +54,20 @@ buildGoModule (finalAttrs: {
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
 
-  buildPhase = ''
-    runHook preBuild
-    make "VERSION=v${finalAttrs.version}" "CC=${stdenv.cc.targetPrefix}cc" native
-    runHook postBuild
-  '';
+  buildPhase =
+    let
+      makeFlags = [
+        "VERSION=v${finalAttrs.version}"
+        "CC=${stdenv.cc.targetPrefix}cc"
+      ];
+    in
+    ''
+      runHook preBuild
+
+      make ${lib.escapeShellArgs makeFlags} native
+
+      runHook postBuild
+    '';
 
   installPhase =
     ''
@@ -73,36 +87,79 @@ buildGoModule (finalAttrs: {
       runHook postInstall
     '';
 
+  postInstall = lib.optionalString withAdditionalGuestAgents ''
+    cp -rs '${pkgs.my.lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
+  '';
+
   nativeInstallCheckInputs = [
     # Workaround for: "panic: $HOME is not defined" at https://github.com/lima-vm/lima/blob/cb99e9f8d01ebb82d000c7912fcadcd87ec13ad5/pkg/limayaml/defaults.go#L53
     writableTmpDirAsHomeHook
-
-    findutils
-    gzip
   ];
   doInstallCheck = true;
 
   # Don't use versionCheckHook for this package until Env solutions like #403971 or #411609 are available on the master branch.
-  installCheckPhase =
-    ''
-      runHook preInstallCheck
+  installCheckPhase = ''
+    runHook preInstallCheck
 
-      [[ "$("$out/bin/limactl" --version | cut -d ' ' -f 3)" == "${finalAttrs.version}" ]]
-      USER=nix $out/bin/limactl validate templates/default.yaml
-      [[ "$(find "$out/share" -type f -name 'lima-guestagent.Linux-*.gz' | wc -l)" -eq 1 ]]
-    ''
-    # This agent matches the host's architecture and is for Linux VMs, so it can only be tested on Linux.
-    + lib.optionalString stdenv.hostPlatform.isLinux ''
-      cp $out/share/lima/lima-guestagent.*.gz ./
-      gzip -dc lima-guestagent.*.gz > lima-guestagent
-      chmod +x lima-guestagent
-      [[ "$(./lima-guestagent --version | cut -d ' ' -f 3)" == "${finalAttrs.version}" ]]
-    ''
-    + ''
-      runHook postInstallCheck
-    '';
+    [[ "$("$out/bin/limactl" --version | cut -d ' ' -f 3)" == "${finalAttrs.version}" ]]
+    USER=nix $out/bin/limactl validate templates/default.yaml
 
-  passthru.updateScript = nix-update-script { };
+    runHook postInstallCheck
+  '';
+
+  passthru = {
+    tests =
+      let
+        arch = stdenv.hostPlatform.parsed.cpu.name;
+      in
+      {
+        minimalAgent = testers.testEqualContents {
+          assertion = "limactl only detects host's architecture guest agent by default";
+          expected = writeText "expected" ''
+            true
+            1
+          '';
+          actual =
+            runCommand "actual"
+              {
+                nativeBuildInputs = [
+                  writableTmpDirAsHomeHook
+                  lima
+                  jq
+                ];
+              }
+              ''
+                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
+                limactl info | jq '.guestAgents | length' >>"$out"
+              '';
+        };
+
+        additionalAgents = testers.testEqualContents {
+          assertion = "limactl also detects additional guest agents if specified";
+          expected = writeText "expected" ''
+            true
+            true
+          '';
+          actual =
+            runCommand "actual"
+              {
+                nativeBuildInputs = [
+                  writableTmpDirAsHomeHook
+                  (lima.override {
+                    withAdditionalGuestAgents = true;
+                  })
+                  jq
+                ];
+              }
+              ''
+                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
+                limactl info | jq '.guestAgents | length >= 2' >>"$out"
+              '';
+        };
+      };
+
+    updateScript = nix-update-script { };
+  };
 
   meta = {
     homepage = "https://github.com/lima-vm/lima";
