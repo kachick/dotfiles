@@ -12,7 +12,7 @@
   nix-update-script,
   apple-sdk_15,
   withAdditionalGuestAgents ? false,
-  lima-additional-guestagents,
+  pkgs, # Changed from the PR.
   writableTmpDirAsHomeHook,
   testers,
   writeText,
@@ -88,7 +88,7 @@ buildGoModule (finalAttrs: {
     '';
 
   postInstall = lib.optionalString withAdditionalGuestAgents ''
-    cp -rs '${lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
+    cp -rs '${pkgs.my.lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
   '';
 
   nativeInstallCheckInputs = [
