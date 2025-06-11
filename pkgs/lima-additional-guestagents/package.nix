@@ -1,4 +1,4 @@
-# Imported https://github.com/NixOS/nixpkgs/pull/415093
+# This file was imported from https://github.com/NixOS/nixpkgs/pull/415093
 
 {
   lib,
@@ -27,13 +27,20 @@ buildGoModule (finalAttrs: {
     apple-sdk_15
   ];
 
-  buildPhase = ''
-    runHook preBuild
+  buildPhase =
+    let
+      makeFlags = [
+        "VERSION=v${finalAttrs.version}"
+        "CC=${stdenv.cc.targetPrefix}cc"
+      ];
+    in
+    ''
+      runHook preBuild
 
-    make "VERSION=v${finalAttrs.version}" "CC=${stdenv.cc.targetPrefix}cc" additional-guestagents
+      make ${lib.escapeShellArgs makeFlags} additional-guestagents
 
-    runHook postBuild
-  '';
+      runHook postBuild
+    '';
 
   installPhase = ''
     runHook preInstall
@@ -58,11 +65,25 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  passthru.updateScript = nix-update-script { };
+  passthru = {
+    updateScript = nix-update-script { };
+  };
 
   meta = {
     homepage = "https://github.com/lima-vm/lima";
     description = "Lima Guest Agents for emulating non-native architectures";
+    longDescription = ''
+      This package should only be used when your guest's architecture differs from the host's.
+
+      To enable its functionality in `limactl`, set `withAdditionalGuestAgents = true` in the `lima` package:
+      ```nix
+      pkgs.lima.override {
+        withAdditionalGuestAgents = true;
+      }
+      ```
+
+      Typically, you won't need to directly add this package to your *.nix files.
+    '';
     changelog = "https://github.com/lima-vm/lima/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
     maintainers = with lib.maintainers; [
