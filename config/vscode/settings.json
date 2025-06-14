@@ -102,5 +102,9 @@
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
-  "update.mode": "none" // NixOS: flake, Windows: winget, macOS: Manually
+  "update.mode": "none", // NixOS: flake, Windows: winget, macOS: Manually
+  "githubIssues.issueCompletions.enabled": false,
+  "github.copilot.enable": {
+    "*": false
+  }
 }
