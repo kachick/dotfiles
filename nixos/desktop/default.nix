@@ -106,6 +106,8 @@
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
+      papirus-icon-theme
+
       cyme
       lshw
       pciutils # `lspci`
