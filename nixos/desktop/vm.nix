@@ -2,7 +2,12 @@
 
 { pkgs, ... }:
 {
-  # programs.virt-manager.enable = true;
+  # Why not other candidates?
+  #
+  # * cockpit: Might be the primary candidate if cockpit-machines is also available. ref: https://github.com/NixOS/nixpkgs/issues/287644
+  # * quickemu: Having another definitions and release cycle than osinfo-db. And seems not actively maintained in these days.
+
+  programs.virt-manager.enable = true;
 
   users.groups.libvirtd.members = [ "kachick" ];
 
@@ -16,12 +21,6 @@
     # See GH-1049 for detail.
     qemu
 
-    # Why not other candidates?
-    #
-    # * cockpit: Might be the primary candidate if cockpit-machines is also available. ref: https://github.com/NixOS/nixpkgs/issues/287644
-    # * virt-manager: It seems too much for my use case. However it is still a candidate.
-    # * quickemu: Having another definitions and release cycle than osinfo-db. And seems not actively maintained in these days.
-    #
     # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
     # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db
     unstable.gnome-boxes
