@@ -18,10 +18,7 @@
 
       typos-lsp
       dprint
-
-      quickemu
-      quickgui
-
+      # gnome-boxes # Omitting. I believe it is a core package of NixOS.
       shogihome
       apery
     ];
