@@ -8,6 +8,7 @@
 {
   imports = [
     (import ./font.nix { inherit pkgs; })
+    (import ./vm.nix { inherit pkgs; })
     ./kanata.nix
   ];
 
@@ -119,16 +120,6 @@
       ghostty # ghostty package now always be backported.
 
       alacritty
-
-      # Ensure existing qemu-img with lima for use of systemd.
-      # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
-      # See GH-1049 for detail.
-      qemu
-
-      # Use latest to apply patches such as https://github.com/quickemu-project/quickemu/issues/1528
-      # Especially quickget requires latest definitions
-      unstable.quickemu
-      unstable.quickgui
 
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
