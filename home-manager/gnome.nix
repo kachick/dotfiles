@@ -37,12 +37,10 @@
         # - Using fixed profile shortcut is difficult in chrome. So don't add PWA here. See GH-813 and GH-968 for detail.
         favorite-apps = [
           "com.mitchellh.ghostty.desktop"
-          "dev.zed.Zed.desktop"
           "org.gnome.TextEditor.desktop"
           "google-chrome.desktop"
-          "podman-desktop.desktop"
+          "signal.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
-          "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
         ];
       };
