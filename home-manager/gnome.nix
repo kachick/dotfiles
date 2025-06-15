@@ -252,7 +252,7 @@
         # https://unix.stackexchange.com/questions/327975/how-to-change-the-gnome-panel-time-format
         clock-show-weekday = true;
 
-        icon-theme = "Papirus";
+        icon-theme = "MoreWaita";
       };
 
       "org/gnome/shell/extensions/dash-to-dock" = {
