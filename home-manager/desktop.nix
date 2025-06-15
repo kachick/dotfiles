@@ -41,7 +41,6 @@ in
         ] (_: defaultBrowser))
         // (lib.genAttrs [
           "application/x-terminal-emulator"
-          "x-terminal-emulator" # I don't know why this format is required in mime context :<
           "x-scheme-handler/terminal"
         ] (_: terminalEmulator))
         // (lib.genAttrs [
