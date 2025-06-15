@@ -106,8 +106,8 @@
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
-      # Prefer MoreWaita for keep consistency with Adwaita as possible
-      # However default Adwait has only few icons, it does not satisfy filers use-case such as Nautilus
+      # Prefer MoreWaita for consistency with Adwaita where possible
+      # However, the default Adwaita has only a few icons and does not meet file manager needs such as Nautilus.
       patched.morewaita-icon-theme
       # (papirus-icon-theme.override { color = "adwaita"; }) # overriding color takes about 5 minutes
 
