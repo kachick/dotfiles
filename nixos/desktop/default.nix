@@ -108,7 +108,7 @@
 
       # Prefer MoreWaita for keep consistency with Adwaita as possible
       # However default Adwait has only few icons, it does not satisfy filers use-case such as Nautilus
-      morewaita-icon-theme
+      patched.morewaita-icon-theme
       # (papirus-icon-theme.override { color = "adwaita"; }) # overriding color takes about 5 minutes
 
       cyme
