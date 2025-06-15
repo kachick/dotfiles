@@ -55,6 +55,11 @@
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
+
+    nautilus-open-any-terminal = {
+      enable = true;
+      terminal = "ghostty";
+    };
   };
 
   environment.gnome.excludePackages = with pkgs; [
@@ -65,7 +70,7 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
-    gnome-terminal # It seems enabling "Open In Terminal" in Nautilus. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
+    gnome-terminal # Appears with "Open In Terminal" in Nautilus even after removed. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
     gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
