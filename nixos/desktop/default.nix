@@ -53,8 +53,6 @@
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
-    # For lanching with command looks like better than alacritty
-    gnome-terminal.enable = true;
   };
 
   environment.gnome.excludePackages = with pkgs; [
