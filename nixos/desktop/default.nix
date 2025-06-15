@@ -40,6 +40,8 @@
 
     # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
     exportConfiguration = true;
+
+    excludePackages = [ pkgs.xterm ];
   };
 
   services.udev.packages = with pkgs; [
@@ -53,8 +55,11 @@
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
-    # For lanching with command looks like better than alacritty
-    gnome-terminal.enable = true;
+
+    nautilus-open-any-terminal = {
+      enable = true;
+      terminal = "ghostty";
+    };
   };
 
   environment.gnome.excludePackages = with pkgs; [
@@ -65,6 +70,8 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
+    gnome-terminal # Appears with "Open In Terminal" in Nautilus even after removed. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
+    gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
   # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036

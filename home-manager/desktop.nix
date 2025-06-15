@@ -9,6 +9,11 @@ let
     "firefox.desktop"
   ];
 
+  terminalEmulator = [
+    "com.mitchellh.ghostty.desktop"
+    "Alacritty.desktop"
+  ];
+
   # Loupe is faster than browsers to open images
   imageViewer = [
     # https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build#L54
@@ -34,6 +39,10 @@ in
           "x-scheme-handler/unknown"
           "application/pdf" # I prefer to open PDF with reader, editor is not frequently used. And native readers Papers is much heavy than browsers
         ] (_: defaultBrowser))
+        // (lib.genAttrs [
+          "application/x-terminal-emulator"
+          "x-scheme-handler/terminal"
+        ] (_: terminalEmulator))
         // (lib.genAttrs [
           # Supported mime-types: https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build
 
