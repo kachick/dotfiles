@@ -75,6 +75,19 @@
           '';
         }
       );
+
+      # nixpkgs' definition roughly includes all upstream files, it is unnecessary for actual use
+      # core difference is removing the apps directory, I just need MoreWaita for mimetype icons
+      # some apps icons are also used as directory icon, however I can ignore them for now, seems I'm not using them
+      morewaita-icon-theme = prev.unstable.morewaita-icon-theme.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          preInstall = ''
+            rm -rf ./scalable/apps ./symbolic/apps ./.github ./_dev
+            rm ./*.md ./*.sh ./*.build
+            find . -xtype l -delete
+          '';
+        }
+      );
     };
   })
 ]
