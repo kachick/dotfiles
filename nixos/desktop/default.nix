@@ -65,6 +65,9 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
+    gnome-terminal # It seems enabling "Open In Terminal" in Nautilus. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
+    gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
+    xterm
   ];
 
   # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
