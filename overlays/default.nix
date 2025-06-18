@@ -54,25 +54,6 @@
           { }
       );
 
-      # TODO: Remove after merging https://github.com/NixOS/nixpkgs/pull/301440
-      cozette = prev.cozette.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          installPhase = ''
-            runHook preInstall
-
-            install -Dm644 *.ttf -t $out/share/fonts/truetype
-            install -Dm644 *.otf -t $out/share/fonts/opentype
-            install -Dm644 *.bdf -t $out/share/fonts/misc
-            install -Dm644 *.otb -t $out/share/fonts/misc
-            install -Dm644 *.woff -t $out/share/fonts/woff
-            install -Dm644 *.woff2 -t $out/share/fonts/woff2
-            install -Dm644 *.psf -t $out/share/consolefonts
-
-            runHook postInstall
-          '';
-        }
-      );
-
       # nixpkgs' definition roughly includes all upstream files, it is unnecessary for actual use
       # core difference is removing the apps directory, I just need MoreWaita for mimetype icons
       # some apps icons are also used as directory icon, however I can ignore them for now, seems I'm not using them

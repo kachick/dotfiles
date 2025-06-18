@@ -6,9 +6,9 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "${pkgs.patched.cozette}/share/consolefonts/cozette_hidpi.psf";
+    font = "${pkgs.my.cozette}/share/consolefonts/cozette_hidpi_adjusted.psf";
 
-    packages = with pkgs.patched; [ cozette ];
+    packages = with pkgs.my; [ cozette ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
     # The IDs are not same as X11 definitions. So check the model section in following path.
