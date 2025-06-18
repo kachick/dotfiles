@@ -62,6 +62,8 @@
     };
   };
 
+  programs.sniffnet.enable = true; # Simple Wireshark
+
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
     gnome-connections
