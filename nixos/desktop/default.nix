@@ -208,6 +208,8 @@
 
       my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/eval
 
+      vassal
+
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
