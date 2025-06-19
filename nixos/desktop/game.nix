@@ -5,7 +5,7 @@
   environment.systemPackages = with pkgs; [
     # Board Game
 
-    vassal
+    my.vassal
 
     my.ludii
 
