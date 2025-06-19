@@ -9,6 +9,7 @@
   imports = [
     (import ./font.nix { inherit pkgs; })
     (import ./vm.nix { inherit pkgs; })
+    (import ./game.nix { inherit pkgs; })
     ./kanata.nix
   ];
 
@@ -193,23 +194,6 @@
 
       my.bitsnpicas
 
-      ## Shogi packages
-
-      # Install yaneuraou for each host with the optimized label if required
-      # If installing at here, it should be "SSE2"
-
-      # shogihome does not provide configuration schema and ENV, so manually setup the foollowing NNUE evaluation files for the engine
-      # Related issue: https://github.com/sunfish-shogi/shogihome/issues/1017
-      (unstable.shogihome.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      })
-
-      my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/eval
-
-      vassal
-
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
@@ -254,8 +238,6 @@
       })
 
       my.chrome-with-profile-by-name
-
-      my.ludii
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
