@@ -20,6 +20,9 @@
 
   # Patched and override existing name because of it is not cofigurable
   (final: prev: {
+    # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
+    # See https://github.com/NixOS/nixpkgs/pull/379731 for detail
+    #
     # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/gn/gnome-keyring/package.nix
     # To disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
     #
