@@ -102,6 +102,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   meta = {
     description = "General game system";
     homepage = "http://ludii.games";
+    sourceProvenance = with lib.sourceTypes; [
+      binaryBytecode
+    ];
     license = lib.licenses.cc-by-nc-nd-40;
     mainProgram = "Ludii";
     maintainers = with lib.maintainers; [
