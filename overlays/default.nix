@@ -45,7 +45,7 @@
               # https://github.com/lima-vm/lima/pull/3637
               name = "lima-suppress-gssapi-warning.patch";
               url = "https://github.com/lima-vm/lima/pull/3637.patch?full_index=1";
-              hash = "sha256-8RM4bR46qPdkis4mqoScO20seQrOHz/22L3b0+ovYeM=";
+              hash = "sha256-Q352EyM6vY/uhvm6s31Ff/IzHWd87EJm6WkFN9HFTJg=";
             })
           ];
         }
