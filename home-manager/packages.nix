@@ -72,6 +72,7 @@
   xh # alt HTTPie
   zellij
   sad
+  broot # `br` for shell util func
 
   typos
   hyperfine

@@ -12,6 +12,7 @@
   programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
   programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
+  programs.broot.enableBashIntegration = true;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/readline.nix

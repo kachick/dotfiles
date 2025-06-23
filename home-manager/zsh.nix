@@ -21,6 +21,7 @@ in
   programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
   programs.television.enableZshIntegration = false; # Conflict with fzf by default
   programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
+  programs.broot.enableZshIntegration = true;
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
     if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then
