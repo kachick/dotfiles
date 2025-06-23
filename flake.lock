@@ -128,26 +128,6 @@
         "type": "github"
       }
     },
-    "psfeditor": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1744046542,
-        "narHash": "sha256-+A0XHwQ0yjTaj4ua0Y6OnsIYkaRD3dj/NonJnusykao=",
-        "owner": "ideras",
-        "repo": "PSFEditor",
-        "rev": "1942494a110b100e7609c10e0e3c2a7258cd20d4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ideras",
-        "repo": "PSFEditor",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "edge-nixpkgs": "edge-nixpkgs",
@@ -155,8 +135,7 @@
         "home-manager-linux": "home-manager-linux",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-darwin": "nixpkgs-darwin",
-        "psfeditor": "psfeditor"
+        "nixpkgs-darwin": "nixpkgs-darwin"
       }
     }
   },
