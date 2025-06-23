@@ -158,8 +158,8 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
-      calibre
-      readest # ebook(epub) reader. Prefer this than unstable Alexandria
+      # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
+      readest # ebook(epub) reader. Prefer this than unstable Alexandria and heaby calibre
 
       dconf-editor
 
