@@ -115,4 +115,5 @@
   bench_shells
   preview
   renmark
+  tree-diff
 ])
