@@ -168,6 +168,14 @@
         switch-input-source-backward = [ "<Shift><Super>space" ];
       };
 
+      "org/gnome/settings-daemon/plugins/power" = {
+        sleep-inactive-ac-timeout =
+          let
+            an_hour = 60 * 60;
+          in
+          an_hour;
+      };
+
       "org/gnome/settings-daemon/plugins/media-keys" = {
         www = [ "<Super>w" ];
         home = [ ];
