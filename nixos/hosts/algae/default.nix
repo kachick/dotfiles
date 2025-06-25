@@ -55,6 +55,15 @@
   #   dates = [ "26:30" ];
   # };
 
+  # Disable sleep only on this device, even if it's a desktop.
+  # This device also serves as a jump host for development, used with SSH and Tailscale-SSH.
+  systemd.sleep.extraConfig = ''
+    AllowSuspend=no
+    AllowHibernation=no
+    AllowHybridSleep=no
+    AllowSuspendThenHibernate=no
+  '';
+
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
     (unstable.yaneuraou.override {
