@@ -246,6 +246,15 @@
         per-window = false;
       };
 
+      "org/gnome/desktop/session" = {
+        # Preset time is limited to 1-15 minutes. However, manually entered values appear correctly in the UI.
+        idle-delay =
+          let
+            an_hour = 60 * 60;
+          in
+          an_hour;
+      };
+
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
         enable-hot-corners = false;

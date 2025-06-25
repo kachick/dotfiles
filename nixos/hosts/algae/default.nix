@@ -15,16 +15,6 @@
     ../../desktop
     ../../desktop/kachick.nix
 
-    {
-      home-manager = {
-        users.kachick = {
-          imports = [
-            ../../../home-manager/gnome-stationary.nix
-          ];
-        };
-      };
-    }
-
     ./hardware-configuration.nix
   ];
 

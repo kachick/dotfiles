@@ -17,16 +17,6 @@
     ../../desktop
     ../../desktop/kachick.nix
 
-    {
-      home-manager = {
-        users.kachick = {
-          imports = [
-            ../../../home-manager/gnome-portable.nix
-          ];
-        };
-      };
-    }
-
     ./hardware-configuration.nix
     ./fingerprint.nix
   ];
