@@ -168,14 +168,6 @@
         switch-input-source-backward = [ "<Shift><Super>space" ];
       };
 
-      "org/gnome/settings-daemon/plugins/power" = {
-        sleep-inactive-ac-timeout =
-          let
-            an_hour = 60 * 60;
-          in
-          an_hour;
-      };
-
       "org/gnome/settings-daemon/plugins/media-keys" = {
         www = [ "<Super>w" ];
         home = [ ];
@@ -252,6 +244,15 @@
         ];
 
         per-window = false;
+      };
+
+      "org/gnome/desktop/session" = {
+        # Preset time is limited to 1-15 minutes. However, manually entered values appear correctly in the UI.
+        idle-delay =
+          let
+            an_hour = 60 * 60;
+          in
+          an_hour;
       };
 
       "org/gnome/desktop/interface" = {
