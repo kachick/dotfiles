@@ -317,6 +317,12 @@
       "org/gnome/nautilus/preferences" = {
         show-create-link = true;
       };
+
+      "org/gnome/TextEditor" = {
+        show-line-numbers = true;
+        highlight-current-line = true;
+        show-map = true;
+      };
     };
   };
 }
