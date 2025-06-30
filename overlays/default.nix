@@ -65,20 +65,6 @@
           '';
         }
       );
-
-      # - Need https://github.com/NixOS/nixpkgs/pull/419521 for updating and cleanups
-      # - I just need MoreWaita for mimetype icons, and I should remove them at here to respect app original icons.
-      #   See https://specifications.freedesktop.org/icon-theme-spec/latest/#icon_lookup for detail
-      #
-      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/mo/morewaita-icon-theme/package.nix
-      morewaita-icon-theme = prev.unstable.morewaita-icon-theme.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          preInstall = ''
-            rm -rf ./scalable/apps ./symbolic/apps
-            find . -xtype l -delete
-          '';
-        }
-      );
     };
   })
 ]
