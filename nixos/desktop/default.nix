@@ -116,14 +116,6 @@
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
-      # The default Adwaita has only a few icons and does not meet file manager needs such as Nautilus.
-      # - Need https://github.com/NixOS/nixpkgs/pull/419521 for updating and cleanups
-      # - I just need MoreWaita for mimetype icons, however just removing and keeping symlinks only in mimetypes/ is an annoying task.
-      #   Some mimetypes also refers apps icons. So simply using upstream package for now.
-      #   See https://specifications.freedesktop.org/icon-theme-spec/latest/#icon_lookup for detail
-      unstable.morewaita-icon-theme
-      # (papirus-icon-theme.override { color = "adwaita"; }) # overriding color takes about 5 minutes
-
       cyme
       lshw
       pciutils # `lspci`
