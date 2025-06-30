@@ -48,6 +48,15 @@
 
         tailscale # Frequently backported to stable channel
 
+        # Enable LSP on global.
+        #   - nixd is useually required in all platforms even in WSL2
+        #   - Especially zed-editor is using for NixOS default VISUAL editor. It requires LSPs
+        nixd
+        unstable.typos-lsp
+        gopls
+        rust-analyzer
+        rustfmt
+
         shellcheck
         shfmt
       ])
