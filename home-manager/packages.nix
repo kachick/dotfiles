@@ -68,7 +68,7 @@
   hexyl # hex viewer
   fd # alt find
   du-dust # `dust`, alt du
-  bottom # `btm`, alt top
+  my.bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   sad
