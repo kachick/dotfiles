@@ -5,8 +5,7 @@
 }:
 
 stdenvNoCC.mkDerivation {
-  pname = "bottom-with-icon";
-  inherit (bottom) version meta;
+  inherit (bottom) pname version meta;
 
   # Copying original package should be better than overriding here to leverage official binary cache
   src = bottom;
