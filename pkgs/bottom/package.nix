@@ -24,7 +24,7 @@ stdenvNoCC.mkDerivation {
   # Also require https://github.com/ClementTsang/bottom/pull/1749 to pass validations
   postFixup = ''
     desktop-file-edit "$out/share/applications/bottom.desktop" \
-      --set-key='Icon' --set-value='btm' \
+      --set-key='Icon' --set-value='bottom' \
       --set-key='Version' --set-value='1.5' \
       --set-key='Categories' --set-value='ConsoleOnly;Monitor;'
   '';
