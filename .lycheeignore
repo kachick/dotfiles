@@ -31,3 +31,6 @@ askubuntu.com
 
 # It seems lychee cannot parse Nix language syntax correctly
 github.com/nodchip/tanuki-/releases/download
+
+# Nix's version interpolation URL is not a standard URL
+https://ludii.games/downloads

@@ -20,37 +20,31 @@
 
   # Patched and override existing name because of it is not cofigurable
   (final: prev: {
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/gn/gnome-keyring/package.nix
-    # To disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
+    # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
+    #
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/gn/gnome-keyring/package.nix
+    # Backport https://github.com/NixOS/nixpkgs/pull/379731 to disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
     #
     # And it should be override the package it self, the module is not configurable for the package. https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/desktops/gnome/gnome-keyring.nix
-    gnome-keyring = prev.gnome-keyring.overrideAttrs (
-      finalAttrs: previousAttrs: {
-        # https://github.com/NixOS/nixpkgs/issues/140824#issuecomment-2573660493
-        # configureFlags -> mesonFlags: https://github.com/NixOS/nixpkgs/commit/58d1ecc5c3621b56577a9c8f955672ac935c1eba
-        mesonFlags = final.lib.lists.remove "-Dssh-agent=true" previousAttrs.mesonFlags;
-      }
-    );
+    gnome-keyring = prev.unstable.gnome-keyring;
   })
 
   # Pacthed packages
   (final: prev: {
     patched = {
-      lima = prev.lima.overrideAttrs (
-        finalAttrs: previousAttrs:
-        if prev.stdenv.hostPlatform.isLinux then
-          {
-            patches = [
-              (prev.fetchpatch {
-                # https://github.com/kachick/lima/pull/1
-                name = "lima-suppress-gssapi-warning.patch";
-                url = "https://patch-diff.githubusercontent.com/raw/kachick/lima/pull/1.patch";
-                hash = "sha256-QTEYorN+nj66WMlMz+hsoZUWPnlGPDCw0VSsqsiayls=";
-              })
-            ];
-          }
-        else
-          { }
+      # Use latest lima, it makes faster build especially patching: https://github.com/NixOS/nixpkgs/pull/415093
+      lima = prev.unstable.lima.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # This patch is needed on Linux. However enables on macOS too for testing.
+          patches = [
+            (prev.fetchpatch {
+              # https://github.com/lima-vm/lima/pull/3637
+              name = "lima-suppress-gssapi-warning.patch";
+              url = "https://github.com/lima-vm/lima/pull/3637.patch?full_index=1";
+              hash = "sha256-Q352EyM6vY/uhvm6s31Ff/IzHWd87EJm6WkFN9HFTJg=";
+            })
+          ];
+        }
       );
     };
   })
