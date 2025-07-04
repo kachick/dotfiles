@@ -5,7 +5,7 @@
   console = {
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
-    # You can list current glyphs with `sudo showconsolefont`
+    # You can list current glyphs with `showconsolefont`
     #
     # Avoiding cozette for now, it is not a monospace font and having problem https://github.com/the-moonwitch/Cozette/issues/122
     # A patch in nixpkgs https://github.com/NixOS/nixpkgs/pull/371226 does not completely resolve it for HiDPI files.
