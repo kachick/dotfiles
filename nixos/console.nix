@@ -6,10 +6,14 @@
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `sudo showconsolefont`
-    font = "${pkgs.unstable.cozette}/share/consolefonts/cozette12x26.psfu";
+    #
+    # Avoiding cozette for now, it is not a monospace font and having problem https://github.com/the-moonwitch/Cozette/issues/122
+    # A patch in nixpkgs https://github.com/NixOS/nixpkgs/pull/371226 does not completely resolve it for HiDPI files.
+    # I guess the root cause is cozette have different wides for each gryph and it will not be fit for monospace specialized tools
+    font = "${pkgs.spleen}/share/consolefonts/spleen-16x32.psfu";
 
     # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
-    packages = with pkgs.unstable; [ cozette ];
+    packages = with pkgs; [ spleen ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
     # The IDs are not same as X11 definitions. So check the model section in following path.
