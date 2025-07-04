@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/console.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/config/console.nix
   # https://wiki.archlinux.org/title/Linux_console
   console = {
     earlySetup = true;
@@ -12,17 +12,18 @@
     # I guess the root cause is cozette have different wides for each gryph and it will not be fit for monospace specialized tools
     #
     # Requirements
-    #   - monospace
-    #   - For HiDPI. It should have 10x20 or larger (This excludes Gohufont)
+    #   - Support IBM437
+    #   - monospace: This excludes Cozette
+    #   - For HiDPI. It should have 12x24 or larger: This excludes Gohufont and Tamzen
     #
     # Candidates
     #   - spleen
-    #   - Terminus
-    font = "${pkgs.tamzen}/share/consolefonts/TamzenForPowerline10x20.psf";
+    #   - Terminus # The bold variant is used by nixos-25.05 default
+    font = "${pkgs.terminus_font}/share/consolefonts/ter-u32n.psf.gz";
 
     # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
     packages = with pkgs; [
-      tamzen
+      terminus_font
     ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
