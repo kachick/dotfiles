@@ -10,10 +10,20 @@
     # Avoiding cozette for now, it is not a monospace font and having problem https://github.com/the-moonwitch/Cozette/issues/122
     # A patch in nixpkgs https://github.com/NixOS/nixpkgs/pull/371226 does not completely resolve it for HiDPI files.
     # I guess the root cause is cozette have different wides for each gryph and it will not be fit for monospace specialized tools
-    font = "${pkgs.spleen}/share/consolefonts/spleen-16x32.psfu";
+    #
+    # Requirements
+    #   - monospace
+    #   - For HiDPI. It should have 10x20 or larger (This excludes Gohufont)
+    #
+    # Candidates
+    #   - spleen
+    #   - Terminus
+    font = "${pkgs.tamzen}/share/consolefonts/TamzenForPowerline10x20.psf";
 
     # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
-    packages = with pkgs; [ spleen ];
+    packages = with pkgs; [
+      tamzen
+    ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
     # The IDs are not same as X11 definitions. So check the model section in following path.
