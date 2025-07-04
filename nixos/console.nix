@@ -1,14 +1,30 @@
 { pkgs, ... }:
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/console.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/config/console.nix
   # https://wiki.archlinux.org/title/Linux_console
   console = {
     earlySetup = true;
     # The font should have PSF formats. Do not specify TTF and OTF
     # You can list current glyphs with `showconsolefont`
-    font = "${pkgs.patched.cozette}/share/consolefonts/cozette_hidpi.psf";
+    #
+    # Avoiding cozette for now, it is not a monospace font and having problem https://github.com/the-moonwitch/Cozette/issues/122
+    # A patch in nixpkgs https://github.com/NixOS/nixpkgs/pull/371226 does not completely resolve it for HiDPI files.
+    # I guess the root cause is cozette have different wides for each gryph and it will not be fit for monospace specialized tools
+    #
+    # Requirements
+    #   - Support IBM437
+    #   - monospace: This excludes Cozette
+    #   - For HiDPI. It should have 12x24 or larger: This excludes Gohufont and Tamzen
+    #
+    # Candidates
+    #   - spleen
+    #   - Terminus # The bold variant is used by nixos-25.05 default
+    font = "${pkgs.terminus_font}/share/consolefonts/ter-u32n.psf.gz";
 
-    packages = with pkgs.patched; [ cozette ];
+    # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
+    packages = with pkgs; [
+      terminus_font
+    ];
 
     # You might need to custom this, for example your device is having JIS layout keyboard.
     # The IDs are not same as X11 definitions. So check the model section in following path.
