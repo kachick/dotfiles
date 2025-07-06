@@ -156,7 +156,10 @@
 
       dconf-editor
 
-      podman-desktop
+      # Using unstable to avoid EOL electron
+      # - https://github.com/kachick/dotfiles/pull/1219#issuecomment-3040550716
+      # - https://github.com/NixOS/nixpkgs/pull/407982#issuecomment-3039508105
+      unstable.podman-desktop
 
       # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
 
