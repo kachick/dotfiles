@@ -214,6 +214,8 @@
         # - Alt_R is using for IME switcher
         # - Super_R is missing in my laptop, however it is just ignored in the device
         overlay-key = "Super_R";
+
+        auto-maximize = false;
       };
 
       "org/gnome/mutter/keybindings" = {
