@@ -188,7 +188,8 @@
         ];
       })
 
-      my.bitsnpicas
+      # Available since https://github.com/NixOS/nixpkgs/pull/409810
+      unstable.bitsnpicas
 
       ## Unfree packages
 
