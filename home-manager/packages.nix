@@ -99,7 +99,10 @@
 
   unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
 
-  unstable.brush # Use latest as possible because of I'm a package maintainer
+  # Require unstable version because
+  #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
+  #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
+  unstable.brush
 ])
 ++ (with pkgs.my; [
   la
