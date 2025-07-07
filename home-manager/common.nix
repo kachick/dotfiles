@@ -97,6 +97,8 @@
       # GH-897
       "ddis" = "direnv disallow";
 
+      # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
+      #       adding `--disable-event unimplemented` might be required.
       "br" = "brush --enable-highlighting";
     };
   };

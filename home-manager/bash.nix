@@ -123,6 +123,7 @@
         # Workaround for issues likely https://github.com/reubeno/brush/issues/380
         # Don't use the "command -v", it made much slow. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
         if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+        	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
         	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
         	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
         fi
