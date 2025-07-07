@@ -99,6 +99,8 @@
 
       # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
       #       adding `--disable-event unimplemented` might be required.
+      #
+      # Highlighting is still experimental. However, this is a core requirement for me: https://github.com/kachick/times_kachick/issues/184#issuecomment-1396670990
       "br" = "brush --enable-highlighting";
     };
   };
