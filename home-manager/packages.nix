@@ -19,7 +19,7 @@
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
   # Use same nixpkgs channel as same as fzf
   television # `tv`. Alt fzf
-  zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
+  unstable.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
   coreutils

@@ -134,10 +134,13 @@
     };
   };
 
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
+    # Using unstable to apply https://github.com/ajeetdsouza/zoxide/pull/1048. Prefer stable since nixos-25.11
+    package = pkgs.unstable.zoxide;
 
-    # Use same nixpkgs channel as same as fzf
+    # Use same nixpkgs channel as same as fzf since nixos-25.11
   };
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
