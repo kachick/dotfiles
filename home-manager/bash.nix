@@ -12,7 +12,6 @@
   programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
   programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
-  programs.broot.enableBashIntegration = true;
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/readline.nix
@@ -121,12 +120,17 @@
         # shellcheck disable=SC2034
         starship_precmd_user_func="set_win_title"
 
-        source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
-        source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        # Workaround for issues likely https://github.com/reubeno/brush/issues/380
+        # Don't use the "command -v", it made much slow. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
+        if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+        	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
+        	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
+        	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+        fi
 
         # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile
         for file in ${../dependencies/bash}/*; do
-            source "$file"
+        	source "$file"
         done
 
         # Disable `Ctrl + S(no output tty)`

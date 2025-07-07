@@ -4,5 +4,7 @@ hyperfine --warmup 1 --runs 3 --shell none "$@" \
 	'zsh --no-rcs --interactive -c exit' \
 	'bash -i -c exit' \
 	'bash --norc -i -c exit' \
+	'brush --enable-highlighting -i -c exit' \
+	'brush --norc --enable-highlighting -i -c exit' \
 	'nu --interactive --commands exit' \
 	'nu --no-config-file --interactive --commands exit'

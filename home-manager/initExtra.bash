@@ -1,7 +1,9 @@
-# https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
-if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
-	bind '"\e[A":history-substring-search-backward'
-	bind '"\e[B":history-substring-search-forward'
+if [[ -z "${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+	# https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
+	if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
+		bind '"\e[A":history-substring-search-backward'
+		bind '"\e[B":history-substring-search-forward'
+	fi
 fi
 
 # set variable identifying the chroot you work in (used in the prompt below)

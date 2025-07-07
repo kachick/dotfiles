@@ -19,7 +19,7 @@
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
   # Use same nixpkgs channel as same as fzf
   television # `tv`. Alt fzf
-  zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
+  unstable.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
   coreutils
@@ -72,7 +72,6 @@
   xh # alt HTTPie
   zellij
   sad
-  broot # `br` for shell util func
 
   typos
   hyperfine
@@ -98,6 +97,11 @@
   fastfetch # active replacement of neofetch
 
   unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
+
+  # Require unstable version because
+  #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
+  #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
+  unstable.brush
 ])
 ++ (with pkgs.my; [
   la

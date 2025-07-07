@@ -96,6 +96,12 @@
 
       # GH-897
       "ddis" = "direnv disallow";
+
+      # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
+      #       adding `--disable-event unimplemented` might be required.
+      #
+      # Highlighting is still experimental. However, this is a core requirement for me: https://github.com/kachick/times_kachick/issues/184#issuecomment-1396670990
+      "br" = "brush --enable-highlighting";
     };
   };
 
@@ -128,10 +134,13 @@
     };
   };
 
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
+    # Using unstable to apply https://github.com/ajeetdsouza/zoxide/pull/1048. Prefer stable since nixos-25.11
+    package = pkgs.unstable.zoxide;
 
-    # Use same nixpkgs channel as same as fzf
+    # Use same nixpkgs channel as same as fzf since nixos-25.11
   };
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
@@ -200,12 +209,5 @@
       "--glob"
       "!.git"
     ];
-  };
-
-  programs.broot = {
-    enable = true;
-    settings = {
-      default_flags = "--hidden --sort-by-type-dirs-last";
-    };
   };
 }
