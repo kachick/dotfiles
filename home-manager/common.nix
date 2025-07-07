@@ -96,6 +96,8 @@
 
       # GH-897
       "ddis" = "direnv disallow";
+
+      "br" = "brush --enable-highlighting";
     };
   };
 
