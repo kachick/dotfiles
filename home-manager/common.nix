@@ -59,6 +59,8 @@
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
 
+      # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
+      # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
       STARSHIP_CONFIG = "${../config/starship/starship.toml}";
     };
 

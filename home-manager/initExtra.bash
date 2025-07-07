@@ -1,4 +1,10 @@
-if [[ -z "${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+if [[ -n "${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+	# - We can't simply use $BRUSH_VERSION for this purpose because of it is a shell variable.
+	#   Starship can only handle environment variables in env_var module.
+	# - Remember remaining this even if you run bash/zsh on brush. SHLVL helps it.
+	# - Don't set built-in $STARSHIP_SHELL variable, remaining on bash should be reasonable for now
+	export STARSHIP_BRUSH_INDICATOR='brush'
+else
 	# https://github.com/Bash-it/bash-it/blob/00062bfcb6c6a68cd2c9d2c76ed764e01e930e87/plugins/available/history-substring-search.plugin.bash
 	if [[ ${SHELLOPTS} =~ (vi|emacs) ]]; then
 		bind '"\e[A":history-substring-search-backward'
