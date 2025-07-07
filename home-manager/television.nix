@@ -4,11 +4,11 @@
   programs.television = {
     enable = true;
 
-    # Don't enable `enable*shIntegration` options for now, the applied keybindings will conflict with fzf.
-
     settings = {
       ui = {
         theme = "nord-dark";
+        input_bar_position = "bottom";
+        # orientation = "portrait"; # Available if https://github.com/alexpasmantier/television/pull/496 released
       };
     };
   };

@@ -37,14 +37,12 @@
         # - Using fixed profile shortcut is difficult in chrome. So don't add PWA here. See GH-813 and GH-968 for detail.
         favorite-apps = [
           "com.mitchellh.ghostty.desktop"
-          "dev.zed.Zed.desktop"
           "org.gnome.TextEditor.desktop"
           "google-chrome.desktop"
-          "podman-desktop.desktop"
-          "quickgui.desktop"
+          "signal.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
-          "org.gnome.Rhythmbox3.desktop"
           "org.gnome.Nautilus.desktop"
+          "io.missioncenter.MissionCenter.desktop"
         ];
       };
 
@@ -216,6 +214,8 @@
         # - Alt_R is using for IME switcher
         # - Super_R is missing in my laptop, however it is just ignored in the device
         overlay-key = "Super_R";
+
+        auto-maximize = false;
       };
 
       "org/gnome/mutter/keybindings" = {
@@ -247,6 +247,18 @@
 
         per-window = false;
       };
+
+      # Do not set this value. Stationary devices need longer times before sleep, while laptops need shorter times.
+      # However, this repository does not handle this pattern smartly with home-manager.
+      #
+      # "org/gnome/desktop/session" = {
+      #   # Preset time is limited to 1-15 minutes. However, manually entered values appear correctly in the UI.
+      #   idle-delay =
+      #     let
+      #       minutes = 10;
+      #     in
+      #     minutes * 60;
+      # };
 
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
@@ -306,6 +318,12 @@
 
       "org/gnome/nautilus/preferences" = {
         show-create-link = true;
+      };
+
+      "org/gnome/TextEditor" = {
+        show-line-numbers = true;
+        highlight-current-line = true;
+        show-map = true;
       };
     };
   };

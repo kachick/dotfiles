@@ -27,18 +27,17 @@ pkgs.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-2EKPmpup+endoiOA7nsS6LCQs7RN8WiII839EBjinqc=";
+  vendorHash = "sha256-+w//08i0dU0kP+vPe1ZXwy4hXOQYgCqRYYAjMQ7KfVM=";
   src =
     with lib.fileset;
-    toSource rec {
+    toSource {
       root = ../../.;
-      # Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
-      fileset = intersection (gitTracked root) (unions [
+      fileset = unions [
         ../../go.mod
         ../../go.sum
         ../../internal
         ./.
-      ]);
+      ];
     };
 
   subPackages = [

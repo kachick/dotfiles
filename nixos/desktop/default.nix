@@ -8,6 +8,8 @@
 {
   imports = [
     (import ./font.nix { inherit pkgs; })
+    (import ./vm.nix { inherit pkgs; })
+    (import ./game.nix { inherit pkgs; })
     ./kanata.nix
   ];
 
@@ -39,6 +41,8 @@
 
     # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
     exportConfiguration = true;
+
+    excludePackages = [ pkgs.xterm ];
   };
 
   services.udev.packages = with pkgs; [
@@ -52,9 +56,14 @@
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
-    # For lanching with command looks like better than alacritty
-    gnome-terminal.enable = true;
+
+    nautilus-open-any-terminal = {
+      enable = true;
+      terminal = "ghostty";
+    };
   };
+
+  programs.sniffnet.enable = true; # Simple Wireshark
 
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
@@ -64,6 +73,8 @@
     evince # document viewer
     gnome-calendar
     gnome-music # does not support flac by defaults
+    gnome-terminal # Appears with "Open In Terminal" in Nautilus even after removed. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
+    gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
   # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
@@ -120,16 +131,6 @@
 
       alacritty
 
-      # Ensure existing qemu-img with lima for use of systemd.
-      # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
-      # See GH-1049 for detail.
-      qemu
-
-      # Use latest to apply patches such as https://github.com/quickemu-project/quickemu/issues/1528
-      # Especially quickget requires latest definitions
-      unstable.quickemu
-      unstable.quickgui
-
       lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
       mission-center
@@ -138,8 +139,6 @@
       wofi
 
       # Add LSP global for zed-editor. Prefer external package for helix
-      unstable.typos-lsp
-      nixd
       vscode-langservers-extracted
       # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
 
@@ -152,11 +151,15 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
-      calibre
+      # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
+      readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 
       dconf-editor
 
-      podman-desktop
+      # Using unstable to avoid EOL electron
+      # - https://github.com/kachick/dotfiles/pull/1219#issuecomment-3040550716
+      # - https://github.com/NixOS/nixpkgs/pull/407982#issuecomment-3039508105
+      unstable.podman-desktop
 
       # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
 
@@ -177,20 +180,16 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
-      ## Shogi packages
-
-      # Install yaneuraou for each host with the optimized label if required
-      # If installing at here, it should be "SSE2"
-
-      # shogihome does not provide configuration schema and ENV, so manually setup the foollowing NNUE evaluation files for the engine
-      # Related issue: https://github.com/sunfish-shogi/shogihome/issues/1017
-      (unstable.shogihome.override {
+      # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
+      # Prefer GUI rather than gurk-rs for now, gurk-rs update is stopped. I guess it is hard until merging https://github.com/NixOS/nixpkgs/pull/387337
+      (unstable.signal-desktop.override {
         commandLineArgs = [
           "--wayland-text-input-version=3"
         ];
       })
 
-      my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/eval
+      # Available since https://github.com/NixOS/nixpkgs/pull/409810
+      unstable.bitsnpicas
 
       ## Unfree packages
 

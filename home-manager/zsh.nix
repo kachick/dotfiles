@@ -18,9 +18,10 @@ in
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  programs.fzf.enableZshIntegration = true;
-  # Avoid nested zellij in host and remote login as container
-  programs.zellij.enableZshIntegration = false;
+  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
+  programs.television.enableZshIntegration = false; # Conflict with fzf by default
+  programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
+  programs.broot.enableZshIntegration = true;
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
     if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then
@@ -236,6 +237,7 @@ in
           }
           precmd_functions+=(set_win_title)
 
+          source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
           source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
@@ -292,6 +294,27 @@ in
           if [ 'linux' = "$TERM" ]; then
             adjust_to_linux_vt
           fi
+
+          rg-fzf-widget() {
+            "${lib.getExe pkgs.my.rg-fzf}" "$LBUFFER"
+            zle reset-prompt
+          }
+
+          _tv_text_then_edit() {
+            local -r tv_result="$("${lib.getExe pkgs.television}" text --input "$LBUFFER")"
+            if [[ -n "$tv_result" ]]; then
+              "$EDITOR" "$tv_result"
+            fi
+
+            zle reset-prompt
+          }
+
+          # television is much faster than ripgrep + fzf solution especially for full-text search
+          # So consider to prefer it after portrait mode is available
+          zle     -N            rg-fzf-widget
+          bindkey -M emacs '^F' rg-fzf-widget
+          bindkey -M vicmd '^F' rg-fzf-widget
+          bindkey -M viins '^F' rg-fzf-widget
 
           # https://superuser.com/a/902508/120469
           # https://github.com/zsh-users/zsh-autosuggestions/issues/259

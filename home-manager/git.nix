@@ -187,8 +187,7 @@ in
               --header 'Accept: application/vnd.github+json' \
               --header 'X-GitHub-Api-Version: 2022-11-28' \
               '/repos/{owner}/{repo}/actions/permissions/workflow' \
-              --field 'can_approve_pull_request_reviews=true' \
-              --raw-field 'default_workflow_permissions=write'
+              --field 'can_approve_pull_request_reviews=true'
         '';
 
         # https://www.collinsdictionary.com/dictionary/english/burl

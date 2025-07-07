@@ -68,10 +68,11 @@
   hexyl # hex viewer
   fd # alt find
   du-dust # `dust`, alt du
-  bottom # `btm`, alt top
+  my.bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   sad
+  broot # `br` for shell util func
 
   typos
   hyperfine
@@ -116,4 +117,5 @@
   bench_shells
   preview
   renmark
+  tree-diff
 ])

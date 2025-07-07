@@ -24,12 +24,6 @@
       # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    psfeditor = {
-      # https://github.com/ideras/PSFEditor/pull/1
-      # Update this if the status of https://github.com/NixOS/nixpkgs/pull/396886 be changed
-      url = "github:ideras/PSFEditor";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -114,6 +108,7 @@
                   nix-init
                   nurl
                   nixfmt-rfc-style
+                  nix-update
 
                   go_1_24
 
@@ -136,7 +131,6 @@
                 ++ (with pkgs.my; [ nix-hash-url ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
-                  inputs.psfeditor.packages.${system}.default
                 ]
               ));
           };

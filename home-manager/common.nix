@@ -201,4 +201,11 @@
       "!.git"
     ];
   };
+
+  programs.broot = {
+    enable = true;
+    settings = {
+      default_flags = "--hidden --sort-by-type-dirs-last";
+    };
+  };
 }
