@@ -59,6 +59,19 @@
 
         shellcheck
         shfmt
+
+        # Useful if facing to coredump likely https://github.com/NixOS/nixpkgs/pull/423716
+        # Simply use built-in TUI as following
+        #
+        # ```console
+        # > lldb --core the.dump
+        # > (lldb) gui
+        # ```
+        #
+        # coredump can be output with `coredumpctl list` and `coredumpctl dump <ID> --output path`
+        #
+        # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
+        lldb
       ])
       ++ (with pkgs.my; [
         rclone-list-mounted
