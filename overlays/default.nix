@@ -32,19 +32,29 @@
   # Pacthed packages
   (final: prev: {
     patched = {
+      # TODO: Remove this patch if merged and backported: https://github.com/NixOS/nixpkgs/pull/423960
+      #
       # Use latest lima, it makes faster build especially patching: https://github.com/NixOS/nixpkgs/pull/415093
       lima = prev.unstable.lima.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          # This patch is needed on Linux. However enables on macOS too for testing.
-          patches = [
-            (prev.fetchpatch {
-              # https://github.com/lima-vm/lima/pull/3637
-              name = "lima-suppress-gssapi-warning.patch";
-              url = "https://github.com/lima-vm/lima/pull/3637.patch?full_index=1";
-              hash = "sha256-Q352EyM6vY/uhvm6s31Ff/IzHWd87EJm6WkFN9HFTJg=";
-            })
-          ];
-        }
+        finalAttrs: previousAttrs:
+        # This patch only required on NixOS. And avoid macOS build for now, at least on GHA macos runners, Nix 2.30.0 brokes the build
+        # See following links
+        # - https://github.com/NixOS/nixpkgs/pull/423960#issuecomment-3061050564
+        # - https://github.com/actions/runner-images/issues/12574#issuecomment-3061038899
+        # - https://github.com/kachick/nixpkgs-reviewing-workspace/pull/106#issuecomment-3062256632
+        if prev.stdenv.hostPlatform.isLinux then
+          {
+            patches = [
+              (prev.fetchpatch {
+                # https://github.com/lima-vm/lima/pull/3637
+                name = "lima-suppress-gssapi-warning.patch";
+                url = "https://github.com/lima-vm/lima/pull/3637.patch?full_index=1";
+                hash = "sha256-Q352EyM6vY/uhvm6s31Ff/IzHWd87EJm6WkFN9HFTJg=";
+              })
+            ];
+          }
+        else
+          { }
       );
     };
   })
