@@ -42,6 +42,14 @@ $env.config = {
           ]
         }
     ]
+
+    completions: {
+      # Available since 0.104.0
+      # - https://github.com/nushell/nushell.github.io/pull/1897
+      # - https://github.com/nushell/nushell/pull/15511
+      # Not available on History yet: https://github.com/nushell/nushell/discussions/7968#discussioncomment-13730988
+      algorithm: "substring"
+    }
 }
 
 # https://github.com/nushell/nushell/issues/7988
