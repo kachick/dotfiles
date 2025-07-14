@@ -37,15 +37,14 @@
 
   services.fstrim.enable = true;
 
-  # You can check the status with `tlp-stat` which installed by enabling this module.
-  services.tlp = {
-    enable = true;
-
-    settings = {
-      # Save long term battery health
-      START_CHARGE_THRESH_BAT0 = 40;
-      STOP_CHARGE_THRESH_BAT0 = 80;
-    };
+  # Don't use TLP on this device.
+  systemd.services.battery-charge-threshold = {
+    description = "Limit battery charging on power-profiles-daemon for longevity";
+    script = ''
+      echo 40 | tee /sys/class/power_supply/BAT0/charge_control_start_threshold
+      echo 80 | tee /sys/class/power_supply/BAT0/charge_control_end_threshold
+    '';
+    wantedBy = [ "multi-user.target" ];
   };
 
   services.udev.extraHwdb = lib.mkAfter ''
