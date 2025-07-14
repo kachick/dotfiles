@@ -119,6 +119,8 @@
       cyme
       lshw
       pciutils # `lspci`
+      smartmontools # `sudo smartctl -a /dev/nvme0n1`
+      nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
 
       # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # Don't use unstable. This package had been frequently broken the build in updating. See GH-1085 and GH-1134.
