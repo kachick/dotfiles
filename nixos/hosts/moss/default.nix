@@ -37,15 +37,28 @@
 
   services.fstrim.enable = true;
 
-  # Don't use TLP on this device.
-  systemd.services.battery-charge-threshold = {
-    description = "Limit battery charging on power-profiles-daemon for longevity";
-    script = ''
-      echo 40 | tee /sys/class/power_supply/BAT0/charge_control_start_threshold
-      echo 80 | tee /sys/class/power_supply/BAT0/charge_control_end_threshold
-    '';
-    wantedBy = [ "multi-user.target" ];
-  };
+  # Don't use this charge_control_*_threshold config for now, while GNOME and UPower integrations are working
+  # However GNOME's "Preserve Battery Health" seems incomplete the UI and behavior for me.
+  # Keep in mind for below links
+  # - https://gitlab.gnome.org/GNOME/gnome-control-center/-/merge_requests/2176
+  # - https://gitlab.gnome.org/GNOME/gnome-control-center/-/issues/2553
+  # - https://gitlab.gnome.org/GNOME/gnome-control-center/-/issues/3456
+  # - https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/7904
+  # - https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/5429
+  # - https://gitlab.gnome.org/GNOME/gnome-shell/-/issues/5228
+  # You can manually check the current value with `ls`, `cat` the /sys/class/power_supply/BAT0/ files or `upower --dump`
+  # And you can watch the GNOME changed value with `upower --monitor-detail`.
+  # `dconf watch /` cannot support this UPower integrations.
+  #
+  # # Don't use TLP on this device.
+  # systemd.services.battery-charge-threshold = {
+  #   description = "Limit battery charging on power-profiles-daemon for longevity";
+  #   script = ''
+  #     echo 40 | tee /sys/class/power_supply/BAT0/charge_control_start_threshold
+  #     echo 80 | tee /sys/class/power_supply/BAT0/charge_control_end_threshold
+  #   '';
+  #   wantedBy = [ "multi-user.target" ];
+  # };
 
   services.udev.extraHwdb = lib.mkAfter ''
     evdev:name:AT Translated Set 2 keyboard:*
