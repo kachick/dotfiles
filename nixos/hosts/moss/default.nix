@@ -37,6 +37,17 @@
 
   services.fstrim.enable = true;
 
+  # You can check the status with `tlp-stat` which installed by enabling this module.
+  services.tlp = {
+    enable = true;
+
+    settings = {
+      # Save long term battery health
+      START_CHARGE_THRESH_BAT0 = 40;
+      STOP_CHARGE_THRESH_BAT0 = 80;
+    };
+  };
+
   services.udev.extraHwdb = lib.mkAfter ''
     evdev:name:AT Translated Set 2 keyboard:*
       KEYBOARD_KEY_3a=leftctrl # original: capslock
