@@ -31,6 +31,8 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  services.fstrim.enable = true;
+
   # Required to reboot if you want to apply changes
   # Prevent GH-894
   # https://askubuntu.com/a/1446653

@@ -35,6 +35,8 @@
 
   services.xserver.videoDrivers = [ "amdgpu" ];
 
+  services.fstrim.enable = true;
+
   services.udev.extraHwdb = lib.mkAfter ''
     evdev:name:AT Translated Set 2 keyboard:*
       KEYBOARD_KEY_3a=leftctrl # original: capslock
