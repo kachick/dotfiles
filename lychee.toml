@@ -42,6 +42,9 @@ exclude = [
 
   # Having strict spam checker, it also rejeccts lychee requests from GitHub Actions
   "https://gitlab.freedesktop.org/",
+
+  # Slow network
+  "wiki.gnupg.org",
 ]
 
 exclude_all_private = true
