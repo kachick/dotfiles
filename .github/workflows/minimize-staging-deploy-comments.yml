@@ -16,6 +16,8 @@ jobs:
     steps:
       # Need checkout before using gh and repo placeholders
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Minimize old deploy comments
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -101,6 +101,7 @@ jobs:
         with:
           # KEEP fetch-depth for gh command
           fetch-depth: 0
+          persist-credentials: false
       - name: Set up Go
         uses: actions/setup-go@v5
         with:

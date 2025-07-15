@@ -25,6 +25,8 @@ jobs:
       CLI_VERSION: '0.18.1' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Install
         run: |
           curl -OL 'https://github.com/lycheeverse/lychee/releases/download/lychee-v${{ env.CLI_VERSION }}/lychee-x86_64-unknown-linux-gnu.tar.gz'
