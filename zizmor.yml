@@ -5,6 +5,14 @@ rules:
         kachick/*: any
         actions/*: any
         crate-ci/*: any
+        dependabot/*: any
+        dprint/*: any
+        DeterminateSystems/*: any
+  excessive-permissions:
+    ignore:
+      - merge-bot-pr.yml
+      - cleanup-staging-packages.yml
+      - container.yml
   template-injection:
     ignore:
       - container.yml

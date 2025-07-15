@@ -17,6 +17,9 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * 2'
 
+permissions:
+  contents: read
+
 jobs:
   # Don't use lycheeverse/lychee-action. There is no benefit rather than using the CLI for my use. And considering the targets should be simple with `git ls-files` rather than built-in glob
   lychee:

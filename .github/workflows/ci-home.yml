@@ -25,6 +25,9 @@ on:
     - cron: '42 1 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   home-manager:
     timeout-minutes: 60

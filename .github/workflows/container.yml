@@ -15,6 +15,11 @@ on:
     - cron: '42 2,14 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+  packages: write
+
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:

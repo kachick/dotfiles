@@ -15,6 +15,10 @@ defaults:
     # https://pubs.opengroup.org/onlinepubs/009695399/utilities/set.html
     shell: bash -Ceuxo pipefail {0}
 
+permissions:
+  pull-requests: write
+  packages: write
+
 jobs:
   get-meta:
     runs-on: ubuntu-24.04

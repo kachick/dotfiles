@@ -24,10 +24,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
-  checks: read # For private repositories
-  actions: read # For private repositories
+  contents: read
 
 defaults:
   run:
@@ -103,7 +100,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v5 # zizmor: ignore[cache-poisoning]
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'

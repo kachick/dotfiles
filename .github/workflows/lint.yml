@@ -11,6 +11,9 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   dprint:
     runs-on: ubuntu-24.04

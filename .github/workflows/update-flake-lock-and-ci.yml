@@ -13,6 +13,9 @@ on:
     # - cron: '17 0 * * 5'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-nixpkgs:
     if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)

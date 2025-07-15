@@ -9,6 +9,10 @@ on:
         required: true
         type: number
 
+permissions:
+  pull-requests: write
+  packages: write
+
 jobs:
   minimize:
     runs-on: ubuntu-24.04

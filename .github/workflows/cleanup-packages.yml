@@ -15,6 +15,9 @@ on:
         default: 50 # Assumes 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior
         type: number
 
+permissions:
+  packages: write
+
 jobs:
   ghcr:
     runs-on: ubuntu-24.04
