@@ -68,7 +68,7 @@ jobs:
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
+        run: | # zizmor: ignore[template-injection]
           (
           cat <<'EOF'
           🤖 removed 🗑️ staging ⬢ from ghcr.io

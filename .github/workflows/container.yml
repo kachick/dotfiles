@@ -189,7 +189,7 @@ jobs:
         if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
+        run: | # zizmor: ignore[template-injection]
           (
           cat <<'EOF'
           ⬢🦭 Staging container-image has been deployed 🚀\

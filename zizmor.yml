@@ -5,3 +5,7 @@ rules:
         kachick/*: any
         actions/*: any
         crate-ci/*: any
+  template-injection:
+    ignore:
+      - container.yml
+      - cleanup-staging-packages.yml
