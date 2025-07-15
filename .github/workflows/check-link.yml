@@ -6,11 +6,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/check-link.yml'
-      - '.lycheeignore'
+      - 'lychee.toml'
   pull_request:
     paths:
       - '.github/workflows/check-link.yml'
-      - '.lycheeignore'
+      - 'lychee.toml'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST
@@ -42,4 +42,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
-          git ls-files '*.md' '*.nix' | xargs lychee --max-concurrency 3 --accept '200,429' --
+          git ls-files '*.md' '*.nix' | xargs lychee --
