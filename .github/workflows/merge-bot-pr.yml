@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       merge: ${{ steps.conclusion.outputs.merge }}
-    if: ${{ github.actor == 'dependabot[bot]' }}
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
       - name: Dependabot metadata
         id: dependabot
@@ -54,7 +54,7 @@ jobs:
   renovate:
     timeout-minutes: 90
     runs-on: ubuntu-24.04
-    if: ${{ github.actor == 'renovate[bot]' }}
+    if: ${{ github.event.pull_request.user.login == 'renovate[bot]' }}
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
@@ -71,7 +71,7 @@ jobs:
   selfup-runner:
     timeout-minutes: 90
     runs-on: ubuntu-24.04
-    if: ${{ github.actor == 'selfup-runner[bot]' }}
+    if: ${{ github.event.pull_request.user.login == 'selfup-runner[bot]' }}
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@v3
