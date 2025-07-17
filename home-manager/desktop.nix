@@ -20,6 +20,14 @@ let
     "firefox.desktop"
   ];
 
+  # I prefer using a PDF reader over an PDF editor, which I use infrequently. Native readers like Papers are also heavier than browsers.
+  # This list is not the same as the `webBrowser` list. The order matters; Firefox is preferred for its speed.
+  pdfReader = [
+    "firefox.desktop"
+    # Chrome is heavy when open large PDF files
+    "google-chrome.desktop"
+  ];
+
   terminalEmulator = [
     "com.mitchellh.ghostty.desktop"
     "Alacritty.desktop"
@@ -83,8 +91,13 @@ in
             "x-scheme-handler/https"
             "x-scheme-handler/about"
             "x-scheme-handler/unknown"
-            "application/pdf" # I prefer to open PDF with reader, editor is not frequently used. And native readers Papers is much heavy than browsers
           ] (_: webBrowser))
+
+        //
+
+          (lib.genAttrs [
+            "application/pdf"
+          ] (_: pdfReader))
 
         //
 
