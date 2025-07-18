@@ -103,11 +103,18 @@
     # However initExtra is still better option than profileExtra.
     initExtra =
       ''
-        # Don't put shell delegation code into early phase than interactive check
-        # Switch to another shell when bash used as a login shell
-        # Used same method as switching to fish
+        # Don't delegate shell execution before interactive shell checks.
+        # Auto-switch to Zsh if Bash is the login shell.
+        # Inspired by Arch Wiki's Fish setup:
         # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-        if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 ]]
+        #
+        # --- Optimization & Cross-Platform Compatibility ---
+        # The order of these checks matters for two reasons:
+        # 1. Performance: Prioritize internal checks to minimize external 'ps' calls.
+        # 2. Cross-Platform Reliability: 'ps' acts differently across systems.
+        #    Even with 'procps' from nixpkgs, the package is not the same on Linux and Darwin, though it has the same name in Nixpkgs.
+        # This approach is also beneficial since Bash isn't typically a login shell on macOS.
+        if [[ -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" ]]
         then
           shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
           exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
