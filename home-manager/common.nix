@@ -225,7 +225,8 @@
     ];
 
     settings = {
-      sync_address = "https://127.0.0.1";
+      # auto_sync = true; # TODO: Consider enabling after test
+      sync_address = "https://algae";
     };
   };
 }

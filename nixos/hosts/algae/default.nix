@@ -66,6 +66,8 @@
     AllowSuspendThenHibernate=no
   '';
 
+  services.atuin.enable = true;
+
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
     (unstable.yaneuraou.override {
