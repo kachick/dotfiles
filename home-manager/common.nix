@@ -220,6 +220,8 @@
     flags = [
       # https://github.com/atuinsh/atuin/issues/51
       "--disable-up-arrow"
+
+      # "--disable-ctrl-r" # TODO: Consider to choose fzf or atuin
     ];
 
     settings = {
