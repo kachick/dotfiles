@@ -1,0 +1,39 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+        children
+        // size affects for the new UI or not
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab name="BPS" {
+        pane split_direction="vertical" {
+            pane size="70%" {
+
+            }
+            pane split_direction="horizontal" size="30%" {
+                pane
+                pane name="repl" start_suspended=true command="nix" close_on_exit=false {
+                    args "repl" "."
+                    start_suspended true
+                }
+            }
+        }
+    }
+    tab name="dconf" {
+        // Don't use edit pane. close_on_exit is only available in command panes
+        pane name="edit" command="hx" size="70%" close_on_exit=false {
+            args "home-manager/gnome.nix"
+        }
+        pane split_direction="vertical" size="30%" {
+            pane name="watch" start_suspended=true command="dconf" close_on_exit=false {
+                args "watch" "/"
+                start_suspended true
+            }
+            pane name="blank" command="zsh" close_on_exit=false
+        }
+    }
+}

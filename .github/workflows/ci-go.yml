@@ -1,4 +1,5 @@
-name: CI - Go
+# https://github.com/golang/go/issues/59968
+name: ʕ◔ϖ◔ʔ
 
 on:
   push:
@@ -9,49 +10,52 @@ on:
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   pull_request:
     paths:
       - '.github/workflows/ci-go.yml'
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   test:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-13
-    runs-on: ${{ matrix.os }}
+        runner:
+          - ubuntu-24.04
+          - windows-2025
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
-      # https://github.com/davidB/rust-cargo-make/pull/178 is the blocker, even if this action is recommended in cargo-make official docs
-      - uses: asdf-vm/actions/install@v2
-        with:
-          # Keep same version as used in *.nix
-          tool_versions: |
-            cargo-make 0.36.12
-      # - run: go test
-      - run: makers test-go-race
+      - run: go test ./...
+      - run: go build -v -race ./...
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
       - name: check format
         run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
-      - run: go vet ./...
+      - name: 'Ensure installing go tool is done. Without this step, `go: downloading ...` logs appears in the extracting command path'
+        run: go tool -n exhaustruct
+      - run: go vet -vettool "$(go tool -n exhaustruct)" ./...

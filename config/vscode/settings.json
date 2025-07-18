@@ -1,0 +1,110 @@
+{
+  "$schema": "vscode://schemas/settings/user",
+  "[json]": {
+    "editor.formatOnSave": true
+  },
+  "json.format.enable": false,
+  "[nix]": {
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer",
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "onUnlessPressed"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
+  "gopls": {
+    "build.buildFlags": ["-tags=linux,windows,darwin"]
+  },
+  "[crystal]": {
+    "editor.defaultFormatter": "crystal-lang-tools.crystal-lang"
+  },
+  "[ruby]": {
+    "editor.defaultFormatter": "rubocop.vscode-rubocop"
+  },
+  "[elm]": {
+    "editor.defaultFormatter": "elmTooling.elm-ls-vscode"
+  },
+  "workbench.editor.enablePreview": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "diffEditor.ignoreTrimWhitespace": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "editor.suggestSelection": "first",
+  "editor.tabSize": 2,
+  "editor.renderWhitespace": "trailing",
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": true,
+  "go.toolsManagement.autoUpdate": true,
+  "workbench.startupEditor": "none",
+  "workbench.iconTheme": "material-icon-theme",
+  "workbench.editorAssociations": {
+    "git-rebase-todo": "default"
+  },
+  "security.workspace.trust.untrustedFiles": "open",
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.profiles.linux": {
+    "bash": {
+      "path": "bash",
+      "args": ["--login"], // Delegate to zsh/fish/nushell after bash. See GH-452
+      "icon": "terminal-bash"
+    }
+  },
+  "window.title": "${activeEditorMedium}${separator}${rootName}",
+  "files.watcherExclude": {
+    "**.log": true,
+    "**/build/**": true,
+    "**/node_modules/**": true,
+    "**/vendor/**": true,
+    "**/.direnv/**": true
+  },
+  "search.exclude": {
+    "**.log": true,
+    "**/build/**": true,
+    "**/node_modules/**": true,
+    "**/log": true,
+    "**/tmp": true,
+    "**/vendor": true,
+    "**/.direnv/**": true
+  },
+  "go.editorContextMenuCommands": {
+    "fillStruct": true
+  },
+  "diffEditor.wordWrap": "off",
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "search.followSymlinks": false,
+  "search.useGlobalIgnoreFiles": true,
+  "git.autofetch": true,
+  "git.ignoreRebaseWarning": true,
+  "files.autoGuessEncoding": true,
+  "editor.guides.indentation": false,
+  "editor.linkedEditing": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "editor.guides.bracketPairs": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+  "elmLS.elmReviewDiagnostics": "warning",
+  "typescript.format.enable": false,
+  "editor.fontFamily": "'PlemolJP Console NF', '源ノ角ゴシック Code JP', monospace",
+  "editor.fontLigatures": "'zero'",
+  "editor.inlineSuggest.enabled": true,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "git.openRepositoryInParentFolders": "never",
+  "shellcheck.ignorePatterns": {
+    "**/.envrc": true
+  },
+  "debug.openDebug": "neverOpen",
+  "editor.tabCompletion": "on",
+  "files.defaultLanguage": "powershell",
+  "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+  "workbench.colorTheme": "Base16 Dark Ashes",
+  "shellformat.useEditorConfig": true,
+  "editor.cursorSurroundingLines": 5,
+  "redhat.telemetry.enabled": false,
+  "update.mode": "none", // NixOS: flake, Windows: winget, macOS: Manually
+  "githubIssues.issueCompletions.enabled": false,
+  "github.copilot.enable": {
+    "*": false
+  }
+}

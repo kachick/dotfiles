@@ -1,0 +1,86 @@
+name: 👋 staging ⬢🗑️
+on:
+  pull_request:
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr-number:
+        description: 'Target PR number'
+        required: true
+        type: number
+
+defaults:
+  run:
+    # https://pubs.opengroup.org/onlinepubs/009695399/utilities/set.html
+    shell: bash -Ceuxo pipefail {0}
+
+permissions:
+  pull-requests: write
+  packages: write
+
+jobs:
+  get-meta:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      pr-number: ${{ steps.get-meta.outputs.pr-number }}
+    steps:
+      - name: Get metadata
+        id: get-meta
+        run: |
+          if [ '${{ github.event_name }}' == 'pull_request' ]; then
+            echo 'pr-number=${{ github.event.pull_request.number }}' | tee -a "$GITHUB_OUTPUT"
+          else
+            echo 'pr-number=${{ inputs.pr-number }}' | tee -a "$GITHUB_OUTPUT"
+          fi
+  minimize-old-comments:
+    needs: [get-meta]
+    uses: ./.github/workflows/minimize-staging-deploy-comments.yml
+    with:
+      pr-number: ${{ fromJSON(needs.get-meta.outputs.pr-number) }}
+  ghcr:
+    needs: [get-meta]
+    runs-on: ubuntu-24.04
+    if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
+    timeout-minutes: 15
+    steps:
+      - name: Inspect the PR published package
+        id: inspect-package
+        run: |
+          gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /users/kachick/packages/container/home/versions \
+            --jq '.[] | select(.metadata.container.tags[] | match("^pr-${{ needs.get-meta.outputs.pr-number }}-")).id' | \
+              ruby -e 'puts STDIN.each_line.map(&:chomp).join(",")' | \
+              xargs --no-run-if-empty --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
+        with:
+          owner: ${{ github.repository_owner }}
+          package-name: 'home'
+          package-type: 'container'
+          token: ${{ github.token }}
+          package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
+      - name: Prepare git to run gh commands
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Post comments to the PR
+        if: ${{ steps.inspect-package.outputs.package-version-ids }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: | # zizmor: ignore[template-injection]
+          (
+          cat <<'EOF'
+          🤖 removed 🗑️ staging ⬢ from ghcr.io
+
+          ```plaintext
+          ${{ steps.inspect-package.outputs.package-version-ids }}
+          ```
+          EOF
+          ) | gh pr comment '${{ needs.get-meta.outputs.pr-number }}' --body-file -

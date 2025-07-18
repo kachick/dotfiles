@@ -1,24 +1,66 @@
+//go:build linux || darwin
+
 package main
 
 import (
-	"github.com/kachick/dotfiles"
+	"flag"
+	"log"
+	"os/exec"
+	"strings"
+
+	"github.com/kachick/dotfiles/internal/constants"
+	"github.com/kachick/dotfiles/internal/fileutils"
+	"github.com/kachick/dotfiles/internal/runner"
 )
 
-func main() {
-	walker := dotfiles.GetWalker()
-
-	bashPaths := walker.GetAllBash()
-	nixPaths := walker.GetAllNix()
-
-	cmds := dotfiles.Commands{
-		{Path: "dprint", Args: []string{"check"}},
-		{Path: "shfmt", Args: append([]string{"--language-dialect", "bash", "--diff"}, bashPaths...)},
-		{Path: "shellcheck", Args: bashPaths},
-		{Path: "nixpkgs-fmt", Args: append([]string{"--check"}, nixPaths...)},
-		{Path: "typos", Args: dotfiles.GetTyposTargetedRoots()},
-		{Path: "gitleaks", Args: []string{"detect"}},
-		{Path: "go", Args: []string{"vet", "./..."}},
+func getExhaustructPath() string {
+	// It downloads dependencies and outputs them in first run.
+	// And getting only last line made messy result. I didn't get the actual root cause of this problem... :<
+	goToolN := func() *exec.Cmd { return exec.Command("go", []string{"tool", "-n", "exhaustruct"}...) }
+	err := goToolN().Run()
+	if err != nil {
+		log.Fatalf("Failed to run `go tool -n`: %+v", err)
 	}
 
-	cmds.ParallelRun()
+	exhaustructResult, err := goToolN().CombinedOutput()
+	if err != nil {
+		log.Fatalf("Missing exhaustruct as a vettool: %+v", err)
+	}
+
+	return strings.TrimSpace(string(exhaustructResult))
+}
+
+func main() {
+	allFlag := flag.Bool("all", false, "includes heavy linters")
+
+	flag.Parse()
+
+	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
+
+	walker := fileutils.GetWalker()
+
+	bashPaths := walker.GetAllBash()
+	markdownPaths := walker.GetAllMarkdown()
+
+	// Don't add secrets scanner here. It should be done in pre-push hook now.
+	linters := runner.Commands{
+		{Path: "shellcheck", Args: bashPaths},
+		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
+		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.0 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
+	}
+
+	heavyOrTrivial := runner.Commands{
+		// FIXME: Adding lychee here making Network error
+		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
+		{Path: "nixpkgs-lint", Args: []string{"."}},
+		{Path: "markdownlint-cli2", Args: markdownPaths},
+		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
+		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
+	}
+
+	if *allFlag {
+		linters = append(linters, heavyOrTrivial...)
+	}
+
+	linters.ParallelRun()
 }

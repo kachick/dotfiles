@@ -1,0 +1,50 @@
+max_concurrency = 3
+
+accept = ["200", "429"]
+
+scheme = ["https", "http"]
+
+exclude = [
+  # It returns 403 error against lychee requests for each word
+  "https://www.collinsdictionary.com/dictionary/",
+
+  # False positive detection and hard to debug by https://github.com/lycheeverse/lychee/issues/1304
+  # user:password
+
+  # reddit often rejects request from GitHub Actions
+  "www.reddit.com/",
+
+  # The server is unstable
+  "ubuntuforums.org",
+
+  "launcher.keychron.com",
+
+  "web.archive.org",
+
+  # Almost unstable. See GH-1051
+  "sr.ht",
+
+  # once failed with 500, always slow, working in CGI
+  "man.openbsd.org",
+
+  # These sites often blocks requests from GitHub Actions or lychee with `Network error: Forbidden`
+  "stackoverflow.com",
+  "stackexchange.com",
+  "superuser.com",
+  "serverfault.com",
+  "askubuntu.com",
+
+  # It seems lychee cannot parse Nix language syntax correctly
+  "github.com/nodchip/tanuki-/releases/download",
+
+  # Nix's version interpolation URL is not a standard URL
+  "https://ludii.games/downloads",
+
+  # Having strict spam checker, it also rejeccts lychee requests from GitHub Actions
+  "https://gitlab.freedesktop.org/",
+
+  # Slow network
+  "wiki.gnupg.org",
+]
+
+exclude_all_private = true

@@ -1,0 +1,1 @@
+la --git-ignore --tree "$@"

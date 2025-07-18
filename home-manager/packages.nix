@@ -1,102 +1,124 @@
-{ pkgs, ... }:
-
 {
-  home.packages = with pkgs; [
-    # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
-    # bash
-    # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-    bashInteractive
-    # readline # needless and using it does not fix bash problems
-    zsh
-    fish
-    starship
-    direnv
-    zoxide
-    fzf
-    atuin
+  pkgs,
+  ...
+}:
 
-    # Used in anywhere
-    coreutils
+(with pkgs; [
+  # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+  # bash
+  # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
+  bashInteractive
+  # readline # needless and using it does not fix bash problems
+  zsh
+  starship
+  direnv
+  nixfmt-rfc-style
+  nushell
+  atuin
 
-    # Use same tools even in macOS
-    findutils
-    diffutils
-    gnugrep
-    gnused
-    gawk
+  fzf # History: CTRL+R, Walker: CTRL+T
+  # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
+  # Use same nixpkgs channel as same as fzf
+  television # `tv`. Alt fzf
+  unstable.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
-    # asdf/rtx
-    #
-    # Prefer rtx now
-    # asdf-vm
-    rtx
-    #
-    # Required in many asdf plugins
-    unzip
+  # Used in anywhere
+  coreutils
+  less # container base image doesn't have less even for ubuntu official
+  procps # `ps`
 
-    git
-    tig
-    lazygit
-    gh
+  # Use same tools even in macOS
+  findutils
+  diffutils
+  gnugrep
+  netcat # `nc`
+  dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
 
-    dprint
-    shellcheck
-    shfmt
-    nixpkgs-fmt
-    nil
+  git
+  # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
+  ghq
 
-    tree
-    exa
-    curl
-    wget
-    jq
-    ripgrep
-    bat
-    duf
-    fd
-    du-dust
-    procs
-    bottom
-    tig
-    zellij
-    typos
-    hyperfine
-    difftastic
-    gnumake
-    gitleaks
-    deno
-    actionlint
-    # https://github.com/NixOS/nixpkgs/pull/218114
-    ruby_3_2
+  sequoia-sq # Alt `gpg`
+  sequoia-chameleon-gnupg
+  gnupg # Also keep original GPG for now. sequoia-chameleon-gnupg does not support some crucial toolset. etc: `gpg --edit-key`, `gpgconf`
 
-    # Includes follows in each repository if needed, not in global
-    # gcc
-    # rustup
-    # go
-    # crystal
-    # elmPackages.elm
-    # sqlite
-    # postgresql
-    # cargo-make
+  age # Candidates: rage
 
-    # If you need to build cruby from source, this section may remind the struggle
-    # Often failed to build cruby even if I enabled following dependencies
-    # zlib
-    # libyaml
-    # openssl
+  # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
+  gopass
 
-  ] ++ (lib.optionals stdenv.isLinux
-    [
-      # Fix missing locales as `locale: Cannot set LC_CTYPE to default locale`
-      glibc
+  # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
+  passage
 
-      # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
-      openssh
-    ]
-  ) ++ (lib.optionals stdenv.isDarwin
-    [
-      # https://github.com/NixOS/nixpkgs/commit/3ea22dab7d906f400cc5983874dbadeb8127c662#diff-32e42fa095503d211e9c2894de26c22166cafb875d0a366701922aa23976c53fL21-L33
-      iterm2
-    ]
-  );
-}
+  # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
+  # See following issues
+  # - https://github.com/kachick/dotfiles/issues/280
+  # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
+
+  micro
+  ox # modeless editor.
+
+  tree
+  eza # alt ls
+  curl
+  wget
+  jq
+  ripgrep # `rg`
+  bat # alt cat
+  mdcat # pipe friendly markdown viewer rather than glow
+  hexyl # hex viewer
+  fd # alt find
+  du-dust # `dust`, alt du
+  my.bottom # `btm`, alt top
+  xh # alt HTTPie
+  zellij
+  sad
+
+  typos
+  hyperfine
+  riffdiff # `riff`
+  gnumake
+  unstable.gitleaks
+  ruby_3_4
+  _7zz # `7zz` - 7zip. Command is not 7zip.
+
+  # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
+  chawan # `cha`
+
+  pastel
+
+  # How to get the installed font names
+  # fontconfig by nix: `fc-list : family style`
+  # darwin: system_profiler SPFontsDataType
+  fontconfig # `fc-list`, `fc-cache`
+
+  # `tldr` rust client, tealdeer is another candidate.
+  tlrc
+
+  fastfetch # active replacement of neofetch
+
+  unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
+
+  # Require unstable version because
+  #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
+  #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
+  unstable.brush
+])
+++ (with pkgs.my; [
+  la
+  lat
+  fzf-bind-posix-shell-history-to-git-commit-message
+  git-delete-merged-branches
+  todo
+  ghqf
+  p
+  walk
+  rg-fzf
+  envs
+  ir
+  updeps
+  bench_shells
+  preview
+  renmark
+  tree-diff
+])

@@ -1,0 +1,7 @@
+# 🟢 Builtin default: [] (Mount nothing)
+mounts:
+  # TODO: Disable default mounting host home to keep secure even if it is not writable
+  # - location: '~' # Just comment out still respects template default. And setting mountPoint as false handles the false as string...
+  - location: '~/repos' # See git.nix in this repo
+    mountPoint: '{{.Home}}/repos' # Keep same behavior for ghq and the wrapped scripts
+    writable: true # For developing purpose, writable should be reasonable. And my system does not directly include these files

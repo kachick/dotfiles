@@ -1,37 +1,82 @@
-name: CI - Nix
+# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
+name: ❄️
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/ci-nix.yml'
-      - '*.nix'
+      - '**.nix'
       - 'flake.*'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
+      - 'cmd/**'
   pull_request:
     paths:
       - '.github/workflows/ci-nix.yml'
-      - '*.nix'
+      - '**.nix'
       - 'flake.*'
-      - 'Makefile.toml'
+      - 'Taskfile.yml'
+      - 'cmd/**'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  tasks:
+  inspect:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-13
-    runs-on: ${{ matrix.os }}
+        runner:
+          - ubuntu-24.04
+          - macos-15
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v3
-      - uses: DeterminateSystems/nix-installer-action@v4
-      - uses: DeterminateSystems/magic-nix-cache-action@v2
-      - run: nix develop --command echo 'This step should be done before any other "nix develop" steps because of measuring Nix build time'
-      - run: nix develop --command makers ci-dev
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/nix-installer-action@v18
+      - name: Print some dotfiles overviews
+        shell: bash -eu -o pipefail {0}
+        run: |
+          </etc/nix/nix.conf
+          ls -alh ~
+      - name: Inspect flake outputs
+        run: |
+          nix flake show
+          nix flake show . --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
+      - run: nix flake check --impure
+        env:
+          # Required to clarify allowing unfree even in check ... :<
+          # This does not make problem only here, because this step does not upload any artifacts.
+          NIXPKGS_ALLOW_UNFREE: '1'
+        # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
+        if: runner.os == 'Linux'
+
+  tasks:
+    defaults:
+      run:
+        shell: nix develop --command bash -eu -o pipefail {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - macos-15
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/nix-installer-action@v18
+      - name: Measure nix shell initialization time
+        run: echo 'This step should be done before any other "nix develop" steps'
+      - run: task ci-dev
+        if: runner.os == 'Linux'
+      - run: task ci-darwin
+        if: runner.os == 'macOS'

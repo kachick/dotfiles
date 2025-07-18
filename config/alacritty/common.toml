@@ -1,0 +1,53 @@
+[general]
+# Later loaded definition wins for existing fields.
+# So higher priority import should be written in ${os}.toml
+# You can find major themes in https://github.com/alacritty/alacritty-theme
+import = [
+  "~/.config/alacritty/themes/iceberg-dark.toml",
+]
+
+# See #295 for the detail
+[colors.selection]
+background = "#005f5f"
+
+[selection]
+save_to_clipboard = true
+
+[cursor]
+style.shape = "Beam"
+
+[font]
+size = 12
+
+[font.normal]
+family = "PlemolJP Console NF"
+style = "Regular"
+
+[font.bold]
+family = "PlemolJP Console NF"
+style = "Italic"
+
+[font.italic]
+family = "PlemolJP Console NF"
+style = "Bold"
+
+[font.bold_italic]
+family = "PlemolJP Console NF"
+style = "Bold Italic"
+
+[window]
+opacity = 0.85
+
+# Do not assume wide display
+# - Alacritty cannot automate sizing as wezterm
+# - Alacritty is used for a stable terminal
+dimensions.columns = 120
+dimensions.lines = 40
+
+position.x = 10
+position.y = 10
+
+# [[keyboard.bindings]]
+# Copy and Paste can be used ctrl + shift + c/v, but it is annoy. Remember following
+# Copy: Needless keybind, use 'selection.save_to_clipboard = true'
+# Paste: Shift + Insert

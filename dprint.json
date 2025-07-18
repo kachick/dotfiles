@@ -1,22 +1,31 @@
 {
+  "$schema": "https://dprint.dev/schemas/v0.json",
   "json": {
+    "trailingCommas": "never"
   },
   "markdown": {
   },
+  "yaml": {
+    "quotes": "preferSingle",
+    "trimTrailingWhitespaces": false
+  },
   "toml": {
   },
-  "prettier": {
-    "printWidth": 120,
-    "singleQuote": true
+  "stylua": {
   },
   "excludes": [
     ".git",
-    "**/*-lock.json"
+    ".direnv",
+    "dist",
+    "result",
+    "dependencies"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/json-0.17.4.wasm",
-    "https://plugins.dprint.dev/markdown-0.15.3.wasm",
-    "https://plugins.dprint.dev/toml-0.5.4.wasm",
-    "https://plugins.dprint.dev/prettier-0.27.0.json@3557a62b4507c55a47d8cde0683195b14d13c41dda66d0f0b0e111aed107e2fe"
+    "https://plugins.dprint.dev/json-0.20.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.19.0.wasm",
+    "https://plugins.dprint.dev/toml-0.7.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm",
+    "https://plugins.dprint.dev/kachick/kdl-0.2.1.wasm",
+    "https://github.com/lizclipse/dprint-plugin-stylua/releases/download/v0.3.0-lizclipse/dprint_plugin_stylua.wasm"
   ]
 }

@@ -1,0 +1,182 @@
+name: 🪟
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+    paths:
+      - '.github/workflows/windows.yml'
+      - 'windows**'
+      - '**.go'
+      - 'go.*'
+      - 'config/**'
+      - '!**.md'
+  pull_request:
+    paths:
+      - '.github/workflows/windows.yml'
+      - 'windows**'
+      - '**.go'
+      - 'go.*'
+      - 'config/**'
+      - '!**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # To respect exit code and make fail-fast behaviors. See GH-617
+    #
+    # NOTE: `pwsh` specifier is defined in below
+    # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L16-L17
+    # - https://github.com/actions/runner/blob/6d7446a45ebc638a842895d5742d6cf9afa3b66d/src/Runner.Worker/Handlers/ScriptHandlerHelpers.cs#L60-L65
+    shell: |
+      pwsh -command "$PSNativeCommandUseErrorActionPreference = $true; $ErrorActionPreference = 'stop'; . '{0}'"
+
+jobs:
+  inspect_runner:
+    runs-on: windows-2025
+    steps:
+      - name: Print some variables which is applied in GH-617
+        run: |
+          $PSVersionTable
+          $PSNativeCommandUseErrorActionPreference
+          $ErrorActionPreference
+  # This job has many comment-out style note, agree to ugly, but do NOT remove for now.
+  # See #443 for detail.
+  #
+  # Not Terraform :)
+  terraform:
+    runs-on: windows-2025
+    steps:
+      - name: Prepare Windows Defender
+        # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
+        run: |
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+
+          # https://github.com/actions/runner-images/blob/61df9288f9be9f6aeaaaa4ad52a7332432913fc3/images/windows/scripts/build/Configure-WindowsDefender.ps1#L38-L44
+          Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Advanced Threat Protection' -Name 'ForceDefenderPassiveMode' -Value '0' -Type 'DWORD'
+          Start-Service -DisplayName *Defend* -WhatIf
+          Start-Service -Name WinDefend
+
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender"
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
+          # I can't find any resource of this key in web also GitHub, but Copilot said... So testing in action runner may be interest :)
+          # Set-ItemProperty -Force -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet" -Name JoinMicrosoftSpyNet -Value 1
+          # Get-Item -Path "Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\SpyNet"
+
+          # Remove cache: https://news.mynavi.jp/article/win10tips-410/
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -RemoveDefinitions -DynamicSignatures
+
+          # Enable cloud-based protection
+          Set-MpPreference -MAPSReporting Advanced
+          # Enable automatic sample submission
+          Set-MpPreference -SubmitSamplesConsent SendSafeSamples
+          # Restart-Service -Name WinDefend
+
+          Set-Service -Name wuauserv -StartupType Manual -Status Running
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
+          Update-MpSignature
+          # Restart-Service -Name WinDefend
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+
+          # Disable to skip(=Enable). When I removed, `Scanning D:\a\dotfiles\dotfiles\distributed-artifact.zip was skipped.` logged
+          Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
+      - name: Make sure dynamic signatures are enabled ... or not
+        run: |
+          Get-MpComputerStatus
+
+          # Remove this to raise error if you REALIZED to enable Dynamic Signature scans
+          # if (!((& "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures) | Select-String -Pattern "SignatureSet ID:")) {
+          #   Exit 42
+          # }
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
+      - uses: actions/checkout@v4
+        with:
+          # KEEP fetch-depth for gh command
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@v5 # zizmor: ignore[cache-poisoning]
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: 'go.sum'
+      - name: List files - before build
+        run: Get-ChildItem
+      - name: Build winit-*
+        # unnecessary to build wsl-* here, it should be done in linux runners
+        run: |
+          go build -o 'dist/' ./cmd/winit-reg
+          go build -o 'dist/' ./cmd/winit-conf
+      - name: List files - after build
+        run: |
+          Get-ChildItem
+          Get-ChildItem -Recurse .\dist
+      - name: Upload artifact
+        id: upload-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: winit
+          path: dist
+      - name: Download the artifact to make sure we can actually use it
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: | # zizmor: ignore[template-injection]
+          gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" `
+            repos/${{ github.repository }}/actions/artifacts/${{ steps.upload-artifact.outputs.artifact-id }}/zip > distributed-artifact.zip
+      - name: Check Windows Defender does not false positive detect the product
+        run: |
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\dist"
+          & "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -Trace -File "$(pwd)\distributed-artifact.zip"
+
+          # Do not enable this as possible, too slow ... Scanning all folders with this option? :<
+          # Start-MpScan -ScanPath "$pwd"
+
+          Get-MpThreat
+          Get-MpThreatDetection
+      # Skipping because of bit slow...
+      # - name: Collect Defender log
+      #   run: |
+      #     New-Item -Force -ItemType "Directory" -Path MpCmdRun-logs
+      #     & "C:\Program Files\Windows Defender\MpCmdRun.exe" -GetFiles -SupportLogLocation "$(pwd)\MpCmdRun-logs"
+      #
+      # Enable this section when you want to update logics and check it
+      # - name: Upload artifact
+      #   id: upload-defender-log
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: MpCmdRun-logs
+      #     path: MpCmdRun-logs/**
+      - name: Inspect built-in tool versions
+        run: |
+          winget --version
+          wsl --version
+      - name: Install tools which is called in profile
+        run: |
+          winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
+        # GH-1150. Disabling until https://github.com/microsoft/winget-cli/issues/5366 is fixed
+        if: false
+      - name: Rebel against unacceptable default
+        run: |
+          .\dist\winit-reg.exe list
+          .\dist\winit-reg.exe run --all
+      # This logics can be finished even if tools are not installed
+      - name: Put config files around terminals
+        run: |
+          Write-Host "$PROFILE"
+          .\dist\winit-conf.exe run
+          Install-Module -Force -Name PSFzfHistory
+          .\dist\winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
+      - name: Make sure it correctly copied some config files
+        run: |
+          Test-Path "$PROFILE"
+          Get-Content "$PROFILE"
+      - name: Release the product
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create --verify-tag "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" dist/*.exe

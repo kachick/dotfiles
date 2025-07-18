@@ -1,23 +1,27 @@
 {
   "editor.defaultFormatter": "dprint.dprint",
   "editor.formatOnSave": true,
-  "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  },
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
-  },
-  "[fish]": {
-    "editor.defaultFormatter": "bmalehorn.vscode-fish"
   },
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
-  "nix.serverPath": "nil",
+  "[kanata]": {
+    "editor.defaultFormatter": "rszyma.vscode-kanata"
+  },
+  "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
-  "nix.serverSettings": {
-    "nil": {
-      "formatting": { "command": ["nixpkgs-fmt"] }
-    }
+  "gopls": {
+    "build.buildFlags": ["-tags=linux,windows,darwin"]
+  },
+  "shellformat.useEditorConfig": true,
+  "shellcheck.ignorePatterns": {
+    "dependencies/**": true,
+    "config/ghostty/config*": true
+  },
+  "search.exclude": {
+    ".direnv/**": true,
+    "dependencies/*sh/": true
   }
 }

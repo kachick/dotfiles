@@ -1,0 +1,110 @@
+{
+  "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+  "CreationDate": "2023-08-20T15:44:57.913-00:00",
+  "Sources": [
+    {
+      "Packages": [
+        {
+          "PackageIdentifier": "7zip.7zip"
+        },
+        {
+          "PackageIdentifier": "Google.JapaneseIME"
+        },
+        {
+          "PackageIdentifier": "Google.Chrome.EXE"
+        },
+        {
+          "PackageIdentifier": "Mozilla.Firefox.DeveloperEdition.ja"
+        },
+        {
+          "PackageIdentifier": "Mozilla.Firefox"
+        },
+        {
+          "PackageIdentifier": "Microsoft.PowerToys"
+        },
+        {
+          "PackageIdentifier": "BurntSushi.ripgrep.MSVC"
+        },
+        {
+          "PackageIdentifier": "junegunn.fzf"
+        },
+        {
+          "PackageIdentifier": "alexpasmantier.television"
+        },
+        {
+          "PackageIdentifier": "sharkdp.fd"
+        },
+        {
+          "PackageIdentifier": "sharkdp.hexyl"
+        },
+        {
+          "PackageIdentifier": "sharkdp.bat"
+        },
+        {
+          "PackageIdentifier": "eza-community.eza"
+        },
+        {
+          "PackageIdentifier": "Microsoft.Edit"
+        },
+        {
+          "PackageIdentifier": "Helix.Helix"
+        },
+        {
+          "PackageIdentifier": "zyedidia.micro"
+        },
+        {
+          "PackageIdentifier": "curlpipe.ox"
+        },
+        {
+          "PackageIdentifier": "uutils.coreutils"
+        },
+        {
+          "PackageIdentifier": "WerWolv.ImHex"
+        },
+        {
+          "PackageIdentifier": "Microsoft.WindowsTerminal"
+        },
+        {
+          "PackageIdentifier": "Microsoft.PowerShell"
+        },
+        {
+          "PackageIdentifier": "Nushell.Nushell"
+        },
+        {
+          "PackageIdentifier": "Alacritty.Alacritty"
+        },
+        {
+          "PackageIdentifier": "Starship.Starship"
+        },
+        {
+          "PackageIdentifier": "Microsoft.VisualStudioCode"
+        },
+        {
+          "PackageIdentifier": "ajeetdsouza.zoxide"
+        },
+        {
+          "PackageIdentifier": "Fastfetch-cli.Fastfetch"
+        },
+        {
+          "PackageIdentifier": "Clement.bottom"
+        },
+        {
+          "PackageIdentifier": "tailscale.tailscale"
+        },
+        {
+          "PackageIdentifier": "chrox.Readest"
+        },
+        {
+          "PackageIdentifier": "OpenWhisperSystems.Signal"
+        }
+      ],
+      "SourceDetails": {
+        "Argument": "https://cdn.winget.microsoft.com/cache",
+        "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+        "Name": "winget",
+        "Type": "Microsoft.PreIndexed.Package"
+      }
+    }
+  ],
+  "WinGetVersion": "1.5.2201"
+}

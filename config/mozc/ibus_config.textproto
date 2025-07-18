@@ -1,0 +1,62 @@
+# `ibus write-cache; ibus restart` might be necessary to apply changes.
+# Guide of options
+# Don't use truncated words, it makes unreadable replacement like `...`
+# longname: Keep shorter, it will be prefixed "Japanese" and truncated the specified word in inputs switcher
+# symbol: Keep 1..3 characters. More will be truncated in inputs switcher
+engines {
+  name : "mozc-jp-ansi"
+  longname : "ANSI"
+  layout : "us" # ANSI INCITS 154-1988
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "ANS" # ANSI is longer than 3
+}
+engines {
+  name : "mozc-jp-jis"
+  longname : "JIS"
+  layout : "jp" # OADG 109A
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "JIS"
+}
+# Below engines are defined by default
+engines {
+  name : "mozc-jp"
+  longname : "Mozc"
+  layout : "default"
+  layout_variant : ""
+  layout_option : ""
+  rank : 80
+  symbol : "あ"
+}
+engines {
+  name : "mozc-on"
+  longname : "Mozc:あ"
+  layout : "default"
+  layout_variant : ""
+  layout_option : ""
+  rank : 99
+  symbol : "あ"
+  composition_mode : HIRAGANA
+}
+engines {
+  name : "mozc-off"
+  longname : "Mozc:A_"
+  layout : "default"
+  layout_variant : ""
+  layout_option : ""
+  rank : 99
+  symbol : "A"
+  composition_mode : DIRECT
+}
+active_on_launch: True
+mozc_renderer {
+  # Set 'False' to use IBus' candidate window.
+  enabled : True
+  # For Wayland sessions, 'mozc_renderer' will be used if and only if any value
+  # set in this field (e.g. "GNOME", "KDE") is found in $XDG_CURRENT_DESKTOP.
+  # https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html#recognized-keys
+  compatible_wayland_desktop_names : ["GNOME"]
+}

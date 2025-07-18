@@ -2,17 +2,32 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "extends": [
-    "github>kachick/renovate-config-dprint:plugins"
+    "config:recommended",
+    "github>kachick/renovate-config-dprint#1.3.0",
+    "github>kachick/renovate-config-dprint:self"
   ],
-  "labels": ["dependencies", "renovate"],
-  "enabledManagers": ["nix", "regex"],
-  "nix": {
-    "enabled": true
-  },
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "enabledManagers": [
+    "custom.regex",
+    "dockerfile"
+  ],
   "packageRules": [
     {
-      "extends": ["schedule:weekly"],
-      "matchPackagePrefixes": ["dprint"]
+      "extends": [
+        "schedule:weekly"
+      ],
+      "matchPackageNames": [
+        "dprint{/,}**"
+      ]
+    },
+    {
+      "matchPackageNames": [
+        "kachick/dprint-plugin-kdl"
+      ],
+      "allowedVersions": "<0.3.0"
     }
   ]
 }

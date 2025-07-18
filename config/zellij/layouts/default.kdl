@@ -1,0 +1,54 @@
+layout {
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+        children
+        // size affects for the new UI or not
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab_template name="BPS" {
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+        // BPS - even used 7-3, call binary here :)
+        pane split_direction="vertical" {
+            pane size="70%" {
+
+            }
+            pane split_direction="horizontal" size="30%" {
+                pane
+                pane
+            }
+        }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab_template name="Side-by-Side" {
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+        pane split_direction="vertical" {
+            pane
+            pane
+        }
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    tab_template name="Plain" {
+        pane size=1 borderless=true {
+            plugin location="compact-bar"
+        }
+        pane
+        pane size=1 borderless=true {
+            plugin location="status-bar"
+        }
+    }
+    BPS focus=true name="BPS"
+    Side-by-Side name="Side-by-Side"
+    Plain name="Plain"
+}

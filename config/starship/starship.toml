@@ -1,0 +1,105 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$username\
+$hostname\
+$os\
+$container\
+$kubernetes\
+$shlvl\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$crystal\
+$elm\
+$haskell\
+$rust\
+$golang\
+$ruby\
+$python\
+$deno\
+$nodejs\
+$direnv\
+$nix_shell\
+$shell\
+$env_var\
+$jobs\
+$time\
+$cmd_duration\
+$status\
+$line_break\
+$character"""
+
+# https://www.reddit.com/r/NixOS/comments/17eb1ym/comment/k62nxo4/?utm_source=reddit&utm_medium=web2x&context=3
+[shlvl]
+disabled = false
+
+[directory]
+style = "blue"
+
+[direnv]
+disabled = false
+# https://github.com/direnv/direnv-logo/blob/0949c12bafa532da0b23482a1bb042cf41b654fc/direnv-logo.png
+symbol = '📁'
+loaded_msg = '🍃'
+unloaded_msg = '🍂'
+format = '[$symbol$loaded]($style) '
+
+# Starship doesn't have brush support, it is reasonable since brush is a bash compatibe shell.
+# However I want to clarify the brush only in shell name likely `bash_indicator` in shell module.
+# So displaying https://github.com/reubeno/brush/pull/531 is a reasonable workaround for now
+# However it is a shell variable, and I should provide new ENV.
+# Grep `STARSHIP_BRUSH_INDICATOR` in this repository and see the trick
+[env_var.STARSHIP_BRUSH_INDICATOR]
+# Don't set `default` to suppress noise on zsh and bash.
+style = "purple"
+
+[character]
+success_symbol = "[>](bold green)"
+error_symbol = "[>](bold red)"
+
+[status]
+disabled = false
+# Displays as a part of character module
+style = "bold red"
+format = "[$status]($style)"
+
+[git_commit]
+only_detached = false
+tag_disabled = false
+
+[git_branch]
+format = "[$branch]($style)"
+# Changed from https://github.com/starship/starship/pull/3066/files
+# https://github.com/sindresorhus/pure/blob/47c0c881f0e7cfdb5eaccd335f52ad17b897c060/pure.zsh#L822
+style = "242"
+
+[git_status]
+style = "purple"
+
+[git_state]
+style = "bright-black"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+
+[shell]
+disabled = false
+bash_indicator = 'bash'
+
+[container]
+disabled = false
+
+[kubernetes]
+disabled = false
+
+[os]
+disabled = false
+
+[nix_shell]
+# Set another character with NixOS and keep short
+symbol = '☃️ '
+format = '[$symbol]($style) '

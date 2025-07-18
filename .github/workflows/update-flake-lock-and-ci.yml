@@ -1,0 +1,31 @@
+name: 🤖🆙❄️
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/update-flake-lock-and-ci.yml'
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    # Every Monday 9:17 JST
+    - cron: '17 0 * * 1'
+    # # Every Wednesday 9:17 JST
+    # - cron: '17 0 * * 3'
+    # # Every Friday 9:17 JST
+    # - cron: '17 0 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-nixpkgs:
+    if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
+    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.2.0
+    with:
+      app_id: ${{ vars.APP_ID }}
+      dry-run: ${{ github.event_name == 'pull_request' }}
+      pr-title: 'Bump flake.lock and related dependencies'
+      optional-run: |
+        nix run .#bump_gomod -- .
+        nix run .#update-completions
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

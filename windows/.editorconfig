@@ -1,0 +1,8 @@
+root = true
+
+# https://github.com/PowerShell/PowerShell/blob/a46843de2119203dc9c8db258138450d4a847c12/.editorconfig
+[*.{cs,ps1,psd1,psm1}]
+end_of_line = crlf
+indent_size = 4
+indent_style = space
+insert_final_newline = true

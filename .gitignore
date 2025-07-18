@@ -1,16 +1,36 @@
 # See https://git-scm.com/docs/gitignore for the syntaxes
 
+.env
+
 # Don't include any history files! It might make an accident... :scream:
 *hist*
+# https://stackoverflow.com/questions/5533050/gitignore-exclude-folder-but-include-specific-subfolder
+!pkgs/**
 
-# Managed by home-manager
-home/.config/fish/conf.d/
-home/.config/fish/config.fish
+rclone.conf
+
+# `local` files may have similar problems: https://github.com/github/gitignore/pull/3651
+*local
+!*local_hook*
 
 dist/
 tmp/
 
 .direnv
 
+# Nix
+result
+
+# Windows
+*.exe
+
 # macOS
 **/AppSupport
+.DS_Store
+
+winget-pkgs-*-raw.json
+
+*.bak
+*.backup
+
+.task

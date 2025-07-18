@@ -1,8 +1,0 @@
-# https://github.com/crate-ci/typos/issues/536#issuecomment-1216549808
-[default.extend-words]
-iterm = "iterm"
-
-[files]
-extend-exclude = [
-  "go.mod",
-]

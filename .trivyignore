@@ -1,0 +1,10 @@
+# Pending in OCI: https://github.com/opencontainers/image-spec/issues/749
+AVD-DS-0026
+
+# Note for AVD-DS-0029
+# Inline ignoring in Dockerfile RUN inspection don't work.
+# https://github.com/aquasecurity/trivy/discussions/4573
+
+# As far as I know, starting systemd should be called by root
+AVD-DS-0002
+

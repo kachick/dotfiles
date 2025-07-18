@@ -1,34 +1,42 @@
-name: Lint
+name: 👕
+# Keep lightweght to run on every events.
+# See https://github.com/kachick/selfup/blob/c53aad349e3577295a68b1b78ee4cb0eddc4e2b9/README.md#L97-L103 for the motivation
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+
+permissions:
+  contents: read
 
 jobs:
   dprint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
-      - uses: dprint/check@v2.2
+      - uses: actions/checkout@v4
         with:
-          # Keep same version as used in *.nix
-          dprint-version: '0.40.0'
+          persist-credentials: false
+      - uses: dprint/check@v2.3
+        with:
+          dprint-version: '0.50.0' # selfup {"extract":"\\d[^']+","replacer":["dprint", "--version"], "nth": 2}
 
   typos:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v3
-      # Keep same version as used in *.nix
-      - uses: crate-ci/typos@v1.16.2
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: crate-ci/typos@v1.32.0 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
         with:
           # https://github.com/crate-ci/typos/issues/779#issuecomment-1635761199
           files: |
             .
             .github
             .vscode
-            home/.config
-            home/.local
-            home/.stack

@@ -1,66 +1,88 @@
-name: CI - Home
+name: 🏠
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/ci-home.yml'
-      - '**/home-manager/**.nix'
-      - 'Makefile.toml'
+      - 'home-manager/**.nix'
+      - '**.nix'
+      - 'flake.*'
+      - 'pkgs/**'
+      - 'Taskfile.yml'
+      - 'go.*'
   pull_request:
     paths:
       - '.github/workflows/ci-home.yml'
-      - '**/home-manager/**.nix'
-      - 'Makefile.toml'
+      - 'home-manager/**.nix'
+      - '**.nix'
+      - 'flake.*'
+      - 'pkgs/**'
+      - 'Taskfile.yml'
+      - 'go.*'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   home-manager:
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - ubuntu-22.04
-          - macos-13
-        home-manager-channel-ref:
-          - a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04 # Pinned for current use
-          - master # unstable nixpkgs
-
-    runs-on: ${{ matrix.os }}
+        runner:
+          - ubuntu-24.04
+          - macos-15
+    runs-on: ${{ matrix.runner }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v4
-      - uses: DeterminateSystems/magic-nix-cache-action@v2
-      - name: Register Nix Channels
+      - uses: DeterminateSystems/nix-installer-action@v18
+      - name: Print some dotfiles overviews
         run: |
-          nix-channel --add https://releases.nixos.org/nixpkgs/nixpkgs-23.11pre511546.844ffa82bbe2/nixexprs.tar.xz nixpkgs
-          nix-channel --add https://github.com/nix-community/home-manager/archive/${{ matrix.home-manager-channel-ref }}.tar.gz home-manager
-          nix-channel --update
-          nix-channel --list
-      - name: Print nixpkgs version after updating channels
-        run: nix-instantiate --eval -E '(import <nixpkgs> {}).lib.version'
-      - run: nix-shell '<home-manager>' -A install
-      - uses: actions/checkout@v3
-      - run: home-manager switch -b backup -f ./home-manager/user-github-actions.nix
+          </etc/nix/nix.conf
+          ls -alh ~
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
+      - run: mkdir -p ~/.local/state/nix/profiles
+      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
+      - run: zsh --interactive -c 'sudoc nix run ".#apply-system"'
+        if: runner.os == 'Linux'
       - name: Print some paths and versions
         run: |
-          which fish
           which zsh
           which bash
           which ruby
           which irb
           which ssh
+      - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
+        run: |
+          [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       # Do not use interactive mode here.
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          fish --command 'starship --version'
-          zsh -c 'which dprint'
+          zsh -c zsh -c 'which la; which p'
+          zsh -c 'starship --version'
           zsh -c 'ruby --version'
           zsh -c 'irb --version'
           zsh -c 'ssh -V'
+          zsh -c 'hx --health'
       - name: Run homemade commands
-        run: zsh -c 'la'
+        run: |
+          zsh -c 'la ~; lat ~/.config'
+          zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
+      - name: Backup generated config
+        run: |
+          nix run .#archive-home-files home-manager-generation-home-files
+      - name: Upload artifact
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        with:
+          name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
+          path: home-manager-generation-home-files.tar.gz
+          if-no-files-found: 'error'
