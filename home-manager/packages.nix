@@ -102,6 +102,9 @@
   #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
   #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
   unstable.brush
+
+  # Available since https://github.com/NixOS/nixpkgs/pull/423741
+  unstable.somo
 ])
 ++ (with pkgs.my; [
   la
