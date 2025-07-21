@@ -29,28 +29,14 @@
     gnome-keyring = prev.unstable.gnome-keyring;
   })
 
-  # Pacthed packages
   (final: prev: {
+    # Pacthed packages should be put here if exist
+    # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
     patched = {
-      # TODO: Remove this overlay if merged and backported: https://github.com/NixOS/nixpkgs/pull/423960
-      #
-      # Use unstable channel for lima, it makes faster build especially patching with omitting additional agents: https://github.com/NixOS/nixpkgs/pull/415093
-      # Also override lima-additional-guestagents in lima inputs if need the additional agents.
-      lima = prev.unstable.lima.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          # 1.2.0 includes https://github.com/lima-vm/lima/pull/3637 to fix GH-950
-          version = "1.2.0";
-
-          src = prev.fetchFromGitHub {
-            owner = "lima-vm";
-            repo = "lima";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-vrYsIYikoN4D3bxu/JTb9lMRcL5k9S6T473dl58SDW0=";
-          };
-
-          vendorHash = "sha256-8S5tAL7GY7dxNdyC+WOrOZ+GfTKTSX84sG8WcSec2Os=";
-        }
-      );
+      # pname = prev.unstable.pname.overrideAttrs (
+      #   finalAttrs: previousAttrs: {
+      #   }
+      # );
     };
   })
 ]
