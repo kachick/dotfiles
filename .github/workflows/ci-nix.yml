@@ -39,7 +39,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/nix-installer-action@v18
+      - uses: DeterminateSystems/nix-installer-action@v19
       - name: Print some dotfiles overviews
         shell: bash -eu -o pipefail {0}
         run: |
@@ -73,7 +73,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/nix-installer-action@v18
+      - uses: DeterminateSystems/nix-installer-action@v19
       - name: Measure nix shell initialization time
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev

@@ -39,7 +39,7 @@ jobs:
           - macos-15
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v18
+      - uses: DeterminateSystems/nix-installer-action@v19
       - name: Print some dotfiles overviews
         run: |
           </etc/nix/nix.conf
