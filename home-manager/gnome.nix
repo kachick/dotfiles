@@ -248,17 +248,17 @@
         per-window = false;
       };
 
-      # Do not set this value. Stationary devices need longer times before sleep, while laptops need shorter times.
+      # Do not depend on this value with home-manager. Stationary devices need longer times before sleep, while laptops need shorter times.
       # However, this repository does not handle this pattern smartly with home-manager.
       #
-      # "org/gnome/desktop/session" = {
-      #   # Preset time is limited to 1-15 minutes. However, manually entered values appear correctly in the UI.
-      #   idle-delay =
-      #     let
-      #       minutes = 10;
-      #     in
-      #     minutes * 60;
-      # };
+      "org/gnome/desktop/session" = {
+        # Preset time is limited to 1-15 minutes. However, manually entered values appear correctly in the UI.
+        idle-delay =
+          let
+            minutes = 0; # `0` disables this option
+          in
+          lib.hm.gvariant.mkUint32 (minutes * 60);
+      };
 
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
