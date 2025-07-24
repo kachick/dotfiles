@@ -31,6 +31,8 @@
         "browser.quitShortcut.disabled" = true;
         "browser.warnOnQuitShortcut" = true; # By default true, just ensuring
 
+        "browser.profiles.enabled" = true;
+
         "layout.spellcheckDefault" = true;
       };
       userChrome = builtins.readFile ../config/firefox/userChrome.css;
