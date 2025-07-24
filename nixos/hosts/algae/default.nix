@@ -33,6 +33,8 @@
 
   services.fstrim.enable = true;
 
+  services.fwupd.enable = true;
+
   # Required to reboot if you want to apply changes
   # Prevent GH-894
   # https://askubuntu.com/a/1446653
