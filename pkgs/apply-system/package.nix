@@ -7,15 +7,13 @@ pkgs.writeShellApplication rec {
     "nounset"
     "pipefail"
   ];
-  text =
-    (builtins.readFile ./${name}.bash)
-    + ''
-      mkdir --parents /etc/containers
-      ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
-      ln --symbolic --force '${../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
-      ln --symbolic --force '${pkgs.my.tailscaled-service}' '/etc/systemd/system/tailscaled.service'
-      systemctl enable tailscaled.service
-    '';
+  text = (builtins.readFile ./${name}.bash) + ''
+    mkdir --parents /etc/containers
+    ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
+    ln --symbolic --force '${../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
+    ln --symbolic --force '${pkgs.my.tailscaled-service}' '/etc/systemd/system/tailscaled.service'
+    systemctl enable tailscaled.service
+  '';
   runtimeInputs = with pkgs; [
     coreutils # `uname`, `ln`, `mkdir`
   ];

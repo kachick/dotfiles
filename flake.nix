@@ -53,11 +53,7 @@
 
       overlays = import ./overlays { inherit edge-nixpkgs; };
 
-      mkPkgs =
-        system:
-        import (mkNixpkgs system) {
-          inherit system overlays;
-        };
+      mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
       mkHomeManager =
         system:
@@ -74,8 +70,8 @@
         };
     in
     {
-      # Why not use `nixfmt-rfc-style`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).nixfmt-tree);
+      # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
+      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
 
       devShells = forAllSystems (
         system:
@@ -107,7 +103,6 @@
                   nixf # `nixf-tidy`
                   nix-init
                   nurl
-                  nixfmt-rfc-style
                   nix-update
 
                   go_1_24
@@ -124,6 +119,7 @@
                   lychee
                 ])
                 ++ (with pkgs.unstable; [
+                  nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   gitleaks
                   dprint
@@ -142,8 +138,8 @@
         system:
         let
           pkgs = mkPkgs system;
+          # Don't include unfree packages, it will fail in `nix flake check`
         in
-        # Don't include unfree packages, it will fail in `nix flake check`
         pkgs.lib.recursiveUpdate pkgs.patched pkgs.my
       );
 
@@ -159,13 +155,7 @@
           system = "x86_64-linux";
           shared = {
             inherit system;
-            specialArgs = {
-              inherit
-                inputs
-                outputs
-                overlays
-                ;
-            };
+            specialArgs = { inherit inputs outputs overlays; };
           };
         in
         {

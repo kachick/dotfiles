@@ -120,7 +120,7 @@ in
           name = "nix";
           auto-format = true;
           formatter = {
-            command = lib.getExe pkgs.nixfmt-rfc-style;
+            command = lib.getExe pkgs.unstable.nixfmt;
           };
           language-servers = [
             "nil" # Not using thesedays, however kept with helix default

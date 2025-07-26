@@ -7,7 +7,8 @@ let
   # It should be ordered with IME support.
   plainTextEditor = [
     "org.gnome.TextEditor.desktop"
-  ] ++ codeEditor;
+  ]
+  ++ codeEditor;
 
   codeEditor = [
     "dev.zed.Zed.desktop"
@@ -37,7 +38,8 @@ let
   imageViewer = [
     # https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build#L54
     "org.gnome.Loupe.desktop"
-  ] ++ webBrowser;
+  ]
+  ++ webBrowser;
 in
 {
   imports = [ ./gnome.nix ];

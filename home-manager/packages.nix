@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 
 (with pkgs; [
   # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -12,7 +9,7 @@
   zsh
   starship
   direnv
-  nixfmt-rfc-style
+  unstable.nixfmt
   nushell
 
   fzf # History: CTRL+R, Walker: CTRL+T
