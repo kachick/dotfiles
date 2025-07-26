@@ -85,10 +85,12 @@
         in
         {
           default = pkgs.mkShellNoCC {
-            # Realize nixd pkgs version inlay hints for stable channel instead of latest
-            NIX_PATH = "nixpkgs=${pkgs.path}";
+            env = {
+              # Correct pkgs versions in the nixd inlay hints
+              NIX_PATH = "nixpkgs=${pkgs.path}";
 
-            TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+              TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+            };
 
             buildInputs =
               (with pkgs; [
