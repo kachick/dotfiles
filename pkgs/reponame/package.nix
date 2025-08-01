@@ -6,7 +6,7 @@
 pkgs.buildGo124Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
-  vendorHash = "sha256-/E+3gMtD8ddZaAnFGxaYTCMzc+wiZggJCf3WGZSsfcQ=";
+  vendorHash = "sha256-CGAwDKktyQQR+3jXTYksLI68j15+0rs7188/rsTJep0=";
   src =
     with lib.fileset;
     toSource {
