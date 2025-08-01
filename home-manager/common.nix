@@ -210,4 +210,21 @@
       "!.git"
     ];
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/atuin.nix
+  programs.atuin = {
+    enable = true;
+
+    flags = [
+      # https://github.com/atuinsh/atuin/issues/51
+      "--disable-up-arrow"
+
+      # "--disable-ctrl-r" # TODO: Consider to choose fzf or atuin
+    ];
+
+    settings = {
+      # auto_sync = true; # TODO: Consider enabling after test
+      sync_address = "https://algae";
+    };
+  };
 }
