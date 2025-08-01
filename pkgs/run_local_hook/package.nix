@@ -6,7 +6,7 @@
 pkgs.buildGo124Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-n2ntYLn8Xu0bEDD9A4RdtlX6hxM9cq9DqB7VKD+yR54=";
+  vendorHash = "sha256-429N7L6kn4XPXHaPvP9BxbwigOSVYl/B3K8fylmVkzc=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
