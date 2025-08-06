@@ -25,7 +25,8 @@
         # https://www.reddit.com/r/firefox/comments/129w85w/is_there_a_way_to_disable_firefox_alt_keyboard/
         "ui.key.menuAccessKeyFocuses" = false;
 
-        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false; # `Sponsored shortcuts`
+        "browser.newtabpage.activity-stream.showSponsoredCheckboxes" = false; # "Support Firefox"
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false; # "Sponsored shortcuts"
         "browser.newtabpage.activity-stream.showSponsored" = false;
 
         "browser.quitShortcut.disabled" = true;
