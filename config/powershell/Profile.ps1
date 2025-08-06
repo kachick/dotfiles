@@ -1,3 +1,6 @@
+# https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_telemetry?view=powershell-7.5
+[Environment]::SetEnvironmentVariable("POWERSHELL_TELEMETRY_OPTOUT", "true", "User")
+
 # Enable ctrl+a, ctrl+e
 Set-PSReadLineOption -EditMode Emacs
 Set-PSReadlineOption -BellStyle None
@@ -33,7 +36,7 @@ function cdtemp {
 # https://github.com/microsoft/winget-cli/issues/2498#issuecomment-1553863082
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User")
 # Specify `bash -i` to run the bash as interactive mode
-[Environment]::SetEnvironmentVariable("RCLONE_PASSWORD_COMMAND", 'wsl.exe --exec bash -ic "gopass show rclone"')
+[Environment]::SetEnvironmentVariable("RCLONE_PASSWORD_COMMAND", 'wsl.exe --exec bash -ic "gopass show rclone"', "Process")
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
