@@ -35,6 +35,8 @@
         "browser.profiles.enabled" = true;
 
         "layout.spellcheckDefault" = true;
+
+        "browser.taskbarTabs.enabled" = true; # Enable PWA. Available in Firefox 141. https://www.reddit.com/r/firefox/comments/1ljidwp/comment/mzk7fku/
       };
       userChrome = builtins.readFile ../config/firefox/userChrome.css;
     };
