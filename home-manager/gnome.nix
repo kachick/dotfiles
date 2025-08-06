@@ -39,6 +39,7 @@
           "com.mitchellh.ghostty.desktop"
           "org.gnome.TextEditor.desktop"
           "google-chrome.desktop"
+          "firefox.desktop"
           "signal.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           "org.gnome.Nautilus.desktop"
