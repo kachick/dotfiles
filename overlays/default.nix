@@ -16,8 +16,6 @@
     };
   })
 
-  # Keep minimum patches as possible. Because of they can not use official binary cache. See GH-754
-
   # Patched and override existing name because of it is not cofigurable
   (final: prev: {
     # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
