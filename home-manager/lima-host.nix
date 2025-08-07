@@ -5,7 +5,7 @@
   ...
 }:
 let
-  lima = pkgs.unstable.lima;
+  lima = pkgs.patched.lima;
 in
 {
   programs.ssh.includes = [

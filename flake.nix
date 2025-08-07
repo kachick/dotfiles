@@ -1,6 +1,15 @@
 {
   description = "kachick's dotfiles that can be placed in the public repository";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://kachick-dotfiles.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+    ];
+  };
+
   inputs = {
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17
