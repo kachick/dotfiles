@@ -17,11 +17,7 @@
 
     ## shogihome does not provide configuration schema and ENV, so manually setup the foollowing NNUE evaluation files for the engine
     # Related issue: https://github.com/sunfish-shogi/shogihome/issues/1017
-    (unstable.shogihome.override {
-      commandLineArgs = [
-        "--wayland-text-input-version=3"
-      ];
-    })
+    patched.shogihome
 
     my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/eval
   ];
