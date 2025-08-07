@@ -39,6 +39,7 @@
         "browser.taskbarTabs.enabled" = true; # Enable PWA. Available in Firefox 141. https://www.reddit.com/r/firefox/comments/1ljidwp/comment/mzk7fku/
 
         "sidebar.verticalTabs" = true;
+        "sidebar.position_start" = false; # Sidebar will be put on right side
         "sidebar.revamp" = true;
       };
       userChrome = builtins.readFile ../config/firefox/userChrome.css;
