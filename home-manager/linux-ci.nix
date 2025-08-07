@@ -29,11 +29,6 @@
         lima
         signal-desktop
         shogihome
-      ])
-      ++ [
-        # Also required the binary cache by special reasons
-        # TODO: Remove after nixos-25.11. See overlays for detail
-        pkgs.gnome-keyring
-      ];
+      ]);
   };
 }
