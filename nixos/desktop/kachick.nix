@@ -1,14 +1,16 @@
 {
+  lib,
   pkgs,
   ...
 }:
 
 let
-  mkUser = import ./mkUser.nix;
+  mkUser = import ./mkUser.nix { inherit lib; };
 in
 {
   users.users.kachick = mkUser {
     description = "foolish";
+    additionalGroups = [ "wheel" ];
   };
 
   home-manager = {

@@ -18,6 +18,14 @@
     "flakes"
   ];
 
+  # `trusted-users = root` by default on NixOS 25.05
+  # Setting another helps us to use binary cache substituters in flake.nix
+  # Only using `--accept-flake-config` is not enough
+  nix.settings.trusted-users = [
+    "root"
+    "@wheel"
+  ];
+
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
   # nix.settings.auto-optimise-store = true;
 
