@@ -97,6 +97,13 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
+1. Make sure your user or one of the groups are listed in `trusted-users`
+
+   ```console
+   > grep trusted-users /etc/nix/nix.conf
+   trusted-users = root your_user @your_user_group
+   ```
+
 1. Make sure there is a nix directory that is used in the home-manager.\
    This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
 
