@@ -223,8 +223,8 @@
             ];
           };
 
-          # macos-13 is the latest x86_64-darwin runner for darwin and technically the right choice for respecting architecture of my old MacBook,
-          # but it's slow, almost 3x slower than Linux runners. So you should use binary cache if use this runner
+          # macos-13 is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
           "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
