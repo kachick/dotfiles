@@ -79,7 +79,7 @@
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-  unstable.chawan # `cha` # chawan stable version is available in unstable channels. TODO: Switch to stable channel after nixos-25.11
+  chawan # `cha`
 
   pastel
 
