@@ -36,7 +36,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - macos-15
+          - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: DeterminateSystems/nix-installer-action@v19
@@ -55,8 +55,6 @@ jobs:
         with:
           name: kachick-dotfiles
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          # I only have Intel Mac. See 'github-actions@macos-*' in flake.nix for the background
-          skipPush: ${{ runner.os == 'macOS' && runner.arch != 'x86_64' }}
 
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles

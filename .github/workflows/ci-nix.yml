@@ -27,13 +27,8 @@ permissions:
 
 jobs:
   inspect:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-24.04
-          - macos-15
-    runs-on: ${{ matrix.runner }}
+    # Only on Linux is enough to check the flake
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -54,8 +49,6 @@ jobs:
           # Required to clarify allowing unfree even in check ... :<
           # This does not make problem only here, because this step does not upload any artifacts.
           NIXPKGS_ALLOW_UNFREE: '1'
-        # https://github.com/kachick/dotfiles/pull/718#issuecomment-2266331003
-        if: runner.os == 'Linux'
 
   tasks:
     defaults:
@@ -66,7 +59,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - macos-15
+          - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -74,6 +67,13 @@ jobs:
         with:
           persist-credentials: false
       - uses: DeterminateSystems/nix-installer-action@v19
+        with:
+          extra-conf: |
+            accept-flake-config = true
+      - uses: cachix/cachix-action@ad2ddac53f961de1989924296a1f236fcfbaa4fc # v15
+        with:
+          name: kachick-dotfiles
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Measure nix shell initialization time
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
