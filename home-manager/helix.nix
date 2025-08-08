@@ -99,7 +99,7 @@ in
             "--enable-footnotes"
             "--enable-emoji"
             "--browser"
-            (lib.getExe pkgs.unstable.chawan)
+            "firefox" # chawan 0.2.1 didn't work
           ];
         };
       };
