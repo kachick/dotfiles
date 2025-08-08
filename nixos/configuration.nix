@@ -13,18 +13,41 @@
     (import ./locale.nix { })
   ];
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/config/nix.nix
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
 
-  # `trusted-users = root` by default on NixOS 25.05
-  # Setting another helps us to use binary cache substituters in flake.nix
-  # Only using `--accept-flake-config` is not enough
-  nix.settings.trusted-users = [
-    "root"
-    "@wheel"
-  ];
+    # `trusted-users = root` by default on NixOS 25.05
+    # Setting another helps us to use binary cache substituters in flake.nix
+    # Only using `--accept-flake-config` is not enough
+    trusted-users = [
+      "root"
+      "@wheel"
+    ];
+
+    # Enabled by default on https://github.com/DeterminateSystems/nix-installer/releases/tag/v3.8.5
+    # Therefore enable also on NixOS to keep consistency against other Linux distros and macOS
+    # See https://github.com/NixOS/nix/pull/8047 for background
+    always-allow-substitutes = true;
+
+    trusted-substituters = [
+      "https://nix-community.cachix.org"
+      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+    ];
+
+    trusted-public-keys = [
+      # https://nix-community.org/cache/
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+
+      # GH-1235
+      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+    ];
+
+    accept-flake-config = true;
+  };
 
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
   # nix.settings.auto-optimise-store = true;
