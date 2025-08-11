@@ -67,7 +67,7 @@ jobs:
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
       - name: Prepare git to run gh commands
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           persist-credentials: false
       - name: Post comments to the PR
