@@ -47,7 +47,7 @@ jobs:
         run: |
           </etc/nix/nix.conf
           ls -alh ~
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
 
