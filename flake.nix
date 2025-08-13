@@ -29,8 +29,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Use 2505.n.n if available
-      # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
+      url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
