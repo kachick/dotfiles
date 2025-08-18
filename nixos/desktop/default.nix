@@ -235,7 +235,7 @@
       my.chrome-with-profile-by-name
     ])
     ++ [
-      inputs.flare-signal.${pkgs.stdenv.hostPlatform.system}.packages.default
+      inputs.flare-signal.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator

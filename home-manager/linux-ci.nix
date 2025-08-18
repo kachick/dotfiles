@@ -33,7 +33,7 @@
       ])
       ++ [
         # Only available on NixOS desktop. Making the binary cache here.
-        inputs.flare-signal.${pkgs.stdenv.hostPlatform.system}.packages.default
+        inputs.flare-signal.packages.${pkgs.stdenv.hostPlatform.system}.default
       ];
   };
 }
