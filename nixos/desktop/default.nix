@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  stdenv,
   lib,
   inputs,
   ...
@@ -186,8 +187,6 @@
       # Prefer GUI rather than gurk-rs for now, gurk-rs update is stopped. I guess it is hard until merging https://github.com/NixOS/nixpkgs/pull/387337
       patched.signal-desktop
 
-      inputs.flare-signal
-
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
 
@@ -236,6 +235,9 @@
 
       my.chrome-with-profile-by-name
     ])
+    ++ [
+      inputs.flare-signal.${stdenv.hostPlatform}.packages.default
+    ]
     ++ (with pkgs.gnomeExtensions; [
       appindicator
       clipboard-history
