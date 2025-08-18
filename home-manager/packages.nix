@@ -93,8 +93,6 @@
 
   fastfetch # active replacement of neofetch
 
-  unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
-
   # Require unstable version because
   #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
   #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
@@ -120,4 +118,5 @@
   preview
   renmark
   tree-diff
+  gurk-rs
 ])

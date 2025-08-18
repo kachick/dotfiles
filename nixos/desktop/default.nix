@@ -182,7 +182,6 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
-      # Prefer GUI rather than gurk-rs for now, gurk-rs update is stopped. I guess it is hard until merging https://github.com/NixOS/nixpkgs/pull/387337
       patched.signal-desktop
 
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
