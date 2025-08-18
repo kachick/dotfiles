@@ -32,6 +32,12 @@
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # The upstream flake is required because nixpkgs has not been updated for over a month since the 0.17.0 release.
+    # It might be reused after https://github.com/NixOS/nixpkgs/pull/432651 is merged.
+    flare-signal = {
+      url = "gitlab:schmiddi-on-mobile/flare/0.17.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -210,6 +216,7 @@
 
           "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
+            extraSpecialArgs = { inherit inputs outputs; };
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
             modules = [

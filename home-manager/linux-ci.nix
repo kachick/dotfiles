@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   ...
 }:
 
@@ -29,6 +30,10 @@
         lima
         signal-desktop
         shogihome
-      ]);
+      ])
+      ++ [
+        # Only available on NixOS desktop. Making the binary cache here.
+        inputs.flare-signal
+      ];
   };
 }

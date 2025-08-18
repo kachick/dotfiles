@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 
@@ -184,6 +185,8 @@
 
       # Prefer GUI rather than gurk-rs for now, gurk-rs update is stopped. I guess it is hard until merging https://github.com/NixOS/nixpkgs/pull/387337
       patched.signal-desktop
+
+      inputs.flare-signal
 
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
