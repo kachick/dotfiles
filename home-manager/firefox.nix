@@ -25,13 +25,22 @@
         # https://www.reddit.com/r/firefox/comments/129w85w/is_there_a_way_to_disable_firefox_alt_keyboard/
         "ui.key.menuAccessKeyFocuses" = false;
 
-        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false; # `Sponsored shortcuts`
+        "browser.newtabpage.activity-stream.showSponsoredCheckboxes" = false; # "Support Firefox"
+        "browser.newtabpage.activity-stream.showSponsoredTopSites" = false; # "Sponsored shortcuts"
         "browser.newtabpage.activity-stream.showSponsored" = false;
 
         "browser.quitShortcut.disabled" = true;
         "browser.warnOnQuitShortcut" = true; # By default true, just ensuring
 
+        "browser.profiles.enabled" = true;
+
         "layout.spellcheckDefault" = true;
+
+        "browser.taskbarTabs.enabled" = true; # Enable PWA. Available in Firefox 141. https://www.reddit.com/r/firefox/comments/1ljidwp/comment/mzk7fku/
+
+        "sidebar.verticalTabs" = true;
+        "sidebar.position_start" = false; # Sidebar will be put on right side
+        "sidebar.revamp" = true;
       };
       userChrome = builtins.readFile ../config/firefox/userChrome.css;
     };

@@ -37,6 +37,8 @@
 
   services.fstrim.enable = true;
 
+  services.fwupd.enable = true;
+
   # Don't use this charge_control_*_threshold config for now, while GNOME and UPower integrations are working
   # However GNOME's "Preserve Battery Health" seems incomplete the UI and behavior for me.
   # Keep in mind for below links

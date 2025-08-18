@@ -14,7 +14,7 @@
 
     sessionVariables = {
       # * Do not specify Nix store path for zed and vscode in macOS
-      #   * zed is fixed in https://github.com/NixOS/nixpkgs/pull/329653, however https://github.com/NixOS/nixpkgs/issues/107466 and GH-754 is the blocker with the build-time
+      #   * See linux-ci.nix for the avoiding reason of zed-editor
       #   * vscode is unfree and heavy when no binary cache
       # * `cli: install` action installs into this path in macOS
       VISUAL = "code --wait";

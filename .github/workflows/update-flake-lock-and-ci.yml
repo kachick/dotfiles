@@ -19,7 +19,7 @@ permissions:
 jobs:
   update-nixpkgs:
     if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
-    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.2.0
+    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.2.2
     with:
       app_id: ${{ vars.APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}

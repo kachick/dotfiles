@@ -213,6 +213,9 @@ _zellij() {
             undo-rename-tab)
                 cmd+="__undo__rename__tab"
                 ;;
+            web)
+                cmd+="__web"
+                ;;
             write)
                 cmd+="__write"
                 ;;
@@ -226,7 +229,7 @@ _zellij() {
 
     case "${cmd}" in
         zellij)
-            opts="-h -V -s -l -n -c -d --help --version --max-panes --data-dir --server --session --layout --new-session-with-layout --config --config-dir --debug options setup list-sessions list-aliases attach kill-session delete-session kill-all-sessions delete-all-sessions action run plugin edit convert-config convert-layout convert-theme pipe help"
+            opts="-h -V -s -l -n -c -d --help --version --max-panes --data-dir --server --session --layout --new-session-with-layout --config --config-dir --debug options setup web list-sessions list-aliases attach kill-session delete-session kill-all-sessions delete-all-sessions action run plugin edit convert-config convert-layout convert-theme pipe help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -752,7 +755,7 @@ _zellij() {
             return 0
             ;;
         zellij__action__new__pane)
-            opts="-d -p -f -i -n -c -s -x -y -h --direction --plugin --cwd --floating --in-place --name --close-on-exit --start-suspended --configuration --skip-plugin-cache --x --y --width --height --pinned --help <COMMAND>..."
+            opts="-d -p -f -i -n -c -s -x -y -h --direction --plugin --cwd --floating --in-place --name --close-on-exit --start-suspended --configuration --skip-plugin-cache --x --y --width --height --pinned --stacked --help <COMMAND>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1350,7 +1353,7 @@ _zellij() {
             return 0
             ;;
         zellij__attach__options)
-            opts="-h --disable-mouse-mode --no-pane-frames --simplified-ui --theme --default-mode --default-shell --default-cwd --default-layout --layout-dir --theme-dir --mouse-mode --pane-frames --mirror-session --on-force-close --scroll-buffer-size --copy-command --copy-clipboard --copy-on-select --scrollback-editor --session-name --attach-to-session --auto-layout --session-serialization --serialize-pane-viewport --scrollback-lines-to-serialize --styled-underlines --serialization-interval --disable-session-metadata --support-kitty-keyboard-protocol --stacked-resize --show-startup-tips --show-release-notes --help"
+            opts="-h --disable-mouse-mode --no-pane-frames --simplified-ui --theme --default-mode --default-shell --default-cwd --default-layout --layout-dir --theme-dir --mouse-mode --pane-frames --mirror-session --on-force-close --scroll-buffer-size --copy-command --copy-clipboard --copy-on-select --scrollback-editor --session-name --attach-to-session --auto-layout --session-serialization --serialize-pane-viewport --scrollback-lines-to-serialize --styled-underlines --serialization-interval --disable-session-metadata --support-kitty-keyboard-protocol --web-server --web-sharing --stacked-resize --show-startup-tips --show-release-notes --advanced-mouse-actions --post-command-discovery-hook --help <WEB_SERVER_IP> <WEB_SERVER_PORT> <WEB_SERVER_CERT> <WEB_SERVER_KEY> <ENFORCE_HTTPS_FOR_LOCALHOST>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1464,6 +1467,14 @@ _zellij() {
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
+                --web-server)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --web-sharing)
+                    COMPREPLY=($(compgen -W "on off disabled" -- "${cur}"))
+                    return 0
+                    ;;
                 --stacked-resize)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
@@ -1474,6 +1485,14 @@ _zellij() {
                     ;;
                 --show-release-notes)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --advanced-mouse-actions)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --post-command-discovery-hook)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)
@@ -1686,7 +1705,7 @@ _zellij() {
             return 0
             ;;
         zellij__options)
-            opts="-h --disable-mouse-mode --no-pane-frames --simplified-ui --theme --default-mode --default-shell --default-cwd --default-layout --layout-dir --theme-dir --mouse-mode --pane-frames --mirror-session --on-force-close --scroll-buffer-size --copy-command --copy-clipboard --copy-on-select --scrollback-editor --session-name --attach-to-session --auto-layout --session-serialization --serialize-pane-viewport --scrollback-lines-to-serialize --styled-underlines --serialization-interval --disable-session-metadata --support-kitty-keyboard-protocol --stacked-resize --show-startup-tips --show-release-notes --help"
+            opts="-h --disable-mouse-mode --no-pane-frames --simplified-ui --theme --default-mode --default-shell --default-cwd --default-layout --layout-dir --theme-dir --mouse-mode --pane-frames --mirror-session --on-force-close --scroll-buffer-size --copy-command --copy-clipboard --copy-on-select --scrollback-editor --session-name --attach-to-session --auto-layout --session-serialization --serialize-pane-viewport --scrollback-lines-to-serialize --styled-underlines --serialization-interval --disable-session-metadata --support-kitty-keyboard-protocol --web-server --web-sharing --stacked-resize --show-startup-tips --show-release-notes --advanced-mouse-actions --post-command-discovery-hook --help <WEB_SERVER_IP> <WEB_SERVER_PORT> <WEB_SERVER_CERT> <WEB_SERVER_KEY> <ENFORCE_HTTPS_FOR_LOCALHOST>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1800,6 +1819,14 @@ _zellij() {
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
+                --web-server)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --web-sharing)
+                    COMPREPLY=($(compgen -W "on off disabled" -- "${cur}"))
+                    return 0
+                    ;;
                 --stacked-resize)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
@@ -1810,6 +1837,14 @@ _zellij() {
                     ;;
                 --show-release-notes)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --advanced-mouse-actions)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --post-command-discovery-hook)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 *)
@@ -1916,7 +1951,7 @@ _zellij() {
             return 0
             ;;
         zellij__run)
-            opts="-d -f -i -n -c -s -x -y -h --direction --cwd --floating --in-place --name --close-on-exit --start-suspended --x --y --width --height --pinned --help <COMMAND>..."
+            opts="-d -f -i -n -c -s -x -y -h --direction --cwd --floating --in-place --name --close-on-exit --start-suspended --x --y --width --height --pinned --stacked --help <COMMAND>..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -2001,6 +2036,40 @@ _zellij() {
                     return 0
                     ;;
                 --generate-auto-start)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        zellij__web)
+            opts="-d -h --start --stop --status --daemonize --create-token --revoke-token --revoke-all-tokens --list-tokens --ip --port --cert --key --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --revoke-token)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --ip)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --port)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --cert)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --key)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;

@@ -1,6 +1,15 @@
 {
   description = "kachick's dotfiles that can be placed in the public repository";
 
+  nixConfig = {
+    extra-substituters = [
+      "https://kachick-dotfiles.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+    ];
+  };
+
   inputs = {
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17
@@ -20,8 +29,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Use 2505.n.n if available
-      # https://github.com/nix-community/NixOS-WSL/blob/2411.6.0/flake.nix#L5
+      url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -53,11 +61,7 @@
 
       overlays = import ./overlays { inherit edge-nixpkgs; };
 
-      mkPkgs =
-        system:
-        import (mkNixpkgs system) {
-          inherit system overlays;
-        };
+      mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
       mkHomeManager =
         system:
@@ -74,8 +78,8 @@
         };
     in
     {
-      # Why not use `nixfmt-rfc-style`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).nixfmt-tree);
+      # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
+      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
 
       devShells = forAllSystems (
         system:
@@ -89,10 +93,12 @@
         in
         {
           default = pkgs.mkShellNoCC {
-            # Realize nixd pkgs version inlay hints for stable channel instead of latest
-            NIX_PATH = "nixpkgs=${pkgs.path}";
+            env = {
+              # Correct pkgs versions in the nixd inlay hints
+              NIX_PATH = "nixpkgs=${pkgs.path}";
 
-            TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+              TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+            };
 
             buildInputs =
               (with pkgs; [
@@ -107,7 +113,6 @@
                   nixf # `nixf-tidy`
                   nix-init
                   nurl
-                  nixfmt-rfc-style
                   nix-update
 
                   go_1_24
@@ -124,6 +129,7 @@
                   lychee
                 ])
                 ++ (with pkgs.unstable; [
+                  nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   gitleaks
                   dprint
@@ -142,8 +148,8 @@
         system:
         let
           pkgs = mkPkgs system;
+          # Don't include unfree packages, it will fail in `nix flake check`
         in
-        # Don't include unfree packages, it will fail in `nix flake check`
         pkgs.lib.recursiveUpdate pkgs.patched pkgs.my
       );
 
@@ -159,13 +165,7 @@
           system = "x86_64-linux";
           shared = {
             inherit system;
-            specialArgs = {
-              inherit
-                inputs
-                outputs
-                overlays
-                ;
-            };
+            specialArgs = { inherit inputs outputs overlays; };
           };
         in
         {
@@ -222,14 +222,10 @@
             ];
           };
 
-          # macos-13 is the latest x86-64 runner for darwin and technically the right choice for respecting architecture of my old MacBook,
-          # but it's slow, almost 3x slower than Linux runners - so I prefer macos-14 or later. :<
-          #
-          # From another angle, I do keep my MacBook OS up-to-date, so maybe it's actually more appropriate as a CI environment than macos-13.
-          # Ideally, I guess it would be best to run both macos-13 and "macos-latest or later"(actually not "latest" in GitHub!),
-          # but I spend less than 1% of my time on macOS compared to Linux, so I don't want to make things more complex here.
-          "github-actions@macos-15" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = mkPkgs "aarch64-darwin";
+          # macos-13 is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
+          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
+            pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
             modules = [

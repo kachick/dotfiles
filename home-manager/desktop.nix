@@ -1,5 +1,7 @@
 {
   lib,
+  config,
+  pkgs,
   ...
 }:
 
@@ -7,7 +9,8 @@ let
   # It should be ordered with IME support.
   plainTextEditor = [
     "org.gnome.TextEditor.desktop"
-  ] ++ codeEditor;
+  ]
+  ++ codeEditor;
 
   codeEditor = [
     "dev.zed.Zed.desktop"
@@ -37,7 +40,8 @@ let
   imageViewer = [
     # https://gitlab.gnome.org/GNOME/loupe/-/blob/47.2/data/meson.build#L54
     "org.gnome.Loupe.desktop"
-  ] ++ webBrowser;
+  ]
+  ++ webBrowser;
 in
 {
   imports = [ ./gnome.nix ];
@@ -128,4 +132,20 @@ in
 
   # https://github.com/nix-community/home-manager/commit/4c8647b1ed35d0e1822c7997172786dfa18cd7da
   services.trayscale.enable = true;
+
+  # GH-1228: Disable podman-desktop Telemetry
+  # podman-desktop does not provide CLI configurable features likely ENV
+  # ref: https://github.com/podman-desktop/podman-desktop/blob/db85f0197406b42dc8a0bd8ef5661e8c19c30e80/.devcontainer/.parent/Containerfile#L36-L38
+  xdg.dataFile."containers/podman-desktop/configuration/.keep".text = "";
+  home.activation.disablePodmanDesktopTelemetry =
+    let
+      configPath = "${config.xdg.dataHome}/containers/podman-desktop/configuration/settings.json";
+    in
+    config.lib.dag.entryAnywhere ''
+      if [[ -f '${configPath}' ]]; then
+        jq '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${pkgs.moreutils}/bin/sponge" '${configPath}'
+      else
+        echo '{"telemetry.enabled": false, "telemetry.check": true}' > '${configPath}'
+      fi
+    '';
 }

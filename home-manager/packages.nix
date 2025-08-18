@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 
 (with pkgs; [
   # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
@@ -12,7 +9,7 @@
   zsh
   starship
   direnv
-  nixfmt-rfc-style
+  unstable.nixfmt
   nushell
   atuin
 
@@ -97,12 +94,13 @@
 
   fastfetch # active replacement of neofetch
 
-  unstable.gurk-rs # nixpkgs version bumps often fail because this package’s crate setup isn’t very standard. Use latest via container or VM if required
-
   # Require unstable version because
   #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
   #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
   unstable.brush
+
+  # Available since https://github.com/NixOS/nixpkgs/pull/423741
+  unstable.somo
 ])
 ++ (with pkgs.my; [
   la
@@ -121,4 +119,5 @@
   preview
   renmark
   tree-diff
+  gurk-rs
 ])

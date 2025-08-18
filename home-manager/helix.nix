@@ -90,6 +90,18 @@ in
           command = lib.getExe pkgs.unstable.typos-lsp;
           config.config = "${../typos.toml}";
         };
+
+        # https://github.com/mhersson/mpls/blob/v0.15.3/README.md?plain=1#L219-L240
+        mpls = {
+          command = lib.getExe pkgs.unstable.mpls;
+          args = [
+            "--code-style"
+            "--enable-footnotes"
+            "--enable-emoji"
+            "--browser"
+            "firefox" # chawan 0.2.1 didn't work
+          ];
+        };
       };
 
       language = [
@@ -120,7 +132,7 @@ in
           name = "nix";
           auto-format = true;
           formatter = {
-            command = lib.getExe pkgs.nixfmt-rfc-style;
+            command = lib.getExe pkgs.unstable.nixfmt;
           };
           language-servers = [
             "nil" # Not using thesedays, however kept with helix default
@@ -152,6 +164,7 @@ in
           formatter = mkDprint "md";
           language-servers = [
             "marksman"
+            "mpls"
             "typos"
           ];
         }
