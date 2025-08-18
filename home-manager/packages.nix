@@ -118,4 +118,5 @@
   preview
   renmark
   tree-diff
+  gurk-rs
 ])

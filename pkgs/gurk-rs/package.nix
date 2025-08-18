@@ -6,18 +6,29 @@
 }:
 
 let
+  version = "0.7.1";
+  # See https://github.com/boxdot/gurk-rs/releases for latest
+  sources = {
+    x86_64-linux = fetchzip {
+      # Musl version is now a static-linked binary, so it works on NixOS out of the box.
+      # https://github.com/boxdot/gurk-rs/issues/149#issuecomment-1294063051
+      url = "https://github.com/boxdot/gurk-rs/releases/download/v${version}/gurk-x86_64-unknown-linux-musl.tar.gz";
+      hash = "sha256-AuMmE97CexJoD7uKTSgwjbOC2mS6bsacZxXmB8xQEsg=";
+    };
+
+    x86_64-darwin = fetchzip {
+      url = "https://github.com/boxdot/gurk-rs/releases/download/v${version}/gurk-x86_64-apple-darwin.tar.gz";
+      hash = "sha256-Js+m2A2ZRDAb08NUualcRDUqGN8rYWvJequ0lxOvAyo=";
+    };
+  };
   mainProgram = "gurk";
+  system = stdenvNoCC.hostPlatform.system;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "gurk-rs";
-  version = "0.7.1";
+  inherit version;
 
-  src = fetchzip {
-    # Musl version is now a static-linked binary, so it works on NixOS out of the box.
-    # https://github.com/boxdot/gurk-rs/issues/149#issuecomment-1294063051
-    url = "https://github.com/boxdot/gurk-rs/releases/download/v${finalAttrs.version}/gurk-x86_64-unknown-linux-musl.tar.gz";
-    hash = "sha256-AuMmE97CexJoD7uKTSgwjbOC2mS6bsacZxXmB8xQEsg=";
-  };
+  src = sources.${system} or (throw "Unsupported system: ${system}");
 
   buildPhase = ''
     mkdir -p "$out/bin"
@@ -45,6 +56,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     homepage = "https://github.com/boxdot/gurk-rs";
     license = lib.licenses.agpl3Only;
     # Upstream also provides other binaries, this restriction is from my laziness
-    platforms = [ "x86_64-linux" ];
+    # Reconsider when addressing GH-1122
+    platforms = lib.platforms.x86_64;
   };
 })
