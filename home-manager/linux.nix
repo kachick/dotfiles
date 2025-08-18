@@ -85,6 +85,7 @@
         rclone-list-mounted
         rclone-mount
         rclone-fzf
+        gurk-rs
       ]);
   };
 
