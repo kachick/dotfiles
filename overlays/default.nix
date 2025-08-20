@@ -71,7 +71,7 @@
           # https://github.com/DeedleFake/trayscale/blob/v0.18.3/dev.deedles.Trayscale.desktop
           postFixup = ''
             desktop-file-edit "$out/share/applications/dev.deedles.Trayscale.desktop" \
-              --set-key='startupWMClass' --set-value='dev.deedles.Trayscale'
+              --set-key='StartupWMClass' --set-value='dev.deedles.Trayscale'
           '';
         }
       );
