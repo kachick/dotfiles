@@ -53,6 +53,27 @@
         }
       );
 
+      # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/tr/trayscale/package.nix
+      trayscale = prev.unstable.trayscale.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          ldflags = [
+            "-s"
+            "-w"
+            # Apply https://github.com/DeedleFake/trayscale/commit/9948effb47c5e604e166d08799148656df24f729 to fix version display
+            "-X=deedles.dev/trayscale/internal/metadata.version=${finalAttrs.version}"
+          ];
+
+          nativeBuildInputs = previousAttrs.nativeBuildInputs ++ [ prev.unstable.desktop-file-utils ];
+
+          # Fix missing icon in GNOME dash
+          # https://github.com/DeedleFake/trayscale/blob/v0.18.3/dev.deedles.Trayscale.desktop
+          postFixup = ''
+            desktop-file-edit "$out/share/applications/trayscale.desktop" \
+              --set-key='startupWMClass' --set-value='dev.deedles.Trayscale'
+          '';
+        }
+      );
+
       # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
       signal-desktop = prev.unstable.signal-desktop.override {
         commandLineArgs = [
