@@ -319,7 +319,10 @@ in
 
           # https://superuser.com/a/902508/120469
           # https://github.com/zsh-users/zsh-autosuggestions/issues/259
-          zshaddhistory() { whence ''${''${(z)1}[1]} >| /dev/null || return 1 }
+          zshaddhistory() {
+            local command_name=''${''${(z)1}[1]}
+            whence "$command_name" >| /dev/null || return 1
+          }
 
           # Same as .zshenv.local
           if [ -f '${config.xdg.configHome}/zsh/.zshrc.local' ]; then

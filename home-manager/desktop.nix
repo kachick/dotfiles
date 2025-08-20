@@ -131,7 +131,12 @@ in
   };
 
   # https://github.com/nix-community/home-manager/commit/4c8647b1ed35d0e1822c7997172786dfa18cd7da
-  services.trayscale.enable = true;
+  services.trayscale = {
+    enable = true;
+    # Using latest would be better for this tool: https://github.com/DeedleFake/trayscale/issues/215#issuecomment-2905114976
+    # Keep in mind, this package has latest tailscale in the input. I think it is mostly okay, because of tailscale package is frequently backported to stable channel
+    package = pkgs.unstable.trayscale;
+  };
 
   # GH-1228: Disable podman-desktop Telemetry
   # podman-desktop does not provide CLI configurable features likely ENV
