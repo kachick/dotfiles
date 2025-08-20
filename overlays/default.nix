@@ -54,6 +54,8 @@
       );
 
       # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/tr/trayscale/package.nix
+      # Using latest would be better for this tool: https://github.com/DeedleFake/trayscale/issues/215#issuecomment-2905114976
+      # Keep in mind, this package has latest tailscale in the input. I think it is mostly okay, because of tailscale package is frequently backported to stable channel
       trayscale = prev.unstable.trayscale.overrideAttrs (
         finalAttrs: previousAttrs: {
           ldflags = [

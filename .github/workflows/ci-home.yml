@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   home-manager:
-    timeout-minutes: 60
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:

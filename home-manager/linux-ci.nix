@@ -27,6 +27,7 @@
       # Test builds and push the binary cache from CI
       ++ (with pkgs.patched; [
         lima
+        trayscale
         signal-desktop
         shogihome
       ]);
