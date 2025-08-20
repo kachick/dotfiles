@@ -68,7 +68,12 @@
     AllowSuspendThenHibernate=no
   '';
 
-  services.atuin.enable = true;
+  services.atuin = {
+    enable = true;
+    openFirewall = true;
+    # default 127.0.0.1 does not accept accesses from other hosts
+    host = "0.0.0.0";
+  };
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
