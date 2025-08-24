@@ -321,6 +321,7 @@ in
           zshaddhistory() {
             local command_name=''${''${(z)1}[1]}
             whence "$command_name" >| /dev/null || return 1
+            "${lib.getExe pkgs.unstable.gitleaks}" stdin <<<"$1" &>| /dev/null || return 1
           }
 
           # Same as .zshenv.local
