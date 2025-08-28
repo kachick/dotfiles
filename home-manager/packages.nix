@@ -113,7 +113,6 @@
   rg-fzf
   envs
   ir
-  updeps
   bench_shells
   preview
   renmark
