@@ -10,7 +10,6 @@
     "golang.go",
     "kdl-org.kdl",
     "davidanson.vscode-markdownlint",
-    "TheNuProjectContributors.vscode-nushell-lang",
-    "rszyma.vscode-kanata"
+    "TheNuProjectContributors.vscode-nushell-lang"
   ]
 }

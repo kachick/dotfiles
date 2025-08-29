@@ -10,7 +10,6 @@
     (import ./font.nix { inherit pkgs; })
     (import ./vm.nix { inherit pkgs; })
     (import ./game.nix { inherit pkgs; })
-    ./kanata.nix
   ];
 
   # `wpa_cli`. I don't know what is the `wpa_gui`
