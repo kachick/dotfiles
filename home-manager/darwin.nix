@@ -52,23 +52,6 @@
   };
 
   xdg = {
-    configFile = {
-      "karabiner/assets" = {
-        source = ../config/keyboards/karabiner/assets;
-        recursive = true;
-      };
-
-      "karabiner/HomeManagerInit_karabiner.json" = {
-        source = ../config/keyboards/karabiner/karabiner.json;
-        # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
-        onChange = ''
-          rm -f ${config.xdg.configHome}/karabiner/karabiner.json
-          cp ${config.xdg.configHome}/karabiner/HomeManagerInit_karabiner.json ${config.xdg.configHome}/karabiner/karabiner.json
-          chmod u+w ${config.xdg.configHome}/karabiner/karabiner.json
-        '';
-      };
-    };
-
     dataFile = {
       # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598
       # https://github.com/midchildan/dotfiles/blob/fae87a3ef327c23031d8081333678f9472e4c0ed/nix/home/modules/gnupg/default.nix#L38

@@ -16,7 +16,3 @@ Cons for Microsoft IME
 ## How to completely disable Microsoft IME after installed Google Japanese Input?
 
 [#300](https://github.com/kachick/dotfiles/issues/300) is the steps.
-
-## How to toggle with US keyboard?
-
-- Using kanata. See [keyboard section](../config/keyboards/README.md)
