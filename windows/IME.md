@@ -9,6 +9,7 @@ Pros for Microsoft IME
 
 Cons for Microsoft IME
 
+- Not a cross-platform solution. Mozc(Google Japanese Input) is available on Linux, Windows, macOS.
 - Needed to tab, not in space to get date as "きょう"
 - No way to get date with ISO 8601 format
 
