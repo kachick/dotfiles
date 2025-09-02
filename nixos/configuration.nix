@@ -47,6 +47,13 @@
     ];
 
     accept-flake-config = true;
+
+    # Workaround for https://github.com/NixOS/nix/issues/11728
+    download-buffer-size =
+      let
+        GiB = 1024 * 1024 * 1024;
+      in
+      1 * GiB;
   };
 
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
