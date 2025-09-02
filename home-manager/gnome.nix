@@ -200,6 +200,10 @@
         display-mode = 0;
       };
 
+      "org/gnome/shell/extensions/lockkeys" = {
+        style = "capslock";
+      };
+
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" ];
 
