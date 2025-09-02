@@ -30,6 +30,7 @@
             dash-to-dock
             # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for detail
             # user-themes # the package name is not the `user-theme`, required `s` suffix
+            lock-keys
           ]
         );
 
@@ -197,6 +198,10 @@
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
         cache-only-favorites = true;
         display-mode = 0;
+      };
+
+      "org/gnome/shell/extensions/lockkeys" = {
+        style = "capslock";
       };
 
       "org/gnome/mutter" = {
