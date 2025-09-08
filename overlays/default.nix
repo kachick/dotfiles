@@ -60,11 +60,30 @@
         ];
       };
 
-      shogihome = prev.unstable.shogihome.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      };
+      shogihome = prev.unstable.shogihome.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          version = "1.25.0";
+
+          src = prev.fetchFromGitHub {
+            owner = "sunfish-shogi";
+            repo = "shogihome";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-Qa8ykN514Moc/PpBhD/X+mzfclQPp3yiriwTJCtmMA8=";
+          };
+
+          # Should manually override instead of replacing npmDepsHash
+          # https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4?u=kachick
+          npmDeps = final.fetchNpmDeps {
+            inherit (finalAttrs) src;
+            name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
+            hash = "sha256-rcrj3dG96oNbmp3cXw1qRJPi1SZdBcG9paAShSfb/0E=";
+          };
+
+          commandLineArgs = [
+            "--wayland-text-input-version=3"
+          ];
+        }
+      );
     };
   })
 ]
