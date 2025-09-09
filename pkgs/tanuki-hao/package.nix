@@ -29,9 +29,14 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   '';
 
   # Almost 25MiB after unarchived
+  # What is the eval_options.txt: https://github.com/yaneurao/YaneuraOu/wiki/%E9%9A%A0%E3%81%97%E6%A9%9F%E8%83%BD#eval_optionstxt
+  # => AFAIK, shogihome does not respect this file. Manually setup the parameters if using yaneuraou through shogihome
+  # What is the FV_SCALE: https://yaneuraou.yaneu.com/2025/02/26/quantization-error-and-yaneuraous-fv_scale/
+  # Upstream clarified 20 is the best option for tanuki-hao in the GH release
   installPhase = ''
     mkdir -p "$out/share"
     cp -r ./eval "$out/share"
+    ln --symbolic '${./eval_options.txt}' "$out/share/eval/eval_options.txt"
   '';
 
   doInstallCheck = true;
