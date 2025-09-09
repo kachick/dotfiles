@@ -1,10 +1,11 @@
 {
   pkgs,
   lib,
+  buildGo125Module,
   makeWrapper,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+buildGo125Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
 
