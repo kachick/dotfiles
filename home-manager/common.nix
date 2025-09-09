@@ -62,6 +62,11 @@
       # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
       # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
       STARSHIP_CONFIG = "${../config/starship/starship.toml}";
+
+      # Workaround to detect tailscale kyes
+      # Setting this is not an ideal state. Because of this env ignores configs on $PWD
+      # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
+      GITLEAKS_CONFIG = "${../config/gitleaks/.gitleaks.toml}";
     };
 
     sessionPath = [
