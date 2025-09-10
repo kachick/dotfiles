@@ -252,6 +252,13 @@
         ];
 
         per-window = false;
+
+        # GH-963 - "Both Shifts together enable Caps Lock, one Shift key disables it" in gnome-tweaks
+        xkb-options = [
+          "caps:none"
+          "lv3:ralt_switch"
+          "shift:both_capslock_cancel"
+        ];
       };
 
       # Do not depend on this value with home-manager. Stationary devices need longer times before sleep, while laptops need shorter times.

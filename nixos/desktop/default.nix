@@ -155,6 +155,7 @@
       # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
       readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 
+      gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
       dconf-editor
 
       # Using unstable to avoid EOL electron
