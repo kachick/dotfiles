@@ -1,5 +1,3 @@
-# This file defines GUI VM management on NixOS desktop. See also lima related files in home-manager
-
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
