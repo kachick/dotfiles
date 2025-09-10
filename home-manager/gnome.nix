@@ -62,6 +62,8 @@
       # Disabling defaults to enable Suprt+num family will be used to switch workspaces
       # https://github.com/pop-os/shell/issues/142
       "org/gnome/shell/keybindings" = {
+        toggle-overview = [ "<Alt>space" ]; # Likely PowerToys Run
+
         switch-to-application-1 = [ ];
         switch-to-application-2 = [ ];
         switch-to-application-3 = [ ];
@@ -174,7 +176,7 @@
         www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Prefer overlay-key
+        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Use org/gnome/shell/keybindings/toggle-overview instead
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
@@ -185,12 +187,6 @@
         name = "Terminal";
         binding = "<Super>t";
         command = lib.getExe pkgs.ghostty;
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-        name = "Toggle Launcher";
-        binding = "<Alt>space";
-        command = lib.getExe pkgs.my.toggle-wofi;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
@@ -213,7 +209,7 @@
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
         # However just removing is not enough. Search feature cannot toggle. Providing an overlay-key is still better than none.
-        # This option does not accept combo like the "<Alt>Space"
+        # This option does not accept combo like the "<Alt>Space". Use org/gnome/shell/keybindings/toggle-overview instead
         #
         # Why this value?
         # - Avoid default Super_L for mistyping.
