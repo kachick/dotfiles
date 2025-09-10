@@ -179,7 +179,6 @@
         # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Use org/gnome/shell/keybindings/toggle-overview instead
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
@@ -249,10 +248,11 @@
 
         per-window = false;
 
-        # GH-963 - "Both Shifts together enable Caps Lock, one Shift key disables it" in gnome-tweaks
         xkb-options = [
           "caps:none"
           "lv3:ralt_switch"
+
+          # GH-963 - "Both Shifts together enable Caps Lock, one Shift key disables it" in gnome-tweaks
           "shift:both_capslock_cancel"
         ];
       };
