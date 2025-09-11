@@ -115,7 +115,7 @@
                   nurl
                   nix-update
 
-                  go_1_24
+                  go_1_25
 
                   shellcheck
                   shfmt
