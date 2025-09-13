@@ -164,8 +164,17 @@
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  # https://github.com/NixOS/nixpkgs/blob/25.05/nixos/modules/programs/ssh.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/doc/manual/configuration/ssh.section.md
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
+  services.fail2ban.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

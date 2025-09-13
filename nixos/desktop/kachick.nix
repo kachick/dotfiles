@@ -11,6 +11,10 @@ in
   users.users.kachick = mkUser {
     description = "foolish";
     additionalGroups = [ "wheel" ];
+
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMCGvjh2wrEY1+QxRu2hNpHztcZfBueQDPXZMZKBgvY5"
+    ];
   };
 
   home-manager = {
