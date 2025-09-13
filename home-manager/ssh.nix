@@ -109,6 +109,14 @@ in
           UserKnownHostsFile = "/dev/null";
         };
       };
+
+      # mDNS via avahi.
+      "*.local" = {
+        extraOptions = {
+          # NixOS reuilds change the host key
+          StrictHostKeyChecking = "no";
+        };
+      };
     };
   };
 }

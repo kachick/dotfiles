@@ -163,7 +163,8 @@
     enable = true;
     nssmdns4 = true;
 
-    # Enable hostname.local
+    # Enable mDNS(hostname.local)
+    # You can test it with: `avahi-resolve-host-name hostname.local`
     publish = {
       enable = true;
       addresses = true;
