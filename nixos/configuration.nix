@@ -158,13 +158,25 @@
     ]
   );
 
+  # To setup a wireless printer
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+
+    # Enable hostname.local
+    publish = {
+      enable = true;
+      addresses = true;
+    };
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
 
   # List services that you want to enable:
 
-  # https://github.com/NixOS/nixpkgs/blob/25.05/nixos/modules/programs/ssh.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/ssh/sshd.nix
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/doc/manual/configuration/ssh.section.md
   services.openssh = {
     enable = true;
