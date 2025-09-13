@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   config,
   ...
 }:
@@ -43,6 +44,11 @@ in
 
   home.file."${sshDir}/control/.keep".text = "Make ControlPath shorter";
 
+  home.activation = {
+    ensureWritableKnownHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      run touch ${sshDir}/known_hosts.local
+    '';
+  };
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
@@ -50,8 +56,9 @@ in
     # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
     hashKnownHosts = false;
 
-    # It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
-    userKnownHostsFile = "${../config/ssh/known_hosts} ${sshDir}/known_hosts.local";
+    # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
+    # - First path should be writable for the StrictHostKeyChecking=no use-case
+    userKnownHostsFile = "${sshDir}/known_hosts.local ${../config/ssh/known_hosts}";
 
     # unit: seconds
     serverAliveInterval = 60;
