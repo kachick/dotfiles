@@ -120,7 +120,7 @@ in
       # mDNS via avahi.
       "*.local" = {
         extraOptions = {
-          # NixOS reuilds change the host key
+          # NixOS rebuilds change the host key
           StrictHostKeyChecking = "no";
         };
       };
