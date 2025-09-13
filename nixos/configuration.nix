@@ -158,7 +158,7 @@
     ]
   );
 
-  ## Avahi (Classic, support printers)
+  ## Avahi (Classic, supported by CUPS)
   # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/avahi-daemon.nix
   # - https://wiki.archlinux.org/title/Avahi
   #
@@ -167,31 +167,29 @@
   # - https://github.com/NixOS/nixpkgs/issues/412777
   # - https://github.com/NixOS/nixpkgs/issues/291108
   services.avahi = {
-    # Enable wireless printer. systemd-resolved does not support this purpose
+    # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
+    # - https://github.com/apple/cups/issues/5452
+    # - https://github.com/OpenPrinting/libcups/issues/81
     enable = true; # If enabled, you should care the conflict with systemd-resolved
 
-    # Thde default inherits from config.networking.enableIPv6 https://github.com/NixOS/nixpkgs/blob/8cd5ce828d5d1d16feff37340171a98fc3bf6526/nixos/modules/services/networking/avahi-daemon.nix#L113C17-L113C45
-    # It might be making unstable behaviors even through disabling nssmdns6
-    ipv6 = false;
-
-    # Enable mDNS(hostname.local)
-    # You can test it with: `avahi-resolve-host-name hostname.local`
-    nssmdns4 = true;
-
-    # This was also required to enable mDNS
-    publish = {
-      enable = true;
-      addresses = true;
-    };
+    # Make sure disabling mDNS in avahi to avoid conflict with systemd-resolved
+    # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
+    # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+    nssmdns4 = false;
+    nssmdns6 = false;
   };
 
-  ## systemd-resolved (Modern, no support for printers)
+  ## systemd-resolved (Modern, not supported by CUPS)
   # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
   # Disabled by default. But ensures to disable MulticastDNS
   services.resolved = {
+    enable = true;
+
+    # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
+    # My motivation come from: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
     extraConfig = ''
-      MulticastDNS=off
+      MulticastDNS=true
     '';
   };
 

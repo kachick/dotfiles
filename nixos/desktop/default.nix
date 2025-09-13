@@ -96,6 +96,9 @@
 
   services.blueman.enable = true;
 
+  # You can use the Web UI via http://localhost:631/admin/
+  # See also CUPS, Avahi and systemd-resolved section
+  # AFAIK, require CUPS even if using "IPP Everywhere"
   services.printing = {
     enable = true;
     drivers = [ pkgs.epson-escpr2 ];
