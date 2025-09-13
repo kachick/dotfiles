@@ -39,19 +39,19 @@
       # );
 
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-      lima = prev.unstable.lima.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          # Upstream PR: https://github.com/NixOS/nixpkgs/pull/428759
-          version = "1.2.1";
+      # lima = prev.unstable.lima.overrideAttrs (
+      #   finalAttrs: previousAttrs: {
+      #     # Upstream PR: <UPDATEME>
+      #     version = "<UPDATEME>";
 
-          src = prev.fetchFromGitHub {
-            owner = "lima-vm";
-            repo = "lima";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-90fFsS5jidaovE2iqXfe4T2SgZJz6ScOwPPYxCsCk/k=";
-          };
-        }
-      );
+      #     src = prev.fetchFromGitHub {
+      #       owner = "lima-vm";
+      #       repo = "lima";
+      #       tag = "v${finalAttrs.version}";
+      #       hash = "<UPDATEME>";
+      #     };
+      #   }
+      # );
 
       # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
       signal-desktop = prev.unstable.signal-desktop.override {

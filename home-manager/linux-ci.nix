@@ -26,7 +26,7 @@
       ])
       # Test builds and push the binary cache from CI
       ++ (with pkgs.patched; [
-        lima
+        # lima # Enable when patched
         signal-desktop
         shogihome
       ]);
