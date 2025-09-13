@@ -158,17 +158,41 @@
     ]
   );
 
-  # To setup a wireless printer
+  ## Avahi (Classic, support printers)
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/avahi-daemon.nix
+  # - https://wiki.archlinux.org/title/Avahi
+  #
+  # If you faced to any troubles around this context, Also see following issues
+  # - https://github.com/NixOS/nixpkgs/issues/118628
+  # - https://github.com/NixOS/nixpkgs/issues/412777
+  # - https://github.com/NixOS/nixpkgs/issues/291108
   services.avahi = {
-    enable = true;
-    nssmdns4 = true;
+    # Enable wireless printer. systemd-resolved does not support this purpose
+    enable = true; # If enabled, you should care the conflict with systemd-resolved
+
+    # Thde default inherits from config.networking.enableIPv6 https://github.com/NixOS/nixpkgs/blob/8cd5ce828d5d1d16feff37340171a98fc3bf6526/nixos/modules/services/networking/avahi-daemon.nix#L113C17-L113C45
+    # It might be making unstable behaviors even through disabling nssmdns6
+    ipv6 = false;
 
     # Enable mDNS(hostname.local)
     # You can test it with: `avahi-resolve-host-name hostname.local`
+    nssmdns4 = true;
+
+    # This was also required to enable mDNS
     publish = {
       enable = true;
       addresses = true;
     };
+  };
+
+  ## systemd-resolved (Modern, no support for printers)
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
+  # - https://wiki.archlinux.org/title/Systemd-resolved
+  # Disabled by default. But ensures to disable MulticastDNS
+  services.resolved = {
+    extraConfig = ''
+      MulticastDNS=off
+    '';
   };
 
   # Some programs need SUID wrappers, can be configured further or are
