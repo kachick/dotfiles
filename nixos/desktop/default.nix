@@ -101,12 +101,6 @@
     drivers = [ pkgs.epson-escpr2 ];
   };
 
-  # To setup a wireless printer
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-  };
-
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
     (with pkgs; [
