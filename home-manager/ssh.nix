@@ -11,11 +11,7 @@ let
   #   - https://wiki.archlinux.jp/index.php/XDG_Base_Directory
   #   - https://superuser.com/a/1606519/120469
   sshDir = "${config.home.homeDirectory}/.ssh";
-  sharedConfig = {
-    identityFile = "${sshDir}/id_ed25519";
-    identitiesOnly = true;
-    user = "git";
-  };
+  localKnownHostsPath = "${sshDir}/known_hosts.local";
 in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
@@ -46,7 +42,7 @@ in
 
   home.activation = {
     ensureWritableKnownHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      run touch ${sshDir}/known_hosts.local
+      run touch '${localKnownHostsPath}'
     '';
   };
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/ssh.nix
@@ -58,7 +54,7 @@ in
 
     # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
     # - First path should be writable for the StrictHostKeyChecking=no use-case
-    userKnownHostsFile = "${sshDir}/known_hosts.local ${../config/ssh/known_hosts}";
+    userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
 
     # unit: seconds
     serverAliveInterval = 60;
@@ -97,33 +93,41 @@ in
     '';
 
     # No problem to register the same *.pub in different services
-    matchBlocks = {
-      # ANYONE can access the registered public key at https://github.com/kachick.keys
-      "github.com" = sharedConfig;
+    matchBlocks =
+      let
+        sharedConfig = {
+          identityFile = "${sshDir}/id_ed25519";
+          identitiesOnly = true;
+          user = "git";
+        };
+      in
+      {
+        # ANYONE can access the registered public key at https://github.com/kachick.keys
+        "github.com" = sharedConfig;
 
-      # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-      "gitlab.com" = sharedConfig;
+        # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
+        "gitlab.com" = sharedConfig;
 
-      # Need authentication to get the public keys
-      #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
-      #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-      "bitbucket.org" = sharedConfig;
+        # Need authentication to get the public keys
+        #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
+        #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
+        "bitbucket.org" = sharedConfig;
 
-      # For WSL2 instances like default Ubuntu and podman-machine
-      "localhost" = sharedConfig // {
-        extraOptions = {
-          StrictHostKeyChecking = "no";
-          UserKnownHostsFile = "/dev/null";
+        # For WSL2 instances like default Ubuntu and podman-machine
+        "localhost" = sharedConfig // {
+          extraOptions = {
+            StrictHostKeyChecking = "no";
+            UserKnownHostsFile = "/dev/null";
+          };
+        };
+
+        # mDNS via avahi.
+        "*.local" = {
+          extraOptions = {
+            # NixOS rebuilds change the host key
+            StrictHostKeyChecking = "no";
+          };
         };
       };
-
-      # mDNS via avahi.
-      "*.local" = {
-        extraOptions = {
-          # NixOS rebuilds change the host key
-          StrictHostKeyChecking = "no";
-        };
-      };
-    };
   };
 }
