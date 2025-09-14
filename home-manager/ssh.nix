@@ -53,7 +53,7 @@ in
     hashKnownHosts = false;
 
     # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
-    # - First path should be writable for the StrictHostKeyChecking=no use-case
+    # - First path should be writable for the `StrictHostKeyChecking != yes` use-case
     userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
 
     # unit: seconds
@@ -82,6 +82,7 @@ in
       PasswordAuthentication no
 
       # default: "ask"
+      # Candidates: "accept-new". Don't use "no" as possible
       StrictHostKeyChecking yes
 
       # https://serverfault.com/a/1109184/112217
@@ -116,7 +117,7 @@ in
         # For WSL2 instances like default Ubuntu and podman-machine
         "localhost" = sharedConfig // {
           extraOptions = {
-            StrictHostKeyChecking = "no";
+            StrictHostKeyChecking = "ask";
             UserKnownHostsFile = "/dev/null";
           };
         };
@@ -125,7 +126,7 @@ in
         "*.local" = {
           extraOptions = {
             # NixOS rebuilds change the host key
-            StrictHostKeyChecking = "no";
+            StrictHostKeyChecking = "accept-new";
           };
         };
       };
