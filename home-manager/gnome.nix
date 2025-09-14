@@ -167,9 +167,9 @@
         # move-to-workspace-8 = [ "<Super><Shift>8" ];
         # move-to-workspace-9 = [ "<Super><Shift>9" ];
 
-        # Intentioanlly specifies same values as default. Because of it is flaky removed if using default.
-        switch-input-source = [ "<Super>space" ];
-        switch-input-source-backward = [ "<Shift><Super>space" ];
+        # Avoid the default "<Super>space", since using <Alt>+Space for toggle-overview
+        switch-input-source = [ "<Super>i" ];
+        switch-input-source-backward = [ "<Shift><Super>i" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
