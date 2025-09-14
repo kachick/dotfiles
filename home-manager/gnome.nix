@@ -62,7 +62,7 @@
       # Disabling defaults to enable Suprt+num family will be used to switch workspaces
       # https://github.com/pop-os/shell/issues/142
       "org/gnome/shell/keybindings" = {
-        toggle-overview = [ "<Alt>space" ]; # Likely PowerToys Run
+        toggle-overview = [ "<Alt>space" ]; # Likely "PowerToys Run(Windows)" and "Spotlight(macOS)".
 
         switch-to-application-1 = [ ];
         switch-to-application-2 = [ ];
