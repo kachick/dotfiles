@@ -195,6 +195,17 @@
   # Avahi module has openFirewall, but resolved module does not have it
   networking.firewall.allowedUDPPorts = [ 5353 ];
 
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/networkmanager.nix
+  networking.networkmanager = {
+    enable = true;
+
+    dns = "systemd-resolved";
+    connectionConfig."connection.mdns" = 2;
+
+    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
+    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

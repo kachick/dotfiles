@@ -2,17 +2,6 @@
 {
   # networking.wireless.enable = true; # Enables wireless support via wpa_supplicant. Bascically prefer networkmanager, enable this if unstable
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/networkmanager.nix
-  networking.networkmanager = {
-    enable = true;
-
-    dns = "systemd-resolved";
-    connectionConfig."connection.mdns" = 2;
-
-    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
-    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
-  };
-
   services.udev = {
     enable = true;
     # Settings keyremap in raw layer than X. See GH-784 and GH-963 for background. And see https://github.com/kachick/dotfiles/wiki/Key-Remapper for the guide
