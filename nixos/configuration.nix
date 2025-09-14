@@ -166,6 +166,7 @@
   # - https://github.com/NixOS/nixpkgs/issues/118628
   # - https://github.com/NixOS/nixpkgs/issues/412777
   # - https://github.com/NixOS/nixpkgs/issues/291108
+  # I don't know how to use both in NixOS likely https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
   services.avahi = {
     # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
     # - https://github.com/apple/cups/issues/5452
@@ -179,6 +180,7 @@
   };
 
   ## systemd-resolved (Modern, not supported by CUPS)
+  # - Check the behavior with `resolvectl status`
   # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
   # Disabled by default. But ensures to disable MulticastDNS
