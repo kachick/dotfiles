@@ -226,7 +226,9 @@
     enable = true;
     shellWrapperName = "y";
     settings = {
-      manager = {
+      # https://github.com/sxyazi/yazi/pull/2803
+      # https://github.com/nix-community/home-manager/pull/7160
+      mgr = {
         sort_dir_first = true;
       };
     };
