@@ -95,6 +95,7 @@ in
         mpls = {
           command = lib.getExe pkgs.unstable.mpls;
           args = [
+            "--no-auto"
             "--code-style"
             "--enable-footnotes"
             "--enable-emoji"
