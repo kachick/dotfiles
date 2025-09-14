@@ -13,8 +13,9 @@
 
 {
   home = {
-    packages =
-      (with pkgs.unstable; [
+    packages = (
+      with pkgs.unstable;
+      [
         # Disabling zed-editor because of it is most flaky in unstable channels.
         # If you want to use newer versions, consider to use upstream providing binary cache
         # See https://github.com/zed-industries/zed/issues/19937 for detail
@@ -23,12 +24,11 @@
         typos-lsp
         dprint
         # gnome-boxes # Omitting. I believe it is a core package of NixOS.
-      ])
-      # Test builds and push the binary cache from CI
-      ++ (with pkgs.patched; [
-        # lima # Enable when patched
-        signal-desktop
-        shogihome
-      ]);
+      ]
+    );
+    # # Test builds and push the binary cache from CI
+    # ++ (with pkgs.patched; [
+    #   # lima # Enable when patched
+    # ]);
   };
 }
