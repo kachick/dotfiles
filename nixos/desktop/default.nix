@@ -52,6 +52,10 @@
   # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
   programs.ssh.enableAskPassword = false;
 
+  # Keep this config even if enabled via keyboard remappers likely https://github.com/NixOS/nixpkgs/blob/88cef159e47c0dc56f151593e044453a39a6e547/nixos/modules/services/hardware/kanata.nix#L204
+  # Because of I sometimes test kanata with kanata-tray instead of NixOS module or the systemd.
+  hardware.uinput.enable = true;
+
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;

@@ -7,9 +7,9 @@ let
   # TODO: Ensure adding WiFi supported Group
   defaultGroups = [
     "networkmanager"
-    "wheel" # Required to use Nix trusted-users and WiFi.
+    "wheel" # Required by Nix trusted-users and WiFi.
     "input" # Finger print in GDM
-    "uinput" # GH-1156
+    "uinput" # Added in GH-1156. Required by keyboard remappers. This will be unassigned when `hardware.uinput.enable = false`.
     "scanner"
     "lp" # Scanner
   ];
