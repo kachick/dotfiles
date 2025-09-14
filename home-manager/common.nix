@@ -220,4 +220,15 @@
       "!.git"
     ];
   };
+
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
+  programs.yazi = {
+    enable = true;
+    shellWrapperName = "y";
+    settings = {
+      manager = {
+        sort_dir_first = true;
+      };
+    };
+  };
 }

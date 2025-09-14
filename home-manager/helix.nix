@@ -65,6 +65,17 @@ in
 
             "C-p" = "file_picker";
             # "C-S-f" = "global_search"; # "<space>-/" by default. FIXME
+
+            # https://github.com/sxyazi/yazi/pull/2461#issue-2905199790
+            "C-y" = [
+              ":sh rm -f /tmp/helix-and-yazi-integration"
+              ":insert-output ${lib.getExe pkgs.yazi} %{buffer_name} --chooser-file=/tmp/helix-and-yazi-integration"
+              ''
+                :insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty
+              ''
+              ":open %sh{cat /tmp/helix-and-yazi-integration}"
+              ":redraw"
+            ];
           };
         in
         {
