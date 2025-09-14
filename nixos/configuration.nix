@@ -189,7 +189,6 @@
     # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
     extraConfig = ''
       MulticastDNS=true
-      DNSStubListener=false
     '';
   };
 
