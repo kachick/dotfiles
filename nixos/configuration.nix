@@ -193,6 +193,9 @@
     '';
   };
 
+  # Avahi module has openFirewall, but resolved module does not have it
+  networking.firewall.allowedUDPPorts = [ 5353 ];
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
