@@ -184,6 +184,7 @@
   # Disabled by default. But ensures to disable MulticastDNS
   services.resolved = {
     enable = true;
+    llmnr = "false";
 
     # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
     extraConfig = ''
