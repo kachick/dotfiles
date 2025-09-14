@@ -7,7 +7,7 @@
     enable = true;
 
     dns = "systemd-resolved";
-    connectionConfig."connection.mdns" = 1;
+    connectionConfig."connection.mdns" = 2;
 
     # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
     # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
