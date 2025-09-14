@@ -163,6 +163,11 @@
   xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
+  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
+  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
+  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";

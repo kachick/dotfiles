@@ -176,7 +176,7 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
-      patched.signal-desktop
+      unstable.signal-desktop
 
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
@@ -186,6 +186,11 @@
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
+      #
+      # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
+      # This restriction might be related to
+      #   - https://github.com/archlinux/svntogit-community/commit/f9ec89f9e2845e90f9524b28b74daf33ceb699bb
+      #   - https://github.com/archlinux/svntogit-community/commit/c8bf3ae2e3deab793cb8e8544250ef943d14c85e
       (
         (vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
@@ -215,14 +220,7 @@
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
       #
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix#L244-L253
-      (google-chrome.override {
-        # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-        # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      })
+      google-chrome
 
       my.chrome-with-profile-by-name
     ])
