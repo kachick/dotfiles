@@ -88,8 +88,11 @@ jobs:
         runner:
           - ubuntu-24.04
           # - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
+        pname:
+          - filen-rclone
+          - mdns-scanner
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 30
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v5
         with:
@@ -102,4 +105,4 @@ jobs:
         with:
           name: kachick-dotfiles
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: nix build .#filen-rclone
+      - run: 'nix build .#${{ matrix.pname }}'
