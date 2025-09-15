@@ -39,7 +39,7 @@ jobs:
           - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/nix-installer-action@v20
         with:
           extra-conf: |
             accept-flake-config = true
