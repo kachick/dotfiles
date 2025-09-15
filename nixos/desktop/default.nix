@@ -185,6 +185,8 @@
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
 
+      patched.mdns-scanner
+
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel

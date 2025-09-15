@@ -103,3 +103,4 @@ jobs:
           name: kachick-dotfiles
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: nix build .#filen-rclone
+      - run: nix build .#mdns-scanner
