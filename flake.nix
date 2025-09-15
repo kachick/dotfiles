@@ -4,9 +4,11 @@
   nixConfig = {
     extra-substituters = [
       "https://kachick-dotfiles.cachix.org"
+      "https://rszyma.cachix.org"
     ];
     extra-trusted-public-keys = [
       "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+      "rszyma.cachix.org-1:L3LKXbrUk+OfUBXj2JjxNrq23Z2BccrgDm/S2r012tg="
     ];
   };
 
@@ -31,6 +33,14 @@
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    kanata-tray = {
+      # Using default branch might be the reasonable way for this flake
+      # It provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b
+      url = "github:rszyma/kanata-tray";
+      # This repo provides binary cache. Therefore it might be reasonable to respect original nixpkgs
+      # Prefer unstable channel since also using latest kanata
+      # inputs.nixpkgs.follows = "edge-nixpkgs";
     };
   };
 
@@ -127,6 +137,8 @@
                   trivy
                   markdownlint-cli2
                   lychee
+
+                  inputs.kanata-tray.packages.${system}.kanata-tray
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail

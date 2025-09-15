@@ -2,6 +2,8 @@
   lib,
   config,
   pkgs,
+  inputs,
+  hostPlatform,
   ...
 }:
 
@@ -45,6 +47,11 @@ let
 in
 {
   imports = [ ./gnome.nix ];
+
+  packages = [
+    pkgs.unstable.kanata # Don't require kanata-with-cmd for now
+    inputs.kanata-tray.packages.${hostPlatform.system}.kanata-tray
+  ];
 
   xdg = {
     # How to get the mimetype: `xdg-mime query filetype path`
