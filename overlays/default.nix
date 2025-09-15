@@ -38,6 +38,12 @@
       #   }
       # );
 
+      # Overriding non mkDerivation often makes hard to modify the hash(not src hash). See following workaround
+      # rust:
+      #   - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
+      #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
+      # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
+
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
       # lima = prev.unstable.lima.overrideAttrs (
       #   finalAttrs: previousAttrs: {
@@ -66,7 +72,10 @@
             hash = "sha256-0MHt/kSR6JvfCk08WIDPz6R9YYzDJ9RRTM6MU6sEwHk=";
           };
 
-          cargoHash = "sha256-oJSsuU1vkisDISnp+/jFs1cWEVxr586l8yHbG6fkPjQ=";
+          cargoDeps = final.rustPlatform.fetchCargoVendor {
+            inherit (finalAttrs) src;
+            hash = "sha256-oJSsuU1vkisDISnp+/jFs1cWEVxr586l8yHbG6fkPjQ=";
+          };
         }
       );
     };
