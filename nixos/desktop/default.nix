@@ -66,7 +66,12 @@
     };
   };
 
-  programs.sniffnet.enable = true; # Simple Wireshark
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/programs/wireshark.nix
+  # Wireshark is still the best tool for my use case, as other modern tools like Sniffnet didn't satisfy my needs.
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark; # default is wireshark-cli(tshark)
+  };
 
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
