@@ -1,9 +1,9 @@
 {
-  pkgs,
   lib,
+  buildGo125Module,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+buildGo125Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
   vendorHash = "sha256-p98IrgD07HurEantYp+492jiNg6OAueGAWDM7jDdOAs=";
