@@ -94,6 +94,7 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
           sudo rm -rf "/usr/local/lib/android" || true
           sudo rm -rf "/usr/local/share/boost" || true
+          df -h
       - name: apt-get remove cleanup
         # Referenced https://zenn.dev/pinto0309/scraps/c6413eb15a1b2a
         run: |
@@ -110,7 +111,6 @@ jobs:
             ghc* \
             google-chrome-stable* \
             google-cloud-sdk* \
-            heroku* \
             imagemagick* \
             javascript* \
             kubectl* \
@@ -134,8 +134,7 @@ jobs:
             yarn*
           sudo apt-get autoremove -y >/dev/null 2>&1 || true
           sudo apt-get autoclean -y >/dev/null 2>&1 || true
-      - name: Logging disk space
-        run: df -h
+          df -h
       - name: Logging dependency versions
         run: |
           podman version
