@@ -83,6 +83,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
+      - name: Logging disk space
+        run: df -h
       - name: Logging dependency versions
         run: |
           podman version
@@ -215,6 +217,9 @@ jobs:
           This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
           EOF
           ) | gh pr comment ${{ github.event.number }} --body-file -
+
+      - name: Logging disk space
+        run: df -h
 
   remove-old-images:
     needs: [build_and_push]
