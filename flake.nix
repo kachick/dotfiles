@@ -11,15 +11,21 @@
   };
 
   inputs = {
+    # Why prefer channels.nixos.org rather than GitHub?
+    #   - Avoid rate limit
+    #   - nixos.org distributing tar.xz is smaller than GitHUub's zip
+    #   - nixos.org distributing tar.xz might ensure stable binary caches
+    # See https://github.com/kachick/dotfiles/issues/1262#issuecomment-3302717297 for detail
+    #
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "https://channels.nixos.org/nixos-25.05/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
+    edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.05-darwin/nixexprs.tar.xz";
     home-manager-linux = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
