@@ -86,6 +86,8 @@ jobs:
       - name: Logging disk space
         run: df -h
       - name: Clean space as per https://github.com/actions/virtual-environments/issues/709
+        # NOTE: This workflow removed 14 Gib in 50sec
+        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
         run: |
           docker images
           docker image prune --all --force
@@ -94,46 +96,6 @@ jobs:
           sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
           sudo rm -rf "/usr/local/lib/android" || true
           sudo rm -rf "/usr/local/share/boost" || true
-          df -h
-      - name: apt-get remove cleanup
-        # Referenced https://zenn.dev/pinto0309/scraps/c6413eb15a1b2a
-        run: |
-          sudo apt purge -y \
-            ansible* \
-            aria2* \
-            aspnetcore* \
-            azure-cli* \
-            cabal* \
-            clang* \
-            dotnet-* \
-            firefox* \
-            gfortran-* \
-            ghc* \
-            google-chrome-stable* \
-            google-cloud-sdk* \
-            imagemagick* \
-            javascript* \
-            kubectl* \
-            llvm* \
-            mono* \
-            mysql* \
-            nginx* \
-            node* \
-            npm* \
-            nuget* \
-            php* \
-            postgresql* \
-            powershell* \
-            rpm* \
-            ruby* \
-            sqlite3* \
-            subversion \
-            temurin* \
-            tmux* \
-            vim* \
-            yarn*
-          sudo apt-get autoremove -y >/dev/null 2>&1 || true
-          sudo apt-get autoclean -y >/dev/null 2>&1 || true
           df -h
       - name: Logging dependency versions
         run: |
