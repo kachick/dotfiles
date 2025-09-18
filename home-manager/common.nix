@@ -239,7 +239,7 @@
       # sync_address = "http://algae.local:8888";
       # Because TLS support is disabled now. NixOS module seems not accepting config files and TSL support for now
       # Therefore using SSH forwarding for the HTTP instead of TLS support on atuin
-      sync_address = "http://localhost:8888";
+      sync_address = "https://algae.local:58888";
     };
   };
 
