@@ -73,6 +73,7 @@
     openFirewall = true;
     # default 127.0.0.1 does not accept accesses from other hosts
     host = "0.0.0.0";
+    openRegistration = true;
   };
 
   environment.systemPackages = with pkgs; [
