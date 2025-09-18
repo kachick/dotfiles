@@ -121,21 +121,21 @@ in
             UserKnownHostsFile = "/dev/null";
           };
 
-          localForwards = [
-            # For atuin
-            {
-              bind.port = 8888;
-              host.address = "algae.local";
-              host.port = 8888;
-            }
-          ];
+          # localForwards = [
+          #   # For atuin
+          #   {
+          #     bind.port = 8888;
+          #     host.address = "algae.local";
+          #     host.port = 8888;
+          #   }
+          # ];
         };
 
         # mDNS via avahi.
         "*.local" = {
           extraOptions = {
             # NixOS rebuilds change the host key
-            StrictHostKeyChecking = "ask"; # Avoiding "accept-new" since accessing atuin via port forwarding
+            StrictHostKeyChecking = "accept-new";
           };
         };
       };

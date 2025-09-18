@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  config,
   ...
 }:
 
@@ -72,8 +73,18 @@
     enable = true;
     openFirewall = false; # Unnecessary to enable for SSH portforwarding
     # default 127.0.0.1 does not accept accesses from other hosts. However it is okay for current SSH portforwarding use-case
-    host = "127.0.0.1";
+    # host = "127.0.0.1";
     openRegistration = true;
+  };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/web-servers/caddy/default.nix
+  services.caddy.enable = true;
+
+  services.caddy.virtualHosts.atuin = {
+    # inherit hostName;
+    extraConfig = ''
+      reverse_proxy 127.0.0.1:${toString config.services.atuin.port}
+    '';
   };
 
   environment.systemPackages = with pkgs; [
