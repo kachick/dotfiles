@@ -10,9 +10,9 @@ on:
     types:
       - labeled
   schedule:
-    # Every 11:42 and 23:42 JST
+    # Every 23:42 JST # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 2,14 * * *'
+    - cron: '42 14 * * *'
   workflow_dispatch:
 
 permissions:
