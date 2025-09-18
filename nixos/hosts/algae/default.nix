@@ -70,9 +70,9 @@
 
   services.atuin = {
     enable = true;
-    openFirewall = true;
-    # default 127.0.0.1 does not accept accesses from other hosts
-    host = "0.0.0.0";
+    openFirewall = false; # Unnecessary to enable for SSH portforwarding
+    # default 127.0.0.1 does not accept accesses from other hosts. However it is okay for current SSH portforwarding use-case
+    host = "127.0.0.1";
     openRegistration = true;
   };
 

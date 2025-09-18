@@ -135,7 +135,7 @@ in
         "*.local" = {
           extraOptions = {
             # NixOS rebuilds change the host key
-            StrictHostKeyChecking = "accept-new";
+            StrictHostKeyChecking = "ask"; # Avoiding "accept-new" since accessing atuin via port forwarding
           };
         };
       };
