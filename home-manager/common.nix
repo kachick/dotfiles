@@ -234,7 +234,7 @@
 
     settings = {
       # auto_sync = true; # TODO: Consider enabling after test
-      sync_address = "https://algae.local:8888";
+      sync_address = "http://algae.local:8888";
     };
   };
 
