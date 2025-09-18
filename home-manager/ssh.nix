@@ -120,6 +120,15 @@ in
             StrictHostKeyChecking = "ask";
             UserKnownHostsFile = "/dev/null";
           };
+
+          localForwards = [
+            # For atuin
+            {
+              bind.port = 8888;
+              host.address = "algae.local";
+              host.port = 8888;
+            }
+          ];
         };
 
         # mDNS via avahi.
