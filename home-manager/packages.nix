@@ -82,6 +82,8 @@
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
   chawan # `cha`
 
+  yazi
+
   pastel
 
   # How to get the installed font names
@@ -114,7 +116,6 @@
   rg-fzf
   envs
   ir
-  updeps
   bench_shells
   preview
   renmark

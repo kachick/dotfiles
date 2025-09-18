@@ -38,33 +38,46 @@
       #   }
       # );
 
+      # Overriding non mkDerivation often makes hard to modify the hash(not src hash). See following workaround
+      # rust:
+      #   - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
+      #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
+      # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
+
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-      lima = prev.unstable.lima.overrideAttrs (
+      # lima = prev.unstable.lima.overrideAttrs (
+      #   finalAttrs: previousAttrs: {
+      #     # Upstream PR: <UPDATEME>
+      #     version = "<UPDATEME>";
+
+      #     src = prev.fetchFromGitHub {
+      #       owner = "lima-vm";
+      #       repo = "lima";
+      #       tag = "v${finalAttrs.version}";
+      #       hash = "<UPDATEME>";
+      #     };
+      #   }
+      # );
+
+      # I think there is no blocker to update this package.
+      # See https://github.com/NixOS/nixpkgs/pull/436735#pullrequestreview-3225509510 for detail
+      mdns-scanner = prev.unstable.mdns-scanner.overrideAttrs (
         finalAttrs: previousAttrs: {
-          # Upstream PR: https://github.com/NixOS/nixpkgs/pull/428759
-          version = "1.2.1";
+          version = "0.24.0";
 
           src = prev.fetchFromGitHub {
-            owner = "lima-vm";
-            repo = "lima";
+            owner = "CramBL";
+            repo = "mdns-scanner";
             tag = "v${finalAttrs.version}";
-            hash = "sha256-90fFsS5jidaovE2iqXfe4T2SgZJz6ScOwPPYxCsCk/k=";
+            hash = "sha256-0MHt/kSR6JvfCk08WIDPz6R9YYzDJ9RRTM6MU6sEwHk=";
+          };
+
+          cargoDeps = final.rustPlatform.fetchCargoVendor {
+            inherit (finalAttrs) src;
+            hash = "sha256-oJSsuU1vkisDISnp+/jFs1cWEVxr586l8yHbG6fkPjQ=";
           };
         }
       );
-
-      # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
-      signal-desktop = prev.unstable.signal-desktop.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      };
-
-      shogihome = prev.unstable.shogihome.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      };
     };
   })
 ]

@@ -34,7 +34,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/nix-installer-action@v20
       - name: Print some dotfiles overviews
         shell: bash -eu -o pipefail {0}
         run: |
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/nix-installer-action@v20
         with:
           extra-conf: |
             accept-flake-config = true
@@ -80,3 +80,29 @@ jobs:
         if: runner.os == 'Linux'
       - run: task ci-darwin
         if: runner.os == 'macOS'
+
+  push-binary-cache:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          # - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
+        pname:
+          - filen-rclone
+          - mdns-scanner
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: DeterminateSystems/nix-installer-action@v20
+        with:
+          extra-conf: |
+            accept-flake-config = true
+      - uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad # v16
+        with:
+          name: kachick-dotfiles
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run: 'nix build .#${{ matrix.pname }}'

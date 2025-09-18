@@ -139,7 +139,7 @@ Composition	VirtualRight	MoveCursorRight
 Conversion	VirtualRight	SegmentWidthExpand
 Conversion	Ctrl Space	IMEOff
 Composition	Ctrl Space	IMEOff
-DirectInput	Ctrl Space	IMEOff
+DirectInput	Ctrl Space	IMEOn
 Precomposition	Ctrl Space	IMEOff
 Suggestion	Ctrl Space	IMEOff
 Prediction	Ctrl Space	IMEOff

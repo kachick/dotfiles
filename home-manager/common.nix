@@ -62,6 +62,11 @@
       # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
       # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
       STARSHIP_CONFIG = "${../config/starship/starship.toml}";
+
+      # Workaround to detect tailscale kyes
+      # Setting this is not an ideal state. Because of this env ignores configs on $PWD
+      # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
+      GITLEAKS_CONFIG = "${../config/gitleaks/.gitleaks.toml}";
     };
 
     sessionPath = [
@@ -158,6 +163,11 @@
   xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
+  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
+  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
+  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
+
   xdg.dataFile."tmpbin/.keep".text = "";
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
@@ -224,7 +234,20 @@
 
     settings = {
       # auto_sync = true; # TODO: Consider enabling after test
-      sync_address = "https://algae";
+      sync_address = "https://algae.local";
+    };
+  };
+
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
+  programs.yazi = {
+    enable = true;
+    shellWrapperName = "y";
+    settings = {
+      # https://github.com/sxyazi/yazi/pull/2803
+      # https://github.com/nix-community/home-manager/pull/7160
+      mgr = {
+        sort_dir_first = true;
+      };
     };
   };
 }

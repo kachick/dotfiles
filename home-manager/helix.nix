@@ -64,7 +64,18 @@ in
             "C-7" = "toggle_comments"; # Trick for realizing "C-/" in Windows Terminal. See https://github.com/helix-editor/helix/issues/1369#issuecomment-1749330353. And not working on ghostty.
 
             "C-p" = "file_picker";
-            # "C-S-f" = "global_search"; # "<space>-/" by default. FIXME
+            "C-F" = "global_search"; # "<space>-/" by default. Use Ctrl+Shift+f like modeless editors
+
+            # https://github.com/sxyazi/yazi/pull/2461#issue-2905199790
+            "C-y" = [
+              ":sh rm -f /tmp/helix-and-yazi-integration"
+              ":insert-output ${lib.getExe pkgs.yazi} %{buffer_name} --chooser-file=/tmp/helix-and-yazi-integration"
+              ''
+                :insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty
+              ''
+              ":open %sh{cat /tmp/helix-and-yazi-integration}"
+              ":redraw"
+            ];
           };
         in
         {
@@ -95,6 +106,7 @@ in
         mpls = {
           command = lib.getExe pkgs.unstable.mpls;
           args = [
+            "--no-auto"
             "--code-style"
             "--enable-footnotes"
             "--enable-emoji"

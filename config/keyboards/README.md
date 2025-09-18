@@ -1,36 +1,22 @@
 # Keyboard
 
-## HWDB
+Since 2025-08-29, I dropped software keyremappers as possible as I can.\
+So ANSI keyboards should switch IME with `Ctrl+Space` in all platforms.
 
-See [the definitions](https://github.com/search?q=repo%3Akachick%2Fdotfiles+extraHwdb&type=code)
+## Linux
 
-## Kanata
-
-Force exiting if I have faced to similar problems like GH-963
-
-`Left Control` + `Space` + `Esc`
-
-Then the process will die. You can restart it with `systemctl start kanata-all`.
-Not just the `kanata`. You can check it with `systemctl list-unit-files "kanata*`.
-
-```console
-> systemctl list-unit-files "kanata*"
-UNIT FILE STATE PRESET
-kanata-all.service enabled ignored
-```
-
-And I added an escape hatch for caps lock. Which is only useable when keeping `F6` and `c + a + p`.
+See [the HWDB definitions](https://github.com/search?q=repo%3Akachick%2Fdotfiles+extraHwdb&type=code).
+I disable capslock, and dropped other keyremappers.
 
 ## Windows
 
-I have replaced "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) and [alt-ime-ahk](https://github.com/karakaram/alt-ime-ahk)" with [kanata](https://github.com/jtroo/kanata).
+I only use "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) to disable capslock.
 
-Use [config file](kanata.kbd) which is same content of NixOS.\
-Download the `kanata_gui.exe` from [release page](https://github.com/jtroo/kanata/releases) and put it in same folder of config.\
-And executing and registered in tray.\
-I don't know why, the _gui does not respect `C:\Users\<Name>\.config\kanata.kbd` atleast in v1.7.0.
+## macOS
 
-## QMK
+I only use macOS built-in keyboard remapper to disable capslock.
+
+## Hardware(QMK)
 
 ### How to
 

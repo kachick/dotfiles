@@ -10,7 +10,6 @@
     (import ./font.nix { inherit pkgs; })
     (import ./vm.nix { inherit pkgs; })
     (import ./game.nix { inherit pkgs; })
-    ./kanata.nix
   ];
 
   # `wpa_cli`. I don't know what is the `wpa_gui`
@@ -53,6 +52,10 @@
   # To avoid unexpected overriding with the NixOS module. I prefer gpg-agent or another way for that.
   programs.ssh.enableAskPassword = false;
 
+  # Keep this config even if enabled via keyboard remappers likely https://github.com/NixOS/nixpkgs/blob/88cef159e47c0dc56f151593e044453a39a6e547/nixos/modules/services/hardware/kanata.nix#L204
+  # Because of I sometimes test kanata with kanata-tray instead of NixOS module or the systemd.
+  hardware.uinput.enable = true;
+
   programs = {
     # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
@@ -63,7 +66,12 @@
     };
   };
 
-  programs.sniffnet.enable = true; # Simple Wireshark
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/programs/wireshark.nix
+  # Wireshark is still the best tool for my use case, as other modern tools like Sniffnet didn't satisfy my needs.
+  programs.wireshark = {
+    enable = true;
+    package = pkgs.wireshark; # default is wireshark-cli(tshark)
+  };
 
   environment.gnome.excludePackages = with pkgs; [
     gnome-tour
@@ -97,15 +105,12 @@
 
   services.blueman.enable = true;
 
+  # You can use the Web UI via http://localhost:631/admin/
+  # See also CUPS, Avahi and systemd-resolved section
+  # AFAIK, require CUPS even if using "IPP Everywhere"
   services.printing = {
     enable = true;
     drivers = [ pkgs.epson-escpr2 ];
-  };
-
-  # To setup a wireless printer
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
   };
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
@@ -137,9 +142,6 @@
 
       mission-center
 
-      # Don't use launchers such as walker which depend on gtk-layer-shell or gtk4-layer-shell. They does not support GNOME on Wayland. See https://github.com/abenz1267/walker/issues/180#issuecomment-2540630523
-      wofi
-
       # Add LSP global for zed-editor. Prefer external package for helix
       vscode-langservers-extracted
       # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
@@ -156,6 +158,7 @@
       # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
       readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 
+      gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
       dconf-editor
 
       # Using unstable to avoid EOL electron
@@ -182,16 +185,23 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
-      patched.signal-desktop
+      unstable.signal-desktop
 
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
+
+      patched.mdns-scanner
 
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
       # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
+      #
+      # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
+      # This restriction might be related to
+      #   - https://github.com/archlinux/svntogit-community/commit/f9ec89f9e2845e90f9524b28b74daf33ceb699bb
+      #   - https://github.com/archlinux/svntogit-community/commit/c8bf3ae2e3deab793cb8e8544250ef943d14c85e
       (
         (vscode.override {
           # https://wiki.archlinux.org/title/Wayland#Electron
@@ -221,14 +231,7 @@
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
       # `rm -rf ~/.config/google-chrome/Singleton*`
       #
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix#L244-L253
-      (google-chrome.override {
-        # https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-        # Similar as https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/chromium.nix
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      })
+      google-chrome
 
       my.chrome-with-profile-by-name
     ])
@@ -236,6 +239,7 @@
       appindicator
       clipboard-history
       dash-to-dock
+      lock-keys
     ]);
 
   # https://askubuntu.com/a/88947

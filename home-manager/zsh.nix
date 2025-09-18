@@ -317,11 +317,9 @@ in
           bindkey -M vicmd '^F' rg-fzf-widget
           bindkey -M viins '^F' rg-fzf-widget
 
-          # https://superuser.com/a/902508/120469
-          # https://github.com/zsh-users/zsh-autosuggestions/issues/259
+          # NOTE: Removed command existence check. Because of syntax highlighting prevents that troubles and I would keep minimum hooks
           zshaddhistory() {
-            local command_name=''${''${(z)1}[1]}
-            whence "$command_name" >| /dev/null || return 1
+            "${lib.getExe pkgs.unstable.gitleaks}" stdin <<<"$1" &>| /dev/null || return 1
           }
 
           # Same as .zshenv.local
