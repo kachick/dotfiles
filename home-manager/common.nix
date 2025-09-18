@@ -221,6 +221,28 @@
     ];
   };
 
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/atuin.nix
+  programs.atuin = {
+    enable = true;
+
+    flags = [
+      # https://github.com/atuinsh/atuin/issues/51
+      "--disable-up-arrow"
+
+      "--disable-ctrl-r" # Keep fzf key-bindings
+    ];
+
+    settings = {
+      # auto_sync = true; # TODO: Consider enabling after test
+
+      # Don't use the actual address likely
+      # sync_address = "http://algae.local:8888";
+      # Because TLS support is disabled now. NixOS module seems not accepting config files and TSL support for now
+      # Therefore using SSH forwarding for the HTTP instead of TLS support on atuin
+      sync_address = "https://algae.local:58888";
+    };
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
   programs.yazi = {
     enable = true;
