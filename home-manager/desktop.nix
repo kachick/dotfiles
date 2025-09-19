@@ -148,7 +148,7 @@ in
     in
     config.lib.dag.entryAnywhere ''
       if [[ -f '${configPath}' ]]; then
-        jq '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${pkgs.moreutils}/bin/sponge" '${configPath}'
+        jq '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${lib.getExe' pkgs.moreutils "sponge"}" '${configPath}'
       else
         echo '{"telemetry.enabled": false, "telemetry.check": true}' > '${configPath}'
       fi
