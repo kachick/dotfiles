@@ -35,7 +35,7 @@ in
   };
 
   home.sessionVariables = rec {
-    GOPASS_GPG_BINARY = lib.getExe' pkgs.sequoia-chameleon-gnupg "gpg-sq";
+    GOPASS_GPG_BINARY = lib.getExe pkgs.sequoia-chameleon-gnupg;
 
     # Do NOT include the identity here
     PASSAGE_DIR = "${config.xdg.dataHome}/passage/store";

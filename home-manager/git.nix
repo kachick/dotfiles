@@ -89,7 +89,7 @@ in
         # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
 
-        program = lib.getExe' pkgs.sequoia-chameleon-gnupg "gpg-sq"; # GH-830
+        program = lib.getExe pkgs.sequoia-chameleon-gnupg; # GH-830
       };
 
       commit = {
