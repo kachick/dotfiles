@@ -44,7 +44,7 @@
       PAGER = "less";
 
       # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
-      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
+      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${lib.getExe' pkgs.util-linux "col"} -bx | ${lib.getExe pkgs.bat} -l man -p'";
       MANROFFOPT = "-c";
 
       # NOTE: Original comments in zsh
