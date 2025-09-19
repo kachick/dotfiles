@@ -32,7 +32,7 @@ in
           sequoia-chameleon-gnupg
         ];
         runtimeEnv = {
-          GOPASS_GPG_BINARY = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq";
+          GOPASS_GPG_BINARY = lib.getExe' pkgs.sequoia-chameleon-gnupg "gpg-sq";
         };
       }
     );
