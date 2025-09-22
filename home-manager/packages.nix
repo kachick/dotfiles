@@ -56,7 +56,6 @@
   unstable.msedit # `edit`
 
   micro
-  ox # modeless editor.
 
   tree
   eza # alt ls
