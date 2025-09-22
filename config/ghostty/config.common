@@ -16,29 +16,25 @@ background-opacity = 0.85
 # How to list
 # - `ghostty +list-themes`
 # - https://iterm2colorschemes.com/
+# - Takecare, upstream did broke some theme names:
+#   1. https://github.com/mbadolato/iTerm2-Color-Schemes/pull/597
+#   2. https://github.com/mbadolato/iTerm2-Color-Schemes/commit/15c43655b92eb442eeaa722d899fffa629697d29
 # ghostty can set both dark and light. However always use dark for terminals
 # theme = dark:ForestBlue,light:iTerm2 Tango Light
 # Candidates
 #   - Guezwhoz
-#   - IC_Green_PPL
-#   - iceberg-dark
+#   - IC Green PPL
+#   - Iceberg Dark
 #   - kanagawabones
 #   - kurokula
-#   - rose-pine
+#   - Rose Pine
 #   - wilmersdorf
 #   - Adventure
-theme = iceberg-dark
+theme = Iceberg Dark
 
 # Avoid the ligatures in "JetBrains Mono" by default
 font-family = "PlemolJP Console NF"
 
-# ghostty documents said setting true by default in Linux but macOS disabled.
-# However keeping same behaviors should be useful if I use same tool in multuple environments.
-# And just setting `true` did not work on my GNOME
-# copy-on-select = clipboard
-# However using clipboard mode making much of clipboard history and making spam notifications. So set another value for now
-copy-on-select = true
-
-# `clipboard-copy` is making a spam if used `copy-on-select = clipboard`. So don't use together.
-# See https://github.com/ghostty-org/ghostty/issues/4800
+# Use 1.2.0 or higher to avoid https://github.com/ghostty-org/ghostty/issues/4800
+copy-on-select = clipboard
 app-notifications = clipboard-copy

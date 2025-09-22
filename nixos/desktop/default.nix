@@ -134,7 +134,10 @@
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
 
-      ghostty # ghostty package now always be backported.
+      # 1.2.0 is not be backported and I need it or lataer versions for following context
+      #   - Broken clipboard: https://github.com/ghostty-org/ghostty/issues/4800
+      #   - Broken msedit: https://github.com/ghostty-org/ghostty/issues/7951
+      unstable.ghostty
 
       alacritty
 

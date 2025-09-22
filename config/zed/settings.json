@@ -108,7 +108,6 @@
     "toml": true,
     "typos": true,
     "ruby": true,
-    "lua": true,
     "kdl": true,
     "basher": true,
     "powershell": true,
