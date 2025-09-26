@@ -53,7 +53,7 @@ func main() {
 		// FIXME: Adding lychee here making Network error
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
-		{Path: "markdownlint-cli2", Args: markdownPaths},
+		{Path: "mado", Args: markdownPaths},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
 	}
