@@ -78,6 +78,21 @@
           };
         }
       );
+
+      # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
+      # - OSS. Apache-2.0
+      # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
+      gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
+          version = "0.6.1";
+
+          src = prev.fetchurl {
+            url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
+            hash = "sha256-gTd+uw5geR7W87BOiE6YmDDJ4AiFlYxbuLE2GWgg0kw=";
+          };
+        }
+      );
     };
   })
 ]

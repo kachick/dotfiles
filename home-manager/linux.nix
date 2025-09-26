@@ -75,6 +75,8 @@
         #
         # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
+
+        patched.gemini-cli-bin
       ])
       ++ (with pkgs.my; [
         rclone-list-mounted
