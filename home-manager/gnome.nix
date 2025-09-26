@@ -295,7 +295,9 @@
 
         multi-monitor = true;
 
-        scroll-action = "switch-workspace";
+        # The "switch-workspace" feature was a bit useful on a desktop but very frustrating on a laptop.
+        # Disabling it temporarily until I implement device-specific home-manager configurations.
+        scroll-action = "do-nothing";
       };
 
       "org/gnome/desktop/wm/preferences" = {
