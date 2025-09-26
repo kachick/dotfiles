@@ -131,7 +131,6 @@
 
                   typos
                   trivy
-                  markdownlint-cli2
                   lychee
                 ])
                 ++ (with pkgs.unstable; [
@@ -141,7 +140,10 @@
                   dprint
                   zizmor
                 ])
-                ++ (with pkgs.my; [ nix-hash-url ])
+                ++ (with pkgs.my; [
+                  nix-hash-url
+                  rumdl
+                ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
                 ]

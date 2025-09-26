@@ -20,6 +20,6 @@ task.vscode-task
 tekumara.typos-vscode
 timonwong.shellcheck
 veelenga.crystal-ameba
-davidanson.vscode-markdownlint
+rvben.rumdl
 kachick.blueberry-brackets-dark-theme
 andrsdc.base16-themes

@@ -5,17 +5,17 @@ Here is a note for me.
 
 - Fast boot
 
-  Problems
+  - Problems
 
-  - [Unstable Wifi](https://github.com/kachick/dotfiles/issues/663)
-  - [Wrong timestamp on dmesg](https://github.com/kachick/dotfiles/issues/664)
+    - [Unstable Wifi](https://github.com/kachick/dotfiles/issues/663)
+    - [Wrong timestamp on dmesg](https://github.com/kachick/dotfiles/issues/664)
 
-  Solutions
+  - Solutions
 
-  - <https://superuser.com/a/1347749>
+    - <https://superuser.com/a/1347749>
 
-  In regedit and paste HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power for the URL
-  Make sure `HiberbootEnabled` is `0`, if not, change it from Control Panel
+      In regedit and paste HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power for the URL
+      Make sure `HiberbootEnabled` is `0`, if not, change it from Control Panel
 
-  Do not
-  - Do not implement in winit or do not apply all environments for Windows Only PC
+  - Do not
+    - Do not implement in winit or do not apply all environments for Windows Only PC
