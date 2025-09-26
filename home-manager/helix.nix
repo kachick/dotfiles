@@ -177,6 +177,7 @@ in
           language-servers = [
             "marksman"
             "mpls"
+            # "rumdl" # TODO: Make it possible to use rumdl here
             "typos"
           ];
         }

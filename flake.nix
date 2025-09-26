@@ -139,9 +139,11 @@
                   gitleaks
                   dprint
                   zizmor
-                  mado # Available since https://github.com/NixOS/nixpkgs/pull/439569. It refers original markdown lint rules rather than nodejs fork by default
                 ])
-                ++ (with pkgs.my; [ nix-hash-url ])
+                ++ (with pkgs.my; [
+                  nix-hash-url
+                  rumdl
+                ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
                 ]

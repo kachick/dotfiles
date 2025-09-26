@@ -20,5 +20,6 @@
   "search.exclude": {
     ".direnv/**": true,
     "dependencies/*sh/": true
-  }
+  },
+  "rumdl.configPath": ".rumdl.toml"
 }
