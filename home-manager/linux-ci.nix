@@ -32,9 +32,10 @@
         # pkgs.patched.lima # Enable when patched
       ]
       # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in ci-nix
-      ++ [
-        pkgs.gnome-keyring
-      ]
+      # ++ [
+      #   # I don't know why this overriding will not work :<
+      #   pkgs.gnome-keyring
+      # ]
       ++ (with pkgs.ibus-engines; [ mozc ]);
   };
 }
