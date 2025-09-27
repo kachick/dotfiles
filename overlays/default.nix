@@ -28,7 +28,7 @@
     # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
     gnome-keyring = prev.unstable.gnome-keyring;
 
-    mozc = final.patched.mozc;
+    mozc = prev.patched.mozc;
   })
 
   (final: prev: {
