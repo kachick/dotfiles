@@ -114,6 +114,15 @@ in
             "firefox" # chawan 0.2.1 didn't work
           ];
         };
+
+        tsgo = {
+          # Available since https://github.com/NixOS/nixpkgs/pull/410902
+          command = lib.getExe pkgs.unstable.typescript-go;
+          args = [
+            "--lsp"
+            "--stdio"
+          ];
+        };
       };
 
       language = [
@@ -220,6 +229,12 @@ in
           auto-format = true;
           formatter = mkDprint "kdl";
           language-servers = [ "typos" ];
+        }
+        {
+          name = "typescript";
+          language-servers = [
+            "tsgo"
+          ];
         }
       ];
     };
