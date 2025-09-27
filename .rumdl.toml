@@ -5,9 +5,6 @@
 # List of rules to disable (uncomment and modify as needed)
 disable = [
   "MD013",
-
-  # Until https://github.com/rvben/rumdl/issues/91 be resolved
-  "MD032",
 ]
 
 # List of rules to enable exclusively (if provided, only these rules will run)
