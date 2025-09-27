@@ -28,20 +28,7 @@
     # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
     gnome-keyring = prev.unstable.gnome-keyring;
 
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
-    # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
-    # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
-    mozc = prev.mozc.overrideAttrs (
-      finalAttrs: previousAttrs: {
-        patches = [
-          (prev.fetchpatch {
-            name = "GH-1277.patch";
-            url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
-            hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
-          })
-        ];
-      }
-    );
+    mozc = prev.patched.mozc;
   })
 
   (final: prev: {
@@ -86,6 +73,21 @@
             url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
             hash = "sha256-gTd+uw5geR7W87BOiE6YmDDJ4AiFlYxbuLE2GWgg0kw=";
           };
+        }
+      );
+
+      # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+      # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
+      # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
+      mozc = prev.mozc.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          patches = [
+            (prev.fetchpatch {
+              name = "GH-1277.patch";
+              url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
+              hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
+            })
+          ];
         }
       );
     };
