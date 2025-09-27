@@ -34,7 +34,7 @@
       # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in ci-nix
       ++ [
         pkgs.gnome-keyring
-        (with pkgs.ibus-engines; [ mozc ])
-      ];
+      ]
+      ++ (with pkgs.ibus-engines; [ mozc ]);
   };
 }
