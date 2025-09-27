@@ -85,7 +85,6 @@ jobs:
           # - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
         pname:
           - filen-rclone
-          - mozc
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
