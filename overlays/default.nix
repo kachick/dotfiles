@@ -59,26 +59,6 @@
       #   }
       # );
 
-      # I think there is no blocker to update this package.
-      # See https://github.com/NixOS/nixpkgs/pull/436735#pullrequestreview-3225509510 for detail
-      mdns-scanner = prev.unstable.mdns-scanner.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          version = "0.24.0";
-
-          src = prev.fetchFromGitHub {
-            owner = "CramBL";
-            repo = "mdns-scanner";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-0MHt/kSR6JvfCk08WIDPz6R9YYzDJ9RRTM6MU6sEwHk=";
-          };
-
-          cargoDeps = final.rustPlatform.fetchCargoVendor {
-            inherit (finalAttrs) src;
-            hash = "sha256-oJSsuU1vkisDISnp+/jFs1cWEVxr586l8yHbG6fkPjQ=";
-          };
-        }
-      );
-
       # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
       # - OSS. Apache-2.0
       # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now

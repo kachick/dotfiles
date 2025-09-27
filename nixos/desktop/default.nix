@@ -193,7 +193,7 @@
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
 
-      patched.mdns-scanner
+      unstable.mdns-scanner
 
       ## Unfree packages
 
