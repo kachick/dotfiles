@@ -2,6 +2,8 @@ hbenl.vscode-test-explorer
 katjanakosic.vscode-json5
 ms-vscode.makefile-tools
 ms-vscode.test-adapter-converter
+davidanson.vscode-markdownlint
 
 # It doesn't help my use until supporting relative path: https://github.com/foxundermoon/vs-shell-format/issues/235
 foxundermoon.shell-format
+

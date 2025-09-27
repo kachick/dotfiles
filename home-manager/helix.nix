@@ -177,6 +177,7 @@ in
           language-servers = [
             "marksman"
             "mpls"
+            # "rumdl" # TODO: Make it possible to use rumdl here
             "typos"
           ];
         }
@@ -249,9 +250,6 @@ in
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
       marksman
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1164
-      # lua-language-server
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
       vscode-langservers-extracted

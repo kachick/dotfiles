@@ -46,14 +46,14 @@ func main() {
 	linters := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
-		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.0 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
+		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.2 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
 	}
 
 	heavyOrTrivial := runner.Commands{
 		// FIXME: Adding lychee here making Network error
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "nixpkgs-lint", Args: []string{"."}},
-		{Path: "markdownlint-cli2", Args: markdownPaths},
+		{Path: "rumdl", Args: append([]string{"check"}, markdownPaths...)},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
 	}

@@ -44,11 +44,11 @@ in
       registerStartingLima =
         if pkgs.stdenv.hostPlatform.isLinux then
           (lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
-            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getBin lima}/bin/limactl start-at-login --enabled
+            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getExe' pkgs.lima "limactl"} start-at-login --enabled
           '')
         else
           (lib.hm.dag.entryBefore [ "setupLaunchAgents" ] ''
-            PATH="$PATH:/bin" run ${lib.getBin lima}/bin/limactl start-at-login --enabled
+            PATH="$PATH:/bin" run ${lib.getExe' pkgs.lima "limactl"} start-at-login --enabled
           '');
     };
   };

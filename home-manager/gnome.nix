@@ -50,7 +50,7 @@
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.ghostty;
+        exec = pkgs.unstable.ghostty.meta.mainProgram;
         # exec-arg="";
       };
 
@@ -185,7 +185,7 @@
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.ghostty;
+        command = pkgs.unstable.ghostty.meta.mainProgram;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
@@ -295,7 +295,9 @@
 
         multi-monitor = true;
 
-        scroll-action = "switch-workspace";
+        # The "switch-workspace" feature was a bit useful on a desktop but very frustrating on a laptop.
+        # Disabling it temporarily until I implement device-specific home-manager configurations.
+        scroll-action = "do-nothing";
       };
 
       "org/gnome/desktop/wm/preferences" = {

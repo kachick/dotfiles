@@ -27,6 +27,21 @@
     #
     # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
     gnome-keyring = prev.unstable.gnome-keyring;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+    # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
+    # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
+    mozc = prev.mozc.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        patches = [
+          (prev.fetchpatch {
+            name = "GH-1277.patch";
+            url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
+            hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
+          })
+        ];
+      }
+    );
   })
 
   (final: prev: {
@@ -59,22 +74,17 @@
       #   }
       # );
 
-      # I think there is no blocker to update this package.
-      # See https://github.com/NixOS/nixpkgs/pull/436735#pullrequestreview-3225509510 for detail
-      mdns-scanner = prev.unstable.mdns-scanner.overrideAttrs (
+      # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
+      # - OSS. Apache-2.0
+      # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
+      gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "0.24.0";
+          # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
+          version = "0.6.1";
 
-          src = prev.fetchFromGitHub {
-            owner = "CramBL";
-            repo = "mdns-scanner";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-0MHt/kSR6JvfCk08WIDPz6R9YYzDJ9RRTM6MU6sEwHk=";
-          };
-
-          cargoDeps = final.rustPlatform.fetchCargoVendor {
-            inherit (finalAttrs) src;
-            hash = "sha256-oJSsuU1vkisDISnp+/jFs1cWEVxr586l8yHbG6fkPjQ=";
+          src = prev.fetchurl {
+            url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
+            hash = "sha256-gTd+uw5geR7W87BOiE6YmDDJ4AiFlYxbuLE2GWgg0kw=";
           };
         }
       );
