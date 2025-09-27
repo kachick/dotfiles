@@ -27,6 +27,21 @@
     #
     # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
     gnome-keyring = prev.unstable.gnome-keyring;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+    # mozc package in nixpkgs is often stay old versions mainly caused by the bazel dependencies
+    # However the latest mozc(2.31.5712.102 or later) has crucial patch to fix hijacking Super key.
+    mozc = prev.mozc.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        patches = [
+          (prev.fetchpatch {
+            name = "GH-1277.patch";
+            url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
+            hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
+          })
+        ];
+      }
+    );
   })
 
   (final: prev: {
