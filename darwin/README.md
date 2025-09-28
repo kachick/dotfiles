@@ -1,3 +1,3 @@
-# macOS - darwin
+# macOS (Darwin)
 
-Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/macOS)
+All macOS-related documentation has been moved to the [project wiki](https://github.com/kachick/dotfiles/wiki/macOS).

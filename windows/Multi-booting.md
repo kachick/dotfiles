@@ -1,21 +1,24 @@
-# Multi-booting
+# Multi-Booting Windows and Linux
 
-If you need Multi-booting from some reasons, you should remember Windows may destroy other OS.\
-Here is a note for me.
+This document outlines potential issues and solutions when multi-booting Windows and another OS. Be aware that Windows updates can sometimes interfere with other operating systems.
 
-- Fast boot
+## Windows Fast Startup Issues
 
-  - Problems
+Windows Fast Startup can cause several problems on the other OS.
 
-    - [Unstable Wifi](https://github.com/kachick/dotfiles/issues/663)
-    - [Wrong timestamp on dmesg](https://github.com/kachick/dotfiles/issues/664)
+### Known Problems
 
-  - Solutions
+- [Unstable Wi-Fi](https://github.com/kachick/dotfiles/issues/663)
+- [Incorrect timestamps in `dmesg`](https://github.com/kachick/dotfiles/issues/664)
 
-    - <https://superuser.com/a/1347749>
+### Solution: Disable Fast Startup
 
-      In regedit and paste HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power for the URL
-      Make sure `HiberbootEnabled` is `0`, if not, change it from Control Panel
+You need to disable Fast Startup to resolve these issues.
 
-  - Do not
-    - Do not implement in winit or do not apply all environments for Windows Only PC
+1. Follow the instructions here: <https://superuser.com/a/1347749>
+2. As described in the link, you can verify the setting in the Windows Registry. Navigate to `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Power`.
+3. Ensure the value of `HiberbootEnabled` is `0`. If it is not, disable Fast Startup through the Control Panel.
+
+### Notes
+
+- This fix is only relevant for multi-boot setups and should not be applied to Windows-only environments.

@@ -1,12 +1,16 @@
-# dependencies
+# Shell Dependencies
 
-## Why
+This directory contains shell script snippets, such as completions, that are sourced by shell startup files (e.g., `.zshrc`).
 
-- Avoid loading packages for just getting the completions in shell rc build steps too keep faster
-- These paths are not ensured in nix. So it might be broken if the package or upstream changed the filenames
+## Purpose
 
-## How
+The main goals for managing these scripts separately are:
 
-- Avoid `vendor` for this dirname while using golang
-- They might be different result with actually using. Prefer Linux rather than Darwin when select a channel
-- Keep convention the filenames for easy use of `source`
+-   **Performance:** To avoid loading entire Nix packages during shell startup just to get completion scripts. This helps keep the shell startup time fast.
+-   **Flexibility:** To manage scripts whose paths are not guaranteed to be stable within Nix packages. This provides a workaround in case upstream packages change their file structure.
+
+## Guidelines
+
+-   **Directory Name:** The name `dependencies` was chosen to avoid conflicts with the `vendor` directory used by Go.
+-   **Platform Differences:** Scripts here might behave differently across operating systems. When creating or updating scripts, prefer targeting the Linux environment over macOS (Darwin) if a choice must be made.
+-   **File Naming:** Maintain a consistent naming convention for files to ensure they can be reliably sourced by shell startup scripts.

@@ -1,48 +1,66 @@
-# Windows
+# Windows Setup Guide
 
-## Installation
+This guide outlines the steps to configure a Windows environment using this dotfiles repository. These commands should be run in PowerShell.
 
-Basically following codes will be done in PowerShell
+## Initial Setup
 
-1. Enable `Sudo` features in Windows. Windows tells us how to enable it at first use
-1. Set `$env.XDG_CONFIG_HOME` in Windows system wide. At least, nushell respects it ([Not all of "XDG Base Directory"](https://github.com/nushell/nushell/issues/10100))
+1. **Enable Sudo:**
+   Enable the `Sudo` feature. Windows will provide instructions on how to do this the first time you use it.
 
-   ```pwsh
-   sudo pwsh --command '[Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", "$HOME\.config", "Machine")'
+2. **Set XDG_CONFIG_HOME:**
+   Set the `XDG_CONFIG_HOME` environment variable system-wide. This is respected by some applications like Nushell, though not all follow the full XDG Base Directory Specification.
+
+   ```powershell
+   sudo pwsh -Command "[Environment]::SetEnvironmentVariable('XDG_CONFIG_HOME', '$HOME\.config', 'Machine')"
    ```
 
-1. Download windows helper binary from [artifacts](https://github.com/kachick/dotfiles/actions/workflows/windows.yml)
-1. New session of pwsh
+3. **Download Helper Binaries:**
+   Download the Windows helper binaries (`winit-conf.exe` and `winit-reg.exe`) from the latest successful workflow run [artifacts](https://github.com/kachick/dotfiles/actions/workflows/windows.yml).
 
-   ```pwsh
+4. **Run Configuration Scripts:**
+   Start a new PowerShell session and run the following commands to apply configurations:
+
+   ```powershell
+   # Apply initial configurations
    ./winit-conf.exe run
 
+   # Install PowerShell modules
    Install-Module -Name PSFzfHistory
-   # $PROFILE is an "Automatic Variables", not ENV
-   # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
+
+   # Generate and apply the PowerShell profile
+   # Note: $PROFILE is a PowerShell automatic variable, not a standard environment variable.
+   # See: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables
    ./winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
 
+   # List and apply Windows Registry settings
    ./winit-reg.exe list
    ./winit-reg.exe run --all
    ```
 
-1. Install some tools
+5. **Install Applications with winget:**
+   The `winit-conf.exe` command generates `winget-*.json` files in your temporary directory. Use these files to install applications.
 
-   ```pwsh
-   # Basically this may be same output of above `winit-conf.exe` log
-   # Pick-up the winget-*.json outputs
+   ```powershell
+   # Find your temporary directory path
    $env:TMP
-   # => C:\Users\YOU\AppData\Local\Temp
+   # Example output: C:\Users\YourUser\AppData\Local\Temp
 
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM1\winget-pkgs-basic.json"
-   # Optional
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM2\winget-pkgs-storage.json"
-   winget import --import-file "C:\Users\YOU\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
+   # Import the application lists. Replace the path with your actual temp path.
+   winget import --import-file "C:\Users\YourUser\AppData\Local\Temp\winitRANDOM1\winget-pkgs-basic.json"
+
+   # Optional application sets
+   winget import --import-file "C:\Users\YourUser\AppData\Local\Temp\winitRANDOM2\winget-pkgs-storage.json"
+   winget import --import-file "C:\Users\YourUser\AppData\Local\Temp\winitRANDOM3\winget-pkgs-entertainment.json"
    ```
 
-1. Remove needless pre-installed tools. Pick up from [bulk-uninstall.ps](./winget/bulk-uninstall.ps1)
-1. Enable Bitlocker and backup the restore key
+6. **Uninstall Bloatware:**
+   Review the [bulk-uninstall.ps1](./winget/bulk-uninstall.ps1) script and run the commands for any pre-installed applications you wish to remove.
 
-## I forgot to backup Bitlocker restore key 😋
+7. **Enable BitLocker:**
+   Enable BitLocker drive encryption and make sure to back up the recovery key to a safe location.
 
-<https://account.microsoft.com/devices/recoverykey> may help
+## Troubleshooting
+
+### I forgot to back up my BitLocker recovery key!
+
+You might be able to find your key at: <https://account.microsoft.com/devices/recoverykey>
