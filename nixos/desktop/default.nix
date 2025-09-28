@@ -195,6 +195,9 @@
 
       unstable.mdns-scanner
 
+      unstable.kanata # Don't require kanata-with-cmd for now
+      pacthed.kanata-tray
+
       ## Unfree packages
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
