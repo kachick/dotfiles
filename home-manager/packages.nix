@@ -105,6 +105,9 @@
 
   # Available since https://github.com/NixOS/nixpkgs/pull/423741
   unstable.somo
+
+  # Available since https://github.com/NixOS/nixpkgs/pull/410902
+  unstable.typescript-go
 ])
 ++ (with pkgs.my; [
   la
