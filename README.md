@@ -1,13 +1,9 @@
 # dotfiles
 
-[![Home Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml?query=branch%3Amain+)
-[![Home Status](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
-[![Nix Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml?query=branch%3Amain+)
-[![CI - Go Status](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
-[![Container Status](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
+[![Home Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml?query=branch%3Amain+) [![Home Status](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+) [![Nix Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml?query=branch%3Amain+) [![CI - Go Status](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+) [![Container Status](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
-Personal dotfiles that can be placed in the public repository\
-Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
+My personal dotfiles, safe to be shared publicly.
+This repository is also my "Bonsai" 🌳, a project I carefully cultivate over time.
 
 ```mermaid
 block-beta
@@ -33,21 +29,21 @@ block-beta
     nixos --> container
 ```
 
-## For visitors
+## Quick Start
 
-If you are using [Podman](https://podman.io/), you can test the pre-built [ubuntu container-image](containers) as follows.
+If you are using [Podman](https://podman.io/), you can test the pre-built [Ubuntu container image](containers) as follows:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
 ```
 
-Or, you can directly use some commands with `nix run` without any installation steps.
+Alternatively, you can run commands directly with `nix run` without any installation.
 
 ```bash
 nix run 'github:kachick/dotfiles#todo'
 ```
 
-List them
+To list available commands:
 
 ```bash
 nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
@@ -55,15 +51,15 @@ nix flake show 'github:kachick/dotfiles' --json 2>/dev/null | jq '.packages | ."
 
 ## NixOS
 
-List defined hostnames
+To list the defined hostnames:
 
 ```bash
 nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.attrNames' | jq '.[]'
 ```
 
-Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
+Flakes are disabled by default in NixOS. [You need to use Git to enable them](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
 
-**NOTICE: This command might drop all existing users except which defined in configurations.**
+**NOTICE: This command might remove all users not defined in the configuration.**
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-25.05#git' \
@@ -72,10 +68,9 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
   --show-trace
 ```
 
-If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode,\
-See [generic configuration](nixos/hosts/generic) for my current workaround.
+If you are setting up NixOS from the installer and want to avoid impure mode, see the [generic configuration](nixos/hosts/generic) for my current workaround.
 
-Finally, reboot the device
+Finally, reboot your device.
 
 ```bash
 sudo reboot now
@@ -83,7 +78,7 @@ sudo reboot now
 
 ## home-manager
 
-List definitions
+To list the available definitions:
 
 ```bash
 nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.attrNames' | jq '.[]'
@@ -91,120 +86,123 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
 ## Ubuntu
 
-1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
+1. Install the [Nix](https://nixos.org/) package manager using the [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
 
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
    ```
 
-1. Make sure your user or one of the groups are listed in `trusted-users`
+2. Make sure your user or one of your groups is listed in `trusted-users`.
 
    ```console
    > grep trusted-users /etc/nix/nix.conf
    trusted-users = root your_user @your_user_group
    ```
 
-1. Make sure there is a nix directory that is used in the home-manager.\
-   This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
+3. Ensure the `nix` directory used by home-manager exists. This is a workaround; see [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for details.
 
    ```bash
    mkdir -p ~/.local/state/nix/profiles
    ```
 
-1. Restart current shell to load Nix as a PATH
+4. Restart your shell to apply the new `PATH`.
 
    ```bash
-   bash
    ```
 
-1. Apply dotfiles
+bash
+
+````
+5.  Apply the dotfiles:
+
+    ```bash
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
+````
+
+6. Apply system-level configurations using [sudo for the nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313).
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
-1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
+sudoc nix run 'github:kachick/dotfiles#apply-system'
+
+````
+7. If required, enable Tailscale SSH:
 
    ```bash
-   sudoc nix run 'github:kachick/dotfiles#apply-system'
-   ```
+````
 
-1. Enable tailscale ssh if required
+sudoc tailscale up --ssh
 
-   ```bash
-   sudoc tailscale up --ssh
-   ```
-
+````
 ### Podman on Ubuntu
 
-1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
+1. Install `uidmap` outside of Nix to use with Podman, even if Podman itself is installed via Nixpkgs.
 
-   - "shadow" in nixpkg is not enough for podman - <https://github.com/NixOS/nixpkgs/issues/138423>
+   - "shadow" in nixpkgs is not sufficient for Podman: <https://github.com/NixOS/nixpkgs/issues/138423>
 
    ```bash
    sudo apt-get install --assume-yes uidmap
-   ```
+````
 
-1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
+2. If you are on WSL, make sure cgroup v1 is disabled. See [the docs](windows/WSL/README.md) for more information.
 
-1. Make sure you can run containers as `podman run public.ecr.aws/debian/debian:12.6-slim cat /etc/os-release`
+3. Verify that you can run containers: `podman run public.ecr.aws/debian/debian:12.6-slim cat /etc/os-release`
 
 ## Debian
 
-After installing missing tools, you can complete same steps as Ubuntu
+After installing the necessary tools, follow the same steps as for Ubuntu.
 
 ```bash
 sudo apt update
 sudo apt upgrade
 sudo apt install --assume-yes curl
-sudo apt install --assume-yes dbus-user-session # For podman
+sudo apt install --assume-yes dbus-user-session # For Podman
 ```
 
-Remember to set special config and reboot if you on WSL
+If you are on WSL, remember to set the special configuration and reboot.
 
 ```bash
-echo '
-[boot]
-systemd=true' | sudo tee /etc/wsl.conf
+echo '\n[boot]\nsystemd=true' | sudo tee /etc/wsl.conf
 ```
 
 ## Windows
 
-1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
-1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
-1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further detail.
+1. Install [WSL2](windows/WSL/README.md) with the default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`.
+2. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`.
+3. Adjust the Windows experience by following the [extracted steps](windows/README.md). For more details, refer to the [CI configuration](.github/workflows/windows.yml).
 
 ## Multi-booting on Windows and Linux
 
-Check [traps](./windows/Multi-booting.md)
+See the [potential issues and solutions](./windows/Multi-booting.md).
 
 ## macOS
 
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911).
+I have mostly given up on maintaining the macOS environment.
 
-1. Apply home-manager with `kachick@macbook` for minimum packages.
-1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-1. Use [Lima](#lima) for development tasks.
+1. Apply the home-manager configuration with `kachick@macbook` for a minimal set of packages.
+2. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) manually (without Nix).
+3. Use [Lima](#lima) for development tasks.
 
 ## Lima
 
-1. Setup [Lima](https://github.com/lima-vm/lima) with default Ubuntu guest
-1. In the lima as `limactl start`, apply home-manager with `kachick@lima`
-1. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
+1. Set up [Lima](https://github.com/lima-vm/lima) with the default Ubuntu guest.
+2. Inside the Lima VM (started with `limactl start`), apply the home-manager configuration with `kachick@lima`.
+3. You can run containers using `lima nerdctl run --rm hello-world`. Podman can also be used after following the "Podman on Ubuntu" setup instructions above.
 
-## How to setup secrets
+## How to set up secrets
 
-Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
+See the [wiki](https://github.com/kachick/dotfiles/wiki/Encryption) for details.
 
 ## Shorthand
 
-If you are developing this repository, putting `.env` makes easy reactivations.
+If you are developing this repository, you can create an `.env` file for easier reactivation of your environment.
 
 ```bash
 echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
 ```
 
-Then you can enable configurations with
+Then, you can apply the configuration with:
 
 ```bash
 task apply

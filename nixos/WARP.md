@@ -1,38 +1,65 @@
-# Cloudflare WARP
+# Using Cloudflare WARP on NixOS
 
-Don't add warp-cli into "gdm/PostLogin", the first execution requires agreement for their policy with y/n interactive mode.\
-It blocks the starting GNOME with black screen with white and frozen cursor after login via GDM.
+This guide provides instructions for setting up and using the Cloudflare WARP client on NixOS.
 
-## First connections
+## Important Note for GNOME Users
+
+Do not add `warp-cli` to GDM's `PostLogin` script. The first time `warp-cli` runs, it requires interactive agreement (y/n) to its policy. Running it from a login script will block the GNOME session from starting, resulting in a black screen with a frozen cursor.
+
+---
+
+## Basic Usage
+
+### 1. Initial Setup and Connection
+
+You must perform these steps manually in a terminal for the first-time setup.
 
 ```bash
+# Register a new device
 warp-cli registration new
+
+# Connect to WARP
 warp-cli connect
 ```
 
-GNOME shows the status badge that will be active if you connected to WARP.
+After connecting, GNOME should display a status badge indicating that WARP is active.
 
-## Make sure the connection status
+### 2. Verifying the Connection
 
-```bash
-warp-cli status
-curl -sL https://www.cloudflare.com/cdn-cgi/trace/ | grep -F 'warp=on'
-```
+You can verify that WARP is active in several ways:
 
-Or use <https://github.com/jason5ng32/MyIP> with accessing to <https://ipcheck.ing/>
+- **Check the CLI status:**
 
-## Disconnect if you want
+  ```bash
+  warp-cli status
+  ```
+
+- **Check the Cloudflare trace endpoint:**
+
+  ```bash
+  curl -sL https://www.cloudflare.com/cdn-cgi/trace/ | grep -F 'warp=on'
+  ```
+
+- **Use a web-based tool:**
+  Visit <https://ipcheck.ing/> (powered by [jason5ng32/MyIP](https://github.com/jason5ng32/MyIP)).
+
+### 3. Disconnecting from WARP
+
+To disconnect from the WARP network:
 
 ```bash
 warp-cli disconnect
 ```
 
+---
+
 ## Split Tunnels
 
-If you encounter connection problems such as [GH-749](https://github.com/kachick/dotfiles/issues/749), you can eclude specific addresses from WARP
+If you encounter connection problems with specific services (e.g., [GH-749](https://github.com/kachick/dotfiles/issues/749)), you can exclude their IP addresses or domains from the WARP tunnel.
 
 ```bash
+# Example: Exclude the dprint plugin registry
 warp-cli tunnel host add plugins.dprint.dev
 ```
 
-See [official document](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) for detail.
+For more detailed information, refer to the [official Split Tunnels documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/).

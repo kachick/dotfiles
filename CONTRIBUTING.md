@@ -1,9 +1,11 @@
-# Development
+# Contributing
 
-1. Install [Nix](https://nixos.org/) package manager
-1. `nix develop --command task setup`
-   - `direnv allow` may not work if you have not completed all the installation steps
+## Development Setup
 
-## Note
+1. Install the [Nix](https://nixos.org/) package manager.
+2. Run `nix develop --command task setup` to prepare the development environment.
+   - Note: `direnv allow` may not work until all installation steps are complete.
 
-This repository might be heavily customized to the author's home.
+## A Note on Customization
+
+This repository is heavily customized for the author's specific needs and environment.

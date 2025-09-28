@@ -1,32 +1,47 @@
-# FAQ
+# Alacritty Configuration FAQ
 
-## alacritty does not respect the config
+This document provides answers to frequently asked questions about configuring Alacritty.
 
-There are 2 points
+---
 
-- Make sure the version `alacritty --version` is 0.13+. Older used YAML, newer uses TOML
-- Make sure the OS and where is the root config put.\
-  In many use-case, we expect and put most files into `$HOME/.config/alacritty/alacritty.toml`.\
-  However windows expect `C:\Users\YOUR_NAME\AppData\Roaming\alacritty\alacritty.toml`.\
-  Other imported files can be put under `$HOME` as above.\
-  FYI, You can temporally specify the different root config as `alacritty --config-file $HOME\.config\alacritty\alacritty.toml`.
+### Why is my Alacritty configuration not being applied?
 
-## How to copy and paste in alacritty?
+There are two common reasons for this:
 
-[Add shift for basic keybinds, not just the ctrl+c, ctrl+v](https://github.com/alacritty/alacritty/issues/2383)
+1. **Incorrect Format (YAML vs. TOML):**
+   - Check your Alacritty version with `alacritty --version`.
+   - Versions `0.13.0` and newer use TOML (`alacritty.toml`).
+   - Older versions use YAML (`alacritty.yml`). Ensure your configuration file uses the correct format for your version.
 
-## How to test look and feel?
+2. **Incorrect Configuration File Location:**
+   - The expected location of the main configuration file depends on your operating system.
+   - **Linux/macOS:** `~/.config/alacritty/alacritty.toml`
+   - **Windows:** `%APPDATA%\alacritty\alacritty.toml` (e.g., `C:\Users\YourUser\AppData\Roaming\alacritty\alacritty.toml`)
+   - While imported files can be placed elsewhere (e.g., under `~/.config/alacritty/`), the main `alacritty.toml` must be in the correct location.
+   - You can temporarily specify a different configuration file using the `--config-file` flag for testing purposes.
 
-If you feel the config is not applied or you want to try another value.\
-Specify the arguments in CLI.
+### How do I copy and paste in Alacritty?
 
-```bash
-alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"IosevkaTerm NFM"'
-alacritty -o window.opacity=0.85 -o font.size=12 font.normal.family='"SauceCodePro NFM"' window.dimensions.columns=180 window.dimensions.lines=50 window.position.x=10 window.position.y=10
-```
+By default, `Ctrl+C` sends an interrupt signal. To use `Ctrl+C` and `Ctrl+V` for copy-paste, you typically need to add `Shift` (i.e., `Ctrl+Shift+C` and `Ctrl+Shift+V`). This behavior is intentional to avoid conflicting with standard terminal signals. See [alacritty/alacritty#2383](https://github.com/alacritty/alacritty/issues/2383) for discussion.
 
-And you can test with actual toml in the `$HOME/.config/alacritty/local.toml`
+### How can I test different settings or themes?
 
-## Can I list runtime config?
+There are two main ways to test settings without modifying your main configuration file:
 
-No. See <https://github.com/alacritty/alacritty/issues/7147>
+1. **Command-line Overrides:**
+   Use the `-o` flag to override specific settings on launch.
+
+   ```bash
+   # Test a different font and opacity
+   alacritty -o window.opacity=0.85 -o font.size=12 -o font.normal.family='"IosevkaTerm NFM"'
+
+   # Test window size and position
+   alacritty -o window.dimensions.columns=180 -o window.dimensions.lines=50 -o window.position.x=10 -o window.position.y=10
+   ```
+
+2. **Local Configuration File:**
+   Create a `~/.config/alacritty/local.toml` file. Settings in this file will override the main `alacritty.toml` and can be used for local testing or machine-specific tweaks.
+
+### Can I view the final, merged runtime configuration?
+
+No, Alacritty does not currently have a feature to print the final configuration after all sources (main config, local config, CLI overrides) have been merged. See [alacritty/alacritty#7147](https://github.com/alacritty/alacritty/issues/7147) for details.

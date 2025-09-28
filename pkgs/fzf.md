@@ -1,14 +1,30 @@
-# fzf
+# fzf Tips and Tricks
 
-- `--preview`: the placeholder will be quoted by singlequote, so do not add excess double quote as "{}". This will be evaluated the given `` and $()
-- `--nth`: Match there
-- `--with-nth`: Whole display and outputs.
-- `--bind 'enter:become(...)'`: Replace process, and no execution if not match
-- `--ansi`: Handle colored input, but remember the output is dirty with the ANSI for another tools. You may need strip them before use.
+This document contains a collection of notes on using `fzf`, covering useful options and common pitfalls.
 
-## Traps
+## Useful Options
 
-- Cannot copy from preview window
-- `become` with `export -f the_func` is broken in darwin. Create another command and inejct it
-- [No feature to output only nth](https://github.com/junegunn/fzf/issues/1323)
-- [No multiple modifiers for binding](https://github.com/junegunn/fzf/pull/3996)
+- `--preview`
+  - The `{}` placeholder is automatically quoted. Avoid adding extra quotes like `"{}"`.
+  - The preview command will evaluate backticks (``) and `$()`.
+
+- `--nth`
+  - Specifies which fields to use for searching.
+
+- `--with-nth`
+  - Specifies which fields to display in the `fzf` list and include in the output.
+
+- `--bind 'enter:become(...)'`
+  - Replaces the `fzf` process with the specified command upon pressing `Enter`.
+  - If there is no match, no command is executed.
+
+- `--ansi`
+  - Enables `fzf` to interpret ANSI color codes in the input.
+  - **Note:** The output will also contain these ANSI codes, which might be problematic for other tools. You may need to strip them before piping the output elsewhere.
+
+## Common Pitfalls and Limitations
+
+- **Copying from Preview:** You cannot directly copy text from the preview window.
+- **`become` on macOS:** Using `become` with an exported shell function (`export -f my_func`) is broken on macOS (Darwin). The workaround is to create a separate executable script and call that instead.
+- **Outputting Specific Fields:** There is no built-in feature to output only a specific field (like `awk '{print $2}'`). See [fzf issue #1323](https://github.com/junegunn/fzf/issues/1323).
+- **Multiple Keybind Modifiers:** Bindings do not support multiple modifiers (e.g., `ctrl-alt-s`). See [fzf PR #3996](https://github.com/junegunn/fzf/pull/3996).

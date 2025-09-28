@@ -1,59 +1,102 @@
-# Windows Subsystem for Linux
+# Windows Subsystem for Linux (WSL) Guide
 
-## How to install WSL2?
+This guide covers the setup and usage of WSL (Windows Subsystem for Linux), including NixOS and Ubuntu distributions.
 
-winget does not support it, run as follows
+## General WSL Tips
 
-## How to open current directory in WSL2 with Windows Explorer?
+### How do I install WSL2?
 
-In WSL shell
+`winget` does not currently support the initial installation of WSL2. Follow the official Microsoft documentation to install it.
+
+### How do I open the current directory in Windows Explorer from a WSL shell?
+
+Run the following command inside your WSL shell:
 
 ```bash
 explorer.exe .
 ```
 
-## How to move on Windows folder from WSL2?
+### How do I navigate to a Windows folder from a WSL shell?
+
+Use the `wslpath` utility to convert the Windows path. This can be combined with tools like `z` for quick navigation.
 
 ```bash
-z "$(wslpath 'G:\GoogleDrive')"
+z "$(wslpath 'G:\\GoogleDrive')"
 ```
 
-## Login shell has been broken in WSL2
+### How do I fix a broken login shell in WSL2?
 
-```pwsh
+If your default login shell is broken, you can log in as the `root` user to fix it.
+
+```powershell
 wsl --user root
 ```
 
-## Setup NixOS on WSL2
+---
 
-Use [NixOS](https://github.com/nix-community/NixOS-WSL).\
-You should remember that does not have `/etc/nixos/hardware-configuration.nix` and the [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md).
+## NixOS on WSL2
 
-```pwsh
-wsl.exe --install --no-distribution
-curl -OL "https://github.com/nix-community/NixOS-WSL/releases/download/2405.5.4/nixos-wsl.tar.gz"
-wsl.exe --import NixOS $env:USERPROFILE\NixOS\ nixos-wsl.tar.gz
-wsl.exe --distribution "NixOS"
-```
+This setup uses the community-maintained [NixOS-WSL](https://github.com/nix-community/NixOS-WSL).
 
-```bash
+**Important Notes:**
+
+- This environment does not have an `/etc/nixos/hardware-configuration.nix` file.
+- The [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/main/docs/src/how-to/change-username.md).
+
+### Installation
+
+1. Run the following commands in PowerShell to download and import the NixOS distribution:
+
+   ```powershell
+   wsl.exe --install --no-distribution
+   curl -OL "https://github.com/nix-community/NixOS-WSL/releases/download/2405.5.4/nixos-wsl.tar.gz"
+   wsl.exe --import NixOS "$env:USERPROFILE\NixOS" nixos-wsl.tar.gz
+   wsl.exe --distribution "NixOS"
+   ```
+
+2. Inside the NixOS shell, update the Nix channels:
+
+   ```bash
+   ```
+
 sudo nix-channel --update
-```
 
-Setup nix and activate home-manager as written in [README](../README.md) with `kachick@wsl-nixos`
+````
+3. Follow the main [README](../README.md) to set up Nix and activate the Home Manager configuration using the `kachick@wsl-nixos` profile.
 
-## Setup Ubuntu on WSL2
+---
 
-```pwsh
-wsl.exe --install "Ubuntu-24.04"
-wsl.exe --distribution "Ubuntu-24.04"
-```
+## Ubuntu on WSL2
 
-Setup nix and activate home-manager as written in [README](../README.md) with `kachick@wsl-ubuntu`
+### Installation
 
-Disable cgroup v1 as putting [.wslconfig](.wslconfig) and restart for setting up podman
+1. Install and launch the Ubuntu distribution from PowerShell:
 
-```pwsh
-winit-conf.exe generate -path=windows/WSL/.wslconfig  > %UserProfile%\.wslconfig
+   ```powershell
+   wsl.exe --install "Ubuntu-24.04"
+   wsl.exe --distribution "Ubuntu-24.04"
+````
+
+2. Follow the main [README](../README.md) to set up Nix and activate the Home Manager configuration using the `kachick@wsl-ubuntu` profile.
+
+### Podman Configuration
+
+To use Podman, you need to disable cgroup v1.
+
+1. Generate the `.wslconfig` file in your Windows user profile directory:
+
+   ```powershell
+   ```
+
+winit-conf.exe generate -path=windows/WSL/.wslconfig > "$env:USERPROFILE\.wslconfig"
+
+````
+2. Shut down WSL to apply the changes. It will restart automatically when you next open a WSL shell.
+
+   ```powershell
+````
+
 wsl.exe --shutdown
+
+```
 ```

@@ -1,18 +1,27 @@
-# What are these packages
+# Custom Packages
 
-- Tiny tools by me, they may be rewritten with another language.
-- Nix packages that are not yet included in [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs)
-- Aliases across multiple shells if it unfits for native shell alias
+This directory contains several types of packages:
 
-## Do not
+- Small, custom tools that may be rewritten in other languages in the future.
+- Nix packages that are not yet available in the main [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs) repository.
+- Scripts that act as aliases across multiple shells, for cases where a native shell alias is not suitable.
 
-- Do not apply shebang, set in the script. It will be applied in `pkgs.writeShellApplication`
-- Do not directly implement in pkgs/default.nix to keep simple list
-- Do not directly implement non tiny scripts in *.nix to apply better editor/formatter support
-- Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
-- Don't use `fileset.gitTracked` for now, [nix-update does not yet support it](https://github.com/Mic92/nix-update/issues/335)
+## Development Guidelines
 
-## How to update
+Follow these guidelines when adding or modifying packages.
 
-- I don't consider automated updating versions in these package for now
-- I can't ignore hash updating for dependabot PRs, for go and rust. Currently resolved with `nix-update --flake pname --version=skip`
+### Scripts
+
+- **Shebangs:** Do not add a shebang (e.g., `#!/bin/bash`) to your script files. The correct interpreter will be set by `pkgs.writeShellApplication` in the Nix expression.
+- **Implementation:** Avoid implementing complex or non-trivial scripts directly within a `.nix` file. Keeping them in separate script files allows for better editor and formatter support.
+
+### Nix Expressions
+
+- **`pkgs/default.nix`:** Do not implement packages directly in this file. It should remain a simple list of package definitions to keep it clean and readable.
+- **`fileset`:** Avoid using `fileset.gitTracked .` as it will cause packages to rebuild unnecessarily whenever any tracked file (like this `README.md`) changes.
+- **`nix-update`:** Currently, do not use `fileset.gitTracked` as it is not yet supported by `nix-update`. See [this issue](https://github.com/Mic92/nix-update/issues/335) for details.
+
+## Updating Packages
+
+- **Automation:** There are currently no plans to automate version updates for these packages.
+- **Dependabot:** For Go and Rust packages, Dependabot pull requests that update dependencies will also change the package hash. To handle this, the hash can be updated using `nix-update --flake <pname> --version=skip`.

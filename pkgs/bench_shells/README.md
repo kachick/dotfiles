@@ -1,7 +1,9 @@
-# Note of my feeling
+# Shell Startup Time: A Personal Benchmark
 
-- ~50ms : blazing fast!
-- 110ms : acceptable
-- 150ms : slow
-- 200ms : 1980s?
-- 300ms : much slow!
+This is a subjective reference for shell startup times and how they "feel."
+
+- **~50ms:** Blazing fast!
+- **~110ms:** Acceptable.
+- **~150ms:** Noticeably slow.
+- **~200ms:** Feels like I'm back in the 1980s.
+- **~300ms+:** Unacceptably slow.

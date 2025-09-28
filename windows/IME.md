@@ -1,18 +1,20 @@
-# Input Method Editor
+# Input Method Editor (IME) Choices
 
-## Why are you still using Google Japanese Input? Why don't you prefer Microsoft IME?
+This document explains the rationale for using Google Japanese Input over the default Microsoft IME on Windows.
 
-Pros for Microsoft IME
+## Comparison: Google Japanese Input vs. Microsoft IME
 
-- Preinstalled by Windows
-- It is having cloud translations now (Called as "予測変換")
+### Microsoft IME: Pros
 
-Cons for Microsoft IME
+- **Pre-installed:** Comes bundled with Windows.
+- **Cloud Suggestions:** Includes cloud-based predictive suggestions (予測変換).
 
-- Not a cross-platform solution. Mozc(Google Japanese Input) is available on Linux, Windows, macOS.
-- Needed to tab, not in space to get date as "きょう"
-- No way to get date with ISO 8601 format
+### Microsoft IME: Cons
 
-## How to completely disable Microsoft IME after installed Google Japanese Input?
+- **Platform-Specific:** It is not a cross-platform solution. In contrast, Mozc (the open-source version of Google Japanese Input) is available on Linux, Windows, and macOS, allowing for a consistent experience.
+- **Date Conversion:** To convert "きょう" to the current date, you must press the `Tab` key instead of the `Space` key.
+- **No ISO 8601 Date Format:** There is no built-in way to convert text to the ISO 8601 date format (e.g., `2023-10-27`).
 
-[#300](https://github.com/kachick/dotfiles/issues/300) is the steps.
+## How to Disable Microsoft IME
+
+After installing Google Japanese Input, you can follow the steps in [issue #300](https://github.com/kachick/dotfiles/issues/300) to completely disable Microsoft IME.

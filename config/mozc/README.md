@@ -1,9 +1,15 @@
-# Mozc
+# Mozc Configuration Notes
 
-## It didn't change the keymap even if changed the config
+This document contains notes for configuring Mozc (Google Japanese Input).
 
-On GNOME, you should require following command to apply changes for both keymap and ibus_config.
+---
+
+### Keymap changes are not applied on GNOME
+
+If you have modified the Mozc configuration but the keymap changes are not taking effect, you may need to restart the IBus daemon.
+
+Run the following command in your terminal to clear the cache and restart IBus:
 
 ```bash
-ibus write-cache; ibus restart
+ibus write-cache && ibus restart
 ```

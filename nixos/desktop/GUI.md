@@ -1,34 +1,57 @@
-# GUI
+# NixOS GUI Guide
+
+This document provides a collection of tips and troubleshooting steps for various GUI components on NixOS.
+
+---
 
 ## GNOME
 
-Q: How to reload GNOME on wayland settings without reboot?\
-A: [`SUPER+L`](https://superuser.com/a/1740160)
+### How can I reload GNOME Shell (on Wayland) without rebooting?
 
-Q: How to check current settings?\
-A: Use `gsettings` or [`dconf-editor`](https://wiki.nixos.org/wiki/GNOME)
+Press `Alt+F2`, type `r`, and press `Enter`. If that doesn't work, locking the screen (`Super+L`) and unlocking can also sometimes apply new settings. See [this Super User answer](https://superuser.com/a/1740160) for context.
+
+### How can I inspect current GNOME settings?
+
+You can use the command-line tool `gsettings` or the graphical [`dconf-editor`](https://wiki.nixos.org/wiki/GNOME).
 
 ```bash
+# Get a specific setting value
 gsettings get org.gnome.desktop.lockdown disable-lock-screen
+
+# Interactively search all keybindings
 gsettings list-recursively org.gnome.shell.keybindings | fzf
 ```
 
-Q: How to persist this config from settings menu?\
-A: `dconf watch /`
+### How can I find the `dconf` key for a setting changed in the GUI?
 
-Q: Why default-apps changes will not be appeared in dconf watch?\
-A: Use `xdg.mimeApps` module in home-manager
+Use `dconf watch /` in a terminal. It will monitor and print any `dconf` changes as you make them in the GNOME Settings application.
 
-Q: [Broken cursor as white square](https://github.com/NixOS/nixpkgs/issues/140505#issuecomment-1637341617)\
-A: `dconf reset /org/gnome/desktop/interface/cursor-theme`
+### Why don't default application changes appear in `dconf watch`?
 
-## IME
+Default application associations (MIME types) are not handled by `dconf`. To manage them declaratively, use the `xdg.mimeApps` module in Home Manager.
 
-Don't use fcitx5. It made crashes. See GH-1128 for detail.
+### How do I fix a broken or white square cursor?
 
-Mozc cannot import the exported keybindings with CLI.\
-So you should manually import it from GUI if setting up Desktop Environment on new hosts.
+This can sometimes be fixed by resetting the cursor theme setting. See [nixpkgs issue #140505](https://github.com/NixOS/nixpkgs/issues/140505#issuecomment-1637341617) for details.
 
-## KDE
+```bash
+dconf reset /org/gnome/desktop/interface/cursor-theme
+```
 
-The definition will be recorded in `~/.config/kglobalshortcutsrc`, however editing and managing by hand is a hard thing.
+---
+
+## Input Method Editor (IME)
+
+### `fcitx5` vs. `IBus`
+
+`fcitx5` is not recommended as it has caused system crashes in the past. `IBus` with Mozc is the preferred setup. See [issue #1128](https://github.com/kachick/dotfiles/issues/1128) for details.
+
+### Mozc Keybindings
+
+Mozc does not support importing custom keybinding configurations via the command line. When setting up a new desktop environment, you must import them manually through the Mozc settings GUI.
+
+---
+
+## KDE Plasma
+
+While KDE Plasma settings are stored in files like `~/.config/kglobalshortcutsrc`, managing them declaratively or by hand is difficult. For this reason, GNOME is the primary desktop environment used in this repository.

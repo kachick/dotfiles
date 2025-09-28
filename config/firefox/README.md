@@ -1,31 +1,48 @@
-# Firefox
+# Firefox Customization Guide
 
-## How to know the config key?
+This document provides tips for advanced customization of Firefox.
 
-1. Open `about:config`
-1. Check `Display only changed flags` (I don't know the original English message)
-1. Modify config with `about:preferences`
-1. Open `about:config` again
+---
 
-And <https://github.com/yokoffing/Betterfox/> helps to know the overview.
+### How do I find the name of a configuration key?
 
-## How to change finder in page position from bottom to top?
+To identify the `about:config` key associated with a setting in the preferences UI:
 
-In Nix, we can define this step with <https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/firefox.nix>
+1. Open a new tab and navigate to `about:config`.
+2. Search for the `showOnlyModified` preference and set it to `true`. This will filter the list to show only settings that have been changed from their default values.
+3. Open `about:preferences` (the standard settings UI) in another tab and change the setting you are interested in.
+4. Switch back to the `about:config` tab. The key for the setting you just changed should now appear in the filtered list.
 
-1. `about:config`
-1. Enable `toolkit.legacyUserProfileCustomizations.stylesheets`
-1. Get profile folder path from `about:support`
-1. Put [userChrome.css](userChrome.css) in the profile folder
-1. Restart Firefox
+For a comprehensive overview of privacy and performance-related settings, the [Betterfox project](https://github.com/yokoffing/Betterfox/) is an excellent resource.
 
-## How to modify or disable keybinding?
+### How do I move the in-page search bar to the top?
 
-Some of them needs to be resolved in patch
+This requires using a custom `userChrome.css` file.
 
-- <https://searchfox.org/mozilla-central/rev/03258de701dbcde998cfb07f75dce2b7d8fdbe20/browser/base/content/browser.xhtml#146-147>
-- <https://searchfox.org/mozilla-central/rev/03258de701dbcde998cfb07f75dce2b7d8fdbe20/browser/base/content/browser-sets.inc#166>
+1. **Enable Custom Stylesheets:**
+   - Go to `about:config`.
+   - Search for `toolkit.legacyUserProfileCustomizations.stylesheets` and set it to `true`.
 
-However, if you are preferring keyboard operations such as tilling window manager, accepting Firefox keybinds maybe reasonable choice for now...
+2. **Locate Your Profile Directory:**
+   - Go to `about:support`.
+   - Find the "Profile Directory" entry and click the "Open Directory" button.
 
-- [Keyboard shortcuts(ja)](https://support.mozilla.org/ja/kb/keyboard-shortcuts-perform-firefox-tasks-quickly#w_twindowtotabu)
+3. **Apply the Custom CSS:**
+   - Inside your profile directory, create a new folder named `chrome`.
+   - Place the [`userChrome.css`](./userChrome.css) file from this repository into the `chrome` folder.
+
+4. **Restart Firefox** to apply the changes.
+
+**Note for Nix users:** This can also be managed declaratively using the [Home Manager Firefox module](https://github.com/nix-community/home-manager/blob/master/modules/programs/firefox.nix).
+
+### How do I modify or disable built-in keybindings?
+
+Modifying some of Firefox's hardcoded keybindings is not straightforward and may require patching the source code.
+
+- **Source Code References:**
+  - [browser.xhtml](https://searchfox.org/mozilla-central/rev/03258de701dbcde998cfb07f75dce2b7d8fdbe20/browser/base/content/browser.xhtml#146-147)
+  - [browser-sets.inc](https://searchfox.org/mozilla-central/rev/03258de701dbcde998cfb07f75dce2b7d8fdbe20/browser/base/content/browser-sets.inc#166)
+
+Given the difficulty, it may be more practical to learn and adapt to the default Firefox keybindings, especially if you use a keyboard-driven workflow (e.g., with a tiling window manager).
+
+- [Official Keyboard Shortcuts (Mozilla Support)](https://support.mozilla.org/en-US/kb/keyboard-shortcuts-perform-firefox-tasks-quickly)

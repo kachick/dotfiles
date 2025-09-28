@@ -1,117 +1,108 @@
-# PowerShell
+# PowerShell Guide
 
-## How to print windows ENV?
+This document provides a collection of tips, troubleshooting advice, and frequently asked questions for using PowerShell on Windows.
 
-AFAIK, %ENVNAME% can be replaced in PowerShell as follows
+---
 
-```console
-~ psh
-> $env:APPDATA
-C:\Users\YOU\AppData\Roaming
+## General Tips and FAQ
 
-~ psh
-> $env:TMP
-C:\Users\YOU\AppData\Local\Temp
+### How do I print environment variables?
+
+You can access environment variables using the `$env:` prefix.
+
+```powershell
+# Get the path to the AppData\Roaming directory
+$env:APPDATA
+# Output: C:\Users\YourUser\AppData\Roaming
+
+# Get the path to the temporary directory
+$env:TMP
+# Output: C:\Users\YourUser\AppData\Local\Temp
 ```
 
-[And golang source code is much helpful](https://github.com/golang/go/blob/f0d1195e13e06acdf8999188decc63306f9903f5/src/os/file.go#L500-L509)
+For more details on how Go handles this, see the [Go source code](https://github.com/golang/go/blob/f0d1195e13e06acdf8999188decc63306f9903f5/src/os/file.go#L500-L509).
 
-## PowerShell startup is too slow
+### How do I get help for a command?
 
-```plaintext
-Loading personal and system profiles took 897ms.
+Use the `Get-Help` cmdlet, similar to `--help` in Unix-like shells.
+
+```powershell
+Get-Help -Name New-Item
 ```
 
-1. Make sure you are using PSFzfHistory, not PSFzf
-1. Make sure `pwsh -NoProfile` is fast
-1. Restart the pwsh, if it is fast, cache maybe generated. The slow may happen when updated windows and/or the runtimes. (I guess)
-1. Do NOT consider about `ngen.exe` solution as Googling say. It looks old for me.
+You can also find documentation online at the [PowerShell Module Browser](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/).
 
-Reason: ngen.exe cannot compile latest pwsh
+### How do I delegate arguments (like `"$@"` in Bash)?
 
-- Official: <https://github.com/PowerShell/PowerShell/issues/14374#issuecomment-1416688062>
-- Better: <https://superuser.com/a/1411591/120469>
-- Didn't: <https://stackoverflow.com/questions/59341482/powershell-steps-to-fix-slow-startup>
-- How: <https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26>
+Use splatting with `@Args`. See the official documentation on [Splatting](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.4#splatting-command-parameters) for more information.
 
-One more noting, if you cannot find ngen.exe, dig under "C:\Windows\Microsoft.NET\Framework" as "C:\Windows\Microsoft.NET\Framework\v4.0.30319\ngen.exe"
+### How do I create a directory recursively (like `mkdir -p`)?
 
-However, for my experience, pwsh is still much slow.\
-I didn't try disabling defenders, but using nushell might be better for the Windows daily driver.
+There isn't a direct, elegant equivalent. `New-Item -ItemType Directory -Path "path/to/create"` works, but it will throw an error if the directory already exists. See [this Stack Overflow thread](https://stackoverflow.com/questions/19853340/powershell-how-can-i-suppress-the-error-if-file-alreadys-exists-for-mkdir-com) for various workarounds.
 
-## How to write PowerShell scripts?
+### Where can I find PowerShell scripting style guides?
 
-- <https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines>
-- <https://github.com/MicrosoftDocs/PowerShell-Docs/blob/a5caf0d1104144f66ea0d7b9e8b2980cf9c605e9/reference/docs-conceptual/community/contributing/powershell-style-guide.md>
-- <https://github.com/kachick/learn_PowerShell>
+- [Strongly Encouraged Development Guidelines](https://learn.microsoft.com/en-us/powershell/scripting/developer/cmdlet/strongly-encouraged-development-guidelines) (Official)
+- [PowerShell Docs Style Guide](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/main/reference/docs-conceptual/community/contributing/powershell-style-guide.md) (Official)
+- [kachick/learn_PowerShell](https://github.com/kachick/learn_PowerShell) (Personal learning repository)
 
-## How to delegate arguments like bash's `"@"`?
+---
 
-[`@Args`](https://learn.microsoft.com/ja-jp/powershell/module/microsoft.powershell.core/about/about_splatting?view=powershell-7.4#splatting-command-parameters)
+## Troubleshooting
 
-## History substring search in major shells for Windows
+### PowerShell startup is slow
 
-- PowerShell: Using <https://github.com/kelleyma49/PSFzf> made much slow, prefer <https://github.com/kachick/PSFzfHistory>
-- nushell: But [it also does not have substring search like a zsh](https://github.com/nushell/nushell/discussions/7968)
+If you see a message like `Loading personal and system profiles took 897ms`, try the following:
 
-## How to get helps for PowerShell commands as `cmd --help` in Unix?
+1. **Check your modules:** Ensure you are using `PSFzfHistory`, not the older `PSFzf`, which can be slower.
+2. **Test without a profile:** Run `pwsh -NoProfile` to see if the slowness is caused by your profile scripts.
+3. **Restart PowerShell:** If a no-profile shell is fast, try restarting your regular shell. Caches might be generated on the first run after an update to Windows or PowerShell itself.
+4. **Avoid `ngen.exe`:** Older advice suggests using `ngen.exe`, but this is outdated and does not work with modern PowerShell.
 
-`Get-Help -Name New-Item`
+If startup is still slow, consider using an alternative shell like Nushell for daily tasks.
 
-Or visit to <https://learn.microsoft.com/ja-jp/powershell/module/microsoft.powershell.management/>
+### Scripts fail to run due to Execution Policy
 
-## How to realize `mkdir -p` in PowerShell?
+If you see an error that a script "cannot be loaded" because it is "not digitally signed," you need to change the execution policy. This often happens when running scripts located in a WSL path (`\\wsl.localhost...`).
 
-No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/powershell-how-can-i-suppress-the-error-if-file-alreadys-exists-for-mkdir-com>
+1. **Temporarily allow unrestricted scripts:**
+   Open an **Administrator** PowerShell terminal and run:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
+   ```
 
-## How to run PowerShell scripts in this repo?
+2. **Verify the policy:**
+   ```powershell
+   Get-ExecutionPolicy -List
+   # Ensure CurrentUser is Unrestricted
+   ```
 
-If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
+3. **Revert the policy:**
+   After you have finished running your scripts, it is a good security practice to revert the policy.
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ```
 
-```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
-```
+### `PSReadLine` module fails to load
 
-Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.
+If you see `Cannot load PSReadline module`, it is often also related to the execution policy. This can break features like command history.
 
-```pwsh
-Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser
-```
+- **Cause:** This can happen if the execution policy is set to `Undefined`.
+- **Solution:** Set the policy to `RemoteSigned` or `Unrestricted` as described above.
+  ```powershell
+  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+  ```
+- **Context:** See [microsoft/terminal issue #7257](https://github.com/microsoft/terminal/issues/7257#issuecomment-1107700978).
 
-```console
-> Get-ExecutionPolicy -List
+### Registry changes are not applied immediately
 
-        Scope ExecutionPolicy
-        ----- ---------------
-MachinePolicy       Undefined
-   UserPolicy       Undefined
-      Process       Undefined
-  CurrentUser    Unrestricted
- LocalMachine       Undefined
-```
+Changes made to the Windows Registry often require a restart of the affected process (e.g., `explorer.exe`) or a full system reboot to take effect. See [this Microsoft forum discussion](https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752) for context.
 
-After completed tasks, disable it as follows
+---
 
-```pwsh
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
+## Shell-Specific Features
 
-## History in PowerShell does not work
+### History Substring Search
 
-If PowerShell in WindowsTerminal displaying as below,
-
-```plaintext
-PowerShell 7.3.6
-Cannot load PSReadline module.  Console is running without PSReadline.
-```
-
-I have faced this problem when called `Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope CurrentUser`.\
-Try to set the permission as `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-
-<https://github.com/microsoft/terminal/issues/7257#issuecomment-1107700978>
-
-## Some PowerShell scripts did not change windows behaviors
-
-<https://answers.microsoft.com/en-us/windows/forum/all/windows-registry-changes-is-a-restart-always/e131b560-1d03-4b12-a32c-50df2bf12752>
-
-After registry editing, needs to restart windows or the process
+- **PowerShell:** For fast history search, use [kachick/PSFzfHistory](https://github.com/kachick/PSFzfHistory) instead of the older `PSFzf`.
+- **Nushell:** As of now, Nushell does not have a built-in Zsh-like substring search. See [nushell/nushell discussion #7968](https://github.com/nushell/nushell/discussions/7968).
