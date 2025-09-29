@@ -1,8 +1,5 @@
 # Cloudflare WARP
 
-Don't add warp-cli into "gdm/PostLogin", the first execution requires agreement for their policy with y/n interactive mode.\
-It blocks the starting GNOME with black screen with white and frozen cursor after login via GDM.
-
 ## First connections
 
 ```bash
