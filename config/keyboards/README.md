@@ -1,7 +1,19 @@
 # Keyboard
 
-Since 2025-08-29, I dropped software keyremappers as possible as I can.\
-So ANSI keyboards should switch IME with `Ctrl+Space` in all platforms.
+## Kanata
+
+Force exiting if I have faced to similar problems like GH-963
+
+`Left Control` + `Space` + `Esc`
+
+Then the process will die. You can restart it with `systemctl start kanata-all`.
+Not just the `kanata`. You can check it with `systemctl list-unit-files "kanata*`.
+
+```console
+> systemctl list-unit-files "kanata*"
+UNIT FILE STATE PRESET
+kanata-all.service enabled ignored
+```
 
 ## Linux
 
@@ -10,11 +22,11 @@ I disable capslock, and dropped other keyremappers.
 
 ## Windows
 
-I only use "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) to disable capslock.
+Additionally using "[Keyboard Manager(PowerToys)](https://github.com/microsoft/PowerToys) to disable capslock.
 
 ## macOS
 
-I only use macOS built-in keyboard remapper to disable capslock.
+I use macOS built-in keyboard remapper to disable capslock.
 
 ## Hardware(QMK)
 
