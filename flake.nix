@@ -38,6 +38,14 @@
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kanata-tray = {
+      url = "github:rszyma/kanata-tray";
+
+      # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
+      # However using follows disables the upstream caches. And I'm okay to build it my self
+      # Prefer unstable channel since also using latest kanata
+      inputs.nixpkgs.follows = "edge-nixpkgs";
+    };
   };
 
   outputs =
@@ -48,6 +56,7 @@
       nixpkgs-darwin,
       home-manager-linux,
       home-manager-darwin,
+      kanata-tray,
       ...
     }@inputs:
     let
@@ -65,7 +74,9 @@
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
-      overlays = import ./overlays { inherit edge-nixpkgs; };
+      overlays = import ./overlays {
+        inherit edge-nixpkgs kanata-tray;
+      };
 
       mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
@@ -132,6 +143,8 @@
                   typos
                   trivy
                   lychee
+
+                  desktop-file-utils # `desktop-file-validate` as a linter
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
@@ -139,6 +152,7 @@
                   gitleaks
                   dprint
                   zizmor
+                  kanata # Enable on devshell for using the --check as a linter
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url

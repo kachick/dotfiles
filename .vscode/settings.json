@@ -7,6 +7,9 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
+  "[kanata]": {
+    "editor.defaultFormatter": "rszyma.vscode-kanata"
+  },
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
   "gopls": {

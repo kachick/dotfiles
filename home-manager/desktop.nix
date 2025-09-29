@@ -153,4 +153,20 @@ in
         echo '{"telemetry.enabled": false, "telemetry.check": true}' > '${configPath}'
       fi
     '';
+
+  xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
+  xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
+
+  home.packages = with pkgs; [
+    unstable.kanata # Don't require kanata-with-cmd for now
+    patched.kanata-tray
+  ];
+
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/xdg-autostart.nix
+  xdg.autostart = {
+    enable = true;
+    entries = [
+      ../config/keyboards/kanata-tray.desktop
+    ];
+  };
 }

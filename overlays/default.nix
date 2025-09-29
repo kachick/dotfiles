@@ -1,5 +1,6 @@
 {
   edge-nixpkgs,
+  kanata-tray,
   ...
 }:
 [
@@ -45,9 +46,12 @@
   })
 
   (final: prev: {
-    # Pacthed packages should be put here if exist
+    # Patched packages should be put here if exist
     # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
     patched = {
+      # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
+      inherit (kanata-tray.packages.${final.system}) kanata-tray;
+
       # pname = prev.unstable.pname.overrideAttrs (
       #   finalAttrs: previousAttrs: {
       #   }

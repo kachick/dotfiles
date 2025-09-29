@@ -5,6 +5,9 @@
     {
       "Packages": [
         {
+          "PackageIdentifier": "jtroo.kanata_gui"
+        },
+        {
           "PackageIdentifier": "bztsrc.usbimager.wo"
         },
         {

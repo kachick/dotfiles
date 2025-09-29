@@ -56,6 +56,8 @@ func main() {
 		{Path: "rumdl", Args: append([]string{"check"}, markdownPaths...)},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
+		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
+		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
 	}
 
 	if *allFlag {
