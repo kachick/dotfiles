@@ -195,7 +195,6 @@
 
       unstable.mdns-scanner
 
-      unstable.kanata # Don't require kanata-with-cmd for now
       patched.kanata-tray
 
       ## Unfree packages
