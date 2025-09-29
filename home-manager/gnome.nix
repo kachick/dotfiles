@@ -253,7 +253,8 @@
           "lv3:ralt_switch"
 
           # GH-963 - "Both Shifts together enable Caps Lock, one Shift key disables it" in gnome-tweaks
-          "shift:both_capslock_cancel"
+          # Disabled since using similar combo via kanata. See kanata.kbd
+          # "shift:both_capslock_cancel"
         ];
       };
 
