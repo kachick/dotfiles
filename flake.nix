@@ -150,6 +150,7 @@
                   gitleaks
                   dprint
                   zizmor
+                  kanata # Enable on devshell for using the --check as a linter
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url
