@@ -109,10 +109,10 @@
     "nixpkgs-darwin": {
       "locked": {
         "lastModified": 315532800,
-        "narHash": "sha256-lOVJRFhHZGx+/kRwhKVe1xW0b3QS+75wevLUkCDGuXI=",
-        "rev": "b5d84e5b26d74be4bd806161af0878251342c65a",
+        "narHash": "sha256-D9xPSE6hJPVRp2cJzPO7rX1E7HdcjHDx2UOf3aAATs0=",
+        "rev": "bd1e762364c6d657a67a05b44a6c04646947e739",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/25.05-darwin/nixpkgs-darwin-25.05pre810380.b5d84e5b26d7/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixpkgs/25.05-darwin/nixpkgs-darwin-25.05pre810494.bd1e762364c6/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
