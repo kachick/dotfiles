@@ -143,6 +143,8 @@
                   typos
                   trivy
                   lychee
+
+                  desktop-file-utils # `desktop-file-validate` as a linter
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
