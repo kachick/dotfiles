@@ -11,7 +11,7 @@
   wayland,
   xorg,
   makeWrapper,
-  displayServer ? "wayland",
+  displayServer ? "x11",
 }:
 
 assert lib.assertOneOf "displayServer" displayServer [
