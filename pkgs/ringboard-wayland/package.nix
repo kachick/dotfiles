@@ -4,4 +4,7 @@
   pkgs,
 }:
 
-pkgs.my.ringboard.override { displayServer = "wayland"; }
+pkgs.my.ringboard.override {
+  pname = "ringboard-wayland";
+  displayServer = "wayland";
+}

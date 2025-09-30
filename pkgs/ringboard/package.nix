@@ -12,6 +12,7 @@
   xorg,
   makeWrapper,
   displayServer ? "x11",
+  pname ? "ringboard",
 }:
 
 assert lib.assertOneOf "displayServer" displayServer [
@@ -20,7 +21,7 @@ assert lib.assertOneOf "displayServer" displayServer [
 ];
 
 pkgs.unstable.rustPlatform.buildRustPackage (finalAttrs: {
-  pname = "ringboard";
+  inherit pname;
 
   # release version needs nightly, so we use a custom tree, see:
   # https://github.com/SUPERCILEX/clipboard-history/issues/22#issuecomment-3322075172
