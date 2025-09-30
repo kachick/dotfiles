@@ -13,8 +13,8 @@ in
   options.services.ringboard = {
     x11.enable = lib.mkEnableOption "X11 support for Ringboard";
     wayland.enable = lib.mkEnableOption "Wayland support for Ringboard";
-    x11Package = lib.mkPackageOption pkgs "ringboard" { };
-    waylandPackage = lib.mkPackageOption pkgs "ringboard-wayland" { };
+    x11Package = lib.mkPackageOption pkgs.my "ringboard" { };
+    waylandPackage = lib.mkPackageOption pkgs.my "ringboard-wayland" { };
   };
 
   config = lib.mkIf (cfg.x11.enable || cfg.wayland.enable) {
