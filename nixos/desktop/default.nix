@@ -343,6 +343,9 @@
   };
 
   services.ringboard = {
-    wayland.enable = true;
+    # Wayland does not work with: ringboard-wayland[89937]: Error: compositor does not implement necessary interface: zwlr_data_control_manager_v1
+    # If this has similar implementation of wayclip, it does not work on GNOME even if GNOME is working under waykand?
+    # Might be related to https://github.com/SUPERCILEX/clipboard-history/issues/16
+    x11.enable = true;
   };
 }
