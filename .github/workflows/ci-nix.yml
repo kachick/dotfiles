@@ -86,6 +86,7 @@ jobs:
         pname:
           - filen-rclone
           - kanata-tray
+          - ringboard
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

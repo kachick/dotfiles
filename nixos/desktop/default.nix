@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ../modules/services/misc/ringboard.nix
     (import ./font.nix { inherit pkgs; })
     (import ./vm.nix { inherit pkgs; })
     (import ./game.nix { inherit pkgs; })
@@ -181,7 +182,7 @@
       # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
       # Don't use clipse it made flickers on GNOME
       #
-      # So prefer clipboard gnome extension except below tools
+      # So prefer ringboard except below tools
       #
       # Don't use `wl-clipboard-rs`, it doesn't work on GNOME.
       #   - "Error: A required Wayland protocol (zwlr_data_control_manager_v1 version 2) is not supported by the compositor"
@@ -240,7 +241,6 @@
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
-      clipboard-history
       dash-to-dock
       lock-keys
     ]);
@@ -340,5 +340,9 @@
         "Alacritty.desktop"
       ];
     };
+  };
+
+  services.ringboard = {
+    wayland.enable = true;
   };
 }
