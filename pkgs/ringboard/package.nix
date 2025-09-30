@@ -2,7 +2,8 @@
 
 {
   stdenv,
-  rustPlatform,
+  # rustPlatform,
+  pkgs,
   fetchFromGitHub,
   lib,
   libxkbcommon,
@@ -18,7 +19,7 @@ assert lib.assertOneOf "displayServer" displayServer [
   "wayland"
 ];
 
-rustPlatform.buildRustPackage (finalAttrs: {
+pkgs.unstable.rustPlatform.buildRustPackage (finalAttrs: {
   pname = "ringboard";
 
   # release version needs nightly, so we use a custom tree, see:
