@@ -44,8 +44,22 @@ in
       registerStartingLima =
         if pkgs.stdenv.hostPlatform.isLinux then
           (lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
-            PATH="$PATH:${lib.getBin pkgs.systemd}/bin" run ${lib.getExe' pkgs.lima "limactl"} start-at-login --enabled
+            run ${
+              pkgs.lib.getExe (
+                pkgs.writeShellApplication {
+                  name = "register-lima-service";
+                  text = "limactl start-at-login --enabled";
+                  meta.description = "Ensure mandatory $PATH when run lima helper command";
+                  runtimeInputs = [
+                    pkgs.systemd
+                    config.programs.ssh.package # Ensure the path before lima executables. See https://github.com/lima-vm/lima/pull/3637 for background
+                    lima
+                  ];
+                }
+              )
+            }
           '')
+
         else
           (lib.hm.dag.entryBefore [ "setupLaunchAgents" ] ''
             PATH="$PATH:/bin" run ${lib.getExe' pkgs.lima "limactl"} start-at-login --enabled
