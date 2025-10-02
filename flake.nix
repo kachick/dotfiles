@@ -67,7 +67,7 @@
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
           "x86_64-darwin" # Kept for actual my device
-          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-13 is deadly slow for daily CI
+          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-15-intel is deadly slow for daily CI
         ] nixpkgs.lib.systems.flakeExposed
       );
 
@@ -244,9 +244,9 @@
             ];
           };
 
-          # macos-13 is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # macos-15-intel is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
           # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
-          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
+          "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI

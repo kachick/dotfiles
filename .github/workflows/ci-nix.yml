@@ -59,7 +59,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
+          - macos-15-intel # Don't use macos-14 or later. macos-15-intel is the last runner of x86_64-darwin
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -82,7 +82,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          # - macos-13 # Don't use macos-14 or later. macos-13 is the last runner of x86_64-darwin
+          # - macos-15-intel # Don't use macos-14 or later. macos-15-intel is the last runner of x86_64-darwin
         pname:
           - filen-rclone
           - kanata-tray
