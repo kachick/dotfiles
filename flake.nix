@@ -66,8 +66,7 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin" # Kept for actual my device
-          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-15-intel is deadly slow for daily CI
+          "x86_64-darwin"
         ] nixpkgs.lib.systems.flakeExposed
       );
 
@@ -244,8 +243,9 @@
             ];
           };
 
-          # macos-15-intel is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
-          # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
+          # macos-15-intel is the last x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # However it is too slow, almost 3x slower than Linux and macos-15(arm64) runner. So you should enable binary cache if use this runner
+          # See https://github.com/kachick/dotfiles/issues/1198#issuecomment-3362312549 for detail
           "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
