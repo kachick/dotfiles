@@ -241,4 +241,7 @@
     enable = true;
     policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
   };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/security/sudo-rs.nix
+  security.sudo-rs.enable = true;
 }
