@@ -10,6 +10,11 @@
   // built-in themes:  https://github.com/zed-industries/zed/tree/9d10489607df700c544c48cf09fea82f5d5aacf8/assets/themes
   // "One Dark" is enough good for me.
   "theme": "One Dark",
+  "icon_theme": {
+    "mode": "system",
+    "dark": "Material Icon Theme",
+    "light": "Material Icon Theme"
+  },
   "telemetry": {
     "metrics": false
   },
@@ -104,6 +109,7 @@
     "blinking": "off"
   },
   "auto_install_extensions": {
+    "material-icon-theme": true,
     "nix": true,
     "toml": true,
     "typos": true,
