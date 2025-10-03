@@ -10,6 +10,7 @@ runs:
     - name: Install Nix
       uses: DeterminateSystems/nix-installer-action@v20
       with:
+        determinate: false
         extra-conf: |
           accept-flake-config = true
     - name: Configure Cachix
