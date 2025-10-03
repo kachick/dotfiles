@@ -94,7 +94,7 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
 
    ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix
    ```
 
 1. Make sure your user or one of the groups are listed in `trusted-users`
