@@ -219,7 +219,7 @@
             ];
           };
 
-          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration {
+          "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/kachick.nix
