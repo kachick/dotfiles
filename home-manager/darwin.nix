@@ -53,11 +53,6 @@
 
   xdg = {
     configFile = {
-      "karabiner/assets" = {
-        source = ../config/keyboards/karabiner/assets;
-        recursive = true;
-      };
-
       "karabiner/HomeManagerInit_karabiner.json" = {
         source = ../config/keyboards/karabiner/karabiner.json;
         # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
