@@ -26,7 +26,9 @@ Additionally using "[Keyboard Manager(PowerToys)](https://github.com/microsoft/P
 
 ## macOS
 
-I use macOS built-in keyboard remapper to disable capslock.
+- Use Karabiner-Elements on macOS. It is active, stable, and having many features. The only weakness is not supporting other OS.
+- macOS built-in keyboard remapper can only simply remap. It is reasonable when I only need to disable capslock.
+- Kanata is the cross-platform solution, however it does not simply work out of box, even if we use Karabiner-VirtualHIDDevice. See also the [instructions](https://github.com/jtroo/kanata/blob/25193104aad589e6df4a4ec700750ff8e18d27bd/docs/release-template.md?plain=1#L67-L131).
 
 ## Hardware(QMK)
 
