@@ -321,6 +321,9 @@
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
+    # Require https://github.com/NixOS/nixpkgs/pull/442245 to adjust home-manager's tailscale-systray module
+    package = pkgs.unstable.tailscale;
+
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489

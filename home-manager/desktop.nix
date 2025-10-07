@@ -44,7 +44,10 @@ let
   ++ webBrowser;
 in
 {
-  imports = [ ./gnome.nix ];
+  imports = [
+    ./modules/services/tailscale-systray.nix
+    ./gnome.nix
+  ];
 
   xdg = {
     # How to get the mimetype: `xdg-mime query filetype path`
@@ -128,6 +131,13 @@ in
 
       defaultApplications = associations.added;
     };
+  };
+
+  # https://github.com/nix-community/home-manager/pull/7821
+  services.tailscale-systray = {
+    enable = true;
+    # Available after https://github.com/NixOS/nixpkgs/pull/442245
+    package = pkgs.unstable.tailscale;
   };
 
   # GH-1228: Disable podman-desktop Telemetry
