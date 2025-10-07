@@ -18,3 +18,5 @@ runs:
       with:
         name: kachick-dotfiles
         authToken: ${{ inputs.cachix-auth-token }}
+        pushFilter: |
+          (-source$ | nixpkgs\.tar\.gz$ | -vendor$)
