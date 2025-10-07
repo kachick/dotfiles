@@ -34,8 +34,10 @@ exclude = [
   "serverfault.com",
   "askubuntu.com",
 
-  # It seems lychee cannot parse Nix language syntax correctly
-  "github.com/nodchip/tanuki-/releases/download",
+  # Lychee cannot parse Nix string interpolation correctly.
+  # This pattern therefore ignores the issue.
+  # e.g., "http://github.com/owner/repo/releases/download/v${version}/asset"
+  '\$%7',
 
   # Nix's version interpolation URL is not a standard URL
   "https://ludii.games/downloads",
