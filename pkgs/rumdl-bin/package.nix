@@ -44,6 +44,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     inherit mainProgram;
     description = "Markdown Linter";
     homepage = "https://github.com/rvben/rumdl";
+    sourceProvenance = with lib.sourceTypes; [
+      binaryBytecode
+    ];
     license = lib.licenses.mit;
     # Upstream also provides other binaries, this restriction is from my laziness
     # Reconsider when addressing GH-1122

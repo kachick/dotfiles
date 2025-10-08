@@ -54,6 +54,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       I may address it again after merging https://github.com/NixOS/nixpkgs/pull/387337.
     '';
     homepage = "https://github.com/boxdot/gurk-rs";
+    sourceProvenance = with lib.sourceTypes; [
+      binaryBytecode
+    ];
     license = lib.licenses.agpl3Only;
     # Upstream also provides other binaries, this restriction is from my laziness
     # Reconsider when addressing GH-1122
