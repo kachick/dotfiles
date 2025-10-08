@@ -49,7 +49,7 @@
         stern
         k9s
 
-        tailscale # Frequently backported to stable channel
+        unstable.tailscale # Frequently backported to stable channel. However it require latest to use tailscale-systray
 
         # Enable LSP on global.
         #   - nixd is useually required in all platforms even in WSL2

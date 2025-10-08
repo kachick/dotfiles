@@ -44,7 +44,10 @@ let
   ++ webBrowser;
 in
 {
-  imports = [ ./gnome.nix ];
+  imports = [
+    ./modules/services/tailscale-systray.nix
+    ./gnome.nix
+  ];
 
   xdg = {
     # How to get the mimetype: `xdg-mime query filetype path`
@@ -130,12 +133,11 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/commit/4c8647b1ed35d0e1822c7997172786dfa18cd7da
-  services.trayscale = {
+  # https://github.com/nix-community/home-manager/pull/7821
+  services.tailscale-systray = {
     enable = true;
-    # Using latest would be better for this tool: https://github.com/DeedleFake/trayscale/issues/215#issuecomment-2905114976
-    # Keep in mind, this package has latest tailscale in the input. I think it is mostly okay, because of tailscale package is frequently backported to stable channel
-    package = pkgs.unstable.trayscale;
+    # Available after https://github.com/NixOS/nixpkgs/pull/442245
+    package = pkgs.unstable.tailscale;
   };
 
   # GH-1228: Disable podman-desktop Telemetry
