@@ -121,5 +121,5 @@
   preview
   renmark
   tree-diff
-  gurk-rs
+  gurk-rs-bin
 ])

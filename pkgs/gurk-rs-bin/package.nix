@@ -25,7 +25,7 @@ let
   system = stdenvNoCC.hostPlatform.system;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "gurk-rs";
+  pname = "gurk-rs-bin";
   inherit version;
 
   src = sources.${system} or (throw "Unsupported system: ${system}");
@@ -58,5 +58,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     # Upstream also provides other binaries, this restriction is from my laziness
     # Reconsider when addressing GH-1122
     platforms = lib.platforms.x86_64;
+    priority = 10; # 5 by default. Prefer src built if exist
   };
 })
