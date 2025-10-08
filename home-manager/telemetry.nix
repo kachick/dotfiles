@@ -18,7 +18,7 @@
     activation = {
       # go generally put on .config/go/telemetry, however using the cmd is the recommended way
       # ref: https://go.dev/doc/telemetry
-      disableGoTelemetry = lib.dag.entryAfter [ "writeBoundary" ] ''
+      disableGoTelemetry = config.lib.dag.entryAfter [ "writeBoundary" ] ''
         ${lib.getExe pkgs.go_1_24} telemetry off
       '';
 
@@ -29,7 +29,7 @@
         let
           configPath = "${config.xdg.dataHome}/containers/podman-desktop/configuration/settings.json";
         in
-        lib.dag.entryAnywhere ''
+        config.lib.dag.entryAnywhere ''
           if [[ -f '${configPath}' ]]; then
             ${lib.getExe pkgs.jq} '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${lib.getExe' pkgs.moreutils "sponge"}" '${configPath}'
           else
