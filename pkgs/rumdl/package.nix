@@ -6,12 +6,12 @@
 }:
 
 let
-  version = "0.0.147";
+  version = "0.0.154";
   # See https://github.com/rvben/rumdl/releases for latest
   sources = {
     x86_64-linux = fetchzip {
       url = "https://github.com/rvben/rumdl/releases/download/v${version}/rumdl-v${version}-x86_64-unknown-linux-musl.tar.gz";
-      hash = "sha256-jUt0EOKx/FZ2WNHCHshMAS0K2hFRHcKJ34ono6a2pyM=";
+      hash = "sha256-oL32jPS3latFf+MP9++ufGtyQIVZyMpvEZJlw+fXH2Q=";
     };
   };
   mainProgram = "rumdl";
