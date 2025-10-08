@@ -19,7 +19,8 @@ let
 in
 
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "rumdl";
+  # Build from source PR is: https://github.com/NixOS/nixpkgs/pull/446292
+  pname = "rumdl-bin";
   inherit version;
 
   src = sources.${system} or (throw "Unsupported system: ${system}");
@@ -42,14 +43,15 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   meta = {
     inherit mainProgram;
     description = "Markdown Linter";
-    longDescription = ''
-      I sent build from source PR into upstream. See https://github.com/NixOS/nixpkgs/pull/446292
-    '';
     homepage = "https://github.com/rvben/rumdl";
+    sourceProvenance = with lib.sourceTypes; [
+      binaryBytecode
+    ];
     license = lib.licenses.mit;
     # Upstream also provides other binaries, this restriction is from my laziness
     # Reconsider when addressing GH-1122
     platforms = lib.intersectLists lib.platforms.x86_64 lib.platforms.linux;
+    priority = 10; # 5 by default. Prefer src built if exist
     maintainers = with lib.maintainers; [
       kachick
     ];
