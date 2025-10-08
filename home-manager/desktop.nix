@@ -1,6 +1,5 @@
 {
   lib,
-  config,
   pkgs,
   ...
 }:
@@ -139,22 +138,6 @@ in
     # Available after https://github.com/NixOS/nixpkgs/pull/442245
     package = pkgs.unstable.tailscale;
   };
-
-  # GH-1228: Disable podman-desktop Telemetry
-  # podman-desktop does not provide CLI configurable features likely ENV
-  # ref: https://github.com/podman-desktop/podman-desktop/blob/db85f0197406b42dc8a0bd8ef5661e8c19c30e80/.devcontainer/.parent/Containerfile#L36-L38
-  xdg.dataFile."containers/podman-desktop/configuration/.keep".text = "";
-  home.activation.disablePodmanDesktopTelemetry =
-    let
-      configPath = "${config.xdg.dataHome}/containers/podman-desktop/configuration/settings.json";
-    in
-    config.lib.dag.entryAnywhere ''
-      if [[ -f '${configPath}' ]]; then
-        jq '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${lib.getExe' pkgs.moreutils "sponge"}" '${configPath}'
-      else
-        echo '{"telemetry.enabled": false, "telemetry.check": true}' > '${configPath}'
-      fi
-    '';
 
   xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
   xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
