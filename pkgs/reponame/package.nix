@@ -1,9 +1,13 @@
 {
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
+buildGo125Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
   vendorHash = "sha256-LKSNhSnu73cjS6LbXXHhlKaITkq6WIwdBi6jo7xNCF4=";
