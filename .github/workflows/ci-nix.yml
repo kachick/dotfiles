@@ -84,11 +84,17 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          # - macos-15-intel # Comment-out if I will add some packages that used in macOS
+          - macos-15-intel
         pname:
           - filen-rclone
           - kanata-tray
-          - rumdl
+          - rumdl # I may use it as a global package
+          - somo
+        exclude:
+          - runner: macos-15-intel
+            pname: filen-rclone # it seems, it doesn't support darwin
+          - runner: macos-15-intel
+            pname: kanata-tray # I don't use it on macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

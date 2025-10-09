@@ -100,7 +100,7 @@
   unstable.brush
 
   # Available since https://github.com/NixOS/nixpkgs/pull/423741
-  unstable.somo
+  patched.somo
 
   # Available since https://github.com/NixOS/nixpkgs/pull/410902
   unstable.typescript-go
