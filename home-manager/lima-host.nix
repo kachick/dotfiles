@@ -62,7 +62,7 @@ in
 
         else
           (lib.hm.dag.entryBefore [ "setupLaunchAgents" ] ''
-            PATH="$PATH:/bin" run ${lib.getExe' pkgs.lima "limactl"} start-at-login --enabled
+            PATH="$PATH:/bin" run ${lib.getExe' lima "limactl"} start-at-login --enabled
           '');
     };
   };
