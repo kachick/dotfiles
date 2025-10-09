@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Startup Settings
+Type=Application
+Exec=kanata-tray
+OnlyShowIn=GNOME;
+NoDisplay=true

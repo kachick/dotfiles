@@ -34,16 +34,17 @@
     always-allow-substitutes = true;
 
     trusted-substituters = [
+      "https://cache.nixos.org/"
       "https://nix-community.cachix.org"
+      "https://numtide.cachix.org"
       "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
     ];
 
     trusted-public-keys = [
-      # https://nix-community.org/cache/
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-
-      # GH-1235
-      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs=" # https://nix-community.org/cache/
+      "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
+      "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI=" # GH-1235
     ];
 
     accept-flake-config = true;
@@ -158,14 +159,74 @@
     ]
   );
 
+  ## Avahi (Classic, supported by CUPS)
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/avahi-daemon.nix
+  # - https://wiki.archlinux.org/title/Avahi
+  #
+  # If you faced to any troubles around this context, Also see following issues
+  # - https://github.com/NixOS/nixpkgs/issues/118628
+  # - https://github.com/NixOS/nixpkgs/issues/412777
+  # - https://github.com/NixOS/nixpkgs/issues/291108
+  # I don't know how to use both in NixOS likely https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
+  services.avahi = {
+    # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
+    # - https://github.com/apple/cups/issues/5452
+    # - https://github.com/OpenPrinting/libcups/issues/81
+    enable = false; # If enabled, you should care the conflict with systemd-resolved
+
+    # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
+    # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
+    # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
+    # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+  };
+
+  ## systemd-resolved (Modern, not supported by CUPS)
+  # - Check the behavior with `resolvectl status`
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
+  # - https://wiki.archlinux.org/title/Systemd-resolved
+  # Disabled by default. But ensures to disable MulticastDNS
+  services.resolved = {
+    enable = true;
+    llmnr = "false";
+
+    # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
+    extraConfig = ''
+      MulticastDNS=true
+      DNSStubListener=false
+    '';
+  };
+
+  # Avahi module has openFirewall, but resolved module does not have it
+  networking.firewall.allowedUDPPorts = [ 5353 ];
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/networkmanager.nix
+  networking.networkmanager = {
+    enable = true;
+
+    dns = "systemd-resolved";
+    connectionConfig."connection.mdns" = 2;
+
+    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
+    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
 
   # List services that you want to enable:
 
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/ssh/sshd.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/doc/manual/configuration/ssh.section.md
+  services.openssh = {
+    enable = true;
+    settings = {
+      PasswordAuthentication = false;
+      PermitRootLogin = "no";
+    };
+  };
+
+  services.fail2ban.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -181,4 +242,7 @@
     enable = true;
     policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
   };
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/security/sudo-rs.nix
+  security.sudo-rs.enable = true;
 }

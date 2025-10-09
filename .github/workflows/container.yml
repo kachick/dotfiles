@@ -10,9 +10,9 @@ on:
     types:
       - labeled
   schedule:
-    # Every 11:42 and 23:42 JST
+    # Every 23:42 JST # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 2,14 * * *'
+    - cron: '42 14 * * *'
   workflow_dispatch:
 
 permissions:
@@ -83,6 +83,20 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
+      - name: Logging disk space
+        run: df -h
+      - name: Clean space as per https://github.com/actions/virtual-environments/issues/709
+        # NOTE: This workflow removed 14 Gib in 50sec
+        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
+        run: |
+          docker images
+          docker image prune --all --force
+          sudo rm -rf "/opt/ghc" || true
+          sudo rm -rf "/usr/share/dotnet" || true
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
+          sudo rm -rf "/usr/local/lib/android" || true
+          sudo rm -rf "/usr/local/share/boost" || true
+          df -h
       - name: Logging dependency versions
         run: |
           podman version
@@ -215,6 +229,9 @@ jobs:
           This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
           EOF
           ) | gh pr comment ${{ github.event.number }} --body-file -
+
+      - name: Logging disk space
+        run: df -h
 
   remove-old-images:
     needs: [build_and_push]

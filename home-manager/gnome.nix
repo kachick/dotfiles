@@ -50,7 +50,7 @@
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = lib.getExe pkgs.ghostty;
+        exec = pkgs.unstable.ghostty.meta.mainProgram;
         # exec-arg="";
       };
 
@@ -62,6 +62,8 @@
       # Disabling defaults to enable Suprt+num family will be used to switch workspaces
       # https://github.com/pop-os/shell/issues/142
       "org/gnome/shell/keybindings" = {
+        toggle-overview = [ "<Alt>space" ]; # Likely "PowerToys Run(Windows)" and "Spotlight(macOS)".
+
         switch-to-application-1 = [ ];
         switch-to-application-2 = [ ];
         switch-to-application-3 = [ ];
@@ -165,32 +167,25 @@
         # move-to-workspace-8 = [ "<Super><Shift>8" ];
         # move-to-workspace-9 = [ "<Super><Shift>9" ];
 
-        # Intentioanlly specifies same values as default. Because of it is flaky removed if using default.
-        switch-input-source = [ "<Super>space" ];
-        switch-input-source-backward = [ "<Shift><Super>space" ];
+        # Avoid the default "<Super>space", since using <Alt>+Space for toggle-overview
+        switch-input-source = [ "<Super>i" ];
+        switch-input-source-backward = [ "<Shift><Super>i" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
         www = [ "<Super>w" ];
         home = [ ];
         email = [ ];
-        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Prefer overlay-key
+        # search = [ "<Alt>space" ]; # Don't set this. It does not realize toggle feature such as PowerToys Run. Use org/gnome/shell/keybindings/toggle-overview instead
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/"
         ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = lib.getExe pkgs.ghostty;
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1" = {
-        name = "Toggle Launcher";
-        binding = "<Alt>space";
-        command = lib.getExe pkgs.my.toggle-wofi;
+        command = pkgs.unstable.ghostty.meta.mainProgram;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {
@@ -213,7 +208,7 @@
         # Disable default Super runs GNOME overview with search
         # https://ubuntuforums.org/showthread.php?t=2405352
         # However just removing is not enough. Search feature cannot toggle. Providing an overlay-key is still better than none.
-        # This option does not accept combo like the "<Alt>Space"
+        # This option does not accept combo like the "<Alt>Space". Use org/gnome/shell/keybindings/toggle-overview instead
         #
         # Why this value?
         # - Avoid default Super_L for mistyping.
@@ -252,6 +247,15 @@
         ];
 
         per-window = false;
+
+        xkb-options = [
+          "caps:none"
+          "lv3:ralt_switch"
+
+          # GH-963 - "Both Shifts together enable Caps Lock, one Shift key disables it" in gnome-tweaks
+          # Disabled since using similar combo via kanata. See kanata.kbd
+          # "shift:both_capslock_cancel"
+        ];
       };
 
       # Do not depend on this value with home-manager. Stationary devices need longer times before sleep, while laptops need shorter times.
@@ -292,7 +296,9 @@
 
         multi-monitor = true;
 
-        scroll-action = "switch-workspace";
+        # The "switch-workspace" feature was a bit useful on a desktop but very frustrating on a laptop.
+        # Disabling it temporarily until I implement device-specific home-manager configurations.
+        scroll-action = "do-nothing";
       };
 
       "org/gnome/desktop/wm/preferences" = {

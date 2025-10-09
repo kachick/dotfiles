@@ -25,10 +25,17 @@
         # gnome-boxes # Omitting. I believe it is a core package of NixOS.
       ])
       # Test builds and push the binary cache from CI
-      ++ (with pkgs.patched; [
-        lima
-        signal-desktop
-        shogihome
-      ]);
+      # Consider to use ci-nix instead
+      # Don't use `with` to keep indentation even if empty list
+      ++ [
+        # pkgs.patched.pname
+        # pkgs.patched.lima # Enable when patched
+      ]
+      # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in ci-nix
+      # ++ [
+      #   # I don't know why this overriding will not work :<
+      #   pkgs.gnome-keyring
+      # ]
+      ++ (with pkgs.ibus-engines; [ mozc ]);
   };
 }

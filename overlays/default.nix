@@ -1,5 +1,6 @@
 {
   edge-nixpkgs,
+  kanata-tray,
   ...
 }:
 [
@@ -27,61 +28,95 @@
     #
     # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
     gnome-keyring = prev.unstable.gnome-keyring;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+    # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
+    # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
+    mozc = prev.mozc.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        patches = [
+          (prev.fetchpatch {
+            name = "GH-1277.patch";
+            url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
+            hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
+          })
+        ];
+      }
+    );
   })
 
   (final: prev: {
-    # Pacthed packages should be put here if exist
+    # Patched packages should be put here if exist
     # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
     patched = {
+      # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
+      inherit (kanata-tray.packages.${final.system}) kanata-tray;
+
       # pname = prev.unstable.pname.overrideAttrs (
       #   finalAttrs: previousAttrs: {
       #   }
       # );
 
-      # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-      lima = prev.unstable.lima.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          # Upstream PR: https://github.com/NixOS/nixpkgs/pull/428759
-          version = "1.2.1";
+      # Overriding non mkDerivation often makes hard to modify the hash(not src hash). See following workaround
+      # rust:
+      #   - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
+      #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
+      # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
 
-          src = prev.fetchFromGitHub {
-            owner = "lima-vm";
-            repo = "lima";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-90fFsS5jidaovE2iqXfe4T2SgZJz6ScOwPPYxCsCk/k=";
+      # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
+      # lima = prev.unstable.lima.overrideAttrs (
+      #   finalAttrs: previousAttrs: {
+      #     # Upstream PR: <UPDATEME>
+      #     version = "<UPDATEME>";
+
+      #     src = prev.fetchFromGitHub {
+      #       owner = "lima-vm";
+      #       repo = "lima";
+      #       tag = "v${finalAttrs.version}";
+      #       hash = "<UPDATEME>";
+      #     };
+      #   }
+      # );
+
+      # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
+      # - OSS. Apache-2.0
+      # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
+      gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
+          version = "0.8.1";
+
+          src = prev.fetchurl {
+            url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
+            hash = "sha256-SRtl8FPMI0VBz0hzmyvtGYPO3mdnm60gu2zlStb5r98=";
           };
         }
       );
 
-      # commandLineArgs is available since https://github.com/NixOS/nixpkgs/commit/6ad174a6dc07c7742fc64005265addf87ad08615
-      signal-desktop = prev.unstable.signal-desktop.override {
-        commandLineArgs = [
-          "--wayland-text-input-version=3"
-        ];
-      };
-
-      shogihome = prev.unstable.shogihome.overrideAttrs (
+      # Wait for merging https://github.com/NixOS/nixpkgs/pull/439590
+      somo = prev.unstable.somo.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "1.25.0";
+          version = "1.3.0";
 
           src = prev.fetchFromGitHub {
-            owner = "sunfish-shogi";
-            repo = "shogihome";
+            owner = "theopfr";
+            repo = "somo";
             tag = "v${finalAttrs.version}";
-            hash = "sha256-Qa8ykN514Moc/PpBhD/X+mzfclQPp3yiriwTJCtmMA8=";
+            hash = "sha256-k7PDCylA6KR/S1dQDSMIoOELPYwJ25dz1u+PM6ITGKg=";
           };
 
-          # Should manually override instead of replacing npmDepsHash
-          # https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4?u=kachick
-          npmDeps = final.fetchNpmDeps {
+          cargoDeps = final.rustPlatform.fetchCargoVendor {
             inherit (finalAttrs) src;
-            name = "${finalAttrs.pname}-${finalAttrs.version}-npm-deps";
-            hash = "sha256-rcrj3dG96oNbmp3cXw1qRJPi1SZdBcG9paAShSfb/0E=";
+            hash = "sha256-i3GmdBqCWPeslpr2zzOR4r8PgMP7EkC1mNFI7jSWO34=";
           };
 
-          commandLineArgs = [
-            "--wayland-text-input-version=3"
+          nativeCheckInputs = [
+            prev.libredirect.hook
           ];
+
+          preCheck = ''
+            export NIX_REDIRECTS=/etc/services=${prev.iana-etc}/etc/services
+          '';
         }
       );
     };

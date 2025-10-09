@@ -52,6 +52,18 @@
   };
 
   xdg = {
+    configFile = {
+      "karabiner/HomeManagerInit_karabiner.json" = {
+        source = ../config/keyboards/karabiner/karabiner.json;
+        # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
+        onChange = ''
+          rm -f ${config.xdg.configHome}/karabiner/karabiner.json
+          cp ${config.xdg.configHome}/karabiner/HomeManagerInit_karabiner.json ${config.xdg.configHome}/karabiner/karabiner.json
+          chmod u+w ${config.xdg.configHome}/karabiner/karabiner.json
+        '';
+      };
+    };
+
     dataFile = {
       # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598
       # https://github.com/midchildan/dotfiles/blob/fae87a3ef327c23031d8081333678f9472e4c0ed/nix/home/modules/gnupg/default.nix#L38
@@ -61,6 +73,15 @@
         max-cache-ttl 604800
         pinentry-program ${pkgs.pinentry_mac}/Applications/pinentry-mac.app/Contents/MacOS/pinentry-mac
       '';
+
+      # The executable was renamed to `zeditor` in https://github.com/NixOS/nixpkgs/pull/344193, and I created a `zed` alias in all platforms.
+      # However, the upstream CLI on Darwin installs to `/usr/local/bin/zed`, not `zeditor`.
+      # This conflicts with my `zed` alias because the names are the same (`zed`).
+      # To resolve this, I define `zeditor` as the bin name here, allowing it to be executed as "zed" via the alias on Darwin.
+      "tmpbin/zeditor" = {
+        source = config.lib.file.mkOutOfStoreSymlink "/usr/local/bin/zed";
+        executable = true;
+      };
     };
   };
 }

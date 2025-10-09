@@ -1,6 +1,5 @@
 {
   lib,
-  config,
   pkgs,
   ...
 }:
@@ -44,7 +43,10 @@ let
   ++ webBrowser;
 in
 {
-  imports = [ ./gnome.nix ];
+  imports = [
+    ./modules/services/tailscale-systray.nix
+    ./gnome.nix
+  ];
 
   xdg = {
     # How to get the mimetype: `xdg-mime query filetype path`
@@ -130,27 +132,27 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/commit/4c8647b1ed35d0e1822c7997172786dfa18cd7da
-  services.trayscale = {
+  # https://github.com/nix-community/home-manager/pull/7821
+  services.tailscale-systray = {
     enable = true;
-    # Using latest would be better for this tool: https://github.com/DeedleFake/trayscale/issues/215#issuecomment-2905114976
-    # Keep in mind, this package has latest tailscale in the input. I think it is mostly okay, because of tailscale package is frequently backported to stable channel
-    package = pkgs.unstable.trayscale;
+    # Available after https://github.com/NixOS/nixpkgs/pull/442245
+    package = pkgs.unstable.tailscale;
   };
 
-  # GH-1228: Disable podman-desktop Telemetry
-  # podman-desktop does not provide CLI configurable features likely ENV
-  # ref: https://github.com/podman-desktop/podman-desktop/blob/db85f0197406b42dc8a0bd8ef5661e8c19c30e80/.devcontainer/.parent/Containerfile#L36-L38
-  xdg.dataFile."containers/podman-desktop/configuration/.keep".text = "";
-  home.activation.disablePodmanDesktopTelemetry =
-    let
-      configPath = "${config.xdg.dataHome}/containers/podman-desktop/configuration/settings.json";
-    in
-    config.lib.dag.entryAnywhere ''
-      if [[ -f '${configPath}' ]]; then
-        jq '. "telemetry.check" = true | . "telemetry.enabled" = false' '${configPath}' | "${pkgs.moreutils}/bin/sponge" '${configPath}'
-      else
-        echo '{"telemetry.enabled": false, "telemetry.check": true}' > '${configPath}'
-      fi
-    '';
+  xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
+  xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
+
+  home.packages = with pkgs; [
+    unstable.kanata # Don't require kanata-with-cmd for now
+    patched.kanata-tray
+  ];
+
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/xdg-autostart.nix
+  xdg.autostart = {
+    enable = true;
+    entries = [
+      ../config/keyboards/kanata-tray.desktop
+      ../config/cloudflare-warp/connect.desktop
+    ];
+  };
 }

@@ -114,15 +114,15 @@
       # 2. Cross-Platform Reliability: 'ps' acts differently across systems.
       #    Even with 'procps' from nixpkgs, the package is not the same on Linux and Darwin, though it has the same name in Nixpkgs.
       # This approach is also beneficial since Bash isn't typically a login shell on macOS.
-      if [[ -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "zsh" ]]
+      if [[ -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${pkgs.zsh}/bin/zsh $LOGIN_OPTION
+        exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
       fi
 
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
-      	echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+      	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
       }
       # shellcheck disable=SC2034
       starship_precmd_user_func="set_win_title"
@@ -141,7 +141,7 @@
       done
 
       # Disable `Ctrl + S(no output tty)`
-      ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+      ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
       source "${pkgs.my.posix_shared_functions}"
 

@@ -11,15 +11,21 @@
   };
 
   inputs = {
+    # Why prefer channels.nixos.org rather than GitHub?
+    #   - Avoid rate limit
+    #   - nixos.org distributing tar.xz is smaller than GitHub's zip
+    #   - nixos.org distributing tar.xz might ensure stable binary caches
+    # See https://github.com/kachick/dotfiles/issues/1262#issuecomment-3302717297 for detail
+    #
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+    nixpkgs.url = "https://channels.nixos.org/nixos-25.05/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    edge-nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
+    edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.05-darwin/nixexprs.tar.xz";
     home-manager-linux = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -32,6 +38,14 @@
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kanata-tray = {
+      url = "github:rszyma/kanata-tray";
+
+      # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
+      # However using follows disables the upstream caches. And I'm okay to build it my self
+      # Prefer unstable channel since also using latest kanata
+      inputs.nixpkgs.follows = "edge-nixpkgs";
+    };
   };
 
   outputs =
@@ -42,6 +56,7 @@
       nixpkgs-darwin,
       home-manager-linux,
       home-manager-darwin,
+      kanata-tray,
       ...
     }@inputs:
     let
@@ -51,15 +66,16 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin" # Kept for actual my device
-          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-13 is deadly slow for daily CI
+          "x86_64-darwin"
         ] nixpkgs.lib.systems.flakeExposed
       );
 
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
-      overlays = import ./overlays { inherit edge-nixpkgs; };
+      overlays = import ./overlays {
+        inherit edge-nixpkgs kanata-tray;
+      };
 
       mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
@@ -125,8 +141,9 @@
 
                   typos
                   trivy
-                  markdownlint-cli2
                   lychee
+
+                  desktop-file-utils # `desktop-file-validate` as a linter
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
@@ -134,8 +151,12 @@
                   gitleaks
                   dprint
                   zizmor
+                  kanata # Enable on devshell for using the --check as a linter
                 ])
-                ++ (with pkgs.my; [ nix-hash-url ])
+                ++ (with pkgs.my; [
+                  nix-hash-url
+                  rumdl-bin
+                ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
                 ]
@@ -198,7 +219,7 @@
             ];
           };
 
-          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration {
+          "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/kachick.nix
@@ -222,9 +243,10 @@
             ];
           };
 
-          # macos-13 is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
-          # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
-          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
+          # macos-15-intel is the last x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # However it is too slow, almost 3x slower than Linux and macos-15(arm64) runner. So you should enable binary cache if use this runner
+          # See https://github.com/kachick/dotfiles/issues/1198#issuecomment-3362312549 for detail
+          "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI

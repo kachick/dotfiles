@@ -89,7 +89,7 @@ in
         # See https://github.com/kachick/dotfiles/issues/289 for detail.
         format = "openpgp";
 
-        program = "${pkgs.lib.getBin pkgs.sequoia-chameleon-gnupg}/bin/gpg-sq"; # GH-830
+        program = lib.getExe pkgs.sequoia-chameleon-gnupg; # GH-830
       };
 
       commit = {
@@ -192,12 +192,12 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !cd "$(${pkgs.ghq}/bin/ghq root)/github.com/$(git config --global ghq.user)" && \
+          !cd "$(${lib.getExe pkgs.ghq} root)/github.com/$(git config --global ghq.user)" && \
             gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
               cd "$1" && \
                 gh setup && \
-                  ${pkgs.direnv}/bin/direnv allow && \
-                    ${pkgs.neo-cowsay}/bin/cowsay -W 100 --rainbow "cdrepo $1"
+                  ${lib.getExe pkgs.direnv} allow && \
+                    ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
         '';
       };
     };

@@ -1,0 +1,22 @@
+name: 'Setup Nix and Cachix'
+description: 'Installs Nix and configures Cachix for caching'
+inputs:
+  cachix-auth-token:
+    description: 'Authentication token for Cachix'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Nix
+      uses: DeterminateSystems/nix-installer-action@v20
+      with:
+        determinate: false
+        extra-conf: |
+          accept-flake-config = true
+    - name: Configure Cachix
+      uses: cachix/cachix-action@0fc020193b5a1fa3ac4575aa3a7d3aa6a35435ad # v16
+      with:
+        name: kachick-dotfiles
+        authToken: ${{ inputs.cachix-auth-token }}
+        # https://github.com/kachick/dotfiles/commit/deba9834efbef3aae2a61aa6ee2794d1eba6e985#r167396022
+        pushFilter: '(-source$|nixpkgs\.tar\.gz$|-vendor)'

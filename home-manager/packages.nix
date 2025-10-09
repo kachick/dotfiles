@@ -52,7 +52,6 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   micro
-  ox # modeless editor.
 
   tree
   eza # alt ls
@@ -81,6 +80,8 @@
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
   chawan # `cha`
 
+  yazi
+
   pastel
 
   # How to get the installed font names
@@ -99,7 +100,10 @@
   unstable.brush
 
   # Available since https://github.com/NixOS/nixpkgs/pull/423741
-  unstable.somo
+  patched.somo
+
+  # Available since https://github.com/NixOS/nixpkgs/pull/410902
+  unstable.typescript-go
 ])
 ++ (with pkgs.my; [
   la
@@ -117,5 +121,5 @@
   preview
   renmark
   tree-diff
-  gurk-rs
+  gurk-rs-bin
 ])

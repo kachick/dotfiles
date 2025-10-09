@@ -2,18 +2,15 @@
   "nodes": {
     "edge-nixpkgs": {
       "locked": {
-        "lastModified": 1757068644,
-        "narHash": "sha256-NOrUtIhTkIIumj1E/Rsv1J37Yi3xGStISEo8tZm3KW4=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "8eb28adfa3dc4de28e792e3bf49fcf9007ca8ac9",
-        "type": "github"
+        "lastModified": 1759815669,
+        "narHash": "sha256-oYRpn8l1jvM8jLe63qimuJASRwCjBzlqGngOToUW2FA=",
+        "rev": "8913c168d1c56dc49a7718685968f38752171c3b",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-25.11pre873256.8913c168d1c5/nixexprs.tar.xz"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz"
       }
     },
     "flake-compat": {
@@ -32,6 +29,24 @@
         "type": "github"
       }
     },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
     "home-manager-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -39,11 +54,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1756679287,
-        "narHash": "sha256-Xd1vOeY9ccDf5VtVK12yM0FS6qqvfUop8UQlxEB+gTQ=",
+        "lastModified": 1758463745,
+        "narHash": "sha256-uhzsV0Q0I9j2y/rfweWeGif5AWe0MGrgZ/3TjpDYdGA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "07fc025fe10487dd80f2ec694f1cd790e752d0e8",
+        "rev": "3b955f5f0a942f9f60cdc9cacb7844335d0f21c3",
         "type": "github"
       },
       "original": {
@@ -60,17 +75,38 @@
         ]
       },
       "locked": {
-        "lastModified": 1756679287,
-        "narHash": "sha256-Xd1vOeY9ccDf5VtVK12yM0FS6qqvfUop8UQlxEB+gTQ=",
+        "lastModified": 1758463745,
+        "narHash": "sha256-uhzsV0Q0I9j2y/rfweWeGif5AWe0MGrgZ/3TjpDYdGA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "07fc025fe10487dd80f2ec694f1cd790e752d0e8",
+        "rev": "3b955f5f0a942f9f60cdc9cacb7844335d0f21c3",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "ref": "release-25.05",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "kanata-tray": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": [
+          "edge-nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754814074,
+        "narHash": "sha256-s9lxDW5WB1DdIrgYF88GwV0kYUm+NMK7u0z8vi+r/Ew=",
+        "owner": "rszyma",
+        "repo": "kanata-tray",
+        "rev": "870e4e5de679a72d930abdfe6becb8cfab67145f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rszyma",
+        "repo": "kanata-tray",
         "type": "github"
       }
     },
@@ -82,11 +118,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1756115490,
-        "narHash": "sha256-7b6lUyt5aWS6piIgVlSupgTy2584Zurce/AAIk7RGGo=",
+        "lastModified": 1759833450,
+        "narHash": "sha256-sDCWLfKL6TK9bfHfMgJY+C4qsrTi5nX4Mfey9bGAH80=",
         "owner": "nix-community",
         "repo": "NixOS-WSL",
-        "rev": "6907b633a1eb6a32dc65718d0197726d5c8b6988",
+        "rev": "dea8d02a5ed6f00fa4a9b3618498107c2d6c6db4",
         "type": "github"
       },
       "original": {
@@ -98,34 +134,28 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1757020766,
-        "narHash": "sha256-PLoSjHRa2bUbi1x9HoXgTx2AiuzNXs54c8omhadyvp0=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "fe83bbdde2ccdc2cb9573aa846abe8363f79a97a",
-        "type": "github"
+        "lastModified": 1759799646,
+        "narHash": "sha256-1WvIF4N7Jj1ppU9ocZZBpsQdiVsHVzVxNt9L2+7FwPM=",
+        "rev": "20c4598c84a671783f741e02bf05cbfaf4907cff",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixos/25.05/nixos-25.05.810859.20c4598c84a6/nixexprs.tar.xz"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixos-25.05",
-        "repo": "nixpkgs",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixos-25.05/nixexprs.tar.xz"
       }
     },
     "nixpkgs-darwin": {
       "locked": {
-        "lastModified": 1757244434,
-        "narHash": "sha256-AeqTqY0Y95K1Fgs6wuT1LafBNcmKxcOkWnm4alD9pqM=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "092c565d333be1e17b4779ac22104338941d913f",
-        "type": "github"
+        "lastModified": 315532800,
+        "narHash": "sha256-WlLqjzht5jaKJHdoSY0yhzNv3/GFSg3R4gr9kzdErlI=",
+        "rev": "d938ebda1d69e17788e19f4c7003aeca90fe7dd2",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixpkgs/25.05-darwin/nixpkgs-darwin-25.05pre810899.d938ebda1d69/nixexprs.tar.xz"
       },
       "original": {
-        "owner": "NixOS",
-        "ref": "nixpkgs-25.05-darwin",
-        "repo": "nixpkgs",
-        "type": "github"
+        "type": "tarball",
+        "url": "https://channels.nixos.org/nixpkgs-25.05-darwin/nixexprs.tar.xz"
       }
     },
     "root": {
@@ -133,9 +163,25 @@
         "edge-nixpkgs": "edge-nixpkgs",
         "home-manager-darwin": "home-manager-darwin",
         "home-manager-linux": "home-manager-linux",
+        "kanata-tray": "kanata-tray",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-darwin": "nixpkgs-darwin"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
       }
     }
   },
