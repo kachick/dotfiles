@@ -1,8 +1,12 @@
 {
   lib,
-  buildGo125Module,
+  pkgs,
   ...
 }:
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
 buildGo125Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";

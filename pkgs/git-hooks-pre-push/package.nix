@@ -1,10 +1,13 @@
 {
   pkgs,
   lib,
-  buildGo125Module,
   makeWrapper,
   ...
 }:
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
 buildGo125Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
