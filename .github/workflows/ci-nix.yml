@@ -88,6 +88,7 @@ jobs:
         pname:
           - filen-rclone
           - kanata-tray
+          - rumdl
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

@@ -155,7 +155,7 @@
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url
-                  rumdl-bin
+                  rumdl
                 ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
