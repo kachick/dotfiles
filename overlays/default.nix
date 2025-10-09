@@ -92,6 +92,33 @@
           };
         }
       );
+
+      # Wait for merging https://github.com/NixOS/nixpkgs/pull/439590
+      somo = prev.unstable.somo.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          version = "1.3.0";
+
+          src = prev.fetchFromGitHub {
+            owner = "theopfr";
+            repo = "somo";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-k7PDCylA6KR/S1dQDSMIoOELPYwJ25dz1u+PM6ITGKg=";
+          };
+
+          cargoDeps = final.rustPlatform.fetchCargoVendor {
+            inherit (finalAttrs) src;
+            hash = "sha256-i3GmdBqCWPeslpr2zzOR4r8PgMP7EkC1mNFI7jSWO34=";
+          };
+
+          nativeCheckInputs = [
+            prev.libredirect.hook
+          ];
+
+          preCheck = ''
+            export NIX_REDIRECTS=/etc/services=${prev.iana-etc}/etc/services
+          '';
+        }
+      );
     };
   })
 ]
