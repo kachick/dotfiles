@@ -118,7 +118,8 @@
     "kdl": true,
     "basher": true,
     "powershell": true,
-    "nu": true
+    "nu": true,
+    "typst": true
     // "base16": true // If slow, check old issue state again https://github.com/zed-industries/zed/issues/13188
   }
 }
