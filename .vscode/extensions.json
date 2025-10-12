@@ -8,9 +8,8 @@
     "tamasfe.even-better-toml",
     "jnoortheen.nix-ide",
     "golang.go",
+    "rvben.rumdl",
     "kdl-org.kdl",
-    "davidanson.vscode-markdownlint",
-    "rszyma.vscode-kanata",
     "TheNuProjectContributors.vscode-nushell-lang"
   ]
 }
