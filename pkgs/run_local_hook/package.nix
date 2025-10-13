@@ -10,7 +10,7 @@ in
 buildGo125Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-DzKsqRkqJ4lWQe12lO4jAmGRnss5O/bWQa+8dlS9kRo=";
+  vendorHash = "sha256-MMscqCfHwKtPE3JK6tSt/LhEkTPBnEtWEnc06Wk5mNo=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook
