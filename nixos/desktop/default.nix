@@ -174,6 +174,8 @@
       # See https://github.com/NixOS/nixpkgs/issues/200714#issuecomment-1318003798 and https://github.com/NixOS/nixpkgs/issues/275046 for details
       papers # PDF reader. Successor of evince. Slow, but the default in GNOME 49.
 
+      gnome-epub-thumbnailer
+
       loupe # image viewer
 
       contrast # Check two color contrast. Also using as a color-picker
