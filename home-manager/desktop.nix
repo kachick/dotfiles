@@ -28,6 +28,8 @@ let
     "firefox.desktop"
     # Chrome is heavy when open large PDF files
     "google-chrome.desktop"
+
+    "org.gnome.Papers.desktop"
   ];
 
   terminalEmulator = [

@@ -169,7 +169,10 @@
       # - https://github.com/NixOS/nixpkgs/pull/407982#issuecomment-3039508105
       unstable.podman-desktop
 
-      # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
+      # Install one of PDF reader to enable PDF thumbnails on nautilus.
+      # It should have `share/thumbnailers/`
+      # See https://github.com/NixOS/nixpkgs/issues/200714#issuecomment-1318003798 and https://github.com/NixOS/nixpkgs/issues/275046 for details
+      papers # PDF reader. Successor of evince. Slow, but the default in GNOME 49.
 
       loupe # image viewer
 
