@@ -1,0 +1,130 @@
+name: 🆙 local packages
+on:
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Skip side-effect if true'
+        default: false
+        required: true
+        type: boolean
+      pr-branch:
+        description: 'Push commits in this branch'
+        default: bot-update-package-versions
+        required: false
+        type: string
+      pr-title:
+        description: 'Use this text for the PR title'
+        default: 'Bump versions of local/patched packages'
+        required: false
+        type: string
+      pr-body:
+        description: 'Use this text for the PR description'
+        default: |
+          Several packages in this repository can be updated with the upstream releases
+        required: false
+        type: string
+
+  workflow_call:
+    inputs:
+      dry-run:
+        default: ${{ github.event_name == 'pull_request' }}
+        required: false
+        type: boolean
+      pr-branch:
+        default: bot-update-package-versions
+        required: false
+        type: string
+      pr-title:
+        default: 'Bump versions of local/patched packages'
+        required: false
+        type: string
+      pr-body:
+        default: |
+          Several packages in this repository can be updated with the upstream releases
+        required: false
+        type: string
+    secrets:
+      APP_PRIVATE_KEY:
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  DEFAULT_BRANCH: main
+  PR_BRANCH: ${{ inputs.pr-branch }}
+  PR_TITLE: '${{ inputs.pr-title }}'
+  PR_BODY: '${{ inputs.pr-body }}'
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      # To push workflow changes and trigger CIs
+      - name: Generate GitHub Apps token
+        id: publish-token
+        uses: actions/create-github-app-token@67018539274d69449ef7c02e8e71183d1719ab42 # v2.1.4
+        with:
+          # Required to set workflow permission for the APP
+          # Why replaced from secrets?: https://github.com/github/docs/commit/eaac671cdd9189afd410366e9eb5edd4ee815194#diff-19d2b329775bf781d0cf19fabafa7f231bd85f133cbf9e23594036ea68f7021dL53-R54
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          # Needed to get commit counts
+          # https://stackoverflow.com/a/65056108
+          fetch-depth: 0
+          # Needed to specify token for checkout phase, only in pushing phase is too late
+          # https://github.com/orgs/community/discussions/27072#discussioncomment-3254515
+          token: ${{ steps.publish-token.outputs.token }}
+          # This value is explicitly set to true to prevent regression that occurred in selfup v1.2.1, even though it is the default for actions/checkout.
+          # Many linters recommend setting this to false, and most users have requested it as the new default (see https://github.com/actions/checkout/issues/485).
+          # However, this workflow depends on the stored credentials for the subsequent git push command.
+          # For this reason, true is required for now.
+          persist-credentials: true
+      - name: Fetch active PRs by me
+        id: fetch-active-prs
+        env:
+          GITHUB_TOKEN: ${{ steps.publish-token.outputs.token }}
+        run: |
+          count="$(gh pr list --author "@me" --state open --head "${PR_BRANCH}" --json number --jq 'length')"
+          echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
+      - name: Prepare Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Prepare Git branch
+        run: |
+          git switch "${PR_BRANCH}" || git switch -c "${PR_BRANCH}"
+        env:
+          PR_BRANCH: '${{ inputs.pr-branch }}'
+
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Update packages
+        shell: nix develop --command bash -eu -o pipefail {0}
+        run: |
+          nix-update --commit --flake gemini-cli-bin
+          nix-update --commit --flake rumdl
+          nix-update --commit --flake filen-rclone
+          nix-update --commit --flake somo
+
+      - name: Count added commits
+        id: count-commits
+        run: |
+          count="$(git rev-list --count 'origin/${{ env.DEFAULT_BRANCH }}..')"
+          echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
+      - run: git push origin "${PR_BRANCH}" --force
+        if: (! inputs.dry-run) && (steps.count-commits.outputs.count > 0)
+      - name: Create PR
+        if: (! inputs.dry-run) && (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
+        env:
+          GITHUB_TOKEN: '${{ steps.publish-token.outputs.token }}'
+        run: |
+          gh pr create \
+            --base '${{ env.DEFAULT_BRANCH }}' \
+            --title "${PR_TITLE}" \
+            --body "${PR_BODY}"

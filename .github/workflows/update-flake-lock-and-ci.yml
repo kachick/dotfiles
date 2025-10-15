@@ -1,4 +1,4 @@
-name: 🤖🆙❄️
+name: 🆙❄️
 on:
   pull_request:
     paths:
@@ -13,11 +13,10 @@ on:
     # - cron: '17 0 * * 5'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  update-nixpkgs:
+  flake-inputs:
+    permissions:
+      contents: write
     if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
     uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.3.0
     with:
@@ -29,3 +28,14 @@ jobs:
         nix run .#update-completions
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+
+  local-packages:
+    permissions:
+      contents: write
+    needs: [flake-inputs]
+    # Always skips if no conditions
+    if: always() && (needs.flake-inputs.result == 'success')
+    uses: ./.github/workflows/update-local-packages.yml
+    with:
+      # Currently hardcoded in selfup's repository: https://github.com/kachick/selfup/blob/5d93696e80f76bee5df93f1c573dd7a1c70c4759/.github/workflows/reusable-bump-flake-lock-and-selfup.yml#L49C18-L49C39
+      pr-branch: bot-update-flake-lock
