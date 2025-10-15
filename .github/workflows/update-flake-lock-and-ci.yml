@@ -23,9 +23,17 @@ jobs:
     with:
       app_id: ${{ vars.APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}
-      pr-title: 'Bump flake.lock and related dependencies'
+      pr-title: 'Bump flake.lock and dependencies'
       optional-run: |
         nix run .#bump_gomod -- .
+
+        nix develop --command '
+          nix-update --commit --flake gemini-cli-bin
+          nix-update --commit --flake rumdl
+          nix-update --commit --flake filen-rclone
+          nix-update --commit --flake somo
+        '
+
         nix run .#update-completions
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
