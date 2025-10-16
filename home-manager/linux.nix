@@ -87,6 +87,9 @@
         rclone-list-mounted
         rclone-mount
         rclone-fzf
+        filen-rclone
+        filen-rclone-mount
+        filen-rclone-fzf
       ]);
   };
 
