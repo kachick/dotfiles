@@ -76,11 +76,6 @@
         # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
 
-        # TODO: Prefer stable channel since nixos-25.11
-        # While using unstable channel, don't add this into macOS dependency. It seems flaky now. See https://github.com/kachick/dotfiles/pull/1295#issuecomment-3377995351
-        # Available since https://github.com/NixOS/nixpkgs/pull/409075
-        unstable.msedit # `edit`
-
         patched.gemini-cli-bin
       ])
       ++ (with pkgs.my; [

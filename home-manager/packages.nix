@@ -51,6 +51,11 @@
   # - https://github.com/kachick/dotfiles/issues/280
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
+  # TODO: Prefer stable channel since nixos-25.11
+  # Available since https://github.com/NixOS/nixpkgs/pull/409075
+  # Fixed in https://github.com/NixOS/nixpkgs/pull/449790 for x86_64-darwin
+  unstable.msedit # `edit`
+
   micro
 
   tree
