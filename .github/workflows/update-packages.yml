@@ -1,0 +1,39 @@
+name: 🆙 my packages
+on:
+  workflow_dispatch:
+    inputs:
+      keep-latest-items:
+        description: 'Only keep last n items'
+        required: true
+        default: 50
+        type: number
+  workflow_call:
+    inputs:
+      keep-latest-items:
+        description: 'Only keep last n items'
+        required: true
+        default: 50 # Assumes 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior
+        type: number
+
+permissions:
+  packages: write
+
+jobs:
+  ghcr:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: nix develop --command bash -eu -o pipefail {0}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - run:
+          nix-update --commit --flake gemini-cli-bin
+          nix-update --commit --flake rumdl
+          nix-update --commit --flake filen-rclone
+          nix-update --commit --flake somo
