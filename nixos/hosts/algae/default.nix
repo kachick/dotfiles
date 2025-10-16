@@ -70,7 +70,7 @@
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
-    (unstable.yaneuraou.override {
+    (patched.yaneuraou.override {
       # See also https://yaneuraou.yaneu.com/2020/08/02/yaneuraou-ryzen-threadripper-3990x-optimization/
       targetLabel = "ZEN2"; # For AMD Ryzen 7 4700GE
     })

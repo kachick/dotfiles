@@ -90,11 +90,14 @@ jobs:
           - kanata-tray
           - rumdl # I may use it as a global package
           - somo
+          - yaneuraou # The generated binary cache has an incorrect CPU label for the target devices. However, this tested environment is valuable for ensuring stability.
         exclude:
           - runner: macos-15-intel
             pname: filen-rclone # it seems, it doesn't support darwin
           - runner: macos-15-intel
             pname: kanata-tray # I don't use it on macOS
+          - runner: macos-15-intel
+            pname: yaneuraou # I don't use it on macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
