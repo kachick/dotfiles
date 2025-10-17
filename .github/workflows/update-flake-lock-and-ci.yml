@@ -39,3 +39,5 @@ jobs:
     with:
       # Currently hardcoded in selfup's repository: https://github.com/kachick/selfup/blob/5d93696e80f76bee5df93f1c573dd7a1c70c4759/.github/workflows/reusable-bump-flake-lock-and-selfup.yml#L49C18-L49C39
       pr-branch: bot-update-flake-lock
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
