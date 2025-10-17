@@ -44,7 +44,7 @@ on:
         required: false
         type: string
     secrets:
-      APP_PRIVATE_KEY:
+      PRIVATE_KEY:
         required: true
 
 permissions:
