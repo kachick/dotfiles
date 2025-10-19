@@ -125,7 +125,7 @@
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
                   nixd
-                  nixf # `nixf-tidy`
+                  nixf-diagnose
                   nurl
                   nix-update
 
