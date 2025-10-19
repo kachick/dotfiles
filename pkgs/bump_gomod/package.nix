@@ -3,7 +3,7 @@ pkgs.writeShellApplication rec {
   name = "bump_gomod";
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
-    git
+    gitMinimal
     unstable.go_1_25
     gnugrep
     findutils # `xargs`
