@@ -126,7 +126,6 @@
                 (with pkgs; [
                   nixd
                   nixf # `nixf-tidy`
-                  nix-init
                   nurl
                   nix-update
 
