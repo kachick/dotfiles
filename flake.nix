@@ -124,7 +124,6 @@
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
-                  nixpkgs-lint-community
                   nixd
                   nixf # `nixf-tidy`
                   nix-init
