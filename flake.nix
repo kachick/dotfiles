@@ -148,11 +148,11 @@
                   dprint
                   go_1_25
                   zizmor
+                  rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
                   kanata # Enable on devshell for using the --check as a linter
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url
-                  rumdl
                 ])
                 ++ [
                   typos-lsp # For zed-editor typos extension

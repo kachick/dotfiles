@@ -88,7 +88,6 @@ jobs:
         pname:
           - filen-rclone
           - kanata-tray
-          - rumdl # I may use it as a global package
           - somo
           - yaneuraou # The generated binary cache has an incorrect CPU label for the target devices. However, this tested environment is valuable for ensuring stability.
         exclude:
