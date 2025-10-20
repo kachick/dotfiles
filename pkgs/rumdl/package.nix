@@ -13,16 +13,16 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "rumdl";
-  version = "0.0.161";
+  version = "0.0.162";
 
   src = fetchFromGitHub {
     owner = "rvben";
     repo = "rumdl";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wiIuOjEwvtOYC+EHLhUqX3oHXGgf/G0gT37LBxYKIpg=";
+    hash = "sha256-aCduiCO49YWeqET3nezI1EYkz+IbTR+uIy7FXHbkYCo=";
   };
 
-  cargoHash = "sha256-uENu/OH+xGA3/Wu1vnbrz8n7o3fIlD2uTbxCIOlxprA=";
+  cargoHash = "sha256-o9NqTdMEoYFZC69Raf0v6fHUKnbN2K+rV3LK6rtjG/k=";
 
   cargoBuildFlags = [
     "--bin=rumdl"
