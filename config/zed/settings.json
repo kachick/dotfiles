@@ -33,7 +33,7 @@
     "button": false
   },
   "chat_panel": {
-    "button": false
+    "button": "never"
   },
   // FIXME: Actually not working...
   "lsp": {
