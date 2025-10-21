@@ -13,16 +13,16 @@ rclone.overrideAttrs (
     pname = "filen-rclone-unwrapped";
     # MUST NOT use 1.70.0-filen.11 or older
     # They lacks the crucial patch https://github.com/FilenCloudDienste/filen-sdk-go/commit/cd9f4e00f07adf815d17ff1125751c943160f9f3
-    version = "1.70.0-filen.12";
+    version = "1.70.0-filen.13";
 
     src = fetchFromGitHub {
       owner = "FilenCloudDienste";
       repo = "filen-rclone";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-YJtHGPSYEPAvthKr5eFFMqKaoEGw1DX3YwxXqe8/ckI=";
+      hash = "sha256-aCklWfQg3MYHnzJIbZSUbT2gZmCLAdRAqyk9ou9YTzo=";
     };
 
-    vendorHash = "sha256-5kzR9sREORBHolQgXpo/1CeITwel7GOczSYZCVl/SwA=";
+    vendorHash = "sha256-JXavjdcDE6L+6db5zQtIiS0KxY6wtaZyyvuN+UmCU+A=";
 
     # nixpkgs definition is still using rec, so I should override at here until using finalAttrs
     # https://github.com/NixOS/nixpkgs/blob/9dcdad5caa134e3afa15401b40dd01391a636962/pkgs/applications/networking/sync/rclone/default.nix#L28
