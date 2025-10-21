@@ -33,5 +33,6 @@
     ".direnv/**": true,
     "dependencies/*sh/": true
   },
-  "rumdl.configPath": ".rumdl.toml"
+  "rumdl.configPath": ".rumdl.toml",
+  "rumdl.server.path": "rumdl"
 }
