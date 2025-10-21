@@ -107,10 +107,9 @@ jobs:
       - name: Update packages
         shell: nix develop --command bash -eu -o pipefail {0}
         # - Don't add yaneuraou for now. The tagging convention seems not fixed, so the updater will be flaky.
-        # - Don't add filen-rclone for now until adjusting the updater to the wrapped package
         run: |
           nix-update --commit --flake gemini-cli-bin
-          nix-update --commit --flake rumdl
+          nix-update --commit --flake filen-rclone-unwrapped
           nix-update --commit --flake somo
 
       - name: Count added commits
