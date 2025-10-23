@@ -179,7 +179,9 @@
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
 
-    nssmdns4 = true;
+    publish.enable = true;
+
+    # nssmdns4 = true;
   };
 
   # # AFAIK, using systemd-resolved requires to disable avahi. It causes a blocker to use printers via WiFi
