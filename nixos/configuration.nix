@@ -179,27 +179,32 @@
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
 
-    publish.enable = true;
+    publish = {
+      enable = true;
+      addresses = true;
+    };
 
-    # nssmdns4 = true;
+    # Enable mDNS(hostname.local)
+    # You can test it with: `avahi-resolve-host-name hostname.local`
+    nssmdns4 = true;
   };
 
-  # # AFAIK, using systemd-resolved requires to disable avahi. It causes a blocker to use printers via WiFi
-  # ## systemd-resolved (Modern, not supported by CUPS)
-  # # - Check the behavior with `resolvectl status`
-  # # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
-  # # - https://wiki.archlinux.org/title/Systemd-resolved
-  # # Disabled by default. But ensures to disable MulticastDNS
-  # services.resolved = {
-  #   enable = true;
-  #   llmnr = "false";
+  # AFAIK, using systemd-resolved requires to disable avahi. It causes a blocker to use printers via WiFi
+  ## systemd-resolved (Modern, not supported by CUPS)
+  # - Check the behavior with `resolvectl status`
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
+  # - https://wiki.archlinux.org/title/Systemd-resolved
+  # Disabled by default. But ensures to disable MulticastDNS
+  services.resolved = {
+    enable = false;
+    llmnr = "false";
 
-  #   # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
-  #   extraConfig = ''
-  #     MulticastDNS=true
-  #     DNSStubListener=false
-  #   '';
-  # };
+    # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
+    extraConfig = ''
+      MulticastDNS=false
+      DNSStubListener=false
+    '';
+  };
 
   # Avahi module has openFirewall, but resolved module does not have it
   networking.firewall.allowedUDPPorts = [ 5353 ];
