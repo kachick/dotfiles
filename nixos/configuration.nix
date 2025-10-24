@@ -179,7 +179,9 @@
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
 
-    nssmdns = false;
+    # Ensure disabling them even through disabled by NixOS default. Ensure avoiding conflict with systemd-resolved
+    nssmdns4 = false;
+    nssmdns6 = false;
   };
 
   ## systemd-resolved (Modern, not supported by CUPS)
