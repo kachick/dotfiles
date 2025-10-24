@@ -172,12 +172,16 @@
     # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
     # - https://github.com/apple/cups/issues/5452
     # - https://github.com/OpenPrinting/libcups/issues/81
-    enable = false; # If enabled, you should care the conflict with systemd-resolved
+    enable = true; # If enabled, you should care the conflict with systemd-resolved
 
     # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
     # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+
+    # Ensure disabling them even through disabled by NixOS default. Ensure avoiding conflict with systemd-resolved
+    nssmdns4 = false;
+    nssmdns6 = false;
   };
 
   ## systemd-resolved (Modern, not supported by CUPS)
