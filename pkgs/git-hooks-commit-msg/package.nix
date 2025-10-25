@@ -4,7 +4,11 @@
   makeWrapper,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
+buildGo125Module (finalAttrs: {
   pname = "git-hooks-commit-msg";
   version = "0.0.1";
 
@@ -26,7 +30,7 @@ pkgs.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-LRfCLaW9dqTAuGtgiVG/8yuNQq38EzSl3XPkkXhqNJY=";
+  vendorHash = "sha256-MMscqCfHwKtPE3JK6tSt/LhEkTPBnEtWEnc06Wk5mNo=";
   src =
     with lib.fileset;
     toSource {

@@ -7,7 +7,7 @@ pkgs.writeShellApplication rec {
     [
       fzf
       coreutils
-      git
+      gitMinimal
       gh
       colorized-logs
       bat

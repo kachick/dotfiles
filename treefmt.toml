@@ -26,7 +26,6 @@ includes = [
   "*.yaml",
   "*.yml",
   "*.kdl",
-  "*.lua",
 ]
 
 [formatter.nixfmt]

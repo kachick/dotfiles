@@ -4,7 +4,11 @@
   makeWrapper,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
+buildGo125Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
 
@@ -15,7 +19,7 @@ pkgs.buildGo124Module (finalAttrs: {
   wrapperPath = lib.makeBinPath (
     with pkgs;
     [
-      git
+      gitMinimal
       typos
       unstable.gitleaks
       my.run_local_hook
@@ -27,7 +31,7 @@ pkgs.buildGo124Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-h3CpFh4yhs1ObpC+5CR5Hcfi9rqBMTK23adF4VAQdqU=";
+  vendorHash = "sha256-duZOUh8KfYoQwirIuiJBp/v2XclMPDZCkJmPfIRjFqI=";
   src =
     with lib.fileset;
     toSource {

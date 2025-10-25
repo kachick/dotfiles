@@ -8,9 +8,15 @@
 // from the command palette or from `Zed` application menu.
 {
   // built-in themes:  https://github.com/zed-industries/zed/tree/9d10489607df700c544c48cf09fea82f5d5aacf8/assets/themes
-  // "One Dark" is enough good for me.
-  "theme": "One Dark",
+  // If pick from the built-in, use "One Dark".
+  "theme": "Base16 Everforest Dark Hard",
+  "icon_theme": {
+    "mode": "system",
+    "dark": "Material Icon Theme",
+    "light": "Material Icon Theme"
+  },
   "telemetry": {
+    "diagnostics": false,
     "metrics": false
   },
   "auto_update": false,
@@ -27,7 +33,7 @@
     "button": false
   },
   "chat_panel": {
-    "button": false
+    "button": "never"
   },
   // FIXME: Actually not working...
   "lsp": {
@@ -104,15 +110,16 @@
     "blinking": "off"
   },
   "auto_install_extensions": {
+    "material-icon-theme": true,
     "nix": true,
     "toml": true,
     "typos": true,
     "ruby": true,
-    "lua": true,
     "kdl": true,
     "basher": true,
     "powershell": true,
-    "nu": true
-    // "base16": true // If slow, check old issue state again https://github.com/zed-industries/zed/issues/13188
+    "nu": true,
+    "typst": true,
+    "base16": true
   }
 }

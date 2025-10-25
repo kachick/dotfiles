@@ -34,16 +34,14 @@ func RunLinters(linters map[string]Linter, shouldSkip func(string) bool) error {
 			continue
 		}
 
-		wg.Add(1)
-		go func(desc string, linter Linter) {
-			defer wg.Done()
+		wg.Go(func() {
 			log.Println(desc)
 			if err := linter.Script(); err != nil {
 				mu.Lock()
 				errs[desc] = err
 				mu.Unlock()
 			}
-		}(desc, linter)
+		})
 	}
 	wg.Wait()
 

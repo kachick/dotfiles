@@ -69,8 +69,10 @@
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
-    (unstable.yaneuraou.override {
-      targetLabel = "ZEN3"; # For AMD Ryzen 5 7530U
+    (patched.yaneuraou.override {
+      # Prefer "AVX2" rather than "ZEN3". Because of ZEN3 does not need workaround about PEXT problems
+      # See also https://yaneuraou.yaneu.com/2020/08/02/yaneuraou-ryzen-threadripper-3990x-optimization/
+      targetLabel = "AVX2"; # For AMD Ryzen 5 7530U
     })
   ];
 }

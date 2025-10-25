@@ -1,4 +1,4 @@
-name: 🤖🆙❄️
+name: 🆙❄️
 on:
   pull_request:
     paths:
@@ -13,13 +13,12 @@ on:
     # - cron: '17 0 * * 5'
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  update-nixpkgs:
+  flake-inputs:
+    permissions:
+      contents: write
     if: (github.event_name != 'pull_request') || (!github.event.pull_request.draft)
-    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.2.2
+    uses: kachick/selfup/.github/workflows/reusable-bump-flake-lock-and-selfup.yml@v1.3.0
     with:
       app_id: ${{ vars.APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}

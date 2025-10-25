@@ -7,5 +7,4 @@ import "embed"
 //go:embed config/nushell/*
 //go:embed config/starship/*
 //go:embed config/alacritty/*
-//go:embed config/ox/*
 var WindowsAssets embed.FS

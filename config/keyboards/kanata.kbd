@@ -1,0 +1,33 @@
+(defcfg
+  linux-continue-if-no-devs-found yes ;; Workaround for GH-1156
+  concurrent-tap-hold yes
+
+  process-unmapped-keys yes
+  windows-altgr add-lctl-release ;; Workaround for problems with process-unmapped-keys
+)
+
+;; Required to specify keys which should be considered in tap-hold-press (=spc, tab for alt-spc, alt-tab)
+;; See https://github.com/jtroo/kanata/blob/fc850fab9da7d0bf377e215f0b923062e037ff64/docs/config.adoc?plain=1#L142-L143
+;; Still required even if enabling process-unmapped-keys
+(defsrc lalt ralt lsft rsft)
+
+(defvar
+  tap-timeout  200
+  hold-timeout 200
+  tt $tap-timeout
+  ht $hold-timeout
+)
+
+
+(deflayermap (base)
+  lalt (tap-hold-press $tt $ht muhenkan lalt)
+  ralt (tap-hold-press $tt $ht henkan ralt)
+)
+
+;; GH-963 - Escape hatch for use of caps
+;; "Both Shifts together enable Caps Lock" without "one Shift key disables it"
+;; Inspired by gnome-tweaks providing "shift:both_capslock_cancel"
+;; This config might not handle the light on macOS: https://github.com/jtroo/kanata/issues/1364
+(defchordsv2
+  (lsft rsft) caps 300 all-released ()
+)

@@ -7,6 +7,18 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
+  "[kanata]": {
+    "editor.defaultFormatter": "rszyma.vscode-kanata"
+  },
+  "[github-actions-workflow]": {
+    // vscode itself or something often sets this to redhat.vscode-yaml by default
+    // it seems annoy and hard to debug. So ensure to use dprint with this config
+    // See also https://github.com/kachick/times_kachick/issues/257
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
   "gopls": {
@@ -20,5 +32,7 @@
   "search.exclude": {
     ".direnv/**": true,
     "dependencies/*sh/": true
-  }
+  },
+  "rumdl.configPath": ".rumdl.toml",
+  "rumdl.server.path": "rumdl"
 }

@@ -134,7 +134,10 @@
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
 
-      ghostty # ghostty package now always be backported.
+      # 1.2.0 is not be backported and I need it or lataer versions for following context
+      #   - Broken clipboard: https://github.com/ghostty-org/ghostty/issues/4800
+      #   - Broken msedit: https://github.com/ghostty-org/ghostty/issues/7951
+      unstable.ghostty
 
       alacritty
 
@@ -166,7 +169,12 @@
       # - https://github.com/NixOS/nixpkgs/pull/407982#issuecomment-3039508105
       unstable.podman-desktop
 
-      # Don't use "papers" for PDF reader, which is a fork of evince, however much heavy to run rather than browsers.
+      # Install one of PDF reader to enable PDF thumbnails on nautilus.
+      # It should have `share/thumbnailers/`
+      # See https://github.com/NixOS/nixpkgs/issues/200714#issuecomment-1318003798 and https://github.com/NixOS/nixpkgs/issues/275046 for details
+      papers # PDF reader. Successor of evince. Slow, but the default in GNOME 49.
+
+      gnome-epub-thumbnailer
 
       loupe # image viewer
 
@@ -190,7 +198,7 @@
       # Available since https://github.com/NixOS/nixpkgs/pull/409810
       unstable.bitsnpicas
 
-      patched.mdns-scanner
+      unstable.mdns-scanner
 
       ## Unfree packages
 
@@ -243,8 +251,13 @@
     ]);
 
   # https://askubuntu.com/a/88947
+  #
   # Don't add unstable or long or waiting(interactive) CLI here such as warp-cli.
+  # A bad example warp-cli, the first execution requires agreement for their policy with y/n interactive mode.\
+  # It blocks the starting GNOME with black screen with white and frozen cursor after login via GDM.
   # See GH-1110 for detail
+  # Consider to use xdg.autostart home-manager module instead
+  #
   # environment.etc."gdm/PostLogin/Default".source = lib.getExe (
   #   pkgs.writeShellApplication {
   #   }
@@ -313,6 +326,8 @@
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
+    # Require https://github.com/NixOS/nixpkgs/pull/442245 to adjust home-manager's tailscale-systray module
+    package = pkgs.unstable.tailscale;
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489

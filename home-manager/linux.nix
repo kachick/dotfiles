@@ -49,7 +49,7 @@
         stern
         k9s
 
-        tailscale # Frequently backported to stable channel
+        unstable.tailscale # Frequently backported to stable channel. However it require latest to use tailscale-systray
 
         # Enable LSP on global.
         #   - nixd is useually required in all platforms even in WSL2
@@ -76,15 +76,15 @@
         # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
 
-        # TODO: Prefer stable channel and also install in darwin since nixos-25.11
-        # Available since https://github.com/NixOS/nixpkgs/pull/409075
-        # NOTE: Currently not working on ghostty: https://github.com/microsoft/edit/issues/561#issuecomment-3045481288
-        unstable.msedit # `edit`
+        patched.gemini-cli-bin
       ])
       ++ (with pkgs.my; [
         rclone-list-mounted
         rclone-mount
         rclone-fzf
+        filen-rclone
+        filen-rclone-mount
+        filen-rclone-fzf
       ]);
   };
 

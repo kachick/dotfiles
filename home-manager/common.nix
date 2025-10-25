@@ -16,6 +16,7 @@
     ./terminals.nix
     ./fzf.nix
     ./television.nix
+    ./telemetry.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -39,12 +40,10 @@
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
-      DO_NOT_TRACK = "1";
-
       PAGER = "less";
 
       # https://github.com/sharkdp/bat/blob/v0.24.0/README.md?plain=1#L201-L219
-      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${pkgs.util-linux}/bin/col -bx | ${lib.getExe pkgs.bat} -l man -p'";
+      MANPAGER = "${lib.getExe pkgs.bashInteractive} -c '${lib.getExe' pkgs.util-linux "col"} -bx | ${lib.getExe pkgs.bat} -l man -p'";
       MANROFFOPT = "-c";
 
       # NOTE: Original comments in zsh

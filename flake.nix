@@ -38,6 +38,14 @@
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kanata-tray = {
+      url = "github:rszyma/kanata-tray";
+
+      # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
+      # However using follows disables the upstream caches. And I'm okay to build it my self
+      # Prefer unstable channel since also using latest kanata
+      inputs.nixpkgs.follows = "edge-nixpkgs";
+    };
   };
 
   outputs =
@@ -48,6 +56,7 @@
       nixpkgs-darwin,
       home-manager-linux,
       home-manager-darwin,
+      kanata-tray,
       ...
     }@inputs:
     let
@@ -57,15 +66,16 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin" # Kept for actual my device
-          "aarch64-darwin" # Kept for GHA macos-14 or later. macos-13 is deadly slow for daily CI
+          "x86_64-darwin"
         ] nixpkgs.lib.systems.flakeExposed
       );
 
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
-      overlays = import ./overlays { inherit edge-nixpkgs; };
+      overlays = import ./overlays {
+        inherit edge-nixpkgs kanata-tray;
+      };
 
       mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
@@ -114,14 +124,10 @@
               ])
               ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
                 (with pkgs; [
-                  nixpkgs-lint-community
                   nixd
-                  nixf # `nixf-tidy`
-                  nix-init
+                  nixf-diagnose
                   nurl
                   nix-update
-
-                  go_1_24
 
                   shellcheck
                   shfmt
@@ -131,17 +137,23 @@
 
                   typos
                   trivy
-                  markdownlint-cli2
                   lychee
+
+                  desktop-file-utils # `desktop-file-validate` as a linter
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   gitleaks
                   dprint
+                  go_1_25
                   zizmor
+                  rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
+                  kanata # Enable on devshell for using the --check as a linter
                 ])
-                ++ (with pkgs.my; [ nix-hash-url ])
+                ++ (with pkgs.my; [
+                  nix-hash-url
+                ])
                 ++ [
                   typos-lsp # For zed-editor typos extension
                 ]
@@ -204,7 +216,7 @@
             ];
           };
 
-          "kachick@lima" = home-manager-darwin.lib.homeManagerConfiguration {
+          "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/kachick.nix
@@ -228,9 +240,10 @@
             ];
           };
 
-          # macos-13 is the latest x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
-          # However it iss too slow, almost 3x slower than Linux and macos-15 runner. So you should enable binary cache if use this runner
-          "github-actions@macos-13" = home-manager-darwin.lib.homeManagerConfiguration {
+          # macos-15-intel is the last x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
+          # However it is too slow, almost 3x slower than Linux and macos-15(arm64) runner. So you should enable binary cache if use this runner
+          # See https://github.com/kachick/dotfiles/issues/1198#issuecomment-3362312549 for detail
+          "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
             pkgs = mkPkgs "x86_64-darwin";
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI

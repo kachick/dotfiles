@@ -14,7 +14,7 @@
 }:
 
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "ludii";
+  pname = "ludii-bin";
   version = "1.3.14";
 
   # Prefer official release assets from ludii.games.
@@ -111,5 +111,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       kachick
     ];
     platforms = lib.platforms.all;
+    priority = 10; # 5 by default. Prefer src built if exist
   };
 })

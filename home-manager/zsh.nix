@@ -26,7 +26,7 @@ in
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
     if [[ -v oldGenPath && -f '${ZCOMPDUMP_CACHE_PATH}' ]]; then
       # Enforcing to clear old cache, because of just omitting -C kept the command names
-      ${lib.getBin pkgs.coreutils}/bin/rm '${ZCOMPDUMP_CACHE_PATH}'
+      ${lib.getExe' pkgs.coreutils "rm"} '${ZCOMPDUMP_CACHE_PATH}'
     fi
   '';
 
@@ -185,7 +185,7 @@ in
         beforeCompInit = lib.mkOrder 550 ''
           _elapsed_seconds_for() {
             local -r target_path="$1"
-            echo "$(("$(${lib.getBin pkgs.coreutils}/bin/date +"%s")" - "$(${lib.getBin pkgs.coreutils}/bin/stat --format='%Y' "$target_path")"))"
+            echo "$(("$(${lib.getExe' pkgs.coreutils "date"} +"%s")" - "$(${lib.getExe' pkgs.coreutils "stat"} --format='%Y' "$target_path")"))"
           }
 
           # path - https://stackoverflow.com/a/48057649/1212807
@@ -202,9 +202,9 @@ in
             else
               # For refreshing the cache
 
-              ${lib.getBin pkgs.coreutils}/bin/mkdir -p "$ZCOMPDUMP_CACHE_DIR"
+              ${lib.getExe' pkgs.coreutils "mkdir"} -p "$ZCOMPDUMP_CACHE_DIR"
               compinit -d "$ZCOMPDUMP_CACHE_PATH"
-              ${lib.getBin pkgs.coreutils}/bin/touch "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
+              ${lib.getExe' pkgs.coreutils "touch"} "$ZCOMPDUMP_CACHE_PATH" # Ensure to update timestamp
             fi
           }
         '';
@@ -234,7 +234,7 @@ in
 
           # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
           function set_win_title() {
-            echo -ne "\033]0; $(${lib.getBin pkgs.coreutils}/bin/basename "$PWD") \007"
+            echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
           }
           precmd_functions+=(set_win_title)
 
@@ -263,7 +263,7 @@ in
           }
 
           _fzf_complete_zellij_post() {
-            ${lib.getBin pkgs.coreutils}/bin/cut --delimiter=' ' --fields=1
+            ${lib.getExe' pkgs.coreutils "cut"} --delimiter=' ' --fields=1
           }
 
           # Do not use absolute path for go-task to respect current version in each repository
@@ -278,7 +278,7 @@ in
           }
 
           # Disable `Ctrl + S(no output tty)`
-          ${lib.getBin pkgs.coreutils}/bin/stty stop undef
+          ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
           # https://unix.stackexchange.com/a/3449
           source_sh () {

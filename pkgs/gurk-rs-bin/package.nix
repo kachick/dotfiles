@@ -25,7 +25,7 @@ let
   system = stdenvNoCC.hostPlatform.system;
 in
 stdenvNoCC.mkDerivation (finalAttrs: {
-  pname = "gurk-rs";
+  pname = "gurk-rs-bin";
   inherit version;
 
   src = sources.${system} or (throw "Unsupported system: ${system}");
@@ -54,9 +54,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
       I may address it again after merging https://github.com/NixOS/nixpkgs/pull/387337.
     '';
     homepage = "https://github.com/boxdot/gurk-rs";
+    sourceProvenance = with lib.sourceTypes; [
+      binaryBytecode
+    ];
     license = lib.licenses.agpl3Only;
     # Upstream also provides other binaries, this restriction is from my laziness
     # Reconsider when addressing GH-1122
     platforms = lib.platforms.x86_64;
+    priority = 10; # 5 by default. Prefer src built if exist
   };
 })

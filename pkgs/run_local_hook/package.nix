@@ -1,12 +1,16 @@
 {
-  pkgs,
   lib,
+  pkgs,
   ...
 }:
-pkgs.buildGo124Module (finalAttrs: {
+
+let
+  inherit (pkgs.unstable) buildGo125Module;
+in
+buildGo125Module (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-LRfCLaW9dqTAuGtgiVG/8yuNQq38EzSl3XPkkXhqNJY=";
+  vendorHash = "sha256-MMscqCfHwKtPE3JK6tSt/LhEkTPBnEtWEnc06Wk5mNo=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook

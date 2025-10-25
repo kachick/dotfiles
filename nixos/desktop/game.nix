@@ -6,7 +6,7 @@
     # Use latest to apply https://github.com/NixOS/nixpkgs/pull/418154
     unstable.vassal
 
-    my.ludii
+    my.ludii-bin
 
     # Shogi
 

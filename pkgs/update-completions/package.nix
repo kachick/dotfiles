@@ -9,7 +9,7 @@ pkgs.writeShellApplication (
 
     runtimeInputs = with pkgs; [
       coreutils # `cp`
-      git
+      gitMinimal
     ];
 
     text = ''

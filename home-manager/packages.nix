@@ -52,8 +52,12 @@
   # - https://github.com/kachick/dotfiles/issues/280
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
+  # TODO: Prefer stable channel since nixos-25.11
+  # Available since https://github.com/NixOS/nixpkgs/pull/409075
+  # Fixed in https://github.com/NixOS/nixpkgs/pull/449790 for x86_64-darwin
+  unstable.msedit # `edit`
+
   micro
-  ox # modeless editor.
 
   tree
   eza # alt ls
@@ -102,7 +106,10 @@
   unstable.brush
 
   # Available since https://github.com/NixOS/nixpkgs/pull/423741
-  unstable.somo
+  patched.somo
+
+  # Available since https://github.com/NixOS/nixpkgs/pull/410902
+  unstable.typescript-go
 ])
 ++ (with pkgs.my; [
   la
@@ -120,5 +127,5 @@
   preview
   renmark
   tree-diff
-  gurk-rs
+  gurk-rs-bin
 ])
