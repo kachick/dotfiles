@@ -115,6 +115,7 @@
     ];
 
     serviceConfig = {
+      User = "kachick";
       Type = "simple";
 
       ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve 8888";
