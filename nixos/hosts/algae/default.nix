@@ -79,25 +79,25 @@
     openRegistration = true;
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/web-servers/caddy/default.nix
-  services.caddy = {
-    enable = true;
+  # # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/web-servers/caddy/default.nix
+  # services.caddy = {
+  #   enable = true;
 
-    acmeCA = "https://acme-v02.api.letsencrypt.org/directory";
-    email = "kachick1@gmail.com";
+  #   acmeCA = "https://acme-v02.api.letsencrypt.org/directory";
+  #   email = "kachick1@gmail.com";
 
-    # - sub.hotsname.local by mDNS is not be supported in systemd-resolved: https://github.com/systemd/systemd/issues/34852
-    # - Consider using tailscale. It is much useful, however it requires hiding tailnet name in public dotfiles, and should consider how to keep running `tailscale serve --bg --https=58888 127.0.0.1:8888`
-    virtualHosts."${config.networking.hostName}.local:58888" = {
-      extraConfig = ''
-        reverse_proxy http://${toString config.services.atuin.host}:${toString config.services.atuin.port}
-      '';
-    };
-  };
+  #   # - sub.hotsname.local by mDNS is not be supported in systemd-resolved: https://github.com/systemd/systemd/issues/34852
+  #   # - Consider using tailscale. It is much useful, however it requires hiding tailnet name in public dotfiles, and should consider how to keep running `tailscale serve --bg --https=58888 127.0.0.1:8888`
+  #   virtualHosts."${config.networking.hostName}.local:58888" = {
+  #     extraConfig = ''
+  #       reverse_proxy http://${toString config.services.atuin.host}:${toString config.services.atuin.port}
+  #     '';
+  #   };
+  # };
 
-  networking.firewall.allowedTCPPorts = [
-    58888
-  ];
+  # networking.firewall.allowedTCPPorts = [
+  #   58888
+  # ];
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
