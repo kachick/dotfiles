@@ -2,7 +2,6 @@
   lib,
   pkgs,
   inputs,
-  config,
   ...
 }:
 
@@ -98,6 +97,32 @@
   # networking.firewall.allowedTCPPorts = [
   #   58888
   # ];
+
+  systemd.services.tailscale-serve-atuin = {
+    description = "Support atuin server via tailscale. See GH-173 and GH-266";
+    wantedBy = [
+      "multi-user.target"
+    ];
+
+    after = [
+      "tailscaled.service"
+      "atuin.service"
+    ];
+
+    requires = [
+      "tailscaled.service"
+      "atuin.service"
+    ];
+
+    serviceConfig = {
+      Type = "simple";
+
+      ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve 8888";
+
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
