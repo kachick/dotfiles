@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  config,
   ...
 }:
 
@@ -96,7 +97,7 @@
       Type = "simple";
 
       # If run without systemd, `--bg` flag might helps
-      ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve 8888";
+      ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve ${toString config.services.atuin.port}";
 
       Restart = "on-failure";
       RestartSec = 5;
