@@ -231,15 +231,17 @@
       "--disable-ctrl-r" # Keep fzf key-bindings
     ];
 
-    # settings = {
-    #   # auto_sync = true; # TODO: Consider enabling after test
+    settings = {
+      # auto_sync = true; # TODO: Consider enabling after test
 
-    #   # Don't use the actual address likely
-    #   # sync_address = "http://algae.local:8888";
-    #   # Because TLS support is disabled now. NixOS module seems not accepting config files and TSL support for now
-    #   # Therefore using SSH forwarding for the HTTP instead of TLS support on atuin
-    #   sync_address = "https://algae.local:58888";
-    # };
+      # Set a temporary value here to prevent using an external service like the default https://api.atuin.sh/.
+      # Current issues:
+      # - Atuin TLS support is disabled.
+      # - The NixOS module does not seem to accept config files or support TLS.
+      # Requirements before actual setup: Set ATUIN_SYNC_ADDRESS="https://algae.${TAILNET_DOMAIN}" on each device.
+      # Typically written to: "XDG_CONFIG_HOME/zsh/.zshenv.local"
+      sync_address = "http://algae.local:8888";
+    };
   };
 
   # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
