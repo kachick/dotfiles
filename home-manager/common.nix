@@ -228,7 +228,8 @@
       # https://github.com/atuinsh/atuin/issues/51
       "--disable-up-arrow"
 
-      # "--disable-ctrl-r" # If prefer fzf key-bindings
+      # NOTE: Add another keybind if I found suitable one
+      "--disable-ctrl-r" # Prefer fzf key-bindings. Use `atuin search --interactive` instead.
     ];
 
     settings = {
