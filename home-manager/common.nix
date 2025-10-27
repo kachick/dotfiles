@@ -228,7 +228,7 @@
       # https://github.com/atuinsh/atuin/issues/51
       "--disable-up-arrow"
 
-      "--disable-ctrl-r" # Keep fzf key-bindings
+      # "--disable-ctrl-r" # If prefer fzf key-bindings
     ];
 
     settings = {
