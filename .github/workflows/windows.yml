@@ -117,7 +117,7 @@ jobs:
           Get-ChildItem -Recurse .\dist
       - name: Upload artifact
         id: upload-artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: winit
           path: dist
@@ -146,7 +146,7 @@ jobs:
       # Enable this section when you want to update logics and check it
       # - name: Upload artifact
       #   id: upload-defender-log
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@v5
       #   with:
       #     name: MpCmdRun-logs
       #     path: MpCmdRun-logs/**
