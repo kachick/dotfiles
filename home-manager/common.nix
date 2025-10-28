@@ -240,7 +240,7 @@
       # - Atuin TLS support is disabled.
       # - The NixOS module does not seem to accept config files or support TLS.
       # Requirements before actual setup: Set ATUIN_SYNC_ADDRESS="https://algae.${TAILNET_DOMAIN}" on each device.
-      # Typically written to: "XDG_CONFIG_HOME/zsh/.zshenv.local"
+      # Typically written to: "$XDG_CONFIG_HOME/zsh/.zshenv.local"
       sync_address = "http://algae.local:8888";
     };
   };
