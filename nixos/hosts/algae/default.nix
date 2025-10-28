@@ -100,7 +100,7 @@
       ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve ${toString config.services.atuin.port}";
 
       Restart = "on-failure";
-      RestartSec = 5;
+      RestartSec = 15;
     };
   };
 
