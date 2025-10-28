@@ -242,6 +242,8 @@
       # Requirements before actual setup: Set ATUIN_SYNC_ADDRESS="https://algae.${TAILNET_DOMAIN}" on each device.
       # Typically written to: "$XDG_CONFIG_HOME/zsh/.zshenv.local"
       sync_address = "http://algae.local:8888";
+
+      enter_accept = false; # Ensure disabling even through it is the default.
     };
   };
 
