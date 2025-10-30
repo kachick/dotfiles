@@ -13,13 +13,13 @@ rclone.overrideAttrs (
     pname = "filen-rclone-unwrapped";
     # MUST NOT use 1.70.0-filen.11 or older
     # They lacks the crucial patch https://github.com/FilenCloudDienste/filen-sdk-go/commit/cd9f4e00f07adf815d17ff1125751c943160f9f3
-    version = "1.70.0-filen.13";
+    version = "1.70.0-filen.14";
 
     src = fetchFromGitHub {
       owner = "FilenCloudDienste";
       repo = "filen-rclone";
       tag = "v${finalAttrs.version}";
-      hash = "sha256-aCklWfQg3MYHnzJIbZSUbT2gZmCLAdRAqyk9ou9YTzo=";
+      hash = "sha256-Ba+ICSDmeEnQxrqMxLAqgmJnl4tTUaiF4lk9DR9zZ4c=";
     };
 
     vendorHash = "sha256-JXavjdcDE6L+6db5zQtIiS0KxY6wtaZyyvuN+UmCU+A=";
