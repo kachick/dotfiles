@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  config,
   ...
 }:
 
@@ -67,6 +68,41 @@
     AllowHybridSleep=no
     AllowSuspendThenHibernate=no
   '';
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/misc/atuin.nix
+  # atuin module appears not supporting customizing server.toml: https://github.com/NixOS/nixpkgs/blob/e9b7f2ff62b35f711568b1f0866243c7c302028d/nixos/modules/services/misc/atuin.nix#L148
+  services.atuin = {
+    enable = true;
+    openRegistration = true; # Always allow to help the testing. It is okay, this server only useable on private networks
+  };
+
+  systemd.services.tailscale-serve-atuin = {
+    description = "Support atuin server via tailscale. See GH-173 and GH-266";
+    wantedBy = [
+      "multi-user.target"
+    ];
+
+    after = [
+      "tailscaled.service"
+      "atuin.service"
+    ];
+
+    requires = [
+      "tailscaled.service"
+      "atuin.service"
+    ];
+
+    serviceConfig = {
+      User = "nobody";
+      Type = "simple";
+
+      # If run without systemd, `--bg` flag might helps
+      ExecStart = "${pkgs.unstable.tailscale}/bin/tailscale serve ${toString config.services.atuin.port}";
+
+      Restart = "on-failure";
+      RestartSec = 15;
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     # Available since https://github.com/NixOS/nixpkgs/pull/406363
