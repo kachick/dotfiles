@@ -93,7 +93,7 @@
     ];
 
     serviceConfig = {
-      User = "nobody";
+      User = "kachick";
       Type = "simple";
 
       # If run without systemd, `--bg` flag might helps
