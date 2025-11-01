@@ -17,8 +17,23 @@
     };
   })
 
-  # Patched and override existing name because of it is not cofigurable
+  # Patched and override existing name because of it is not configurable
   (final: prev: {
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/li/linux-firmware/package.nix
+    linux-firmware = prev.linux-firmware.overrideAttrs (
+      finalAttrs: previousAttrs: rec {
+        # Don't use "20251021" and the later versions for now. See GH-1328 for detail
+        version = "20251011";
+
+        src = prev.fetchFromGitLab {
+          owner = "kernel-firmware";
+          repo = "linux-firmware";
+          tag = version;
+          hash = "sha256-LFVrrVCqJORiHVnhIY0l7B4pRHI2MS0o/GbgOUDqO8s=";
+        };
+      }
+    );
+
     # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
     #
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/gn/gnome-keyring/package.nix
