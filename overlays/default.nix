@@ -17,8 +17,23 @@
     };
   })
 
-  # Patched and override existing name because of it is not cofigurable
+  # Patched and override existing name because of it is not configurable
   (final: prev: {
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/li/linux-firmware/package.nix
+    linux-firmware = prev.linux-firmware.overrideAttrs (
+      finalAttrs: previousAttrs: rec {
+        # Don't use "20251021" and the later versions for now. See GH-1328 for detail
+        version = "20251011";
+
+        src = prev.fetchFromGitLab {
+          owner = "kernel-firmware";
+          repo = "linux-firmware";
+          tag = version;
+          hash = "sha256-LFVrrVCqJORiHVnhIY0l7B4pRHI2MS0o/GbgOUDqO8s=";
+        };
+      }
+    );
+
     # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
     #
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/gn/gnome-keyring/package.nix
@@ -84,11 +99,11 @@
       gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
         finalAttrs: previousAttrs: {
           # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
-          version = "0.11.0";
+          version = "0.11.3";
 
           src = prev.fetchurl {
             url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
-            hash = "sha256-NdGVl7yZfao4Z5sGw7Xii3MJM3GZ3khHP3NwODkPlE8=";
+            hash = "sha256-JReB8+4+Pnbo8XsLGmcZ0xKjuFHeRC3e5uuhGOM/06I=";
           };
         }
       );
@@ -120,17 +135,17 @@
         }
       );
 
-      # Wait for releasing stable version which including https://github.com/yaneurao/YaneuraOu/commit/33dce0bfa363f63d99977c29b3d6ab40ff896138
-      # See https://github.com/yaneurao/YaneuraOu/issues/304#issuecomment-3405888952 for detail
       yaneuraou = prev.unstable.yaneuraou.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "9.01-unstable";
+          # Require https://github.com/yaneurao/YaneuraOu/commit/33dce0bfa363f63d99977c29b3d6ab40ff896138
+          # See https://github.com/yaneurao/YaneuraOu/issues/304#issuecomment-3405888952 for detail
+          version = "9.01";
 
           src = prev.fetchFromGitHub {
             owner = "yaneurao";
             repo = "YaneuraOu";
-            rev = "33dce0bfa363f63d99977c29b3d6ab40ff896138";
-            hash = "sha256-x0pHkCzby2HTGJoYN3/b9IiX1mIGrxjT2bTqB2lD0Q4=";
+            tag = "v${finalAttrs.version}git";
+            hash = "sha256-1awnGCGIdeMAqAd0TWgoJr5spJo2mFBWdR3iMc2i4OM=";
           };
         }
       );
