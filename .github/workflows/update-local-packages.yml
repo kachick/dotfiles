@@ -106,7 +106,7 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Update packages
         shell: nix develop --command bash -eu -o pipefail {0}
-        # - Don't add yaneuraou for now. The tagging convention seems not fixed, so the updater will be flaky.
+        # - Don't add yaneuraou here. I don't know the tagging convention, and nix-update seems not supporting passthru.updateScript. So the updater will be flaky.
         run: |
           nix-update --commit --flake gemini-cli-bin
           nix-update --commit --flake filen-rclone-unwrapped

@@ -135,17 +135,17 @@
         }
       );
 
-      # Wait for releasing stable version which including https://github.com/yaneurao/YaneuraOu/commit/33dce0bfa363f63d99977c29b3d6ab40ff896138
-      # See https://github.com/yaneurao/YaneuraOu/issues/304#issuecomment-3405888952 for detail
       yaneuraou = prev.unstable.yaneuraou.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "9.01-unstable";
+          # Require https://github.com/yaneurao/YaneuraOu/commit/33dce0bfa363f63d99977c29b3d6ab40ff896138
+          # See https://github.com/yaneurao/YaneuraOu/issues/304#issuecomment-3405888952 for detail
+          version = "9.01";
 
           src = prev.fetchFromGitHub {
             owner = "yaneurao";
             repo = "YaneuraOu";
-            rev = "33dce0bfa363f63d99977c29b3d6ab40ff896138";
-            hash = "sha256-x0pHkCzby2HTGJoYN3/b9IiX1mIGrxjT2bTqB2lD0Q4=";
+            tag = "v${finalAttrs.version}git";
+            hash = "sha256-uhr3jS+ttN5pF1zZpHq2xWy3sdMV19eRUhuj2uPspak=";
           };
         }
       );
