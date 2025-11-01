@@ -145,7 +145,7 @@
             owner = "yaneurao";
             repo = "YaneuraOu";
             tag = "v${finalAttrs.version}git";
-            hash = "sha256-1awnGCGIdeMAqAd0TWgoJr5spJo2mFBWdR3iMc2i4OM=";
+            hash = "sha256-uhr3jS+ttN5pF1zZpHq2xWy3sdMV19eRUhuj2uPspak=";
           };
         }
       );
