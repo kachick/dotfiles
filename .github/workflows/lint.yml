@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   dprint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
@@ -28,7 +28,7 @@ jobs:
 
   typos:
     timeout-minutes: 15
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v5
         with:
