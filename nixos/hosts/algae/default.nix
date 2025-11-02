@@ -14,6 +14,7 @@
     ../../hardware.nix
     ../../desktop
     ../../desktop/kachick.nix
+    ../../desktop/genericUsers.nix # Debug: https://github.com/kachick/dotfiles/issues/1328#issuecomment-3477554945
 
     ./hardware-configuration.nix
   ];
