@@ -13,6 +13,9 @@
       # Don't add needless quotation in the arguments. For example `gopass show 'rclone'` does not work. It should be `gopass show rclone`.
       RCLONE_PASSWORD_COMMAND = "${lib.getExe pkgs.gopass} show rclone";
 
+      # ref: https://github.com/boxdot/gurk-rs/pull/421
+      GURK_PASSPHRASE_COMMAND = "${lib.getExe pkgs.gopass} show gurk-rs";
+
       # Workaround for rust-analyzer error: "ERROR can't load standard library, try installing `rust-src`"
       RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
     };
