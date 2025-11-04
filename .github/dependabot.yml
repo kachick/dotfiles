@@ -6,6 +6,8 @@ updates:
       interval: 'weekly'
     ignore:
       - dependency-name: 'crate-ci/typos'
+    cooldown:
+      default-days: 14
   - package-ecosystem: 'gomod'
     directory: '/'
     schedule:
