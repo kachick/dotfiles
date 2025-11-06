@@ -247,6 +247,11 @@
     policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
   };
 
+  # To test https://github.com/NixOS/nixpkgs/pull/459211
+  virtualisation.containerd = {
+    enable = true;
+  };
+
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
 }
