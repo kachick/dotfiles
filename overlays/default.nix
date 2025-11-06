@@ -81,22 +81,18 @@
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
       lima = prev.unstable.lima.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "1.2.2";
+          # - 1.2.2 or higher is required to avoid some CVE: https://github.com/NixOS/nixpkgs/pull/459093
+          # - 2.0.0 or higher includes patch for `limactl stop`: https://github.com/lima-vm/lima/pull/4303
+          version = "2.0.0";
 
           src = prev.fetchFromGitHub {
             owner = "lima-vm";
             repo = "lima";
             tag = "v${finalAttrs.version}";
-            hash = "sha256-bIYF/bsOMuWTkjD6fe6by220/WQGL+VWEBXmUzyXU98=";
+            hash = "sha256-X0MyXcgi63HEh+0DF/mt50z2vVsz/ENs9T4rsjZhjYw=";
           };
 
-          patches = prev.fetchpatch2 {
-            # See below
-            # - https://github.com/lima-vm/lima/pull/4303
-            # - https://github.com/NixOS/nixpkgs/pull/458941
-            url = "https://github.com/lima-vm/lima/compare/v1.2.2...kachick:lima:fix-missing-pkill-1.2.1.patch";
-            hash = "sha256-fDGmIlTmprChQssaedTtL6imZErqWHa0wwWNXhMFBrE=";
-          };
+          vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
         }
       );
 
