@@ -86,6 +86,7 @@ jobs:
           - ubuntu-24.04
           - macos-15-intel
         pname:
+          - lima
           - filen-rclone
           - kanata-tray
           - somo

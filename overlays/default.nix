@@ -79,19 +79,17 @@
       # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
 
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-      # lima = prev.unstable.lima.overrideAttrs (
-      #   finalAttrs: previousAttrs: {
-      #     # Upstream PR: <UPDATEME>
-      #     version = "<UPDATEME>";
-
-      #     src = prev.fetchFromGitHub {
-      #       owner = "lima-vm";
-      #       repo = "lima";
-      #       tag = "v${finalAttrs.version}";
-      #       hash = "<UPDATEME>";
-      #     };
-      #   }
-      # );
+      lima = prev.unstable.lima.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          patches = prev.fetchpatch2 {
+            # See below
+            # - https://github.com/lima-vm/lima/pull/4303
+            # - https://github.com/NixOS/nixpkgs/pull/458941
+            url = "https://github.com/lima-vm/lima/compare/v1.2.1...kachick:lima:fix-missing-pkill-1.2.1.patch";
+            hash = "sha256-fDGmIlTmprChQssaedTtL6imZErqWHa0wwWNXhMFBrE=";
+          };
+        }
+      );
 
       # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
       # - OSS. Apache-2.0
