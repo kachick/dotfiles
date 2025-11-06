@@ -79,19 +79,23 @@
       # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
 
       # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-      # lima = prev.unstable.lima.overrideAttrs (
-      #   finalAttrs: previousAttrs: {
-      #     # Upstream PR: <UPDATEME>
-      #     version = "<UPDATEME>";
+      lima = prev.unstable.lima.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # - 1.2.2 or higher is required to avoid some CVEs in the nerdctl dependency: https://github.com/NixOS/nixpkgs/pull/459093
+          # - 2.0.0 includes patch for `limactl stop`: https://github.com/lima-vm/lima/pull/4303
+          # - 2.0.1 includes patch for graceful shutdown: https://github.com/lima-vm/lima/pull/4310
+          version = "2.0.1";
 
-      #     src = prev.fetchFromGitHub {
-      #       owner = "lima-vm";
-      #       repo = "lima";
-      #       tag = "v${finalAttrs.version}";
-      #       hash = "<UPDATEME>";
-      #     };
-      #   }
-      # );
+          src = prev.fetchFromGitHub {
+            owner = "lima-vm";
+            repo = "lima";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-GPrx4pvD6AxYIvAS+Mz8gFZ/Z7HeFFoHh3LOtAJ9bhI=";
+          };
+
+          vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
+        }
+      );
 
       # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
       # - OSS. Apache-2.0
