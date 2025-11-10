@@ -2,11 +2,11 @@
   "nodes": {
     "edge-nixpkgs": {
       "locked": {
-        "lastModified": 1761979820,
-        "narHash": "sha256-BS0y7XzskKPuQanztg6ei7TDfA8chOp0en9/noD7pN0=",
-        "rev": "2fb006b87f04c4d3bdf08cfdbc7fab9c13d94a15",
+        "lastModified": 1762686035,
+        "narHash": "sha256-rzt3aYsEMKvwNXW0H/6J2z733gqS4g1IXd1pDUWzVpk=",
+        "rev": "b6a8526db03f735b89dd5ff348f53f752e7ddc8e",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/unstable/nixos-25.11pre887511.2fb006b87f04/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/unstable/nixos-25.11pre891611.b6a8526db03f/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
@@ -118,11 +118,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1761968430,
-        "narHash": "sha256-/Ko3QBS9/7joFRObu2gIONY3RaopFLfMs5O0whQhIVc=",
+        "lastModified": 1762253902,
+        "narHash": "sha256-VD24fJZgZYfDuVA2yuWVKVnMCfhWaC0+Y65gDelVgQQ=",
         "owner": "nix-community",
         "repo": "NixOS-WSL",
-        "rev": "137fa85e8009c6465de01b591225670be79d2a38",
+        "rev": "d54dc722d9e47667c96c2bcc8d6228f4fa1afd9a",
         "type": "github"
       },
       "original": {
@@ -134,11 +134,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1762109967,
-        "narHash": "sha256-sIY6cnAOjN6IWwQo6a1CXq6fm6s0nFAkmgA1JsA1wbE=",
-        "rev": "3de8f8d73e35724bf9abef41f1bdbedda1e14a31",
+        "lastModified": 1762537618,
+        "narHash": "sha256-aIePlSVgncfoNZHebbu/yfdhMwkzkeCX08zye8PvQmY=",
+        "rev": "6faeb062ee4cf4f105989d490831713cc5a43ee1",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/25.05/nixos-25.05.812242.3de8f8d73e35/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixos/25.05/nixos-25.05.812554.6faeb062ee4c/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
@@ -148,10 +148,10 @@
     "nixpkgs-darwin": {
       "locked": {
         "lastModified": 315532800,
-        "narHash": "sha256-HByhIlLJkYcR+VOD9fRWQ9+6eS8YxoR1xyn1Zd93dqM=",
-        "rev": "1b7e751db23cedcd3bf56dc5170840b8a7e752a2",
+        "narHash": "sha256-uhksLNluhbzEhYauJ3sUv/1heMegBTwX84DK/A3Xlwc=",
+        "rev": "dd11e87513e1efcd62fd9ac27acaded5b49b63ab",
         "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/25.05-darwin/nixpkgs-darwin-25.05pre812307.1b7e751db23c/nixexprs.tar.xz"
+        "url": "https://releases.nixos.org/nixpkgs/25.05-darwin/nixpkgs-darwin-25.05pre812583.dd11e87513e1/nixexprs.tar.xz"
       },
       "original": {
         "type": "tarball",
