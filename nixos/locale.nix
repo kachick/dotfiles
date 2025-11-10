@@ -1,7 +1,7 @@
 { ... }:
 {
   # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/i18n.nix
-  # https://nixos.wiki/wiki/Locales
+  # https://wiki.nixos.org/wiki/Locales
   # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
   i18n = {
     # GNOME respects this, I don't know how to realize it only via home-manager

@@ -7,7 +7,7 @@ rules:
         crate-ci/*: any
         dependabot/*: any
         dprint/*: any
-        DeterminateSystems/*: any
+        cachix/*: any
   excessive-permissions:
     ignore:
       - merge-bot-pr.yml

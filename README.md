@@ -91,10 +91,11 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
 ## Ubuntu
 
-1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
+1. Install [Nix](https://nixos.org/download/) and enable [Flakes](https://wiki.nixos.org/wiki/Flakes)
 
    ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix
+   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+   sudo echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
    ```
 
 1. Make sure your user or one of the groups are listed in `trusted-users`
@@ -182,6 +183,7 @@ Check [traps](./windows/Multi-booting.md)
 
 I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911).
 
+1. Ensure installing Nix with official installer. [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) does not support [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224).
 1. Apply home-manager with `kachick@macbook` for minimum packages.
 1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
 1. Use [Lima](#lima) for development tasks.
