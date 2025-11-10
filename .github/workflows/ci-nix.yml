@@ -89,7 +89,6 @@ jobs:
           - lima
           - filen-rclone
           - kanata-tray
-          - somo
           - yaneuraou # The generated binary cache has an incorrect CPU label for the target devices. However, this tested environment is valuable for ensuring stability.
         exclude:
           - runner: macos-15-intel
