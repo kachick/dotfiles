@@ -96,15 +96,16 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    ```bash
    extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
    echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
+   echo "trusted-users = root $USER @wheel" >> "$extra_conf_path"
 
    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --nix-extra-conf-file "$extra_conf_path"
    ```
 
-1. Make sure your user or one of the groups are listed in `trusted-users`
+1. If you forgot something adding in the installation phase, manually add it.\
+   Some config needs rebooting to apply it such as `trusted-users`.
 
-   ```console
-   > grep trusted-users /etc/nix/nix.conf
-   trusted-users = root your_user @your_user_group
+   ```bash
+   echo 'experimental-features = nix-command flakes' | sudo tee --append /etc/nix/nix.conf
    ```
 
 1. Make sure there is a nix directory that is used in the home-manager.\
