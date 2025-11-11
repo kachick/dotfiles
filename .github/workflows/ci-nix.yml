@@ -91,9 +91,7 @@ jobs:
           - kanata-tray
         exclude:
           - runner: macos-15-intel
-            pname: filen-rclone # upstream rclone package is also broken in this platform: https://github.com/NixOS/nixpkgs/issues/437470
-          - runner: macos-15-intel
-            pname: kanata-tray # I don't use it on macOS
+            pname: kanata-tray # I'm using Karabiner-Elements on macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
