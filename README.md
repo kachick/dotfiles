@@ -94,8 +94,10 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Install [Nix](https://nixos.org/download/) and enable [Flakes](https://wiki.nixos.org/wiki/Flakes)
 
    ```bash
-   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
-   sudo echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
+   extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+   echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
+
+   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --nix-extra-conf-file "$extra_conf_path"
    ```
 
 1. Make sure your user or one of the groups are listed in `trusted-users`
