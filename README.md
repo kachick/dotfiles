@@ -181,9 +181,10 @@ Check [traps](./windows/Multi-booting.md)
 
 ## macOS
 
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911).
+I basically [give up](https://github.com/kachick/dotfiles/issues/911) to maintain my old Intel Mac.\
+However I should keep the minimum environment for now.
 
-1. Ensure installing Nix with official installer. [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) does not support [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224).
+1. Make sure installing official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
 1. Apply home-manager with `kachick@macbook` for minimum packages.
 1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
 1. Use [Lima](#lima) for development tasks.
