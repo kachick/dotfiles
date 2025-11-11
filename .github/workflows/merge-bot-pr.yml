@@ -22,7 +22,7 @@ jobs:
         id: conclusion
         if: >-
           steps.dependabot.outputs.update-type != 'version-update:semver-major' ||
-          contains(steps.dependabot.outputs.dependency-names, 'DeterminateSystems')
+          contains(steps.dependabot.outputs.dependency-names, 'cachix')
         run: echo -n 'merge=true' | tee -a "$GITHUB_OUTPUT"
   dependabot:
     needs: [judge-dependabot]

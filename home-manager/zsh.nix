@@ -29,7 +29,7 @@ in
     fi
   '';
 
-  # https://nixos.wiki/wiki/Zsh
+  # https://wiki.nixos.org/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zsh.nix
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
