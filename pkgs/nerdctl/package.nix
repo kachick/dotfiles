@@ -3,18 +3,27 @@
 
 {
   lib,
-  buildGoModule,
+  # buildGoModule,
+  pkgs,
   fetchFromGitHub,
   makeWrapper,
   installShellFiles,
-  buildkit,
-  cni-plugins,
+  # buildkit,
+  # cni-plugins,
   writableTmpDirAsHomeHook,
-  versionCheckHook,
+  # versionCheckHook, # `versionCheckKeepEnvironment` is not available in nixos-25.05
   extraPackages ? [ ],
   nix-update-script,
 }:
 
+let
+  inherit (pkgs.unstable)
+    buildGoModule
+    buildkit
+    cni-plugins
+    versionCheckHook # To pass build. Others keep concistency as possible.
+    ;
+in
 buildGoModule (finalAttrs: {
   pname = "nerdctl";
   version = "2.2.0";
