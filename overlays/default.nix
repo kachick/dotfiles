@@ -5,15 +5,10 @@
 }:
 [
   (final: _prev: {
-    my =
-      final.lib.packagesFromDirectoryRecursive {
-        inherit (final) callPackage;
-        directory = ../pkgs;
-      }
-      // final.lib.packagesFromDirectoryRecursive {
-        inherit (final.unstable) callPackage;
-        directory = ../pkgs-unstable;
-      };
+    my = final.lib.packagesFromDirectoryRecursive {
+      inherit (final) callPackage;
+      directory = ../pkgs;
+    };
   })
 
   (final: _prev: {
