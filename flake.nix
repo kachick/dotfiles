@@ -38,7 +38,9 @@
       url = "github:nix-community/NixOS-WSL/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     kanata-tray = {
+      # TODO: Prefer https://github.com/NixOS/nixpkgs/pull/458994 once it's in a suitable channel.
       url = "github:rszyma/kanata-tray";
 
       # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.

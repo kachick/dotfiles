@@ -91,17 +91,21 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
 ## Ubuntu
 
-1. Install [Nix](https://nixos.org/) package manager with [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) to enable [Flakes](https://nixos.wiki/wiki/Flakes) by default.
+1. Install [Nix](https://nixos.org/download/) and enable [Flakes](https://wiki.nixos.org/wiki/Flakes)
 
    ```bash
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --prefer-upstream-nix
+   extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+   echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
+   echo "trusted-users = root $USER @wheel" >> "$extra_conf_path"
+
+   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --nix-extra-conf-file "$extra_conf_path"
    ```
 
-1. Make sure your user or one of the groups are listed in `trusted-users`
+1. If you forgot something adding in the installation phase, manually add it.\
+   Some config needs rebooting to apply it such as `trusted-users`.
 
-   ```console
-   > grep trusted-users /etc/nix/nix.conf
-   trusted-users = root your_user @your_user_group
+   ```bash
+   echo 'experimental-features = nix-command flakes' | sudo tee --append /etc/nix/nix.conf
    ```
 
 1. Make sure there is a nix directory that is used in the home-manager.\
@@ -180,8 +184,10 @@ Check [traps](./windows/Multi-booting.md)
 
 ## macOS
 
-I basically [give up to maintain macOS environment](https://github.com/kachick/dotfiles/issues/911).
+I basically [give up](https://github.com/kachick/dotfiles/issues/911) to maintain my old Intel Mac.\
+However I should keep the minimum environment for now.
 
+1. Make sure installing official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
 1. Apply home-manager with `kachick@macbook` for minimum packages.
 1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
 1. Use [Lima](#lima) for development tasks.

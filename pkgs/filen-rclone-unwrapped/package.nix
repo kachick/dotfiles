@@ -1,5 +1,5 @@
 {
-  rclone,
+  pkgs,
   fetchFromGitHub,
   ...
 }:
@@ -8,7 +8,9 @@
 # Even if changed the priority, it makes confusing.
 # And I don't prefer filen-rclone for other purpose for the stability.
 # Prefer official rclone for non filen providers
-rclone.overrideAttrs (
+#
+# Needs nixos-25.11 or latter to fix broken build on x86_64-darwin: https://github.com/NixOS/nixpkgs/issues/437470
+pkgs.unstable.rclone.overrideAttrs (
   finalAttrs: previousAttrs: {
     pname = "filen-rclone-unwrapped";
     # MUST NOT use 1.70.0-filen.11 or older
@@ -25,7 +27,7 @@ rclone.overrideAttrs (
     vendorHash = "sha256-JXavjdcDE6L+6db5zQtIiS0KxY6wtaZyyvuN+UmCU+A=";
 
     # nixpkgs definition is still using rec, so I should override at here until using finalAttrs
-    # https://github.com/NixOS/nixpkgs/blob/9dcdad5caa134e3afa15401b40dd01391a636962/pkgs/applications/networking/sync/rclone/default.nix#L28
+    # https://github.com/NixOS/nixpkgs/blob/480f847ddc3ccab43a76f31f713653b5ad79ba3f/pkgs/by-name/rc/rclone/package.nix#L18
     ldflags = [
       "-s"
       "-w"

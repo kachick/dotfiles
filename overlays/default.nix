@@ -103,53 +103,11 @@
       gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
         finalAttrs: previousAttrs: {
           # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
-          version = "0.12.0";
+          version = "0.13.0";
 
           src = prev.fetchurl {
             url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
-            hash = "sha256-l6gVgiQbtS+k24ZctmkxDjDT0isSDHabhqQ6ZwMBzQo=";
-          };
-        }
-      );
-
-      # Wait for merging https://github.com/NixOS/nixpkgs/pull/439590
-      somo = prev.unstable.somo.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          version = "1.3.0";
-
-          src = prev.fetchFromGitHub {
-            owner = "theopfr";
-            repo = "somo";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-k7PDCylA6KR/S1dQDSMIoOELPYwJ25dz1u+PM6ITGKg=";
-          };
-
-          cargoDeps = final.rustPlatform.fetchCargoVendor {
-            inherit (finalAttrs) src;
-            hash = "sha256-i3GmdBqCWPeslpr2zzOR4r8PgMP7EkC1mNFI7jSWO34=";
-          };
-
-          nativeCheckInputs = [
-            prev.libredirect.hook
-          ];
-
-          preCheck = ''
-            export NIX_REDIRECTS=/etc/services=${prev.iana-etc}/etc/services
-          '';
-        }
-      );
-
-      yaneuraou = prev.unstable.yaneuraou.overrideAttrs (
-        finalAttrs: previousAttrs: {
-          # Require https://github.com/yaneurao/YaneuraOu/commit/33dce0bfa363f63d99977c29b3d6ab40ff896138
-          # See https://github.com/yaneurao/YaneuraOu/issues/304#issuecomment-3405888952 for detail
-          version = "9.01";
-
-          src = prev.fetchFromGitHub {
-            owner = "yaneurao";
-            repo = "YaneuraOu";
-            tag = "v${finalAttrs.version}git";
-            hash = "sha256-uhr3jS+ttN5pF1zZpHq2xWy3sdMV19eRUhuj2uPspak=";
+            hash = "sha256-P3haGRJrdELTPxKuaMrn/AmOAPH08R9nqNw2pwmEd+0=";
           };
         }
       );

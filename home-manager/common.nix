@@ -114,8 +114,8 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  ## Needless the nix config here, because it is already configured by DeterminateSystems/nix-installer
-  # https://github.com/nix-community/home-manager/blob/36f873dfc8e2b6b89936ff3e2b74803d50447e0a/modules/misc/nix.nix#L5
+  # # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/nix.nix
+  # # NOTE: Consider ensuring flake here: `echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf`
   # nix
 
   programs.lesspipe.enable = true;
