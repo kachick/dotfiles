@@ -254,4 +254,12 @@
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
+
+  networking.hosts = {
+    "127.0.0.1" = [
+      # The motivation is: https://github.com/kachick/dotfiles/pull/266#discussion_r2462670847
+      # Ensure to avoid the default URL in atuin connections
+      "api.atuin.sh"
+    ];
+  };
 }

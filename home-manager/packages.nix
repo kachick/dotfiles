@@ -11,6 +11,7 @@
   direnv
   unstable.nixfmt
   nushell
+  atuin
 
   fzf # History: CTRL+R, Walker: CTRL+T
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell

@@ -220,6 +220,33 @@
     ];
   };
 
+  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/atuin.nix
+  programs.atuin = {
+    enable = true;
+
+    flags = [
+      # https://github.com/atuinsh/atuin/issues/51
+      "--disable-up-arrow"
+
+      # NOTE: Add another keybind if I found suitable one
+      "--disable-ctrl-r" # Prefer fzf key-bindings. Use `atuin search --interactive` instead.
+    ];
+
+    settings = {
+      # auto_sync = true; # TODO: Consider enabling after test
+
+      # Set a temporary value here to prevent using an external service like the default https://api.atuin.sh/.
+      # Current issues:
+      # - Atuin TLS support is disabled.
+      # - The NixOS module does not seem to accept config files or support TLS.
+      # Requirements before actual setup: Set ATUIN_SYNC_ADDRESS="https://algae.${TAILNET_DOMAIN}" on each device.
+      # Typically written to: "$XDG_CONFIG_HOME/zsh/.zshenv.local"
+      sync_address = "http://algae.local:8888";
+
+      enter_accept = false; # Ensure disabling even through it is the default.
+    };
+  };
+
   # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
   programs.yazi = {
     enable = true;
