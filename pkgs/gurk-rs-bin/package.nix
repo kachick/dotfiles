@@ -92,8 +92,13 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     inherit mainProgram;
     description = "Signal Messenger client for terminal";
     homepage = "https://github.com/${repo}";
-    # TODO(kachick): Nixpkgs version bumps often fail because this package’s crate setup isn’t very standard.
-    # I may address it again after merging https://github.com/NixOS/nixpkgs/pull/387337.
+
+    # The Nixpkgs version update seems stuck since the changes in this commit range were added: https://github.com/whisperfish/presage/compare/473c70d...2acc5328a.
+    # I guess the problem is that Nixpkgs does not handle the Rust edition difference ("2021 for presage" vs "2024 for presage-store-sqlite, gurk-rs") correctly.
+    # Also, signal toolsets are not easy to publish to crate.io:
+    #   - https://github.com/boxdot/gurk-rs/issues/112#issuecomment-1411063453
+    #   - https://github.com/whisperfish/presage/issues/75#issuecomment-1378389896
+    #   - https://github.com/signalapp/libsignal/issues/490
     sourceProvenance = with lib.sourceTypes; [
       binaryBytecode
     ];
