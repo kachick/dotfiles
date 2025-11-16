@@ -16,6 +16,8 @@
 #   - Which is NixOS core: gnome-*
 
 {
+  imports = [ ./lima-host.nix ];
+
   home = {
     packages =
       # (with pkgs.unstable; [
