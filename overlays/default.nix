@@ -98,20 +98,14 @@
             vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
           };
           lima-additional-guestagents = prev.unstable.lima-additional-guestagents.overrideAttrs (
-            finalAttrs: previousAttrs: {
-              inherit lima-src;
-            }
+            finalAttrs: previousAttrs: lima-src
           );
         in
         (prev.unstable.lima.override {
           inherit lima-additional-guestagents;
           withAdditionalGuestAgents = true;
         }).overrideAttrs
-          (
-            finalAttrs: previousAttrs: {
-              inherit lima-src;
-            }
-          );
+          (finalAttrs: previousAttrs: lima-src);
 
       # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
       # - OSS. Apache-2.0
