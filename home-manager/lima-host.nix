@@ -5,7 +5,12 @@
   ...
 }:
 let
-  lima = pkgs.patched.lima;
+  lima =
+    with pkgs.patched;
+    lima.override {
+      lima-additional-guestagents = lima-additional-guestagents;
+      withAdditionalGuestAgents = true;
+    };
 in
 {
   programs.ssh.includes = [
