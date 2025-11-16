@@ -106,6 +106,7 @@
       },
       "original": {
         "owner": "rszyma",
+        "ref": "v0.8.0",
         "repo": "kanata-tray",
         "type": "github"
       }

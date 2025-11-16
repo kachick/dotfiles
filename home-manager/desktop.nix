@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }:
 
@@ -144,10 +145,18 @@ in
   xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
   xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
 
-  home.packages = with pkgs; [
-    unstable.kanata # Don't require kanata-with-cmd for now
-    patched.kanata-tray
-  ];
+  home = {
+    packages = with pkgs; [
+      unstable.kanata # Don't require kanata-with-cmd for now
+      patched.kanata-tray
+    ];
+
+    sessionVariables = {
+      # https://github.com/rszyma/kanata-tray/pull/68
+      # https://github.com/NixOS/nixpkgs/pull/458994#discussion_r2506875784
+      KANATA_TRAY_LOG_DIR = "${config.xdg.cacheHome}/kanata-tray";
+    };
+  };
 
   # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/xdg-autostart.nix
   xdg.autostart = {
