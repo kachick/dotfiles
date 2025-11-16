@@ -97,14 +97,14 @@
 
             vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
           };
-          lima-additional-guest-agents = prev.unstable.lima-additional-guest-agents.overrideAttrs (
+          lima-additional-guestagents = prev.unstable.lima-additional-guestagents.overrideAttrs (
             finalAttrs: previousAttrs: {
               inherit lima-src;
             }
           );
         in
         (prev.unstable.lima.override {
-          inherit lima-additional-guest-agents;
+          inherit lima-additional-guestagents;
           withAdditionalGuestAgents = true;
         }).overrideAttrs
           (
