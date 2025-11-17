@@ -10,6 +10,7 @@
   starship
   direnv
   unstable.nixfmt
+  file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
   nushell
 
   fzf # History: CTRL+R, Walker: CTRL+T
