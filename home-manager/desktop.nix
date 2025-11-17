@@ -145,6 +145,9 @@ in
   xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
   xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
 
+  xdg.cacheFile."kanata-tray/.keep".text =
+    "kanata-tray exits if the specified directory does not exist";
+
   home = {
     packages = with pkgs; [
       unstable.kanata # Don't require kanata-with-cmd for now
