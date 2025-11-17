@@ -82,8 +82,14 @@
 
           vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
         };
+
+        lima-additional-guestagents = prev.unstable.lima-additional-guestagents.overrideAttrs (
+          finalAttrs: previousAttrs: lima-src
+        );
       in
       {
+        inherit lima-additional-guestagents;
+
         # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
         inherit (kanata-tray.packages.${final.system}) kanata-tray;
 
@@ -98,11 +104,12 @@
         #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
         # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
 
-        lima = prev.unstable.lima.overrideAttrs (finalAttrs: previousAttrs: lima-src);
-
-        lima-additional-guestagents = prev.unstable.lima-additional-guestagents.overrideAttrs (
-          finalAttrs: previousAttrs: lima-src
-        );
+        lima =
+          (prev.unstable.lima.override {
+            lima-additional-guestagents = lima-additional-guestagents;
+            withAdditionalGuestAgents = true;
+          }).overrideAttrs
+            (finalAttrs: previousAttrs: lima-src);
 
         # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
         # - OSS. Apache-2.0
