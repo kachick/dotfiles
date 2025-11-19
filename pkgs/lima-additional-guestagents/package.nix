@@ -66,13 +66,7 @@ buildGoModule (finalAttrs: {
     longDescription = ''
       This package should only be used when your guest's architecture differs from the host's.
 
-      To enable its functionality in `limactl`, set `withAdditionalGuestAgents = true` in the `lima` package:
-      ```nix
-      pkgs.lima.override {
-        withAdditionalGuestAgents = true;
-      }
-      ```
-
+      To enable its functionality in `limactl`, use `lima-full` package.
       Typically, you won't need to directly add this package to your *.nix files.
     '';
     changelog = "https://github.com/lima-vm/lima/releases/tag/v${finalAttrs.version}";

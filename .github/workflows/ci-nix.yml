@@ -87,6 +87,7 @@ jobs:
           - macos-15-intel
         pname:
           - lima
+          - lima-full
           - filen-rclone
           - kanata-tray
           - nerdctl
