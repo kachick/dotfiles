@@ -48,68 +48,35 @@
   (final: prev: {
     # Patched packages should be put here if exist
     # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
-    patched =
-      let
-        # The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache :<
-        # Wait for merging: https://github.com/NixOS/nixpkgs/pull/461178
-        lima-src = rec {
-          # - 1.2.2 or higher is required to avoid some CVEs in the nerdctl dependency: https://github.com/NixOS/nixpkgs/pull/459093
-          # - 2.0.0 includes patch for `limactl stop`: https://github.com/lima-vm/lima/pull/4303
-          # - 2.0.1 includes patch for graceful shutdown: https://github.com/lima-vm/lima/pull/4310
-          version = "2.0.1";
+    patched = {
+      # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
+      inherit (kanata-tray.packages.${final.system}) kanata-tray;
 
-          src = prev.fetchFromGitHub {
-            owner = "lima-vm";
-            repo = "lima";
-            tag = "v${version}";
-            hash = "sha256-GPrx4pvD6AxYIvAS+Mz8gFZ/Z7HeFFoHh3LOtAJ9bhI=";
+      # pname = prev.unstable.pname.overrideAttrs (
+      #   finalAttrs: previousAttrs: {
+      #   }
+      # );
+
+      # Overriding non mkDerivation often makes hard to modify the hash(not src hash). See following workaround
+      # rust:
+      #   - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
+      #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
+      # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
+
+      # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
+      # - OSS. Apache-2.0
+      # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
+      gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
+          version = "0.15.4";
+
+          src = prev.fetchurl {
+            url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
+            hash = "sha256-X4QXDZYtTY0LO9OiE9F99DBvit79Tsz/4zhfVHPQxSE=";
           };
-
-          vendorHash = "sha256-dA6zdrhN73Y8InlrCEdHgYwe5xbUlvKx0IMis2nWgWE=";
-        };
-
-        lima-additional-guestagents = prev.unstable.lima-additional-guestagents.overrideAttrs (
-          finalAttrs: previousAttrs: lima-src
-        );
-      in
-      {
-        inherit lima-additional-guestagents;
-
-        # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
-        inherit (kanata-tray.packages.${final.system}) kanata-tray;
-
-        # pname = prev.unstable.pname.overrideAttrs (
-        #   finalAttrs: previousAttrs: {
-        #   }
-        # );
-
-        # Overriding non mkDerivation often makes hard to modify the hash(not src hash). See following workaround
-        # rust:
-        #   - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
-        #   - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
-        # npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
-
-        lima =
-          (prev.unstable.lima.override {
-            lima-additional-guestagents = lima-additional-guestagents;
-            withAdditionalGuestAgents = true;
-          }).overrideAttrs
-            (finalAttrs: previousAttrs: lima-src);
-
-        # - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
-        # - OSS. Apache-2.0
-        # - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
-        gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
-          finalAttrs: previousAttrs: {
-            # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
-            version = "0.15.4";
-
-            src = prev.fetchurl {
-              url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
-              hash = "sha256-X4QXDZYtTY0LO9OiE9F99DBvit79Tsz/4zhfVHPQxSE=";
-            };
-          }
-        );
-      };
+        }
+      );
+    };
   })
 ]
