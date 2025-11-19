@@ -1,7 +1,7 @@
 {
-  lima,
+  pkgs,
 }:
 
-lima.override {
+pkgs.my.lima.override {
   withAdditionalGuestAgents = true;
 }

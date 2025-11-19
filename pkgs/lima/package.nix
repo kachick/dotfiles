@@ -30,7 +30,7 @@
 
 let
   inherit (pkgs.unstable) buildGoModule;
-  lima-additional-guestagents = callPackage ./additional-guestagents.nix { };
+  lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
 in
 buildGoModule (finalAttrs: {
   pname = "lima";
