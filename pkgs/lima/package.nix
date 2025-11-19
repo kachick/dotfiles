@@ -12,7 +12,7 @@
   # buildGoModule,
   callPackage,
   installShellFiles,
-  qemu,
+  # qemu,
   darwin,
   makeWrapper,
   nix-update-script,
@@ -24,12 +24,12 @@
   testers,
   writeText,
   runCommand,
-  lima,
+  # lima,
   jq,
 }:
 
 let
-  inherit (pkgs.unstable) buildGoModule versionCheckHook;
+  inherit (pkgs.unstable) buildGoModule qemu versionCheckHook;
   lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
 in
 buildGoModule (finalAttrs: {
@@ -112,6 +112,7 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
+  # How to run in these flake repository...?
   passthru = {
     tests =
       let
@@ -129,7 +130,7 @@ buildGoModule (finalAttrs: {
               {
                 nativeBuildInputs = [
                   writableTmpDirAsHomeHook
-                  lima
+                  pkgs.my.lima
                   jq
                 ];
               }
@@ -150,9 +151,7 @@ buildGoModule (finalAttrs: {
               {
                 nativeBuildInputs = [
                   writableTmpDirAsHomeHook
-                  (lima.override {
-                    withAdditionalGuestAgents = true;
-                  })
+                  pkgs.my.lima-full
                   jq
                 ];
               }
