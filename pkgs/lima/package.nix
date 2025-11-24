@@ -9,9 +9,7 @@
   lib,
   stdenv,
   pkgs,
-  # Must NOT use unstable channel for buildGoModule especially for this package. It enforces dynamically linked for native-guestagent
-  # It also appears even if setting CGO_ENABLED=0 https://github.com/NixOS/nixpkgs/issues/456953
-  buildGoModule,
+  # buildGoModule,
   callPackage,
   installShellFiles,
   # qemu,
@@ -31,7 +29,7 @@
 }:
 
 let
-  inherit (pkgs.unstable) qemu versionCheckHook;
+  inherit (pkgs.unstable) buildGoModule qemu versionCheckHook;
   lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
 in
 buildGoModule (finalAttrs: {
