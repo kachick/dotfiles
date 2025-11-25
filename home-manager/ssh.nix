@@ -72,73 +72,94 @@ in
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L531-L547
     matchBlocks =
       let
-        # You can register the same *.pub in different services
-        gitHostingService = {
-          identityFile = "${sshDir}/id_ed25519";
-          identitiesOnly = true;
-          user = "git";
+        mapAttrsToDagEntries = lib.attrsets.mapAttrsToList (
+          k: v: {
+            name = k;
+            value = v;
+          }
+        );
+
+        hosts =
+          let
+            # You can register the same *.pub in different services
+            gitHostingService = {
+              identityFile = "${sshDir}/id_ed25519";
+              identitiesOnly = true;
+              user = "git";
+            };
+          in
+          {
+            # ANYONE can access the registered public key at https://github.com/kachick.keys
+            "github.com" = gitHostingService;
+
+            # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
+            "gitlab.com" = gitHostingService;
+
+            # Need authentication to get the public keys
+            #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
+            #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
+            "bitbucket.org" = gitHostingService;
+
+            # For WSL2 instances like default Ubuntu and podman-machine
+            "localhost" = gitHostingService // {
+              extraOptions = {
+                StrictHostKeyChecking = "ask";
+                UserKnownHostsFile = "/dev/null";
+              };
+            };
+          };
+
+        domains = {
+          # mDNS via avahi.
+          "*.local" = {
+            extraOptions = {
+              # NixOS rebuilds change the host key
+              StrictHostKeyChecking = "accept-new";
+            };
+          };
+        };
+
+        fallbacks = {
+          "*" = {
+            # See https://github.com/nix-community/home-manager/pull/7655 for background
+            enableDefaultConfig = false;
+
+            # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
+            hashKnownHosts = false;
+
+            # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
+            # - First path should be writable for the `StrictHostKeyChecking != yes` use-case
+            userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
+
+            # unit: seconds
+            serverAliveInterval = 60;
+
+            forwardAgent = true;
+
+            controlMaster = "auto";
+            controlPersist = "10m";
+            # Used %r by default. And it makes `ControlPath too long` especially using upterm.
+            # See following resources and GH-1030
+            # https://github.com/nix-community/home-manager/blob/20665c6efa83d71020c8730f26706258ba5c6b2a/modules/programs/ssh.nix#L424-L430
+            # https://github.com/owenthereal/upterm/issues/283#issuecomment-2508582116
+            # And just avoiding %r is not enough for `tailscale ssh`. So, only use %C to avoid it.
+            # https://gist.github.com/andyvanee/bcf95b1044b80e72b4a42933549a079b
+            controlPath = "~/.ssh/control/%C";
+
+            addKeysToAgent = "yes";
+
+            # https://serverfault.com/a/1109184/112217
+            checkHostIP = "no";
+          };
         };
       in
-      {
-        # TODO: Ensure to be last element of the list(DAG)
-        "*" = {
-          # See https://github.com/nix-community/home-manager/pull/7655 for background
-          enableDefaultConfig = false;
-
-          # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
-          hashKnownHosts = false;
-
-          # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
-          # - First path should be writable for the `StrictHostKeyChecking != yes` use-case
-          userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
-
-          # unit: seconds
-          serverAliveInterval = 60;
-
-          forwardAgent = true;
-
-          controlMaster = "auto";
-          controlPersist = "10m";
-          # Used %r by default. And it makes `ControlPath too long` especially using upterm.
-          # See following resources and GH-1030
-          # https://github.com/nix-community/home-manager/blob/20665c6efa83d71020c8730f26706258ba5c6b2a/modules/programs/ssh.nix#L424-L430
-          # https://github.com/owenthereal/upterm/issues/283#issuecomment-2508582116
-          # And just avoiding %r is not enough for `tailscale ssh`. So, only use %C to avoid it.
-          # https://gist.github.com/andyvanee/bcf95b1044b80e72b4a42933549a079b
-          controlPath = "~/.ssh/control/%C";
-
-          addKeysToAgent = "yes";
-
-          # https://serverfault.com/a/1109184/112217
-          checkHostIP = "no";
-        };
-
-        # ANYONE can access the registered public key at https://github.com/kachick.keys
-        "github.com" = gitHostingService;
-
-        # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-        "gitlab.com" = gitHostingService;
-
-        # Need authentication to get the public keys
-        #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
-        #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-        "bitbucket.org" = gitHostingService;
-
-        # For WSL2 instances like default Ubuntu and podman-machine
-        "localhost" = gitHostingService // {
-          extraOptions = {
-            StrictHostKeyChecking = "ask";
-            UserKnownHostsFile = "/dev/null";
-          };
-        };
-
-        # mDNS via avahi.
-        "*.local" = {
-          extraOptions = {
-            # NixOS rebuilds change the host key
-            StrictHostKeyChecking = "accept-new";
-          };
-        };
-      };
+      # MUST keep `specific first, generic last`
+      lib.hm.dag.entriesAnywhere (
+        lib.lists.concatMap mapAttrsToDagEntries [
+          hosts
+          domains
+          fallbacks
+        ]
+      );
   };
 }
