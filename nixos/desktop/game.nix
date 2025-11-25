@@ -3,7 +3,7 @@
   environment.systemPackages = with pkgs; [
     # Board Game
 
-    # Use latest to apply https://github.com/NixOS/nixpkgs/pull/418154
+    # Use latest to avoid update notifier (Might be better disabling it in nixpkgs)
     unstable.vassal
 
     my.ludii-bin

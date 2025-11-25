@@ -87,9 +87,15 @@
 
   # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
   # https://wiki.gnupg.org/GnomeKeyring
-  #
-  # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-  services.gnome.gnome-keyring.enable = true;
+  services.gnome = {
+    # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
+    gnome-keyring.enable = true;
+
+    # https://github.com/NixOS/nixpkgs/blob/release-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
+    # Disabling SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
+    # See also https://github.com/NixOS/nixpkgs/pull/379731
+    gcr-ssh-agent.enable = false;
+  };
   # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
   # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. But just disabling security.pam.sshAgentAuth does not resolve it. It should be done in package build phase.
   # The workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
@@ -134,10 +140,7 @@
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
 
-      # 1.2.0 is not be backported and I need it or lataer versions for following context
-      #   - Broken clipboard: https://github.com/ghostty-org/ghostty/issues/4800
-      #   - Broken msedit: https://github.com/ghostty-org/ghostty/issues/7951
-      unstable.ghostty
+      ghostty
 
       alacritty
 
@@ -193,11 +196,13 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
+      # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
       unstable.signal-desktop
 
-      # Available since https://github.com/NixOS/nixpkgs/pull/409810
+      # Use latest as the package mainatiner
       unstable.bitsnpicas
 
+      # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
       unstable.mdns-scanner
 
       ## Unfree packages
@@ -326,8 +331,6 @@
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
-    # Require https://github.com/NixOS/nixpkgs/pull/442245 to adjust home-manager's tailscale-systray module
-    package = pkgs.unstable.tailscale;
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489

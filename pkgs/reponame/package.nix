@@ -1,13 +1,10 @@
 {
   lib,
-  pkgs,
+  buildGoModule,
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo125Module;
-in
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
   vendorHash = "sha256-tiG+CqSzHzoePHQUBAVcnleUueY5jq4Iyhi91NHru6s=";

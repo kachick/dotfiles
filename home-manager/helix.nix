@@ -102,9 +102,9 @@ in
           config.config = "${../typos.toml}";
         };
 
-        # https://github.com/mhersson/mpls/blob/v0.15.3/README.md?plain=1#L219-L240
+        # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241
         mpls = {
-          command = lib.getExe pkgs.unstable.mpls;
+          command = lib.getExe pkgs.mpls;
           args = [
             "--no-auto"
             "--code-style"

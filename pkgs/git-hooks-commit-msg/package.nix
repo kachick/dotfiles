@@ -1,14 +1,12 @@
 {
   pkgs,
   lib,
+  buildGoModule,
   makeWrapper,
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo125Module;
-in
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "git-hooks-commit-msg";
   version = "0.0.1";
 

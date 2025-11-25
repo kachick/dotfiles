@@ -138,8 +138,6 @@ in
   # https://github.com/nix-community/home-manager/pull/7821
   services.tailscale-systray = {
     enable = true;
-    # Available after https://github.com/NixOS/nixpkgs/pull/442245
-    package = pkgs.unstable.tailscale;
   };
 
   xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;

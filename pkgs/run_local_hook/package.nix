@@ -1,13 +1,10 @@
 {
   lib,
-  pkgs,
+  buildGoModule,
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo125Module;
-in
-buildGo125Module (finalAttrs: {
+buildGoModule (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
   vendorHash = "sha256-q+kTI8OZAYIPNMUyNnXY2yKUaH00KzrzEG0V1CPFao0=";

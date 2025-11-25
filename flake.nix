@@ -142,13 +142,14 @@
                   lychee
 
                   desktop-file-utils # `desktop-file-validate` as a linter
+
+                  go_1_25
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   gitleaks
                   dprint
-                  go_1_25
                   zizmor
                   rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
                   kanata # Enable on devshell for using the --check as a linter
