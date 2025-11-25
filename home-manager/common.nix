@@ -163,14 +163,19 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
   programs.starship = {
     enable = true;
 
-    # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
-    # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
-    configPath = "${../config/starship/starship.toml}";
+    # Don't use `settings` option to prefer my raw toml. To consider sharing it in Windows, keeping original format is best way for me.
+    # Also empty `settings` avoid writing the config. See https://github.com/nix-community/home-manager/blob/381f4f8a3a5f773cb80d2b7eb8f8d733b8861434/modules/programs/starship.nix#L102C18-L102C28
   };
+
+  # NOTE:
+  #   * Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
+  #     Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
+  #   * Avoid directory setting `programs.starship.configPath = Nix Store Path`. It is prevented by home-manager validation by their use
+  home.file."${config.programs.starship.configPath}".source = "${../config/starship/starship.toml}";
 
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
   programs.bat = {
