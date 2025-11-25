@@ -75,7 +75,7 @@
   zellij
   sad
 
-  typos
+  unstable.typos
   hyperfine
   riffdiff # `riff`
   gnumake

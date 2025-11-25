@@ -11,7 +11,7 @@
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/vim.nix
   # https://wiki.nixos.org/wiki/Vim
   programs.vim = {
-    # Enabling this may cause colisions. Do not add in packages list
+    # Enabling this may cause collisions. Do not add in packages list
     enable = true;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins = with pkgs.vimPlugins; [

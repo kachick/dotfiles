@@ -20,7 +20,7 @@ buildGo125Module (finalAttrs: {
     with pkgs;
     [
       gitMinimal
-      typos
+      unstable.typos
       unstable.gitleaks
       my.run_local_hook
     ]
