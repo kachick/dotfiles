@@ -139,8 +139,6 @@
   # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
-
-    # Use same nixpkgs channel as same as fzf since nixos-25.11
   };
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
