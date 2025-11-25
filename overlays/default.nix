@@ -13,7 +13,8 @@
 
   (final: _prev: {
     unstable = import edge-nixpkgs {
-      inherit (final) system config;
+      inherit (final) config;
+      inherit (final.stdenvNoCC.hostPlatform) system;
     };
   })
 
@@ -40,7 +41,7 @@
     # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
     patched = {
       # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
-      inherit (kanata-tray.packages.${final.system}) kanata-tray;
+      inherit (kanata-tray.packages.${final.stdenvNoCC.hostPlatform.system}) kanata-tray;
 
       # pname = prev.unstable.pname.overrideAttrs (
       #   finalAttrs: previousAttrs: {
