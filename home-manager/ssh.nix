@@ -72,13 +72,6 @@ in
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L531-L547
     matchBlocks =
       let
-        mapAttrsToDagEntries = lib.attrsets.mapAttrsToList (
-          k: v: {
-            name = k;
-            value = v;
-          }
-        );
-
         hosts =
           let
             # You can register the same *.pub in different services
@@ -90,28 +83,31 @@ in
           in
           {
             # ANYONE can access the registered public key at https://github.com/kachick.keys
-            "github.com" = gitHostingService;
+            "github.com" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
 
             # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-            "gitlab.com" = gitHostingService;
+            "gitlab.com" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
 
             # Need authentication to get the public keys
             #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
             #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-            "bitbucket.org" = gitHostingService;
+            "bitbucket.org" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
 
             # For WSL2 instances like default Ubuntu and podman-machine
-            "localhost" = gitHostingService // {
-              extraOptions = {
-                StrictHostKeyChecking = "ask";
-                UserKnownHostsFile = "/dev/null";
-              };
-            };
+            "localhost" = lib.hm.dag.entryBefore [ "*" ] (
+              gitHostingService
+              // {
+                extraOptions = {
+                  StrictHostKeyChecking = "ask";
+                  UserKnownHostsFile = "/dev/null";
+                };
+              }
+            );
           };
 
         domains = {
           # mDNS via avahi.
-          "*.local" = {
+          "*.local" = lib.hm.dag.entryBetween [ "*" ] [ "localhost" ] {
             extraOptions = {
               # NixOS rebuilds change the host key
               StrictHostKeyChecking = "accept-new";
@@ -153,13 +149,6 @@ in
           };
         };
       in
-      # MUST keep `specific first, generic last`
-      lib.hm.dag.entriesAnywhere (
-        lib.lists.concatMap mapAttrsToDagEntries [
-          hosts
-          domains
-          fallbacks
-        ]
-      );
+      hosts // domains // fallbacks;
   };
 }
