@@ -86,31 +86,28 @@ in
           in
           {
             # ANYONE can access the registered public key at https://github.com/kachick.keys
-            "github.com" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
+            "github.com" = gitHostingService;
 
             # ANYONE can access the registered public key at https://gitlab.com/kachick.keys
-            "gitlab.com" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
+            "gitlab.com" = gitHostingService;
 
             # Need authentication to get the public keys
             #   - https://stackoverflow.com/questions/23396870/can-i-get-ssh-public-key-from-url-in-bitbucket
             #   - https://developer.atlassian.com/cloud/bitbucket/rest/api-group-ssh/#api-users-selected-user-ssh-keys-get
-            "bitbucket.org" = lib.hm.dag.entryBefore [ "*" ] gitHostingService;
+            "bitbucket.org" = gitHostingService;
 
             # For WSL2 instances like default Ubuntu and podman-machine
-            "localhost" = lib.hm.dag.entryBefore [ "*" ] (
-              gitHostingService
-              // {
-                extraOptions = {
-                  StrictHostKeyChecking = "ask";
-                  UserKnownHostsFile = "/dev/null";
-                };
-              }
-            );
+            "localhost" = gitHostingService // {
+              extraOptions = {
+                StrictHostKeyChecking = "ask";
+                UserKnownHostsFile = "/dev/null";
+              };
+            };
           };
 
         domains = {
           # mDNS via avahi.
-          "*.local" = lib.hm.dag.entryBetween [ "*" ] [ "localhost" ] {
+          "*.local" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
             extraOptions = {
               # NixOS rebuilds change the host key
               StrictHostKeyChecking = "accept-new";
@@ -119,7 +116,7 @@ in
         };
 
         fallbacks = {
-          "*" = {
+          "*" = lib.hm.dag.entryAfter (builtins.attrNames domains) {
             # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
             hashKnownHosts = false;
 
