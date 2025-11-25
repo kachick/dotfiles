@@ -57,8 +57,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     versionCheckHook
   ];
   doInstallCheck = true;
-  # NOTE: Keep except on NixOS/nixpkgs/*-unstable. See https://github.com/NixOS/nixpkgs/pull/412768#issuecomment-3427141813
-  versionCheckProgram = "${placeholder "out"}/bin/${mainProgram}";
   versionCheckProgramArg = "--version";
 
   passthru = {
