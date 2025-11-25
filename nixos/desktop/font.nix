@@ -25,8 +25,8 @@
 
       # Source Han family includes many definitions, useful for fallback
       source-han-code-jp
-      source-han-sans-japanese
-      source-han-serif-japanese
+      source-han-sans
+      source-han-serif
     ];
 
     # Same as home-manager module?
