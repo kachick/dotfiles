@@ -58,10 +58,6 @@
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
 
-      # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
-      # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
-      STARSHIP_CONFIG = "${../config/starship/starship.toml}";
-
       # Workaround to detect tailscale kyes
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
       # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
@@ -172,6 +168,10 @@
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
+
+    # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
+    # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
+    configPath = "${../config/starship/starship.toml}";
   };
 
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
