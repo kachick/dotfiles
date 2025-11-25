@@ -69,13 +69,13 @@
   mdcat # pipe friendly markdown viewer rather than glow
   hexyl # hex viewer
   fd # alt find
-  du-dust # `dust`, alt du
+  dust # `dust`, alt du
   unstable.bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   sad
 
-  typos
+  unstable.typos
   hyperfine
   riffdiff # `riff`
   gnumake

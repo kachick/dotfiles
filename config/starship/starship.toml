@@ -47,7 +47,7 @@ loaded_msg = '🍃'
 unloaded_msg = '🍂'
 format = '[$symbol$loaded]($style) '
 
-# Starship doesn't have brush support, it is reasonable since brush is a bash compatibe shell.
+# Starship doesn't have brush support, it is reasonable since brush is a bash compatible shell.
 # However I want to clarify the brush only in shell name likely `bash_indicator` in shell module.
 # So displaying https://github.com/reubeno/brush/pull/531 is a reasonable workaround for now
 # However it is a shell variable, and I should provide new ENV.

@@ -103,7 +103,7 @@
         system:
         let
           pkgs = mkPkgs system;
-          # Keeping latest would be better with below reasons
+          # Use latest because:
           # - typos-lsp is a third-party tool, it might have different releases with typos-cli even if both are defined in same nixpkgs channel.
           #   See https://github.com/kachick/dotfiles/commit/11bd10a13196d87f74f9464964d34f6ce33fa669#commitcomment-154399068 for detail.
           # - It will not be used in CI, it doesn't block workflows even if typos upstream introduced false-positive detection.
@@ -137,7 +137,6 @@
                   # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
                   treefmt
 
-                  typos
                   trivy
                   lychee
 
@@ -147,6 +146,7 @@
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
                   hydra-check # Background and how to use: https://github.com/kachick/dotfiles/pull/909#issuecomment-2453389909
                   gitleaks
+                  typos
                   dprint
                   go_1_25
                   zizmor
