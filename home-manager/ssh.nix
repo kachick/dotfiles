@@ -145,7 +145,7 @@ in
             addKeysToAgent = "yes";
 
             # https://serverfault.com/a/1109184/112217
-            checkHostIP = "no";
+            checkHostIP = false;
           };
         };
       in
