@@ -49,6 +49,9 @@ in
   programs.ssh = {
     enable = true;
 
+    # See https://github.com/nix-community/home-manager/pull/7655 for background
+    enableDefaultConfig = false;
+
     # Enable custom or temporary config without `home-manager switch`
     includes = [ "${sshDir}/config.local" ];
 
@@ -117,9 +120,6 @@ in
 
         fallbacks = {
           "*" = {
-            # See https://github.com/nix-community/home-manager/pull/7655 for background
-            enableDefaultConfig = false;
-
             # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
             hashKnownHosts = false;
 
