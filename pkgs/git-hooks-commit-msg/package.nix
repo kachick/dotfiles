@@ -17,7 +17,7 @@ buildGoModule (finalAttrs: {
   wrapperPath = lib.makeBinPath (
     with pkgs;
     [
-      typos
+      unstable.typos
       unstable.gitleaks
       my.run_local_hook
     ]
