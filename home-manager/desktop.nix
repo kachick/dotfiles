@@ -47,7 +47,6 @@ let
 in
 {
   imports = [
-    ./modules/services/tailscale-systray.nix
     ./gnome.nix
   ];
 
@@ -135,7 +134,6 @@ in
     };
   };
 
-  # https://github.com/nix-community/home-manager/pull/7821
   services.tailscale-systray = {
     enable = true;
   };
