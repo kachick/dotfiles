@@ -22,20 +22,20 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.05/nixexprs.tar.xz";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.11"; # TODO: Use https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz after the branch off. release-25.11 is not available in channels.nixos.org
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.05-darwin/nixexprs.tar.xz";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/release-25.11"; # TODO: Use nixpkgs-25.11-darwin after the branch off
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.11 after the branch off
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.11 after the branch off
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/release-25.05";
+      url = "github:nix-community/NixOS-WSL/main"; # TODO: Use release-25.11 after the branch off
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

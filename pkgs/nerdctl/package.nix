@@ -11,7 +11,7 @@
   # buildkit,
   # cni-plugins,
   writableTmpDirAsHomeHook,
-  # versionCheckHook, # `versionCheckKeepEnvironment` is not available in nixos-25.05
+  versionCheckHook,
   extraPackages ? [ ],
   nix-update-script,
 }:
@@ -21,7 +21,6 @@ let
     buildGoModule
     buildkit
     cni-plugins
-    versionCheckHook # To pass build. Others keep concistency as possible.
     ;
 in
 buildGoModule (finalAttrs: {

@@ -36,10 +36,10 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   #
-  # TODO: Bump to 25.11 once that nixos-25.11 release is out.
+  # TODO: Bump to 26.05 once that nixos-26.05 release is out.
   #       Daily‑use machines should keep their current stateVersion.
   #       This “generic” host is a template, so tracking the latest release makes sense here.
-  system.stateVersion = "25.05"; # Did you read the comment?
+  system.stateVersion = "25.11"; # Did you read the comment?
 
   boot.loader.systemd-boot = {
     enable = true;
