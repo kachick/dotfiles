@@ -171,6 +171,10 @@
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
+  # Disabled by default from performance.
+  # Enabling to test `man -k`: https://github.com/NixOS/nixpkgs/pull/464253#issuecomment-3568042952
+  programs.man.generateCaches = true;
+
   # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
