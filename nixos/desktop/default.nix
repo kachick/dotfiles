@@ -15,15 +15,15 @@
   # `wpa_cli`. I don't know what is the `wpa_gui`
   networking.wireless.userControlled.enable = true;
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/xserver.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/xserver.nix
   services.xserver = {
     enable = true;
 
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/gdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/display-managers/gdm.nix
     displayManager.gdm.enable = true;
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/lightdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
@@ -91,7 +91,7 @@
     # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
     gnome-keyring.enable = true;
 
-    # https://github.com/NixOS/nixpkgs/blob/release-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
     # Disabling SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
     # See also https://github.com/NixOS/nixpkgs/pull/379731
     gcr-ssh-agent.enable = false;
@@ -209,7 +209,7 @@
 
       # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
       #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
+      # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/applications/editors/vscode/generic.nix
       #
       # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
       # This restriction might be related to
@@ -309,7 +309,7 @@
   };
 
   i18n = {
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/i18n/input-method/ibus.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/i18n/input-method/ibus.nix
     inputMethod = {
       enable = true;
       # Don't use fcitx5. It always made systemd-coredump. See GH-1114
@@ -336,7 +336,7 @@
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338
   #
   # NOTE:

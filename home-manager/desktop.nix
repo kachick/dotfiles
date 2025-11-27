@@ -53,7 +53,7 @@ in
   xdg = {
     # How to get the mimetype: `xdg-mime query filetype path`
     #
-    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg-mime-apps.nix - different of  https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/mime.nix
+    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg-mime-apps.nix - different of  https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/xdg/mime.nix
     mimeApps = rec {
       enable = true;
       # Don't use `xdg-settings set default-web-browser`.
