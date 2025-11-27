@@ -34,6 +34,19 @@
         ];
       }
     );
+
+    # TODO: Drop this and creating binary cacge workarounds once https://github.com/NixOS/nixpkgs/pull/465616 is [available](https://nixpkgs-tracker.ocfox.me/?pr=465616)
+    # https://github.com/NixOS/nixpkgs/issues/465014
+    # https://github.com/NixOS/nixpkgs/pull/465639
+    gnome-shell = prev.gnome-shell.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        version = "49.2";
+        src = prev.fetchurl {
+          url = "mirror://gnome/sources/gnome-shell/${prev.lib.versions.major finalAttrs.version}/gnome-shell-${finalAttrs.version}.tar.xz";
+          hash = "sha256-0TuFXY35nev37M+BC24FT9sK64fvixMZGKbkyRl6Asc=";
+        };
+      }
+    );
   })
 
   (final: prev: {
