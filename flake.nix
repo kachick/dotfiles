@@ -27,11 +27,11 @@
     edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
     nixpkgs-darwin.url = "github:NixOS/nixpkgs/release-25.11"; # TODO: Use nixpkgs-25.11-darwin after the branch off
     home-manager-linux = {
-      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.11 after the branch off
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/master"; # TODO: Use release-25.11 after the branch off
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {

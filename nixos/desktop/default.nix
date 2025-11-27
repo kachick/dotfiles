@@ -57,7 +57,7 @@
   hardware.uinput.enable = true;
 
   programs = {
-    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
+    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
 
     nautilus-open-any-terminal = {
@@ -299,7 +299,7 @@
   '';
 
   # Require add-on for built-in Japanese translations and multiple containers. It is a disadvantage than Chrome
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/programs/firefox.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
     languagePacks = [

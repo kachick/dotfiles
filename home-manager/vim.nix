@@ -8,7 +8,7 @@
   xdg.stateFile."vim/.keep".text =
     "Keep this directory because of home-manager and vim does not create the file if directory is missing";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/vim.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/vim.nix
   # https://wiki.nixos.org/wiki/Vim
   programs.vim = {
     # Enabling this may cause collisions. Do not add in packages list

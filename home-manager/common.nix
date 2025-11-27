@@ -21,7 +21,7 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -110,13 +110,13 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  # # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/nix.nix
+  # # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/nix.nix
   # # NOTE: Consider ensuring flake here: `echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf`
   # nix
 
   programs.lesspipe.enable = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/direnv.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
 
@@ -136,7 +136,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/zoxide.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
   };
@@ -167,7 +167,7 @@
   # Enabling to test `man -k`: https://github.com/NixOS/nixpkgs/pull/464253#issuecomment-3568042952
   programs.man.generateCaches = true;
 
-  # https://github.com/nix-community/home-manager/blob/master/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
 
@@ -181,7 +181,7 @@
   #   * Avoid directory setting `programs.starship.configPath = Nix Store Path`. It is prevented by home-manager validation by their use
   home.file."${config.programs.starship.configPath}".source = "${../config/starship/starship.toml}";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -195,7 +195,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 
@@ -225,7 +225,7 @@
     ];
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/yazi.nix
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";

@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix
   dconf = {
     enable = true;
     settings = {
