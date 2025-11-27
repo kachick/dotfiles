@@ -16,9 +16,7 @@
   networking.wireless.userControlled.enable = true;
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/xserver.nix
-  services.xserver = {
-    enable = true;
-
+  services = {
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/display-managers/gdm.nix
@@ -32,16 +30,20 @@
       extraGSettingsOverridePackages = [ pkgs.mutter ];
     };
 
-    # Configure keymap in X11
-    xkb = {
-      layout = "us,jp"; # multiple specifier is available
-      variant = "";
+    xserver = {
+      enable = true;
+
+      # Configure keymap in X11
+      xkb = {
+        layout = "us,jp"; # multiple specifier is available
+        variant = "";
+      };
+
+      # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
+      exportConfiguration = true;
+
+      excludePackages = [ pkgs.xterm ];
     };
-
-    # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
-    exportConfiguration = true;
-
-    excludePackages = [ pkgs.xterm ];
   };
 
   services.udev.packages = with pkgs; [
