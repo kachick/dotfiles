@@ -87,23 +87,24 @@
     gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
-  # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
+  # When using gnome-online-accounts, you also need gnome-keyring even though recommended to be uninstalled by gnupg.
+  # `pass-secret` families didn't work on GOA. See GH-1034 and GH-1036.
   # https://wiki.gnupg.org/GnomeKeyring
+  #
+  # I disables GOA since nixos-25.11(GNOME 49.1) because of GOA is broken on Nautilus: https://gitlab.gnome.org/GNOME/gnome-build-meta/-/issues/960
+  # Use rclone and the helpers for cloud storages
   services.gnome = {
     # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-    gnome-keyring.enable = true;
+    gnome-keyring.enable = lib.mkForce false;
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
-    # Disabling SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
+    # Disabling SSH_AUTH_SOCK by gnome-keyring. If you avoid GH-714 but need GH-1015, you also need this
     # See also https://github.com/NixOS/nixpkgs/pull/379731
-    gcr-ssh-agent.enable = true;
+    gcr-ssh-agent.enable = false;
 
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
-    gnome-online-accounts.enable = true;
+    gnome-online-accounts.enable = false;
   };
-  # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
-  # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. But just disabling security.pam.sshAgentAuth does not resolve it. It should be done in package build phase.
-  # The workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
