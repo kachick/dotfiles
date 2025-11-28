@@ -74,6 +74,18 @@
   # Bootloader.
   boot.loader.efi.canTouchEfiVariables = true;
 
+  system.nixos-init.enable = true; # bashlesss init. See https://github.com/NixOS/nixpkgs/issues/428908 for detail
+  system.etc.overlay.enable = true; # Required in `nixos-init`.
+  boot.initrd.systemd.enable = true; # Required in `nixos-init`.
+  services.userborn.enable = true; # Required in `nixos-init`.
+  # imports = [
+  #   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/profiles/bashless.nix
+  #   # Including perlless profile.
+  #   # Don't use this progile even if simply setting `system.nixos-init.enable = true` is not enough.
+  #   # Because this profile disables much of other modules by default. I introduce bashless only for initializer for now.
+  #   # (inputs.nixpkgs + "/nixos/modules/profiles/bashless.nix")
+  # ];
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
