@@ -146,7 +146,7 @@ in
 
   home = {
     packages = with pkgs; [
-      unstable.kanata # Don't require kanata-with-cmd for now
+      kanata # Don't require kanata-with-cmd for now
       patched.kanata-tray
     ];
 

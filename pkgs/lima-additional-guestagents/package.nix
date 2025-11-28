@@ -1,16 +1,12 @@
 {
   lib,
   stdenv,
-  pkgs,
-  # buildGoModule, # Keep same toolset as lima package
+  buildGoModule, # Keep same toolset as lima package
   callPackage,
   apple-sdk_15,
   findutils,
 }:
 
-let
-  inherit (pkgs.unstable) buildGoModule;
-in
 buildGoModule (finalAttrs: {
   pname = "lima-additional-guestagents";
 

@@ -9,10 +9,10 @@
   lib,
   stdenv,
   pkgs,
-  # buildGoModule,
+  buildGoModule,
   callPackage,
   installShellFiles,
-  # qemu,
+  qemu,
   darwin,
   makeWrapper,
   nix-update-script,
@@ -29,7 +29,6 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGoModule qemu;
   lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
 in
 buildGoModule (finalAttrs: {

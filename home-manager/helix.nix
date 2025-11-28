@@ -116,7 +116,6 @@ in
         };
 
         tsgo = {
-          # Available since https://github.com/NixOS/nixpkgs/pull/410902
           command = lib.getExe pkgs.unstable.typescript-go;
           args = [
             "--lsp"
@@ -257,7 +256,7 @@ in
       rust-analyzer
 
       # Looks like required to enable gopls
-      unstable.go_1_25
+      go_1_25
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
       gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
