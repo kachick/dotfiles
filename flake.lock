@@ -47,28 +47,7 @@
         "type": "github"
       }
     },
-    "home-manager-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-darwin"
-        ]
-      },
-      "locked": {
-        "lastModified": 1764177491,
-        "narHash": "sha256-dhX2abFWxeXab3Aad4Pg1xGtn9W84/qetNXfmYUwktw=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "2217780c39169a9c77915200137550c2ef0fa974",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "release-25.11",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "home-manager-linux": {
+    "home-manager": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -146,28 +125,13 @@
         "url": "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz"
       }
     },
-    "nixpkgs-darwin": {
-      "locked": {
-        "lastModified": 1764173365,
-        "narHash": "sha256-jIDXwnsSM+HujMS7LRZkSouvuESjvE1x8GMD0oqQxls=",
-        "rev": "2fecba9952096ba043c16b9ef40b92851ff3e5d9",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/25.11-darwin/nixpkgs-darwin-25.11pre902013.2fecba995209/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixpkgs-25.11-darwin/nixexprs.tar.xz"
-      }
-    },
     "root": {
       "inputs": {
         "edge-nixpkgs": "edge-nixpkgs",
-        "home-manager-darwin": "home-manager-darwin",
-        "home-manager-linux": "home-manager-linux",
+        "home-manager": "home-manager",
         "kanata-tray": "kanata-tray",
         "nixos-wsl": "nixos-wsl",
-        "nixpkgs": "nixpkgs",
-        "nixpkgs-darwin": "nixpkgs-darwin"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {

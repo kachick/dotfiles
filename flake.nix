@@ -23,16 +23,10 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
-    # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.11-darwin/nixexprs.tar.xz";
-    home-manager-linux = {
+    home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/main"; # TODO: Use release-25.11 after the branch off
@@ -55,9 +49,7 @@
       self,
       nixpkgs,
       edge-nixpkgs,
-      nixpkgs-darwin,
-      home-manager-linux,
-      home-manager-darwin,
+      home-manager,
       kanata-tray,
       ...
     }@inputs:
@@ -68,31 +60,20 @@
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
-          "x86_64-darwin"
         ] nixpkgs.lib.systems.flakeExposed
       );
-
-      mkNixpkgs =
-        system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
       overlays = import ./overlays {
         inherit edge-nixpkgs kanata-tray;
       };
 
-      mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
-
-      mkHomeManager =
-        system:
-        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then # ... correct code?
-          home-manager-darwin
-        else
-          home-manager-linux;
+      mkPkgs = system: import nixpkgs { inherit system overlays; };
 
       mkApp =
-        { system, pkg }:
+        { pkg }:
         {
           type = "app";
-          program = (mkNixpkgs system).lib.getExe pkg;
+          program = nixpkgs.lib.getExe pkg;
         };
     in
     {
@@ -176,8 +157,7 @@
 
       apps = forAllSystems (system: {
         home-manager = mkApp {
-          inherit system;
-          pkg = (mkHomeManager system).packages.${system}.home-manager;
+          pkg = home-manager.packages.${system}.home-manager;
         };
       });
 
@@ -201,7 +181,7 @@
           x86-Linux-pkgs = mkPkgs "x86_64-linux";
         in
         {
-          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
+          "kachick@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/kachick.nix
@@ -211,15 +191,7 @@
             ];
           };
 
-          "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = mkPkgs "x86_64-darwin";
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/darwin.nix
-            ];
-          };
-
-          "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration {
+          "kachick@lima" = home-manager.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/kachick.nix
@@ -229,7 +201,7 @@
             ];
           };
 
-          "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration {
+          "github-actions@ubuntu-24.04" = home-manager.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             # Prefer "kachick" over "common" only here.
             # Using values as much as possible as actual values to create a robust CI
@@ -243,21 +215,7 @@
             ];
           };
 
-          # macos-15-intel is the last x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
-          # However it is too slow, almost 3x slower than Linux and macos-15(arm64) runner. So you should enable binary cache if use this runner
-          # See https://github.com/kachick/dotfiles/issues/1198#issuecomment-3362312549 for detail
-          "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = mkPkgs "x86_64-darwin";
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/darwin.nix
-              { home.username = "runner"; }
-            ];
-          };
-
-          "user@container" = home-manager-linux.lib.homeManagerConfiguration {
+          "user@container" = home-manager.lib.homeManagerConfiguration {
             pkgs = x86-Linux-pkgs;
             modules = [
               ./home-manager/genericUser.nix

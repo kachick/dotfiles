@@ -186,8 +186,3 @@ tasks:
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
       - 'fmt'
-
-  ci-darwin:
-    desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
-    cmds:
-      - task --version

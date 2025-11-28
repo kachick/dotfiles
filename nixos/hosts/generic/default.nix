@@ -9,7 +9,7 @@
   networking.hostName = lib.mkDefault "generic";
 
   imports = [
-    inputs.home-manager-linux.nixosModules.home-manager
+    inputs.home-manager.nixosModules.home-manager
     ../../configuration.nix
     ../../hardware.nix
     ../../desktop

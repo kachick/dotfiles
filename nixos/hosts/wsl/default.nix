@@ -6,7 +6,7 @@
   imports = [
     ../../configuration.nix
     inputs.nixos-wsl.nixosModules.default
-    inputs.home-manager-linux.nixosModules.home-manager
+    inputs.home-manager.nixosModules.home-manager
   ];
 
   wsl.enable = true;

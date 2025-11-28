@@ -17,7 +17,6 @@
 # https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
 pkgs.writeText "posix_shared_functions.sh" (
   # Actually this file is not a bash script, but dash mode is unuseful. Expecting mostly bash code will work even in zsh...
-  # Ensure absolute Nix path even if coreutils for darwin
   # Use replaceVars to enable basic shellscript helpers such as shfmt, shellcheck and syntax highlighters
   builtins.readFile (
     replaceVars ./posix_shared_functions.bash {
