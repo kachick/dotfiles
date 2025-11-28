@@ -96,7 +96,10 @@
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
     # Disabling SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
     # See also https://github.com/NixOS/nixpkgs/pull/379731
-    gcr-ssh-agent.enable = false;
+    gcr-ssh-agent.enable = true;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
+    gnome-online-accounts.enable = true;
   };
   # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
   # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. But just disabling security.pam.sshAgentAuth does not resolve it. It should be done in package build phase.
