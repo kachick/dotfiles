@@ -89,7 +89,6 @@
 
   # How to get the installed font names
   # fontconfig by nix: `fc-list : family style`
-  # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
   # `tldr` rust client, tealdeer is another candidate.

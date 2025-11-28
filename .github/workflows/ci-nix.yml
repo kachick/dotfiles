@@ -61,7 +61,6 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - macos-15-intel
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -75,8 +74,6 @@ jobs:
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
         if: runner.os == 'Linux'
-      - run: task ci-darwin
-        if: runner.os == 'macOS'
 
   push-binary-cache:
     strategy:
@@ -84,18 +81,12 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          - macos-15-intel
         pname:
           - lima
           - lima-full
           - filen-rclone
           - kanata-tray
           - nerdctl
-        exclude:
-          - runner: macos-15-intel
-            pname: kanata-tray # I'm using Karabiner-Elements on macOS
-          - runner: macos-15-intel
-            pname: nerdctl # upstream also does not support macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

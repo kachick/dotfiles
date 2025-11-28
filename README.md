@@ -14,7 +14,7 @@ block-beta
     columns 3
 
     block:os:3
-        nixos(("❄")) macos(("🍎")) windows(("🪟"))
+        nixos(("❄")) windows(("🪟"))
     end
 
     block:vm:3
@@ -26,7 +26,6 @@ block-beta
     end
 
     nixos --> lima
-    macos --> lima
     windows --> wsl2
 
     vm --> container
@@ -181,16 +180,6 @@ systemd=true' | sudo tee /etc/wsl.conf
 ## Multi-booting on Windows and Linux
 
 Check [traps](./windows/Multi-booting.md)
-
-## macOS
-
-I basically [give up](https://github.com/kachick/dotfiles/issues/911) to maintain my old Intel Mac.\
-However I should keep the minimum environment for now.
-
-1. Make sure installing official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
-1. Apply home-manager with `kachick@macbook` for minimum packages.
-1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-1. Use [Lima](#lima) for development tasks.
 
 ## Lima
 

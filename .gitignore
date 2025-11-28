@@ -25,7 +25,7 @@ result-*
 # Windows
 *.exe
 
-# macOS
+# macOS - Keeping basic entries for now, even if dropped macOS support
 **/AppSupport
 .DS_Store
 

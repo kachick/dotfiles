@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   nativeBuildInputs = [
     jdk
     makeWrapper
-    copyDesktopItems # TODO: Consider darwin desktopItems
+    copyDesktopItems
   ];
 
   unpackPhase = ''

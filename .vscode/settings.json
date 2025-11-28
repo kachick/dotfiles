@@ -22,7 +22,7 @@
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
   "gopls": {
-    "build.buildFlags": ["-tags=linux,windows,darwin"]
+    "build.buildFlags": ["-tags=linux,windows"]
   },
   "shellformat.useEditorConfig": true,
   "shellcheck.ignorePatterns": {

@@ -20,8 +20,6 @@ in
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
 
-    # Update [darwin.nix](darwin.nix) if changed this section
-    #
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
     defaultCacheTtl = day * 7;
     # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
