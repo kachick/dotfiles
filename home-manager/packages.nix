@@ -17,7 +17,7 @@
   # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
   # Use same nixpkgs channel as same as fzf
   television # `tv`. Alt fzf
-  unstable.zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
+  zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
   # Used in anywhere
   coreutils
@@ -52,10 +52,7 @@
   # - https://github.com/kachick/dotfiles/issues/280
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
-  # TODO: Prefer stable channel since nixos-25.11
-  # Available since https://github.com/NixOS/nixpkgs/pull/409075
-  # Fixed in https://github.com/NixOS/nixpkgs/pull/449790 for x86_64-darwin
-  unstable.msedit # `edit`
+  msedit # `edit`
 
   micro
 
@@ -70,7 +67,7 @@
   hexyl # hex viewer
   fd # alt find
   dust # `dust`, alt du
-  unstable.bottom # `btm`, alt top
+  bottom # `btm`, alt top
   xh # alt HTTPie
   zellij
   sad
@@ -100,15 +97,9 @@
 
   fastfetch # active replacement of neofetch
 
-  # Require unstable version because
-  #   - Stable binary cache: https://github.com/reubeno/brush/pull/600
-  #   - $BRUSH_VERSION for gradual adoption: https://github.com/reubeno/brush/pull/531
+  # Use unstable version in my maintained packages
   unstable.brush
-
-  # Available since https://github.com/NixOS/nixpkgs/pull/423741
   unstable.somo
-
-  # Available since https://github.com/NixOS/nixpkgs/pull/410902
   unstable.typescript-go
 ])
 ++ (with pkgs.my; [

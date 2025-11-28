@@ -15,15 +15,13 @@
   # `wpa_cli`. I don't know what is the `wpa_gui`
   networking.wireless.userControlled.enable = true;
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/xserver.nix
-  services.xserver = {
-    enable = true;
-
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/xserver.nix
+  services = {
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/gdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/display-managers/gdm.nix
     displayManager.gdm.enable = true;
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/x11/display-managers/lightdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
@@ -32,16 +30,20 @@
       extraGSettingsOverridePackages = [ pkgs.mutter ];
     };
 
-    # Configure keymap in X11
-    xkb = {
-      layout = "us,jp"; # multiple specifier is available
-      variant = "";
+    xserver = {
+      enable = true;
+
+      # Configure keymap in X11
+      xkb = {
+        layout = "us,jp"; # multiple specifier is available
+        variant = "";
+      };
+
+      # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
+      exportConfiguration = true;
+
+      excludePackages = [ pkgs.xterm ];
     };
-
-    # Make it possible to use `localectl list-keymaps`. See https://github.com/NixOS/nixpkgs/issues/19629
-    exportConfiguration = true;
-
-    excludePackages = [ pkgs.xterm ];
   };
 
   services.udev.packages = with pkgs; [
@@ -57,7 +59,7 @@
   hardware.uinput.enable = true;
 
   programs = {
-    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix#L39-L42
+    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
 
     nautilus-open-any-terminal = {
@@ -66,7 +68,7 @@
     };
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/programs/wireshark.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/wireshark.nix
   # Wireshark is still the best tool for my use case, as other modern tools like Sniffnet didn't satisfy my needs.
   programs.wireshark = {
     enable = true;
@@ -85,14 +87,24 @@
     gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
-  # I need gnome-keyring to use gnome-online-accounts even though recommended to be uninstalled by gnupg. pass-secret families didn't work on goa. See GH-1034 and GH-1036
+  # When using gnome-online-accounts, you also need gnome-keyring even though recommended to be uninstalled by gnupg.
+  # `pass-secret` families didn't work on GOA. See GH-1034 and GH-1036.
   # https://wiki.gnupg.org/GnomeKeyring
   #
-  # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-  services.gnome.gnome-keyring.enable = true;
-  # On the otherhand, I should avoid deprecated gnome-keyring for ssh integrations even if it looks working.
-  # gnome-keyring enables pam.sshAgentAuth, and it sets the $SSH_AUTH_SOCK, and following modules skips to override this variable. But just disabling security.pam.sshAgentAuth does not resolve it. It should be done in package build phase.
-  # The workaround might be updated with https://github.com/NixOS/nixpkgs/issues/140824
+  # I disables GOA since nixos-25.11(GNOME 49.1) because of GOA is broken on Nautilus: https://gitlab.gnome.org/GNOME/gnome-build-meta/-/issues/960
+  # Use rclone and the helpers for cloud storages
+  services.gnome = {
+    # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
+    gnome-keyring.enable = lib.mkForce false;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
+    # Disabling SSH_AUTH_SOCK by gnome-keyring. If you avoid GH-714 but need GH-1015, you also need this
+    # See also https://github.com/NixOS/nixpkgs/pull/379731
+    gcr-ssh-agent.enable = false;
+
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
+    gnome-online-accounts.enable = false;
+  };
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput = {
@@ -134,10 +146,7 @@
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
 
-      # 1.2.0 is not be backported and I need it or lataer versions for following context
-      #   - Broken clipboard: https://github.com/ghostty-org/ghostty/issues/4800
-      #   - Broken msedit: https://github.com/ghostty-org/ghostty/issues/7951
-      unstable.ghostty
+      ghostty
 
       alacritty
 
@@ -193,18 +202,19 @@
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
 
+      # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
       unstable.signal-desktop
 
-      # Available since https://github.com/NixOS/nixpkgs/pull/409810
+      # Use latest as the package mainatiner
       unstable.bitsnpicas
 
+      # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
       unstable.mdns-scanner
 
       ## Unfree packages
 
-      # Don't use unstable channel since nixos-25.05. It frequently backported to stable channel
-      #   - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/applications/editors/vscode/vscode.nix
-      # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/pkgs/applications/editors/vscode/generic.nix#L207-L217
+      # Don't use unstable channel as possible. It frequently backported to stable channel
+      # ref: https://github.com/NixOS/nixpkgs/commits/nixos-25.11/pkgs/applications/editors/vscode/vscode.nix
       #
       # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
       # This restriction might be related to
@@ -233,7 +243,7 @@
       # Don't use chromium, it does not provide built-in cloud translations
       #
       # Don't use unstable channel. It frequently backported to stable channel
-      #  - https://github.com/NixOS/nixpkgs/commits/nixos-24.11/pkgs/by-name/go/google-chrome/package.nix
+      #  - https://github.com/NixOS/nixpkgs/commits/nixos-25.11/pkgs/by-name/go/google-chrome/package.nix
       #  - Actually unstable is/was broken. See GH-776
       #
       # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname
@@ -294,7 +304,7 @@
   '';
 
   # Require add-on for built-in Japanese translations and multiple containers. It is a disadvantage than Chrome
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/programs/firefox.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
     languagePacks = [
@@ -304,7 +314,7 @@
   };
 
   i18n = {
-    # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/i18n/input-method/ibus.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/i18n/input-method/ibus.nix
     inputMethod = {
       enable = true;
       # Don't use fcitx5. It always made systemd-coredump. See GH-1114
@@ -316,24 +326,22 @@
   };
 
   # Workaround for https://discourse.nixos.org/t/unsetting-gtk-im-module-environment-variable/49331/
-  # Replace with https://github.com/NixOS/nixpkgs/pull/384689 if merged to a stable channel. TODO: Update this or this config or comment since nixos-25.11
+  # TODO: Update this config or comment when updating to nixos-26.05 and https://github.com/NixOS/nixpkgs/pull/384689 was closed.
   environment.variables = {
     GTK_IM_MODULE = lib.mkForce ""; # Make better experience in FireFox even if QT_IM_MODULE cannot be updated
     QT_IM_MODULE = lib.mkForce ""; # FIXME: Did not work even through applied in /etc/set-environment, and cannot be override in home-manager systemd module.
   };
 
-  # TODO: Consider to use headscale
+  # Alternative candidates: headscale
   services.tailscale = {
     enable = true;
     extraUpFlags = [ "--ssh" ];
-    # Require https://github.com/NixOS/nixpkgs/pull/442245 to adjust home-manager's tailscale-systray module
-    package = pkgs.unstable.tailscale;
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/config/xdg/terminal-exec.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338
   #
   # NOTE:

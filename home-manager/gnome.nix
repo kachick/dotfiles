@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/dconf.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix
   dconf = {
     enable = true;
     settings = {
@@ -50,7 +50,7 @@
 
       # https://unix.stackexchange.com/questions/481142/launch-default-terminal-emulator-by-command
       "org/gnome/desktop/default-applications/terminal" = {
-        exec = pkgs.unstable.ghostty.meta.mainProgram;
+        exec = pkgs.ghostty.meta.mainProgram;
         # exec-arg="";
       };
 
@@ -185,7 +185,7 @@
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0" = {
         name = "Terminal";
         binding = "<Super>t";
-        command = pkgs.unstable.ghostty.meta.mainProgram;
+        command = pkgs.ghostty.meta.mainProgram;
       };
 
       "org/gnome/shell/extensions/clipboard-history" = {

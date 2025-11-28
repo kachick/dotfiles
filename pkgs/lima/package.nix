@@ -9,10 +9,10 @@
   lib,
   stdenv,
   pkgs,
-  # buildGoModule,
+  buildGoModule,
   callPackage,
   installShellFiles,
-  # qemu,
+  qemu,
   darwin,
   makeWrapper,
   nix-update-script,
@@ -20,7 +20,7 @@
   withAdditionalGuestAgents ? false,
   # lima-additional-guestagents,
   writableTmpDirAsHomeHook,
-  # versionCheckHook, # nixos-25.05 does not support versionCheckKeepEnvironment
+  versionCheckHook,
   testers,
   writeText,
   runCommand,
@@ -29,7 +29,6 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGoModule qemu versionCheckHook;
   lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
 in
 buildGoModule (finalAttrs: {

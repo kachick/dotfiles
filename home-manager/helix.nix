@@ -17,7 +17,7 @@ let
   };
 in
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/helix.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {
     # Enabling this may cause collisions. Do not add in packages list
@@ -102,9 +102,9 @@ in
           config.config = "${../typos.toml}";
         };
 
-        # https://github.com/mhersson/mpls/blob/v0.15.3/README.md?plain=1#L219-L240
+        # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241
         mpls = {
-          command = lib.getExe pkgs.unstable.mpls;
+          command = lib.getExe pkgs.mpls;
           args = [
             "--no-auto"
             "--code-style"
@@ -116,7 +116,6 @@ in
         };
 
         tsgo = {
-          # Available since https://github.com/NixOS/nixpkgs/pull/410902
           command = lib.getExe pkgs.unstable.typescript-go;
           args = [
             "--lsp"
@@ -257,7 +256,7 @@ in
       rust-analyzer
 
       # Looks like required to enable gopls
-      unstable.go_1_25
+      go_1_25
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
       gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133

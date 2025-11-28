@@ -22,20 +22,20 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.05/nixexprs.tar.xz";
+    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.05-darwin/nixexprs.tar.xz";
+    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.11-darwin/nixexprs.tar.xz";
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/release-25.05";
+      url = "github:nix-community/NixOS-WSL/main"; # TODO: Use release-25.11 after the branch off
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -64,7 +64,7 @@
     let
       inherit (self) outputs;
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.11/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
@@ -141,6 +141,9 @@
                   lychee
 
                   desktop-file-utils # `desktop-file-validate` as a linter
+                  kanata # Enable on devshell for using the --check as a linter
+
+                  go_1_25
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
@@ -148,10 +151,8 @@
                   gitleaks
                   typos
                   dprint
-                  go_1_25
                   zizmor
                   rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
-                  kanata # Enable on devshell for using the --check as a linter
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url

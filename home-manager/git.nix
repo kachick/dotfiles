@@ -26,32 +26,10 @@ in
 {
   home.file."repos/.keep".text = "Put repositories here";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/git.nix
-  # xdg will be used in home-manager: https://github.com/nix-community/home-manager/blob/7b8d43fbaf8450c30caaed5eab876897d0af891b/modules/programs/git.nix#L417-L418
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/git.nix
+  # `xdg.configFile` will be respected: https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/git.nix#L351-L352
   programs.git = {
     enable = true;
-
-    # userEmail = "<UPDATE_ME_IN_FLAKE>";
-    # userName = "<UPDATE_ME_IN_FLAKE>";
-
-    # `git config --get-regexp ^alias` will show current aliases
-    aliases = {
-      fixup = "commit --all --amend";
-      current = "symbolic-ref --short HEAD";
-      switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
-      upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-      refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
-      all = "!git refresh && git-delete-merged-branches";
-      lf = "!${lib.getExe pkgs.my.git-log-fzf}";
-      reset-main = ''
-        !git fetch origin && \
-          git switch main && \
-          git branch -m "backup-main-$(${lib.getExe pkgs.nushell} --commands 'random uuid')" && \
-          git checkout origin/main && \
-          git checkout -b main
-      '';
-      resolve-conflict = "!${lib.getExe pkgs.my.git-resolve-conflict}";
-    };
 
     # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
     # Candidates: https://github.com/git/git/tree/v2.44.1/templates
@@ -75,7 +53,8 @@ in
       sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
     };
 
-    extraConfig = {
+    # NOTE: `extraConfig` was renamed and restructured to `settings`: https://github.com/nix-community/home-manager/pull/8006
+    settings = {
       user = {
         # - Visibility
         #   - https://stackoverflow.com/questions/48065535/should-i-keep-gitconfigs-signingkey-private
@@ -165,13 +144,32 @@ in
       ghq = {
         root = "~/repos";
       };
+
+      # `git config --get-regexp ^alias` will show current aliases
+      alias = {
+        fixup = "commit --all --amend";
+        current = "symbolic-ref --short HEAD";
+        switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
+        upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
+        refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
+        all = "!git refresh && git-delete-merged-branches";
+        lf = "!${lib.getExe pkgs.my.git-log-fzf}";
+        reset-main = ''
+          !git fetch origin && \
+            git switch main && \
+            git branch -m "backup-main-$(${lib.getExe pkgs.nushell} --commands 'random uuid')" && \
+            git checkout origin/main && \
+            git checkout -b main
+        '';
+        resolve-conflict = "!${lib.getExe pkgs.my.git-resolve-conflict}";
+      };
     };
   };
 
   # If you encounter .config/gh/config.yml readonly permission errors, attempt after `rm -rf ~/.config/gh`
   # https://github.com/cli/cli/pull/5378#issuecomment-2252558180
   #
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/gh.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/gh.nix
   programs.gh = {
     enable = true;
 

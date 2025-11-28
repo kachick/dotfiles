@@ -52,7 +52,7 @@
         stern
         k9s
 
-        unstable.tailscale # Frequently backported to stable channel. However it require latest to use tailscale-systray
+        tailscale # Frequently backported to stable channel
 
         # Enable LSP on global.
         #   - nixd is useually required in all platforms even in WSL2
@@ -105,7 +105,7 @@
 
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
   # Check your `~/.config/user-dirs.dirs` if you faced any trouble
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg-user-dirs.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg-user-dirs.nix
   xdg = {
     userDirs = {
       enable = true;

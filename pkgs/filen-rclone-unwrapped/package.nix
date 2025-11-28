@@ -8,9 +8,7 @@
 # Even if changed the priority, it makes confusing.
 # And I don't prefer filen-rclone for other purpose for the stability.
 # Prefer official rclone for non filen providers
-#
-# Needs nixos-25.11 or latter to fix broken build on x86_64-darwin: https://github.com/NixOS/nixpkgs/issues/437470
-pkgs.unstable.rclone.overrideAttrs (
+pkgs.rclone.overrideAttrs (
   finalAttrs: previousAttrs: {
     pname = "filen-rclone-unwrapped";
     # MUST NOT use 1.70.0-filen.11 or older

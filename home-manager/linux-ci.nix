@@ -38,6 +38,7 @@
       #   # I don't know why this overriding will not work :<
       #   pkgs.gnome-keyring
       # ]
+      ++ [ pkgs.gnome-shell ] # See overlays/default.nix
       ++ (with pkgs.ibus-engines; [ mozc ]);
   };
 }

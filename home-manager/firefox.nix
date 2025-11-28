@@ -1,6 +1,6 @@
 { ... }:
 {
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/firefox.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/firefox
   programs.firefox = {
     enable = true;
     # In firefox package, use null instead of `pkgs.emptyDirectory`

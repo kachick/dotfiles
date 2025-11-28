@@ -31,15 +31,14 @@ in
 
   # https://wiki.nixos.org/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zsh.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zsh
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;
 
-    # BE CAREFUL WHEN REFACTOR: Why can't I use let ~ in or rec for this dotDir and ${config.xdg.configHome}?
-    # zsh manager always append $HOME as the prefix, so you can NOT write as `"${config.xdg.configHome}/zsh"`
-    # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L25C3-L25C10
-    dotDir = ".config/zsh";
+    # 1. We can use absolute path since https://github.com/nix-community/home-manager/pull/6089
+    # 2. We should use absolute path since https://github.com/nix-community/home-manager/pull/7561
+    dotDir = "${config.xdg.configHome}/zsh";
 
     localVariables = {
       inherit ZCOMPDUMP_CACHE_DIR ZCOMPDUMP_CACHE_PATH;

@@ -13,23 +13,14 @@
 
   (final: _prev: {
     unstable = import edge-nixpkgs {
-      inherit (final) system config;
+      inherit (final) config;
+      inherit (final.stdenvNoCC.hostPlatform) system;
     };
   })
 
   # Patched and override existing name because of it is not configurable
   (final: prev: {
-    # TODO: Use `services.gnome.gcr-ssh-agent.enable = false` since nixos-25.11
-    #
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/gn/gnome-keyring/package.nix
-    # Backport https://github.com/NixOS/nixpkgs/pull/379731 to disable SSH_AUTH_SOCK by gnome-keyring. This is required because of I should avoid GH-714 but realize GH-1015
-    #
-    # And it should be override the package it self, the module is not configurable for the package. https://github.com/NixOS/nixpkgs/blob/nixos-24.11/nixos/modules/services/desktops/gnome/gnome-keyring.nix
-    #
-    # NOTE: This approcah might be wrong. See https://github.com/kachick/dotfiles/pull/1235/files#r2261225864 for detail
-    gnome-keyring = prev.unstable.gnome-keyring;
-
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/mo/mozc/package.nix
     # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
     # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
     mozc = prev.mozc.overrideAttrs (
@@ -43,6 +34,19 @@
         ];
       }
     );
+
+    # TODO: Drop this and creating binary cache workarounds once https://github.com/NixOS/nixpkgs/pull/465616 is [available](https://nixpkgs-tracker.ocfox.me/?pr=465616)
+    # https://github.com/NixOS/nixpkgs/issues/465014
+    # https://github.com/NixOS/nixpkgs/pull/465639
+    gnome-shell = prev.gnome-shell.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        version = "49.2";
+        src = prev.fetchurl {
+          url = "mirror://gnome/sources/gnome-shell/${prev.lib.versions.major finalAttrs.version}/gnome-shell-${finalAttrs.version}.tar.xz";
+          hash = "sha256-0TuFXY35nev37M+BC24FT9sK64fvixMZGKbkyRl6Asc=";
+        };
+      }
+    );
   })
 
   (final: prev: {
@@ -50,7 +54,7 @@
     # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
     patched = {
       # "patched" might be inaccurate wording for this package. However this place is the better for my use. And not a lie. The channel might be different with upstream
-      inherit (kanata-tray.packages.${final.system}) kanata-tray;
+      inherit (kanata-tray.packages.${final.stdenvNoCC.hostPlatform.system}) kanata-tray;
 
       # pname = prev.unstable.pname.overrideAttrs (
       #   finalAttrs: previousAttrs: {

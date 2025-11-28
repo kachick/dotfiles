@@ -14,7 +14,7 @@
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/readline.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/readline.nix
   programs.readline = {
     enable = true;
     variables = {
@@ -36,7 +36,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bash.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/bash.nix
   programs.bash = {
     enable = true;
 
@@ -94,7 +94,7 @@
     ];
 
     # For interactive shells. In .bashrc and after early return
-    # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bash.nix#L221-L222
+    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/bash.nix#L271
     # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc
     #
     # Extracting because embedded here requires complex escape with nix multiline.

@@ -19,7 +19,7 @@
       # go generally put on .config/go/telemetry, however using the cmd is the recommended way
       # ref: https://go.dev/doc/telemetry
       disableGoTelemetry = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-        ${lib.getExe pkgs.unstable.go_1_25} telemetry off
+        ${lib.getExe pkgs.go_1_25} telemetry off
       '';
 
       # GH-1228: Disable podman-desktop Telemetry.

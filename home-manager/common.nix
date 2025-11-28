@@ -21,7 +21,7 @@
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/misc/xdg.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg.nix
   xdg.enable = true;
 
   home = {
@@ -34,9 +34,9 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     #
-    # TODO: Bump to 25.11 *carefully* once both NixOS and Home Manager 25.11 are out.
+    # TODO: Bump to 26.05 *carefully* once both NixOS and Home Manager 26.05 are out.
     #       This setting is similar to but not identical in purpose to NixOS’s `system.stateVersion`.
-    stateVersion = "25.05";
+    stateVersion = "25.11";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
@@ -57,10 +57,6 @@
       LESSCHARSET = "utf-8";
 
       STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
-
-      # NOTE: Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
-      # Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
-      STARSHIP_CONFIG = "${../config/starship/starship.toml}";
 
       # Workaround to detect tailscale kyes
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
@@ -114,13 +110,13 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  # # https://github.com/nix-community/home-manager/blob/release-25.05/modules/misc/nix.nix
+  # # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/nix.nix
   # # NOTE: Consider ensuring flake here: `echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf`
   # nix
 
   programs.lesspipe.enable = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/direnv.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
 
@@ -140,13 +136,9 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/zoxide.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
-    # Using unstable to apply https://github.com/ajeetdsouza/zoxide/pull/1048. Prefer stable since nixos-25.11
-    package = pkgs.unstable.zoxide;
-
-    # Use same nixpkgs channel as same as fzf since nixos-25.11
   };
 
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
@@ -175,12 +167,21 @@
   # Enabling to test `man -k`: https://github.com/NixOS/nixpkgs/pull/464253#issuecomment-3568042952
   programs.man.generateCaches = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/starship.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/starship.nix
   programs.starship = {
     enable = true;
+
+    # Don't use `settings` option to prefer my raw toml. To consider sharing it in Windows, keeping original format is best way for me.
+    # Also empty `settings` avoid writing the config. See https://github.com/nix-community/home-manager/blob/381f4f8a3a5f773cb80d2b7eb8f8d733b8861434/modules/programs/starship.nix#L102C18-L102C28
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/bat.nix
+  # NOTE:
+  #   * Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
+  #     Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
+  #   * Avoid directory setting `programs.starship.configPath = Nix Store Path`. It is prevented by home-manager validation by their use
+  home.file."${config.programs.starship.configPath}".source = "${../config/starship/starship.toml}";
+
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/bat.nix
   programs.bat = {
     enable = true;
 
@@ -194,7 +195,7 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-24.11/modules/programs/zellij.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zellij.nix
   programs.zellij = {
     enable = true;
 
@@ -224,7 +225,7 @@
     ];
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-25.05/modules/programs/yazi.nix
+  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/yazi.nix
   programs.yazi = {
     enable = true;
     shellWrapperName = "y";
