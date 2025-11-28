@@ -13,14 +13,14 @@
     (import ./locale.nix { })
   ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/config/nix.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/nix.nix
   nix.settings = {
     experimental-features = [
       "nix-command"
       "flakes"
     ];
 
-    # `trusted-users = root` by default on NixOS 25.05
+    # `trusted-users = root` by default on NixOS 25.11
     # Setting another helps us to use binary cache substituters in flake.nix
     # Only using `--accept-flake-config` is not enough
     trusted-users = [
@@ -160,7 +160,7 @@
   );
 
   ## Avahi (Classic, supported by CUPS)
-  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/avahi-daemon.nix
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/avahi-daemon.nix
   # - https://wiki.archlinux.org/title/Avahi
   #
   # If you faced to any troubles around this context, Also see following issues
@@ -186,7 +186,7 @@
 
   ## systemd-resolved (Modern, not supported by CUPS)
   # - Check the behavior with `resolvectl status`
-  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/system/boot/resolved.nix
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
   # Disabled by default. But ensures to disable MulticastDNS
   services.resolved = {
@@ -203,7 +203,7 @@
   # Avahi module has openFirewall, but resolved module does not have it
   networking.firewall.allowedUDPPorts = [ 5353 ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/networkmanager.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/networkmanager.nix
   networking.networkmanager = {
     enable = true;
 
@@ -220,8 +220,8 @@
 
   # List services that you want to enable:
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/services/networking/ssh/sshd.nix
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/doc/manual/configuration/ssh.section.md
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/ssh/sshd.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/doc/manual/configuration/ssh.section.md
   services.openssh = {
     enable = true;
     settings = {
@@ -240,8 +240,9 @@
 
   # programs.nix-ld.enable = false;
 
-  # Don't use podman NixOS module. It works under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
-  # https://github.com/NixOS/nixpkgs/blob/24.05/nixos/modules/virtualisation/containers.nix
+  # Didn't use podman NixOS module on nixos-24.05. It worked under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
+  # I may reconsider to use the latest NixOS module now, however current home-manager based setup seems working for me. It is also useful on WSL2 and Lima
+  # https://github.com/NixOS/nixpkgs/blob/25.11/nixos/modules/virtualisation/containers.nix
   virtualisation.containers = {
     enable = true;
     policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
@@ -252,6 +253,6 @@
     enable = true;
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/security/sudo-rs.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
 }

@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/nixos/modules/config/console.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/console.nix
   # https://wiki.archlinux.org/title/Linux_console
   console = {
     earlySetup = true;
@@ -18,7 +18,7 @@
     #
     # Candidates
     #   - spleen
-    #   - Terminus # The bold variant is used by nixos-25.05 default
+    #   - Terminus # The bold variant is used by nixos-25.11 default
     font = "${pkgs.terminus_font}/share/consolefonts/ter-u32n.psf.gz";
 
     # https://github.com/NixOS/nixpkgs/pull/371226 is now available only on unstable
@@ -30,7 +30,7 @@
     # The IDs are not same as X11 definitions. So check the model section in following path.
     #
     # ```bash
-    # bat "$(nix build --no-link --print-out-paths github:NixOS/nixpkgs/nixos-25.05#xkeyboard_config)/etc/X11/xkb/rules/base.lst"
+    # bat "$(nix build --no-link --print-out-paths github:NixOS/nixpkgs/nixos-25.11#xkeyboard_config)/etc/X11/xkb/rules/base.lst"
     # ```
     #
     # JIS should be "jp106", not "jp"

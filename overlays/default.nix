@@ -20,7 +20,7 @@
 
   # Patched and override existing name because of it is not configurable
   (final: prev: {
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.05/pkgs/by-name/mo/mozc/package.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/mo/mozc/package.nix
     # The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
     # However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
     mozc = prev.mozc.overrideAttrs (

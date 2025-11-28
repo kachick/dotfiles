@@ -64,7 +64,7 @@
     let
       inherit (self) outputs;
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/release-24.11/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
       forAllSystems = nixpkgs.lib.genAttrs (
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
