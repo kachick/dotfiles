@@ -35,7 +35,7 @@
       }
     );
 
-    # TODO: Drop this and creating binary cacge workarounds once https://github.com/NixOS/nixpkgs/pull/465616 is [available](https://nixpkgs-tracker.ocfox.me/?pr=465616)
+    # TODO: Drop this and creating binary cache workarounds once https://github.com/NixOS/nixpkgs/pull/465616 is [available](https://nixpkgs-tracker.ocfox.me/?pr=465616)
     # https://github.com/NixOS/nixpkgs/issues/465014
     # https://github.com/NixOS/nixpkgs/pull/465639
     gnome-shell = prev.gnome-shell.overrideAttrs (
