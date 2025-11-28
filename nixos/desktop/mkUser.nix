@@ -4,7 +4,6 @@ attrs:
 
 let
   # Don't set "wheel" by default. Most distributions set sudoable.
-  # TODO: Ensure adding WiFi supported Group
   defaultGroups = [
     "networkmanager"
     "wheel" # Required by Nix trusted-users and WiFi.
