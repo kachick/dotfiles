@@ -177,9 +177,7 @@
       gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
       dconf-editor
 
-      # Using unstable to avoid EOL electron
-      # - https://github.com/kachick/dotfiles/pull/1219#issuecomment-3040550716
-      # - https://github.com/NixOS/nixpkgs/pull/407982#issuecomment-3039508105
+      # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
       unstable.podman-desktop
 
       # Install one of PDF reader to enable PDF thumbnails on nautilus.
