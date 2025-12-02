@@ -87,21 +87,25 @@
     gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
   ];
 
-  # When using gnome-online-accounts, you also need gnome-keyring even though recommended to be uninstalled by gnupg.
-  # `pass-secret` families didn't work on GOA. See GH-1034 and GH-1036.
-  # https://wiki.gnupg.org/GnomeKeyring
-  #
-  # I disables GOA since nixos-25.11(GNOME 49.1) because of GOA is broken on Nautilus: https://gitlab.gnome.org/GNOME/gnome-build-meta/-/issues/960
-  # Use rclone and the helpers for cloud storages
   services.gnome = {
-    # Require mkforce if you want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
-    gnome-keyring.enable = lib.mkForce false;
+    # We need gnome-keyring even though recommended to be uninstalled by gnupg.
+    # - As far as I see, It is used by following applications: gnome-online-accounts, vscode, signal-desktop, google-chrome.
+    # - `pass-secret` families didn't work on GOA. See GH-1034 and GH-1036.
+    #
+    # https://wiki.gnupg.org/GnomeKeyring
+    #
+    # Require mkforce if you absolutely want to disable. See https://discourse.nixos.org/t/gpg-smartcard-for-ssh/33689/3
+    gnome-keyring.enable = true;
 
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
     # Disabling SSH_AUTH_SOCK by gnome-keyring. If you avoid GH-714 but need GH-1015, you also need this
     # See also https://github.com/NixOS/nixpkgs/pull/379731
+    #
+    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
     gcr-ssh-agent.enable = false;
 
+    # I disables GOA since nixos-25.11(GNOME 49.1) because of GOA is broken on Nautilus: https://gitlab.gnome.org/GNOME/gnome-build-meta/-/issues/960
+    # Use rclone and the helpers for cloud storages
+    #
     # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
     gnome-online-accounts.enable = false;
   };
