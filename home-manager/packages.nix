@@ -92,9 +92,6 @@
   # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
-  # `tldr` rust client, tealdeer is another candidate.
-  tlrc
-
   fastfetch # active replacement of neofetch
 
   # Use unstable version in my maintained packages

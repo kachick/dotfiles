@@ -88,7 +88,6 @@
       "rm"
       "rmdir"
       "git show"
-      "tldr"
       "export"
       "exit"
     ];

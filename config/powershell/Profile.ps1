@@ -10,7 +10,6 @@ Set-PSReadlineOption -AddToHistoryHandler {
     param ($command)
     switch -regex ($command) {
         "^[a-z]$" {return $false}
-        "tldr" {return $false}
         "exit" {return $false}
         "^function" {return $false}
     }
