@@ -7,7 +7,7 @@ pkgs.writeShellApplication rec {
   #
   # After several candidates, I think this combination is the best for now.
   runtimeInputs = with pkgs; [
-    chawan
+    unstable.chawan
     comrak
   ];
   meta.description = "RENder MARkdown in terminal. See GH-740";
