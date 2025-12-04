@@ -15,6 +15,8 @@
 
   virtualisation.spiceUSBRedirection.enable = true;
 
+  virtualisation.vmware.host.enable = true;
+
   environment.systemPackages = with pkgs; [
     # Ensure existing qemu-img with lima for use of systemd.
     # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
