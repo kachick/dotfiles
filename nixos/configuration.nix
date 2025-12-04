@@ -91,7 +91,7 @@
 
   systemd = {
     # https://github.com/NixOS/nixpkgs/blob/8e5e5a6add04c7f1e38e76f59ada6732947f1e55/nixos/doc/manual/release-notes/rl-2411.section.md?plain=1#L69-L76
-    enableStrictShellChecks = true;
+    enableStrictShellChecks = false; # vmware module have unclean code about for that: https://github.com/NixOS/nixpkgs/blob/d4bcbdebac0a89785a19af1ed3c8827e54934421/nixos/modules/virtualisation/vmware-host.nix#L15
   };
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
