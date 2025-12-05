@@ -1,8 +1,5 @@
 {
-  lib,
-  stdenv,
   buildGoModule, # Keep same toolset as lima package
-  apple-sdk_15,
   findutils,
   pkgs,
 }:
@@ -15,28 +12,17 @@ buildGoModule (finalAttrs: {
 
   inherit (lima) version src vendorHash;
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
-    apple-sdk_15
-  ];
-
   # Basically needless because forcing by upstream: https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
   # However clarifying the value to avoid confusion and future regressions by changes likely: https://github.com/NixOS/nixpkgs/pull/458867
   env.CGO_ENABLED = "0";
 
-  buildPhase =
-    let
-      makeFlags = [
-        "VERSION=v${finalAttrs.version}"
-        "CC=${stdenv.cc.targetPrefix}cc"
-      ];
-    in
-    ''
-      runHook preBuild
+  buildPhase = ''
+    runHook preBuild
 
-      make ${lib.escapeShellArgs makeFlags} additional-guestagents
+    make additional-guestagents
 
-      runHook postBuild
-    '';
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
