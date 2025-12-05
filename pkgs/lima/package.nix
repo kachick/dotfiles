@@ -17,20 +17,14 @@
   makeWrapper,
   nix-update-script,
   apple-sdk_15,
-  withAdditionalGuestAgents ? false,
-  # lima-additional-guestagents,
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
   writeText,
   runCommand,
-  # lima,
   jq,
 }:
 
-let
-  lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
-in
 buildGoModule (finalAttrs: {
   pname = "lima";
 
@@ -56,6 +50,12 @@ buildGoModule (finalAttrs: {
   # It attaches entitlements with codesign and strip removes those,
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
+
+  # Setting env.CGO_ENABLED does not have meangs at here, brcause is should be enforced at upstream.
+  # limactl: CGO_ENABLED=1
+  # guest agents(include native-agent): CGO_ENABLED=0
+  # It is important for this package. See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
+  # TODO: Write test for ensuring guest agents linked types
 
   buildPhase =
     let
@@ -89,10 +89,6 @@ buildGoModule (finalAttrs: {
     runHook postInstall
   '';
 
-  postInstall = lib.optionalString withAdditionalGuestAgents ''
-    cp -rs '${lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
-  '';
-
   nativeInstallCheckInputs = [
     # Workaround for: "panic: $HOME is not defined" at https://github.com/lima-vm/lima/blob/cb99e9f8d01ebb82d000c7912fcadcd87ec13ad5/pkg/limayaml/defaults.go#L53
     writableTmpDirAsHomeHook
@@ -111,13 +107,13 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  # How to run in these flake repository...?
   passthru = {
     tests =
       let
         arch = stdenv.hostPlatform.parsed.cpu.name;
       in
       {
+        # `nix build .#lima.passthru.tests.minimalAgent`
         minimalAgent = testers.testEqualContents {
           assertion = "limactl only detects host's architecture guest agent by default";
           expected = writeText "expected" ''
@@ -136,27 +132,6 @@ buildGoModule (finalAttrs: {
               ''
                 limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
                 limactl info | jq '.guestAgents | length' >>"$out"
-              '';
-        };
-
-        additionalAgents = testers.testEqualContents {
-          assertion = "limactl also detects additional guest agents if specified";
-          expected = writeText "expected" ''
-            true
-            true
-          '';
-          actual =
-            runCommand "actual"
-              {
-                nativeBuildInputs = [
-                  writableTmpDirAsHomeHook
-                  pkgs.my.lima-full
-                  jq
-                ];
-              }
-              ''
-                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
-                limactl info | jq '.guestAgents | length >= 2' >>"$out"
               '';
         };
       };

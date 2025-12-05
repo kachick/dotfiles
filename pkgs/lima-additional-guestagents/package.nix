@@ -5,8 +5,12 @@
   callPackage,
   apple-sdk_15,
   findutils,
+  pkgs,
 }:
 
+let
+  inherit (pkgs.my) lima;
+in
 buildGoModule (finalAttrs: {
   pname = "lima-additional-guestagents";
 
@@ -17,6 +21,10 @@ buildGoModule (finalAttrs: {
   buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
     apple-sdk_15
   ];
+
+  # Basically needless because forcing by upstream: https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
+  # However clarifying the value to avoid confusion and future regressions by changes likely: https://github.com/NixOS/nixpkgs/pull/458867
+  env.CGO_ENABLED = "0";
 
   buildPhase =
     let
@@ -56,8 +64,7 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  meta = {
-    homepage = "https://github.com/lima-vm/lima";
+  meta = lima.meta // {
     description = "Lima Guest Agents for emulating non-native architectures";
     longDescription = ''
       This package should only be used when your guest's architecture differs from the host's.
@@ -65,10 +72,5 @@ buildGoModule (finalAttrs: {
       To enable its functionality in `limactl`, use `lima-full` package.
       Typically, you won't need to directly add this package to your *.nix files.
     '';
-    changelog = "https://github.com/lima-vm/lima/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [
-      kachick
-    ];
   };
 })
