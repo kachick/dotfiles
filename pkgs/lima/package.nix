@@ -16,7 +16,7 @@
   darwin,
   makeWrapper,
   nix-update-script,
-  apple-sdk_15,
+  apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
