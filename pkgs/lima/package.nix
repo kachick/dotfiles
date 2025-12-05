@@ -51,7 +51,7 @@ buildGoModule (finalAttrs: {
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
 
-  # Setting env.CGO_ENABLED does not have meangs at here, brcause is should be enforced at upstream.
+  # Setting env.CGO_ENABLED does not have meanings at here, because is should be enforced at upstream.
   # limactl: CGO_ENABLED=1
   # guest agents(include native-agent): CGO_ENABLED=0
   # It is important for this package. See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
