@@ -2,7 +2,6 @@
   lib,
   stdenv,
   buildGoModule, # Keep same toolset as lima package
-  callPackage,
   apple-sdk_15,
   findutils,
   pkgs,
@@ -14,9 +13,7 @@ in
 buildGoModule (finalAttrs: {
   pname = "lima-additional-guestagents";
 
-  # Because agents must use the same version as lima, lima's updateScript should also update the shared src.
-  # nixpkgs-update: no auto update
-  inherit (callPackage ../lima/source.nix { }) version src vendorHash; # Loading external package files is progibit in nixpkgs. However it is okay in my dotfiles :)
+  inherit (lima) version src vendorHash;
 
   buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
     apple-sdk_15
