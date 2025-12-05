@@ -12,8 +12,10 @@ buildGoModule (finalAttrs: {
 
   inherit (lima) version src vendorHash;
 
-  # Basically needless because forcing by upstream: https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
-  # However clarifying the value to avoid confusion and future regressions by changes likely: https://github.com/NixOS/nixpkgs/pull/458867
+  # This is mainly not needed because the upstream repository forces the value:
+  #   - https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
+  # However, clarifying the value prevents confusion and specifically guards against regressions, such as the one that previously occurred:
+  #   - https://github.com/NixOS/nixpkgs/pull/458867
   env.CGO_ENABLED = "0";
 
   buildPhase = ''

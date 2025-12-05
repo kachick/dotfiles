@@ -65,9 +65,9 @@ buildGoModule (finalAttrs: {
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
 
-  # Setting env.CGO_ENABLED does not have meanings at here, because is is enforced at upstream.
-  # limactl: CGO_ENABLED=1
-  # guest agents(include native-agent): CGO_ENABLED=0
+  # Setting env.CGO_ENABLED does not work, because the upstream forces the value.
+  #   - limactl: CGO_ENABLED=1
+  #   - guest agents(include native-agent): CGO_ENABLED=0
   # See also passthru.tests
 
   buildPhase =
@@ -151,7 +151,7 @@ buildGoModule (finalAttrs: {
         # Regression test for https://github.com/NixOS/nixpkgs/issues/456953.
         # See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
         staticallyLinkedAgent =
-          runCommand "${finalAttrs.pname}-guestagent-test"
+          runCommand "${finalAttrs.pname}-guestagent-linked-test"
             {
               nativeBuildInputs = [
                 lima
