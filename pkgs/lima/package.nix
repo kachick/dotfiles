@@ -23,8 +23,14 @@
   writeText,
   runCommand,
   jq,
+  _7zz,
+  file,
+  gnugrep,
 }:
 
+let
+  inherit (pkgs.my) lima;
+in
 buildGoModule (finalAttrs: {
   pname = "lima";
 
@@ -51,11 +57,10 @@ buildGoModule (finalAttrs: {
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
 
-  # Setting env.CGO_ENABLED does not have meanings at here, because is should be enforced at upstream.
+  # Setting env.CGO_ENABLED does not have meanings at here, because is is enforced at upstream.
   # limactl: CGO_ENABLED=1
   # guest agents(include native-agent): CGO_ENABLED=0
-  # It is important for this package. See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
-  # TODO: Write test for ensuring guest agents linked types
+  # See also passthru.tests
 
   buildPhase =
     let
@@ -125,7 +130,7 @@ buildGoModule (finalAttrs: {
               {
                 nativeBuildInputs = [
                   writableTmpDirAsHomeHook
-                  pkgs.my.lima
+                  lima
                   jq
                 ];
               }
@@ -134,6 +139,25 @@ buildGoModule (finalAttrs: {
                 limactl info | jq '.guestAgents | length' >>"$out"
               '';
         };
+
+        # Regression test for https://github.com/NixOS/nixpkgs/issues/456953.
+        # See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
+        staticallyLinkedAgent =
+          runCommand "${finalAttrs.pname}-guestagent-test"
+            {
+              nativeBuildInputs = [
+                lima
+                _7zz
+                # glibc
+                file # Easier than `lld(glibc)` or `readelf`
+                gnugrep
+              ];
+            }
+            ''
+              7zz x "${lima}/share/lima/lima-guestagent.Linux-${arch}.gz"
+              file './lima-guestagent.Linux-${arch}' >"$out"
+              grep -P 'ELF.+statically linked' "$out"
+            '';
       };
 
     updateScript = nix-update-script {
