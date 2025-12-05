@@ -78,7 +78,7 @@ jobs:
       - run: task ci-darwin
         if: runner.os == 'macOS'
 
-  push-binary-cache:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -86,8 +86,6 @@ jobs:
           - ubuntu-24.04
           - macos-15-intel
         pname:
-          - lima
-          - lima-full
           - filen-rclone
           - kanata-tray
           - nerdctl
@@ -106,3 +104,26 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - run: 'nix build .#${{ matrix.pname }}'
+
+  build-lima:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - macos-15-intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - run: 'nix build .#lima-full'
+      - run: |
+          nix build .#lima.passthru.tests.minimalAgent
+          nix build .#lima.passthru.tests.staticallyLinkedAgent
+          nix build .#lima-full.passthru.tests.additionalAgents

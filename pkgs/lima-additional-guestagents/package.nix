@@ -1,37 +1,30 @@
 {
-  lib,
-  stdenv,
   buildGoModule, # Keep same toolset as lima package
-  callPackage,
-  apple-sdk_15,
   findutils,
+  pkgs,
 }:
 
+let
+  inherit (pkgs.my) lima;
+in
 buildGoModule (finalAttrs: {
   pname = "lima-additional-guestagents";
 
-  # Because agents must use the same version as lima, lima's updateScript should also update the shared src.
-  # nixpkgs-update: no auto update
-  inherit (callPackage ../lima/source.nix { }) version src vendorHash; # Loading external package files is progibit in nixpkgs. However it is okay in my dotfiles :)
+  inherit (lima) version src vendorHash;
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [
-    apple-sdk_15
-  ];
+  # This is mainly not needed because the upstream repository forces the value:
+  #   - https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
+  # However, clarifying the value prevents confusion and specifically guards against regressions, such as the one that previously occurred:
+  #   - https://github.com/NixOS/nixpkgs/pull/458867
+  env.CGO_ENABLED = "0";
 
-  buildPhase =
-    let
-      makeFlags = [
-        "VERSION=v${finalAttrs.version}"
-        "CC=${stdenv.cc.targetPrefix}cc"
-      ];
-    in
-    ''
-      runHook preBuild
+  buildPhase = ''
+    runHook preBuild
 
-      make ${lib.escapeShellArgs makeFlags} additional-guestagents
+    make additional-guestagents
 
-      runHook postBuild
-    '';
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
@@ -56,8 +49,7 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  meta = {
-    homepage = "https://github.com/lima-vm/lima";
+  meta = lima.meta // {
     description = "Lima Guest Agents for emulating non-native architectures";
     longDescription = ''
       This package should only be used when your guest's architecture differs from the host's.
@@ -65,10 +57,5 @@ buildGoModule (finalAttrs: {
       To enable its functionality in `limactl`, use `lima-full` package.
       Typically, you won't need to directly add this package to your *.nix files.
     '';
-    changelog = "https://github.com/lima-vm/lima/releases/tag/v${finalAttrs.version}";
-    license = lib.licenses.asl20;
-    maintainers = with lib.maintainers; [
-      kachick
-    ];
   };
 })

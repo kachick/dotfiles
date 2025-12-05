@@ -10,31 +10,39 @@
   stdenv,
   pkgs,
   buildGoModule,
-  callPackage,
+  fetchFromGitHub,
   installShellFiles,
   qemu,
   darwin,
   makeWrapper,
   nix-update-script,
-  apple-sdk_15,
-  withAdditionalGuestAgents ? false,
-  # lima-additional-guestagents,
+  apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
   writeText,
   runCommand,
-  # lima,
   jq,
+  _7zz,
+  file,
+  gnugrep,
 }:
 
 let
-  lima-additional-guestagents = pkgs.my.lima-additional-guestagents;
+  inherit (pkgs.my) lima;
 in
 buildGoModule (finalAttrs: {
   pname = "lima";
+  version = "2.0.2";
 
-  inherit (callPackage ./source.nix { }) version src vendorHash;
+  src = fetchFromGitHub {
+    owner = "lima-vm";
+    repo = "lima";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-MWNvHHyf2qZxt83D22tTKR6EXAeAgcoXE1YjXHc9SwQ=";
+  };
+
+  vendorHash = "sha256-fCqAf0buqA6GajP7SIsVPyKM3jY2n9CbS5hpa3dsWbc=";
 
   nativeBuildInputs = [
     makeWrapper
@@ -56,6 +64,11 @@ buildGoModule (finalAttrs: {
   # It attaches entitlements with codesign and strip removes those,
   # voiding the entitlements and making it non-operational.
   dontStrip = stdenv.hostPlatform.isDarwin;
+
+  # Setting env.CGO_ENABLED does not work, because the upstream forces the value.
+  #   - limactl: CGO_ENABLED=1
+  #   - guest agents(include native-agent): CGO_ENABLED=0
+  # See also passthru.tests
 
   buildPhase =
     let
@@ -89,10 +102,6 @@ buildGoModule (finalAttrs: {
     runHook postInstall
   '';
 
-  postInstall = lib.optionalString withAdditionalGuestAgents ''
-    cp -rs '${lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
-  '';
-
   nativeInstallCheckInputs = [
     # Workaround for: "panic: $HOME is not defined" at https://github.com/lima-vm/lima/blob/cb99e9f8d01ebb82d000c7912fcadcd87ec13ad5/pkg/limayaml/defaults.go#L53
     writableTmpDirAsHomeHook
@@ -111,13 +120,13 @@ buildGoModule (finalAttrs: {
     runHook postInstallCheck
   '';
 
-  # How to run in these flake repository...?
   passthru = {
     tests =
       let
         arch = stdenv.hostPlatform.parsed.cpu.name;
       in
       {
+        # `nix build .#lima.passthru.tests.minimalAgent`
         minimalAgent = testers.testEqualContents {
           assertion = "limactl only detects host's architecture guest agent by default";
           expected = writeText "expected" ''
@@ -129,7 +138,7 @@ buildGoModule (finalAttrs: {
               {
                 nativeBuildInputs = [
                   writableTmpDirAsHomeHook
-                  pkgs.my.lima
+                  lima
                   jq
                 ];
               }
@@ -139,26 +148,24 @@ buildGoModule (finalAttrs: {
               '';
         };
 
-        additionalAgents = testers.testEqualContents {
-          assertion = "limactl also detects additional guest agents if specified";
-          expected = writeText "expected" ''
-            true
-            true
-          '';
-          actual =
-            runCommand "actual"
-              {
-                nativeBuildInputs = [
-                  writableTmpDirAsHomeHook
-                  pkgs.my.lima-full
-                  jq
-                ];
-              }
-              ''
-                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
-                limactl info | jq '.guestAgents | length >= 2' >>"$out"
-              '';
-        };
+        # Regression test for https://github.com/NixOS/nixpkgs/issues/456953.
+        # See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
+        staticallyLinkedAgent =
+          runCommand "${finalAttrs.pname}-guestagent-linked-test"
+            {
+              nativeBuildInputs = [
+                lima
+                _7zz
+                # glibc
+                file # Easier than `lld(glibc)` or `readelf`
+                gnugrep
+              ];
+            }
+            ''
+              7zz x "${lima}/share/lima/lima-guestagent.Linux-${arch}.gz"
+              file './lima-guestagent.Linux-${arch}' >"$out"
+              grep -P 'ELF.+statically linked' "$out"
+            '';
       };
 
     updateScript = nix-update-script {
