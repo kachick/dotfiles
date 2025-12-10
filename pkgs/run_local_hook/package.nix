@@ -7,7 +7,7 @@
 buildGoModule (finalAttrs: {
   pname = "run_local_hook";
   version = "0.0.1";
-  vendorHash = "sha256-q+kTI8OZAYIPNMUyNnXY2yKUaH00KzrzEG0V1CPFao0=";
+  vendorHash = "sha256-ZOuTkkpig+fZZlpA+mBWxkwiD06uUggQQKLpmJyF7R8=";
 
   # Don't add dependencies as possible to keep simple nix code.
   # For example, git should be because of this is a git hook

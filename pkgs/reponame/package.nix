@@ -7,7 +7,7 @@
 buildGoModule (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
-  vendorHash = "sha256-tiG+CqSzHzoePHQUBAVcnleUueY5jq4Iyhi91NHru6s=";
+  vendorHash = "sha256-rBq1SoUP6sFsHcEd/+Wr35Id1X3pFMVEfTxQU5jQ8gQ=";
   src =
     with lib.fileset;
     toSource {
