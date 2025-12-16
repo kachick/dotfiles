@@ -1,6 +1,6 @@
 # Usage
 
-Putting the [hardware-configuration.nix](/etc/nixos/hardware-configuration.nix) into this repository is much annoy for each bootstrapping of the device.\
+Putting the `/etc/nixos/hardware-configuration.nix` into this repository is much annoy for each bootstrapping of the device.\
 Although it requires impure mode. So I'm putting these files for the purpose.
 
 ```bash
