@@ -88,12 +88,9 @@ jobs:
         pname:
           - filen-rclone
           - kanata-tray
-          - nerdctl
         exclude:
           - runner: macos-15-intel
             pname: kanata-tray # I'm using Karabiner-Elements on macOS
-          - runner: macos-15-intel
-            pname: nerdctl # upstream also does not support macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
