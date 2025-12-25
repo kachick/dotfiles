@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-slim
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - uses: dprint/check@v2.3
@@ -30,7 +30,7 @@ jobs:
     timeout-minutes: 15
     runs-on: ubuntu-slim
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
         with:
           persist-credentials: false
       - uses: crate-ci/typos@v1.40.0 # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["typos", "--version"], "nth": 2}
