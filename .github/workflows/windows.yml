@@ -94,7 +94,7 @@ jobs:
           #   Exit 42
           # }
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6.0.1
         with:
           # KEEP fetch-depth for gh command
           fetch-depth: 0
@@ -117,7 +117,7 @@ jobs:
           Get-ChildItem -Recurse .\dist
       - name: Upload artifact
         id: upload-artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: winit
           path: dist
@@ -146,7 +146,7 @@ jobs:
       # Enable this section when you want to update logics and check it
       # - name: Upload artifact
       #   id: upload-defender-log
-      #   uses: actions/upload-artifact@v5
+      #   uses: actions/upload-artifact@v6
       #   with:
       #     name: MpCmdRun-logs
       #     path: MpCmdRun-logs/**
