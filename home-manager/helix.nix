@@ -268,6 +268,9 @@ in
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
       vscode-langservers-extracted
 
+      # https://github.com/helix-editor/helix/blob/25.07.1/languages.toml#L115
+      systemd-lsp
+
       ## Not helpful. Didn't activated?
       #
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
