@@ -182,6 +182,12 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 Check [traps](./windows/Multi-booting.md)
 
+## Windows on Linux
+
+Use [winboat](https://github.com/TibixDev/winboat).\
+The full-desktop feature is powered-by [FreeRDP](https://github.com/FreeRDP/FreeRDP).\
+You can exit the full-screen RDP session with `Ctrl + Alt + Enter`. (Not the `End` or `Pause/Break` keys)
+
 ## macOS
 
 I basically [give up](https://github.com/kachick/dotfiles/issues/911) to maintain my old Intel Mac.\
