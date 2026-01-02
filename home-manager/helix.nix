@@ -95,7 +95,9 @@ in
     # https://github.com/helix-editor/helix/blob/25.01.1/languages.toml
     languages = {
       language-server = {
-        # Helix cannot set common LSP. https://github.com/helix-editor/helix/discussions/8850
+        # Helix cannot set global LSP.
+        # - https://github.com/helix-editor/helix/discussions/8850
+        # - https://github.com/helix-editor/helix/issues/12721
         # So required to manually merge language-servers for each language
         typos = {
           command = lib.getExe pkgs.unstable.typos-lsp;
