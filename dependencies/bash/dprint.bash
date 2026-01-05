@@ -60,6 +60,9 @@ _dprint() {
             dprint__config,add)
                 cmd="dprint__config__add"
                 ;;
+            dprint__config,edit)
+                cmd="dprint__config__edit"
+                ;;
             dprint__config,help)
                 cmd="dprint__config__help"
                 ;;
@@ -71,6 +74,9 @@ _dprint() {
                 ;;
             dprint__config__help,add)
                 cmd="dprint__config__help__add"
+                ;;
+            dprint__config__help,edit)
+                cmd="dprint__config__help__edit"
                 ;;
             dprint__config__help,help)
                 cmd="dprint__config__help__help"
@@ -129,6 +135,9 @@ _dprint() {
             dprint__help__config,add)
                 cmd="dprint__help__config__add"
                 ;;
+            dprint__help__config,edit)
+                cmd="dprint__help__config__edit"
+                ;;
             dprint__help__config,init)
                 cmd="dprint__help__config__init"
                 ;;
@@ -180,7 +189,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -199,6 +208,10 @@ _dprint() {
                     return 0
                     ;;
                 --incremental)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --fail-fast)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
@@ -310,7 +323,7 @@ _dprint() {
             return 0
             ;;
         dprint__config)
-            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help init update add help"
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help init update add edit help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -348,7 +361,45 @@ _dprint() {
             return 0
             ;;
         dprint__config__add)
-            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]"
+            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --plugins)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dprint__config__edit)
+            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -386,7 +437,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__help)
-            opts="init update add help"
+            opts="init update add edit help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -400,6 +451,20 @@ _dprint() {
             return 0
             ;;
         dprint__config__help__add)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dprint__config__help__edit)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -456,7 +521,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__init)
-            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -494,7 +559,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__update)
-            opts="-y -c -L -h --yes --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-y -g -r -c -L -h --yes --global --recursive --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -726,7 +791,7 @@ _dprint() {
             return 0
             ;;
         dprint__help__config)
-            opts="init update add"
+            opts="init update add edit"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -740,6 +805,20 @@ _dprint() {
             return 0
             ;;
         dprint__help__config__add)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dprint__help__config__edit)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -936,7 +1015,7 @@ _dprint() {
             return 0
             ;;
         dprint__init)
-            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
