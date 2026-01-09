@@ -14,11 +14,11 @@ tasks:
     desc: Shorthand to rebuild NixOS or home-manager
     cmds:
       - |
-          if [ -f '/etc/NIXOS' ]; then
-            task nixos
-          else
-            task home-manager
-          fi
+        if [ -f '/etc/NIXOS' ]; then
+          task nixos
+        else
+          task home-manager
+        fi
 
   nixos:
     desc: Enable NixOS config for current device
@@ -157,7 +157,7 @@ tasks:
     desc: Run container with selecting the tag with fuzzy finder
     cmds:
       - |
-          curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
+        curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
 
   ghcr-*:
     desc: Run container which is built and registered via GitHub Actions
