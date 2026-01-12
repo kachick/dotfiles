@@ -143,9 +143,9 @@
       smartmontools # `sudo smartctl -a /dev/nvme0n1`
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
 
-      # Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      # Don't use unstable. This package had been frequently broken the build in updating. See GH-1085 and GH-1134.
-      zed-editor
+      # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
+      # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky. See linux-ci.nix for further detail
+      unstable.zed-editor
 
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
