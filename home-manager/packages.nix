@@ -84,6 +84,8 @@
   # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/464253
   unstable.chawan # `cha`
 
+  unstable.gurk-rs
+
   yazi
 
   pastel
@@ -116,5 +118,4 @@
   preview
   renmark
   tree-diff
-  gurk-rs-bin
 ])
