@@ -77,7 +77,7 @@
   riffdiff # `riff`
   gnumake
   unstable.gitleaks
-  ruby_3_4
+  ruby_4_0
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
