@@ -60,11 +60,11 @@
       gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
         finalAttrs: previousAttrs: {
           # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
-          version = "0.23.0";
+          version = "0.24.0";
 
           src = prev.fetchurl {
             url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
-            hash = "sha256-9ZWdPHOCVpxZLM2c5tNQDFDs8RRlj5duUBAVRYRjg+E=";
+            hash = "sha256-Lg1xOCbz7VDzzhGej4gzGSFSFHOWN+F4cyUuZ38KRwQ=";
           };
         }
       );
