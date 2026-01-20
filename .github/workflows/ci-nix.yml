@@ -120,7 +120,8 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - run: 'nix build .#lima-full'
-      - run: |
+      - name: Package tests
+        run: |
           nix build .#lima.passthru.tests.minimalAgent
           nix build .#lima.passthru.tests.staticallyLinkedAgent
           nix build .#lima-full.passthru.tests.additionalAgents
