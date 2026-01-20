@@ -69,6 +69,7 @@
         nixpkgs.lib.intersectLists [
           "x86_64-linux"
           "x86_64-darwin"
+          "aarch64-darwin" # https://github.com/NixOS/nixpkgs/pull/479581#issuecomment-3770663909
         ] nixpkgs.lib.systems.flakeExposed
       );
 
