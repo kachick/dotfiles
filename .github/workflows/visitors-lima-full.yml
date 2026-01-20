@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: cachix/install-nix-action@4e002c8ec80594ecd40e759629461e26c8abed15 # v31.9.0
       - run: |
-          nix shell 'github:kachick/dotfiles/cffc3e0db55b9a8a5bf39dfde598d2e4674a2e56#lima-full' --command limactl --version
+          nix shell 'github:kachick/dotfiles/43256914ba0c2fe4af38d35edbc572c3df97e484#lima-full' --command limactl --version
