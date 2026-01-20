@@ -1,39 +1,28 @@
 {
   stdenvNoCC,
+  symlinkJoin,
   pkgs,
   testers,
   writeText,
   runCommand,
   writableTmpDirAsHomeHook,
-  versionCheckHook,
   jq,
 }:
 
 let
   inherit (pkgs.my) lima lima-additional-guestagents lima-full;
 in
-stdenvNoCC.mkDerivation {
+symlinkJoin {
   inherit (lima) version;
 
   pname = "lima-full";
 
-  src = lima;
-
-  installPhase = ''
-    mkdir -p "$out/share/lima"
-    cp -rs "$src/." "$out/"
-    cp -rs '${lima-additional-guestagents}/share/lima/.' "$out/share/lima/"
-  '';
-
-  nativeInstallCheckInputs = [
-    # Workaround for: "panic: $HOME is not defined" at https://github.com/lima-vm/lima/blob/cb99e9f8d01ebb82d000c7912fcadcd87ec13ad5/pkg/limayaml/defaults.go#L53
-    writableTmpDirAsHomeHook
-    versionCheckHook
+  paths = [
+    lima
+    lima-additional-guestagents
   ];
-  doInstallCheck = true;
-  versionCheckProgram = "${placeholder "out"}/bin/limactl";
-  versionCheckProgramArg = "--version";
-  versionCheckKeepEnvironment = [ "HOME" ];
+
+  # symlinkJoin does not run InstallCheckPhase even if defined
 
   passthru = {
     tests =
