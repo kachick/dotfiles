@@ -1,10 +1,3 @@
-# The lima package always takes long time to be reviewed and merged. So I can't depend on nixpkgs's binary cache
-#
-# Current status in nixpkgs: Wait for merging https://github.com/NixOS/nixpkgs/pull/461178
-# - 1.2.2 or higher is required to avoid some CVEs in the nerdctl dependency: https://github.com/NixOS/nixpkgs/pull/459093
-# - 2.0.0 includes patch for `limactl stop`: https://github.com/lima-vm/lima/pull/4303
-# - 2.0.1 includes patch for graceful shutdown: https://github.com/lima-vm/lima/pull/4310
-
 {
   lib,
   stdenv,
@@ -15,7 +8,6 @@
   qemu,
   darwin,
   makeWrapper,
-  nix-update-script,
   apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
   writableTmpDirAsHomeHook,
   versionCheckHook,
@@ -167,13 +159,6 @@ buildGoModule (finalAttrs: {
               grep -P 'ELF.+statically linked' "$out"
             '';
       };
-
-    updateScript = nix-update-script {
-      extraArgs = [
-        "--override-filename"
-        ./source.nix
-      ];
-    };
   };
 
   meta = {
@@ -181,6 +166,8 @@ buildGoModule (finalAttrs: {
     description = "Linux virtual machines with automatic file sharing and port forwarding";
     changelog = "https://github.com/lima-vm/lima/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.asl20;
+
+    # Why forked: https://github.com/NixOS/nixpkgs/pull/479581#issuecomment-3774363725
     maintainers = with lib.maintainers; [
       kachick
     ];
