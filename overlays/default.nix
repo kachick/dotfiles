@@ -85,6 +85,20 @@
           vendorHash = "sha256-K5geAvG+mvnKeixOyZt0C1T5ojSBFmx2K/Msol0HsSg=";
         }
       );
+
+      # fzf-git.sh is hard to be customed by others. So adding patches at here
+      # I don't need to consider the binary cache for this package.
+      fzf-git-sh = prev.unstable.fzf-git-sh.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # git worktree displays absolute path by design for the flexibility.
+          # However I have conventions for them. I would squash the longer and duplicated prefix of paths.
+          # This patch makes it possible to filter the worktrees by branch names.
+          postPatch = previousAttrs.postPatch + ''
+            substituteInPlace fzf-git.sh \
+              --replace-fail 'git worktree list | _fzf_git_fzf \' 'git worktree list | _fzf_git_fzf --with-nth=3 \'
+          '';
+        }
+      );
     };
   })
 ]
