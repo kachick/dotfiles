@@ -69,6 +69,7 @@
         }
       );
 
+      # Don't enable shell integrations, it replaces original `git` command.
       git-wt = prev.unstable.git-wt.overrideAttrs (
         finalAttrs: previousAttrs: {
           # 0.15.0 or later is required to enable https://github.com/k1LoW/git-wt/pull/81

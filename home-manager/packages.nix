@@ -34,6 +34,7 @@
   git
   # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
   ghq
+  patched.git-wt # `git wt` via git subcommand
 
   sequoia-sq # Alt `gpg`
   sequoia-chameleon-gnupg

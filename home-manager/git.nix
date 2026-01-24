@@ -145,6 +145,10 @@ in
         root = "~/repos";
       };
 
+      wt = {
+        basedir = "../{gitroot}/.worktrees";
+      };
+
       # `git config --get-regexp ^alias` will show current aliases
       alias = {
         fixup = "commit --all --amend";
