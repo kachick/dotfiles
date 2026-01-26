@@ -81,8 +81,8 @@
   _7zz # `7zz` - 7zip. Command is not 7zip.
 
   # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
-  # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/464253
-  unstable.chawan # `cha`
+  # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562
+  chawan # `cha`
 
   unstable.gurk-rs
 
