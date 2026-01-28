@@ -88,6 +88,7 @@ jobs:
         pname:
           - filen-rclone
           - kanata-tray
+          - git-wt
         exclude:
           - runner: macos-15-intel
             pname: kanata-tray # I'm using Karabiner-Elements on macOS

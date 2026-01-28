@@ -110,6 +110,7 @@ jobs:
           nix-update --commit --flake gemini-cli-bin
           nix-update --commit --flake filen-rclone-unwrapped
           nix-update --commit --flake lima
+          nix-update --commit --flake git-wt
 
       - name: Count added commits
         id: count-commits
