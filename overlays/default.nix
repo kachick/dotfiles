@@ -67,9 +67,17 @@
             hash = "sha256-IOx+n39JGYmHp42ObLD30H2Lgpju6bDBQ7fHLP1oc60=";
           };
 
+          schema = prev.fetchurl {
+            url = "https://raw.githubusercontent.com/google-gemini/gemini-cli/v${finalAttrs.version}/schemas/settings.schema.json";
+            hash = "sha256-BUH+DmCw9pwY+6QRoP+oFuAuxUaVFNTiFGBgvGt4Nzo=";
+          };
+
+          # Added JSON schema in package:
+          # https://github.com/google-gemini/gemini-cli/issues/5302
+          #
           # I removed the patches to disable autoUpdater. They are better for Nixpkgs, but simple packaging is okay for my use.
           # Instead of using patches, set up the config yourself:
-          # https://github.com/google-gemini/gemini-cli/blob/v0.26.0/docs/get-started/configuration.md
+          # https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/configuration.md
           #
           # Keeping ripgrep patches here. Update them once this issue is resolved:
           # https://github.com/google-gemini/gemini-cli/issues/11438
@@ -77,6 +85,7 @@
             runHook preInstall
 
             install -D "$src" "$out/bin/gemini"
+            install -D "$schema" "$out/share/settings.schema.json"
 
             substituteInPlace "$out/bin/gemini" \
               --replace-fail 'const existingPath = await resolveExistingRgPath();' 'const existingPath = "${prev.unstable.lib.getExe prev.unstable.ripgrep}";'
