@@ -236,7 +236,7 @@ in
           precmd_functions+=(set_win_title)
 
           source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
-          source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+          source "${pkgs.patched.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
           for file in ${../dependencies/zsh}/*; do
