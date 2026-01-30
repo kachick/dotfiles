@@ -60,12 +60,38 @@
       gemini-cli-bin = prev.unstable.gemini-cli-bin.overrideAttrs (
         finalAttrs: previousAttrs: {
           # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.
-          version = "0.25.2";
+          version = "0.26.0";
 
           src = prev.fetchurl {
             url = "https://github.com/google-gemini/gemini-cli/releases/download/v${finalAttrs.version}/gemini.js";
-            hash = "sha256-k5zGtNlpW+T41DxrKexaqLinV5CzrQYepW+MKVYoS9o=";
+            hash = "sha256-IOx+n39JGYmHp42ObLD30H2Lgpju6bDBQ7fHLP1oc60=";
           };
+
+          schema = prev.fetchurl {
+            url = "https://raw.githubusercontent.com/google-gemini/gemini-cli/v${finalAttrs.version}/schemas/settings.schema.json";
+            hash = "sha256-BUH+DmCw9pwY+6QRoP+oFuAuxUaVFNTiFGBgvGt4Nzo=";
+          };
+
+          # Added JSON schema in package:
+          # https://github.com/google-gemini/gemini-cli/issues/5302
+          #
+          # I removed the patches to disable autoUpdater. They are better for Nixpkgs, but simple packaging is okay for my use.
+          # Instead of using patches, set up the config yourself:
+          # https://github.com/google-gemini/gemini-cli/blob/main/docs/get-started/configuration.md
+          #
+          # Keeping ripgrep patches here. Update them once this issue is resolved:
+          # https://github.com/google-gemini/gemini-cli/issues/11438
+          installPhase = ''
+            runHook preInstall
+
+            install -D "$src" "$out/bin/gemini"
+            install -D "$schema" "$out/share/settings.schema.json"
+
+            substituteInPlace "$out/bin/gemini" \
+              --replace-fail 'const existingPath = await resolveExistingRgPath();' 'const existingPath = "${prev.unstable.lib.getExe prev.unstable.ripgrep}";'
+
+            runHook postInstall
+          '';
         }
       );
     };
