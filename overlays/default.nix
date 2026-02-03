@@ -119,6 +119,14 @@
           ];
 
           vendorHash = "sha256-LomeLlk0d/HTL0NKmbd083u7BHsy4FmAah9IzvmtO2s=";
+
+          # nixpkgs definition is still using rec, so I should override at here until using finalAttrs
+          # https://github.com/NixOS/nixpkgs/blob/ac7c30e2ca1f70e82222e1d95a0221c1edee9228/pkgs/by-name/rc/rclone/package.nix#L18
+          ldflags = [
+            "-s"
+            "-w"
+            "-X github.com/rclone/rclone/fs.Version=${finalAttrs.version}"
+          ];
         }
       );
     };
