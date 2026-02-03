@@ -86,6 +86,7 @@ jobs:
           - ubuntu-24.04
           - macos-15-intel
         pname:
+          - rclone
           - kanata-tray
         exclude:
           - runner: macos-15-intel
