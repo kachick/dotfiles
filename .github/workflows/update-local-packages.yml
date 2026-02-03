@@ -108,7 +108,7 @@ jobs:
         shell: nix develop --command bash -eu -o pipefail {0}
         run: |
           nix-update --commit --flake gemini-cli-bin
-          nix-update --commit --flake filen-rclone-unwrapped
+          nix-update --commit --flake rclone
           nix-update --commit --flake lima
 
       - name: Count added commits

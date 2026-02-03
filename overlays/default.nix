@@ -94,6 +94,41 @@
           '';
         }
       );
+
+      rclone = prev.unstable.rclone.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          version = "1.73.0";
+
+          # Since 1.73.0, official rclone merged filen-rclone
+          # It is frequently updated rather than FilenCloudDienste/filen-rclone
+          # However it is not yet reached in nixos-unstable: https://nixpkgs-tracker.ocfox.me/?pr=485515
+          src = prev.fetchFromGitHub {
+            owner = "rclone";
+            repo = "rclone";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-g/ofD/KsUOXVTOveHKddPN9PP5bx7HWFPct1IhJDZYE=";
+          };
+
+          patches = [
+            # Unmerged patch for Filen.io: https://github.com/FilenCloudDienste/filen-rclone/issues/5
+            (prev.fetchpatch2 {
+              name = "fix-potential-panic-in-case-of-error-during-upload.patch";
+              url = "https://patch-diff.githubusercontent.com/raw/rclone/rclone/pull/9140.patch?full_index=1";
+              hash = "sha256-7hz6C+EExdBctHD/8X9Fn8MBeERfgVEtORBb1Zr7DTg=";
+            })
+          ];
+
+          vendorHash = "sha256-LomeLlk0d/HTL0NKmbd083u7BHsy4FmAah9IzvmtO2s=";
+
+          # nixpkgs definition is still using rec, so I should override at here until using finalAttrs
+          # https://github.com/NixOS/nixpkgs/blob/ac7c30e2ca1f70e82222e1d95a0221c1edee9228/pkgs/by-name/rc/rclone/package.nix#L18
+          ldflags = [
+            "-s"
+            "-w"
+            "-X github.com/rclone/rclone/fs.Version=${finalAttrs.version}"
+          ];
+        }
+      );
     };
   })
 ]

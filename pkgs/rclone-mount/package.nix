@@ -4,7 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     coreutils # `mktemp`
-    rclone
+    patched.rclone
   ];
   meta = {
     description = "Mount rclone to my usual directory";

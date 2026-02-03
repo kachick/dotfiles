@@ -39,7 +39,7 @@
 
         dysk # alt df. Only works on Linux. See https://github.com/NixOS/nixpkgs/pull/400833
 
-        rclone
+        patched.rclone
 
         # - Enable special module for Nix OS.
         # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
@@ -85,9 +85,6 @@
         rclone-list-mounted
         rclone-mount
         rclone-fzf
-        filen-rclone
-        filen-rclone-mount
-        filen-rclone-fzf
       ]);
   };
 
