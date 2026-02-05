@@ -41,3 +41,8 @@ app-notifications = clipboard-copy
 
 # https://github.com/ghostty-org/ghostty/issues/4326
 split-divider-color = #9DA5B4
+
+# e=down, o=right by default. However I can't remember and guess them.
+keybind = ctrl+shift+-=new_split:down
+keybind = ctrl+shift+|=new_split:right
+keybind = ctrl+shift+s=new_split:auto
