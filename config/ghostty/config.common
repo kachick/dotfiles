@@ -38,3 +38,6 @@ font-family = "PlemolJP Console NF"
 # Use 1.2.0 or higher to avoid https://github.com/ghostty-org/ghostty/issues/4800
 copy-on-select = clipboard
 app-notifications = clipboard-copy
+
+# https://github.com/ghostty-org/ghostty/issues/4326
+split-divider-color = #9DA5B4
