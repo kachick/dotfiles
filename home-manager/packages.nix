@@ -71,6 +71,7 @@
   xh # alt HTTPie
   zellij
   sad
+  pik # alt pkill
 
   unstable.typos
   hyperfine
