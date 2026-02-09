@@ -21,8 +21,3 @@ extend-exclude = [
   # typos does not have line based disabling option. See https://github.com/crate-ci/typos/issues/316#issuecomment-889836924
   "**/typo_commands.nix",
 ]
-
-[type.nix.extend-words]
-# Workaround until reaching: https://github.com/crate-ci/typos/pull/1475
-# You can track it here: https://nixpkgs-tracker.ocfox.me/?pr=485536
-substituters = "substituters"
