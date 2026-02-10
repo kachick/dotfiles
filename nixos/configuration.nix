@@ -74,6 +74,10 @@
   # Bootloader.
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # GH-1255 for HDD
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/hardware/iosched.nix
+  hardware.block.defaultSchedulerRotational = "bfq";
+
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
