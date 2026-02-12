@@ -65,6 +65,7 @@
   bat # alt cat
   mdcat # pipe friendly markdown viewer rather than glow
   hexyl # hex viewer
+  dysk # alt df
   fd # alt find
   dust # `dust`, alt du
   bottom # `btm`, alt top

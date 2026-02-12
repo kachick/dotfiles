@@ -37,8 +37,6 @@
         # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
         iw # replacement of wireless-tools(iwconfig)
 
-        dysk # alt df. Only works on Linux. See https://github.com/NixOS/nixpkgs/pull/400833
-
         patched.rclone
 
         # - Enable special module for Nix OS.
