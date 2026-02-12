@@ -173,12 +173,17 @@
     # - https://github.com/OpenPrinting/libcups/issues/81
     enable = true; # If enabled, you should care the conflict with systemd-resolved
 
+    publish = {
+      enable = true;
+      addresses = true;
+      workstation = true;
+    };
+
     # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
     # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
 
-    # Ensure disabling them even through disabled by NixOS default. Ensure avoiding conflict with systemd-resolved
     nssmdns4 = false;
     nssmdns6 = false;
   };
@@ -192,9 +197,11 @@
     enable = true;
     llmnr = "false";
 
-    # Enable mDNS(hostname.local). Consider to avoid conflict with Avahi
+    # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
+    # - https://github.com/systemd/systemd/pull/40133
+    # - https://www.freedesktop.org/software/systemd/man/latest/resolved.conf.html
     extraConfig = ''
-      MulticastDNS=true
+      MulticastDNS=resolve
       DNSStubListener=false
     '';
   };
@@ -207,7 +214,9 @@
     enable = true;
 
     dns = "systemd-resolved";
-    connectionConfig."connection.mdns" = 2;
+    # 1 means 'resolve' (resolve only, no announcement)
+    # See https://networkmanager.dev/docs/api/latest/nm-settings-nmcli.html
+    connectionConfig."connection.mdns" = 1;
 
     # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
     # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
