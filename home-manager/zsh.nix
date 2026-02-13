@@ -151,6 +151,11 @@ in
         # - Some crucial PATH will be hidden they are installed by non nix layer. For example: vscode
         setopt no_global_rcs
 
+        # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
+        if [[ -n "$SSH_CONNECTION" && "$TERM" == "xterm-ghostty" ]]; then
+          export TERM=xterm-256color
+        fi
+
         # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
         # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
         if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
