@@ -20,6 +20,8 @@
       VISUAL = "code --wait";
 
       BROWSER = "open";
+
+      TERMINFO_DIRS = "${pkgs.kitty.terminfo}/share/terminfo:${pkgs.ghostty.terminfo}/share/terminfo:/usr/share/terminfo";
     };
 
     sessionPath = [
