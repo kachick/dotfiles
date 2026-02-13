@@ -99,6 +99,10 @@
 
   fastfetch # active replacement of neofetch
 
+  # For healthy Nix life
+  unstable.hydra-check
+  unstable.nix-tree
+
   # Use unstable version in my maintained packages
   unstable.brush
   unstable.somo
