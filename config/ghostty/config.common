@@ -6,7 +6,7 @@
 # This disabling does not work on `nix run`. Installed in nixos and ran from launcher worked (from shell or gnome difference?.
 cursor-style-blink = false
 # See https://github.com/ghostty-org/ghostty/discussions/2812
-shell-integration-features = no-cursor
+shell-integration-features = no-cursor,ssh-terminfo,ssh-env
 cursor-style = bar
 adjust-cursor-thickness = 400%
 
