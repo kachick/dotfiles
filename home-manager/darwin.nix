@@ -5,7 +5,10 @@
 }:
 
 {
-  imports = [ ./lima-host.nix ];
+  imports = [
+    ./lima-host.nix
+    ./terminfo.nix
+  ];
 
   targets.genericLinux.enable = false;
 
