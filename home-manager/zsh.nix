@@ -277,6 +277,12 @@ in
           # Disable `Ctrl + S(no output tty)`
           ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
+          if [[ -n "$SSH_CONNECTION" ]] && [[ "$OSTYPE" == darwin* ]]; then
+            # 'stty sane' fixes double echoing in some Darwin SSH environments
+            ${lib.getExe' pkgs.coreutils "stty"} sane
+            ${lib.getExe' pkgs.coreutils "stty"} stop undef
+          fi
+
           # https://unix.stackexchange.com/a/3449
           source_sh () {
             emulate -LR sh

@@ -142,6 +142,12 @@
       # Disable `Ctrl + S(no output tty)`
       ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
+      if [[ -n "$SSH_CONNECTION" ]] && [[ "$OSTYPE" == darwin* ]]; then
+        # 'stty sane' fixes double echoing in some Darwin SSH environments
+        ${lib.getExe' pkgs.coreutils "stty"} sane
+        ${lib.getExe' pkgs.coreutils "stty"} stop undef
+      fi
+
       source "${pkgs.my.posix_shared_functions}"
 
       # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
