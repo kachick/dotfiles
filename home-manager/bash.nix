@@ -119,6 +119,11 @@
         exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
       fi
 
+      # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
+      if [[ -n "$SSH_CONNECTION" && "$OSTYPE" == darwin* && "$TERM" == "xterm-ghostty" ]]; then
+        export TERM=xterm-256color
+      fi
+
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
       function set_win_title() {
       	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
