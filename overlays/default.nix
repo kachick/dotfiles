@@ -36,15 +36,9 @@
     );
 
     # Workaround for https://github.com/NixOS/nixpkgs/issues/488689
-    inetutils =
-      if prev.stdenv.hostPlatform.isDarwin then
-        prev.inetutils.overrideAttrs (
-          finalAttrs: previousAttrs: {
-            hardeningDisable = (previousAttrs.hardeningDisable or [ ]) ++ [ "format" ];
-          }
-        )
-      else
-        prev.inetutils;
+    # The fix https://github.com/NixOS/nixpkgs/pull/482476 was merged into staging, but master still lacks the patch.
+    # This uses the previous version from unstable on Darwin to prevent CI failures.
+    inetutils = if prev.stdenv.hostPlatform.isDarwin then prev.unstable.inetutils else prev.inetutils;
   })
 
   (final: prev: {
