@@ -170,19 +170,11 @@ tasks:
     cmds:
       - './containers/build.bash'
 
-  deps:
-    desc: Print some dependency versions
-    deps:
-      - build-cmd
-    cmds:
-      - ./dist/deps
-
   ci-dev:
     desc: Provided for CI
     deps:
       - 'default'
       - 'setup'
-      - 'deps'
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
       - 'fmt'
