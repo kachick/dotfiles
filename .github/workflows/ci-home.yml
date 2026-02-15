@@ -8,7 +8,6 @@ on:
       - '**.nix'
       - 'flake.*'
       - 'pkgs/**'
-      - 'Taskfile.yml'
       - 'go.*'
   pull_request:
     paths:
@@ -17,7 +16,6 @@ on:
       - '**.nix'
       - 'flake.*'
       - 'pkgs/**'
-      - 'Taskfile.yml'
       - 'go.*'
   schedule:
     # Every 10:42 JST

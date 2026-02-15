@@ -10,14 +10,12 @@ on:
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Taskfile.yml'
   pull_request:
     paths:
       - '.github/workflows/ci-go.yml'
       - '**.go'
       - 'go.*'
       - 'testdata/**'
-      - 'Taskfile.yml'
   workflow_dispatch:
 
 permissions:
