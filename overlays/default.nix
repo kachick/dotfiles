@@ -34,6 +34,20 @@
         ];
       }
     );
+
+    # Workaround for https://github.com/NixOS/nixpkgs/issues/488689
+    # ref: https://github.com/wimpysworld/nix-config/blob/f06334b9277ee229c9e356a90401d0b1c94f11d7/overlays/default.nix#L46-L56
+    inetutils = prev.inetutils.overrideAttrs (
+      finalAttrs: previousAttrs:
+      prev.lib.optionalAttrs prev.stdenv.isDarwin {
+        env = (previousAttrs.env or { }) // {
+          NIX_CFLAGS_COMPILE = toString [
+            (previousAttrs.env.NIX_CFLAGS_COMPILE or "")
+            "-Wno-format-security"
+          ];
+        };
+      }
+    );
   })
 
   (final: prev: {
