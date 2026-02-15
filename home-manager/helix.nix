@@ -258,9 +258,9 @@ in
       rust-analyzer
 
       # Looks like required to enable gopls
-      go_1_25
+      unstable.go_1_26
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
-      gopls
+      unstable.gopls
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
       golangci-lint-langserver
 

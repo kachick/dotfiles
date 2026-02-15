@@ -17,7 +17,7 @@ type Cmd struct {
 type Commands []Cmd
 
 func (cmds Commands) ParallelRun() {
-	wg := &sync.WaitGroup{}
+	wg := new(sync.WaitGroup)
 	for _, cmd := range cmds {
 		wg.Go(func() {
 			output, err := exec.Command(cmd.Path, cmd.Args...).CombinedOutput()

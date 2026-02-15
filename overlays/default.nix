@@ -46,7 +46,8 @@
     inetutils = if prev.stdenv.hostPlatform.isDarwin then prev.unstable.inetutils else prev.inetutils;
 
     home-manager =
-      (if prev.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux).packages.${prev.stdenv.hostPlatform.system}.home-manager.override
+      (if prev.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux)
+      .packages.${prev.stdenv.hostPlatform.system}.home-manager.override
         {
           inetutils = final.inetutils;
         };

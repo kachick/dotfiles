@@ -27,7 +27,7 @@ func MakeSkipChecker() func(string) bool {
 func RunLinters(linters map[string]Linter, shouldSkip func(string) bool) error {
 	var mu sync.Mutex
 	errs := map[string]error{}
-	wg := &sync.WaitGroup{}
+	wg := new(sync.WaitGroup)
 
 	for desc, linter := range linters {
 		if shouldSkip(linter.Tag) {

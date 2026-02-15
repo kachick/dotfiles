@@ -2,7 +2,6 @@
   lib,
   stdenv,
   pkgs,
-  buildGoModule,
   fetchFromGitHub,
   installShellFiles,
   qemu,
@@ -21,9 +20,10 @@
 }:
 
 let
+  inherit (pkgs.unstable) buildGo126Module;
   inherit (pkgs.my) lima;
 in
-buildGoModule (finalAttrs: {
+buildGo126Module (finalAttrs: {
   pname = "lima";
   version = "2.0.3";
 

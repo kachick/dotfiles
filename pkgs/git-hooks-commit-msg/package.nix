@@ -1,12 +1,14 @@
 {
   pkgs,
   lib,
-  buildGoModule,
   makeWrapper,
   ...
 }:
 
-buildGoModule (finalAttrs: {
+let
+  inherit (pkgs.unstable) buildGo126Module;
+in
+buildGo126Module (finalAttrs: {
   pname = "git-hooks-commit-msg";
   version = "0.0.1";
 
@@ -28,7 +30,7 @@ buildGoModule (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-bLT7ieKcVkUPhqnP5tfYXnHwlvzjNuC3tLV16wK3x20=";
+  vendorHash = "sha256-jKp/VNsFM9U4CJ1qyHqaa1fEFjD5tpccziOBSohUSxU=";
   src =
     with lib.fileset;
     toSource {
