@@ -114,10 +114,7 @@
 
       rclone = prev.unstable.rclone.overrideAttrs (
         finalAttrs: previousAttrs: {
-          # Since 1.73.0, official rclone merged filen-rclone
-          # It is frequently updated for Filen.io patches rather than the FilenCloudDienste/filen-rclone
-          version = "1.73.0";
-
+          # Remove these patches once 1.73.1 is available
           patches = [
             # Pre-release patch for Filen.io: https://github.com/rclone/rclone/pull/9145
             (prev.fetchpatch2 {
