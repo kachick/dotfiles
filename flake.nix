@@ -140,8 +140,6 @@
 
                   desktop-file-utils # `desktop-file-validate` as a linter
                   kanata # Enable on devshell for using the --check as a linter
-
-                  go_1_25
                 ])
                 ++ (with pkgs.unstable; [
                   nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
@@ -150,6 +148,7 @@
                   dprint
                   zizmor
                   rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
+                  go_1_26
                 ])
                 ++ (with pkgs.my; [
                   nix-hash-url

@@ -1,13 +1,13 @@
 {
-  buildGoModule, # Keep same toolset as lima package
-  findutils,
   pkgs,
+  findutils,
 }:
 
 let
+  inherit (pkgs.unstable) buildGo126Module; # Keep same toolset as lima package
   inherit (pkgs.my) lima;
 in
-buildGoModule (finalAttrs: {
+buildGo126Module (finalAttrs: {
   pname = "lima-additional-guestagents";
 
   inherit (lima) version src vendorHash;

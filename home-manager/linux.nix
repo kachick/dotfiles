@@ -57,7 +57,7 @@
         #   - Especially zed-editor is using for NixOS default VISUAL editor. It requires LSPs
         nixd
         unstable.typos-lsp
-        gopls
+        unstable.gopls
         rust-analyzer
         rustfmt
 

@@ -3,9 +3,8 @@ package fileutils
 import (
 	"io/fs"
 	"path/filepath"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 )
 
 type WalkedReport struct {

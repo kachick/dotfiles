@@ -1,12 +1,14 @@
 {
   pkgs,
   lib,
-  buildGoModule,
   makeWrapper,
   ...
 }:
 
-buildGoModule (finalAttrs: {
+let
+  inherit (pkgs.unstable) buildGo126Module;
+in
+buildGo126Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
 
@@ -29,7 +31,7 @@ buildGoModule (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-PWA+AMY7PImXYeJtTeGlEb0Fp7Uq6cP1M0C5PVSx+cY=";
+  vendorHash = "sha256-r3azKFtIO41pnmkSfkksLUswqiIvln5LYQ+i386wJgU=";
   src =
     with lib.fileset;
     toSource {
