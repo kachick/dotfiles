@@ -34,7 +34,7 @@
 
         iputils # `ping` etc
 
-        # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/by-name/iw/iw/package.nix
+        # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/iw/iw/package.nix
         iw # replacement of wireless-tools(iwconfig)
 
         patched.rclone

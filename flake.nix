@@ -24,7 +24,7 @@
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    edge-nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
     nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.11-darwin/nixexprs.tar.xz";
     home-manager-linux = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -46,7 +46,7 @@
       # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
       # However using follows disables the upstream caches. And I'm okay to build it my self
       # Prefer unstable channel since also using latest kanata
-      inputs.nixpkgs.follows = "edge-nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
 
@@ -54,7 +54,7 @@
     {
       self,
       nixpkgs,
-      edge-nixpkgs,
+      nixpkgs-unstable,
       nixpkgs-darwin,
       home-manager-linux,
       home-manager-darwin,
@@ -77,7 +77,7 @@
 
       overlays = import ./overlays {
         inherit
-          edge-nixpkgs
+          nixpkgs-unstable
           kanata-tray
           home-manager-linux
           home-manager-darwin
