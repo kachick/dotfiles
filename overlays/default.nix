@@ -114,17 +114,9 @@
 
       rclone = prev.unstable.rclone.overrideAttrs (
         finalAttrs: previousAttrs: {
-          version = "1.73.0";
-
           # Since 1.73.0, official rclone merged filen-rclone
-          # It is frequently updated rather than FilenCloudDienste/filen-rclone
-          # However it is not yet reached in nixos-unstable: https://nixpkgs-tracker.ocfox.me/?pr=485515
-          src = prev.fetchFromGitHub {
-            owner = "rclone";
-            repo = "rclone";
-            tag = "v${finalAttrs.version}";
-            hash = "sha256-g/ofD/KsUOXVTOveHKddPN9PP5bx7HWFPct1IhJDZYE=";
-          };
+          # It is frequently updated for Filen.io patches rather than the FilenCloudDienste/filen-rclone
+          version = "1.73.0";
 
           patches = [
             # Pre-release patch for Filen.io: https://github.com/rclone/rclone/pull/9145
