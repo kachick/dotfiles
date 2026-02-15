@@ -76,17 +76,15 @@
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
       overlays = import ./overlays {
-        inherit edge-nixpkgs kanata-tray;
+        inherit
+          edge-nixpkgs
+          kanata-tray
+          home-manager-linux
+          home-manager-darwin
+          ;
       };
 
       mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
-
-      mkHomeManager =
-        system:
-        if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then # ... correct code?
-          home-manager-darwin
-        else
-          home-manager-linux;
 
       mkApp =
         { system, pkg }:
@@ -177,7 +175,7 @@
       apps = forAllSystems (system: {
         home-manager = mkApp {
           inherit system;
-          pkg = (mkPkgs system).callPackage ((mkHomeManager system) + "/home-manager") { };
+          pkg = (mkPkgs system).home-manager;
         };
       });
 
