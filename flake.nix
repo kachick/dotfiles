@@ -177,7 +177,7 @@
       apps = forAllSystems (system: {
         home-manager = mkApp {
           inherit system;
-          pkg = (mkPkgs system).callPackage "${mkHomeManager system}/home-manager" { };
+          pkg = (mkPkgs system).callPackage ((mkHomeManager system) + "/home-manager") { };
         };
       });
 
