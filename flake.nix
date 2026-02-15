@@ -35,7 +35,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/main"; # TODO: Use release-25.11 after the branch off
+      url = "github:nix-community/NixOS-WSL/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
