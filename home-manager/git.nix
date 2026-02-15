@@ -53,6 +53,47 @@ in
       sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
     };
 
+    # Global: "$HOME/.config/git/ignore"
+    # Local:
+    #  - ".git/info/exclude"
+    #  - echo '*' > /repo/you-want-to-hide-this-cache-dir/.gitignore
+    ignores = [
+      "tmp/"
+      "*.tmp"
+      "log/"
+      "*.log"
+      "*.pid"
+      "/dist/"
+
+      # https://github.com/github/gitignore/pull/3651
+      ".env"
+      ".env.*"
+      "!.env.example"
+
+      # https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
+      "Thumbs.db*"
+
+      # https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
+      ".DS_Store"
+      "__MACOSX/"
+
+      # https://agents.md/#examples
+      "AGENTS.md"
+      "/.gemini/"
+
+      # Editor
+      "/.helix/"
+      "/.zed/"
+      "/.vscode/"
+
+      # Nix
+      ".direnv/"
+      "/result/"
+
+      # Major
+      "node_modules/"
+    ];
+
     # NOTE: `extraConfig` was renamed and restructured to `settings`: https://github.com/nix-community/home-manager/pull/8006
     settings = {
       user = {
