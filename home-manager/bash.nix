@@ -136,7 +136,7 @@
       if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
       	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
       	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
-      	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+      	source "${pkgs.patched.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       fi
 
       # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile

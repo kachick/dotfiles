@@ -30,6 +30,11 @@ getrepo() {
 	'@ghq@' get "$1" && cdrepo "$1"
 }
 
+# https://github.com/junegunn/fzf-git.sh/blob/8dd169c08393b4d50c2ddd270da19705a30cbbac/README.md?plain=1#L93-L95
+cdwt() {
+	cd "$(_fzf_git_worktrees --no-multi)" || return 1
+}
+
 cdtemp() {
 	local word
 	if [ $# -lt 1 ]; then

@@ -142,6 +142,37 @@
           ];
         }
       );
+
+      # Don't enable shell integrations, it replaces original `git` command.
+      git-wt = prev.unstable.git-wt.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # 0.15.0 or later is required to enable https://github.com/k1LoW/git-wt/pull/81
+          version = "0.15.0";
+
+          src = prev.fetchFromGitHub {
+            owner = "k1LoW";
+            repo = "git-wt";
+            tag = "v${finalAttrs.version}";
+            hash = "sha256-A8vkwa8+RfupP9UaUuSVjkt5HtWvqR5VmSsVg2KpeMo=";
+          };
+
+          vendorHash = "sha256-K5geAvG+mvnKeixOyZt0C1T5ojSBFmx2K/Msol0HsSg=";
+        }
+      );
+
+      # fzf-git.sh is hard to be customed by others. So adding patches at here
+      # I don't need to consider the binary cache for this package.
+      fzf-git-sh = prev.unstable.fzf-git-sh.overrideAttrs (
+        finalAttrs: previousAttrs: {
+          # git worktree displays absolute path by design for the flexibility.
+          # However I have conventions for them. I would squash the longer and duplicated prefix of paths.
+          # This patch makes it possible to filter the worktrees by branch names.
+          postPatch = previousAttrs.postPatch + ''
+            substituteInPlace fzf-git.sh \
+              --replace-fail 'git worktree list | _fzf_git_fzf \' 'git worktree list | _fzf_git_fzf --with-nth=3 \'
+          '';
+        }
+      );
     };
   })
 ]
