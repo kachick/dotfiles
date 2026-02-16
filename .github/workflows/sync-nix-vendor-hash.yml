@@ -1,0 +1,51 @@
+name: 🔄 Sync Nix vendorHash
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'go.mod'
+      - 'go.sum'
+
+permissions:
+  contents: write
+
+jobs:
+  sync-hash:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
+    steps:
+      - name: Generate GitHub Apps token
+        id: publish-token
+        uses: actions/create-github-app-token@21419caef284e7f45d8293382412e99e587ca540 # v2.2.0
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.1
+        with:
+          token: ${{ steps.publish-token.outputs.token }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: true
+
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Prepare Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run bump_gomod
+        shell: nix develop --command bash -eu -o pipefail {0}
+        run: |
+          nix run .#bump_gomod -- .
+
+      - name: Push changes
+        run: |
+          # bump_gomod already commits if there are changes
+          # We just need to push if the head has moved
+          if [ "$(git rev-parse HEAD)" != "${{ github.event.pull_request.head.sha }}" ]; then
+            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          fi
