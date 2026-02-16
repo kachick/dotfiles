@@ -43,9 +43,12 @@ jobs:
           nix run .#bump_gomod -- .
 
       - name: Push changes
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           # bump_gomod already commits if there are changes
           # We just need to push if the head has moved
-          if [ "$(git rev-parse HEAD)" != "${{ github.event.pull_request.head.sha }}" ]; then
-            git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          if [ "$(git rev-parse HEAD)" != "${HEAD_SHA}" ]; then
+            git push origin HEAD:"${HEAD_REF}"
           fi
