@@ -54,6 +54,7 @@ func main() {
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "rumdl", Args: append([]string{"check"}, markdownPaths...)},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
+		{Path: "zizmor", Args: []string{"."}},
 		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
 		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
