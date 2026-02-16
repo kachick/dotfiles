@@ -22,10 +22,10 @@ jobs:
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
 
-      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.1
+      - uses: actions/checkout@v6.0.2
         with:
           token: ${{ steps.publish-token.outputs.token }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: true
 
       - uses: ./.github/actions/setup-nix
@@ -49,6 +49,7 @@ jobs:
         run: |
           # bump_gomod already commits if there are changes
           # We just need to push if the head has moved
-          if [ "$(git rev-parse HEAD)" != "${HEAD_SHA}" ]; then
+          CURRENT_SHA=$(git rev-parse HEAD)
+          if [ "${CURRENT_SHA}" != "${HEAD_SHA}" ]; then
             git push origin HEAD:"${HEAD_REF}"
           fi
