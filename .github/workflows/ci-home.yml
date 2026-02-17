@@ -34,6 +34,9 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
+          # macos-15-intel is the last x86_64-darwin runner. It is very slow, but we must use it.
+          # We tried building on fast ARM runners (macos-26+) with Rosetta 2 emulation, but it was even slower (e.g. 14m -> 26m)
+          # and some tests (like lima) failed because they detect and require a native architecture.
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
     steps:
