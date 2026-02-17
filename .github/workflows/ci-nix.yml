@@ -61,7 +61,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          # We must use Intel runners for Darwin. ARM runners with Rosetta 2 emulation are too slow and fail some tests.
+          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
@@ -85,7 +85,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          # We must use Intel runners for Darwin. ARM runners with Rosetta 2 emulation are too slow and fail some tests.
+          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
           - macos-15-intel
         pname:
           - rclone
@@ -110,7 +110,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
-          # We must use Intel runners for Darwin. ARM runners with Rosetta 2 emulation are too slow and fail some tests.
+          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
