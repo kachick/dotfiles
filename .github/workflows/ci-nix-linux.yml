@@ -93,10 +93,6 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        # nix build automatically selects the correct architecture for the current runner.
-        run: |
-          tests=$(nix eval .#${{ matrix.pname }}.passthru.tests --apply 'builtins.attrNames' --json 2>/dev/null || echo "[]")
-          echo "$tests" | jq -r '.[]' | while read -r test_name; do
-            echo "Building test: $test_name"
-            nix build ".#${{ matrix.pname }}.passthru.tests.$test_name"
-          done
+        # Use nix-build via flake-compat for simpler recursive building.
+        # It automatically detects system architecture and skips if no tests exist.
+        run: nix-build -E '(import ./default.nix).packages.${builtins.currentSystem}.${{ matrix.pname }}.passthru.tests or {}'
