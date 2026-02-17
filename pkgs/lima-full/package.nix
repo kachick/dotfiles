@@ -25,33 +25,29 @@ symlinkJoin {
   # symlinkJoin does not run InstallCheckPhase even if defined
 
   passthru = {
-    tests =
-      let
-        arch = stdenvNoCC.hostPlatform.parsed.cpu.name;
-      in
-      {
-        # `nix build .#lima-full.passthru.tests.additionalAgents`
-        additionalAgents = testers.testEqualContents {
-          assertion = "limactl also detects additional guest agents if specified";
-          expected = writeText "expected" ''
-            true
-            true
-          '';
-          actual =
-            runCommand "actual"
-              {
-                nativeBuildInputs = [
-                  writableTmpDirAsHomeHook
-                  lima-full
-                  jq
-                ];
-              }
-              ''
-                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
-                limactl info | jq '.guestAgents | length >= 2' >>"$out"
-              '';
-        };
+    tests = lima.passthru.tests // {
+      # `nix build .#lima-full.passthru.tests.additionalAgents`
+      additionalAgents = testers.testEqualContents {
+        assertion = "limactl also detects additional guest agents if specified";
+        expected = writeText "expected" ''
+          true
+          true
+        '';
+        actual =
+          runCommand "actual"
+            {
+              nativeBuildInputs = [
+                writableTmpDirAsHomeHook
+                lima-full
+                jq
+              ];
+            }
+            ''
+              limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
+              limactl info | jq '.guestAgents | length >= 2' >>"$out"
+            '';
       };
+    };
   };
 
   meta = lima.meta // {
