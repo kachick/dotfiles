@@ -139,6 +139,7 @@
             "-s"
             "-w"
             "-X github.com/rclone/rclone/fs.Version=${finalAttrs.version}"
+            "-X ForceRebuild=true" # TODO: This line has been added to force rebuild to measure the cross-build
           ];
         }
       );

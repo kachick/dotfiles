@@ -72,6 +72,8 @@ buildGo126Module (finalAttrs: {
     ''
       runHook preBuild
 
+      # TODO: This line has been added to force rebuild to measure the cross-build
+
       make ${lib.escapeShellArgs makeFlags} native
 
       runHook postBuild
