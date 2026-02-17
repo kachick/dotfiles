@@ -12,7 +12,7 @@
 # Limitation: Don't add unfree packages such as cloudflare-warp, vscode
 #
 # Omit if:
-#   - Which is build on ci-nix workflow: typos, dprint
+#   - Which is build on ci-nix-linux workflow: typos, dprint
 #   - Which is NixOS core: gnome-*
 
 {
@@ -33,12 +33,12 @@
       ])
       ++
         # Test builds and push the binary cache from CI
-        # Consider to use ci-nix instead
+        # Consider to use ci-nix-linux instead
         # Don't use `with` to keep indentation even if empty list
         [
           # pkgs.patched.pname
         ]
-      # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in ci-nix
+      # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in ci-nix-linux
       # ++ [
       #   # I don't know why this overriding will not work :<
       #   pkgs.gnome-keyring

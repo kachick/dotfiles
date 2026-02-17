@@ -1,17 +1,17 @@
 # https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
-name: ❄️
+name: ❄️ 🐧
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci-nix.yml'
+      - '.github/workflows/ci-nix-linux.yml'
       - '**.nix'
       - 'flake.*'
       - 'Taskfile.yml'
       - 'cmd/**'
   pull_request:
     paths:
-      - '.github/workflows/ci-nix.yml'
+      - '.github/workflows/ci-nix-linux.yml'
       - '**.nix'
       - 'flake.*'
       - 'Taskfile.yml'
@@ -57,12 +57,8 @@ jobs:
       run:
         shell: nix develop --command bash -eu -o pipefail {0}
     strategy:
-      fail-fast: false
       matrix:
-        runner:
-          - ubuntu-24.04
-          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
-          - macos-15-intel
+        runner: [ubuntu-24.04]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -75,24 +71,16 @@ jobs:
       - name: Measure nix shell initialization time
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
-        if: runner.os == 'Linux'
-      - run: task ci-darwin
-        if: runner.os == 'macOS'
 
   build:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - ubuntu-24.04
-          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
-          - macos-15-intel
+        runner: [ubuntu-24.04]
         pname:
           - rclone
           - kanata-tray
-        exclude:
-          - runner: macos-15-intel
-            pname: kanata-tray # I'm using Karabiner-Elements on macOS
+          - lima-full
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -102,29 +90,14 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: 'nix build .#${{ matrix.pname }}'
-
-  build-lima:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-24.04
-          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
-          - macos-15-intel
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - run: 'nix build .#lima-full'
-      - name: Package tests
+      - name: Build package
+        run: nix build '.#${{ matrix.pname }}'
+      - name: Run passthru tests
+        # Use nix-build via flake-compat for simpler recursive building.
+        # It automatically detects system architecture and skips if no tests exist.
         run: |
-          nix build .#lima.passthru.tests.minimalAgent
-          nix build .#lima.passthru.tests.staticallyLinkedAgent
-          nix build .#lima-full.passthru.tests.additionalAgents
+          if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
+            nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
+          else
+            echo 'No passthru.tests found for ${{ matrix.pname }}, skipping.'
+          fi

@@ -1,8 +1,10 @@
 # dotfiles
 
-[![Home Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home.yml?query=branch%3Amain+)
-[![Home Status](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
-[![Nix Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix.yml?query=branch%3Amain+)
+[![🐧 🏠 Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml?query=branch%3Amain+)
+[![🍎 🏠 Status](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml?query=branch%3Amain+)
+[![Windows Status](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
+[![🐧 ❄️ Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix-linux.yml?query=branch%3Amain+)
+[![🍎 ❄️ Status](https://github.com/kachick/dotfiles/actions/workflows/ci-nix-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-nix-darwin.yml?query=branch%3Amain+)
 [![CI - Go Status](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 [![Container Status](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
