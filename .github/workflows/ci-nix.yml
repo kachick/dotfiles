@@ -59,9 +59,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Use ARM runner (macos-26) for faster environment initialization even for Intel Mac tasks.
         runner:
           - ubuntu-24.04
-          - macos-15-intel
+          - macos-26
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -82,15 +83,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner:
-          - ubuntu-24.04
-          - macos-15-intel
-        pname:
-          - rclone
-          - kanata-tray
-        exclude:
-          - runner: macos-15-intel
-            pname: kanata-tray # I'm using Karabiner-Elements on macOS
+        include:
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+            pname: rclone
+          - runner: ubuntu-24.04
+            system: x86_64-linux
+            pname: kanata-tray
+          # Build Intel Mac (x86_64-darwin) packages on fast ARM runners (macos-26)
+          - runner: macos-26
+            system: x86_64-darwin
+            pname: rclone
+            # kanata-tray: I'm using Karabiner-Elements on macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -100,15 +104,16 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: 'nix build .#${{ matrix.pname }}'
+      - run: 'nix build .#packages.${{ matrix.system }}.${{ matrix.pname }}'
 
   build-lima:
     strategy:
       fail-fast: false
       matrix:
+        # Use ARM runner (macos-26) to build Intel Mac (x86_64-darwin) lima packages faster
         runner:
           - ubuntu-24.04
-          - macos-15-intel
+          - macos-26
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -119,9 +124,21 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - run: 'nix build .#lima-full'
+      - name: Build lima-full
+        run: |
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            nix build .#packages.x86_64-darwin.lima-full
+          else
+            nix build .#lima-full
+          fi
       - name: Package tests
         run: |
-          nix build .#lima.passthru.tests.minimalAgent
-          nix build .#lima.passthru.tests.staticallyLinkedAgent
-          nix build .#lima-full.passthru.tests.additionalAgents
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            nix build .#packages.x86_64-darwin.lima.passthru.tests.minimalAgent
+            nix build .#packages.x86_64-darwin.lima.passthru.tests.staticallyLinkedAgent
+            nix build .#packages.x86_64-darwin.lima-full.passthru.tests.additionalAgents
+          else
+            nix build .#lima.passthru.tests.minimalAgent
+            nix build .#lima.passthru.tests.staticallyLinkedAgent
+            nix build .#lima-full.passthru.tests.additionalAgents
+          fi
