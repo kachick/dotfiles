@@ -8,6 +8,7 @@ on:
       - 'home-manager/kachick.nix'
       - 'home-manager/common.nix'
       - 'home-manager/lima-host.nix'
+      - 'home-manager/packages.nix'
       - 'darwin/**'
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - 'home-manager/darwin.nix'
       - 'home-manager/kachick.nix'
       - 'home-manager/common.nix'
+      - 'home-manager/packages.nix'
       - 'home-manager/lima-host.nix'
       - 'darwin/**'
     types: [opened, synchronize, reopened, labeled]

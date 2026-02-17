@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
-      - '**.nix'
+      # - '**.nix' # Don't include these widely trigger
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
@@ -13,7 +13,7 @@ on:
     paths:
       - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
-      - '**.nix'
+      # - '**.nix' # Don't include these widely trigger
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'

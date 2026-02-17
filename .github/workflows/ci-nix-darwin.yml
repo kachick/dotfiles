@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-nix-darwin.yml'
-      - '**.nix'
+      # - '**.nix' # Don't include these widely trigger
       - 'flake.*'
       - 'pkgs/lima/**'
       - 'pkgs/lima-full/**'
@@ -13,7 +13,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ci-nix-darwin.yml'
-      - '**.nix'
+      # - '**.nix' # Don't include these widely trigger
       - 'flake.*'
       - 'pkgs/lima/**'
       - 'pkgs/lima-full/**'
