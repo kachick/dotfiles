@@ -34,6 +34,7 @@ jobs:
       matrix:
         runner:
           - ubuntu-24.04
+          # We must use Intel runners for Darwin. See darwin/README.md for the reason why we don't use ARM runners.
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
     steps:
