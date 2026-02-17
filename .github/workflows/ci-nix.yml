@@ -55,12 +55,7 @@ jobs:
   tasks:
     defaults:
       run:
-        # Explicitly target x86_64-darwin on macOS runners to use Rosetta 2 on ARM machines (macos-26),
-        # as this flake only supports x86_64-darwin for now.
-        shell: >-
-          nix develop
-          ${{ runner.os == 'macOS' && '.#x86_64-darwin' || '' }}
-          --command bash -eu -o pipefail {0}
+        shell: nix develop --command bash -eu -o pipefail {0}
     strategy:
       fail-fast: false
       matrix:
@@ -81,7 +76,10 @@ jobs:
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
         if: runner.os == 'Linux'
-      - run: task ci-darwin
+      - name: Run task on Darwin
+        # Explicitly target x86_64-darwin on ARM machines (macos-26) via Rosetta 2,
+        # as this flake only supports x86_64-darwin for now.
+        run: nix develop .#x86_64-darwin --command task ci-darwin
         if: runner.os == 'macOS'
 
   build:
