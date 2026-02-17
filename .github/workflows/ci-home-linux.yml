@@ -68,7 +68,11 @@ jobs:
       - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
       - name: Print some paths and versions
         run: |
-          which zsh && which bash && which ruby && which irb && which ssh
+          which zsh
+          which bash
+          which ruby
+          which irb
+          which ssh
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
@@ -77,7 +81,12 @@ jobs:
       # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'
+          zsh -c zsh -c 'which la; which p'
+          zsh -c 'starship --version'
+          zsh -c 'ruby --version'
+          zsh -c 'irb --version'
+          zsh -c 'ssh -V'
+          zsh -c 'hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

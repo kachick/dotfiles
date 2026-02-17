@@ -63,14 +63,22 @@ jobs:
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
       - name: Print some paths and versions
         run: |
-          which zsh && which bash && which ruby && which irb && which ssh
+          which zsh
+          which bash
+          which ruby
+          which irb
+          which ssh
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       - name: Run customized dependencies
         run: |
-          zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'
+          zsh -c 'starship --version'
+          zsh -c 'ruby --version'
+          zsh -c 'irb --version'
+          zsh -c 'ssh -V'
+          zsh -c 'hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'
