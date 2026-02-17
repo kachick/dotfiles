@@ -73,7 +73,7 @@ jobs:
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
       - name: Run customized dependencies
         run: |
-          zsh -c 'which la; which p; starship --version; ruby --version; irb --version; ssh -V; hx --health'
+          zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

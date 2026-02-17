@@ -11,7 +11,13 @@ on:
       - 'pkgs/lima-full/**'
       - 'overlays/default.nix'
   pull_request:
-    # No paths here to allow label-based OR logic.
+    paths:
+      - '.github/workflows/ci-nix-darwin.yml'
+      - '**.nix'
+      - 'flake.*'
+      - 'pkgs/lima/**'
+      - 'pkgs/lima-full/**'
+      - 'overlays/default.nix'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
@@ -24,13 +30,9 @@ permissions:
 jobs:
   tasks:
     if: >-
-      github.event_name != 'pull_request' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-darwin') ||
-      contains(toJSON(github.event.commits), '**.nix') ||
-      contains(toJSON(github.event.commits), 'flake.lock')
-    defaults:
-      run:
-        shell: nix develop --command bash -eu -o pipefail {0}
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'ci-darwin' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
     strategy:
       matrix:
         runner: [macos-15-intel]
@@ -49,10 +51,9 @@ jobs:
 
   build:
     if: >-
-      github.event_name != 'pull_request' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-darwin') ||
-      contains(toJSON(github.event.commits), 'pkgs/lima') ||
-      contains(toJSON(github.event.commits), 'overlays/default.nix')
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'ci-darwin' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
     strategy:
       fail-fast: false
       matrix:
