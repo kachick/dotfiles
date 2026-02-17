@@ -88,9 +88,5 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        run: |
-          tests=$(nix eval .#${{ matrix.pname }}.passthru.tests --apply 'builtins.attrNames' --json 2>/dev/null || echo "[]")
-          echo "$tests" | jq -r '.[]' | while read -r test_name; do
-            echo "Building test: $test_name"
-            nix build ".#${{ matrix.pname }}.passthru.tests.$test_name"
-          done
+        # nix-build is more convenient for building all derivations in an attribute set.
+        run: nix-build -E '(import . {}).${{ matrix.pname }}.passthru.tests'

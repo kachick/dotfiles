@@ -27,26 +27,30 @@ symlinkJoin {
   passthru = {
     tests = lima.passthru.tests // {
       # `nix build .#lima-full.passthru.tests.additionalAgents`
-      additionalAgents = testers.testEqualContents {
-        assertion = "limactl also detects additional guest agents if specified";
-        expected = writeText "expected" ''
-          true
-          true
-        '';
-        actual =
-          runCommand "actual"
-            {
-              nativeBuildInputs = [
-                writableTmpDirAsHomeHook
-                lima-full
-                jq
-              ];
-            }
-            ''
-              limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
-              limactl info | jq '.guestAgents | length >= 2' >>"$out"
-            '';
-      };
+      additionalAgents =
+        let
+          arch = stdenvNoCC.hostPlatform.parsed.cpu.name;
+        in
+        testers.testEqualContents {
+          assertion = "limactl also detects additional guest agents if specified";
+          expected = writeText "expected" ''
+            true
+            true
+          '';
+          actual =
+            runCommand "actual"
+              {
+                nativeBuildInputs = [
+                  writableTmpDirAsHomeHook
+                  lima-full
+                  jq
+                ];
+              }
+              ''
+                limactl info | jq '.guestAgents | has("${arch}")' >>"$out"
+                limactl info | jq '.guestAgents | length >= 2' >>"$out"
+              '';
+        };
     };
   };
 
