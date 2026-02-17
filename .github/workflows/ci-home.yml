@@ -1,4 +1,4 @@
-name: 🏠 Linux
+name: 🏠 🐧
 on:
   push:
     branches: [main]
@@ -28,7 +28,12 @@ permissions:
 
 jobs:
   home-manager:
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     steps:
       - name: Logging disk space
@@ -60,7 +65,7 @@ jobs:
 
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
-      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@ubuntu-24.04'
+      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
       - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
       - name: Print some paths and versions
         run: |
@@ -93,6 +98,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: 'home-files-${{ github.sha }}-ubuntu-24.04'
+          name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
           path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'

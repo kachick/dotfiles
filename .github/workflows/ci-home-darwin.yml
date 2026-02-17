@@ -1,4 +1,4 @@
-name: 🏠 Darwin
+name: 🏠 🍎
 on:
   push:
     branches: [main]
@@ -17,7 +17,6 @@ on:
       - 'home-manager/common.nix'
       - 'home-manager/lima-host.nix'
       - 'darwin/**'
-    types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
     - cron: '42 1 * * *'
@@ -28,23 +27,17 @@ permissions:
 
 jobs:
   home-manager:
-    # Trigger on specific paths, schedule, manual dispatch, or when 'ci-darwin' label is added
+    # Trigger on specific paths, schedule, manual dispatch, or when 'ci-darwin' label is present in PR.
+    # We rely on 'on.paths' for PR triggers, but this 'if' ensures it only runs for the owner or when labeled.
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.action == 'labeled' && github.event.label.name == 'ci-darwin' ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci-darwin')) ||
-      (
-        github.event.action != 'labeled' &&
-        (
-          contains(github.event.pull_request.changed_files, 'home-manager/darwin.nix') ||
-          contains(github.event.pull_request.changed_files, 'home-manager/kachick.nix') ||
-          contains(github.event.pull_request.changed_files, 'home-manager/common.nix') ||
-          contains(github.event.pull_request.changed_files, 'home-manager/lima-host.nix') ||
-          contains(github.event.pull_request.changed_files, 'darwin/') ||
-          contains(github.event.pull_request.changed_files, '.github/workflows/ci-home-darwin.yml')
-        )
-      )
-    runs-on: macos-15-intel
+      (github.event_name != 'pull_request') ||
+      (contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - macos-15-intel
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6.0.2
@@ -63,7 +56,7 @@ jobs:
       - run: mkdir -p ~/.local/state/nix/profiles
       # Workaround for 69901b1deb5dee17659b6a51faa0008a30b40831
       - run: touch /usr/local/bin/zed
-      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@macos-15-intel'
+      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
       - name: Print some paths and versions
         run: |
           which zsh
@@ -95,6 +88,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: 'home-files-${{ github.sha }}-macos-15-intel'
+          name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
           path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'

@@ -1,5 +1,4 @@
-# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
-name: ❄️ Darwin
+name: ❄️ 🍎
 on:
   push:
     branches: [main]
@@ -18,7 +17,6 @@ on:
       - 'pkgs/lima/**'
       - 'pkgs/lima-full/**'
       - 'overlays/default.nix'
-    types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
     - cron: '42 1 * * *'
@@ -30,17 +28,8 @@ permissions:
 jobs:
   tasks:
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.action == 'labeled' && github.event.label.name == 'ci-darwin' ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci-darwin')) ||
-      (
-        github.event.action != 'labeled' &&
-        (
-          contains(github.event.pull_request.changed_files, '**.nix') ||
-          contains(github.event.pull_request.changed_files, 'flake.lock') ||
-          contains(github.event.pull_request.changed_files, '.github/workflows/ci-nix-darwin.yml')
-        )
-      )
+      (github.event_name != 'pull_request') ||
+      (contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
     defaults:
       run:
         shell: nix develop --command bash -eu -o pipefail {0}
@@ -59,19 +48,8 @@ jobs:
 
   build:
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.action == 'labeled' && github.event.label.name == 'ci-darwin' ||
-      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci-darwin')) ||
-      (
-        github.event.action != 'labeled' &&
-        (
-          contains(github.event.pull_request.changed_files, 'pkgs/lima/') ||
-          contains(github.event.pull_request.changed_files, 'pkgs/lima-full/') ||
-          contains(github.event.pull_request.changed_files, 'overlays/default.nix') ||
-          contains(github.event.pull_request.changed_files, 'flake.lock') ||
-          contains(github.event.pull_request.changed_files, '.github/workflows/ci-nix-darwin.yml')
-        )
-      )
+      (github.event_name != 'pull_request') ||
+      (contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
     strategy:
       fail-fast: false
       matrix:
