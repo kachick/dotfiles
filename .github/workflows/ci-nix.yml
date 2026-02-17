@@ -88,5 +88,6 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        # nix-build is more convenient for building all derivations in an attribute set.
-        run: nix-build -E '(import . {}).${{ matrix.pname }}.passthru.tests'
+        # This one-liner evaluates all attribute names in passthru.tests and builds them in a single nix build command.
+        run: |
+          nix build $(nix eval .#${{ matrix.pname }}.passthru.tests --apply 't: builtins.concatStringsSep " " (builtins.map (n: ".#${{ matrix.pname }}.passthru.tests.${n}") (builtins.attrNames t))' --raw)
