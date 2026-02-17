@@ -7,8 +7,8 @@ on:
       - 'home-manager/darwin.nix'
       - 'home-manager/kachick.nix'
       - 'home-manager/common.nix'
-      - 'home-manager/lima-host.nix'
       - 'home-manager/packages.nix'
+      - 'home-manager/lima-host.nix'
       - 'darwin/**'
   pull_request:
     paths:
@@ -21,6 +21,8 @@ on:
       - 'darwin/**'
     types: [opened, synchronize, reopened, labeled]
   schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
@@ -34,6 +36,7 @@ jobs:
       github.event.action != 'labeled' ||
       github.event.label.name == 'ci-darwin' ||
       contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -42,7 +45,6 @@ jobs:
         runner:
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -72,6 +74,8 @@ jobs:
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+      # Do not use interactive mode here.
+      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
           zsh -c 'starship --version'

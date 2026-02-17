@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
-      # - '**.nix' # Don't include these widely trigger
+      - '**.nix'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
@@ -13,12 +13,13 @@ on:
     paths:
       - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
-      # - '**.nix' # Don't include these widely trigger
+      - '**.nix'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
   schedule:
     # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
@@ -27,13 +28,13 @@ permissions:
 
 jobs:
   home-manager:
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         runner:
           - ubuntu-24.04
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
     steps:
       - name: Logging disk space
         run: df -h
@@ -64,8 +65,12 @@ jobs:
 
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
+      # Workaround for 69901b1deb5dee17659b6a51faa0008a30b40831
+      - run: touch /usr/local/bin/zed
+        if: runner.os == 'macOS'
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
       - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
+        if: runner.os == 'Linux'
       - name: Print some paths and versions
         run: |
           which zsh
