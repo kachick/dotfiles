@@ -90,6 +90,7 @@ jobs:
         pname:
           - rclone
           - kanata-tray
+          - lima-full
         exclude:
           - runner: macos-15-intel
             pname: kanata-tray # I'm using Karabiner-Elements on macOS
@@ -102,29 +103,14 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: 'nix build .#${{ matrix.pname }}'
-
-  build-lima:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-24.04
-          # We must use Intel runners for Darwin. See darwin/README.md for the reason.
-          - macos-15-intel
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - run: 'nix build .#lima-full'
-      - name: Package tests
+      - name: Build package
+        run: nix build .#${{ matrix.pname }}
+      - name: Run passthru tests
+        # This step builds all derivations defined in `passthru.tests` of the package.
+        # It handles both direct packages and those with nested tests like lima-full.
         run: |
-          nix build .#lima.passthru.tests.minimalAgent
-          nix build .#lima.passthru.tests.staticallyLinkedAgent
-          nix build .#lima-full.passthru.tests.additionalAgents
+          tests=$(nix eval .#${{ matrix.pname }}.passthru.tests --apply 'builtins.attrNames' --json 2>/dev/null || echo "[]")
+          echo "$tests" | jq -r '.[]' | while read -r test_name; do
+            echo "Building test: $test_name"
+            nix build ".#${{ matrix.pname }}.passthru.tests.$test_name"
+          done
