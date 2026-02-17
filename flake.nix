@@ -1,6 +1,7 @@
 {
   description = "kachick's dotfiles that can be placed in the public repository";
 
+  # Trigger CI optimization
   nixConfig = {
     extra-substituters = [
       "https://kachick-dotfiles.cachix.org"
