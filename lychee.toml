@@ -50,6 +50,9 @@ exclude = [
 
   # Slow network
   "wiki.gnupg.org",
+
+  # Requires login
+  "account.microsoft.com",
 ]
 
 exclude_all_private = true
