@@ -1,25 +1,25 @@
-name: 🏠 Linux
+name: 🏠 Darwin
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci-home.yml'
-      - 'home-manager/**.nix'
-      - '**.nix'
-      - 'flake.*'
-      - 'pkgs/**'
-      - 'go.*'
+      - '.github/workflows/ci-home-darwin.yml'
+      - 'home-manager/darwin.nix'
+      - 'home-manager/kachick.nix'
+      - 'home-manager/common.nix'
+      - 'home-manager/lima-host.nix'
+      - 'darwin/**'
   pull_request:
     paths:
-      - '.github/workflows/ci-home.yml'
-      - 'home-manager/**.nix'
-      - '**.nix'
-      - 'flake.*'
-      - 'pkgs/**'
-      - 'go.*'
+      - '.github/workflows/ci-home-darwin.yml'
+      - 'home-manager/darwin.nix'
+      - 'home-manager/kachick.nix'
+      - 'home-manager/common.nix'
+      - 'home-manager/lima-host.nix'
+      - 'darwin/**'
+    types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
@@ -28,24 +28,25 @@ permissions:
 
 jobs:
   home-manager:
-    runs-on: ubuntu-24.04
+    # Trigger on specific paths, schedule, manual dispatch, or when 'ci-darwin' label is added
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.action == 'labeled' && github.event.label.name == 'ci-darwin' ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'ci-darwin')) ||
+      (
+        github.event.action != 'labeled' &&
+        (
+          contains(github.event.pull_request.changed_files, 'home-manager/darwin.nix') ||
+          contains(github.event.pull_request.changed_files, 'home-manager/kachick.nix') ||
+          contains(github.event.pull_request.changed_files, 'home-manager/common.nix') ||
+          contains(github.event.pull_request.changed_files, 'home-manager/lima-host.nix') ||
+          contains(github.event.pull_request.changed_files, 'darwin/') ||
+          contains(github.event.pull_request.changed_files, '.github/workflows/ci-home-darwin.yml')
+        )
+      )
+    runs-on: macos-15-intel
     timeout-minutes: 60
     steps:
-      - name: Logging disk space
-        run: df -h
-      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
-      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
-        # NOTE: This workflow removed 14 Gib in 50sec
-        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
-        run: |
-          docker image prune --all --force
-          sudo rm -rf '/opt/ghc' \
-            '/usr/share/dotnet' \
-            "$AGENT_TOOLSDIRECTORY" \
-             '/usr/local/lib/android' \
-             '/usr/local/share/boost'
-      - name: Logging disk space after clean
-        run: df -h
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
@@ -60,8 +61,9 @@ jobs:
 
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
-      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@ubuntu-24.04'
-      - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
+      # Workaround for 69901b1deb5dee17659b6a51faa0008a30b40831
+      - run: touch /usr/local/bin/zed
+      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@macos-15-intel'
       - name: Print some paths and versions
         run: |
           which zsh
@@ -93,6 +95,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: 'home-files-${{ github.sha }}-ubuntu-24.04'
+          name: 'home-files-${{ github.sha }}-macos-15-intel'
           path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'
