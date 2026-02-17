@@ -33,8 +33,12 @@ jobs:
       github.event.action != 'labeled' ||
       github.event.label.name == 'ci-darwin' ||
       contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+    defaults:
+      run:
+        shell: nix develop --command bash -eu -o pipefail {0}
     strategy:
       matrix:
+        # macos-15-intel is the last x86_64-darwin runner.
         runner: [macos-15-intel]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
@@ -60,6 +64,7 @@ jobs:
         runner: [macos-15-intel]
         pname:
           - rclone
+          # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here
           - lima-full
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180

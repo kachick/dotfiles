@@ -35,6 +35,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # macos-15-intel is the last x86_64-darwin runner. It is very slow, but we must use it.
+        # See darwin/README.md for the reason why we don't use ARM runners for cross-builds.
         runner:
           - macos-15-intel
     runs-on: ${{ matrix.runner }}
@@ -64,8 +66,6 @@ jobs:
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-      # Do not use interactive mode here.
-      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
           zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'

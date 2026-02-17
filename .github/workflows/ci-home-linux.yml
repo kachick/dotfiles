@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci-home.yml'
+      - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
@@ -11,7 +11,7 @@ on:
       - 'go.*'
   pull_request:
     paths:
-      - '.github/workflows/ci-home.yml'
+      - '.github/workflows/ci-home-linux.yml'
       - 'home-manager/**.nix'
       - '**.nix'
       - 'flake.*'
@@ -38,7 +38,9 @@ jobs:
       - name: Logging disk space
         run: df -h
       # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
-      - name: Clean disk space
+      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
+        # NOTE: This workflow removed 14 Gib in 50sec
+        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
         run: |
           docker image prune --all --force
           sudo rm -rf '/opt/ghc' \
@@ -71,6 +73,8 @@ jobs:
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+      # Do not use interactive mode here.
+      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
           zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'
