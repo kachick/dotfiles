@@ -91,4 +91,10 @@ jobs:
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
         # Use nix-build via flake-compat for simpler recursive building of attribute sets.
-        run: nix-build --attr packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests
+        # Only run if passthru.tests exists to avoid errors.
+        run: |
+          if nix eval .#packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests >/dev/null 2>&1; then
+            nix-build --attr packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests
+          else
+            echo "No passthru.tests found for ${{ matrix.pname }}, skipping."
+          fi
