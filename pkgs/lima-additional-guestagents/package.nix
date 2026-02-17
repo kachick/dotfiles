@@ -21,8 +21,6 @@ buildGo126Module (finalAttrs: {
   buildPhase = ''
     runHook preBuild
 
-    # TODO: This line has been added to force rebuild to measure the cross-build
-
     make additional-guestagents
 
     runHook postBuild

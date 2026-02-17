@@ -14,7 +14,6 @@ runs:
         extra_nix_config: |
           sandbox = true
           accept-flake-config = true
-          ${{ runner.os == 'macOS' && 'extra-platforms = x86_64-darwin aarch64-darwin' || '' }}
     - name: Configure Cachix
       uses: cachix/cachix-action@3ba601ff5bbb07c7220846facfa2cd81eeee15a1 # v16
       with:

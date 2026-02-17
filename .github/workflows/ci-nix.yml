@@ -59,10 +59,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Use ARM runner (macos-26) for faster environment initialization even for Intel Mac tasks.
         runner:
           - ubuntu-24.04
-          - macos-26
+          - macos-15-intel
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -76,28 +75,22 @@ jobs:
         run: echo 'This step should be done before any other "nix develop" steps'
       - run: task ci-dev
         if: runner.os == 'Linux'
-      - name: Run task on Darwin
-        # Explicitly target x86_64-darwin on ARM machines (macos-26) via Rosetta 2,
-        # as this flake only supports x86_64-darwin for now.
-        run: nix develop .#x86_64-darwin --command task ci-darwin
+      - run: task ci-darwin
         if: runner.os == 'macOS'
 
   build:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - runner: ubuntu-24.04
-            system: x86_64-linux
-            pname: rclone
-          - runner: ubuntu-24.04
-            system: x86_64-linux
-            pname: kanata-tray
-          # Build Intel Mac (x86_64-darwin) packages on fast ARM runners (macos-26)
-          - runner: macos-26
-            system: x86_64-darwin
-            pname: rclone
-            # kanata-tray: I'm using Karabiner-Elements on macOS
+        runner:
+          - ubuntu-24.04
+          - macos-15-intel
+        pname:
+          - rclone
+          - kanata-tray
+        exclude:
+          - runner: macos-15-intel
+            pname: kanata-tray # I'm using Karabiner-Elements on macOS
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -107,16 +100,15 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: 'nix build .#packages.${{ matrix.system }}.${{ matrix.pname }}'
+      - run: 'nix build .#${{ matrix.pname }}'
 
   build-lima:
     strategy:
       fail-fast: false
       matrix:
-        # Use ARM runner (macos-26) to build Intel Mac (x86_64-darwin) lima packages faster
         runner:
           - ubuntu-24.04
-          - macos-26
+          - macos-15-intel
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -127,21 +119,9 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Build lima-full
-        run: |
-          if [ "${{ runner.os }}" = "macOS" ]; then
-            nix build .#packages.x86_64-darwin.lima-full
-          else
-            nix build .#lima-full
-          fi
+      - run: 'nix build .#lima-full'
       - name: Package tests
         run: |
-          if [ "${{ runner.os }}" = "macOS" ]; then
-            nix build .#packages.x86_64-darwin.lima.passthru.tests.minimalAgent
-            nix build .#packages.x86_64-darwin.lima.passthru.tests.staticallyLinkedAgent
-            nix build .#packages.x86_64-darwin.lima-full.passthru.tests.additionalAgents
-          else
-            nix build .#lima.passthru.tests.minimalAgent
-            nix build .#lima.passthru.tests.staticallyLinkedAgent
-            nix build .#lima-full.passthru.tests.additionalAgents
-          fi
+          nix build .#lima.passthru.tests.minimalAgent
+          nix build .#lima.passthru.tests.staticallyLinkedAgent
+          nix build .#lima-full.passthru.tests.additionalAgents

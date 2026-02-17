@@ -27,9 +27,15 @@ permissions:
   contents: read
 
 jobs:
-  home-manager-linux:
-    runs-on: ubuntu-24.04
+  home-manager:
     timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - macos-15-intel
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Logging disk space
         run: df -h
@@ -44,6 +50,8 @@ jobs:
             "$AGENT_TOOLSDIRECTORY" \
              '/usr/local/lib/android' \
              '/usr/local/share/boost'
+        # I didn't face any disk problem on darwin runner yet
+        if: runner.os == 'Linux'
       - name: Logging disk space after clean
         run: df -h
       - uses: actions/checkout@v6.0.2
@@ -60,81 +68,12 @@ jobs:
 
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
-      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@ubuntu-24.04'
-      - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
-      - name: Print some paths and versions
-        run: |
-          which zsh
-          which bash
-          which ruby
-          which irb
-          which ssh
-      - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
-        run: |
-          [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-          [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-      # Do not use interactive mode here.
-      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
-      - name: Run customized dependencies
-        run: |
-          zsh -c zsh -c 'which la; which p'
-          zsh -c 'starship --version'
-          zsh -c 'ruby --version'
-          zsh -c 'irb --version'
-          zsh -c 'ssh -V'
-          zsh -c 'hx --health'
-      - name: Run homemade commands
-        run: |
-          zsh -c 'la ~; lat ~/.config'
-          zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
-      - name: Backup generated config
-        run: |
-          nix run .#archive-home-files home-files-linux
-      - name: Upload artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-        with:
-          name: 'home-files-${{ github.sha }}-linux'
-          path: home-files-linux.tar.gz
-          if-no-files-found: 'error'
-
-  build-home-darwin-x86:
-    # Build Intel Mac configuration on fast ARM runner to populate binary cache.
-    # It is much faster than building on Intel runners.
-    runs-on: macos-26
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Build activation package for Intel Mac
-        run: |
-          nix build .#homeConfigurations."github-actions@macos-15-intel".activationPackage
-
-  home-manager-darwin:
-    needs: [build-home-darwin-x86]
-    runs-on: macos-15-intel
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - name: Print some dotfiles overviews
-        run: |
-          </etc/nix/nix.conf
-          ls -alh ~
-
-      # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
-      - run: mkdir -p ~/.local/state/nix/profiles
       # Workaround for 69901b1deb5dee17659b6a51faa0008a30b40831
       - run: touch /usr/local/bin/zed
-      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@macos-15-intel'
+        if: runner.os == 'macOS'
+      - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
+      - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
+        if: runner.os == 'Linux'
       - name: Print some paths and versions
         run: |
           which zsh
@@ -162,10 +101,10 @@ jobs:
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
       - name: Backup generated config
         run: |
-          nix run .#archive-home-files home-files-darwin
+          nix run .#archive-home-files home-manager-generation-home-files
       - name: Upload artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: 'home-files-${{ github.sha }}-darwin'
-          path: home-files-darwin.tar.gz
+          name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
+          path: home-manager-generation-home-files.tar.gz
           if-no-files-found: 'error'
