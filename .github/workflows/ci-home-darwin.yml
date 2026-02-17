@@ -17,6 +17,7 @@ on:
       - 'home-manager/common.nix'
       - 'home-manager/lima-host.nix'
       - 'darwin/**'
+    types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
     - cron: '42 1 * * *'
@@ -27,11 +28,9 @@ permissions:
 
 jobs:
   home-manager:
-    # Trigger on specific paths, schedule, manual dispatch, or when 'ci-darwin' label is present in PR.
-    # We rely on 'on.paths' for PR triggers, but this 'if' ensures it only runs for the owner or when labeled.
-    if: >-
-      (github.event_name != 'pull_request') ||
-      (contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
+    # On PR, this workflow only triggers if paths match.
+    # The 'labeled' type combined with 'paths' acts as an AND condition in GHA.
+    # We keep it simple as per project conventions.
     strategy:
       fail-fast: false
       matrix:
