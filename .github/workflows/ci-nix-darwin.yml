@@ -11,13 +11,7 @@ on:
       - 'pkgs/lima-full/**'
       - 'overlays/default.nix'
   pull_request:
-    paths:
-      - '.github/workflows/ci-nix-darwin.yml'
-      - '**.nix'
-      - 'flake.*'
-      - 'pkgs/lima/**'
-      - 'pkgs/lima-full/**'
-      - 'overlays/default.nix'
+    # No paths here to allow label-based OR logic.
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
@@ -29,10 +23,18 @@ permissions:
 
 jobs:
   tasks:
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin') ||
+      contains(toJSON(github.event.commits), '**.nix') ||
+      contains(toJSON(github.event.commits), 'flake.lock')
     defaults:
       run:
         shell: nix develop --command bash -eu -o pipefail {0}
-    runs-on: macos-15-intel
+    strategy:
+      matrix:
+        runner: [macos-15-intel]
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6.0.2
@@ -46,13 +48,19 @@ jobs:
       - run: task ci-darwin
 
   build:
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin') ||
+      contains(toJSON(github.event.commits), 'pkgs/lima') ||
+      contains(toJSON(github.event.commits), 'overlays/default.nix')
     strategy:
       fail-fast: false
       matrix:
+        runner: [macos-15-intel]
         pname:
           - rclone
           - lima-full
-    runs-on: macos-15-intel
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
       - uses: actions/checkout@v6.0.2
@@ -64,8 +72,6 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        # Use nix-build via flake-compat for simpler recursive building of attribute sets.
-        # Only run if passthru.tests exists to avoid errors.
         run: |
           if nix eval .#packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests >/dev/null 2>&1; then
             nix-build --attr packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests

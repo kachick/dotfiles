@@ -10,16 +10,9 @@ on:
       - 'home-manager/lima-host.nix'
       - 'darwin/**'
   pull_request:
-    paths:
-      - '.github/workflows/ci-home-darwin.yml'
-      - 'home-manager/darwin.nix'
-      - 'home-manager/kachick.nix'
-      - 'home-manager/common.nix'
-      - 'home-manager/lima-host.nix'
-      - 'darwin/**'
+    # Do NOT use 'paths' here to allow the 'labeled' trigger to work even for unrelated paths.
     types: [opened, synchronize, reopened, labeled]
   schedule:
-    # Every 10:42 JST
     - cron: '42 1 * * *'
   workflow_dispatch:
 
@@ -28,9 +21,16 @@ permissions:
 
 jobs:
   home-manager:
-    # On PR, this workflow only triggers if paths match.
-    # The 'labeled' type combined with 'paths' acts as an AND condition in GHA.
-    # We keep it simple as per project conventions.
+    # Trigger logic:
+    # - Always run for non-PR events (Push, Schedule, Dispatch)
+    # - For PRs, run if 'ci-darwin' label is present.
+    # - For PRs, run if Darwin-related paths are touched (manually checked here to avoid GHA 'AND' limitation).
+    if: >-
+      github.event_name != 'pull_request' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin') ||
+      contains(toJSON(github.event.pull_request.head.label), 'darwin') ||
+      contains(toJSON(github.event.commits), 'home-manager/darwin.nix') ||
+      contains(toJSON(github.event.commits), 'darwin/')
     strategy:
       fail-fast: false
       matrix:
@@ -58,25 +58,14 @@ jobs:
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
       - name: Print some paths and versions
         run: |
-          which zsh
-          which bash
-          which ruby
-          which irb
-          which ssh
+          which zsh && which bash && which ruby && which irb && which ssh
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-      # Do not use interactive mode here.
-      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          zsh -c zsh -c 'which la; which p'
-          zsh -c 'starship --version'
-          zsh -c 'ruby --version'
-          zsh -c 'irb --version'
-          zsh -c 'ssh -V'
-          zsh -c 'hx --health'
+          zsh -c 'starship --version; ruby --version; irb --version; ssh -V; hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

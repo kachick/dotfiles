@@ -19,7 +19,6 @@ on:
       - 'go.*'
   schedule:
     # Every 10:42 JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
 
@@ -39,9 +38,7 @@ jobs:
       - name: Logging disk space
         run: df -h
       # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
-      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
-        # NOTE: This workflow removed 14 Gib in 50sec
-        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
+      - name: Clean disk space
         run: |
           docker image prune --all --force
           sudo rm -rf '/opt/ghc' \
@@ -69,25 +66,14 @@ jobs:
       - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
       - name: Print some paths and versions
         run: |
-          which zsh
-          which bash
-          which ruby
-          which irb
-          which ssh
+          which zsh && which bash && which ruby && which irb && which ssh
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
           [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
           [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
-      # Do not use interactive mode here.
-      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
       - name: Run customized dependencies
         run: |
-          zsh -c zsh -c 'which la; which p'
-          zsh -c 'starship --version'
-          zsh -c 'ruby --version'
-          zsh -c 'irb --version'
-          zsh -c 'ssh -V'
-          zsh -c 'hx --health'
+          zsh -c 'which la; which p; starship --version; ruby --version; irb --version; ssh -V; hx --health'
       - name: Run homemade commands
         run: |
           zsh -c 'la ~; lat ~/.config'

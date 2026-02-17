@@ -55,7 +55,10 @@ jobs:
     defaults:
       run:
         shell: nix develop --command bash -eu -o pipefail {0}
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        runner: [ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6.0.2
@@ -72,11 +75,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [ubuntu-24.04]
         pname:
           - rclone
           - kanata-tray
           - lima-full
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
       - uses: actions/checkout@v6.0.2
@@ -88,8 +92,6 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        # Use nix-build via flake-compat for simpler recursive building of attribute sets.
-        # Only run if passthru.tests exists to avoid errors.
         run: |
           if nix eval .#packages.x86_64-linux.${{ matrix.pname }}.passthru.tests >/dev/null 2>&1; then
             nix-build --attr packages.x86_64-linux.${{ matrix.pname }}.passthru.tests
