@@ -93,11 +93,10 @@ jobs:
       - name: Build package
         run: nix build .#${{ matrix.pname }}
       - name: Run passthru tests
-        # Use nix-build via flake-compat for simpler recursive building of attribute sets.
-        # Only run if passthru.tests exists to avoid errors.
+        # nix build automatically selects the correct architecture for the current runner.
         run: |
-          if nix eval .#packages.x86_64-linux.${{ matrix.pname }}.passthru.tests >/dev/null 2>&1; then
-            nix-build --attr packages.x86_64-linux.${{ matrix.pname }}.passthru.tests
-          else
-            echo "No passthru.tests found for ${{ matrix.pname }}, skipping."
-          fi
+          tests=$(nix eval .#${{ matrix.pname }}.passthru.tests --apply 'builtins.attrNames' --json 2>/dev/null || echo "[]")
+          echo "$tests" | jq -r '.[]' | while read -r test_name; do
+            echo "Building test: $test_name"
+            nix build ".#${{ matrix.pname }}.passthru.tests.$test_name"
+          done
