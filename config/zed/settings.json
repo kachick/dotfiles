@@ -19,6 +19,10 @@
     "diagnostics": false,
     "metrics": false
   },
+  // "features" key is not available in Zed's JSON schema at Zed 0.223.3. However it works! (Seems Zed's bug)
+  "features": {
+    "edit_prediction_provider": "none"
+  },
   "auto_update": false,
   "soft_wrap": "editor_width",
   "ui_font_family": "PlemolJP Console NF",
@@ -27,6 +31,18 @@
   "buffer_font_size": 14,
   "tabs": {
     "file_icons": true
+  },
+  // I did't use these GUI git feature yet
+  "git_panel": {
+    "button": false
+  },
+  // I didn't get any important from this, and the indicator seems annoy
+  "notification_panel": {
+    "button": false
+  },
+  // Important feature, however I don't forgot ctrl+shift+F
+  "search": {
+    "button": false
   },
   // https://github.com/zed-industries/zed/issues/7121#issuecomment-1918611074
   "collaboration_panel": {
