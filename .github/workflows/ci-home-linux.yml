@@ -4,29 +4,19 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/**'
-      - 'pkgs/**'
-      - 'overlays/**'
-      - 'internal/**'
+      - 'home-manager/**.nix'
+      - '**.nix'
       - 'flake.*'
-      - 'devShells.nix'
+      - 'pkgs/**'
       - 'go.*'
-      - '**.go'
-      - '!nixos/**'
-      - '!windows/**'
   pull_request:
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/**'
-      - 'pkgs/**'
-      - 'overlays/**'
-      - 'internal/**'
+      - 'home-manager/**.nix'
+      - '**.nix'
       - 'flake.*'
-      - 'devShells.nix'
+      - 'pkgs/**'
       - 'go.*'
-      - '**.go'
-      - '!nixos/**'
-      - '!windows/**'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

@@ -7,23 +7,15 @@ on:
       - '.github/workflows/ci-nix-linux.yml'
       - '**.nix'
       - 'flake.*'
-      - 'devShells.nix'
       - 'Taskfile.yml'
       - 'cmd/**'
-      - 'pkgs/**'
-      - 'overlays/**'
-      - 'internal/**'
   pull_request:
     paths:
       - '.github/workflows/ci-nix-linux.yml'
       - '**.nix'
       - 'flake.*'
-      - 'devShells.nix'
       - 'Taskfile.yml'
       - 'cmd/**'
-      - 'pkgs/**'
-      - 'overlays/**'
-      - 'internal/**'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

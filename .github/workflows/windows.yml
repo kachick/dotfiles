@@ -12,8 +12,6 @@ on:
       - '**.go'
       - 'go.*'
       - 'config/**'
-      - '!nixos/**'
-      - '!home-manager/**'
       - '!**.md'
   pull_request:
     paths:
@@ -22,8 +20,6 @@ on:
       - '**.go'
       - 'go.*'
       - 'config/**'
-      - '!nixos/**'
-      - '!home-manager/**'
       - '!**.md'
   workflow_dispatch:
 
