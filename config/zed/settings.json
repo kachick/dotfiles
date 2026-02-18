@@ -33,6 +33,9 @@
   "tabs": {
     "file_icons": true
   },
+  "tab_bar": {
+    "show_nav_history_buttons": false
+  },
   "title_bar": {
     // "show_branch_icon": false,      // Show/hide branch icon beside branch switcher
     // "show_branch_name": true,       // Show/hide branch name
