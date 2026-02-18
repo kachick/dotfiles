@@ -131,6 +131,11 @@ in
             "--stdio"
           ];
         };
+
+        rumdl = {
+          command = lib.getExe pkgs.unstable.rumdl;
+          args = [ "server" ];
+        };
       };
 
       language = [
@@ -194,7 +199,7 @@ in
           language-servers = [
             "marksman"
             "mpls"
-            # "rumdl" # TODO: Make it possible to use rumdl here
+            "rumdl"
             "typos"
           ];
         }
@@ -273,6 +278,8 @@ in
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
       marksman
+
+      unstable.rumdl
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
       vscode-langservers-extracted
