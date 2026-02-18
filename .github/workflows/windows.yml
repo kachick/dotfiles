@@ -8,7 +8,7 @@ on:
       - main
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows/**'
+      - 'windows**'
       - '**.go'
       - 'go.*'
       - 'config/**'
@@ -16,7 +16,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows/**'
+      - 'windows**'
       - '**.go'
       - 'go.*'
       - 'config/**'
