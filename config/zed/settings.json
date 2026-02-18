@@ -35,6 +35,10 @@
   "chat_panel": {
     "button": "never"
   },
+  // https://github.com/zed-industries/zed/discussions/11904#discussioncomment-9457583
+  "prettier": {
+    "allowed": false
+  },
   // FIXME: Actually not working...
   "lsp": {
     "vscode-json-language-server": {
