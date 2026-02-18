@@ -57,6 +57,9 @@ in
           # This option makes much confusion, actually working `false = show dotfiles but respecting .gitignore`
           hidden = false;
         };
+
+        # https://github.com/helix-editor/helix/pull/11430#issuecomment-2593580148
+        default-yank-register = "+";
       };
 
       keys =
