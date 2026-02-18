@@ -23,6 +23,7 @@
   "features": {
     "edit_prediction_provider": "none"
   },
+  "disable_ai": true, // I'm not negative to LLM. However I don't welcome the Zed AI UI and the strong and many suggestions.
   "auto_update": false,
   "soft_wrap": "editor_width",
   "ui_font_family": "PlemolJP Console NF",
