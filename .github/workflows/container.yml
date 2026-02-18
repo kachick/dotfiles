@@ -237,6 +237,6 @@ jobs:
     needs: [build_and_push]
     # Always skips if no conditions
     if: always() && (needs.build_and_push.result == 'success')
-    uses: ./.github/workflows/cleanup-packages.yml
+    uses: ./.github/workflows/cleanup-github-packages.yml
     with:
       keep-latest-items: 50 # 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior

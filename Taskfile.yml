@@ -153,7 +153,7 @@ tasks:
 
   ghcr:
     # It looks like no paging and sorting API. So keep feawest than last 50 images
-    # Now it is cared in deployment workflow, it triggers https://github.com/kachick/dotfiles/actions/workflows/cleanup-packages.yml
+    # Now it is cared in deployment workflow, it triggers https://github.com/kachick/dotfiles/actions/workflows/cleanup-github-packages.yml
     desc: Run container with selecting the tag with fuzzy finder
     cmds:
       - |
