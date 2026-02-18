@@ -66,6 +66,12 @@
   "prettier": {
     "allowed": false
   },
+  "git": {
+    // https://github.com/zed-industries/zed/discussions/11279#discussioncomment-9292914
+    "inline_blame": {
+      "enabled": false
+    }
+  },
   "lsp": {
     "json-language-server": {
       "binary": {
