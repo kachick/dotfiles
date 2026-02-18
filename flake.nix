@@ -40,7 +40,7 @@
     };
 
     flake-compat = {
-      url = "github:edolstra/flake-compat";
+      url = "github:NixOS/flake-compat";
       flake = false;
     };
 
