@@ -2,6 +2,7 @@
   pkgs,
   lib,
   config,
+  mkWritableConfig,
   ...
 }:
 
@@ -38,27 +39,28 @@ in
     );
   };
 
-  home.file."${sshDir}/control/.keep".text = "Make ControlPath shorter";
-
-  # NixOS handles authorized_keys at the system level during user creation.
-  # However, since this project doesn't use nix-darwin, we need to manage it via Home Manager on Darwin.
-  #
-  # Note that you also need to manually enable "Remote Login" in
-  # macOS System Settings -> General -> Sharing to start the sshd service.
-  #
-  # Use onChange to bypass the symlink issue on Darwin's sshd.
-  # macOS sshd strictly checks permissions of authorized_keys and rejects it if it's a symlink
-  # to the Nix store (which has 755 permissions), resulting in:
-  # "Permission denied (publickey,password,keyboard-interactive)."
-  home.file."${sshDir}/HomeManagerInit_authorized_keys" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-    text = lib.strings.concatLines (import ../config/ssh/keys.nix);
-    # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
-    onChange = ''
-      rm -f ${sshDir}/authorized_keys
-      cp ${config.home.homeDirectory}/.ssh/HomeManagerInit_authorized_keys ${sshDir}/authorized_keys
-      chmod 600 ${sshDir}/authorized_keys
-    '';
-  };
+  home.file =
+    let
+      authorizedKeys = pkgs.writeText "authorized_keys" (
+        lib.strings.concatLines (import ../config/ssh/keys.nix)
+      );
+    in
+    {
+      "${sshDir}/control/.keep".text = "Make ControlPath shorter";
+    }
+    // (lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
+      # NixOS handles authorized_keys at the system level during user creation.
+      # However, since this project doesn't use nix-darwin, we need to manage it via Home Manager on Darwin.
+      #
+      # Note that you also need to manually enable "Remote Login" in
+      # macOS System Settings -> General -> Sharing to start the sshd service.
+      #
+      # Use mkWritableConfig to bypass the symlink issue on Darwin's sshd.
+      # macOS sshd strictly checks permissions of authorized_keys and rejects it if it's a symlink
+      # to the Nix store (which has 755 permissions), resulting in:
+      # "Permission denied (publickey,password,keyboard-interactive)."
+      mkWritableConfig.file "${sshDir}/authorized_keys" authorizedKeys { perm = "600"; }
+    ));
 
   home.activation = {
     ensureWritableKnownHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

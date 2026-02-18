@@ -43,3 +43,9 @@ It maybe occurred with home-manager module and manually specified `pkgs.*`, try 
 
 - <https://github.com/kachick/dotfiles/issues/280>
 - <https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2>
+
+## Writable config management (HomeManagerInit pattern)
+
+To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, Karabiner, SSH), we use a pattern involving `onChange`.
+
+We provide a helper `hmInit` in `home-manager/lib.nix` that automates this pattern. See the comments in that file for more details.
