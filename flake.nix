@@ -102,69 +102,7 @@
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
       formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
 
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = mkPkgs system;
-          # Use latest because:
-          # - typos-lsp is a third-party tool, it might have different releases with typos-cli even if both are defined in same nixpkgs channel.
-          #   See https://github.com/kachick/dotfiles/commit/11bd10a13196d87f74f9464964d34f6ce33fa669#commitcomment-154399068 for detail.
-          # - It will not be used in CI, it doesn't block workflows even if typos upstream introduced false-positive detection.
-          typos-lsp = pkgs.unstable.typos-lsp;
-        in
-        {
-          default = pkgs.mkShellNoCC {
-            env = {
-              # Correct pkgs versions in the nixd inlay hints
-              NIX_PATH = "nixpkgs=${pkgs.path}";
-
-              TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
-            };
-
-            buildInputs =
-              (with pkgs; [
-                # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
-                bashInteractive
-                go-task
-              ])
-              ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
-                (with pkgs; [
-                  nixd
-                  nixf-diagnose
-                  nurl
-                  nix-update
-
-                  shellcheck
-                  shfmt
-
-                  # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
-                  treefmt
-
-                  trivy
-                  lychee
-
-                  desktop-file-utils # `desktop-file-validate` as a linter
-                  kanata # Enable on devshell for using the --check as a linter
-                ])
-                ++ (with pkgs.unstable; [
-                  nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
-                  gitleaks
-                  typos
-                  dprint
-                  zizmor
-                  rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
-                  go_1_26
-                ])
-                ++ (with pkgs.my; [
-                  nix-hash-url
-                ])
-                ++ [
-                  typos-lsp # For zed-editor typos extension
-                ]
-              ));
-          };
-        }
-      );
+      devShells = forAllSystems (system: import ./devShells.nix { pkgs = mkPkgs system; });
 
       packages = forAllSystems (
         system:
@@ -182,91 +120,17 @@
         };
       });
 
-      nixosConfigurations =
-        let
-          system = "x86_64-linux";
-          shared = {
-            inherit system;
-            specialArgs = { inherit inputs outputs overlays; };
-          };
-        in
-        {
-          "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/moss ]; });
-          "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/algae ]; });
-          "generic" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/generic ]; });
-          "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./nixos/hosts/wsl ]; });
-        };
+      nixosConfigurations = import ./nixos {
+        inherit
+          nixpkgs
+          inputs
+          outputs
+          overlays
+          ;
+      };
 
-      homeConfigurations =
-        let
-          x86-Linux-pkgs = mkPkgs "x86_64-linux";
-        in
-        {
-          "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              ./home-manager/genericLinux.nix
-              ./home-manager/wsl.nix
-            ];
-          };
-
-          "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = mkPkgs "x86_64-darwin";
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/darwin.nix
-            ];
-          };
-
-          "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              ./home-manager/genericLinux.nix
-              ./home-manager/lima-guest.nix
-            ];
-          };
-
-          "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/linux.nix
-              ./home-manager/linux-ci.nix
-              { home.username = "runner"; }
-              ./home-manager/genericLinux.nix
-              ./home-manager/systemd.nix
-            ];
-          };
-
-          # macos-15-intel is the last x86_64-darwin runner. It is technically the right choice for respecting architecture of my old MacBook.
-          # However it is too slow, almost 3x slower than Linux and macos-15(arm64) runner. So you should enable binary cache if use this runner
-          # See https://github.com/kachick/dotfiles/issues/1198#issuecomment-3362312549 for detail
-          "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration {
-            pkgs = mkPkgs "x86_64-darwin";
-            # Prefer "kachick" over "common" only here.
-            # Using values as much as possible as actual values to create a robust CI
-            modules = [
-              ./home-manager/kachick.nix
-              ./home-manager/darwin.nix
-              { home.username = "runner"; }
-            ];
-          };
-
-          "user@container" = home-manager-linux.lib.homeManagerConfiguration {
-            pkgs = x86-Linux-pkgs;
-            modules = [
-              ./home-manager/genericUser.nix
-              ./home-manager/linux.nix
-              ./home-manager/genericLinux.nix
-              ./home-manager/systemd.nix
-            ];
-          };
-        };
+      homeConfigurations = import ./home-manager {
+        inherit home-manager-linux home-manager-darwin mkPkgs;
+      };
     };
 }

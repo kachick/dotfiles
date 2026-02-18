@@ -1,4 +1,4 @@
-name: 🏠 🍎
+name: ❄️🏠 🍎
 on:
   push:
     branches: [main]
@@ -9,7 +9,9 @@ on:
       - 'home-manager/common.nix'
       - 'home-manager/packages.nix'
       - 'home-manager/lima-host.nix'
+      - '!home-manager/**/*.md'
       - 'darwin/**'
+      - '!darwin/**/*.md'
   pull_request:
     paths:
       - '.github/workflows/ci-home-darwin.yml'
@@ -18,7 +20,9 @@ on:
       - 'home-manager/common.nix'
       - 'home-manager/packages.nix'
       - 'home-manager/lima-host.nix'
+      - '!home-manager/**/*.md'
       - 'darwin/**'
+      - '!darwin/**/*.md'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST

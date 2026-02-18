@@ -1,19 +1,21 @@
-name: 🏠 🐧
+name: ❄️🏠 🐧
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/**.nix'
-      - '**.nix'
+      - 'home-manager/'
+      - '!home-manager/**/*.md'
+      - '!home-manager/darwin/'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
   pull_request:
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/**.nix'
-      - '**.nix'
+      - 'home-manager/'
+      - '!home-manager/**/*.md'
+      - '!home-manager/darwin/'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
