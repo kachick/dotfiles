@@ -1,0 +1,49 @@
+# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
+name: 🐚 🍎
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/devshell-darwin.yml'
+      - 'flake.*'
+      - 'devShells.nix'
+  pull_request:
+    paths:
+      - '.github/workflows/devshell-darwin.yml'
+      - 'flake.*'
+      - 'devShells.nix'
+    types: [opened, synchronize, reopened, labeled]
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tasks:
+    if: >-
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'ci-darwin' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+    defaults:
+      run:
+        shell: nix develop --command bash -eu -o pipefail {0}
+    strategy:
+      matrix:
+        # macos-15-intel is the last x86_64-darwin runner.
+        runner: [macos-15-intel]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Measure nix shell initialization time
+        run: echo 'This step should be done before any other "nix develop" steps'
+      - run: task ci-darwin

@@ -1,0 +1,53 @@
+# https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
+name: ❄️📦 🐧
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/package-linux.yml'
+      - 'pkgs/'
+      - 'flake.lock'
+  pull_request:
+    paths:
+      - '.github/workflows/package-linux.yml'
+      - 'pkgs/'
+      - 'flake.lock'
+  schedule:
+    # Every 10:42 JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04]
+        pname:
+          - rclone
+          - kanata-tray
+          - lima-full
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Build package
+        run: nix build '.#${{ matrix.pname }}'
+      - name: Run passthru tests
+        # Use nix-build via flake-compat for simpler recursive building.
+        # It automatically detects system architecture and skips if no tests exist.
+        run: |
+          if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
+            nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
+          else
+            echo 'No passthru.tests found for ${{ matrix.pname }}, skipping.'
+          fi

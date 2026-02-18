@@ -1,17 +1,20 @@
 # https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
-name: ❄️📦
+name: ❄️📦 🍎
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/package.yml'
+      - '.github/workflows/package-darwin.yml'
       - 'pkgs/'
       - 'flake.lock'
+      - 'overlays/default.nix'
   pull_request:
     paths:
-      - '.github/workflows/package.yml'
+      - '.github/workflows/package-darwin.yml'
       - 'pkgs/'
       - 'flake.lock'
+      - 'overlays/default.nix'
+    types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
@@ -23,13 +26,17 @@ permissions:
 
 jobs:
   build:
+    if: >-
+      github.event.action != 'labeled' ||
+      github.event.label.name == 'ci-darwin' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-24.04]
+        runner: [macos-15-intel]
         pname:
           - rclone
-          - kanata-tray
+          # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here
           - lima-full
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
@@ -47,7 +54,7 @@ jobs:
         # It automatically detects system architecture and skips if no tests exist.
         run: |
           if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
-            nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
+            nix-build --attr 'packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests'
           else
             echo 'No passthru.tests found for ${{ matrix.pname }}, skipping.'
           fi
