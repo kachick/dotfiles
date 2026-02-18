@@ -1,6 +1,7 @@
 {
   pkgs, # Don't depend on nixpkgs-unstable as possible until realize https://github.com/NixOS/nixpkgs/issues/107466,
   config,
+  mkWritableConfig,
   ...
 }:
 
@@ -52,17 +53,7 @@
   };
 
   xdg = {
-    configFile = {
-      "karabiner/HomeManagerInit_karabiner.json" = {
-        source = ../config/keyboards/karabiner/karabiner.json;
-        # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
-        onChange = ''
-          rm -f ${config.xdg.configHome}/karabiner/karabiner.json
-          cp ${config.xdg.configHome}/karabiner/HomeManagerInit_karabiner.json ${config.xdg.configHome}/karabiner/karabiner.json
-          chmod u+w ${config.xdg.configHome}/karabiner/karabiner.json
-        '';
-      };
-    };
+    configFile = mkWritableConfig.xdg "karabiner/karabiner.json" ../config/keyboards/karabiner/karabiner.json { };
 
     dataFile = {
       # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598

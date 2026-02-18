@@ -1,4 +1,10 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  mkWritableConfig,
+  ...
+}:
 
 let
   # Alternative global dprint
@@ -17,6 +23,8 @@ let
   };
 in
 {
+  xdg.configFile = mkWritableConfig.xdg "helix/config.toml" (pkgs.formats.toml { }).generate "helix-config" config.programs.helix.settings { };
+
   # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {

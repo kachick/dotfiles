@@ -1,5 +1,6 @@
 {
   pkgs,
+  mkWritableConfig,
   ...
 }:
 
@@ -12,8 +13,7 @@
     ./vim.nix
   ];
 
-  # Intentionally avoiding to use https://github.com/nix-community/home-manager/pull/5455 for keeping sharable config in Windows. zed-editor is now available on Windows
-  xdg.configFile."zed/settings.json".source = ../config/zed/settings.json;
+  xdg.configFile = mkWritableConfig.xdg "zed/settings.json" ../config/zed/settings.json { };
 
   home = {
     sessionVariables = {
