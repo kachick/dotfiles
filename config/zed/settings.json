@@ -39,14 +39,7 @@
   "prettier": {
     "allowed": false
   },
-  // FIXME: Actually not working...
   "lsp": {
-    "vscode-json-language-server": {
-      "binary": {
-        "path": "/run/current-system/sw/bin/vscode-json-language-server",
-        "arguments": ["--stdio"]
-      }
-    },
     "json-language-server": {
       "binary": {
         "path": "/run/current-system/sw/bin/vscode-json-language-server",
@@ -77,15 +70,13 @@
     "JSON": {
       // "enable_language_server": false, // Didn't disable with this option
       "language_servers": [
-        "vscode-json-language-server",
-        "!json-language-server"
+        "json-language-server"
       ]
     },
     "JSONC": {
       // "enable_language_server": false, // Didn't disable with this option
       "language_servers": [
-        "vscode-json-language-server",
-        "!json-language-server"
+        "json-language-server"
       ]
     },
     "YAML": {
