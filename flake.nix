@@ -120,7 +120,7 @@
         };
       });
 
-      nixosConfigurations = import ./nixos/outputs.nix {
+      nixosConfigurations = import ./nixos {
         inherit
           nixpkgs
           inputs
@@ -129,7 +129,7 @@
           ;
       };
 
-      homeConfigurations = import ./home-manager/outputs.nix {
+      homeConfigurations = import ./home-manager {
         inherit home-manager-linux home-manager-darwin mkPkgs;
       };
     };

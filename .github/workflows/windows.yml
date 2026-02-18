@@ -8,18 +8,22 @@ on:
       - main
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows**'
+      - 'windows/**'
       - '**.go'
       - 'go.*'
       - 'config/**'
+      - '!nixos/**'
+      - '!home-manager/**'
       - '!**.md'
   pull_request:
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows**'
+      - 'windows/**'
       - '**.go'
       - 'go.*'
       - 'config/**'
+      - '!nixos/**'
+      - '!home-manager/**'
       - '!**.md'
   workflow_dispatch:
 

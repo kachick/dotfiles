@@ -4,21 +4,27 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-darwin.yml'
-      - 'home-manager/darwin.nix'
-      - 'home-manager/kachick.nix'
-      - 'home-manager/common.nix'
-      - 'home-manager/packages.nix'
-      - 'home-manager/lima-host.nix'
+      - 'home-manager/**'
       - 'darwin/**'
+      - 'pkgs/**'
+      - 'overlays/**'
+      - 'internal/**'
+      - 'flake.*'
+      - 'devShells.nix'
+      - '!nixos/**'
+      - '!windows/**'
   pull_request:
     paths:
       - '.github/workflows/ci-home-darwin.yml'
-      - 'home-manager/darwin.nix'
-      - 'home-manager/kachick.nix'
-      - 'home-manager/common.nix'
-      - 'home-manager/packages.nix'
-      - 'home-manager/lima-host.nix'
+      - 'home-manager/**'
       - 'darwin/**'
+      - 'pkgs/**'
+      - 'overlays/**'
+      - 'internal/**'
+      - 'flake.*'
+      - 'devShells.nix'
+      - '!nixos/**'
+      - '!windows/**'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
