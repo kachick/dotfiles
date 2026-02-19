@@ -63,18 +63,17 @@ jobs:
               continue
             fi
 
-            # Check if the package or its tests need a rebuild using nix build --dry-run.
-            # Nix's dry-run output contains "will be built" if the package (or any dependency)
-            # is not available in any of the configured substituters (cache.nixos.org, Cachix, etc.).
+            # Check if any derivations (actual store paths ending in ".drv") need to be built.
+            # If nothing matches, it means the package and its dependencies are cached.
             NEED_BUILD=false
-            if nix build ".#packages.x86_64-darwin.$pname" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -q "will be built"; then
+            if nix build ".#packages.x86_64-darwin.$pname" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
               echo "Package $pname needs a rebuild."
               NEED_BUILD=true
             else
               echo "Package $pname is cached. Checking tests..."
               # Check tests if they exist
               if nix eval ".#packages.x86_64-darwin.$pname.passthru.tests" --extra-experimental-features 'nix-command flakes' >/dev/null 2>&1; then
-                if nix build ".#packages.x86_64-darwin.$pname.passthru.tests" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -q "will be built"; then
+                if nix build ".#packages.x86_64-darwin.$pname.passthru.tests" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
                   echo "Tests for $pname need a rebuild."
                   NEED_BUILD=true
                 fi

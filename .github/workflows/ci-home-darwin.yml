@@ -61,10 +61,10 @@ jobs:
             exit 0
           fi
 
-          # Use nix build --dry-run to check if the home-manager activation package for Darwin
-          # is already cached in any of the configured substituters.
-          # If the output contains "will be built", it means a rebuild is required on Darwin.
-          if nix build '.#homeConfigurations."github-actions@macos-15-intel".activationPackage' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -q "will be built"; then
+          # Use nix build --dry-run to check if any derivations need to be built for the
+          # home-manager activation package. If any actual store paths ending in ".drv"
+          # need to be built, it means the configuration is not cached in any substituter.
+          if nix build '.#homeConfigurations."github-actions@macos-15-intel".activationPackage' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
             echo "Home manager configuration needs a rebuild. Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
           else

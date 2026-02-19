@@ -51,10 +51,10 @@ jobs:
           fi
 
           # Use nix build --dry-run to check if the Darwin devShell dependencies are already cached.
-          # We ignore "nix-shell.drv" (and "inputDerivation-nix-shell.drv") because Nix always wants to build
-          # the temporary shell derivation even if all its dependencies are already cached in a substituter.
-          # If any other real package needs a rebuild, "will be built" will appear for that package.
-          if nix build '.#devShells.x86_64-darwin.default' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep "will be built" | grep -vE "nix-shell\.drv|inputDerivation-nix-shell\.drv" | grep -q "will be built"; then
+          # We check if any store paths ending in ".drv" (actual derivations) need to be built,
+          # while ignoring temporary ones like "nix-shell.drv" or "inputDerivation-nix-shell.drv".
+          # These temporary derivations are often rebuilt even if all dependencies are cached.
+          if nix build '.#devShells.x86_64-darwin.default' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -vE "nix-shell\.drv|inputDerivation-nix-shell\.drv" | grep -q "."; then
             echo "DevShell environment dependencies need a rebuild. Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
