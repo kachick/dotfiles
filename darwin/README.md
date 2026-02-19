@@ -11,3 +11,49 @@ As of early 2026, this repository prioritizes Linux, and macOS (Darwin) maintena
   - **Performance**: Emulation was significantly slower than native Intel runners. For example, building the `lima` package took about 26 minutes, compared to 14 minutes on a native Intel runner.
   - **Compatibility**: Some tools and tests (e.g., `lima`) detect the host architecture and fail when running under Rosetta 2.
 - **Future**: This is a temporary situation until Rosetta 2 is removed (reportedly in `macos-28`).
+
+## CI Optimization: Cache Detection on Linux
+
+To minimize the usage of the slow and expensive Darwin runners, we use a "Planning Job" on a fast Linux runner (`ubuntu-24.04`) to detect if a rebuild is actually necessary.
+
+### How it works
+
+We leverage the native `nix build --dry-run` command. Since Nix can calculate the derivation of any platform (including Darwin) on Linux, we can check if the resulting store path exists in any of the configured substituters (Cachix, etc.) without performing the actual build.
+
+### Rationale
+
+While we could check specific cache URLs (like `cache.nixos.org` or `kachick-dotfiles.cachix.org`) using `curl`, the `--dry-run` approach is superior because:
+- **Automatic Resolution**: It respects all substituters defined in `flake.nix` (`nixConfig.extra-substituters`) and system configs.
+- **Maintainability**: No need to update the CI script when adding new cache providers (e.g., Garnix).
+- **Comprehensive**: It checks for both the package itself and its entire dependency tree.
+
+### Output Patterns to Check
+
+The logic looks for the string `will be built` in the standard error output:
+
+1. **Cached (Skip Build)**:
+   ```text
+   these 5 paths will be fetched (29.17 MiB download, 83.40 MiB unpacked):
+     /nix/store/...-rclone-1.73.0
+   ```
+   (The string `will be built` is absent.)
+
+2. **Rebuild Required (Trigger Darwin Job)**:
+   ```text
+   this derivation will be built:
+     /nix/store/...-package.drv
+   ```
+   (The string `will be built` is present.)
+
+3. **Local Store (Already evaluated/built on the runner)**:
+   (Output is empty or only includes minor logs; `will be built` is absent.)
+
+### Implementation Example
+
+```bash
+if nix build ".#packages.x86_64-darwin.pname" --dry-run 2>&1 | grep -q "will be built"; then
+  echo "Rebuild required on Darwin"
+else
+  echo "Cached or already exists"
+fi
+```

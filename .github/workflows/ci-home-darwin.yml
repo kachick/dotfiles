@@ -61,17 +61,15 @@ jobs:
             exit 0
           fi
 
-          # Evaluate the hash of the home-manager activation package for Darwin on Linux.
-          OUT_PATH=$(nix eval --raw '.#homeConfigurations."github-actions@macos-15-intel".activationPackage.outPath' --extra-experimental-features 'nix-command flakes')
-          HASH=$(echo "$OUT_PATH" | cut -d/ -f4 | cut -d- -f1)
-
-          if curl -s -f -I "https://kachick-dotfiles.cachix.org/$HASH.narinfo" > /dev/null || \
-             curl -s -f -I "https://cache.nixos.org/$HASH.narinfo" > /dev/null; then
-            echo "Home manager configuration is already in cache ($HASH). Skipping Darwin runner."
-            echo "should_run=false" >> $GITHUB_OUTPUT
-          else
-            echo "Home manager configuration is NOT in any cache ($HASH). Running on Darwin."
+          # Use nix build --dry-run to check if the home-manager activation package for Darwin
+          # is already cached in any of the configured substituters.
+          # If the output contains "will be built", it means a rebuild is required on Darwin.
+          if nix build '.#homeConfigurations."github-actions@macos-15-intel".activationPackage' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -q "will be built"; then
+            echo "Home manager configuration needs a rebuild. Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Home manager configuration is already cached. Skipping Darwin runner."
+            echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
   home-manager:

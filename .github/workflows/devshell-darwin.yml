@@ -50,17 +50,15 @@ jobs:
             exit 0
           fi
 
-          # Evaluate the Darwin devShell outPath on Linux.
-          OUT_PATH=$(nix eval --raw '.#devShells.x86_64-darwin.default.outPath' --extra-experimental-features 'nix-command flakes')
-          HASH=$(echo "$OUT_PATH" | cut -d/ -f4 | cut -d- -f1)
-
-          if curl -s -f -I "https://kachick-dotfiles.cachix.org/$HASH.narinfo" > /dev/null || \
-             curl -s -f -I "https://cache.nixos.org/$HASH.narinfo" > /dev/null; then
-            echo "DevShell environment is already in cache ($HASH). Skipping Darwin runner."
-            echo "should_run=false" >> $GITHUB_OUTPUT
-          else
-            echo "DevShell environment is NOT in any cache ($HASH). Running on Darwin."
+          # Use nix build --dry-run to check if the Darwin devShell is already cached
+          # in any of the configured substituters.
+          # If the output contains "will be built", it means the environment needs to be prepared on Darwin.
+          if nix build '.#devShells.x86_64-darwin.default' --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -q "will be built"; then
+            echo "DevShell environment needs a rebuild. Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "DevShell environment is already cached. Skipping Darwin runner."
+            echo "should_run=false" >> $GITHUB_OUTPUT
           fi
 
   tasks:
