@@ -8,13 +8,16 @@ If you want to manage your NixOS configuration in a separate repository (or a se
 
 1. **Copy `flake.nix`**: Copy the `flake.nix` in this directory to your project root.
 2. **Generate Hardware Config**: Run the following command on your target machine:
+
    ```bash
    nixos-generate-config --show-hardware-config > hardware-configuration.nix
    ```
+
 3. **Adjust `flake.nix`**:
    - Update the `dotfiles.url` if you want to point to a specific branch or GIT_SHA.
    - Change the `networking.hostName` to your preference.
 4. **Apply**:
+
    ```bash
    sudo nixos-rebuild switch --flake .#sample
    ```
