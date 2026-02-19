@@ -28,27 +28,22 @@
           # 1. Import the base desktop settings from dotfiles
           dotfiles.nixosModules.desktop
 
-          # 2. Define your hardware (Use nixos-generate-config to get this)
+          # 2. Import the generic user definition
+          dotfiles.nixosModules.genericUser
+
+          # 3. Define your hardware (Use nixos-generate-config to get this)
           # ./hardware-configuration.nix
 
-          # 3. Define your own user and machine specific settings
+          # 4. Define machine specific settings
           (
-            { pkgs, ... }:
+            { ... }:
             {
               networking.hostName = "sample";
               system.stateVersion = "25.11";
-
-              users.users.user = {
-                isNormalUser = true;
-                extraGroups = [
-                  "wheel"
-                  "networkmanager"
-                ];
-                shell = pkgs.zsh;
-              };
             }
           )
         ];
+
       };
     };
 }

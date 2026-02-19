@@ -46,6 +46,7 @@ Here is an example of `flake.nix` for your private repository.
 - `dotfiles.nixosModules.desktop`: For Desktop machines. Includes `common` plus GUI environment (GNOME, Fonts, GUI Apps).
 - `dotfiles.nixosModules.common`: Basic system settings (CLI tools, Nix settings, GC, SSH, etc.).
 - `dotfiles.nixosModules.hardware`: Common hardware tweaks (Keymaps, udev rules).
+- `dotfiles.nixosModules.genericUser`: A generic user named `user` with basic settings.
 
 ## Development and Testing
 
