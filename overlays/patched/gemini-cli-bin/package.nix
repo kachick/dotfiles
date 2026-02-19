@@ -29,7 +29,7 @@ unstable.gemini-cli-bin.overrideAttrs (
       install -D "$src" "$out/bin/gemini"
       install -D "$schema" "$out/share/settings.schema.json"
 
-      substituteInPlace "$out/bin/gemini" 
+      substituteInPlace "$out/bin/gemini" \
         --replace-fail 'const existingPath = await resolveExistingRgPath();' 'const existingPath = "${unstable.lib.getExe unstable.ripgrep}";'
 
       runHook postInstall
