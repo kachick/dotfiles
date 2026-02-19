@@ -7,7 +7,11 @@ These settings are exported as `homeManagerModules`.
 
 ```nix
 {
-  inputs.dotfiles.url = "github:kachick/dotfiles";
+  inputs = {
+    dotfiles.url = "github:kachick/dotfiles";
+    nixpkgs.follows = "dotfiles/nixpkgs";
+    home-manager.follows = "dotfiles/home-manager-linux";
+  };
 
   outputs = { self, nixpkgs, home-manager, dotfiles, ... }: {
     homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
@@ -17,24 +21,16 @@ These settings are exported as `homeManagerModules`.
         dotfiles.homeManagerModules.desktop
         # Add Linux specific tools
         dotfiles.homeManagerModules.linux
-        # Add kachick's personal profile (Optional)
-        dotfiles.homeManagerModules.kachick
 
         # Machine specific overrides
         { home.username = "user"; }
       ];
+      # Required for internal module cross-references
       extraSpecialArgs = { outputs = dotfiles; };
     };
   };
 }
 ```
-
-### Exported Modules
-
-- `dotfiles.homeManagerModules.desktop`: Recommended for GUI users. Includes `common`.
-- `dotfiles.homeManagerModules.common`: Common CLI tool settings.
-- `dotfiles.homeManagerModules.linux`: Linux specific tool settings (Podman, etc.).
-- `dotfiles.homeManagerModules.kachick`: kachick's personal profile (Git, GPG).
 
 ---
 

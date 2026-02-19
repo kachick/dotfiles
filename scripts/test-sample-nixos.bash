@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+# This script verifies that the sample flake.nix in nixos/hosts/generic/
+# correctly evaluates against the current repository state.
+#
+# Usage:
+#   ./scripts/test-sample-nixos.bash
+#
+# Prerequisite:
+#   Must be executed from the repository root.
+
 set -euo pipefail
 
 # This script helps diagnose why 'nixosModules' might appear missing.

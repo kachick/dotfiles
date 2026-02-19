@@ -9,25 +9,16 @@
 
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # 1. Point to this repository.
     #
-    # TIPS: While you can point to a branch (e.g., github:kachick/dotfiles/main),
-    #       Nix sometimes pulls older revisions from its internal cache even after
-    #       recreating flake.lock. To avoid such troubleshooting, using a specific
-    #       GIT_SHA is the most reliable way during development or for stability.
-    #
-    # dotfiles.url = "github:kachick/dotfiles/GIT_SHA_HERE";
+    # TIPS: Nix sometimes pulls older revisions from its internal cache even after
+    #       recreating flake.lock. Using a specific GIT_SHA is the most reliable way.
+    #       Example: "github:kachick/dotfiles/0eca03bf838bc6870da6db0cf80aa26dd8cbcddd"
     dotfiles.url = "github:kachick/dotfiles";
 
-    # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency and cache hits
-    # nixpkgs.follows = "dotfiles/nixpkgs";
-    # home-manager.follows = "dotfiles/home-manager-linux";
+    # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency
+    nixpkgs.follows = "dotfiles/nixpkgs";
+    home-manager.follows = "dotfiles/home-manager-linux";
   };
 
   outputs =
@@ -42,10 +33,9 @@
         };
         modules = [
           # Import modules from the dotfiles input
-          # Note: These modules automatically include dependencies (Home Manager, Overlays, Bootloader)
           dotfiles.nixosModules.desktop
-          dotfiles.nixosModules.hardware
           dotfiles.nixosModules.genericUser
+
           # Import your own hardware configuration
           ./hardware-configuration.nix
 
