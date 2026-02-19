@@ -65,11 +65,12 @@ jobs:
           OUT_PATH=$(nix eval --raw '.#homeConfigurations."github-actions@macos-15-intel".activationPackage.outPath' --extra-experimental-features 'nix-command flakes')
           HASH=$(echo "$OUT_PATH" | cut -d/ -f4 | cut -d- -f1)
 
-          if curl -s -f -I "https://kachick-dotfiles.cachix.org/$HASH.narinfo" > /dev/null; then
-            echo "Home manager configuration is already in Cachix ($HASH). Skipping Darwin runner."
+          if curl -s -f -I "https://kachick-dotfiles.cachix.org/$HASH.narinfo" > /dev/null || \
+             curl -s -f -I "https://cache.nixos.org/$HASH.narinfo" > /dev/null; then
+            echo "Home manager configuration is already in cache ($HASH). Skipping Darwin runner."
             echo "should_run=false" >> $GITHUB_OUTPUT
           else
-            echo "Home manager configuration is NOT in Cachix ($HASH). Running on Darwin."
+            echo "Home manager configuration is NOT in any cache ($HASH). Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
