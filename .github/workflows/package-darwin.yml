@@ -29,19 +29,89 @@ permissions:
   contents: read
 
 jobs:
+  # This planning job runs on a fast Linux runner to check if the Darwin packages
+  # are already in the Cachix cache. If they are, it will skip the slow Darwin job
+  # to avoid the overhead of booting the Intel Mac runner and unpacking nixpkgs.
+  planning:
+    runs-on: ubuntu-24.04
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - id: set-matrix
+        run: |
+          # List of packages to check (must be kept in sync with the build matrix requirements)
+          PACKAGES=("rclone" "lima-full")
+          TO_BUILD=()
+
+          # Force build if manually triggered or if the 'ci-darwin' label is present
+          FORCE=false
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+            FORCE=true
+            echo "Forcing build due to label or manual trigger."
+          fi
+
+          for pname in "${PACKAGES[@]}"; do
+            echo "Checking $pname..."
+            if [ "$FORCE" = "true" ]; then
+              TO_BUILD+=("\"$pname\"")
+              continue
+            fi
+
+            # Evaluate the Darwin outPath on the fast Linux runner.
+            # This calculates the store hash without performing the actual build.
+            OUT_PATH=$(nix eval --raw ".#packages.x86_64-darwin.$pname.outPath" --extra-experimental-features 'nix-command flakes')
+            HASH=$(echo "$OUT_PATH" | cut -d/ -f4 | cut -d- -f1)
+
+            NEED_BUILD=false
+            # Check if the package exists in Cachix by requesting the .narinfo file.
+            if ! curl -s -f -I "https://kachick-dotfiles.cachix.org/$HASH.narinfo" > /dev/null; then
+              echo "Package $pname is NOT in Cachix ($HASH)."
+              NEED_BUILD=true
+            else
+              echo "Package $pname is in Cachix ($HASH). Checking tests..."
+              # Even if the main package is cached, we rebuild if its tests are not cached.
+              # This ensures that tests are always verified and results are pushed to Cachix.
+              TESTS=$(nix eval --json ".#packages.x86_64-darwin.$pname.passthru.tests" --extra-experimental-features 'nix-command flakes' --apply 't: builtins.mapAttrs (name: drv: drv.outPath) t' 2>/dev/null || echo "{}")
+              for test_path in $(echo "$TESTS" | jq -r '. | values[]'); do
+                TEST_HASH=$(echo "$test_path" | cut -d/ -f4 | cut -d- -f1)
+                if ! curl -s -f -I "https://kachick-dotfiles.cachix.org/$TEST_HASH.narinfo" > /dev/null; then
+                  echo "Test $test_path is NOT in Cachix ($TEST_HASH)."
+                  NEED_BUILD=true
+                  break
+                fi
+              done
+            fi
+
+            if [ "$NEED_BUILD" = "true" ]; then
+              TO_BUILD+=("\"$pname\"")
+            else
+              echo "$pname and its tests are already in Cachix. Skipping build on Darwin runner."
+            fi
+          done
+
+          # Return the list of packages that actually need building.
+          # If this is an empty list [], the subsequent 'build' job will be skipped.
+          echo "packages=[$(IFS=,; echo "${TO_BUILD[*]}")]" >> $GITHUB_OUTPUT
+
   build:
+    needs: planning
+    # Only run if there are packages that need building and the trigger conditions match.
     if: >-
-      github.event.action != 'labeled' ||
+      needs.planning.outputs.packages != '[]' &&
+      (github.event.action != 'labeled' ||
       github.event.label.name == 'ci-darwin' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
     strategy:
       fail-fast: false
       matrix:
         runner: [macos-15-intel]
-        pname:
-          - rclone
-          # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here
-          - lima-full
+        pname: ${{ fromJSON(needs.planning.outputs.packages) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
