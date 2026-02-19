@@ -9,9 +9,10 @@
 
 {
   inputs = {
-    # 1. Point to this repository
-    # If you are pointing to a working branch instead of main, use:
-    # dotfiles.url = "github:kachick/dotfiles/YOUR_BRANCH_NAME";
+    # 1. Point to this repository.
+    # If you want to use a specific branch or GIT_SHA for stability, use:
+    # dotfiles.url = "github:kachick/dotfiles/reorganized-modules";
+    # dotfiles.url = "github:kachick/dotfiles/0eca03bf838bc6870da6db0cf80aa26dd8cbcddd";
     dotfiles.url = "github:kachick/dotfiles";
 
     # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency and cache hits
@@ -30,21 +31,26 @@
           outputs = dotfiles;
         };
         modules = [
-          # 1. Import modules from the dotfiles input
+          # Import modules from the dotfiles input
           # Note: These modules automatically include necessary dependencies (like Home Manager NixOS module)
           dotfiles.nixosModules.desktop
           dotfiles.nixosModules.genericUser
 
-          # 2. Import your own hardware configuration
-          # Note: nixos-generate-config creates this file for you
+          # Import your own hardware configuration
+          # Note: nixos-generate-config --show-hardware-config > hardware-configuration.nix
           ./hardware-configuration.nix
 
-          # 3. Define machine specific settings
+          # Define machine specific settings
           (
             { ... }:
             {
               networking.hostName = "sample";
               system.stateVersion = "25.11";
+
+              # Bootloader settings are not included in common modules to support WSL/Servers.
+              # You should enable one of them here.
+              boot.loader.systemd-boot.enable = true;
+              boot.loader.efi.canTouchEfiVariables = true;
             }
           )
         ];

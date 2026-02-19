@@ -21,7 +21,6 @@ cp "$SAMPLE_FLAKE" "$TMP_DIR/flake.nix"
 cat >"$TMP_DIR/hardware-configuration.nix" <<EOF
 { ... }: {
   fileSystems."/" = { device = "/dev/sda1"; fsType = "ext4"; };
-  boot.loader.systemd-boot.enable = true;
   nixpkgs.hostPlatform = "x86_64-linux";
 }
 EOF
