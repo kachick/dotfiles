@@ -6,6 +6,7 @@ These settings are exported as `nixosModules`, so you can inherit and reuse them
 ## How to use from other flakes (Inheritance)
 
 Here is a minimal example of `flake.nix` for your repository.
+You can find a more detailed template in [nixos/hosts/sample](./hosts/sample/flake.nix).
 
 ```nix
 {

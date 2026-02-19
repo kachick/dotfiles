@@ -33,7 +33,11 @@
         };
         modules = [
           # Import modules from the dotfiles input
-          dotfiles.nixosModules.desktop
+          # Note: These modules automatically include dependencies (Home Manager, Overlays, Bootloader)
+
+          # dotfiles.nixosModules.common  # Basic CLI set (Included in desktop)
+          dotfiles.nixosModules.desktop # Desktop set (Includes common. Comment out for servers)
+          dotfiles.nixosModules.hardware # Shared hardware tweaks (Keyboard remaps, etc.)
           dotfiles.nixosModules.genericUser
 
           # Import your own hardware configuration

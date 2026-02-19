@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script verifies that the sample flake.nix in nixos/hosts/generic/
+# This script verifies that the sample flake.nix in nixos/hosts/sample/
 # correctly evaluates against the current repository state.
 #
 # Usage:
@@ -14,7 +14,7 @@ set -euo pipefail
 # This script helps diagnose why 'nixosModules' might appear missing.
 
 REPO_ROOT=$(pwd)
-SAMPLE_FLAKE="$REPO_ROOT/nixos/hosts/generic/flake.nix"
+SAMPLE_FLAKE="$REPO_ROOT/nixos/hosts/sample/flake.nix"
 
 echo "=== Diagnosis Start ==="
 

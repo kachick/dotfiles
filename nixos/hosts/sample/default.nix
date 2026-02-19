@@ -6,7 +6,7 @@
 
 {
   # Keep same name with flake outputs
-  networking.hostName = lib.mkDefault "generic";
+  networking.hostName = lib.mkDefault "sample";
 
   imports = [
     outputs.nixosModules.desktop
