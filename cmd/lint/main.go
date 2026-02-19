@@ -13,7 +13,6 @@ import (
 	"github.com/kachick/dotfiles/internal/runner"
 )
 
-// GH-1449 test 2
 func getExhaustructPath() string {
 	// It downloads dependencies and outputs them in first run.
 	// And getting only last line made messy result. I didn't get the actual root cause of this problem... :<
