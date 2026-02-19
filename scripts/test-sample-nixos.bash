@@ -11,22 +11,17 @@
 
 set -euo pipefail
 
-# This script helps diagnose why 'nixosModules' might appear missing.
-
 REPO_ROOT=$(pwd)
 SAMPLE_FLAKE="$REPO_ROOT/nixos/hosts/sample/flake.nix"
 
-echo "=== Diagnosis Start ==="
+echo "Checking sample flake evaluation against local repository state..."
 
-# 1. Check local flake attributes
-echo "[1] Checking LOCAL flake attributes..."
-nix eval --json ".#nixosModules" --apply "builtins.attrNames"
-
-# 2. Setup testing environment
+# 1. Setup testing environment in a temporary directory
 TMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TMP_DIR"' EXIT
 cp "$SAMPLE_FLAKE" "$TMP_DIR/flake.nix"
 
+# Create a dummy hardware-configuration.nix to satisfy evaluation requirements
 cat >"$TMP_DIR/hardware-configuration.nix" <<EOF
 { ... }: {
   fileSystems."/" = { device = "/dev/sda1"; fsType = "ext4"; };
@@ -34,18 +29,13 @@ cat >"$TMP_DIR/hardware-configuration.nix" <<EOF
 }
 EOF
 
-# 3. Test with LOCAL path (This should work)
-echo -e "\n[2] Testing with LOCAL path (path:$REPO_ROOT)..."
+# 2. Point the dotfiles input to the local repository path
+# This ensures we are testing the current PR/commit changes.
 sed -i "s|github:kachick/dotfiles|path:$REPO_ROOT|g" "$TMP_DIR/flake.nix"
+
+# 3. Perform dry-run build
+# If this fails, the script will exit with a non-zero code due to 'set -e'.
 cd "$TMP_DIR"
-nix build ".#nixosConfigurations.sample.config.system.build.toplevel" --dry-run && echo "SUCCESS" || echo "FAILED"
+nix build ".#nixosConfigurations.sample.config.system.build.toplevel" --dry-run --show-trace
 
-# 4. Test with REMOTE URL (This might fail if pointing to main)
-echo -e "\n[3] Testing with REMOTE URL (github:kachick/dotfiles)..."
-# Re-copy to reset to remote URL
-cp "$SAMPLE_FLAKE" "$TMP_DIR/flake.nix"
-# NOTE: We don't run build here because it might fetch large amounts,
-# just evaluate the attribute existence.
-nix eval "github:kachick/dotfiles#nixosModules" --apply "builtins.attrNames" || echo "FAILED (As expected if change is not on main)"
-
-echo -e "\n=== Diagnosis Finished ==="
+echo "✅ Sample flake evaluation succeeded!"
