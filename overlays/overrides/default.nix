@@ -6,13 +6,16 @@ let
     final // { inherit prev home-manager-linux home-manager-darwin; }
   );
 
-  files = builtins.readDir ./overrides;
-  nixFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) files;
+  # Read all .nix files in this directory except default.nix
+  files = builtins.readDir ./.;
+  nixFiles = lib.filterAttrs (
+    name: type: type == "regular" && lib.hasSuffix ".nix" name && name != "default.nix"
+  ) files;
 in
 lib.mapAttrs' (
   name: _type:
   let
     pname = lib.removeSuffix ".nix" name;
   in
-  lib.nameValuePair pname (callPackage (./overrides + "/${name}") { })
+  lib.nameValuePair pname (callPackage (./. + "/${name}") { })
 ) nixFiles
