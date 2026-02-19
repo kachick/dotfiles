@@ -9,11 +9,14 @@
 
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    # Point to this repository
+    # 1. Point to this repository
     # If you are pointing to a working branch instead of main, use:
     # dotfiles.url = "github:kachick/dotfiles/YOUR_BRANCH_NAME";
     dotfiles.url = "github:kachick/dotfiles";
+
+    # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency and cache hits
+    nixpkgs.follows = "dotfiles/nixpkgs";
+    home-manager.follows = "dotfiles/home-manager-linux";
   };
 
   outputs =
@@ -27,16 +30,14 @@
           outputs = dotfiles;
         };
         modules = [
-          # 1. Import modules from the dotfiles input
-          # Note: These modules automatically include necessary dependencies (like Home Manager NixOS module)
+          # Import modules from the dotfiles input
           dotfiles.nixosModules.desktop
           dotfiles.nixosModules.genericUser
 
-          # 2. Import your own hardware configuration
-          # Note: nixos-generate-config creates this file for you
+          # Import your own hardware configuration
           ./hardware-configuration.nix
 
-          # 3. Define machine specific settings
+          # Define machine specific settings
           (
             { ... }:
             {
