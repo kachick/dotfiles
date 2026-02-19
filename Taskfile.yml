@@ -181,7 +181,7 @@ tasks:
     deps:
       - 'default'
       - 'setup'
-      - 'test-sample-nixos'
+      # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
       - 'fmt'

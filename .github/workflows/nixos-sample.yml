@@ -1,0 +1,37 @@
+name: ❄️📝
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nixos-sample.yml'
+      - 'nixos/**'
+      - 'flake.*'
+      - 'scripts/test-sample-nixos.bash'
+  pull_request:
+    paths:
+      - '.github/workflows/nixos-sample.yml'
+      - 'nixos/**'
+      - 'flake.*'
+      - 'scripts/test-sample-nixos.bash'
+  workflow_dispatch:
+  schedule:
+    # Every 10:42 JST
+    - cron: '42 1 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  test-sample:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Verify sample configuration template
+        # Use nix develop to ensure task and required tools are available
+        run: nix develop --command task test-sample-nixos

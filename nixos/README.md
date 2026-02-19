@@ -38,5 +38,5 @@ You can find a more detailed template in [nixos/hosts/sample](./hosts/sample/fla
 To verify the sample configuration against the current repository state:
 
 ```bash
-./scripts/test-sample-nixos.bash
+task test-sample-nixos
 ```
