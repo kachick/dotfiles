@@ -10,13 +10,9 @@
   };
 
   outputs =
+    { nixpkgs, dotfiles, ... }@inputs:
     {
-      self,
-      nixpkgs,
-      dotfiles,
-      ...
-    }@inputs:
-    {
+
       nixosConfigurations.sample = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         # Important: Pass 'dotfiles' as 'outputs' to specialArgs
