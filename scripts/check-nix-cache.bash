@@ -28,7 +28,7 @@ fi
 
 # Optionally check if passthru.tests also need a rebuild.
 if [[ "$CHECK_TESTS" == "true" ]]; then
-	if nix eval "$INSTALLABLE.passthru.tests" --extra-experimental-features 'nix-command flakes' > /dev/null 2>&1; then
+	if nix eval "$INSTALLABLE.passthru.tests" --extra-experimental-features 'nix-command flakes' >/dev/null 2>&1; then
 		if nix build "$INSTALLABLE.passthru.tests" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 |
 			grep -o '/nix/store/[^ ]*\.drv' |
 			grep -q "."; then
