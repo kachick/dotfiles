@@ -29,19 +29,64 @@ permissions:
   contents: read
 
 jobs:
+  # This planning job runs on a fast Linux runner to check if the Darwin packages
+  # are already in the Cachix cache. If they are, it will skip the slow Darwin job
+  # to avoid the overhead of booting the Intel Mac runner and unpacking nixpkgs.
+  planning:
+    runs-on: ubuntu-24.04
+    env:
+      # List of packages to check for Darwin builds.
+      # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.
+      TARGET_PACKAGES: >-
+        rclone
+        lima-full
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - id: set-matrix
+        run: |
+          TO_BUILD=()
+
+          # Force build if manually triggered or if the 'ci-darwin' label is present
+          FORCE=false
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+            FORCE=true
+            echo "Forcing build due to label or manual trigger."
+          fi
+
+          for pname in $TARGET_PACKAGES; do
+            echo "Checking $pname..."
+            if [ "$FORCE" = "true" ] || ! ./scripts/check-nix-cache.bash ".#packages.x86_64-darwin.$pname" true; then
+              echo "Package $pname needs a rebuild."
+              TO_BUILD+=("\"$pname\"")
+            else
+              echo "$pname and its tests are already cached. Skipping build on Darwin runner."
+            fi
+          done
+
+          # Return the list of packages that actually need building.
+          # If this is an empty list [], the subsequent 'build' job will be skipped.
+          echo "packages=[$(IFS=,; echo "${TO_BUILD[*]}")]" >> $GITHUB_OUTPUT
+
   build:
+    needs: planning
+    # Only run if there are packages that need building and the trigger conditions match.
     if: >-
-      github.event.action != 'labeled' ||
+      needs.planning.outputs.packages != '[]' &&
+      (github.event.action != 'labeled' ||
       github.event.label.name == 'ci-darwin' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
     strategy:
       fail-fast: false
       matrix:
         runner: [macos-15-intel]
-        pname:
-          - rclone
-          # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here
-          - lima-full
+        pname: ${{ fromJSON(needs.planning.outputs.packages) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

@@ -4,7 +4,6 @@
 [![~/ on Darwin](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml?query=branch%3Amain+)
 [![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
 [![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
-[![Devshell on Darwin](https://github.com/kachick/dotfiles/actions/workflows/devshell-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-darwin.yml?query=branch%3Amain+)
 [![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml?query=branch%3Amain+)
 [![Package on Darwin](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml?query=branch%3Amain+)
 [![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)

@@ -34,12 +34,50 @@ permissions:
   contents: read
 
 jobs:
+  # This planning job avoids booting the extremely slow Darwin runner if the
+  # home-manager configuration hasn't changed (exists in Cachix).
+  planning:
+    runs-on: ubuntu-24.04
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - id: check
+        run: |
+          # Force run only if manually triggered or if the 'ci-darwin' label is present.
+          FORCE=false
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+            FORCE=true
+            echo "Forcing run due to label or manual trigger."
+          fi
+
+          if [ "$FORCE" = "true" ]; then
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Use a common script to check if the home-manager configuration needs a rebuild.
+          if ! ./scripts/check-nix-cache.bash '.#homeConfigurations."github-actions@macos-15-intel".activationPackage'; then
+            echo "Home manager configuration needs a rebuild. Running on Darwin."
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          else
+            echo "Home manager configuration is already cached. Skipping Darwin runner."
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          fi
+
   home-manager:
-    # If triggered by a label, ensure it is 'ci-darwin'. Other triggers (path match, schedule, etc.) run normally.
+    needs: planning
+    # If triggered by a label, ensure it is 'ci-darwin'. Other triggers run normally unless cached.
     if: >-
-      github.event.action != 'labeled' ||
+      needs.planning.outputs.should_run == 'true' &&
+      (github.event.action != 'labeled' ||
       github.event.label.name == 'ci-darwin' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-darwin')
+      contains(github.event.pull_request.labels.*.name, 'ci-darwin'))
     timeout-minutes: 60
     strategy:
       fail-fast: false
