@@ -36,6 +36,16 @@
             {
               networking.hostName = "sample";
               system.stateVersion = "25.11";
+
+              # Pseudo file system for dry-run
+              fileSystems."/" = {
+                device = "/dev/sda1";
+                fsType = "ext4";
+              };
+
+              # Use systemd-boot for the sample
+              boot.loader.systemd-boot.enable = true;
+              boot.loader.efi.canTouchEfiVariables = true;
             }
           )
         ];
