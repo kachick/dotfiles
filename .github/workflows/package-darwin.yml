@@ -34,6 +34,12 @@ jobs:
   # to avoid the overhead of booting the Intel Mac runner and unpacking nixpkgs.
   planning:
     runs-on: ubuntu-24.04
+    env:
+      # List of packages to check for Darwin builds.
+      # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.
+      TARGET_PACKAGES: >-
+        rclone
+        lima-full
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}
     steps:
@@ -45,8 +51,6 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - id: set-matrix
         run: |
-          # List of packages to check (must be kept in sync with the build matrix requirements)
-          PACKAGES=("rclone" "lima-full")
           TO_BUILD=()
 
           # Force build if manually triggered or if the 'ci-darwin' label is present
@@ -56,38 +60,10 @@ jobs:
             echo "Forcing build due to label or manual trigger."
           fi
 
-          for pname in "${PACKAGES[@]}"; do
+          for pname in $TARGET_PACKAGES; do
             echo "Checking $pname..."
-            # Force build only if manually triggered or if the 'ci-darwin' label is present.
-            # We don't rely on git diff here as it can be unreliable for Nix dependency changes.
-            FORCE_PKG=false
-            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
-              FORCE_PKG=true
-            fi
-
-            if [ "$FORCE_PKG" = "true" ]; then
-              TO_BUILD+=("\"$pname\"")
-              continue
-            fi
-
-            # Check if the package or its tests need a rebuild using nix build --dry-run.
-            # This is substituter-agnostic and respects all configured caches.
-            NEED_BUILD=false
-            if nix build ".#packages.x86_64-darwin.$pname" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
+            if [ "$FORCE" = "true" ] || ! ./scripts/check-nix-cache.bash ".#packages.x86_64-darwin.$pname" true; then
               echo "Package $pname needs a rebuild."
-              NEED_BUILD=true
-            else
-              echo "Package $pname is cached. Checking tests..."
-              # Check tests if they exist
-              if nix eval ".#packages.x86_64-darwin.$pname.passthru.tests" --extra-experimental-features 'nix-command flakes' >/dev/null 2>&1; then
-                if nix build ".#packages.x86_64-darwin.$pname.passthru.tests" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
-                  echo "Tests for $pname need a rebuild."
-                  NEED_BUILD=true
-                fi
-              fi
-            fi
-
-            if [ "$NEED_BUILD" = "true" ]; then
               TO_BUILD+=("\"$pname\"")
             else
               echo "$pname and its tests are already cached. Skipping build on Darwin runner."
