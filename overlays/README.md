@@ -33,6 +33,6 @@ Nix calculates the "names" of packages before their "values".
 Overriding non `mkDerivation` packages (like those using `buildRustPackage` or `buildNpmPackage`) often makes it hard to modify the hash (not just the source hash). In such cases, you might need to override the specific builder attributes or use a more manual approach.
 
 - Rust:
-  - https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20
-  - https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2
-- npm: https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4
+  - <https://discourse.nixos.org/t/is-it-possible-to-override-cargosha256-in-buildrustpackage/4393/20>
+  - <https://discourse.nixos.org/t/nixpkgs-overlay-for-mpd-discord-rpc-is-no-longer-working/59982/2>
+- npm: <https://discourse.nixos.org/t/npmdepshash-override-what-am-i-missing-please/50967/4>
