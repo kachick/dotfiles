@@ -1,4 +1,7 @@
 { unstable, fetchurl, ... }:
+# - Should locally override to use latest stable for now: https://github.com/NixOS/nixpkgs/pull/444028#issuecomment-3310117634
+# - OSS. Apache-2.0
+# - Reasonable choice rather than gemini-cli package. gemini-cli-bin is easier to track latest for now
 unstable.gemini-cli-bin.overrideAttrs (
   finalAttrs: _previousAttrs: {
     # Don't trust `gemini --version` results, for example, 0.6.1 actually returned `0.6.0`.

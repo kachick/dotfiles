@@ -11,6 +11,8 @@ let
   ) files;
 in
 {
+  # Patched packages should be put here if exist
+  # Keep patched attr even if empty. To expose and runnable `nix build .#pname` for patched namespace
   patched = lib.mapAttrs' (
     name: _type:
     let
