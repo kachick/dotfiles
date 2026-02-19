@@ -36,7 +36,7 @@
         };
         modules = [
           # Import modules from the dotfiles input
-          # Note: These modules automatically include necessary dependencies (like Home Manager NixOS module)
+          # Note: These modules automatically include dependencies (Home Manager, Overlays, Bootloader)
           dotfiles.nixosModules.desktop
           dotfiles.nixosModules.genericUser
 
@@ -50,11 +50,6 @@
             {
               networking.hostName = "sample";
               system.stateVersion = "25.11";
-
-              # Bootloader settings are not included in common modules to support WSL/Servers.
-              # You should enable one of them here.
-              boot.loader.systemd-boot.enable = true;
-              boot.loader.efi.canTouchEfiVariables = true;
             }
           )
         ];
