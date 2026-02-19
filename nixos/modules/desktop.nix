@@ -1,7 +1,7 @@
 { outputs, ... }:
 {
   imports = [
-    outputs.nixosModules.common
+    ../configuration.nix
     outputs.nixosModules.home-manager
     ../desktop
   ];

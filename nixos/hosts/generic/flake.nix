@@ -30,14 +30,16 @@
           outputs = dotfiles;
         };
         modules = [
-          # Import modules from the dotfiles input
+          # 1. Import modules from the dotfiles input
+          # Note: These modules automatically include necessary dependencies (like Home Manager NixOS module)
           dotfiles.nixosModules.desktop
           dotfiles.nixosModules.genericUser
 
-          # Import your own hardware configuration
+          # 2. Import your own hardware configuration
+          # Note: nixos-generate-config creates this file for you
           ./hardware-configuration.nix
 
-          # Define machine specific settings
+          # 3. Define machine specific settings
           (
             { ... }:
             {
