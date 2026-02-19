@@ -56,23 +56,13 @@ jobs:
             echo "Forcing build due to label or manual trigger."
           fi
 
-          # Determine which files have changed to force builds if necessary
-          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
-          FILES_CHANGED=""
-          if [[ -n "$BASE_REF" && "$BASE_REF" != "0000000000000000000000000000000000000000" ]]; then
-            FILES_CHANGED=$(git diff --name-only "$BASE_REF" HEAD)
-          fi
-
           for pname in "${PACKAGES[@]}"; do
             echo "Checking $pname..."
-            # Force build if manually triggered, if the 'ci-darwin' label is present,
-            # OR if global flake/overlay files or the package definition itself have changed.
+            # Force build only if manually triggered or if the 'ci-darwin' label is present.
+            # We don't rely on git diff here as it can be unreliable for Nix dependency changes.
             FORCE_PKG=false
             if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
               FORCE_PKG=true
-            elif echo "$FILES_CHANGED" | grep -qE "^pkgs/$pname/|^overlays/|flake\.nix|flake\.lock"; then
-              FORCE_PKG=true
-              echo "Forcing build for $pname because its definitions have changed."
             fi
 
             if [ "$FORCE_PKG" = "true" ]; then
@@ -80,8 +70,8 @@ jobs:
               continue
             fi
 
-            # Check if any derivations (actual store paths ending in ".drv") need to be built.
-            # If nothing matches, it means the package and its dependencies are cached.
+            # Check if the package or its tests need a rebuild using nix build --dry-run.
+            # This is substituter-agnostic and respects all configured caches.
             NEED_BUILD=false
             if nix build ".#packages.x86_64-darwin.$pname" --dry-run --extra-experimental-features 'nix-command flakes' 2>&1 | grep -o '/nix/store/[^ ]*\.drv' | grep -q "."; then
               echo "Package $pname needs a rebuild."

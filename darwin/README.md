@@ -58,3 +58,9 @@ else
   echo "Cached or already exists"
 fi
 ```
+
+## Removed: Devshell on Darwin
+
+The `devshell-darwin.yml` workflow was removed in 2026-02 because implementing a reliable "Planning Job" (cache detection) for `devShells` proved to be excessively complex.
+
+Unlike regular packages or Home Manager configurations, `devShell` derivations (`nix-shell.drv`) are not typically cached in binary substituters. Even if all underlying dependencies are cached, Nix often wants to "rebuild" the temporary shell derivation itself. This makes it difficult to differentiate between a simple environment setup and an actual change in the development tools without significant overhead or unreliable heuristics (like `git diff`). Given the low usage of Darwin development in this repo, we decided to drop the automated devshell check on Darwin.
