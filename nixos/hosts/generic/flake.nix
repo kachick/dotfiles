@@ -6,14 +6,13 @@
 #     nixos-generate-config --show-hardware-config > hardware-configuration.nix
 #  3. Run dry-run to verify:
 #     nix build ".#nixosConfigurations.sample.config.system.build.toplevel" --dry-run
-#
-# NOTE: If you are pointing to a working branch instead of main, use:
-#       dotfiles.url = "github:kachick/dotfiles/YOUR_BRANCH_NAME";
 
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     # Point to this repository
+    # If you are pointing to a working branch instead of main, use:
+    # dotfiles.url = "github:kachick/dotfiles/YOUR_BRANCH_NAME";
     dotfiles.url = "github:kachick/dotfiles";
   };
 
@@ -29,6 +28,7 @@
         };
         modules = [
           # 1. Import modules from the dotfiles input
+          # Note: These modules automatically include necessary dependencies (like Home Manager NixOS module)
           dotfiles.nixosModules.desktop
           dotfiles.nixosModules.genericUser
 

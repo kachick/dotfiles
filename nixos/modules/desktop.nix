@@ -2,6 +2,7 @@
 {
   imports = [
     outputs.nixosModules.common
+    outputs.nixosModules.home-manager
     ../desktop
   ];
 

@@ -142,7 +142,7 @@
         default = nixpkgs.lib.composeManyExtensions overlays;
       };
 
-      nixosModules = import ./nixos/modules;
+      nixosModules = import ./nixos/modules { inherit inputs; };
 
       homeManagerModules = import ./home-manager/modules { inherit overlays; };
     };

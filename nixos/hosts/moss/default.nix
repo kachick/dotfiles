@@ -12,7 +12,6 @@
   networking.hostName = "moss";
 
   imports = [
-    inputs.home-manager-linux.nixosModules.home-manager
     outputs.nixosModules.desktop
     outputs.nixosModules.hardware
     ../../desktop/kachick.nix

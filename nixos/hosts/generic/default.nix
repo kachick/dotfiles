@@ -10,7 +10,6 @@
   networking.hostName = lib.mkDefault "generic";
 
   imports = [
-    inputs.home-manager-linux.nixosModules.home-manager
     outputs.nixosModules.desktop
     outputs.nixosModules.hardware
     ../../desktop/genericUsers.nix

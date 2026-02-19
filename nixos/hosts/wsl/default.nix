@@ -11,7 +11,7 @@
   imports = [
     outputs.nixosModules.common
     inputs.nixos-wsl.nixosModules.default
-    inputs.home-manager-linux.nixosModules.home-manager
+    outputs.nixosModules.home-manager
   ];
 
   wsl.enable = true;
