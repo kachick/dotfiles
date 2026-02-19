@@ -72,7 +72,6 @@ buildGo126Module (finalAttrs: {
     ''
       runHook preBuild
 
-      ## GH-1449 test 1
       make ${lib.escapeShellArgs makeFlags} native
 
       runHook postBuild
