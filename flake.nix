@@ -145,36 +145,19 @@
       nixosModules = {
         common = ./nixos/configuration.nix;
         hardware = ./nixos/hardware.nix;
-        desktop = {
-          imports = [
-            self.nixosModules.common
-            ./nixos/desktop
-          ];
-          nixpkgs.overlays = [ self.overlays.default ];
-          _module.args.overlays = [ self.overlays.default ];
-        };
+        desktop = ./nixos/modules/desktop.nix;
       };
 
       homeManagerModules = {
         common = ./home-manager/common.nix;
-        desktop = {
-          imports = [
-            self.homeManagerModules.common
-            ./home-manager/desktop.nix
-          ];
-        };
+        desktop = ./home-manager/modules/desktop.nix;
         # All Linux (NixOS + non-NixOS)
         linux = ./home-manager/linux.nix;
         # Only for non-NixOS Linux (Home Manager convention)
         genericLinux = ./home-manager/genericLinux.nix;
 
         # Personal profile
-        kachick = {
-          imports = [
-            self.homeManagerModules.common
-            ./home-manager/kachick.nix
-          ];
-        };
+        kachick = ./home-manager/modules/kachick.nix;
 
         # Platform/Environment specific
         genericUser = ./home-manager/genericUser.nix;

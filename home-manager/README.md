@@ -13,8 +13,12 @@ These settings are exported as `homeManagerModules`.
     homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       modules = [
-        # Standard Desktop Linux set (kachick profile, CLI/GUI common, overlays included)
-        dotfiles.homeManagerModules.desktop-linux
+        # Standard Desktop Linux set (Includes common CLI settings)
+        dotfiles.homeManagerModules.desktop
+        # Add Linux specific tools
+        dotfiles.homeManagerModules.linux
+        # Add kachick's personal profile (Optional)
+        dotfiles.homeManagerModules.kachick
 
         # Machine specific overrides
         { home.username = "user"; }
@@ -27,15 +31,14 @@ These settings are exported as `homeManagerModules`.
 
 ### Exported Modules
 
-- `dotfiles.homeManagerModules.desktop-linux`: Recommended bundle for Linux desktop.
+- `dotfiles.homeManagerModules.desktop`: Recommended for GUI users. Includes `common`.
 - `dotfiles.homeManagerModules.common`: Common CLI tool settings.
-- `dotfiles.homeManagerModules.desktop`: Common GUI tool settings.
-- `dotfiles.homeManagerModules.kachick`: Personal profile including git, gpg settings.
-- `dotfiles.homeManagerModules.overlays`: Module to apply this repository's custom packages to home-manager.
+- `dotfiles.homeManagerModules.linux`: Linux specific tool settings (Podman, etc.).
+- `dotfiles.homeManagerModules.kachick`: kachick's personal profile (Git, GPG).
 
 ---
 
-### FAQ
+## FAQ
 
 Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
 
