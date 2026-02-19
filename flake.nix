@@ -130,7 +130,20 @@
       };
 
       homeConfigurations = import ./home-manager {
-        inherit home-manager-linux home-manager-darwin mkPkgs;
+        inherit
+          home-manager-linux
+          home-manager-darwin
+          mkPkgs
+          outputs
+          ;
       };
+
+      overlays = {
+        default = nixpkgs.lib.composeManyExtensions overlays;
+      };
+
+      nixosModules = import ./nixos/modules { inherit inputs; };
+
+      homeManagerModules = import ./home-manager/modules { inherit overlays; };
     };
 }

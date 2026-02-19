@@ -75,14 +75,13 @@ nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpk
   --show-trace
 ```
 
-If you are experimenting to setup NixOS just after installing from their installer and want to avoid impure mode,\
-See [generic configuration](nixos/hosts/generic) for my current workaround.
-
 Finally, reboot the device
 
 ```bash
 sudo reboot now
 ```
+
+Refer to the [sample](nixos/hosts/sample) flake for an example of inheriting modules from another repository.
 
 ## home-manager
 
