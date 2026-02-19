@@ -48,10 +48,14 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          HAS_CI_DARWIN_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}
         run: |
           # Force run only if manually triggered or if the 'ci-darwin' label is present.
           FORCE=false
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]] || [[ "$LABEL_NAME" == "ci-darwin" ]] || [[ "$HAS_CI_DARWIN_LABEL" == "true" ]]; then
             FORCE=true
             echo "Forcing run due to label or manual trigger."
           fi

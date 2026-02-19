@@ -33,17 +33,21 @@ While we could check specific cache URLs (like `cache.nixos.org` or `kachick-dot
 The logic looks for the string `will be built` in the standard error output:
 
 1. **Cached (Skip Build)**:
+
    ```text
    these 5 paths will be fetched (29.17 MiB download, 83.40 MiB unpacked):
      /nix/store/...-rclone-1.73.0
    ```
+
    (The string `will be built` is absent.)
 
 2. **Rebuild Required (Trigger Darwin Job)**:
+
    ```text
    this derivation will be built:
      /nix/store/...-package.drv
    ```
+
    (The string `will be built` is present.)
 
 3. **Local Store (Already evaluated/built on the runner)**:

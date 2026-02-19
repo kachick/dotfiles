@@ -50,12 +50,16 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - id: set-matrix
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          HAS_CI_DARWIN_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}
         run: |
           TO_BUILD=()
 
           # Force build if manually triggered or if the 'ci-darwin' label is present
           FORCE=false
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]] || [[ "$LABEL_NAME" == "ci-darwin" ]] || [[ "$HAS_CI_DARWIN_LABEL" == "true" ]]; then
             FORCE=true
             echo "Forcing build due to label or manual trigger."
           fi
@@ -97,13 +101,17 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build package
-        run: nix build '.#${{ matrix.pname }}'
+        env:
+          PNAME: ${{ matrix.pname }}
+        run: nix build ".#$PNAME"
       - name: Run passthru tests
         # Use nix-build via flake-compat for simpler recursive building.
         # It automatically detects system architecture and skips if no tests exist.
+        env:
+          PNAME: ${{ matrix.pname }}
         run: |
-          if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
-            nix-build --attr 'packages.x86_64-darwin.${{ matrix.pname }}.passthru.tests'
+          if nix eval ".#$PNAME.passthru.tests" >/dev/null 2>&1; then
+            nix-build --attr "packages.x86_64-darwin.$PNAME.passthru.tests"
           else
-            echo 'No passthru.tests found for ${{ matrix.pname }}, skipping.'
+            echo "No passthru.tests found for $PNAME, skipping."
           fi
