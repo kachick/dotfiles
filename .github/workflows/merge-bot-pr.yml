@@ -24,31 +24,6 @@ jobs:
           steps.dependabot.outputs.update-type != 'version-update:semver-major' ||
           contains(steps.dependabot.outputs.dependency-names, 'cachix')
         run: echo -n 'merge=true' | tee -a "$GITHUB_OUTPUT"
-  dependabot:
-    needs: [judge-dependabot]
-    if: ${{ needs.judge-dependabot.outputs.merge == 'true' }}
-    timeout-minutes: 90
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@v2.5.0
-      - name: Wait other jobs
-        uses: kachick/wait-other-jobs@main
-        timeout-minutes: 75
-        with:
-          skip-same-workflow: 'true'
-      - name: Generate GitHub Apps token
-        id: merge-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-      - name: Approve and merge
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{ steps.merge-token.outputs.token }}
 
   # Avoid `automerge` renovate official feature.
   #   It wait longtime to be merged.
@@ -57,33 +32,16 @@ jobs:
   #    - `Allow auto-merge`
   #    - `Require status checks to pass before merging` and specify the status names
   #   Changing in all personal repository is annoy task for me. Even if using terrafform, getting mandatory CI names in each repo is too annoy!
-  renovate:
-    timeout-minutes: 90
-    runs-on: ubuntu-24.04
-    if: ${{ github.event.pull_request.user.login == 'renovate[bot]' }}
-    steps:
-      - name: Wait other jobs
-        uses: kachick/wait-other-jobs@main
-        timeout-minutes: 75
-        with:
-          skip-same-workflow: 'true'
-      - name: Generate GitHub Apps token
-        id: merge-token
-        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-      - name: Approve and merge
-        run: gh pr review --approve "$PR_URL" && gh pr merge --auto --delete-branch --squash "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{ steps.merge-token.outputs.token }}
-
   # https://github.com/kachick/anylang-template/issues/51
-  selfup-runner:
+  automerge:
     timeout-minutes: 90
     runs-on: ubuntu-24.04
-    if: ${{ github.event.pull_request.user.login == 'selfup-runner[bot]' }}
+    needs: [judge-dependabot]
+    if: >-
+      always() &&
+      ((github.event.pull_request.user.login == 'dependabot[bot]' && needs.judge-dependabot.outputs.merge == 'true') ||
+      (github.event.pull_request.user.login == 'renovate[bot]') ||
+      (github.event.pull_request.user.login == 'selfup-runner[bot]'))
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@main
