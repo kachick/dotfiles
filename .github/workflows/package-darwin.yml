@@ -7,13 +7,13 @@ on:
       - '.github/workflows/package-darwin.yml'
       - 'pkgs/'
       - 'flake.lock'
-      - 'overlays/default.nix'
+      - 'overlays'
   pull_request:
     paths:
       - '.github/workflows/package-darwin.yml'
       - 'pkgs/'
       - 'flake.lock'
-      - 'overlays/default.nix'
+      - 'overlays'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST
