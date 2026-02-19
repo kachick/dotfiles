@@ -49,11 +49,21 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - id: check
         run: |
-          # Force run if manually triggered or if the 'ci-darwin' label is present
+          # Force run if manually triggered, if the 'ci-darwin' label is present,
+          # OR if the home-manager definition files have changed.
           FORCE=false
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
             FORCE=true
             echo "Forcing run due to label or manual trigger."
+          fi
+
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [[ -n "$BASE_REF" && "$BASE_REF" != "0000000000000000000000000000000000000000" ]]; then
+            FILES_CHANGED=$(git diff --name-only "$BASE_REF" HEAD)
+            if echo "$FILES_CHANGED" | grep -qE "^home-manager/|^darwin/|flake\.nix|flake\.lock"; then
+              FORCE=true
+              echo "Forcing run because home-manager definitions have changed."
+            fi
           fi
 
           if [ "$FORCE" = "true" ]; then

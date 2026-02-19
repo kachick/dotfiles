@@ -38,11 +38,25 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - id: check
         run: |
-          # Force run if manually triggered or if the 'ci-darwin' label is present
+          # Force run if manually triggered, if the 'ci-darwin' label is present,
+          # OR if the environment definition files (devShells.nix, flake.nix, flake.lock) have changed.
+          # This ensures that any changes to the devshell tools or structure are always verified on Darwin.
           FORCE=false
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
             FORCE=true
             echo "Forcing run due to label or manual trigger."
+          fi
+
+          # Use git to check if relevant files have changed compared to the base branch
+          # (only available if fetching the full history or comparing branches).
+          # On GHA, we need to ensure the base branch is available.
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
+          if [[ -n "$BASE_REF" && "$BASE_REF" != "0000000000000000000000000000000000000000" ]]; then
+            FILES_CHANGED=$(git diff --name-only "$BASE_REF" HEAD)
+            if echo "$FILES_CHANGED" | grep -qE "devShells\.nix|flake\.nix|flake\.lock"; then
+              FORCE=true
+              echo "Forcing run because devshell definitions have changed."
+            fi
           fi
 
           if [ "$FORCE" = "true" ]; then

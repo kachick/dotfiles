@@ -56,9 +56,26 @@ jobs:
             echo "Forcing build due to label or manual trigger."
           fi
 
+          # Determine which files have changed to force builds if necessary
+          BASE_REF="${{ github.event.pull_request.base.sha || github.event.before }}"
+          FILES_CHANGED=""
+          if [[ -n "$BASE_REF" && "$BASE_REF" != "0000000000000000000000000000000000000000" ]]; then
+            FILES_CHANGED=$(git diff --name-only "$BASE_REF" HEAD)
+          fi
+
           for pname in "${PACKAGES[@]}"; do
             echo "Checking $pname..."
-            if [ "$FORCE" = "true" ]; then
+            # Force build if manually triggered, if the 'ci-darwin' label is present,
+            # OR if global flake/overlay files or the package definition itself have changed.
+            FORCE_PKG=false
+            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event.label.name }}" == "ci-darwin" ]] || [[ "${{ contains(github.event.pull_request.labels.*.name, 'ci-darwin') }}" == "true" ]]; then
+              FORCE_PKG=true
+            elif echo "$FILES_CHANGED" | grep -qE "^pkgs/$pname/|^overlays/|flake\.nix|flake\.lock"; then
+              FORCE_PKG=true
+              echo "Forcing build for $pname because its definitions have changed."
+            fi
+
+            if [ "$FORCE_PKG" = "true" ]; then
               TO_BUILD+=("\"$pname\"")
               continue
             fi
