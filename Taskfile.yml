@@ -55,8 +55,14 @@ tasks:
     desc: Make sure NixOS and/or home-manager will work for current user and device
     deps:
       - test-go
+      - test-sample-nixos
     cmds:
       - ./scripts/dry.bash
+
+  test-sample-nixos:
+    desc: Verify the sample NixOS configuration template
+    cmds:
+      - ./scripts/test-sample-nixos.bash
 
   test-go:
     sources:
@@ -175,6 +181,7 @@ tasks:
     deps:
       - 'default'
       - 'setup'
+      - 'test-sample-nixos'
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
       - 'fmt'
