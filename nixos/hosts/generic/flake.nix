@@ -10,9 +10,13 @@
 {
   inputs = {
     # 1. Point to this repository.
-    # If you want to use a specific branch or GIT_SHA for stability, use:
-    # dotfiles.url = "github:kachick/dotfiles/reorganized-modules";
-    # dotfiles.url = "github:kachick/dotfiles/0eca03bf838bc6870da6db0cf80aa26dd8cbcddd";
+    #
+    # TIPS: While you can point to a branch (e.g., github:kachick/dotfiles/main),
+    #       Nix sometimes pulls older revisions from its internal cache even after
+    #       recreating flake.lock. To avoid such troubleshooting, using a specific
+    #       GIT_SHA is the most reliable way during development or for stability.
+    #
+    # dotfiles.url = "github:kachick/dotfiles/GIT_SHA_HERE";
     dotfiles.url = "github:kachick/dotfiles";
 
     # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency and cache hits
