@@ -6,13 +6,11 @@ on:
       - '.github/workflows/nixos-sample.yml'
       - 'nixos/**'
       - 'flake.*'
-      - 'scripts/test-sample-nixos.bash'
   pull_request:
     paths:
       - '.github/workflows/nixos-sample.yml'
       - 'nixos/**'
       - 'flake.*'
-      - 'scripts/test-sample-nixos.bash'
   workflow_dispatch:
   schedule:
     # Every 10:42 JST
@@ -33,5 +31,4 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Verify sample configuration template
-        # Use nix develop to ensure task and required tools are available
         run: nix develop --command task test-sample-nixos

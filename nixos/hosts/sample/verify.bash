@@ -12,7 +12,8 @@
 set -euo pipefail
 
 REPO_ROOT=$(pwd)
-SAMPLE_FLAKE="$REPO_ROOT/nixos/hosts/sample/flake.nix"
+SAMPLE_DIR=$(dirname "$(realpath "$0")")
+SAMPLE_FLAKE="$SAMPLE_DIR/flake.nix"
 
 echo "Checking sample flake evaluation against local repository state..."
 

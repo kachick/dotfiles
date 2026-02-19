@@ -1,21 +1,28 @@
-# Generic Host Template
+# NixOS Host Template
 
-This host configuration serves as a reference for using the exported `nixosModules`.
-In most cases, you don't need to copy this directory. Instead, you should import `dotfiles.nixosModules.desktop` or `dotfiles.nixosModules.common` in your own flake.
+This directory contains a standalone template for a NixOS system that inherits from this repository.
 
-## How to use this as a base for a new machine
+## How to use this template
 
-1. Create a new host directory (e.g., `nixos/hosts/my-new-machine`).
-2. Generate hardware config: `nixos-generate-config --show-hardware-config > hardware-configuration.nix`.
-3. Create `default.nix` and import the modules:
+If you want to manage your NixOS configuration in a separate repository (or a separate branch), this is the easiest starting point.
 
-```nix
-{ outputs, ... }: {
-  imports = [
-    outputs.nixosModules.desktop
-    outputs.nixosModules.hardware # Optional
-    ./hardware-configuration.nix
-  ];
-  system.stateVersion = "25.11";
-}
+1. **Copy `flake.nix`**: Copy the `flake.nix` in this directory to your project root.
+2. **Generate Hardware Config**: Run the following command on your target machine:
+   ```bash
+   nixos-generate-config --show-hardware-config > hardware-configuration.nix
+   ```
+3. **Adjust `flake.nix`**:
+   - Update the `dotfiles.url` if you want to point to a specific branch or GIT_SHA.
+   - Change the `networking.hostName` to your preference.
+4. **Apply**:
+   ```bash
+   sudo nixos-rebuild switch --flake .#sample
+   ```
+
+## Development and Testing
+
+The `verify.bash` script in this directory ensures that this template remains valid and evaluatable against the current state of the main repository.
+
+```bash
+task test-sample-nixos
 ```

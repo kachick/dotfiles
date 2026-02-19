@@ -15,6 +15,5 @@ in
 {
   "moss" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/moss ]; });
   "algae" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/algae ]; });
-  "sample" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/sample ]; });
   "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/wsl ]; });
 }

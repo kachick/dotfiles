@@ -62,7 +62,7 @@ tasks:
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
     cmds:
-      - ./scripts/test-sample-nixos.bash
+      - ./nixos/hosts/sample/verify.bash
 
   test-go:
     sources:
