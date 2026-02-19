@@ -23,6 +23,7 @@ We leverage the native `nix build --dry-run` command. Since Nix can calculate th
 ### Rationale
 
 While we could check specific cache URLs (like `cache.nixos.org` or `kachick-dotfiles.cachix.org`) using `curl`, the `--dry-run` approach is superior because:
+
 - **Automatic Resolution**: It respects all substituters defined in `flake.nix` (`nixConfig.extra-substituters`) and system configs.
 - **Maintainability**: No need to update the CI script when adding new cache providers (e.g., Garnix).
 - **Comprehensive**: It checks for both the package itself and its entire dependency tree.
