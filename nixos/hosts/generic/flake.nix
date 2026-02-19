@@ -9,6 +9,12 @@
 
 {
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # 1. Point to this repository.
     #
     # TIPS: While you can point to a branch (e.g., github:kachick/dotfiles/main),
@@ -20,8 +26,8 @@
     dotfiles.url = "github:kachick/dotfiles";
 
     # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency and cache hits
-    nixpkgs.follows = "dotfiles/nixpkgs";
-    home-manager.follows = "dotfiles/home-manager-linux";
+    # nixpkgs.follows = "dotfiles/nixpkgs";
+    # home-manager.follows = "dotfiles/home-manager-linux";
   };
 
   outputs =
@@ -41,7 +47,6 @@
           dotfiles.nixosModules.genericUser
 
           # Import your own hardware configuration
-          # Note: nixos-generate-config --show-hardware-config > hardware-configuration.nix
           ./hardware-configuration.nix
 
           # Define machine specific settings
