@@ -2,6 +2,7 @@
   lib,
   pkgs,
   inputs,
+  outputs,
   ...
 }:
 
@@ -10,9 +11,8 @@
 
   imports = [
     inputs.home-manager-linux.nixosModules.home-manager
-    ../../configuration.nix
-    ../../hardware.nix
-    ../../desktop
+    outputs.nixosModules.desktop
+    outputs.nixosModules.hardware
     ../../desktop/kachick.nix
 
     ./hardware-configuration.nix

@@ -1,10 +1,15 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  outputs,
+  ...
+}:
 
 {
   networking.hostName = "wsl";
 
   imports = [
-    ../../configuration.nix
+    outputs.nixosModules.common
     inputs.nixos-wsl.nixosModules.default
     inputs.home-manager-linux.nixosModules.home-manager
   ];
@@ -29,18 +34,18 @@
     backupFileExtension = "backup";
     users.nixos = {
       imports = [
-        ../../../home-manager/kachick.nix # Hack for now
-        ../../../home-manager/linux.nix
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.linux
         {
           home.username = "nixos";
-          targets.genericLinux.enable = false;
         }
-        ../../../home-manager/wsl.nix
+        outputs.homeManagerModules.wsl
       ];
     };
     extraSpecialArgs = {
       inherit
         pkgs
+        outputs
         ;
     };
   };

@@ -130,7 +130,62 @@
       };
 
       homeConfigurations = import ./home-manager {
-        inherit home-manager-linux home-manager-darwin mkPkgs;
+        inherit
+          home-manager-linux
+          home-manager-darwin
+          mkPkgs
+          outputs
+          ;
+      };
+
+      overlays = {
+        default = nixpkgs.lib.composeManyExtensions overlays;
+      };
+
+      nixosModules = {
+        common = ./nixos/configuration.nix;
+        hardware = ./nixos/hardware.nix;
+        desktop = {
+          imports = [
+            self.nixosModules.common
+            ./nixos/desktop
+          ];
+          nixpkgs.overlays = [ self.overlays.default ];
+          _module.args.overlays = [ self.overlays.default ];
+        };
+      };
+
+      homeManagerModules = {
+        common = ./home-manager/common.nix;
+        desktop = {
+          imports = [
+            self.homeManagerModules.common
+            ./home-manager/desktop.nix
+          ];
+        };
+        # All Linux (NixOS + non-NixOS)
+        linux = ./home-manager/linux.nix;
+        # Only for non-NixOS Linux (Home Manager convention)
+        genericLinux = ./home-manager/genericLinux.nix;
+
+        # Personal profile
+        kachick = {
+          imports = [
+            self.homeManagerModules.common
+            ./home-manager/kachick.nix
+          ];
+        };
+
+        # Platform/Environment specific
+        genericUser = ./home-manager/genericUser.nix;
+        darwin = ./home-manager/darwin.nix;
+        systemd = ./home-manager/systemd.nix;
+        wsl = ./home-manager/wsl.nix;
+        lima-guest = ./home-manager/lima-guest.nix;
+        lima-host = ./home-manager/lima-host.nix;
+        overlays = {
+          nixpkgs.overlays = [ self.overlays.default ];
+        };
       };
     };
 }

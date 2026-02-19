@@ -1,6 +1,7 @@
 {
   lib,
   inputs,
+  outputs,
   ...
 }:
 
@@ -10,9 +11,8 @@
 
   imports = [
     inputs.home-manager-linux.nixosModules.home-manager
-    ../../configuration.nix
-    ../../hardware.nix
-    ../../desktop
+    outputs.nixosModules.desktop
+    outputs.nixosModules.hardware
     ../../desktop/genericUsers.nix
 
     # ./hardware-configuration.nix # UPDATEME: Comment-in only in your new device

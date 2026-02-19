@@ -1,24 +1,21 @@
-# Usage
+# Generic Host Template
 
-Putting the `/etc/nixos/hardware-configuration.nix` into this repository is much annoy for each bootstrapping of the device.\
-Although it requires impure mode. So I'm putting these files for the purpose.
+This host configuration serves as a reference for using the exported `nixosModules`.
+In most cases, you don't need to copy this directory. Instead, you should import `dotfiles.nixosModules.desktop` or `dotfiles.nixosModules.common` in your own flake.
 
-```bash
-cp /etc/nixos/hardware-configuration.nix ./nixos/hosts/generic/
+## How to use this as a base for a new machine
 
-# Comment-in-ont about hardware-configuration.nix in this directory.
-git grep 'UPDATEME' ./nixos/hosts/generic
+1. Create a new host directory (e.g., `nixos/hosts/my-new-machine`).
+2. Generate hardware config: `nixos-generate-config --show-hardware-config > hardware-configuration.nix`.
+3. Create `default.nix` and import the modules:
 
-git add .
+```nix
+{ outputs, ... }: {
+  imports = [
+    outputs.nixosModules.desktop
+    outputs.nixosModules.hardware # Optional
+    ./hardware-configuration.nix
+  ];
+  system.stateVersion = "25.11";
+}
 ```
-
-```zsh
-nixos-rebuild build --flake .#generic
-
-# Make sure result of above step
-
-# Apply it
-sudo nixos-rebuild switch --flake .#generic
-```
-
-If you want to use `task apply`, you might require rebooting to apply new hostname.
