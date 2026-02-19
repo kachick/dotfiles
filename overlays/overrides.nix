@@ -1,21 +1,18 @@
 { home-manager-linux, home-manager-darwin }:
 final: prev:
 let
-  inherit (final) lib;
-  # callPackage に渡す引数を明示的に管理する
+  inherit (prev) lib;
   callPackage = lib.callPackageWith (
-    final
-    // {
-      inherit
-        prev
-        home-manager-linux
-        home-manager-darwin
-        ;
-    }
+    final // { inherit prev home-manager-linux home-manager-darwin; }
   );
+
+  files = builtins.readDir ./overrides;
+  nixFiles = lib.filterAttrs (name: type: type == "regular" && lib.hasSuffix ".nix" name) files;
 in
-{
-  mozc = callPackage ./overrides/mozc/package.nix { };
-  inetutils = callPackage ./overrides/inetutils/package.nix { };
-  home-manager = callPackage ./overrides/home-manager/package.nix { };
-}
+lib.mapAttrs' (
+  name: _type:
+  let
+    pname = lib.removeSuffix ".nix" name;
+  in
+  lib.nameValuePair pname (callPackage (./overrides + "/${name}") { })
+) nixFiles
