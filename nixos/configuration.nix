@@ -74,6 +74,8 @@
   # Bootloader.
   boot.loader.efi.canTouchEfiVariables = true;
 
+  hardware.enableRedistributableFirmware = true;
+
   # GH-1255 for HDD
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/hardware/iosched.nix
   hardware.block.defaultSchedulerRotational = "bfq";
@@ -143,6 +145,7 @@
       micro
 
       usbutils # `lsusb` to get IDs
+      v4l-utils # `v4l2-ctl` for webcam debugging
 
       wget
       curl

@@ -193,6 +193,8 @@
 
       loupe # image viewer
 
+      snapshot # GNOME Camera app
+
       contrast # Check two color contrast. Also using as a color-picker
 
       # Clipboard
