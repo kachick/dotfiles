@@ -19,6 +19,8 @@ Here is an example of `flake.nix` for your private repository.
       modules = [
         # Desktop set (Includes Desktop Environment, Fonts, and GUI Apps)
         dotfiles.nixosModules.desktop
+        # Shared hardware tweaks (Keyboard remaps, etc.)
+        dotfiles.nixosModules.hardware
 
         # Your machine specific config (hostname, user, filesystems, etc.)
         ./configuration.nix

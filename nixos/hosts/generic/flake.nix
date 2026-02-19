@@ -44,8 +44,8 @@
           # Import modules from the dotfiles input
           # Note: These modules automatically include dependencies (Home Manager, Overlays, Bootloader)
           dotfiles.nixosModules.desktop
+          dotfiles.nixosModules.hardware
           dotfiles.nixosModules.genericUser
-
           # Import your own hardware configuration
           ./hardware-configuration.nix
 
