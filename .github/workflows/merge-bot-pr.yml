@@ -48,6 +48,7 @@ jobs:
         timeout-minutes: 75
         with:
           skip-same-workflow: 'true'
+          event-list: '[ "${{ github.event_name }}", "dynamic" ]'
       - name: Generate GitHub Apps token
         id: merge-token
         uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
