@@ -8,12 +8,16 @@ on:
       - 'pkgs/'
       - 'flake.lock'
       - 'overlays/**'
+      - '!overlays/*.md'
+      - '!overlays/**/*.md'
   pull_request:
     paths:
       - '.github/workflows/package-darwin.yml'
       - 'pkgs/'
       - 'flake.lock'
       - 'overlays/**'
+      - '!overlays/*.md'
+      - '!overlays/**/*.md'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST

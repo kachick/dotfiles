@@ -8,12 +8,16 @@ on:
       - 'pkgs/'
       - 'flake.lock'
       - 'overlays/**'
+      - '!overlays/*.md'
+      - '!overlays/**/*.md'
   pull_request:
     paths:
       - '.github/workflows/package-linux.yml'
       - 'pkgs/'
       - 'flake.lock'
       - 'overlays/**'
+      - '!overlays/*.md'
+      - '!overlays/**/*.md'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
