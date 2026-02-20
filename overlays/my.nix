@@ -6,7 +6,7 @@ final: _prev: {
     }
     // {
       constants = {
-        nix-config = import ../internal/constants/nix-config.nix;
+        nix-config = import ../config/nix/constants.nix;
       };
     };
 }
