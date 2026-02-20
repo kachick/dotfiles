@@ -51,12 +51,12 @@ jobs:
           # Strictly following official lima-actions documentation
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Create Lima Instance
-        # This uses config/lima/docker-nix.yaml which inherits from template://docker
-        # Delete existing instance if restored from cache to ensure fresh creation with the latest YAML.
+      - name: Create Lima Instances
+        # Delete existing instances if restored from cache to ensure fresh creation.
         run: |
-          limactl delete -f docker-nix || true
+          limactl delete -f docker-nix docker-nix-home || true
           limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix-home config/lima/docker-nix-home.yaml
 
   test-provisioning:
     needs: prepare-image
@@ -79,22 +79,19 @@ jobs:
             ~/.lima
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Start Lima Guest and Provision Nix/Home-Manager
-        run: |
-          # limactl start will find the pre-created instance and apply user-provisioning.bash
-          limactl start --name=docker-nix --tty=false
+      - name: Step 1 - Provision Nix (Lightweight)
+        run: limactl start --name=docker-nix --tty=false
 
-      - name: Verify Docker
-        run: limactl shell docker-nix docker run --rm hello-world
+      - name: Verify Nix in Guest
+        run: limactl shell docker-nix bash -lc 'nix --version'
 
-      - name: Verify Nix and Home-Manager
-        run: |
-          limactl shell docker-nix bash -lc 'nix --version'
-          limactl shell docker-nix bash -lc 'home-manager --version'
+      - name: Step 2 - Provision Home-Manager (Full)
+        run: limactl start --name=docker-nix-home --tty=false
 
-      - name: Verify tools installed via Home-Manager
+      - name: Verify Home-Manager and tools
         run: |
-          limactl shell docker-nix bash -lc 'starship --version'
-          limactl shell docker-nix bash -lc 'ruby --version'
-          limactl shell docker-nix bash -lc 'hx --version'
-          limactl shell docker-nix bash -lc 'la ~'
+          limactl shell docker-nix-home bash -lc 'home-manager --version'
+          limactl shell docker-nix-home bash -lc 'starship --version'
+          limactl shell docker-nix-home bash -lc 'ruby --version'
+          limactl shell docker-nix-home bash -lc 'hx --version'
+          limactl shell docker-nix-home bash -lc 'la ~'
