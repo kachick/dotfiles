@@ -48,10 +48,15 @@ jobs:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Start Lima Guest and Provision Nix/Home-Manager
-        # Using --tty=false to avoid interactive prompt
+      - name: Build Lima Template
+        id: build-template
         run: |
-          nix develop --command task lima-guest-docker -- --tty=false
+          nix build .#lima-template --no-link
+          echo "path=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml" >> "$GITHUB_OUTPUT"
+
+      - name: Start Lima Guest and Provision Nix/Home-Manager
+        run: |
+          limactl start --name=docker-nix --tty=false ${{ steps.build-template.outputs.path }}
 
       - name: Verify Docker
         run: limactl shell docker-nix docker run --rm hello-world
