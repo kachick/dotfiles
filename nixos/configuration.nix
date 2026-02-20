@@ -33,9 +33,9 @@
     # See https://github.com/NixOS/nix/pull/8047 for background
     always-allow-substitutes = true;
 
-    trusted-substituters = pkgs.my.constants.nix-config.substituters;
+    trusted-substituters = outputs.lib.nixConfig.substituters;
 
-    trusted-public-keys = pkgs.my.constants.nix-config.trusted-public-keys;
+    trusted-public-keys = outputs.lib.nixConfig.trusted-public-keys;
 
     accept-flake-config = true;
 

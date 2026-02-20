@@ -39,8 +39,8 @@ provision:
         TARGET_FLAKE="{{.Param.flake}}"
 
         # Sync full cache list from constants
-        SUBSTITUTERS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.substituters" --apply 'builtins.concatStringsSep " "')
-        KEYS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
+        SUBSTITUTERS=$(nix eval --raw "${TARGET_FLAKE}#lib.nixConfig.substituters" --apply 'builtins.concatStringsSep " "')
+        KEYS=$(nix eval --raw "${TARGET_FLAKE}#lib.nixConfig.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
 
         {
           echo "extra-substituters = ${SUBSTITUTERS}"
