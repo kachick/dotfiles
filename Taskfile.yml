@@ -179,8 +179,8 @@ tasks:
   lima-guest-docker:
     desc: Provision a Lima guest with Docker and Nix (home-manager)
     vars:
-      LIMA_VERSION: '{{.LIMA_VERSION | default "v2.0.3"}}'
-      TEMPLATE_URL: 'https://raw.githubusercontent.com/lima-vm/lima/{{.LIMA_VERSION}}/templates/docker.yaml'
+      LIMA_VERSION: '{{.LIMA_VERSION | default "2.0.3"}}' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+      TEMPLATE_URL: 'https://raw.githubusercontent.com/lima-vm/lima/v{{.LIMA_VERSION}}/templates/docker.yaml'
     cmds:
       - mkdir -p dist
       - curl -sfL {{.TEMPLATE_URL}} -o dist/docker.yaml

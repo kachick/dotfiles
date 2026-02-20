@@ -42,10 +42,10 @@ jobs:
         id: lima-setup
         with:
           # Match with Taskfile.yml default
-          version: 'v2.0.3'
+          version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
 
       - name: Cache Lima
-        uses: actions/cache@v6.0.2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
