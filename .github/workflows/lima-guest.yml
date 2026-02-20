@@ -25,7 +25,12 @@ permissions:
   contents: read
 
 jobs:
-  test-lima-provisioning:
+  # IMPORTANT: These jobs MUST remain split.
+  # GitHub Actions only saves the cache if the job completes successfully.
+  # By separating 'prepare-image' from 'test-provisioning', we ensure that
+  # the heavy image download is cached even if the subsequent provisioning or
+  # tool verification fails. DO NOT MERGE THESE JOBS.
+  prepare-image:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6.0.2
@@ -47,28 +52,45 @@ jobs:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Build Lima Template
-        id: build-template
+      - name: Build Lima Template and Create Instance
+        # Separate 'create' ensures the image is downloaded and cached in this job.
         run: |
           TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
-          echo "path=${TEMPLATE_PATH}" >> "$GITHUB_OUTPUT"
+          limactl create --name=docker-nix "${TEMPLATE_PATH}"
 
-      - name: Create Lima Instance (Download Image)
-        # Ensure image is downloaded and cached even if start fails.
-        # This step is purely for image preparation.
-        run: |
-          limactl create --name=docker-nix ${{ steps.build-template.outputs.path }}
+  test-provisioning:
+    needs: prepare-image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3'
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/lima
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
-        # Provisioning happens here.
         run: |
-          limactl start --name=docker-nix --tty=false
+          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
+          # limactl start will find the image in the loaded cache, skipping download.
+          limactl start --name=docker-nix --tty=false "${TEMPLATE_PATH}"
 
       - name: Verify Docker
         run: limactl shell docker-nix docker run --rm hello-world
 
       - name: Verify Nix and Home-Manager
-        # Now nix should be in PATH even in non-interactive shells due to /etc/bash.bashrc patch
         run: |
           limactl shell docker-nix nix --version
           limactl shell docker-nix home-manager --version
