@@ -176,6 +176,11 @@ tasks:
     cmds:
       - './containers/build.bash'
 
+  lima-guest-ubuntu:
+    desc: Provision a Lima guest with Ubuntu LTS and home-manager
+    cmds:
+      - limactl start config/lima/ubuntu-lts.yaml
+
   ci-dev:
     desc: Provided for CI
     deps:

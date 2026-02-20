@@ -1,0 +1,70 @@
+# This template provisions a Lima guest with Ubuntu LTS and applies home-manager.
+# Use `limactl start config/lima/ubuntu-lts.yaml` to create.
+
+# Base template
+# https://github.com/lima-vm/lima/blob/master/templates/ubuntu-lts.yaml
+
+images:
+  - location: 'https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img'
+    arch: 'x86_64'
+  - location: 'https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img'
+    arch: 'aarch64'
+
+mounts:
+  - location: '~'
+    writable: false
+  - location: '~/repos'
+    mountPoint: '{{.Home}}/repos'
+    writable: true
+
+provision:
+  # 1. Install Nix (Multi-user) and enable flakes
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! command -v nix >/dev/null 2>&1; then
+        # Use the official installer
+        curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes
+      fi
+
+      # Enable flakes for all users
+      mkdir -p /etc/nix
+      if ! grep -q "experimental-features" /etc/nix/nix.conf 2>/dev/null; then
+        echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+        # Restart nix-daemon to apply changes
+        if command -v systemctl >/dev/null 2>&1; then
+          systemctl restart nix-daemon
+        fi
+      fi
+  # 2. Apply home-manager
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Ensure Nix is in PATH
+      for i in {1..30}; do
+        if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+          break
+        fi
+        echo "Waiting for Nix installation to complete..."
+        sleep 2
+      done
+
+      if ! command -v nix >/dev/null 2>&1; then
+        echo "Nix not found"
+        exit 1
+      fi
+
+      DOTFILES_DIR="$HOME/repos/github.com/kachick/dotfiles"
+      if [ ! -d "$DOTFILES_DIR" ]; then
+         echo "Dotfiles directory not found at $DOTFILES_DIR. Ensure it is mounted."
+         exit 1
+      fi
+
+      cd "$DOTFILES_DIR"
+      # Apply home-manager configuration for "kachick@lima"
+      # It will manage /home/kachick.linux (or similar) as defined in lima-guest.nix
+      nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#kachick@lima"

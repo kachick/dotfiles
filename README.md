@@ -202,8 +202,7 @@ However I should keep the minimum environment for now.
 
 ## Lima
 
-1. Setup [Lima](https://github.com/lima-vm/lima) with default Ubuntu guest
-1. In the lima as `limactl start`, apply home-manager with `kachick@lima`
+1. Setup [Lima](https://github.com/lima-vm/lima) with `task lima-guest-ubuntu`. It will provision the Ubuntu guest with Nix and home-manager.
 1. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
 
 ## How to setup secrets
