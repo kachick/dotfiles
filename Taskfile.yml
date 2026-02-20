@@ -176,6 +176,11 @@ tasks:
     cmds:
       - './containers/build.bash'
 
+  build-lima-template:
+    internal: true
+    cmds:
+      - nix build .#lima-template --no-link
+
   lima-guest-docker-create:
     desc: Create a Lima guest without starting it
     deps:
