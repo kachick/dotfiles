@@ -102,3 +102,23 @@ jobs:
           limactl shell docker-nix-home bash -lc 'ruby --version'
           limactl shell docker-nix-home bash -lc 'hx --version'
           limactl shell docker-nix-home bash -lc 'la ~'
+
+      - name: Prepare Artifact
+        # Collect instance and cache for archiving.
+        # We use zeekstd for seekable zstd compression.
+        run: |
+          mkdir -p dist/lima-artifact
+          # Copy instance metadata and image cache
+          cp -r ~/.lima/docker-nix-home dist/lima-artifact/
+          cp -r ~/.cache/lima dist/lima-artifact/cache
+
+          # Create seekable zstd archive using zeekstd
+          # Note: zeekstd provides a seekable format that can be handled by compatible tools.
+          nix run nixpkgs#zeekstd -- -c dist/lima-artifact > lima-docker-nix-home.zeekstd
+
+      - name: Upload VM Artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: lima-vm-docker-nix-home-${{ github.sha }}
+          path: lima-docker-nix-home.zeekstd
+          retention-days: 7
