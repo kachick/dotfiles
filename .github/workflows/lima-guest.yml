@@ -48,8 +48,8 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
-          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
+          # Strictly following official lima-actions documentation
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Prepare Lima Config and Create Instance
         # Custom provisioning is now handled by ~/.lima/_config/user-provisioning.bash
@@ -78,8 +78,7 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
-          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
         run: |
