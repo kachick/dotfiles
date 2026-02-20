@@ -8,23 +8,23 @@ set -eux -o pipefail
 # 1. Install Nix (Multi-user) and enable flakes with binary caches
 # Following README Ubuntu instructions carefully.
 if ! command -v nix >/dev/null 2>&1; then
-    extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
-    {
-        echo 'experimental-features = nix-command flakes'
-        # 'user' is the name defined in the 'user' block of this YAML
-        echo "trusted-users = root $LIMA_CID_USER @wheel"
+	extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+	{
+		echo 'experimental-features = nix-command flakes'
+		# 'user' is the name defined in the 'user' block of this YAML
+		echo "trusted-users = root $LIMA_CID_USER @wheel"
 
-        # Add binary caches from flake.nix to speed up provisioning
-        echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org"
-        echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    } >> "$extra_conf_path"
+		# Add binary caches from flake.nix to speed up provisioning
+		echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org"
+		echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+	} >>"$extra_conf_path"
 
-    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes --nix-extra-conf-file "$extra_conf_path"
+	sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes --nix-extra-conf-file "$extra_conf_path"
 fi
 
 # Force Nix profile loading for non-interactive shells in Ubuntu
 if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
-    tee -a /etc/bash.bashrc <<'EOF'
+	tee -a /etc/bash.bashrc <<'EOF'
 if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
     . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
