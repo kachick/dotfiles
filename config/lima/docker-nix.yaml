@@ -9,6 +9,7 @@ user:
 
 provision:
   # 1. Install Nix (Multi-user) and enable flakes with binary caches
+  # Following README Ubuntu instructions.
   - mode: system
     script: |
       #!/bin/bash
@@ -23,10 +24,11 @@ provision:
         } >> "$extra_conf_path"
 
         # Provide $HOME for the installer, otherwise it fails in 'mode: system'
-        HOME=/root sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes --nix-extra-conf-file "$extra_conf_path"
+        HOME=/root curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes --nix-extra-conf-file "$extra_conf_path"
       fi
 
       # Force Nix profile loading for non-interactive shells in Ubuntu.
+      # We prepend it to the top of /etc/bash.bashrc to bypass the interactive-only check.
       if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
         sed -i '1i if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh; fi' /etc/bash.bashrc
       fi

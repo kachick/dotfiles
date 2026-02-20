@@ -48,11 +48,12 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          # Strictly following official lima-actions documentation
-          key: lima-${{ steps.lima-setup.outputs.version }}
+          # Include config hash in the key to invalidate stale instances.
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Create Lima Instances
-        # Delete existing instances if restored from cache to ensure fresh creation.
         run: |
           limactl delete -f docker-nix docker-nix-home || true
           limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
@@ -77,18 +78,23 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Step 1 - Provision Nix (Lightweight)
         run: limactl start --name=docker-nix --tty=false
 
       - name: Verify Nix in Guest
-        run: limactl shell docker-nix bash -lc 'nix --version'
+        # After /etc/bash.bashrc patch, nix should be in PATH.
+        # Using separate arguments like the local success case.
+        run: limactl shell docker-nix nix --version
 
       - name: Step 2 - Provision Home-Manager (Full)
         run: limactl start --name=docker-nix-home --tty=false
 
       - name: Verify Home-Manager and tools
+        # Using bash -lc for user-level tools which are defined in ~/.profile
         run: |
           limactl shell docker-nix-home bash -lc 'home-manager --version'
           limactl shell docker-nix-home bash -lc 'starship --version'
