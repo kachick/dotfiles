@@ -176,10 +176,12 @@ tasks:
     cmds:
       - './containers/build.bash'
 
-  build-lima-template:
-    internal: true
+  lima-guest-docker-create:
+    desc: Create a Lima guest without starting it
+    deps:
+      - build-lima-template
     cmds:
-      - nix build .#lima-template --no-link
+      - limactl create --name=docker-nix "$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml"
 
   lima-guest-docker:
     desc: Provision a Lima guest with Docker and Nix (home-manager)
