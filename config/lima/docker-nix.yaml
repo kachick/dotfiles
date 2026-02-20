@@ -19,6 +19,7 @@ provision:
         {
           echo 'experimental-features = nix-command flakes'
           echo "trusted-users = root {{.User}} @wheel"
+          # Initial bootstrap caches
           echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org"
           echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         } >> "$extra_conf_path"
@@ -26,6 +27,21 @@ provision:
         # Provide $HOME for the installer, otherwise it fails in 'mode: system'
         export HOME=/root
         curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes --nix-extra-conf-file "$extra_conf_path"
+
+        # After installation, we can fetch the full synchronized list from the flake
+        # and update nix.conf to be complete and consistent with the repo.
+        . /etc/profile.d/nix.sh
+        FLAKE_URI="github:kachick/dotfiles/main"
+
+        # Sync full cache list from constants
+        SUBSTITUTERS=$(nix eval --raw "${FLAKE_URI}#outputs.overlays.default.final.my.constants.nix-config.substituters" --apply 'builtins.concatStringsSep " "')
+        KEYS=$(nix eval --raw "${FLAKE_URI}#outputs.overlays.default.final.my.constants.nix-config.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
+
+        {
+          echo "extra-substituters = ${SUBSTITUTERS}"
+          echo "extra-trusted-public-keys = ${KEYS}"
+        } | tee -a /etc/nix/nix.conf
+        systemctl restart nix-daemon
       fi
 
       # Force Nix profile loading for non-interactive shells in Ubuntu.
