@@ -3,10 +3,11 @@
   fetchurl,
   yq-go,
   lib,
+  my,
 }:
 
 let
-  version = "2.0.3"; # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+  inherit (my.lima) version;
   baseTemplate = fetchurl {
     url = "https://raw.githubusercontent.com/lima-vm/lima/v${version}/templates/docker.yaml";
     hash = "sha256-XH+CcaBX+1igLYzgKi69WlM/AokJ5csA8nMXfcCl1JU=";
@@ -17,7 +18,7 @@ runCommand "lima-template"
   {
     nativeBuildInputs = [ yq-go ];
     meta = {
-      description = "Generated Lima template with Docker and customized Nix/home-manager provisioning";
+      description = "Generated Lima template with Docker and customized Nix/home-manager provisioning. Version follows my.lima";
       inherit version;
       license = lib.licenses.asl20;
     };

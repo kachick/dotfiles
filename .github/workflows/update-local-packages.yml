@@ -31,6 +31,7 @@ jobs:
         package:
           - gemini-cli-bin
           - lima
+          - lima-template
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -81,6 +82,9 @@ jobs:
         shell: nix develop --command bash -eu -o pipefail {0}
         run: |
           nix-update --commit --flake "${PACKAGE}"
+          if [[ "${PACKAGE}" == "lima" ]]; then
+            nix-update --commit --flake "lima-template" --version=skip
+          fi
         env:
           PACKAGE: ${{ matrix.package }}
 
