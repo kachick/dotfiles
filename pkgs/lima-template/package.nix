@@ -1,6 +1,5 @@
 {
   runCommand,
-  fetchurl,
   yq-go,
   lib,
   my,
@@ -8,10 +7,7 @@
 
 let
   inherit (my.lima) version;
-  baseTemplate = fetchurl {
-    url = "https://raw.githubusercontent.com/lima-vm/lima/v${version}/templates/docker.yaml";
-    hash = "sha256-XH+CcaBX+1igLYzgKi69WlM/AokJ5csA8nMXfcCl1JU=";
-  };
+  baseTemplate = "${my.lima.src}/templates/docker.yaml";
   patchYaml = ../../config/lima/patch.yaml;
 in
 runCommand "lima-template"
