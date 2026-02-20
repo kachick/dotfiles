@@ -183,8 +183,9 @@ tasks:
       TEMPLATE_URL: 'https://raw.githubusercontent.com/lima-vm/lima/{{.LIMA_VERSION}}/templates/docker.yaml'
     cmds:
       - mkdir -p dist
+      - curl -sfL {{.TEMPLATE_URL}} -o dist/docker.yaml
       - |
-        nix run 'nixpkgs#yq-go' -- eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' {{.TEMPLATE_URL}} config/lima/patch.yaml > dist/lima.yaml
+        nix run 'nixpkgs#yq-go' -- eval-all 'select(fi==0) as $base | select(fi==1) as $patch | $base * $patch | .provision = $base.provision + $patch.provision | .mounts = $base.mounts + $patch.mounts' dist/docker.yaml config/lima/patch.yaml > dist/lima.yaml
       - limactl start dist/lima.yaml
 
   ci-dev:
