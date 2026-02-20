@@ -5,3 +5,61 @@ mounts:
   - location: '~/repos' # See git.nix in this repo
     mountPoint: '{{.Home}}/repos' # Keep same behavior for ghq and the wrapped scripts
     writable: true # For developing purpose, writable should be reasonable. And my system does not directly include these files
+
+# GLOBAL OVERRIDES (Appended to template provision list)
+# See: https://github.com/lima-vm/lima/blob/v2.0.3/templates/default.yaml#L608-L634
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Only run for docker-nix instance to avoid side effects on other machines
+      if [[ "${LIMA_CID_NAME}" != "docker-nix" ]]; then
+          echo "Skipping custom provisioning for instance: ${LIMA_CID_NAME}"
+          exit 0
+      fi
+
+      # 1. Install Nix (Multi-user) and enable flakes with binary caches
+      if ! command -v nix >/dev/null 2>&1; then
+          extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+          {
+              echo 'experimental-features = nix-command flakes'
+              echo "trusted-users = root $LIMA_CID_USER @wheel"
+              echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org"
+              echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          } >> "$extra_conf_path"
+          sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes --nix-extra-conf-file "$extra_conf_path"
+      fi
+
+      # Force Nix profile loading for non-interactive shells in Ubuntu
+      if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
+          tee -a /etc/bash.bashrc <<'EOF'
+      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      fi
+      EOF
+      fi
+
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      if [[ "${LIMA_CID_NAME}" != "docker-nix" ]]; then
+          exit 0
+      fi
+
+      # Source Nix for the current provisioning session
+      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      fi
+
+      # Step 3 in README Ubuntu section
+      mkdir -p ~/.local/state/nix/profiles
+
+      DOTFILES_DIR="$HOME/repos/github.com/kachick/dotfiles"
+      if [ -d "$DOTFILES_DIR" ]; then
+          cd "$DOTFILES_DIR"
+          nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#user@lima"
+      fi

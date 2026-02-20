@@ -52,10 +52,9 @@ jobs:
           key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Prepare Lima Config and Create Instance
-        # Custom provisioning is now handled by ~/.lima/_config/user-provisioning.bash
+        # Custom provisioning is now integrated into ~/.lima/_config/default.yaml
         run: |
           mkdir -p ~/.lima/_config
-          cp config/lima/_config/user-provisioning.bash ~/.lima/_config/user-provisioning.bash
           cp config/lima/_config/default.yaml ~/.lima/_config/default.yaml
           limactl create --name=docker-nix template://docker
 
