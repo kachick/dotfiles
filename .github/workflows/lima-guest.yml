@@ -89,12 +89,12 @@ jobs:
 
       - name: Verify Nix and Home-Manager
         run: |
-          limactl shell docker-nix nix --version
-          limactl shell docker-nix home-manager --version
+          limactl shell docker-nix bash -lc 'nix --version'
+          limactl shell docker-nix bash -lc 'home-manager --version'
 
       - name: Verify tools installed via Home-Manager
         run: |
-          limactl shell docker-nix starship --version
-          limactl shell docker-nix ruby --version
-          limactl shell docker-nix hx --version
-          limactl shell docker-nix la ~
+          limactl shell docker-nix bash -lc 'starship --version'
+          limactl shell docker-nix bash -lc 'ruby --version'
+          limactl shell docker-nix bash -lc 'hx --version'
+          limactl shell docker-nix bash -lc 'la ~'
