@@ -179,7 +179,7 @@ tasks:
   lima-guest-docker:
     desc: Provision a Lima guest with Docker and Nix (home-manager)
     cmds:
-      - limactl start --name=ubuntu "$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml"
+      - limactl start --name=docker-nix "$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml"
 
   ci-dev:
     desc: Provided for CI

@@ -54,17 +54,17 @@ jobs:
           nix develop --command task lima-guest-docker -- --tty=false
 
       - name: Verify Docker
-        run: lima --name=ubuntu docker run --rm hello-world
+        run: lima --name=docker-nix docker run --rm hello-world
 
       - name: Verify Nix in Guest
-        run: lima --name=ubuntu nix --version
+        run: lima --name=docker-nix nix --version
 
       - name: Verify Home-Manager in Guest
-        run: lima --name=ubuntu home-manager --version
+        run: lima --name=docker-nix home-manager --version
 
       - name: Verify tools installed via Home-Manager
         run: |
-          lima --name=ubuntu zsh -c 'starship --version'
-          lima --name=ubuntu zsh -c 'ruby --version'
-          lima --name=ubuntu hx --version'
-          lima --name=ubuntu zsh -c 'la ~'
+          lima --name=docker-nix zsh -c 'starship --version'
+          lima --name=docker-nix zsh -c 'ruby --version'
+          lima --name=docker-nix hx --version'
+          lima --name=docker-nix zsh -c 'la ~'
