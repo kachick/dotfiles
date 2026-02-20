@@ -4,6 +4,7 @@
 
 {
   pkgs,
+  outputs,
   overlays,
   ...
 }:
