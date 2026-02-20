@@ -63,10 +63,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
       - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
         id: lima-setup
         with:
@@ -87,29 +83,11 @@ jobs:
           limactl start --name=docker-nix --tty=false
           limactl start --name=docker-nix-home --tty=false
 
+      - name: Verify Nix in Guest
+        run: limactl shell docker-nix nix --version
+
       - name: Verify Home-Manager and tools
         run: |
           limactl shell docker-nix-home bash -lc 'home-manager --version'
           limactl shell docker-nix-home bash -lc 'starship --version'
           limactl shell docker-nix-home bash -lc 'la ~'
-
-            - name: Create Golden Images
-              # Flatten the diffdisks into standalone qcow2 images.
-              # We use qemu-utils for qemu-img and zeekstd for seekable zstd compression.
-              run: |
-                # 1. Lightweight Nix image
-                nix shell nixpkgs#qemu-utils -c qemu-img convert -O qcow2 ~/.lima/docker-nix/diffdisk docker-nix.qcow2
-                nix run nixpkgs#zeekstd -- -c docker-nix.qcow2 > docker-nix.qcow2.zeekstd
-
-                # 2. Full Home-Manager image
-                nix shell nixpkgs#qemu-utils -c qemu-img convert -O qcow2 ~/.lima/docker-nix-home/diffdisk docker-nix-home.qcow2
-                nix run nixpkgs#zeekstd -- -c docker-nix-home.qcow2 > docker-nix-home.qcow2.zeekstd
-
-            - name: Upload VM Image Artifacts
-              uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
-              with:
-                name: lima-golden-images-${{ github.sha }}
-                path: |
-                  docker-nix.qcow2.zeekstd
-                  docker-nix-home.qcow2.zeekstd
-                retention-days: 7
