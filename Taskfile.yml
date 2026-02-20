@@ -189,12 +189,12 @@ tasks:
   lima-guest-docker-home-create:
     desc: Create a Lima guest with Docker, Nix, and home-manager
     cmds:
-      - limactl create --yes --name=docker-nix-home config/lima/docker-nix-home.yaml
+      - limactl create --yes --name=docker-nix-home --mount "$(pwd):{{.Home}}/dotfiles:w" config/lima/docker-nix-home.yaml
 
   lima-guest-docker-home:
     desc: Provision a Lima guest with Docker, Nix, and home-manager
     cmds:
-      - limactl start --name=docker-nix-home config/lima/docker-nix-home.yaml
+      - limactl start --name=docker-nix-home --mount "$(pwd):{{.Home}}/dotfiles:w" config/lima/docker-nix-home.yaml
 
   ci-dev:
     desc: Provided for CI

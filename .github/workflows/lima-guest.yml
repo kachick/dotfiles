@@ -57,7 +57,7 @@ jobs:
         run: |
           limactl delete -f docker-nix docker-nix-home || true
           limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
-          limactl create --yes --name=docker-nix-home config/lima/docker-nix-home.yaml
+          limactl create --yes --name=docker-nix-home --mount "${{ github.workspace }}:{{.Home}}/dotfiles:w" config/lima/docker-nix-home.yaml
 
   test-provisioning:
     needs: prepare-image
