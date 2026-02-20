@@ -1,14 +1,10 @@
-# This template provisions a Lima guest with Ubuntu LTS and applies home-manager.
-# Use `limactl start config/lima/ubuntu-lts.yaml` to create.
+# This is a patch for official Lima templates.
+# Use it like:
+#   yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' https://raw.githubusercontent.com/lima-vm/lima/master/templates/docker.yaml config/lima/patch.yaml > dist/lima.yaml
+#   limactl start dist/lima.yaml
 
-# Base template
-# https://github.com/lima-vm/lima/blob/master/templates/ubuntu-lts.yaml
-
-images:
-  - location: 'https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img'
-    arch: 'x86_64'
-  - location: 'https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img'
-    arch: 'aarch64'
+user:
+  name: 'user'
 
 mounts:
   - location: '~'
@@ -65,6 +61,5 @@ provision:
       fi
 
       cd "$DOTFILES_DIR"
-      # Apply home-manager configuration for "kachick@lima"
-      # It will manage /home/kachick.linux (or similar) as defined in lima-guest.nix
-      nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#kachick@lima"
+      # Apply home-manager configuration for "user@lima"
+      nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#user@lima"

@@ -51,6 +51,19 @@ in
     }
   );
 
+  "user@lima" = home-manager-linux.lib.homeManagerConfiguration (
+    shared
+    // {
+      pkgs = x86-Linux-pkgs;
+      modules = [
+        outputs.homeManagerModules.genericUser
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
+        outputs.homeManagerModules.lima-guest
+      ];
+    }
+  );
+
   "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {

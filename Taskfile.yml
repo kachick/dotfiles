@@ -176,10 +176,16 @@ tasks:
     cmds:
       - './containers/build.bash'
 
-  lima-guest-ubuntu:
-    desc: Provision a Lima guest with Ubuntu LTS and home-manager
+  lima-guest-docker:
+    desc: Provision a Lima guest with Docker and Nix (home-manager)
+    vars:
+      LIMA_VERSION: '{{.LIMA_VERSION | default "v1.0.5"}}'
+      TEMPLATE_URL: 'https://raw.githubusercontent.com/lima-vm/lima/{{.LIMA_VERSION}}/templates/docker.yaml'
     cmds:
-      - limactl start config/lima/ubuntu-lts.yaml
+      - mkdir -p dist
+      - |
+        nix run 'nixpkgs#yq-go' -- eval-all 'select(fileIndex == 0) * select(fileIndex == 1)' {{.TEMPLATE_URL}} config/lima/patch.yaml > dist/lima.yaml
+      - limactl start dist/lima.yaml
 
   ci-dev:
     desc: Provided for CI
