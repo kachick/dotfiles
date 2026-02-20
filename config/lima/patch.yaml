@@ -19,15 +19,19 @@ provision:
       #!/bin/bash
       set -eux -o pipefail
       if ! command -v nix >/dev/null 2>&1; then
-        # Use the official installer
         curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes
       fi
 
-      # Enable flakes for all users
+      # Force Nix profile loading for non-interactive shells in Ubuntu
+      # https://github.com/NixOS/nix/issues/2407#issuecomment-411513180
+      if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
+        echo 'if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh; fi' >> /etc/bash.bashrc
+      fi
+
+      # Enable flakes
       mkdir -p /etc/nix
       if ! grep -q "experimental-features" /etc/nix/nix.conf 2>/dev/null; then
         echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-        # Restart nix-daemon to apply changes
         if command -v systemctl >/dev/null 2>&1; then
           systemctl restart nix-daemon
         fi
@@ -38,27 +42,11 @@ provision:
       #!/bin/bash
       set -eux -o pipefail
 
-      # Ensure Nix is in PATH
-      for i in {1..30}; do
-        if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
-          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          break
-        fi
-        echo "Waiting for Nix installation to complete..."
-        sleep 2
-      done
-
-      if ! command -v nix >/dev/null 2>&1; then
-        echo "Nix not found"
-        exit 1
+      # Source Nix for the current provisioning session
+      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
       fi
 
       DOTFILES_DIR="$HOME/repos/github.com/kachick/dotfiles"
-      if [ ! -d "$DOTFILES_DIR" ]; then
-         echo "Dotfiles directory not found at $DOTFILES_DIR. Ensure it is mounted."
-         exit 1
-      fi
-
       cd "$DOTFILES_DIR"
-      # Apply home-manager configuration for "user@lima"
       nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#user@lima"
