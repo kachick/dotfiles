@@ -25,7 +25,7 @@ permissions:
   contents: read
 
 jobs:
-  test-lima-provisioning:
+  prepare-image:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6.0.2
@@ -47,24 +47,43 @@ jobs:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Build Lima Template
-        id: build-template
+      - name: Build Lima Template and Create Instance
+        # Separate 'create' ensures the image is downloaded and cached in this job.
         run: |
-          nix build .#lima-template --no-link
-          echo "path=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml" >> "$GITHUB_OUTPUT"
+          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
+          limactl create --name=docker-nix "${TEMPLATE_PATH}"
 
-      - name: Create Lima Instance (Ensures Image Cache)
-        # Separate 'create' from 'start' to ensure the image is cached in ~/.cache/lima
-        # even if the subsequent provisioning fails.
-        run: |
-          limactl create --name=docker-nix ${{ steps.build-template.outputs.path }}
+  test-provisioning:
+    needs: prepare-image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3'
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/lima
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
         run: |
-          limactl start --name=docker-nix --tty=false
+          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
+          # limactl start will find the existing instance directory or create it, 
+          # and the image will be found in the loaded cache.
+          limactl start --name=docker-nix --tty=false "${TEMPLATE_PATH}"
 
       - name: Verify Docker
-        # Docker is pre-installed in the system path by the template
         run: limactl shell docker-nix docker run --rm hello-world
 
       - name: Verify Nix and Home-Manager
