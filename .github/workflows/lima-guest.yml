@@ -35,13 +35,10 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Install task
-        run: nix-env -iA nixpkgs.go-task
-
       - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
         id: lima-setup
         with:
-          # Match with Taskfile.yml default
+          # Match with LIMA_VERSION in pkgs/lima-template/package.nix
           version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
 
       - name: Cache Lima
@@ -52,9 +49,8 @@ jobs:
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
         # Using --tty=false to avoid interactive prompt
-        # The instance name will be 'default' by default if using dist/lima.yaml
         run: |
-          task lima-guest-docker -- --tty=false
+          nix develop --command task lima-guest-docker -- --tty=false
 
       - name: Verify Docker
         run: lima docker run --rm hello-world
