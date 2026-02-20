@@ -25,75 +25,7 @@ permissions:
   contents: read
 
 jobs:
-  prepare-image:
-    runs-on: ubuntu-24.04
-    outputs:
-      template_path: ${{ steps.build-template.outputs.path }}
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
-        id: lima-setup
-        with:
-          version: 'v2.0.3'
-
-      - name: Cache Lima
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/lima
-          key: lima-${{ steps.lima-setup.outputs.version }}
-
-      - name: Build Lima Template
-        id: build-template
-        run: |
-          nix build .#lima-template --no-link
-          echo "path=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml" >> "$GITHUB_OUTPUT"
-
-      - name: Create Lima Instance (Download Image)
-        # This will download the image and prepare the VM, but not start the heavy provisioning.
-        # It ensures the image is cached even if starting fails.
-        run: |
-          limactl create --name=docker-nix ${{ steps.build-template.outputs.path }}
-
-  test-provisioning:
-    needs: prepare-image
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-
-      # Note: We don't need Nix on the host here because we only use limactl.
-      # But we need lima-actions to get limactl and its environment.
-
-      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
-        id: lima-setup
-        with:
-          version: 'v2.0.3'
-
-      - name: Cache Lima
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/lima
-          key: lima-${{ steps.lima-setup.outputs.version }}
-
-      - name: Start Lima Guest and Provision Nix/Home-Manager
-        run: |
-          # Re-create the instance from the cached image and start it.
-          # Since the image is in ~/.cache/lima, this should be fast.
-          nix run 'nixpkgs#go-task' -- lima-guest-docker -- --tty=false
-        if: false # TODO: Need to rethink how to pass the template between jobs or rebuild it.
-
-  # Since passing artifacts is complex for just a template, let's keep it in one job but optimize start.
-  # Wait, I'll revert to a single job but ensure cache works better by calling create explicitly.
-
-  test-lima-provisioning-optimized:
+  test-lima-provisioning:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6.0.2
@@ -122,6 +54,8 @@ jobs:
           echo "path=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml" >> "$GITHUB_OUTPUT"
 
       - name: Create Lima Instance (Ensures Image Cache)
+        # Separate 'create' from 'start' to ensure the image is cached in ~/.cache/lima
+        # even if the subsequent provisioning fails.
         run: |
           limactl create --name=docker-nix ${{ steps.build-template.outputs.path }}
 
@@ -130,13 +64,15 @@ jobs:
           limactl start --name=docker-nix --tty=false
 
       - name: Verify Docker
+        # Docker is pre-installed in the system path by the template
         run: limactl shell docker-nix docker run --rm hello-world
 
-      - name: Verify Nix in Guest
-        run: limactl shell docker-nix bash -lc 'nix --version'
-
-      - name: Verify Home-Manager in Guest
-        run: limactl shell docker-nix bash -lc 'home-manager --version'
+      - name: Verify Nix and Home-Manager
+        # Use 'bash -lc' to ensure profile files (like /etc/profile.d/nix.sh) are sourced,
+        # making 'nix' and user-installed tools available in PATH.
+        run: |
+          limactl shell docker-nix bash -lc 'nix --version'
+          limactl shell docker-nix bash -lc 'home-manager --version'
 
       - name: Verify tools installed via Home-Manager
         run: |
