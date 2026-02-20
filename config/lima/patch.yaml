@@ -3,13 +3,13 @@
 #   yq eval-all 'select(fileIndex == 0) * select(fileIndex == 1) | .provision = select(fileIndex == 0).provision + select(fileIndex == 1).provision | .mounts = select(fileIndex == 0).mounts + select(fileIndex == 1).mounts' dist/docker.yaml config/lima/patch.yaml
 
 user:
-  name: "user"
+  name: 'user'
 
 mounts:
-  - location: "~"
+  - location: '~'
     writable: false
-  - location: "~/repos"
-    mountPoint: "{{.Home}}/repos"
+  - location: '~/repos'
+    mountPoint: '{{.Home}}/repos'
     writable: true
 
 provision:
@@ -37,7 +37,7 @@ provision:
     script: |
       #!/bin/bash
       set -eux -o pipefail
-      
+
       # Ensure Nix is in PATH
       for i in {1..30}; do
         if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then

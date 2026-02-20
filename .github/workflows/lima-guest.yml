@@ -71,10 +71,3 @@ jobs:
           lima zsh -c 'ruby --version'
           lima zsh -c 'hx --version'
           lima zsh -c 'la ~'
-
-      - name: Verify tools installed via Home-Manager
-        run: |
-          lima zsh -c 'starship --version'
-          lima zsh -c 'ruby --version'
-          lima zsh -c 'hx --version'
-          lima zsh -c 'la ~'
