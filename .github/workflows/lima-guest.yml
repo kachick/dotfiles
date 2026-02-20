@@ -87,7 +87,6 @@ jobs:
 
       - name: Verify Nix in Guest
         # After /etc/bash.bashrc patch, nix should be in PATH.
-        # Using separate arguments like the local success case.
         run: limactl shell docker-nix nix --version
 
       - name: Step 2 - Provision Home-Manager (Full)
