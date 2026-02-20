@@ -51,12 +51,10 @@ jobs:
           # Strictly following official lima-actions documentation
           key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Prepare Lima Config and Create Instance
-        # Custom provisioning is now integrated into ~/.lima/_config/default.yaml
+      - name: Create Lima Instance
+        # This uses config/lima/docker-nix.yaml which inherits from template://docker
         run: |
-          mkdir -p ~/.lima/_config
-          cp config/lima/_config/default.yaml ~/.lima/_config/default.yaml
-          limactl create --name=docker-nix template://docker
+          limactl create --name=docker-nix config/lima/docker-nix.yaml
 
   test-provisioning:
     needs: prepare-image
