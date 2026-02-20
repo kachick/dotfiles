@@ -56,7 +56,7 @@ jobs:
         # Delete existing instance if restored from cache to ensure fresh creation with the latest YAML.
         run: |
           limactl delete -f docker-nix || true
-          limactl create --name=docker-nix config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
 
   test-provisioning:
     needs: prepare-image
