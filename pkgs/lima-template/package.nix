@@ -7,14 +7,14 @@
 
 let
   inherit (my.lima) version;
-  baseTemplate = "${my.lima.src}/templates/docker.yaml";
+  baseTemplate = "${my.lima}/share/lima/templates/docker.yaml";
   patchYaml = ../../config/lima/patch.yaml;
 in
 runCommand "lima-template"
   {
     nativeBuildInputs = [ yq-go ];
     meta = {
-      description = "Generated Lima template with Docker and customized Nix/home-manager provisioning. Version follows my.lima";
+      description = "Generated Lima template with Docker and customized Nix/home-manager provisioning. Version follows my.lima package output";
       inherit version;
       license = lib.licenses.asl20;
     };
