@@ -54,10 +54,13 @@ jobs:
             lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Create Lima Instances
+        # Delete existing instances if restored from cache to ensure fresh creation.
+        # For 'docker-nix-home', we mount the workspace to the same path as local development (~/repos/...)
+        # to ensure the provisioning script finds the flake.
         run: |
           limactl delete -f docker-nix docker-nix-home || true
           limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
-          limactl create --yes --name=docker-nix-home --mount "${{ github.workspace }}:{{.Home}}/dotfiles:w" config/lima/docker-nix-home.yaml
+          limactl create --yes --name=docker-nix-home --mount "${{ github.workspace }}:{{.Home}}/repos/github.com/kachick/dotfiles:w" config/lima/docker-nix-home.yaml
 
   test-provisioning:
     needs: prepare-image

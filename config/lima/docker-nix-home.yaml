@@ -19,8 +19,10 @@ provision:
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
       fi
 
-      # Use the fixed mount point provided by --mount flag in Taskfile/GHA
-      DOTFILES_DIR="{{.Home}}/dotfiles"
+      # Use the standard path as used in kachick's environment.
+      # In GHA, we ensure this path exists via explicit --mount.
+      # In local, it is usually provided by global mounts in _config/default.yaml.
+      DOTFILES_DIR="{{.Home}}/repos/github.com/kachick/dotfiles"
       if [ ! -d "$DOTFILES_DIR" ]; then
         echo "Dotfiles directory not found at $DOTFILES_DIR. Ensure it is mounted."
         exit 1
