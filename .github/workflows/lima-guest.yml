@@ -53,10 +53,18 @@ jobs:
           key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Build Lima Template and Create Instance
-        # Separate 'create' ensures the image is downloaded and cached in this job.
+        id: build-template
         run: |
-          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
-          limactl create --name=docker-nix "${TEMPLATE_PATH}"
+          TEMPLATE_DIR=$(nix build .#lima-template --no-link --print-out-paths)
+          cp "${TEMPLATE_DIR}/lima.yaml" ./docker-nix.yaml
+          limactl create --name=docker-nix ./docker-nix.yaml
+
+      - name: Upload Lima Template Artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: lima-template
+          path: ./docker-nix.yaml
+          retention-days: 1
 
   test-provisioning:
     needs: prepare-image
@@ -66,9 +74,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      # Note: Nix is NOT required on the host in this job as we use the pre-built template artifact.
 
       - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
         id: lima-setup
@@ -81,11 +87,15 @@ jobs:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
 
+      - name: Download Lima Template Artifact
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: lima-template
+
       - name: Start Lima Guest and Provision Nix/Home-Manager
         run: |
-          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
-          # limactl start will find the image in the loaded cache, skipping download.
-          limactl start --name=docker-nix --tty=false "${TEMPLATE_PATH}"
+          # Use the template from artifact. Image will be found in the restored cache.
+          limactl start --name=docker-nix --tty=false ./docker-nix.yaml
 
       - name: Verify Docker
         run: limactl shell docker-nix docker run --rm hello-world
