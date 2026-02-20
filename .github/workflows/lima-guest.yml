@@ -48,18 +48,14 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          # Include config hash in the key to invalidate stale instances.
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
-          restore-keys: |
-            lima-${{ steps.lima-setup.outputs.version }}-
+          # Strictly following official lima-actions documentation
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Create Lima Instances
         run: |
-          REF="${{ github.head_ref || github.ref_name }}"
-          FLAKE_URI="github:kachick/dotfiles/${REF}"
           limactl delete -f docker-nix docker-nix-home || true
           limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
-          limactl create --yes --name=docker-nix-home --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix-home.yaml
+          limactl create --yes --name=docker-nix-home config/lima/docker-nix-home.yaml
 
   test-provisioning:
     needs: prepare-image
@@ -80,19 +76,16 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
-          restore-keys: |
-            lima-${{ steps.lima-setup.outputs.version }}-
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
-      - name: Step 1 - Provision Nix (Lightweight)
-        run: limactl start --name=docker-nix --tty=false
+      - name: Start Lima Guest and Provision Nix/Home-Manager
+        run: |
+          # limactl start will find the pre-created instance and apply user-provisioning.bash
+          limactl start --name=docker-nix --tty=false
+          limactl start --name=docker-nix-home --tty=false
 
       - name: Verify Nix in Guest
-        # After /etc/bash.bashrc patch, nix should be in PATH.
         run: limactl shell docker-nix nix --version
-
-      - name: Step 2 - Provision Home-Manager (Full)
-        run: limactl start --name=docker-nix-home --tty=false
 
       - name: Verify Home-Manager and tools
         # Using bash -lc for user-level tools which are defined in ~/.profile
@@ -104,17 +97,11 @@ jobs:
           limactl shell docker-nix-home bash -lc 'la ~'
 
       - name: Prepare Artifact
-        # Collect instance and cache for archiving.
-        # We use zeekstd for seekable zstd compression.
+        # Archive only the instance directory. Base images (~/.cache/lima) are excluded to keep size small.
+        # We use zeekstd for seekable zstd compression via tar.
         run: |
-          mkdir -p dist/lima-artifact
-          # Copy instance metadata and image cache
-          cp -r ~/.lima/docker-nix-home dist/lima-artifact/
-          cp -r ~/.cache/lima dist/lima-artifact/cache
-
-          # Create seekable zstd archive using zeekstd
-          # Note: zeekstd provides a seekable format that can be handled by compatible tools.
-          nix run nixpkgs#zeekstd -- -c dist/lima-artifact > lima-docker-nix-home.zeekstd
+          # Create seekable zstd archive using tar + zeekstd
+          tar -C ~/.lima -cf - docker-nix-home | nix run nixpkgs#zeekstd -- -c > lima-docker-nix-home.zeekstd
 
       - name: Upload VM Artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
