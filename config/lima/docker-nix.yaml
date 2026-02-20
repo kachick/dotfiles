@@ -24,7 +24,6 @@ provision:
         } >> "$extra_conf_path"
 
         # Provide $HOME for the installer, otherwise it fails in 'mode: system'
-        # Also ensure the installer is executed with correct permissions
         export HOME=/root
         curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes --nix-extra-conf-file "$extra_conf_path"
       fi

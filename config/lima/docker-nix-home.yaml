@@ -6,9 +6,9 @@ base:
 
 # Configuration parameters that can be overridden via `limactl create --set`
 param:
-  # The flake URI to use for provisioning.
-  # Can be a GitHub URL or a local path.
-  flake: 'github:kachick/dotfiles/main'
+  # The default flake URI. In CI, we override this to point to the GitHub branch.
+  # In local, if we mount the repo to ~/dotfiles, this will be used.
+  flake: '{{.Home}}/dotfiles'
 
 provision:
   # 2. Apply home-manager
@@ -20,11 +20,19 @@ provision:
       # Step 3 in README Ubuntu section
       mkdir -p ~/.local/state/nix/profiles
 
-      # Source Nix for the current provisioning session
+      # Ensure Nix is in PATH.
+      export PATH="/nix/var/nix/profiles/default/bin:$PATH"
       if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
       fi
 
-      # Apply home-manager configuration using the provided Flake URI.
-      # This follows the README instructions while allowing branch/path overrides.
-      nix run "{{.Param.flake}}#home-manager" -- switch -b backup --show-trace --flake "{{.Param.flake}}#user@lima"
+      # Determine which Flake URI to use.
+      # If the local path from 'param.flake' exists, use it. Otherwise fall back to GitHub.
+      TARGET_FLAKE="{{.Param.flake}}"
+      if [[ "${TARGET_FLAKE}" == "/"* ]] && [[ ! -d "${TARGET_FLAKE}" ]]; then
+          echo "Local directory ${TARGET_FLAKE} not found, falling back to GitHub main branch."
+          TARGET_FLAKE="github:kachick/dotfiles/main"
+      fi
+
+      echo "Applying home-manager using flake: ${TARGET_FLAKE}"
+      nix run "${TARGET_FLAKE}#home-manager" -- switch -b backup --show-trace --flake "${TARGET_FLAKE}#user@lima"

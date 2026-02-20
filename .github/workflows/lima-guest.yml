@@ -54,8 +54,6 @@ jobs:
             lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Create Lima Instances
-        # Custom provisioning uses the current GitHub branch via 'param.flake'.
-        # This removes the need for local mounts in GHA and follows README patterns.
         run: |
           REF="${{ github.head_ref || github.ref_name }}"
           FLAKE_URI="github:kachick/dotfiles/${REF}"
