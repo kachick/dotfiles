@@ -1,0 +1,38 @@
+# This template inherits from docker-nix.yaml and adds home-manager provisioning.
+# See: https://lima-vm.io/docs/templates/
+
+base:
+  - ./docker-nix.yaml
+
+# Configuration parameters that can be overridden via `limactl create --set`
+param:
+  # The default flake URI. In CI, we override this to point to the GitHub branch.
+  # In local, if we mount the repo to ~/dotfiles, this will be used.
+  flake: '{{.Home}}/dotfiles'
+
+provision:
+  # 2. Apply home-manager
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Step 3 in README Ubuntu section
+      mkdir -p ~/.local/state/nix/profiles
+
+      # Ensure Nix is in PATH.
+      export PATH="/nix/var/nix/profiles/default/bin:$PATH"
+      if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+      fi
+
+      # Determine which Flake URI to use.
+      # If the local path from 'param.flake' exists, use it. Otherwise fall back to GitHub.
+      TARGET_FLAKE="{{.Param.flake}}"
+      if [[ "${TARGET_FLAKE}" == "/"* ]] && [[ ! -d "${TARGET_FLAKE}" ]]; then
+          echo "Local directory ${TARGET_FLAKE} not found, falling back to GitHub main branch."
+          TARGET_FLAKE="github:kachick/dotfiles/main"
+      fi
+
+      echo "Applying home-manager using flake: ${TARGET_FLAKE}"
+      nix run "${TARGET_FLAKE}#home-manager" -- switch -b backup --show-trace --flake "${TARGET_FLAKE}#user@lima"

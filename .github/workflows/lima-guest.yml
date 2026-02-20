@@ -1,0 +1,98 @@
+name: Lima Guest Provisioning Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'config/lima/**'
+      - 'home-manager/lima-guest.nix'
+      - 'home-manager/default.nix'
+      - 'Taskfile.yml'
+      - '.github/workflows/lima-guest.yml'
+  pull_request:
+    paths:
+      - 'config/lima/**'
+      - 'home-manager/lima-guest.nix'
+      - 'home-manager/default.nix'
+      - 'Taskfile.yml'
+      - '.github/workflows/lima-guest.yml'
+  workflow_dispatch:
+  schedule:
+    # Every Sunday at 00:00 UTC to catch upstream breakages
+    - cron: '0 0 * * 0'
+
+permissions:
+  contents: read
+
+jobs:
+  # IMPORTANT: These jobs MUST remain split.
+  # GitHub Actions only saves the cache if the job completes successfully.
+  prepare-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/lima
+            ~/.lima
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
+
+      - name: Create Lima Instances
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          REF="${HEAD_REF:-$REF_NAME}"
+          FLAKE_URI="github:kachick/dotfiles/${REF}"
+          limactl delete -f docker-nix docker-nix-home || true
+          limactl create --yes --name=docker-nix --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix-home --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix-home.yaml
+
+  test-provisioning:
+    needs: prepare-image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/lima
+            ~/.lima
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
+
+      - name: Start Lima Guest and Provision Nix/Home-Manager
+        run: |
+          limactl start --name=docker-nix --tty=false
+          limactl start --name=docker-nix-home --tty=false
+
+      - name: Verify Nix in Guest
+        run: limactl shell docker-nix nix --version
+
+      - name: Verify Home-Manager and tools
+        run: |
+          limactl shell docker-nix-home bash -lc 'home-manager --version'
+          limactl shell docker-nix-home bash -lc 'starship --version'
+          limactl shell docker-nix-home bash -lc 'la ~'

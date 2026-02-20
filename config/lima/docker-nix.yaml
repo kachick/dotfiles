@@ -1,0 +1,55 @@
+# This template inherits from the official Docker template and adds Nix.
+# See: https://lima-vm.io/docs/templates/
+
+base:
+  - template:docker
+
+# Configuration parameters that can be overridden via `limactl create --set`
+param:
+  # The flake URI to use for synchronizing Nix configuration.
+  flake: 'github:kachick/dotfiles/main'
+
+user:
+  name: 'user'
+
+provision:
+  # 1. Install Nix (Multi-user) and enable flakes with binary caches
+  # Following README Ubuntu instructions.
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! command -v nix >/dev/null 2>&1; then
+        extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+        {
+          echo 'experimental-features = nix-command flakes'
+          echo "trusted-users = root {{.User}} @wheel"
+          # Initial bootstrap caches
+          echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org"
+          echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        } >> "$extra_conf_path"
+
+        # Provide $HOME for the installer, otherwise it fails in 'mode: system'
+        export HOME=/root
+        curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes --nix-extra-conf-file "$extra_conf_path"
+
+        # After installation, we fetch the full synchronized list from the flake
+        # using the provided param.flake URI.
+        . /etc/profile.d/nix.sh
+        TARGET_FLAKE="{{.Param.flake}}"
+
+        # Sync full cache list from constants
+        SUBSTITUTERS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.substituters" --apply 'builtins.concatStringsSep " "')
+        KEYS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
+
+        {
+          echo "extra-substituters = ${SUBSTITUTERS}"
+          echo "extra-trusted-public-keys = ${KEYS}"
+        } | tee -a /etc/nix/nix.conf
+        systemctl restart nix-daemon
+      fi
+      # Force Nix profile loading for non-interactive shells in Ubuntu.
+      # We prepend it to the top of /etc/bash.bashrc to bypass the interactive-only check.
+      if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
+        sed -i '1i if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh; fi' /etc/bash.bashrc
+      fi
