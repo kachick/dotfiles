@@ -2,7 +2,7 @@
 # See: https://lima-vm.io/docs/templates/
 
 base:
-  - template://docker
+  - template:docker
 
 user:
   name: 'user'
