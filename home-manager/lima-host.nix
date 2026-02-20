@@ -26,6 +26,7 @@ in
     # Lima and the yaml config does not have importing feature. However it prefers some files to realize overriding.
     # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for detail
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
+    file.".lima/_config/user-provisioning.bash".source = ../config/lima/_config/user-provisioning.bash;
 
     shellAliases = {
       "lc" = "limactl";

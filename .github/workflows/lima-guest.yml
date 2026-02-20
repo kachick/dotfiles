@@ -37,10 +37,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
       - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
         id: lima-setup
         with:
@@ -52,13 +48,16 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          # Following official lima-actions documentation for the key
-          key: lima-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
+          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Build Lima Template and Create Instance
+      - name: Prepare Lima Config and Create Instance
+        # Custom provisioning is now handled by ~/.lima/_config/user-provisioning.bash
         run: |
-          TEMPLATE_PATH=$(nix build .#lima-template --no-link --print-out-paths)/lima.yaml
-          limactl create --name=docker-nix "${TEMPLATE_PATH}"
+          mkdir -p ~/.lima/_config
+          cp config/lima/_config/user-provisioning.bash ~/.lima/_config/user-provisioning.bash
+          cp config/lima/_config/default.yaml ~/.lima/_config/default.yaml
+          limactl create --name=docker-nix template://docker
 
   test-provisioning:
     needs: prepare-image
@@ -79,11 +78,12 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
+          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
         run: |
-          # limactl start will find the pre-created instance and the cached image.
+          # limactl start will find the pre-created instance and apply user-provisioning.bash
           limactl start --name=docker-nix --tty=false
 
       - name: Verify Docker
