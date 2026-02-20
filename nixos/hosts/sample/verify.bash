@@ -32,7 +32,7 @@ EOF
 
 # 2. Point the dotfiles input to the local repository path
 # This ensures we are testing the current PR/commit changes.
-sed -i "s|github:kachick/dotfiles|git+file://$REPO_ROOT|g" "$TMP_DIR/flake.nix"
+sed -i "s|github:kachick/dotfiles|path:$REPO_ROOT|g" "$TMP_DIR/flake.nix"
 
 # 3. Perform dry-run build
 # If this fails, the script will exit with a non-zero code due to 'set -e'.

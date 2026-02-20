@@ -28,6 +28,7 @@ in
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
 
     shellAliases = {
+
       "lc" = "limactl";
     };
 
