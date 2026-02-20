@@ -25,11 +25,8 @@ permissions:
   contents: read
 
 jobs:
-  # IMPORTANT: These jobs MUST remain split.
-  # GitHub Actions only saves the cache if the job completes successfully.
-  # By separating 'prepare-image' from 'test-provisioning', we ensure that
-  # the heavy image download is cached even if the subsequent provisioning or
-  # tool verification fails. DO NOT MERGE THESE JOBS.
+  # Split jobs to ensure the heavy image is cached even if provisioning fails.
+  # ~/.lima is also cached to share the instance between jobs.
   prepare-image:
     runs-on: ubuntu-24.04
     steps:
@@ -52,10 +49,8 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          # Using github.sha in the key to ensure the cache is saved and shared between jobs in this run.
-          key: lima-${{ github.sha }}-${{ steps.lima-setup.outputs.version }}
-          restore-keys: |
-            lima-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
+          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Build Lima Template and Create Instance
         run: |
@@ -70,8 +65,6 @@ jobs:
         with:
           persist-credentials: false
 
-      # Nix is NOT required on the host in this job.
-
       - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
         id: lima-setup
         with:
@@ -83,14 +76,11 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ github.sha }}-${{ steps.lima-setup.outputs.version }}
-          restore-keys: |
-            lima-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}-${{ github.run_id }}
+          restore-keys: lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
-        run: |
-          # The 'docker-nix' instance is restored from cache, so we just start it by name.
-          limactl start --name=docker-nix --tty=false
+        run: limactl start --name=docker-nix --tty=false
 
       - name: Verify Docker
         run: limactl shell docker-nix docker run --rm hello-world
