@@ -53,7 +53,9 @@ jobs:
 
       - name: Create Lima Instance
         # This uses config/lima/docker-nix.yaml which inherits from template://docker
+        # Delete existing instance if restored from cache to ensure fresh creation with the latest YAML.
         run: |
+          limactl delete -f docker-nix || true
           limactl create --name=docker-nix config/lima/docker-nix.yaml
 
   test-provisioning:
