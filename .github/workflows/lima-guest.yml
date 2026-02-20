@@ -46,7 +46,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/lima
-          key: lima-action-1be8c646a08d3a8c1186531108508cde33394b52-${{ steps.lima-setup.outputs.version }}
+          key: lima-${{ steps.lima-setup.outputs.version }}
 
       - name: Start Lima Guest and Provision Nix/Home-Manager
         # Using --tty=false to avoid interactive prompt
