@@ -13,34 +13,38 @@ mounts:
     writable: true
 
 provision:
-  # 1. Install Nix (Multi-user) and enable flakes
+  # 1. Install Nix (Multi-user) and enable flakes with binary caches
+  # Following README Ubuntu instructions carefully.
   - mode: system
     script: |
       #!/bin/bash
       set -eux -o pipefail
       if ! command -v nix >/dev/null 2>&1; then
-        curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes
+        extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
+        echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
+        # 'user' is the name defined in the 'user' block of this YAML
+        echo "trusted-users = root user @wheel" >> "$extra_conf_path"
+
+        # Add binary caches from flake.nix to speed up provisioning
+        echo "extra-substituters = https://kachick-dotfiles.cachix.org https://cache.nixos.org" >> "$extra_conf_path"
+        echo "extra-trusted-public-keys = kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" >> "$extra_conf_path"
+
+        sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --yes --nix-extra-conf-file "$extra_conf_path"
       fi
 
       # Force Nix profile loading for non-interactive shells in Ubuntu
-      # https://github.com/NixOS/nix/issues/2407#issuecomment-411513180
       if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
         echo 'if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh; fi' >> /etc/bash.bashrc
       fi
 
-      # Enable flakes
-      mkdir -p /etc/nix
-      if ! grep -q "experimental-features" /etc/nix/nix.conf 2>/dev/null; then
-        echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-        if command -v systemctl >/dev/null 2>&1; then
-          systemctl restart nix-daemon
-        fi
-      fi
   # 2. Apply home-manager
   - mode: user
     script: |
       #!/bin/bash
       set -eux -o pipefail
+
+      # Step 3 in README Ubuntu section
+      mkdir -p ~/.local/state/nix/profiles
 
       # Source Nix for the current provisioning session
       if [ -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
@@ -49,4 +53,5 @@ provision:
 
       DOTFILES_DIR="$HOME/repos/github.com/kachick/dotfiles"
       cd "$DOTFILES_DIR"
+      # Apply home-manager configuration for "user@lima"
       nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#user@lima"
