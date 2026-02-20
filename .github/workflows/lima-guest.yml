@@ -2,6 +2,7 @@ name: Lima Guest Provisioning Test
 
 on:
   push:
+    branches: [main]
     paths:
       - 'config/lima/**'
       - 'home-manager/lima-guest.nix'
