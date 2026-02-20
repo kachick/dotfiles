@@ -45,7 +45,7 @@ jobs:
           version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
 
       - name: Cache Lima
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/lima
           key: lima-${{ steps.lima-setup.outputs.version }}
