@@ -4,6 +4,11 @@
 base:
   - template:docker
 
+# Configuration parameters that can be overridden via `limactl create --set`
+param:
+  # The flake URI to use for synchronizing Nix configuration.
+  flake: 'github:kachick/dotfiles/main'
+
 user:
   name: 'user'
 
@@ -28,14 +33,14 @@ provision:
         export HOME=/root
         curl -L https://nixos.org/nix/install | sh -s -- --daemon --yes --nix-extra-conf-file "$extra_conf_path"
 
-        # After installation, we can fetch the full synchronized list from the flake
-        # and update nix.conf to be complete and consistent with the repo.
+        # After installation, we fetch the full synchronized list from the flake
+        # using the provided param.flake URI.
         . /etc/profile.d/nix.sh
-        FLAKE_URI="github:kachick/dotfiles/main"
+        TARGET_FLAKE="{{.Param.flake}}"
 
         # Sync full cache list from constants
-        SUBSTITUTERS=$(nix eval --raw "${FLAKE_URI}#outputs.overlays.default.final.my.constants.nix-config.substituters" --apply 'builtins.concatStringsSep " "')
-        KEYS=$(nix eval --raw "${FLAKE_URI}#outputs.overlays.default.final.my.constants.nix-config.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
+        SUBSTITUTERS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.substituters" --apply 'builtins.concatStringsSep " "')
+        KEYS=$(nix eval --raw "${TARGET_FLAKE}#outputs.overlays.default.final.my.constants.nix-config.trusted-public-keys" --apply 'builtins.concatStringsSep " "')
 
         {
           echo "extra-substituters = ${SUBSTITUTERS}"
@@ -43,7 +48,6 @@ provision:
         } | tee -a /etc/nix/nix.conf
         systemctl restart nix-daemon
       fi
-
       # Force Nix profile loading for non-interactive shells in Ubuntu.
       # We prepend it to the top of /etc/bash.bashrc to bypass the interactive-only check.
       if ! grep -q "nix-daemon.sh" /etc/bash.bashrc; then
