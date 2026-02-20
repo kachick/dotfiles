@@ -5,6 +5,12 @@
 
 set -eux -o pipefail
 
+# Only run for docker-nix instance to avoid side effects on other machines
+if [[ "${LIMA_CID_NAME}" != "docker-nix" ]]; then
+    echo "Skipping custom provisioning for instance: ${LIMA_CID_NAME}"
+    exit 0
+fi
+
 # 1. Install Nix (Multi-user) and enable flakes with binary caches
 # Following README Ubuntu instructions carefully.
 if ! command -v nix >/dev/null 2>&1; then
