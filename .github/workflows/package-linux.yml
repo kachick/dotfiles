@@ -37,6 +37,7 @@ jobs:
           - rclone
           - kanata-tray
           - lima-full
+          - gemini-cli-bin
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
