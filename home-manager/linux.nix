@@ -37,7 +37,7 @@
         # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/iw/iw/package.nix
         iw # replacement of wireless-tools(iwconfig)
 
-        patched.rclone
+        unstable.rclone
 
         # - Enable special module for Nix OS.
         # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
