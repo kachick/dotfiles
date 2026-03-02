@@ -5,7 +5,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     coreutils # `mktemp`
     util-linux # `mountpoint` (Not available on Darwin)
-    patched.rclone
+    unstable.rclone
   ];
   meta = {
     description = "Mount rclone to my usual directory";

@@ -34,7 +34,6 @@ jobs:
       matrix:
         runner: [ubuntu-24.04]
         pname:
-          - rclone
           - kanata-tray
           - lima-full
           - gemini-cli-bin

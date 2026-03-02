@@ -38,7 +38,6 @@ jobs:
       # List of packages to check for Darwin builds.
       # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.
       TARGET_PACKAGES: >-
-        rclone
         lima-full
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}
