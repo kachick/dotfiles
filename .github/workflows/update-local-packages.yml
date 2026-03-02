@@ -29,7 +29,6 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - gemini-cli-bin
           - lima
     runs-on: ubuntu-24.04
     timeout-minutes: 60

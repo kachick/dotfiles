@@ -53,6 +53,15 @@
       # Prefer unstable channel since also using latest kanata
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+
+      # This repo provides binary cache and I already allows the cache.numtide.com.
+      # However, to reduce nodes in flake.lock, I prefer my own channel for now.
+      # Revisit once introducing other agents which takes long time to build.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -64,6 +73,7 @@
       home-manager-linux,
       home-manager-darwin,
       kanata-tray,
+      llm-agents,
       ...
     }@inputs:
     let
@@ -80,14 +90,16 @@
       mkNixpkgs =
         system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
 
-      overlays = import ./overlays {
-        inherit
-          nixpkgs-unstable
-          kanata-tray
-          home-manager-linux
-          home-manager-darwin
-          ;
-      };
+      overlays =
+        import ./overlays {
+          inherit
+            nixpkgs-unstable
+            kanata-tray
+            home-manager-linux
+            home-manager-darwin
+            ;
+        }
+        ++ [ llm-agents.overlays.default ];
 
       mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
 
