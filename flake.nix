@@ -122,10 +122,7 @@
           pkgs = mkPkgs system;
           # Don't include unfree packages, it will fail in `nix flake check`
         in
-        (pkgs.lib.recursiveUpdate pkgs.patched pkgs.my)
-        // {
-          inherit (pkgs.unstable) zed-editor;
-        }
+        pkgs.lib.recursiveUpdate pkgs.local pkgs.pinned
       );
 
       apps = forAllSystems (system: {

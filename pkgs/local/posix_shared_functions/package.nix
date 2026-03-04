@@ -21,12 +21,12 @@ pkgs.writeText "posix_shared_functions.sh" (
   # Use replaceVars to enable basic shellscript helpers such as shfmt, shellcheck and syntax highlighters
   builtins.readFile (
     replaceVars ./posix_shared_functions.bash {
-      reponame = lib.getExe pkgs.my.reponame;
-      ghqf = lib.getExe pkgs.my.ghqf;
+      reponame = lib.getExe pkgs.local.reponame;
+      ghqf = lib.getExe pkgs.local.ghqf;
       ghq = lib.getExe pkgs.ghq;
       gopass = lib.getExe pkgs.gopass;
       coreutils = lib.getBin pkgs.coreutils;
-      fzf_bind_shell_hist = lib.getExe pkgs.my.fzf-bind-posix-shell-history-to-git-commit-message;
+      fzf_bind_shell_hist = lib.getExe pkgs.local.fzf-bind-posix-shell-history-to-git-commit-message;
       starship = "${pkgs.starship}";
     }
   )

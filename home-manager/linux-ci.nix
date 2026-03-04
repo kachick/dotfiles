@@ -23,7 +23,7 @@
         # Consider to use package-linux workflow instead
         # Don't use `with` to keep indentation even if empty list
         [
-          # pkgs.patched.pname
+          # pkgs.pinned.pname
         ]
       # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in package-linux workflow
       # ++ [

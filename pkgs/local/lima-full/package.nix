@@ -10,7 +10,7 @@
 }:
 
 let
-  inherit (pkgs.my) lima lima-additional-guestagents lima-full;
+  inherit (pkgs.local) lima lima-additional-guestagents lima-full;
 in
 symlinkJoin {
   inherit (lima) version;

@@ -147,7 +147,7 @@ in
   home = {
     packages = with pkgs; [
       kanata # Don't require kanata-with-cmd for now
-      patched.kanata-tray
+      pinned.kanata-tray
     ];
 
     sessionVariables = {

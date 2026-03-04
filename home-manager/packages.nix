@@ -108,7 +108,7 @@
   unstable.somo
   unstable.typescript-go
 ])
-++ (with pkgs.my; [
+++ (with pkgs.local; [
   la
   lat
   fzf-bind-posix-shell-history-to-git-commit-message

@@ -5,7 +5,7 @@
 
 let
   inherit (pkgs.unstable) buildGo126Module; # Keep same toolset as lima package
-  inherit (pkgs.my) lima;
+  inherit (pkgs.local) lima;
 in
 buildGo126Module (finalAttrs: {
   pname = "lima-additional-guestagents";

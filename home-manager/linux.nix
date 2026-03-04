@@ -79,7 +79,7 @@
 
         llm-agents.gemini-cli
       ])
-      ++ (with pkgs.my; [
+      ++ (with pkgs.local; [
         rclone-list-mounted
         rclone-mount
         rclone-fzf
