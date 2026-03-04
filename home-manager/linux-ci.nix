@@ -30,6 +30,6 @@
       #   # I don't know why this overriding will not work :<
       #   pkgs.gnome-keyring
       # ]
-      ++ (with pkgs.ibus-engines; [ mozc ]);
+      ++ (with pkgs.ibus-engines; [ ]);
   };
 }

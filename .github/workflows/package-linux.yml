@@ -37,9 +37,23 @@ jobs:
           - kanata-tray
           - lima-full
           - zed-editor
+          - mozc
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
+      - name: Logging disk space
+        run: df -h
+      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
+        # NOTE: This workflow removed 14 Gib in 50sec
+        run: |
+          docker image prune --all --force
+          sudo rm -rf '/opt/ghc' \
+            '/usr/share/dotnet' \
+            "$AGENT_TOOLSDIRECTORY" \
+             '/usr/local/lib/android' \
+             '/usr/local/share/boost'
+      - name: Logging disk space after clean
+        run: df -h
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false

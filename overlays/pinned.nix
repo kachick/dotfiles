@@ -11,5 +11,8 @@ in
 
     # Pinned from nixpkgs-unstable
     inherit (final.unstable) zed-editor;
+
+    # Expose the patched mozc for CI building
+    inherit (final) mozc;
   };
 }
