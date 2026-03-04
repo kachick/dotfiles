@@ -34,7 +34,9 @@ This directory contains Nix package definitions, organized by their origin and p
 Packages exposed in `packages` output can be updated using the standard CLI tools:
 
 - **Hash Update**: For Go/Rust packages where dependabot only updates `go.mod` or `Cargo.toml`, use:
+
   ```console
   nix-update --flake pname --version=skip
   ```
+
 - Automated version updates are not currently considered for these local packages.
