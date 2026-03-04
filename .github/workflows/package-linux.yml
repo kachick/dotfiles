@@ -41,7 +41,6 @@ jobs:
           - pname: zed-editor
             skip_tests: true
           - pname: mozc
-            skip_tests: true
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     env:
