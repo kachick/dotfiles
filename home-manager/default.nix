@@ -59,7 +59,7 @@ in
         outputs.homeManagerModules.kachick
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
-        ./linux-ci.nix
+        ./lima-host.nix
         { home.username = "runner"; }
         outputs.homeManagerModules.systemd
       ];
