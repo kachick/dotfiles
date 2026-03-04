@@ -28,6 +28,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   # This planning job runs on a fast Linux runner to check if the Darwin packages
   # are already in the Cachix cache. If they are, it will skip the slow Darwin job

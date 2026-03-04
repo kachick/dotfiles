@@ -27,6 +27,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/main' && github.run_id || github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   build:
     strategy:
