@@ -5,8 +5,8 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     fzf
     unstable.rclone
-    my.rclone-mount
-    my.rclone-list-mounted
+    local.rclone-mount
+    local.rclone-list-mounted
   ];
   meta = {
     description = "List and operate rclone remotes";

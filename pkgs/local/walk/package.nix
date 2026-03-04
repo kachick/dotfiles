@@ -5,7 +5,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     fzf
     fd
-    my.preview
+    local.preview
   ];
   meta = {
     description = "Fuzzy finder for file path";

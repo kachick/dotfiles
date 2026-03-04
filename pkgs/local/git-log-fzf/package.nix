@@ -12,7 +12,7 @@ pkgs.writeShellApplication rec {
       colorized-logs
       bat
       riffdiff
-      my.git-log-simple
+      local.git-log-simple
     ]
     ++ (lib.optionals stdenv.isLinux [
       wslu # WSL helpers like `wslview`. It is used in open browser features in gh command

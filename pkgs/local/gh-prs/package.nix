@@ -8,7 +8,7 @@ pkgs.writeShellApplication rec {
       coreutils
       fzf
       gh
-      my.wait-and-squashmerge
+      local.wait-and-squashmerge
     ]
     ++ (lib.optionals stdenv.isLinux [
       wslu # WSL helpers like `wslview`. It is used in open browser features in gh command

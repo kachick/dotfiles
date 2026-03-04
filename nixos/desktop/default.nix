@@ -258,7 +258,7 @@
       #
       google-chrome
 
-      my.chrome-with-profile-by-name
+      local.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator

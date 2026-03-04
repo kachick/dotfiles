@@ -21,7 +21,7 @@ buildGo126Module (finalAttrs: {
     [
       unstable.typos
       unstable.gitleaks
-      my.run_local_hook
+      local.run_local_hook
     ]
   );
 
@@ -34,17 +34,17 @@ buildGo126Module (finalAttrs: {
   src =
     with lib.fileset;
     toSource {
-      root = ../../.;
+      root = ../../../.;
       fileset = unions [
-        ../../go.mod
-        ../../go.sum
-        ../../internal
+        ../../../go.mod
+        ../../../go.sum
+        ../../../internal
         ./.
       ];
     };
 
   subPackages = [
-    "pkgs/${finalAttrs.pname}"
+    "pkgs/local/${finalAttrs.pname}"
   ];
 
   env.CGO_ENABLED = 0;
@@ -52,7 +52,7 @@ buildGo126Module (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
-    "-X main.TyposConfigPath=${../../typos.toml}"
+    "-X main.TyposConfigPath=${../../../typos.toml}"
   ];
 
   meta = {

@@ -9,8 +9,8 @@ pkgs.writeShellApplication rec {
   ];
   text = (builtins.readFile ./${name}.bash) + ''
     mkdir --parents /etc/containers
-    ln --symbolic --force '${../../config/containers/policy.json}' '/etc/containers/policy.json'
-    ln --symbolic --force '${../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
+    ln --symbolic --force '${../../../config/containers/policy.json}' '/etc/containers/policy.json'
+    ln --symbolic --force '${../../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
     ln --symbolic --force '${pkgs.local.tailscaled-service}' '/etc/systemd/system/tailscaled.service'
     systemctl enable tailscaled.service
   '';
