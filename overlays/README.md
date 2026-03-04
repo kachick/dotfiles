@@ -1,27 +1,24 @@
-# Overlays
+# Overlays in this repository
 
-This directory manages Nix overlays to extend or modify `nixpkgs`.
+This directory contains Nixpkgs overlays used to customize, fix, or extend the default package set.
 
-## Structure
+## Directory Structure
 
 - `default.nix`: The entry point that imports all other overlays.
-- `overrides/`: Overlays that modify existing packages in `nixpkgs`.
-- `patched/`: Overlays for custom or heavily patched packages.
-- `unstable.nix`: Provides access to the `unstable` channel via `pkgs.unstable`.
-- `my.nix`: Imports local packages from the `pkgs/` directory.
+- `local.nix`: Exposes packages defined in `pkgs/local/` under the `pkgs.local` namespace.
+- `pinned.nix`: Explicitly exposes and pins specific external packages (e.g., from `nixpkgs-unstable` or external flake inputs) under the `pkgs.pinned` namespace.
+- `unstable.nix`: Imports and exposes the `nixpkgs-unstable` channel as `pkgs.unstable`.
+- `overrides/`: Contains transparent overlays that override existing package names in `nixpkgs` (e.g., `mozc`).
+
+## Guidelines
+
+1. **Namespace Separation**: Use `local` and `pinned` to avoid accidental collisions with upstream `nixpkgs`.
+2. **Transparent Overlays**: Only use these in `overrides/` when a system component expects a specific name and cannot be configured otherwise.
+3. **Automatic Loading**: The `default.nix` in `overrides/` uses `builtins.readDir` to find and load all `.nix` files automatically.
 
 ## How it works (and why it's safe)
 
-We use a "directory-based automatic loading" system in `overrides/` and `patched/`.
-
-### Automatic Loading
-
-The `default.nix` in each subdirectory uses `builtins.readDir` to find all `.nix` files and load them automatically. You can add a new override by simply creating a new `.nix` file in the appropriate directory.
-
-### Avoiding Infinite Recursion
-
-We use `prev.lib` instead of `final.lib` for the loading logic.
-Nix calculates the "names" of packages before their "values".
+We use `prev.lib` instead of `final.lib` for the loading logic to avoid infinite recursion. Nix calculates the "names" of packages before their "values".
 
 1. **Discovery (Names)**: We get package names from filenames using `builtins.readDir`. This does NOT use `final`, so it's safe from loops.
 2. **Evaluation (Values)**: We use `final` inside `callPackage` to get the latest dependencies.

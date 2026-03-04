@@ -27,6 +27,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   build:
     strategy:
@@ -36,6 +40,13 @@ jobs:
         pname:
           - kanata-tray
           - lima-full
+          - zed-editor
+          - mozc
+        # Skip tests for heavy packages to avoid long build times in CI.
+        # We trust upstream/hydra for these packages since we're just pinning/patching them.
+        include:
+          - pname: zed-editor
+            skip_tests: true
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
@@ -51,6 +62,11 @@ jobs:
         # Use nix-build via flake-compat for simpler recursive building.
         # It automatically detects system architecture and skips if no tests exist.
         run: |
+          if [[ "${{ matrix.skip_tests }}" == "true" ]]; then
+            echo "Skipping tests for ${{ matrix.pname }} as requested in matrix."
+            exit 0
+          fi
+
           if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
             nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
           else

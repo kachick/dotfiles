@@ -50,7 +50,7 @@ in
           rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
           go_1_26
         ])
-        ++ (with pkgs.my; [
+        ++ (with pkgs.local; [
           nix-hash-url
         ])
         ++ [
