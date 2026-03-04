@@ -43,7 +43,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   doInstallCheck = true;
   nativeInstallCheckInputs = [
-    pkgs.unstable.yaneuraou
+    pkgs.local.yaneuraou-avx2
   ];
   installCheckPhase = ''
     runHook preInstallCheck
