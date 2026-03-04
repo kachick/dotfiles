@@ -36,6 +36,7 @@ jobs:
         pname:
           - kanata-tray
           - lima-full
+          - zed-editor
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:

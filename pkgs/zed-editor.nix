@@ -1,0 +1,2 @@
+{ unstable, ... }:
+unstable.zed-editor

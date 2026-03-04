@@ -15,7 +15,7 @@
 
     sessionVariables = {
       # * Do not specify Nix store path for zed and vscode in macOS
-      #   * See linux-ci.nix for the avoiding reason of zed-editor
+      #   * See the flake packages for the flaky avoiding reason of zed-editor
       #   * vscode is unfree and heavy when no binary cache
       # * `cli: install` action installs into this path in macOS
       VISUAL = "code --wait";
