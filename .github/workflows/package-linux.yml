@@ -43,8 +43,6 @@ jobs:
           - pname: mozc
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
-    env:
-      NIXPKGS_ALLOW_UNFREE: '1'
     steps:
       - uses: actions/checkout@v6.0.2
         with:
