@@ -62,6 +62,15 @@
       # Revisit once introducing other agents which takes long time to build.
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    # zed-editor package is the most flaky in nixpkgs: GH-1085, GH-1134 and GH-1402
+    # Even when buldable, Hydra is also flaky: https://github.com/kachick/dotfiles/pull/1466#issuecomment-3995710752
+    zed-editor = {
+      url = "github:zed-industries/zed/v0.225.13"; # TODO: Automatically bump this version
+      # This repo provides binary cache, but basically only for nightly: https://github.com/zed-industries/zed/issues/19937#issuecomment-3647351505
+      # So there is no reason to use upstream caches both the cachix and garnix for now.
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs =
@@ -74,6 +83,7 @@
       home-manager-darwin,
       kanata-tray,
       llm-agents,
+      zed-editor,
       ...
     }@inputs:
     let
@@ -95,6 +105,7 @@
           inherit
             nixpkgs-unstable
             kanata-tray
+            zed-editor
             home-manager-linux
             home-manager-darwin
             ;

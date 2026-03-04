@@ -1,8 +1,8 @@
-{ kanata-tray }:
+{ kanata-tray, zed-editor }:
 final: _prev:
 let
   inherit (_prev) lib;
-  callPackage = lib.callPackageWith (final // { inherit kanata-tray; });
+  callPackage = lib.callPackageWith (final // { inherit kanata-tray zed-editor; });
 
   # Read all .nix files in this directory except default.nix
   files = builtins.readDir ./.;

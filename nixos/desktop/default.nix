@@ -148,8 +148,8 @@
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky. See linux-ci.nix for further detail
-      unstable.zed-editor
+      # - We can't trust any nixpkgs' channel and the binary-cache for zed-editor package. Both stable and unstable are flaky.
+      patched.zed-editor
 
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
@@ -281,7 +281,7 @@
 
   environment.variables = {
     # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
-    VISUAL = "${pkgs.zed-editor.meta.mainProgram} --wait";
+    VISUAL = "${pkgs.patched.zed-editor.meta.mainProgram} --wait";
   };
 
   environment.sessionVariables = {

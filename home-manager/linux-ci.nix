@@ -16,24 +16,12 @@
 
   home = {
     packages =
-      (with pkgs.unstable; [
-        # Why do I need special handling for zed-editor?:
-        #   See GH-1085, GH-1134 and GH-1402
-        #   zed-editor package was very flaky in hydra between both stable and unstable channels.
-        #   The authors send and package maintainers merge updating PRs immediately without attempting build on any platforms.
-        #   Since I can't trust stable channel, unstable channel is a bit better to fix it faster.
-        # Why don't I use ustream's flake?:
-        #   By the way, upstream's cache https://github.com/zed-industries/zed/issues/19937 is for nightly use.
-        #   It does not ensure providing cache for tagged versions.
-        zed-editor
-      ])
-      ++
-        # Test builds and push the binary cache from CI
-        # Consider to use package-linux workflow instead
-        # Don't use `with` to keep indentation even if empty list
-        [
-          # pkgs.patched.pname
-        ]
+      # Test builds and push the binary cache from CI
+      # Consider to use package-linux workflow instead
+      # Don't use `with` to keep indentation even if empty list
+      [
+        # pkgs.patched.pname
+      ]
       # These packages are override original pname instead of adding new namespace. So required to build the binary cache here. I'm unsure how to run these in package-linux workflow
       # ++ [
       #   # I don't know why this overriding will not work :<

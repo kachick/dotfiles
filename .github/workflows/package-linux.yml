@@ -36,8 +36,9 @@ jobs:
         pname:
           - kanata-tray
           - lima-full
+          - zed-editor
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 180
+    timeout-minutes: 180 # Especially zed-editor takes much longtime to build
     steps:
       - uses: actions/checkout@v6.0.2
         with:
