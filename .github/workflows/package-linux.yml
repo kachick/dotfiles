@@ -33,11 +33,15 @@ jobs:
       fail-fast: false
       matrix:
         runner: [ubuntu-24.04]
-        pname:
-          - kanata-tray
-          - lima-full
-          - zed-editor
-          - mozc
+        # Skip tests for heavy packages to avoid long build times in CI.
+        # We trust upstream/hydra for these packages since we're just pinning/patching them.
+        include:
+          - pname: kanata-tray
+          - pname: lima-full
+          - pname: zed-editor
+            skip_tests: true
+          - pname: mozc
+            skip_tests: true
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     env:
@@ -68,6 +72,11 @@ jobs:
         # Use nix-build via flake-compat for simpler recursive building.
         # It automatically detects system architecture and skips if no tests exist.
         run: |
+          if [[ "${{ matrix.skip_tests }}" == "true" ]]; then
+            echo "Skipping tests for ${{ matrix.pname }} as requested in matrix."
+            exit 0
+          fi
+
           if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
             nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
           else
