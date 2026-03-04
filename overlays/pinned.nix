@@ -19,7 +19,7 @@ in
     kanata-tray = kanata-tray.packages.${system}.default;
 
     # Pinned from nixpkgs-unstable
-    inherit (final.unstable) zed-editor;
+    inherit (_prev.unstable) zed-editor;
 
     # Expose the patched mozc for CI building
     inherit (final) mozc;

@@ -40,6 +40,8 @@ jobs:
           - mozc
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
+    env:
+      NIXPKGS_ALLOW_UNFREE: '1'
     steps:
       - name: Logging disk space
         run: df -h
