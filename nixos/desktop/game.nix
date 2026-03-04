@@ -6,7 +6,7 @@
     # Use latest to avoid update notifier (Might be better disabling it in nixpkgs)
     unstable.vassal
 
-    my.ludii-bin
+    local.ludii-bin
 
     # Shogi
 
@@ -17,6 +17,6 @@
     # Related issue: https://github.com/sunfish-shogi/shogihome/issues/1017
     unstable.shogihome
 
-    my.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/tanuki-hao/eval
+    local.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/tanuki-hao/eval
   ];
 }

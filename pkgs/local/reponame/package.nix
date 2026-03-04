@@ -1,0 +1,36 @@
+{
+  lib,
+  pkgs,
+  ...
+}:
+
+let
+  inherit (pkgs.unstable) buildGo126Module;
+in
+buildGo126Module (finalAttrs: {
+  pname = "reponame";
+  version = "0.0.1";
+  vendorHash = "sha256-RcnCN/+5ZdBJN6dRKdwnbPlSVCS3zutxBdaoH3fONMM=";
+  src =
+    with lib.fileset;
+    toSource {
+      root = ../../../.;
+      fileset = unions [
+        ../../../go.mod
+        ../../../go.sum
+        ../../../internal
+        ./.
+      ];
+    };
+
+  subPackages = [
+    "pkgs/local/${finalAttrs.pname}"
+  ];
+
+  env.CGO_ENABLED = 0;
+
+  meta = {
+    description = "OWNER/REPO => REPO, REPO => REPO";
+    mainProgram = finalAttrs.pname;
+  };
+})

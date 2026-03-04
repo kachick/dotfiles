@@ -122,7 +122,7 @@
           pkgs = mkPkgs system;
           # Don't include unfree packages, it will fail in `nix flake check`
         in
-        pkgs.lib.recursiveUpdate pkgs.patched pkgs.my
+        pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
       );
 
       apps = forAllSystems (system: {

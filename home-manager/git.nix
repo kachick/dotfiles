@@ -17,7 +17,7 @@ let
         run_local_hook '${hook_name}' "$@"
       '';
       meta.description = "GH-545";
-      runtimeInputs = [ pkgs.my.run_local_hook ];
+      runtimeInputs = [ pkgs.local.run_local_hook ];
     }
   );
   # NOTE: Don't use the home-manager module. Enabling it forces to set programs.git.iniContent.pager.log, it makes much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
@@ -34,10 +34,10 @@ in
     # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
     # Candidates: https://github.com/git/git/tree/v2.44.1/templates
     hooks = {
-      commit-msg = lib.getExe pkgs.my.git-hooks-commit-msg;
+      commit-msg = lib.getExe pkgs.local.git-hooks-commit-msg;
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-      pre-push = lib.getExe pkgs.my.git-hooks-pre-push;
+      pre-push = lib.getExe pkgs.local.git-hooks-pre-push;
 
       pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
       pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
@@ -194,7 +194,7 @@ in
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
         refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
         all = "!git refresh && git-delete-merged-branches";
-        lf = "!${lib.getExe pkgs.my.git-log-fzf}";
+        lf = "!${lib.getExe pkgs.local.git-log-fzf}";
         reset-main = ''
           !git fetch origin && \
             git switch main && \
@@ -202,7 +202,7 @@ in
             git checkout origin/main && \
             git checkout -b main
         '';
-        resolve-conflict = "!${lib.getExe pkgs.my.git-resolve-conflict}";
+        resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
       };
     };
   };
@@ -250,6 +250,6 @@ in
       ];
     };
 
-    extensions = (with pkgs; [ gh-poi ]) ++ (with pkgs.my; [ gh-prs ]);
+    extensions = (with pkgs; [ gh-poi ]) ++ (with pkgs.local; [ gh-prs ]);
   };
 }
