@@ -7,12 +7,20 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
 // Target represents a nix flake output to be compared
 type Target struct {
 	Name      string
 	Attribute string
+}
+
+// Result holds the diff output for a target
+type Result struct {
+	Target Target
+	Diff   string
+	Has    bool
 }
 
 func main() {
@@ -31,23 +39,47 @@ func main() {
 		{Name: "Home Manager", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
 	}
 
+	results := make([]Result, len(targets))
+	var wg sync.WaitGroup
+
+	fmt.Fprintln(os.Stderr, "Starting parallel nix evaluations...")
+
+	for i, t := range targets {
+		// Go 1.25+ sync.WaitGroup.Go method handles Add(1) and defer Done() internally.
+		// Capturing loop variables i and t is safe in Go 1.22+.
+		wg.Go(func() {
+			fmt.Fprintf(os.Stderr, "[%s] Evaluating...\n", t.Name)
+			diff, ok := compareTarget(*baseFlake, *currentFlake, t)
+			results[i] = Result{Target: t, Diff: diff, Has: ok}
+			if ok {
+				fmt.Fprintf(os.Stderr, "[%s] Done (changes found).\n", t.Name)
+			} else {
+				fmt.Fprintf(os.Stderr, "[%s] Done (no changes).\n", t.Name)
+			}
+		})
+	}
+
+	wg.Wait()
+	fmt.Fprintln(os.Stderr, "All evaluations finished. Generating report...")
+
+	// Print final report to stdout
 	fmt.Println("## ❄️ Nix Package Version Changes")
 	fmt.Println("")
 
-	hasDiff := false
-	for _, target := range targets {
-		if diff, ok := compareTarget(*baseFlake, *currentFlake, target); ok {
-			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", target.Name)
+	hasAnyDiff := false
+	for _, res := range results {
+		if res.Has {
+			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", res.Target.Name)
 			fmt.Println("```text")
-			fmt.Print(diff)
+			fmt.Print(res.Diff)
 			fmt.Println("```")
 			fmt.Println("</details>")
 			fmt.Println("")
-			hasDiff = true
+			hasAnyDiff = true
 		}
 	}
 
-	if !hasDiff {
+	if !hasAnyDiff {
 		fmt.Println("No package version changes detected in monitored targets.")
 	}
 }
@@ -73,6 +105,7 @@ func compareTarget(base, current string, target Target) (string, bool) {
 	cmd := exec.Command("nix", "run", "nixpkgs#dix", "--", oldDrv, newDrv)
 	var out bytes.Buffer
 	cmd.Stdout = &out
+	// Errors during dix are also printed to stderr
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: dix failed for %s: %v\n", target.Name, err)
@@ -83,11 +116,9 @@ func compareTarget(base, current string, target Target) (string, bool) {
 }
 
 func getDerivation(flakePath string) (string, error) {
-	// Use nix path-info --derivation to get the .drv path
 	cmd := exec.Command("nix", "path-info", flakePath, "--derivation")
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	// Suppress warnings in stderr for cleaner output, or log them to stderr
 	if err := cmd.Run(); err != nil {
 		return "", err
 	}
