@@ -32,21 +32,19 @@
     # Enabled by default on https://github.com/DeterminateSystems/nix-installer/releases/tag/v3.8.5
     # Therefore enable also on NixOS to keep consistency against other Linux distros and macOS
     # See https://github.com/NixOS/nix/pull/8047 for background
-    always-allow-substitutes = true;
+    settings = {
+      always-allow-substitutes = true;
 
-    # Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
-    extra-trusted-substituters = (import ../config/nix/binary-caches.nix).extra-substituters;
+      accept-flake-config = true;
 
-    extra-trusted-public-keys = (import ../config/nix/binary-caches.nix).extra-trusted-public-keys;
-
-    accept-flake-config = true;
-
-    # Workaround for https://github.com/NixOS/nix/issues/11728
-    download-buffer-size =
-      let
-        GiB = 1024 * 1024 * 1024;
-      in
-      1 * GiB;
+      # Workaround for https://github.com/NixOS/nix/issues/11728
+      download-buffer-size =
+        let
+          GiB = 1024 * 1024 * 1024;
+        in
+        1 * GiB;
+    }
+    // (import ../config/nix/binary-caches.nix);
   };
 
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508

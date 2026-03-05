@@ -1,10 +1,11 @@
+# Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
 {
   extra-substituters = [
     "https://cache.nixos.org/"
-    "https://nix-community.cachix.org"
+    "https://nix-community.cachix.org" # https://nix-community.org/cache/
     "https://cache.garnix.io"
-    "https://cache.numtide.com"
-    "https://selfup.cachix.org"
+    "https://cache.numtide.com" # Replaced from https://numtide.cachix.org: https://github.com/numtide/treefmt/pull/655
+    "https://selfup.cachix.org" # GH-1235
     "https://kachick-dotfiles.cachix.org"
   ];
 
