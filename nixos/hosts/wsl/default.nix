@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   pkgs,
   outputs,
   ...
