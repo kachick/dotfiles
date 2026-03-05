@@ -1,0 +1,103 @@
+name: ❄️ NixOS CI
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-nixos.yml'
+      - 'nixos/**'
+      - '!nixos/**/*.md'
+      - 'flake.*'
+  pull_request:
+    types: [labeled, opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/ci-nixos.yml'
+      - 'nixos/**'
+      - '!nixos/**/*.md'
+      - 'flake.*'
+  workflow_dispatch:
+  schedule:
+    # Every 10:42 JST
+    - cron: '42 1 * * *'
+
+permissions:
+  contents: read
+
+# Ensure only one run per branch/PR at a time.
+# Queue new runs instead of cancelling existing ones to ensure heavy builds complete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  wait:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Wait other jobs to leverage binary caches
+        uses: kachick/wait-other-jobs@v4
+        timeout-minutes: 180
+        with:
+          # Only wait for workflows that provide binary caches to avoid deadlocks
+          wait-list: |
+            [
+              { "workflowFile": "package-linux.yml", "optional": true },
+              { "workflowFile": "ci-home-linux.yml", "optional": true }
+            ]
+          event-list: '[ "${{ github.event_name }}", "dynamic" ]'
+
+  build:
+    needs: [wait]
+    # Run if:
+    # 1. Previous 'wait' job succeeded OR was skipped (non-PR case).
+    # 2. It's not a pull request (push, schedule, etc.)
+    # 3. It's a pull request and:
+    #    - The 'nixos-rebuild' label is attached
+    #    - OR it was triggered by paths (action != labeled)
+    if: >-
+      always() &&
+      (needs.wait.result == 'success' || needs.wait.result == 'skipped') &&
+      (github.event_name != 'pull_request' ||
+       (github.event_name == 'pull_request' && (
+         contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
+         github.event.action != 'labeled'
+       )))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [moss, algae, wsl]
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          # IMPORTANT: Do not provide auth token for NixOS system builds.
+          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
+          # To avoid licensing issues with public binary caches, we only perform build verification
+          # without pushing the resulting system closures.
+          cachix-auth-token: ''
+          skip-push: true
+      - name: Build NixOS system [${{ matrix.host }}]
+        run: |
+          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
+          # Fail if evaluation warnings were detected
+          if grep -i "warning:" /tmp/nix-stderr; then
+            echo "❌ Nix evaluation warnings detected!"
+            exit 1
+          fi
+
+  test-sample:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: ''
+          skip-push: true
+      - name: Verify sample configuration template
+        # Using `nix develop` to ensure `task` is available from devShell
+        run: nix develop --command task test-sample-nixos

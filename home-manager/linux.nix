@@ -37,7 +37,7 @@
         # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/iw/iw/package.nix
         iw # replacement of wireless-tools(iwconfig)
 
-        patched.rclone
+        unstable.rclone
 
         # - Enable special module for Nix OS.
         # - Linux package does not contain podman-remote, you should install uidmap with apt and use this podman as actual engine
@@ -77,9 +77,9 @@
         # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
 
-        patched.gemini-cli-bin
+        llm-agents.gemini-cli
       ])
-      ++ (with pkgs.my; [
+      ++ (with pkgs.local; [
         rclone-list-mounted
         rclone-mount
         rclone-fzf

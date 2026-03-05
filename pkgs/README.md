@@ -1,18 +1,42 @@
-# What are these packages
+# Packages in this repository
 
-- Tiny tools by me, they may be rewritten with another language.
-- Nix packages that are not yet included in [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs)
-- Aliases across multiple shells if it unfits for native shell alias
+This directory contains Nix package definitions, organized by their origin and purpose.
 
-## Do not
+## Directory Structure
 
-- Do not apply shebang, set in the script. It will be applied in `pkgs.writeShellApplication`
-- Do not directly implement in pkgs/default.nix to keep simple list
-- Do not directly implement non tiny scripts in *.nix to apply better editor/formatter support
-- Don't just use `fileset.gitTracked root`, then always rebuild even if just changed the README.md
-- Don't use `fileset.gitTracked` for now, [nix-update does not yet support it](https://github.com/Mic92/nix-update/issues/335)
+- `local/`: Packages where the source code is managed in this repository, or where we provide our own packaging logic (e.g., `default.nix`) for external sources not found in `nixpkgs`.
+  - Examples: `la`, `lat`, `tanuki-hao`, `lima-full`.
+  - Exposed as: `pkgs.local.<name>`.
+- `pinned/`: (Virtual/Implicit) External packages from `nixpkgs` or other flakes that we explicitly want to build and cache in CI, often for stability or specific versioning.
+  - Examples: `zed-editor`, `kanata-tray`.
+  - Exposed as: `pkgs.pinned.<name>` (or directly in `packages` output).
+
+## Principles
+
+1. **Namespace Separation**: Use explicit namespaces (`local`, `pinned`, `unstable`) to avoid accidental name collisions with upstream `nixpkgs`.
+2. **Transparency vs. Explicitness**:
+   - Use **Transparent Overlays** only when an existing system component (like IBus) expects a specific name (e.g., `mozc`).
+   - Use **Explicit Namespaces** for everything else to keep the origin of a package clear in the configuration files.
+3. **CI Integration**: Packages listed in `packages` output of `flake.nix` are automatically built by the dedicated package workflows.
+
+## Guidelines
+
+- **Shebangs**: Do not apply shebangs manually in scripts; they will be applied by `pkgs.writeShellApplication`.
+- **Implementation**:
+  - Do not directly implement packaging in `default.nix` or `local.nix` to keep lists simple.
+  - Do not directly implement non-tiny scripts in `*.nix` files to ensure better editor/formatter support.
+- **Fileset Usage**:
+  - Avoid `fileset.gitTracked root` as it triggers rebuilds even for unrelated changes (like `README.md`).
+  - [nix-update does not yet support `fileset.gitTracked`](https://github.com/Mic92/nix-update/issues/335), so avoid using it if you need automated updates.
 
 ## How to update
 
-- I don't consider automated updating versions in these package for now
-- I can't ignore hash updating for dependabot PRs, for go and rust. Currently resolved with `nix-update --flake pname --version=skip`
+Packages exposed in `packages` output can be updated using the standard CLI tools:
+
+- **Hash Update**: For Go/Rust packages where dependabot only updates `go.mod` or `Cargo.toml`, use:
+
+  ```console
+  nix-update --flake pname --version=skip
+  ```
+
+- Automated version updates are not currently considered for these local packages.

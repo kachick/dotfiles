@@ -14,7 +14,7 @@
       "--walker-skip '.git,node_modules,.direnv,vendor,dist'"
     ];
 
-    # CTRL+T - such as `pkgs.my.walk`. However, you shouldn't use fzf's `become`. This will be used in shell functions.
+    # CTRL+T - such as `pkgs.local.walk`. However, you shouldn't use fzf's `become`. This will be used in shell functions.
     fileWidgetCommand = defaultCommand;
     fileWidgetOptions = [
       "--preview '${lib.getExe pkgs.bat} --color=always {}'"

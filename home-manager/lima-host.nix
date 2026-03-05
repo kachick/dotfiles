@@ -5,7 +5,7 @@
   ...
 }:
 let
-  lima = pkgs.my.lima-full;
+  lima = pkgs.local.lima-full;
 in
 {
   programs.ssh.includes = [

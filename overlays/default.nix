@@ -5,8 +5,8 @@
   home-manager-darwin,
 }:
 [
-  (import ./my.nix)
+  (import ./local.nix)
   (import ./unstable.nix nixpkgs-unstable)
+  (import ./pinned.nix { inherit kanata-tray; })
   (import ./overrides { inherit home-manager-linux home-manager-darwin; })
-  (import ./patched { inherit kanata-tray; })
 ]

@@ -28,6 +28,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   # This planning job runs on a fast Linux runner to check if the Darwin packages
   # are already in the Cachix cache. If they are, it will skip the slow Darwin job
@@ -38,7 +42,6 @@ jobs:
       # List of packages to check for Darwin builds.
       # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.
       TARGET_PACKAGES: >-
-        rclone
         lima-full
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}

@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
+  lib,
   pkgs,
   outputs,
   overlays,
@@ -34,9 +35,10 @@
     # See https://github.com/NixOS/nix/pull/8047 for background
     always-allow-substitutes = true;
 
-    trusted-substituters = pkgs.my.constants.nix-config.substituters;
+    # Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
+    extra-trusted-substituters = pkgs.local.constants.nix-config.substituters;
 
-    trusted-public-keys = pkgs.my.constants.nix-config.trusted-public-keys;
+    extra-trusted-public-keys = pkgs.local.constants.nix-config.trusted-public-keys;
 
     accept-flake-config = true;
 
@@ -184,9 +186,10 @@
   # - Check the behavior with `resolvectl status`
   # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
-  # Disabled by default. But ensures to disable MulticastDNS
+  # Use mkDefault to allow specialized environments (like WSL2) to opt-out
+  # or avoid conflicts with their own network management.
   services.resolved = {
-    enable = true;
+    enable = lib.mkDefault true;
     llmnr = "false";
 
     # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.

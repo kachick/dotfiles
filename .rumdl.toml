@@ -5,6 +5,7 @@
 # List of rules to disable (uncomment and modify as needed)
 disable = [
   "MD013",
+  "MD076", # Seems weird behavior. Revisit after using 0.1.34: https://github.com/rvben/rumdl/commit/b169de1cd3c79a2989365d4c87867ec8da7de76e
 ]
 
 # List of rules to enable exclusively (if provided, only these rules will run)
