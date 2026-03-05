@@ -203,8 +203,8 @@ However I should keep the minimum environment for now.
 1. Install and configure Nix in the guest:
 
    ```bash
-   DOTFILES_REV=main limactl shell docker-nix \
-     bash -c "curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/$DOTFILES_REV/scripts/install-nix.bash | DOTFILES_REV=$DOTFILES_REV bash"
+   limactl shell docker-nix \
+     bash -c "export DOTFILES_REV=main; curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/\$DOTFILES_REV/scripts/install-nix.bash | bash"
    ```
 
 1. Apply home-manager:
