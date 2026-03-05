@@ -1,3 +1,4 @@
+# https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/nix.nix
 {
   nix = {
     settings = {
@@ -37,6 +38,8 @@
       ];
 
       accept-flake-config = true;
+     # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
+     # auto-optimise-store = true;
 
       # Workaround for https://github.com/NixOS/nix/issues/11728
       download-buffer-size =
