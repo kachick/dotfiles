@@ -19,10 +19,11 @@ jobs:
     timeout-minutes: 30
     # Run only for bot PRs or when the 'ci-nix-diff' label is present.
     if: >-
-      github.event.pull_request.user.login == 'kachick-bot' ||
       github.event.pull_request.user.login == 'dependabot[bot]' ||
+      github.event.pull_request.user.login == 'renovate[bot]' ||
+      github.event.pull_request.user.login == 'selfup-runner[bot]' ||
       contains(github.event.pull_request.labels.*.name, 'ci-nix-diff') ||
-      github.event.action == 'workflow_dispatch'
+      github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v6.0.2
         with:
