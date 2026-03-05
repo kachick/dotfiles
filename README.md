@@ -99,13 +99,8 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
    ```
 
-1. Apply home-manager:
 1. If you forgot something adding in the installation phase, manually add it.\
    Some config needs rebooting to apply it such as `trusted-users`.
-
-   ```bash
-   echo 'experimental-features = nix-command flakes' | sudo tee --append /etc/nix/nix.conf
-   ```
 
 1. Make sure there is a nix directory that is used in the home-manager.\
    This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
