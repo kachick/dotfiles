@@ -49,14 +49,17 @@ jobs:
           gh api -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "repos/{owner}/{repo}/issues/${PR_NUMBER}/comments" --paginate | \
-              jq -r '.[] |
-                select(.user.login == "github-actions[bot]" and (.body | contains("## ❄️ Nix Package Version Changes"))) |
+              jq '.[] |
+                select(.user.login == "github-actions[bot]" and (.body | contains("nix-diff-report"))) |
                 .node_id' | \
-                  xargs --no-run-if-empty -I {node_id} \
+                  xargs --no-run-if-empty --replace='{node_id}' \
                     gh api graphql --raw-field subjectId="{node_id}" \
                       --raw-field query='mutation($subjectId:ID!) {
                         minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
                           clientMutationId
+                          minimizedComment {
+                            isMinimized
+                          }
                         }
                       }'
 

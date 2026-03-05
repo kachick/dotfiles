@@ -73,6 +73,7 @@ func main() {
 
 	// Print final report to stdout
 	fmt.Println("## ❄️ Nix Package Version Changes")
+	fmt.Println("<!-- nix-diff-report -->")
 	fmt.Println("")
 
 	hasAnyDiff := false
