@@ -29,13 +29,13 @@ jobs:
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
           go run ./cmd/nix-diff/main.go -base "$BASE_FLAKE" > diff_report.md
-          
+
           if grep -q "<details" diff_report.md; then
             echo "has_diff=true" >> $GITHUB_OUTPUT
           else
             echo "has_diff=false" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Sync PR comment
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -46,7 +46,7 @@ jobs:
           gh api "repos/{owner}/{repo}/issues/${PR_NUMBER}/comments" --paginate | \
             jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("## ❄️ Nix Package Version Changes"))) | .id' | \
             xargs -I {} gh api -X DELETE "repos/{owner}/{repo}/issues/comments/{}"
-          
+
           # Post the new report only if there are actual package changes relative to the base branch
           if [[ "$HAS_DIFF" == "true" ]]; then
             gh pr comment "$PR_NUMBER" --body-file diff_report.md
