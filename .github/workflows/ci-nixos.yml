@@ -40,12 +40,21 @@ jobs:
         github.event.action != 'labeled'
       ))
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
         host: [moss, algae, wsl]
     steps:
+      - name: Wait other jobs to leverage binary caches
+        if: github.event_name == 'pull_request'
+        uses: kachick/wait-other-jobs@v3.5.3
+        timeout-minutes: 180
+        with:
+          skip-same-workflow: 'true'
+          # Should wait for package-linux and home-linux results to use their binary caches
+          # Also wait for "dynamic" to consider workflows triggered by labels
+          event-list: '[ "${{ github.event_name }}", "dynamic" ]'
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
