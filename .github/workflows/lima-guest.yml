@@ -93,7 +93,7 @@ jobs:
           # It will configure caches using the flake from the same branch.
           limactl shell docker-nix bash -c "curl -fsSL ${RAW_URL} | bash -s -- ${FLAKE_URI}"
 
-      - name: Show Nix version in Guest
+      - name: Verify Nix installation in Guest
         run: limactl shell docker-nix nix --version
 
       - name: Show Binary Cache effectiveness in Guest
