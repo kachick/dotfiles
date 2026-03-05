@@ -1,6 +1,6 @@
 # Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
 {
-  extra-substituters = [
+  extra-trusted-substituters = [
     "https://cache.nixos.org/"
     "https://nix-community.cachix.org" # https://nix-community.org/cache/
     "https://cache.garnix.io"

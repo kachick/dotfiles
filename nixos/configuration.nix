@@ -44,7 +44,14 @@
         in
         1 * GiB;
     }
-    // (import ../config/nix/binary-caches.nix);
+    // (
+      let
+        binary-caches = import ../config/nix/binary-caches.nix;
+      in
+      {
+        inherit (binary-caches) extra-trusted-substituters extra-trusted-public-keys;
+      }
+    );
   };
 
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
