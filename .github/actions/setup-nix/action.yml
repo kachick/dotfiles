@@ -2,9 +2,12 @@ name: 'Setup Nix and Cachix'
 description: 'Installs Nix and configures Cachix for caching'
 inputs:
   cachix-auth-token:
-    description: 'Authentication token for Cachix (Optional. If not provided, it runs as read-only mode)'
+    description: 'Authentication token for Cachix'
+    required: true
+  skip-push:
+    description: 'If true, skip pushing to Cachix'
     required: false
-    default: ''
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -20,7 +23,7 @@ runs:
       with:
         name: kachick-dotfiles
         authToken: ${{ inputs.cachix-auth-token }}
-        # Skip push if authToken is not provided to avoid errors and licensing issues
-        skipPush: ${{ inputs.cachix-auth-token == '' }}
+        # Skip push if requested to avoid errors and licensing issues
+        skipPush: ${{ inputs.skip-push == 'true' }}
         # https://github.com/kachick/dotfiles/commit/deba9834efbef3aae2a61aa6ee2794d1eba6e985#r167396022
         pushFilter: '(-source$|nixpkgs\.tar\.gz$|-vendor)'
