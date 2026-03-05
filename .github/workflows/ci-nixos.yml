@@ -46,6 +46,17 @@ jobs:
       matrix:
         host: [moss, algae, wsl]
     steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          # IMPORTANT: Do not provide auth token for NixOS system builds.
+          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
+          # To avoid licensing issues with public binary caches, we only perform build verification
+          # without pushing the resulting system closures.
+          cachix-auth-token: ''
+          skip-push: true
       - name: Wait other jobs to leverage binary caches
         if: github.event_name == 'pull_request'
         uses: kachick/wait-other-jobs@v4
@@ -58,17 +69,6 @@ jobs:
               { "workflowFile": "ci-home-linux.yml", "optional": true }
             ]
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
-      - uses: actions/checkout@v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          # IMPORTANT: Do not provide auth token for NixOS system builds.
-          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
-          # To avoid licensing issues with public binary caches, we only perform build verification
-          # without pushing the resulting system closures.
-          cachix-auth-token: ''
-          skip-push: true
       - name: Build NixOS system [${{ matrix.host }}]
         run: |
           nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
