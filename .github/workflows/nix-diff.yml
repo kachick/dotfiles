@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'flake.lock'
+    types: [opened, synchronize, reopened, labeled]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -16,6 +17,12 @@ jobs:
   nix-diff:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    # Run only for bot PRs or when the 'ci-nix-diff' label is present.
+    if: >-
+      github.event.pull_request.user.login == 'kachick-bot' ||
+      github.event.pull_request.user.login == 'dependabot[bot]' ||
+      contains(github.event.pull_request.labels.*.name, 'ci-nix-diff') ||
+      github.event.action == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -34,13 +41,13 @@ jobs:
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
           # Use tee to show progress in logs while capturing for the report
           go run ./cmd/nix-diff/main.go -base "$BASE_FLAKE" | tee diff_report.md
-          
+
           if grep -q "<details" diff_report.md; then
             echo "has_diff=true" >> $GITHUB_OUTPUT
           else
             echo "has_diff=false" >> $GITHUB_OUTPUT
           fi
-      
+
       - name: Minimize old diff comments
         env:
           GITHUB_TOKEN: ${{ github.token }}

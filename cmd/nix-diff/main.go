@@ -7,21 +7,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"sync"
-	"time"
 )
 
 // Target represents a nix flake output to be compared
 type Target struct {
 	Name      string
 	Attribute string
-}
-
-// Result holds the diff output for a target
-type Result struct {
-	Target Target
-	Diff   string
-	Has    bool
 }
 
 func main() {
@@ -40,63 +31,26 @@ func main() {
 		{Name: "Home Manager", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
 	}
 
-	// Fetch base flake metadata first to pre-download the source and avoid concurrent fetch issues
-	fmt.Fprintf(os.Stderr, "Fetching base flake metadata: %s\n", *baseFlake)
-	if err := prefetchFlake(*baseFlake); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: failed to prefetch base flake: %v\n", err)
-	}
-
-	results := make([]Result, len(targets))
-	var wg sync.WaitGroup
-
-	fmt.Fprintln(os.Stderr, "Starting parallel nix evaluations...")
-	start := time.Now()
-
-	for i, t := range targets {
-		wg.Go(func() {
-			tName := t.Name
-			fmt.Fprintf(os.Stderr, "[%s] Evaluating...\n", tName)
-			evalStart := time.Now()
-			diff, ok := compareTarget(*baseFlake, *currentFlake, t)
-			results[i] = Result{Target: t, Diff: diff, Has: ok}
-			duration := time.Since(evalStart).Round(time.Second)
-			if ok {
-				fmt.Fprintf(os.Stderr, "[%s] Done (changes found) in %v.\n", tName, duration)
-			} else {
-				fmt.Fprintf(os.Stderr, "[%s] Done (no changes) in %v.\n", tName, duration)
-			}
-		})
-	}
-
-	wg.Wait()
-	fmt.Fprintf(os.Stderr, "All evaluations finished in %v. Generating report...\n", time.Since(start).Round(time.Second))
-
-	// Print final report to stdout
 	fmt.Println("## ❄️ Nix Package Version Changes")
 	fmt.Println("<!-- nix-diff-report -->")
 	fmt.Println("")
 
-	hasAnyDiff := false
-	for _, res := range results {
-		if res.Has {
-			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", res.Target.Name)
+	hasDiff := false
+	for _, target := range targets {
+		if diff, ok := compareTarget(*baseFlake, *currentFlake, target); ok {
+			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", target.Name)
 			fmt.Println("```text")
-			fmt.Print(res.Diff)
+			fmt.Print(diff)
 			fmt.Println("```")
-			fmt.Println("</details>\n")
-			hasAnyDiff = true
+			fmt.Println("</details>")
+			fmt.Println("")
+			hasDiff = true
 		}
 	}
 
-	if !hasAnyDiff {
+	if !hasDiff {
 		fmt.Println("No package version changes detected in monitored targets.")
 	}
-}
-
-func prefetchFlake(flakePath string) error {
-	// Running metadata pre-downloads the flake inputs
-	cmd := exec.Command("nix", "flake", "metadata", flakePath)
-	return cmd.Run()
 }
 
 func compareTarget(base, current string, target Target) (string, bool) {
