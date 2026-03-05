@@ -51,11 +51,11 @@ jobs:
         uses: kachick/wait-other-jobs@v3.5.3
         timeout-minutes: 180
         with:
-          # Only wait for jobs that provide binary caches to avoid deadlocks
+          # Only wait for workflows that provide binary caches to avoid deadlocks
           wait-list: |
             [
-              { "workflowFile": "package-linux.yml", "jobName": "build" },
-              { "workflowFile": "ci-home-linux.yml", "jobName": "home-manager" }
+              { "workflowFile": "package-linux.yml" },
+              { "workflowFile": "ci-home-linux.yml" }
             ]
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
       - uses: actions/checkout@v6.0.2
