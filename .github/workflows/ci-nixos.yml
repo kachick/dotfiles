@@ -54,8 +54,8 @@ jobs:
           # Only wait for workflows that provide binary caches to avoid deadlocks
           wait-list: |
             [
-              { "workflowFile": "package-linux.yml" },
-              { "workflowFile": "ci-home-linux.yml" }
+              { "workflowFile": "package-linux.yml", "optional": true },
+              { "workflowFile": "ci-home-linux.yml", "optional": true }
             ]
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
       - uses: actions/checkout@v6.0.2
