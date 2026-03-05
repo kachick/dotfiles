@@ -197,7 +197,8 @@
   # - Check the behavior with `resolvectl status`
   # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
-  # Disabled by default. But ensures to disable MulticastDNS
+  # Use mkDefault to allow specialized environments (like WSL2) to opt-out
+  # or avoid conflicts with their own network management.
   services.resolved = {
     enable = lib.mkDefault true;
     llmnr = "false";
