@@ -22,23 +22,46 @@ on:
 permissions:
   contents: read
 
+# Ensure only one run per branch/PR at a time.
+# Queue new runs instead of cancelling existing ones to ensure heavy builds complete.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
+  wait:
+    runs-on: ubuntu-24.04
+    # Only wait on pull requests. Push/Schedule runs should start immediately.
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Wait other jobs to leverage binary caches
+        uses: kachick/wait-other-jobs@v4
+        timeout-minutes: 180
+        with:
+          # Only wait for workflows that provide binary caches to avoid deadlocks
+          wait-list: |
+            [
+              { "workflowFile": "package-linux.yml", "optional": true },
+              { "workflowFile": "ci-home-linux.yml", "optional": true }
+            ]
+          event-list: '[ "${{ github.event_name }}", "dynamic" ]'
+
   build:
+    needs: [wait]
     # Run if:
-    # 1. It's not a pull request (push, schedule, etc.)
-    # 2. It's a pull request and:
+    # 1. Previous 'wait' job succeeded OR was skipped (non-PR case).
+    # 2. It's not a pull request (push, schedule, etc.)
+    # 3. It's a pull request and:
     #    - The 'nixos-rebuild' label is attached
-    #    - OR it was triggered by paths (this is implicit if we don't use 'if' for labels,
-    #      but since we want to support both, we need to be careful)
-    #
-    # Actually, GitHub Actions 'paths' filter already handles the "only run if files changed" part.
-    # The 'labeled' type and label check allows us to manually trigger it for other PRs.
+    #    - OR it was triggered by paths (action != labeled)
     if: >-
-      github.event_name != 'pull_request' ||
-      (github.event_name == 'pull_request' && (
-        contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
-        github.event.action != 'labeled'
-      ))
+      always() &&
+      (needs.wait.result == 'success' || needs.wait.result == 'skipped') &&
+      (github.event_name != 'pull_request' ||
+       (github.event_name == 'pull_request' && (
+         contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
+         github.event.action != 'labeled'
+       )))
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     strategy:
@@ -57,18 +80,6 @@ jobs:
           # without pushing the resulting system closures.
           cachix-auth-token: ''
           skip-push: true
-      - name: Wait other jobs to leverage binary caches
-        if: github.event_name == 'pull_request'
-        uses: kachick/wait-other-jobs@v4
-        timeout-minutes: 180
-        with:
-          # Only wait for workflows that provide binary caches to avoid deadlocks
-          wait-list: |
-            [
-              { "workflowFile": "package-linux.yml", "optional": true },
-              { "workflowFile": "ci-home-linux.yml", "optional": true }
-            ]
-          event-list: '[ "${{ github.event_name }}", "dynamic" ]'
       - name: Build NixOS system [${{ matrix.host }}]
         run: |
           nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
