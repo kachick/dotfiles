@@ -202,11 +202,21 @@ However I should keep the minimum environment for now.
 
 ## Lima
 
-1. Setup [Lima](https://github.com/lima-vm/lima) with `task lima-guest-docker`. It will provision the Ubuntu guest with Docker and Nix.
-   - The instance name is **`docker-nix`**.
-1. In the guest, you can run containers as `docker run --rm hello-world`.
-1. If you want to apply home-manager, run the following command in the guest:
+1. Download the template and start the guest:
    ```bash
+   curl -O https://raw.githubusercontent.com/kachick/dotfiles/main/config/lima/docker-nix.yaml
+   limactl create --name=docker-nix docker-nix.yaml
+   limactl start docker-nix
+   ```
+1. In the guest, you can run containers as `docker run --rm hello-world`.
+1. If you want to apply home-manager, enter the guest shell (`limactl shell docker-nix`) and run:
+   ```bash
+   # Setup binary caches
+   echo "extra-substituters = $(nix eval --raw github:kachick/dotfiles#binary-caches.substituters --apply 'builtins.concatStringsSep " "')" | sudo tee -a /etc/nix/nix.conf
+   echo "extra-trusted-public-keys = $(nix eval --raw github:kachick/dotfiles#binary-caches.trusted-public-keys --apply 'builtins.concatStringsSep " "')" | sudo tee -a /etc/nix/nix.conf
+   sudo systemctl restart nix-daemon
+
+   # Apply home-manager
    nix run "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
    ```
 

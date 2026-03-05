@@ -50,14 +50,9 @@ jobs:
             lima-${{ steps.lima-setup.outputs.version }}-
 
       - name: Create Lima Instance
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-          REF_NAME: ${{ github.ref_name }}
         run: |
-          REF="${HEAD_REF:-$REF_NAME}"
-          FLAKE_URI="github:kachick/dotfiles/${REF}"
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
 
   test-provisioning:
     needs: prepare-image

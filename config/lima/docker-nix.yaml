@@ -4,34 +4,21 @@
 base:
   - template:docker
 
-# Configuration parameters that can be overridden via `limactl create --set`
-param:
-  # The flake URI to use for synchronizing Nix configuration.
-  flake: 'github:kachick/dotfiles/main'
-
 user:
   name: 'user'
 
 provision:
-  # 1. Run the installer script.
-  # We fetch the script from the provided flake URI to ensure we are testing the correct branch.
   - mode: system
     script: |
       #!/bin/bash
       set -eux -o pipefail
 
-      TARGET_FLAKE="{{.Param.flake}}"
-      # Extract repo and branch from 'github:user/repo/branch' or 'github:user/repo'
-      if [[ "${TARGET_FLAKE}" =~ ^github:([^/]+)/([^/]+)(/([^/]+))?$ ]]; then
-          ORG="${BASH_REMATCH[1]}"
-          REPO="${BASH_REMATCH[2]}"
-          BRANCH="${BASH_REMATCH[4]:-main}"
-          RAW_URL="https://raw.githubusercontent.com/${ORG}/${REPO}/${BRANCH}/scripts/install-nix.bash"
-          echo "Fetching installer from: ${RAW_URL}"
-          curl -fsSL "${RAW_URL}" | sudo -u {{.User}} bash -s -- "${TARGET_FLAKE}"
-      else
-          # Fallback to current main if pattern doesn't match
-          curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | sudo -u {{.User}} bash -s -- "${TARGET_FLAKE}"
+      if ! command -v nix >/dev/null 2>&1; then
+          # https://github.com/DeterminateSystems/nix-installer
+          curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install linux \
+            --extra-conf "sandbox = false" \
+            --init none \
+            --no-confirm
       fi
 
       # Force Nix profile loading for non-interactive shells in Ubuntu.
