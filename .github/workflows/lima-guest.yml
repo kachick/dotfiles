@@ -87,17 +87,17 @@ jobs:
 
       - name: Install and configure Nix in Guest
         env:
-          REF: ${{ github.head_ref || github.ref_name }}
+          REV: ${{ github.head_ref || github.ref_name }}
         run: |
           # Use the same pipe-based command as in README, passing the current branch.
-          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REF}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REF}"
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REV}"
 
       - name: Verify Nix installation in Guest
         run: limactl shell docker-nix nix --version
 
       - name: Show Binary Cache effectiveness in Guest
         env:
-          REF: ${{ github.head_ref || github.ref_name }}
+          REV: ${{ github.head_ref || github.ref_name }}
         run: |
-          FLAKE_URI="github:kachick/dotfiles/${REF}"
+          FLAKE_URI="github:kachick/dotfiles/${REV}"
           limactl shell docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
