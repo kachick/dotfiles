@@ -11,7 +11,7 @@ permissions:
 jobs:
   nix-diff:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -28,8 +28,9 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
-          go run ./cmd/nix-diff/main.go -base "$BASE_FLAKE" > diff_report.md
-
+          # Use tee to show progress in logs while capturing for the report
+          go run ./cmd/nix-diff/main.go -base "$BASE_FLAKE" | tee diff_report.md
+          
           if grep -q "<details" diff_report.md; then
             echo "has_diff=true" >> $GITHUB_OUTPUT
           else
