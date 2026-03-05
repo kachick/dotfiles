@@ -93,7 +93,6 @@
       overlays =
         import ./overlays {
           inherit
-            self
             nixpkgs-unstable
             kanata-tray
             home-manager-linux

@@ -1,13 +1,12 @@
 {
   pkgs,
   lib,
-  outputs,
   ...
 }:
 let
-  # Extract the configuration from a representative NixOS host.
-  # This avoids the need for a separate binary-caches.nix file.
-  nixConfig = outputs.nixosConfigurations.wsl.config.nix.settings;
+  # Directly import the Nix module to extract binary cache settings.
+  # This works because nix.nix is a pure attribute set.
+  nixConfig = (import ../../../nixos/nix.nix).nix.settings;
   conf = ''
     extra-substituters = ${lib.concatStringsSep " " nixConfig.extra-trusted-substituters}
     extra-trusted-public-keys = ${lib.concatStringsSep " " nixConfig.extra-trusted-public-keys}
