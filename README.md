@@ -197,7 +197,7 @@ However I should keep the minimum environment for now.
 1. Start a standard Docker guest with Lima:
 
    ```bash
-   limactl start --name=docker-nix template://docker
+   limactl start --name=docker-nix template:docker
    ```
 
 1. Install and configure Nix in the guest:
