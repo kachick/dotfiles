@@ -12,9 +12,9 @@ if ! command -v nix >/dev/null 2>&1; then
 	echo "Installing Nix..."
 	# https://github.com/NixOS/nix-installer
 	curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install linux \
-	    --extra-conf "sandbox = false" \
-	    --extra-conf "trusted-users = root @wheel" \
-	    --no-confirm
+		--extra-conf "sandbox = false" \
+		--extra-conf "trusted-users = root @wheel" \
+		--no-confirm
 	# shellcheck source=/dev/null
 	. /etc/profile.d/nix.sh
 fi
