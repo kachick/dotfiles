@@ -7,18 +7,12 @@ on:
       - 'nixos/nix.nix'
       - 'pkgs/local/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
-      - 'home-manager/lima-guest.nix'
-      - 'home-manager/default.nix'
-      - 'Taskfile.yml'
       - '.github/workflows/lima-guest.yml'
   pull_request:
     paths:
       - 'nixos/nix.nix'
       - 'pkgs/local/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
-      - 'home-manager/lima-guest.nix'
-      - 'home-manager/default.nix'
-      - 'Taskfile.yml'
       - '.github/workflows/lima-guest.yml'
   workflow_dispatch:
   schedule:
