@@ -20,8 +20,6 @@
   # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
   # nix.settings.auto-optimise-store = true;
 
-
-
   # Bootloader.
   boot.loader.efi.canTouchEfiVariables = true;
 
