@@ -38,8 +38,8 @@
       ];
 
       accept-flake-config = true;
-     # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
-     # auto-optimise-store = true;
+      # Enabling might cause heavy build time: https://github.com/NixOS/nix/issues/6033#issuecomment-1028697508
+      # auto-optimise-store = true;
 
       # Workaround for https://github.com/NixOS/nix/issues/11728
       download-buffer-size =

@@ -15,8 +15,6 @@
     ./nix.nix
   ];
 
-
-
   # Bootloader.
   boot.loader.efi.canTouchEfiVariables = true;
 
