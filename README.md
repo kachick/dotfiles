@@ -205,7 +205,7 @@ However I should keep the minimum environment for now.
    ```bash
    # You can specify the branch or revision with DOTFILES_REV (default: main)
    # For example: export DOTFILES_REV=main
-   limactl shell docker-nix bash -c 'curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${DOTFILES_REV:-main}/scripts/install-nix.bash" | DOTFILES_REV=${DOTFILES_REV:-main} bash'
+   limactl shell docker-nix bash -c "curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/${DOTFILES_REV:-main}/scripts/install-nix.bash | DOTFILES_REV=${DOTFILES_REV:-main} bash"
    ```
 
 1. Apply home-manager:
