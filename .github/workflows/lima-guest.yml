@@ -18,8 +18,9 @@ on:
       - '.github/workflows/lima-guest.yml'
   workflow_dispatch:
   schedule:
-    # Every Sunday at 00:00 UTC to catch upstream breakages
-    - cron: '0 0 * * 0'
+    # Every 10:42 on Tuesday JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * 2'
 
 permissions:
   contents: read
