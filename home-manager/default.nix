@@ -38,6 +38,8 @@ in
     }
   );
 
+  # Lima guest username is forced to match the host username by design.
+  # Revisit once https://github.com/lima-vm/lima/issues/1015 has resolved
   "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {

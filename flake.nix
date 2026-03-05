@@ -130,6 +130,10 @@
           inherit system;
           pkg = (mkPkgs system).home-manager;
         };
+        gen-nix-cache-conf = mkApp {
+          inherit system;
+          pkg = (mkPkgs system).local.gen-nix-cache-conf;
+        };
       });
 
       nixosConfigurations = import ./nixos {

@@ -93,22 +93,14 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
 ## Ubuntu
 
-1. Install [Nix](https://nixos.org/download/) and enable [Flakes](https://wiki.nixos.org/wiki/Flakes)
+1. Install and configure Nix:
 
    ```bash
-   extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
-   echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
-   echo "trusted-users = root $USER @wheel" >> "$extra_conf_path"
-
-   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --nix-extra-conf-file "$extra_conf_path"
+   curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
    ```
 
 1. If you forgot something adding in the installation phase, manually add it.\
    Some config needs rebooting to apply it such as `trusted-users`.
-
-   ```bash
-   echo 'experimental-features = nix-command flakes' | sudo tee --append /etc/nix/nix.conf
-   ```
 
 1. Make sure there is a nix directory that is used in the home-manager.\
    This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
@@ -202,9 +194,30 @@ However I should keep the minimum environment for now.
 
 ## Lima
 
-1. Setup [Lima](https://github.com/lima-vm/lima) with default Ubuntu guest
-1. In the lima as `limactl start`, apply home-manager with `kachick@lima`
-1. You can run containers as `lima nerdctl run --rm hello-world`. You can also use podman after above `Podman on Ubuntu` setups
+1. Start a standard Docker guest with Lima:
+
+   ```bash
+   limactl start --name=docker-nix template:docker
+   ```
+
+1. Install and configure Nix in the guest:
+
+   ```bash
+   REV=main; \
+     curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
+   ```
+
+1. Apply home-manager:
+
+   ```bash
+   limactl shell docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#kachick@lima"
+   ```
+
+1. Run containers:
+
+   ```bash
+   limactl shell docker-nix docker run --rm hello-world
+   ```
 
 ## How to setup secrets
 

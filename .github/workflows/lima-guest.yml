@@ -1,0 +1,100 @@
+name: Lima Guest Provisioning Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'nixos/nix.nix'
+      - 'pkgs/local/gen-nix-cache-conf/**'
+      - 'scripts/install-nix.bash'
+      - '.github/workflows/lima-guest.yml'
+  pull_request:
+    paths:
+      - 'nixos/nix.nix'
+      - 'pkgs/local/gen-nix-cache-conf/**'
+      - 'scripts/install-nix.bash'
+      - '.github/workflows/lima-guest.yml'
+  workflow_dispatch:
+  schedule:
+    # Every 10:42 on Tuesday JST
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '42 1 * * 2'
+
+permissions:
+  contents: read
+
+jobs:
+  # IMPORTANT: These jobs MUST remain split.
+  # GitHub Actions only saves the cache if the job completes successfully.
+  prepare-image:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/lima
+            ~/.lima
+          key: lima-${{ steps.lima-setup.outputs.version }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
+
+      - name: Create Lima Instance from standard template
+        run: |
+          limactl delete -f docker-nix || true
+          limactl create --yes --name=docker-nix template:docker
+
+  test-provisioning:
+    needs: prepare-image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: lima-vm/lima-actions/setup@1be8c646a08d3a8c1186531108508cde33394b52 # v1
+        id: lima-setup
+        with:
+          version: 'v2.0.3' # selfup {"extract":"v?\\d\\.\\d+\\.\\d+","replacer":["limactl", "--version"], "nth": 3}
+
+      - name: Cache Lima
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cache/lima
+            ~/.lima
+          key: lima-${{ steps.lima-setup.outputs.version }}
+          restore-keys: |
+            lima-${{ steps.lima-setup.outputs.version }}-
+
+      - name: Start docker-nix
+        run: limactl start --name=docker-nix --tty=false
+
+      - name: Install and configure Nix in Guest
+        env:
+          REV: ${{ github.head_ref || github.ref_name }}
+        run: |
+          # Use the same pipe-based command as in README, passing the current branch.
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REV}"
+
+      - name: Verify Nix installation in Guest
+        run: limactl shell docker-nix nix --version
+
+      - name: Show Binary Cache effectiveness in Guest
+        env:
+          REV: ${{ github.head_ref || github.ref_name }}
+        run: |
+          FLAKE_URI="github:kachick/dotfiles/${REV}"
+          limactl shell docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
+
+      - name: Show Docker works in Guest
+        run: limactl shell docker-nix docker run --rm hello-world
