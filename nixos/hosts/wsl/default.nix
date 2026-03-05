@@ -21,7 +21,7 @@
 
   # Resolvconf is managed by WSL by default.
   # Avoid conflict warning: "systemd-resolved is enabled, but resolv.conf is managed by WSL"
-  services.resolved.enable = lib.mkForce false;
+  services.resolved.enable = false;
 
   # wsl.defaultUser is `nixos`
 

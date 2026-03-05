@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 {
+  lib,
   pkgs,
   overlays,
   ...
@@ -198,7 +199,7 @@
   # - https://wiki.archlinux.org/title/Systemd-resolved
   # Disabled by default. But ensures to disable MulticastDNS
   services.resolved = {
-    enable = true;
+    enable = lib.mkDefault true;
     llmnr = "false";
 
     # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
