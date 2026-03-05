@@ -38,12 +38,12 @@ in
     }
   );
 
-  "user@lima" = home-manager-linux.lib.homeManagerConfiguration (
+  "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.genericUser
+        outputs.homeManagerModules.kachick
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.lima-guest
