@@ -206,7 +206,7 @@ However I should keep the minimum environment for now.
    curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | limactl shell docker-nix bash
    ```
 
-   - If you want to use a specific branch, append ` -s -- branch-name` to the bash command.
+   - If you want to use a specific branch, append `-s -- branch-name` to the bash command.
 
 1. Apply home-manager:
 
