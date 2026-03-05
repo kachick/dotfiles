@@ -111,7 +111,9 @@
         };
     in
     {
-      binary-caches = import ./config/nix/binary-caches.nix;
+      lib = {
+        binary-caches = import ./config/nix/binary-caches.nix;
+      };
 
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
       formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
@@ -131,6 +133,10 @@
         home-manager = mkApp {
           inherit system;
           pkg = (mkPkgs system).home-manager;
+        };
+        gen-nix-cache-conf = mkApp {
+          inherit system;
+          pkg = (mkPkgs system).local.gen-nix-cache-conf;
         };
       });
 

@@ -93,16 +93,13 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 
 ## Ubuntu
 
-1. Install [Nix](https://nixos.org/download/) and enable [Flakes](https://wiki.nixos.org/wiki/Flakes)
+1. Install and configure Nix:
 
    ```bash
-   extra_conf_path="$(mktemp --suffix=.extra.nix.conf)"
-   echo 'experimental-features = nix-command flakes' >> "$extra_conf_path"
-   echo "trusted-users = root $USER @wheel" >> "$extra_conf_path"
-
-   sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon --nix-extra-conf-file "$extra_conf_path"
+   curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
    ```
 
+1. Apply home-manager:
 1. If you forgot something adding in the installation phase, manually add it.\
    Some config needs rebooting to apply it such as `trusted-users`.
 
@@ -202,22 +199,22 @@ However I should keep the minimum environment for now.
 
 ## Lima
 
-1. Download the template and start the guest:
-   ```bash
-   curl -O https://raw.githubusercontent.com/kachick/dotfiles/main/config/lima/docker-nix.yaml
-   limactl create --name=docker-nix docker-nix.yaml
-   limactl start docker-nix
-   ```
-1. In the guest, you can run containers as `docker run --rm hello-world`.
-1. If you want to apply home-manager, enter the guest shell (`limactl shell docker-nix`) and run:
-   ```bash
-   # Setup binary caches
-   echo "extra-substituters = $(nix eval --raw github:kachick/dotfiles#binary-caches.substituters --apply 'builtins.concatStringsSep " "')" | sudo tee -a /etc/nix/nix.conf
-   echo "extra-trusted-public-keys = $(nix eval --raw github:kachick/dotfiles#binary-caches.trusted-public-keys --apply 'builtins.concatStringsSep " "')" | sudo tee -a /etc/nix/nix.conf
-   sudo systemctl restart nix-daemon
+1. Start a standard Docker guest with Lima:
 
-   # Apply home-manager
-   nix run "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
+   ```bash
+   limactl start --name=docker-nix template://docker
+   ```
+
+1. Install and configure Nix in the guest:
+
+   ```bash
+   limactl shell docker-nix bash -c 'curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash'
+   ```
+
+1. Apply home-manager:
+
+   ```bash
+   limactl shell docker-nix nix run "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
    ```
 
 ## How to setup secrets

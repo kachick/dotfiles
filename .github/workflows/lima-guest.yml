@@ -45,14 +45,14 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          key: lima-${{ steps.lima-setup.outputs.version }}
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Create Lima Instance
+      - name: Create Lima Instance from standard template
         run: |
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix template://docker
 
   test-provisioning:
     needs: prepare-image
@@ -73,12 +73,25 @@ jobs:
           path: |
             ~/.cache/lima
             ~/.lima
-          key: lima-${{ steps.lima-setup.outputs.version }}-${{ hashFiles('config/lima/*.yaml') }}
+          key: lima-${{ steps.lima-setup.outputs.version }}
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Start docker-nix (Nix only)
+      - name: Start docker-nix
         run: limactl start --name=docker-nix --tty=false
+
+      - name: Install and configure Nix in Guest
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          REF="${HEAD_REF:-$REF_NAME}"
+          FLAKE_URI="github:kachick/dotfiles/${REF}"
+          RAW_URL="https://raw.githubusercontent.com/kachick/dotfiles/${REF}/scripts/install-nix.bash"
+
+          # Use the installer script from the current branch.
+          # It will configure caches using the flake from the same branch.
+          limactl shell docker-nix bash -c "curl -fsSL ${RAW_URL} | bash -s -- ${FLAKE_URI}"
 
       - name: Verify Nix in Guest
         run: limactl shell docker-nix nix --version
