@@ -83,10 +83,11 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Start Lima Guest and Provision Nix/Home-Manager
-        run: |
-          limactl start --name=docker-nix --tty=false
-          limactl start --name=docker-nix-home --tty=false
+      - name: Start docker-nix (Nix only)
+        run: limactl start --name=docker-nix --tty=false
+
+      - name: Start docker-nix-home (Nix + home-manager)
+        run: limactl start --name=docker-nix-home --tty=false
 
       - name: Verify Nix in Guest
         run: limactl shell docker-nix nix --version

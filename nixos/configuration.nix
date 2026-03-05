@@ -36,9 +36,9 @@
     always-allow-substitutes = true;
 
     # Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
-    extra-trusted-substituters = pkgs.local.constants.nix-config.substituters;
+    extra-trusted-substituters = (import ../config/nix/binary-caches.nix).substituters;
 
-    extra-trusted-public-keys = pkgs.local.constants.nix-config.trusted-public-keys;
+    extra-trusted-public-keys = (import ../config/nix/binary-caches.nix).trusted-public-keys;
 
     accept-flake-config = true;
 
