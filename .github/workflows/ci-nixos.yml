@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Wait other jobs to leverage binary caches
         if: github.event_name == 'pull_request'
-        uses: kachick/wait-other-jobs@v3.5.3
+        uses: kachick/wait-other-jobs@v4
         timeout-minutes: 180
         with:
           # Only wait for workflows that provide binary caches to avoid deadlocks
