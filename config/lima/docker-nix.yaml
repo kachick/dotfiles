@@ -12,29 +12,25 @@ param:
 user:
   name: 'user'
 
-mounts:
-  - location: '~'
-    writable: true
-  - location: '/tmp/lima'
-    writable: true
-
 provision:
-  # 1. Run the installer script from the mounted repository.
-  # If running in CI, it will mount the current repo state.
+  # 1. Run the installer script.
+  # We fetch the script from the provided flake URI to ensure we are testing the correct branch.
   - mode: system
     script: |
       #!/bin/bash
       set -eux -o pipefail
 
-      # If dotfiles are mounted, use the local script.
-      INSTALLER="/home/{{.User}}/dotfiles/scripts/install-nix.bash"
       TARGET_FLAKE="{{.Param.flake}}"
-
-      if [[ -f "${INSTALLER}" ]]; then
-          echo "Running local installer script..."
-          sudo -u {{.User}} bash "${INSTALLER}" "${TARGET_FLAKE}"
+      # Extract repo and branch from 'github:user/repo/branch' or 'github:user/repo'
+      if [[ "${TARGET_FLAKE}" =~ ^github:([^/]+)/([^/]+)(/([^/]+))?$ ]]; then
+          ORG="${BASH_REMATCH[1]}"
+          REPO="${BASH_REMATCH[2]}"
+          BRANCH="${BASH_REMATCH[4]:-main}"
+          RAW_URL="https://raw.githubusercontent.com/${ORG}/${REPO}/${BRANCH}/scripts/install-nix.bash"
+          echo "Fetching installer from: ${RAW_URL}"
+          curl -fsSL "${RAW_URL}" | sudo -u {{.User}} bash -s -- "${TARGET_FLAKE}"
       else
-          echo "Local installer script not found, falling back to direct GitHub fetch."
+          # Fallback to current main if pattern doesn't match
           curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | sudo -u {{.User}} bash -s -- "${TARGET_FLAKE}"
       fi
 

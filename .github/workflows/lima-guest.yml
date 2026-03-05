@@ -57,8 +57,7 @@ jobs:
           REF="${HEAD_REF:-$REF_NAME}"
           FLAKE_URI="github:kachick/dotfiles/${REF}"
           limactl delete -f docker-nix || true
-          # Mount the repository to verify the local installer script.
-          limactl create --yes --name=docker-nix --mount "$(pwd):/home/user/dotfiles:ro" --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix.yaml
+          limactl create --yes --name=docker-nix --set ".param.flake = \"${FLAKE_URI}\"" config/lima/docker-nix.yaml
 
   test-provisioning:
     needs: prepare-image

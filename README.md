@@ -207,7 +207,7 @@ However I should keep the minimum environment for now.
 1. In the guest, you can run containers as `docker run --rm hello-world`.
 1. If you want to apply home-manager, run the following command in the guest:
    ```bash
-   nix run "~/dotfiles#home-manager" -- switch -b backup --flake "~/dotfiles#user@lima"
+   nix run "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
    ```
 
 ## How to setup secrets

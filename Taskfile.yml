@@ -187,7 +187,7 @@ tasks:
   lima-guest-docker-create:
     desc: Create a Lima guest with Docker and Nix (Lightweight)
     cmds:
-      - limactl create --yes --name=docker-nix --mount "$(pwd):/home/user/dotfiles:ro" {{.CLI_ARGS}} config/lima/docker-nix.yaml
+      - limactl create --yes --name=docker-nix {{.CLI_ARGS}} config/lima/docker-nix.yaml
 
   lima-guest-docker:
     desc: Provision a Lima guest with Docker and Nix (Lightweight)
