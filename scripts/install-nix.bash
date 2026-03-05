@@ -23,7 +23,7 @@ fi
 # 2. Configure binary caches into nix.custom.conf
 # We run the gen-nix-cache-conf app from the flake.
 echo "Configuring binary caches from ${TARGET_FLAKE}..."
-nix run "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
+nix run --accept-flake-config "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
 sudo systemctl restart nix-daemon
 
 echo "✅ Nix setup completed!"
