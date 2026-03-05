@@ -53,6 +53,7 @@
   # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
   msedit # `edit`
+  unstable.fresh-editor # `fresh`
 
   micro
 
