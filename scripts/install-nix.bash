@@ -3,10 +3,10 @@ set -eux -o pipefail
 
 # This script installs Nix and configures binary caches from the dotfiles flake.
 # Usage:
-#   [DOTFILES_REV=main] ./scripts/install-nix.bash [FLAKE_URI]
+#   curl ... | bash -s -- [REVISION]
 
-TARGET_REV="${DOTFILES_REV:-main}"
-TARGET_FLAKE="${1:-github:kachick/dotfiles/${TARGET_REV}}"
+TARGET_REV="${1:-main}"
+TARGET_FLAKE="github:kachick/dotfiles/${TARGET_REV}"
 
 # 1. Install Nix in multi-user mode
 if ! command -v nix >/dev/null 2>&1; then

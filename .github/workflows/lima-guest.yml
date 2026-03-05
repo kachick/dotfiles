@@ -86,17 +86,10 @@ jobs:
         run: limactl start --name=docker-nix --tty=false
 
       - name: Install and configure Nix in Guest
-        env:
-          HEAD_REF: ${{ github.head_ref }}
-          REF_NAME: ${{ github.ref_name }}
         run: |
-          REF="${HEAD_REF:-$REF_NAME}"
-          FLAKE_URI="github:kachick/dotfiles/${REF}"
-          RAW_URL="https://raw.githubusercontent.com/kachick/dotfiles/${REF}/scripts/install-nix.bash"
-
-          # Use the installer script from the current branch.
-          # It will configure caches using the flake from the same branch.
-          limactl shell docker-nix bash -c "curl -fsSL ${RAW_URL} | bash -s -- ${FLAKE_URI}"
+          REF="${{ github.head_ref || github.ref_name }}"
+          # Use the same pipe-based command as in README, passing the current branch.
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REF}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REF}"
 
       - name: Verify Nix installation in Guest
         run: limactl shell docker-nix nix --version
