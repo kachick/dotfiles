@@ -100,10 +100,10 @@ jobs:
         run: |
           REF="${HEAD_REF:-$REF_NAME}"
           FLAKE_URI="github:kachick/dotfiles/${REF}"
-          
+
           # 1. Basic nix version check
           limactl shell docker-nix nix --version
-          
+
           # 2. Verify custom binary cache by running a lightweight local package.
           # If the cache is working, this should fetch the binary instead of building it.
           limactl shell docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
