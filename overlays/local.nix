@@ -1,6 +1,11 @@
+{ self }:
 final: _prev: {
-  local = final.lib.packagesFromDirectoryRecursive {
-    inherit (final) callPackage;
-    directory = ../pkgs/local;
-  };
+  local =
+    final.lib.packagesFromDirectoryRecursive {
+      callPackage = final.lib.callPackageWith (final // { outputs = self; });
+      directory = ../pkgs/local;
+    }
+    // {
+      outputs = self;
+    };
 }

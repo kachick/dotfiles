@@ -93,6 +93,7 @@
       overlays =
         import ./overlays {
           inherit
+            self
             nixpkgs-unstable
             kanata-tray
             home-manager-linux
@@ -111,10 +112,6 @@
         };
     in
     {
-      lib = {
-        binary-caches = import ./config/nix/binary-caches.nix;
-      };
-
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
       formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
 
