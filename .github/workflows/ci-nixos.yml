@@ -31,8 +31,6 @@ concurrency:
 jobs:
   wait:
     runs-on: ubuntu-24.04
-    # Only wait on pull requests. Push/Schedule runs should start immediately.
-    if: github.event_name == 'pull_request'
     steps:
       - name: Wait other jobs to leverage binary caches
         uses: kachick/wait-other-jobs@v4
