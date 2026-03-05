@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 )
 
 // Target represents a nix flake output to be compared
@@ -39,28 +40,36 @@ func main() {
 		{Name: "Home Manager", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
 	}
 
+	// Fetch base flake metadata first to pre-download the source and avoid concurrent fetch issues
+	fmt.Fprintf(os.Stderr, "Fetching base flake metadata: %s\n", *baseFlake)
+	if err := prefetchFlake(*baseFlake); err != nil {
+		fmt.Fprintf(os.Stderr, "Warning: failed to prefetch base flake: %v\n", err)
+	}
+
 	results := make([]Result, len(targets))
 	var wg sync.WaitGroup
 
 	fmt.Fprintln(os.Stderr, "Starting parallel nix evaluations...")
+	start := time.Now()
 
 	for i, t := range targets {
-		// Go 1.25+ sync.WaitGroup.Go method handles Add(1) and defer Done() internally.
-		// Capturing loop variables i and t is safe in Go 1.22+.
 		wg.Go(func() {
-			fmt.Fprintf(os.Stderr, "[%s] Evaluating...\n", t.Name)
+			tName := t.Name
+			fmt.Fprintf(os.Stderr, "[%s] Evaluating...\n", tName)
+			evalStart := time.Now()
 			diff, ok := compareTarget(*baseFlake, *currentFlake, t)
 			results[i] = Result{Target: t, Diff: diff, Has: ok}
+			duration := time.Since(evalStart).Round(time.Second)
 			if ok {
-				fmt.Fprintf(os.Stderr, "[%s] Done (changes found).\n", t.Name)
+				fmt.Fprintf(os.Stderr, "[%s] Done (changes found) in %v.\n", tName, duration)
 			} else {
-				fmt.Fprintf(os.Stderr, "[%s] Done (no changes).\n", t.Name)
+				fmt.Fprintf(os.Stderr, "[%s] Done (no changes) in %v.\n", tName, duration)
 			}
 		})
 	}
 
 	wg.Wait()
-	fmt.Fprintln(os.Stderr, "All evaluations finished. Generating report...")
+	fmt.Fprintf(os.Stderr, "All evaluations finished in %v. Generating report...\n", time.Since(start).Round(time.Second))
 
 	// Print final report to stdout
 	fmt.Println("## ❄️ Nix Package Version Changes")
@@ -73,8 +82,7 @@ func main() {
 			fmt.Println("```text")
 			fmt.Print(res.Diff)
 			fmt.Println("```")
-			fmt.Println("</details>")
-			fmt.Println("")
+			fmt.Println("</details>\n")
 			hasAnyDiff = true
 		}
 	}
@@ -82,6 +90,12 @@ func main() {
 	if !hasAnyDiff {
 		fmt.Println("No package version changes detected in monitored targets.")
 	}
+}
+
+func prefetchFlake(flakePath string) error {
+	// Running metadata pre-downloads the flake inputs
+	cmd := exec.Command("nix", "flake", "metadata", flakePath)
+	return cmd.Run()
 }
 
 func compareTarget(base, current string, target Target) (string, bool) {
@@ -105,7 +119,6 @@ func compareTarget(base, current string, target Target) (string, bool) {
 	cmd := exec.Command("nix", "run", "nixpkgs#dix", "--", oldDrv, newDrv)
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	// Errors during dix are also printed to stderr
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: dix failed for %s: %v\n", target.Name, err)
