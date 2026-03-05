@@ -6,14 +6,14 @@ on:
       - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
       - '!nixos/**/*.md'
-      - 'flake.lock'
+      - 'flake.*'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
     paths:
       - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
       - '!nixos/**/*.md'
-      - 'flake.lock'
+      - 'flake.*'
   workflow_dispatch:
   schedule:
     # Every 10:42 JST
@@ -86,3 +86,18 @@ jobs:
             echo "❌ Nix evaluation warnings detected!"
             exit 1
           fi
+
+  test-sample:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: ''
+          skip-push: true
+      - name: Verify sample configuration template
+        # Using `nix develop` to ensure `task` is available from devShell
+        run: nix develop --command task test-sample-nixos
