@@ -51,7 +51,7 @@ jobs:
       - name: Create Lima Instance from standard template
         run: |
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix --set '.user.name = "user"' template:docker
+          limactl create --yes --name=docker-nix template:docker
 
   test-provisioning:
     needs: prepare-image
