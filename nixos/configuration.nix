@@ -5,7 +5,6 @@
 {
   lib,
   pkgs,
-  outputs,
   overlays,
   ...
 }:
