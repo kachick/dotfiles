@@ -1,0 +1,66 @@
+name: ❄️ NixOS CI
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci-nixos.yml'
+      - 'nixos/**'
+      - '!nixos/**/*.md'
+      - 'flake.lock'
+  pull_request:
+    types: [labeled, opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/ci-nixos.yml'
+      - 'nixos/**'
+      - '!nixos/**/*.md'
+      - 'flake.lock'
+  workflow_dispatch:
+  schedule:
+    # Every 10:42 JST
+    - cron: '42 1 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Run if:
+    # 1. It's not a pull request (push, schedule, etc.)
+    # 2. It's a pull request and:
+    #    - The 'nixos-rebuild' label is attached
+    #    - OR it was triggered by paths (this is implicit if we don't use 'if' for labels,
+    #      but since we want to support both, we need to be careful)
+    #
+    # Actually, GitHub Actions 'paths' filter already handles the "only run if files changed" part.
+    # The 'labeled' type and label check allows us to manually trigger it for other PRs.
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event_name == 'pull_request' && (
+        contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
+        github.event.action != 'labeled'
+      ))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [moss, algae, wsl]
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          # IMPORTANT: Do not provide auth token for NixOS system builds.
+          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
+          # To avoid licensing issues with public binary caches, we only perform build verification
+          # without pushing the resulting system closures.
+          cachix-auth-token: ''
+      - name: Build NixOS system [${{ matrix.host }}]
+        run: |
+          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
+          # Fail if evaluation warnings were detected
+          if grep -i "warning:" /tmp/nix-stderr; then
+            echo "❌ Nix evaluation warnings detected!"
+            exit 1
+          fi
