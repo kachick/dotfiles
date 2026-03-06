@@ -92,16 +92,8 @@ func compareTarget(base, current string, target Target) (string, bool) {
 	}
 
 	// Use dix to diff the derivations.
-	// Expect dix to be in PATH (handled by nix wrapper in CI).
-	// Fallback to nix run for local development if not in PATH.
-	dixBinary, err := exec.LookPath("dix")
-	var cmd *exec.Cmd
-	if err == nil {
-		cmd = exec.Command(dixBinary, oldDrv, newDrv)
-	} else {
-		cmd = exec.Command("nix", "run", "nixpkgs#dix", "--", oldDrv, newDrv)
-	}
-
+	// Dix is guaranteed to be in PATH by the nix packaging (wrapProgram).
+	cmd := exec.Command("dix", oldDrv, newDrv)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
