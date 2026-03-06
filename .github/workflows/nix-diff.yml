@@ -10,7 +10,6 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  pull-requests: write
   contents: read
 
 jobs:
@@ -60,6 +59,8 @@ jobs:
     needs: diff
     runs-on: ubuntu-24.04
     if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6.0.2
         with:
