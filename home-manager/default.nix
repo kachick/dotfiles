@@ -21,7 +21,7 @@ in
       modules = [
         outputs.homeManagerModules.profiles.kachick
         outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.genericLinux
+        outputs.homeManagerModules.targets.generic-linux
         outputs.homeManagerModules.targets.wsl
       ];
     }
@@ -47,7 +47,7 @@ in
       modules = [
         outputs.homeManagerModules.profiles.kachick
         outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.genericLinux
+        outputs.homeManagerModules.targets.generic-linux
         outputs.homeManagerModules.targets.lima-guest
       ];
     }
@@ -60,7 +60,7 @@ in
       modules = [
         outputs.homeManagerModules.profiles.kachick
         outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.genericLinux
+        outputs.homeManagerModules.targets.generic-linux
         { home.username = "runner"; }
         outputs.homeManagerModules.services.systemd
       ];
@@ -86,7 +86,7 @@ in
       modules = [
         outputs.homeManagerModules.profiles.ephemeral
         outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.genericLinux
+        outputs.homeManagerModules.targets.generic-linux
         outputs.homeManagerModules.services.systemd
       ];
     }

@@ -112,6 +112,25 @@
               pkgs = mkPkgs system;
             }
           );
+
+      # Helper to map a directory of .nix files/directories to an attribute set.
+      # File name (without .nix) becomes the attribute name.
+      mapModules =
+        dir:
+        let
+          contents = builtins.readDir dir;
+          # Exclude default.nix to avoid infinite recursion if placed in the same dir
+          files = nixpkgs.lib.filterAttrs (
+            n: v: (v == "directory" || (v == "regular" && nixpkgs.lib.hasSuffix ".nix" n)) && n != "default.nix"
+          ) contents;
+        in
+        nixpkgs.lib.mapAttrs' (
+          n: v:
+          let
+            name = if v == "regular" then nixpkgs.lib.removeSuffix ".nix" n else n;
+          in
+          nixpkgs.lib.nameValuePair name (dir + "/${n}")
+        ) files;
     in
     {
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
@@ -163,6 +182,15 @@
 
       nixosModules = import ./nixos/modules { inherit inputs; };
 
-      homeManagerModules = import ./home-manager/modules { inherit overlays; };
+      homeManagerModules = {
+        profiles = mapModules ./home-manager/profiles;
+        targets = mapModules ./home-manager/targets;
+        services = mapModules ./home-manager/services;
+        programs = mapModules ./home-manager/programs;
+
+        overlays = {
+          nixpkgs.overlays = [ outputs.overlays.default ];
+        };
+      };
     };
 }

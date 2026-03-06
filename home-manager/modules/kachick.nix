@@ -1,6 +1,0 @@
-{ ... }:
-{
-  imports = [
-    ../profiles/kachick.nix
-  ];
-}
