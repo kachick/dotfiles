@@ -1,22 +1,22 @@
 { overlays }:
 {
-  common = ../common.nix;
+  common = ../profiles/common;
   desktop = ./desktop.nix;
   # All Linux (NixOS + non-NixOS)
-  linux = ../linux.nix;
+  linux = ../targets/linux.nix;
   # Only for non-NixOS Linux (Home Manager convention)
-  genericLinux = ../genericLinux.nix;
+  genericLinux = ../targets/generic-linux.nix;
 
   # Personal profile
   kachick = ./kachick.nix;
 
   # Platform/Environment specific
-  genericUser = ../genericUser.nix;
-  darwin = ../darwin.nix;
-  systemd = ../systemd.nix;
-  wsl = ../wsl.nix;
-  lima-guest = ../lima-guest.nix;
-  lima-host = ../lima-host.nix;
+  ephemeral = ../profiles/ephemeral.nix;
+  darwin = ../targets/darwin.nix;
+  systemd = ../services/systemd.nix;
+  wsl = ../targets/wsl.nix;
+  lima-guest = ../targets/lima-guest.nix;
+  lima-host = ../targets/lima-host.nix;
 
   overlays = {
     nixpkgs.overlays = [ overlays.default ];

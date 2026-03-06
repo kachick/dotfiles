@@ -42,7 +42,7 @@
         "sidebar.position_start" = false; # Sidebar will be put on right side
         "sidebar.revamp" = true;
       };
-      userChrome = builtins.readFile ../config/firefox/userChrome.css;
+      userChrome = builtins.readFile ../../config/firefox/userChrome.css;
     };
   };
 }

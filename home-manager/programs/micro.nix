@@ -23,7 +23,7 @@
     "${pkgs.local.micro-everforest}/colorschemes/everforest.micro";
 
   # Default keybinfings are https://github.com/zyedidia/micro/blob/master/runtime/help/keybindings.md
-  xdg.configFile."micro/bindings.json".source = ../config/micro/bindings.json;
+  xdg.configFile."micro/bindings.json".source = ../../config/micro/bindings.json;
 
   # TODO: Consider to extract from nix managed, because of now also using in windows
   # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/micro.nix

@@ -1,7 +1,7 @@
 { lib, ... }:
 
 {
-  imports = [ ./common.nix ];
+  imports = [ ./common ];
 
   home.username = lib.mkDefault "user";
 

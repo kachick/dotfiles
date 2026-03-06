@@ -2,6 +2,6 @@
 {
   imports = [
     outputs.homeManagerModules.common
-    ../desktop.nix
+    ../programs/desktop.nix
   ];
 }

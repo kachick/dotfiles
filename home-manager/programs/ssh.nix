@@ -42,7 +42,7 @@ in
   home.file =
     let
       authorizedKeys = pkgs.writeText "authorized_keys" (
-        lib.strings.concatLines (import ../config/ssh/keys.nix)
+        lib.strings.concatLines (import ../../config/ssh/keys.nix)
       );
     in
     {
@@ -144,7 +144,7 @@ in
 
             # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
             # - First path should be writable for the `StrictHostKeyChecking != yes` use-case
-            userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
+            userKnownHostsFile = "${localKnownHostsPath} ${../../config/ssh/known_hosts}";
 
             # unit: seconds
             serverAliveInterval = 60;
