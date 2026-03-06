@@ -6,9 +6,8 @@
 }:
 
 let
-  home-manager-linux = inputs.home-manager-linux;
-  home-manager-darwin = inputs.home-manager-darwin;
-  outputs = self.outputs;
+  inherit (inputs) home-manager-linux home-manager-darwin;
+  inherit (self) outputs;
 
   x86-Linux-pkgs = mkPkgs "x86_64-linux";
   shared = {
