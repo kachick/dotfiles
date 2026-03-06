@@ -71,7 +71,6 @@
 
   outputs =
     inputs@{
-      self,
       nixpkgs,
       nixpkgs-unstable,
       nixpkgs-darwin,
