@@ -124,9 +124,9 @@
       #
       # You should run `ibus write-cache; ibus restart` after changed the ibus config
       # See https://github.com/google/mozc/blob/2.31.5712.102/docs/configurations.md for detail
-      "mozc/ibus_config.textproto".source = ../../config/mozc/ibus_config.textproto;
+      "mozc/ibus_config.textproto".source = ../config/mozc/ibus_config.textproto;
       # You should manually load the custom keymap if changed. Because of mozc_tool does not support CLI and rc files
-      "mozc/keymap-msime-customized.txt".source = ../../config/mozc/keymap-msime-customized.txt;
+      "mozc/keymap-msime-customized.txt".source = ../config/mozc/keymap-msime-customized.txt;
     };
   };
 }

@@ -19,10 +19,10 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.generic-linux
-        outputs.homeManagerModules.targets.wsl
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
+        outputs.homeManagerModules.wsl
       ];
     }
   );
@@ -32,8 +32,8 @@ in
     // {
       pkgs = mkPkgs "x86_64-darwin";
       modules = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.darwin
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.darwin
       ];
     }
   );
@@ -45,10 +45,10 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.generic-linux
-        outputs.homeManagerModules.targets.lima-guest
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
+        outputs.homeManagerModules.lima-guest
       ];
     }
   );
@@ -58,11 +58,11 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.generic-linux
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
         { home.username = "runner"; }
-        outputs.homeManagerModules.services.systemd
+        outputs.homeManagerModules.systemd
       ];
     }
   );
@@ -72,8 +72,8 @@ in
     // {
       pkgs = mkPkgs "x86_64-darwin";
       modules = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.darwin
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.darwin
         { home.username = "runner"; }
       ];
     }
@@ -84,10 +84,10 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.profiles.ephemeral
-        outputs.homeManagerModules.targets.linux
-        outputs.homeManagerModules.targets.generic-linux
-        outputs.homeManagerModules.services.systemd
+        outputs.homeManagerModules.ephemeral
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
+        outputs.homeManagerModules.systemd
       ];
     }
   );

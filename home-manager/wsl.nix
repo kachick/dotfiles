@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 
 let
-  commonSystemd = import ../services/systemd.nix { inherit pkgs lib; };
+  commonSystemd = import ./systemd.nix { inherit pkgs lib; };
 in
 
 {

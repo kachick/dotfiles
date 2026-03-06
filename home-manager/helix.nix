@@ -13,7 +13,7 @@ let
     args = [
       "fmt"
       "--config"
-      "${../../dprint.json}"
+      "${../dprint.json}"
       "--stdin"
       # No need to specify all extensions, just providing a hint to detect language
       extension
@@ -108,7 +108,7 @@ in
         # So required to manually merge language-servers for each language
         typos = {
           command = lib.getExe pkgs.unstable.typos-lsp;
-          config.config = "${../../typos.toml}";
+          config.config = "${../typos.toml}";
         };
 
         # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241

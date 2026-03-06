@@ -24,15 +24,15 @@ in
     backupFileExtension = "backup";
     users.user = {
       imports = [
-        ../../home-manager/profiles/ephemeral.nix
+        ../../home-manager/ephemeral.nix.nix
         {
           targets.genericLinux.enable = false;
         }
-        ../../home-manager/targets/linux.nix
-        ../../home-manager/targets/lima-host.nix
-        ../../home-manager/services/systemd.nix
-        ../../home-manager/programs/desktop.nix
-        ../../home-manager/programs/firefox.nix
+        ../../home-manager/linux.nix
+        ../../home-manager/lima-host.nix
+        ../../home-manager/systemd.nix
+        ../../home-manager/desktop.nix
+        ../../home-manager/firefox.nix
       ];
     };
     extraSpecialArgs = {

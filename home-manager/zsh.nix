@@ -119,7 +119,7 @@ in
               # typo of "-a -m"
               "-a- m"
             ]
-            ++ import ./typo-commands.nix
+            ++ import ./typo_commands.nix
           )
       );
     };
@@ -244,7 +244,7 @@ in
           source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
-          for file in ${../../dependencies/zsh}/*; do
+          for file in ${../dependencies/zsh}/*; do
               source "$file"
           done
 

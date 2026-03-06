@@ -6,7 +6,7 @@
 }:
 
 let
-  hmLib = import ../../lib.nix { inherit config lib; };
+  hmLib = import ./lib.nix { inherit config lib; };
 in
 {
   _module.args = {
@@ -14,16 +14,16 @@ in
   };
 
   imports = [
-    ../../programs/bash.nix
-    ../../programs/zsh.nix
-    ../../programs/encryption.nix
-    ../../programs/ssh.nix
-    ../../programs/git.nix
-    ../../programs/editors.nix
-    ../../programs/terminals.nix
-    ../../programs/fzf.nix
-    ../../programs/television.nix
-    ../../programs/telemetry.nix
+    ./bash.nix
+    ./zsh.nix
+    ./encryption.nix
+    ./ssh.nix
+    ./git.nix
+    ./editors.nix
+    ./terminals.nix
+    ./fzf.nix
+    ./television.nix
+    ./telemetry.nix
   ];
 
   # home.username = "<UPDATE_ME_IN_FLAKE>";
@@ -68,7 +68,7 @@ in
       # Workaround to detect tailscale kyes
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
       # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
-      GITLEAKS_CONFIG = "${../../../config/gitleaks/.gitleaks.toml}";
+      GITLEAKS_CONFIG = "${../config/gitleaks/.gitleaks.toml}";
     };
 
     sessionPath = [
@@ -151,20 +151,20 @@ in
   # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
   # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
   xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
-    ../../../config/powershell/Profile.ps1;
+    ../config/powershell/Profile.ps1;
 
   # Don't use nushell Nix modules. Because of the interface and API is much unstable
   # I prefer to use stable home-manager channel. So nushell integration should be done manually
   #
   # Don't use `recursive` here. We can't expect any nushell changes for now
-  xdg.configFile."nushell/env.nu".source = ../../../config/nushell/env.nu;
-  xdg.configFile."nushell/config.nu".source = ../../../config/nushell/config.nu;
-  xdg.configFile."nushell/unix_config.nu".source = ../../../config/nushell/unix_config.nu;
+  xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
+  xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
+  xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
   # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
   # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-  xdg.configFile."electron-flags.conf".source = ../../../config/electron/electron-flags.conf;
+  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
@@ -186,9 +186,7 @@ in
   #   * Setting in this variable might be unuseful, because of home-manager session variables will not be changed on GNOME except re-login
   #     Workaround is `export STARSHIP_CONFIG="$(fd --absolute-path starship.toml)"` while developing
   #   * Avoid directory setting `programs.starship.configPath = Nix Store Path`. It is prevented by home-manager validation by their use
-  home.file."${config.programs.starship.configPath}".source = "${
-    ../../../config/starship/starship.toml
-  }";
+  home.file."${config.programs.starship.configPath}".source = "${../config/starship/starship.toml}";
 
   # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/bat.nix
   programs.bat = {
@@ -211,11 +209,11 @@ in
     # Don't use settings, nix and KDL is much unfit: https://github.com/NixOS/nixpkgs/issues/198655#issuecomment-1453525659
   };
   xdg.configFile."zellij" = {
-    source = ../../../config/zellij;
+    source = ../config/zellij;
     recursive = true;
   };
   xdg.configFile."zellij/simplified-ui.kdl" = {
-    text = builtins.readFile ../../../config/zellij/config.kdl + ''
+    text = builtins.readFile ../config/zellij/config.kdl + ''
       // Use a simplified UI without special fonts (arrow glyphs)
       // This is necessary on Linux VT to avoid Tofu
       // Or you can run zellij with `zellij options --simplified-ui true`

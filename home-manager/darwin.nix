@@ -55,7 +55,7 @@
   xdg = {
     configFile =
       # https://github.com/nix-community/home-manager/issues/3090#issuecomment-2010891733
-      mkWritableConfig.xdg "karabiner/karabiner.json" ../../config/keyboards/karabiner/karabiner.json { };
+      mkWritableConfig.xdg "karabiner/karabiner.json" ../config/keyboards/karabiner/karabiner.json { };
 
     dataFile = {
       # https://github.com/NixOS/nixpkgs/issues/240819#issuecomment-1616760598

@@ -138,8 +138,8 @@ in
     enable = true;
   };
 
-  xdg.configFile."kanata/kanata.kbd".source = ../../config/keyboards/kanata.kbd;
-  xdg.configFile."kanata-tray/kanata-tray.toml".source = ../../config/keyboards/kanata-tray.toml;
+  xdg.configFile."kanata/kanata.kbd".source = ../config/keyboards/kanata.kbd;
+  xdg.configFile."kanata-tray/kanata-tray.toml".source = ../config/keyboards/kanata-tray.toml;
 
   xdg.cacheFile."kanata-tray/.keep".text =
     "kanata-tray exits if the specified directory does not exist";
@@ -161,8 +161,8 @@ in
   xdg.autostart = {
     enable = true;
     entries = [
-      ../../config/keyboards/kanata-tray.desktop
-      ../../config/cloudflare-warp/connect.desktop
+      ../config/keyboards/kanata-tray.desktop
+      ../config/cloudflare-warp/connect.desktop
     ];
   };
 }
