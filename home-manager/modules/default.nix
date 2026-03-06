@@ -1,4 +1,4 @@
-{ overlays }:
+{ outputs }:
 {
   common = ../common.nix;
   desktop = ./desktop.nix;
@@ -19,6 +19,6 @@
   lima-host = ../lima-host.nix;
 
   overlays = {
-    nixpkgs.overlays = [ overlays.default ];
+    nixpkgs.overlays = [ outputs.overlays.default ];
   };
 }
