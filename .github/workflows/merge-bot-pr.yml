@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Wait other jobs
         uses: kachick/wait-other-jobs@main
-        timeout-minutes: 180 # Keep larger than others. For example: Building zed-editor took 140 minutes
+        timeout-minutes: 75
         with:
           skip-same-workflow: 'true'
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
