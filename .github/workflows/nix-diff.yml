@@ -45,7 +45,7 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
-          nix build .#local.nix-diff
+          nix build .#nix-diff
           ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
           cat "snippet-${{ matrix.target }}.md"
 

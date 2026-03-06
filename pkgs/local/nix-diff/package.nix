@@ -1,18 +1,34 @@
 {
   lib,
-  buildGoModule,
+  pkgs,
   makeWrapper,
   unstable,
 }:
 
-buildGoModule {
+let
+  inherit (pkgs.unstable) buildGo126Module;
+in
+buildGo126Module (finalAttrs: {
   pname = "nix-diff";
   version = "0.0.1";
 
-  src = ../../../cmd/nix-diff;
+  vendorHash = "sha256-8kO79VawdMhdP5JczC9Yh1Dqva7EarOQHHCuuiWNF7U=";
 
-  # No external go dependencies other than standard library or internal packages
-  vendorHash = null;
+  src =
+    with lib.fileset;
+    toSource {
+      root = ../../../.;
+      fileset = unions [
+        ../../../go.mod
+        ../../../go.sum
+        ../../../internal
+        ./.
+      ];
+    };
+
+  subPackages = [
+    "pkgs/local/${finalAttrs.pname}"
+  ];
 
   nativeBuildInputs = [ makeWrapper ];
 
@@ -21,9 +37,10 @@ buildGoModule {
       --prefix PATH : ${lib.makeBinPath [ unstable.dix ]}
   '';
 
+  env.CGO_ENABLED = 0;
+
   meta = {
     description = "Compare nix derivations and report package changes";
-    license = lib.licenses.mit;
-    mainProgram = "nix-diff";
+    mainProgram = finalAttrs.pname;
   };
-}
+})
