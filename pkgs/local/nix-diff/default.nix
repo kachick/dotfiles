@@ -2,7 +2,7 @@
   lib,
   buildGoModule,
   makeWrapper,
-  dix,
+  unstable,
 }:
 
 buildGoModule {
@@ -18,7 +18,7 @@ buildGoModule {
 
   postInstall = ''
     wrapProgram $out/bin/nix-diff \
-      --prefix PATH : ${lib.makeBinPath [ dix ]}
+      --prefix PATH : ${lib.makeBinPath [ unstable.dix ]}
   '';
 
   meta = {
