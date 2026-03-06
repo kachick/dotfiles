@@ -62,10 +62,15 @@
       # Revisit once introducing other agents which takes long time to build.
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    {
+    inputs@{
       self,
       nixpkgs,
       nixpkgs-unstable,
@@ -74,92 +79,84 @@
       home-manager-darwin,
       kanata-tray,
       llm-agents,
+      flake-parts,
       ...
-    }@inputs:
+    }:
     let
-      inherit (self) outputs;
-
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
-      forAllSystems = nixpkgs.lib.genAttrs (
-        nixpkgs.lib.intersectLists [
-          "x86_64-linux"
-          "x86_64-darwin"
-        ] nixpkgs.lib.systems.flakeExposed
-      );
-
-      mkNixpkgs =
-        system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
-
-      overlays =
-        import ./overlays {
+      sharedOverlays =
+        (import ./overlays {
           inherit
             nixpkgs-unstable
             kanata-tray
             home-manager-linux
             home-manager-darwin
             ;
-        }
+        })
         ++ [ llm-agents.overlays.default ];
 
-      mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
-
-      mkApp =
-        { system, pkg }:
-        {
-          type = "app";
-          program = (mkNixpkgs system).lib.getExe pkg;
-        };
-    in
-    {
-      # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
-
-      devShells = forAllSystems (system: import ./devShells.nix { pkgs = mkPkgs system; });
-
-      packages = forAllSystems (
+      mkPkgs =
         system:
         let
-          pkgs = mkPkgs system;
-          # Don't include unfree packages, it will fail in `nix flake check`
+          base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
         in
-        pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
-      );
-
-      apps = forAllSystems (system: {
-        home-manager = mkApp {
+        import base {
           inherit system;
-          pkg = (mkPkgs system).home-manager;
+          overlays = sharedOverlays;
         };
-        gen-nix-cache-conf = mkApp {
-          inherit system;
-          pkg = (mkPkgs system).local.gen-nix-cache-conf;
+    in
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [
+        "x86_64-linux"
+        "x86_64-darwin"
+      ];
+
+      # Modularize the flake by importing parts.
+      # These files will automatically receive 'self', 'inputs', and 'mkPkgs' as arguments.
+      imports = [
+        ./nixos
+        ./home-manager
+        ./home-manager/modules
+      ];
+
+      _module.args = {
+        inherit nixpkgs mkPkgs sharedOverlays;
+      };
+
+      perSystem =
+        {
+          system,
+          ...
+        }:
+        let
+          pkgs = mkPkgs system;
+        in
+        {
+          # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
+          formatter = pkgs.unstable.nixfmt-tree;
+
+          devShells = import ./devShells.nix { inherit pkgs; };
+
+          packages = pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local;
+
+          apps = {
+            home-manager = {
+              type = "app";
+              program = nixpkgs.lib.getExe pkgs.home-manager;
+            };
+            gen-nix-cache-conf = {
+              type = "app";
+              program = nixpkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
+            };
+          };
         };
-      });
 
-      nixosConfigurations = import ./nixos {
-        inherit
-          nixpkgs
-          inputs
-          outputs
-          overlays
-          ;
+      flake = {
+        overlays = {
+          # Consolidated overlay exposed as a primary flake output.
+          default = nixpkgs.lib.composeManyExtensions sharedOverlays;
+        };
+
+        nixosModules = import ./nixos/modules { inherit inputs; };
       };
-
-      homeConfigurations = import ./home-manager {
-        inherit
-          home-manager-linux
-          home-manager-darwin
-          mkPkgs
-          outputs
-          ;
-      };
-
-      overlays = {
-        default = nixpkgs.lib.composeManyExtensions overlays;
-      };
-
-      nixosModules = import ./nixos/modules { inherit inputs; };
-
-      homeManagerModules = import ./home-manager/modules { inherit overlays; };
     };
 }

@@ -5,7 +5,7 @@
 {
   lib,
   pkgs,
-  overlays,
+  outputs,
   ...
 }:
 {
@@ -30,7 +30,7 @@
   time.timeZone = "Asia/Tokyo";
 
   nixpkgs = {
-    inherit overlays;
+    overlays = [ outputs.overlays.default ];
 
     # Allow unfree packages
     # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
