@@ -48,7 +48,15 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
-          nix build .#nix-diff
+
+          # Explicitly target x86_64-darwin even on ARM runner
+          if [[ "${{ matrix.runner }}" == "macos-26" ]]; then
+            TARGET_SYSTEM="x86_64-darwin"
+          else
+            TARGET_SYSTEM="x86_64-linux"
+          fi
+
+          nix build ".#packages.''${TARGET_SYSTEM}.nix-diff"
           ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
           cat "snippet-${{ matrix.target }}.md"
 
