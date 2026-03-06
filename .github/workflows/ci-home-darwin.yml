@@ -4,14 +4,24 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-darwin.yml'
-      - 'home-manager/*.nix'
+      - 'home-manager/darwin.nix'
+      - 'home-manager/kachick.nix'
+      - 'home-manager/common.nix'
+      - 'home-manager/packages.nix'
+      - 'home-manager/lima-host.nix'
+      - 'home-manager/ephemeral.nix'
       - '!home-manager/**/*.md'
       - 'darwin/**'
       - '!darwin/**/*.md'
   pull_request:
     paths:
       - '.github/workflows/ci-home-darwin.yml'
-      - 'home-manager/*.nix'
+      - 'home-manager/darwin.nix'
+      - 'home-manager/kachick.nix'
+      - 'home-manager/common.nix'
+      - 'home-manager/packages.nix'
+      - 'home-manager/lima-host.nix'
+      - 'home-manager/ephemeral.nix'
       - '!home-manager/**/*.md'
       - 'darwin/**'
       - '!darwin/**/*.md'
