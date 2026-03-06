@@ -26,10 +26,6 @@ buildGo126Module (finalAttrs: {
       ];
     };
 
-  subPackages = [
-    "pkgs/local/${finalAttrs.pname}"
-  ];
-
   nativeBuildInputs = [ makeWrapper ];
 
   postInstall = ''
