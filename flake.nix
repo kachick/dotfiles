@@ -79,7 +79,7 @@
     let
       inherit (self) outputs;
 
-      sharedOverlays =
+      overlays =
         import ./overlays {
           inherit
             nixpkgs-unstable
@@ -95,49 +95,57 @@
         let
           base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
         in
-        import base {
-          inherit system;
-          overlays = sharedOverlays;
-        };
+        import base { inherit system overlays; };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
       forAllSystems =
         f:
-        nixpkgs.lib.genAttrs (nixpkgs.lib.intersectLists [
-          "x86_64-linux"
-          "x86_64-darwin"
-        ] nixpkgs.lib.systems.flakeExposed) (system: f (mkPkgs system));
+        nixpkgs.lib.genAttrs
+          (nixpkgs.lib.intersectLists [
+            "x86_64-linux"
+            "x86_64-darwin"
+          ] nixpkgs.lib.systems.flakeExposed)
+          (
+            system:
+            f {
+              inherit system;
+              pkgs = mkPkgs system;
+            }
+          );
     in
     {
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (pkgs: pkgs.unstable.nixfmt-tree);
+      formatter = forAllSystems ({ pkgs, ... }: pkgs.unstable.nixfmt-tree);
 
-      devShells = forAllSystems (pkgs: import ./devShells.nix { inherit pkgs; });
+      devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        pkgs:
+        { pkgs, ... }:
         # Don't include unfree packages, it will fail in `nix flake check`
         pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
       );
 
-      apps = forAllSystems (pkgs: {
-        home-manager = {
-          type = "app";
-          program = nixpkgs.lib.getExe pkgs.home-manager;
-        };
-        gen-nix-cache-conf = {
-          type = "app";
-          program = nixpkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
-        };
-      });
+      apps = forAllSystems (
+        { pkgs, ... }:
+        {
+          home-manager = {
+            type = "app";
+            program = pkgs.lib.getExe pkgs.home-manager;
+          };
+          gen-nix-cache-conf = {
+            type = "app";
+            program = pkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
+          };
+        }
+      );
 
       nixosConfigurations = import ./nixos {
         inherit
           nixpkgs
           inputs
           outputs
+          overlays
           ;
-        overlays = sharedOverlays;
       };
 
       homeConfigurations = import ./home-manager {
@@ -150,14 +158,11 @@
       };
 
       overlays = {
-        default = nixpkgs.lib.composeManyExtensions sharedOverlays;
+        default = nixpkgs.lib.composeManyExtensions overlays;
       };
 
       nixosModules = import ./nixos/modules { inherit inputs; };
 
-      homeManagerModules = import ./home-manager/modules {
-        # Module internally references outputs.overlays.default
-        inherit outputs;
-      };
+      homeManagerModules = import ./home-manager/modules { inherit overlays; };
     };
 }
