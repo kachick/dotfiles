@@ -25,13 +25,13 @@ in
     backupFileExtension = "backup";
     users.kachick = {
       imports = [
-        ../../home-manager/kachick.nix
-        ../../home-manager/linux.nix
+        ../../home-manager/profiles/kachick.nix
+        ../../home-manager/targets/linux.nix
         { targets.genericLinux.enable = false; }
-        ../../home-manager/lima-host.nix
-        ../../home-manager/systemd.nix
-        ../../home-manager/desktop.nix
-        ../../home-manager/firefox.nix
+        ../../home-manager/targets/lima-host.nix
+        ../../home-manager/services/systemd.nix
+        ../../home-manager/programs/desktop.nix
+        ../../home-manager/programs/firefox.nix
       ];
     };
     extraSpecialArgs = {

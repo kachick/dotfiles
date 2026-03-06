@@ -38,7 +38,7 @@
           # dotfiles.nixosModules.common  # Basic CLI set (Included in desktop)
           dotfiles.nixosModules.desktop # Desktop set (Includes common. Comment out for servers)
           dotfiles.nixosModules.hardware # Shared hardware tweaks (Keyboard remaps, etc.)
-          dotfiles.nixosModules.genericUser
+          dotfiles.nixosModules.ephemeral
 
           # Import your own hardware configuration
           ./hardware-configuration.nix
