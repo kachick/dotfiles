@@ -10,14 +10,27 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  pull-requests: write
   contents: read
 
 jobs:
-  nix-diff:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    # Run only for selfup bot PRs or when the 'ci-nix-diff' label is present.
+  diff:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: DevShell
+            runner: ubuntu-24.04
+          - target: NixOS
+            runner: ubuntu-24.04
+          - target: home-manager-linux
+            runner: ubuntu-24.04
+          - target: home-manager-darwin
+            # Use macos-26 (ARM) for faster evaluation of x86_64-darwin configurations.
+            # While this may trigger Rosetta 2 for IFD builds, the overall evaluation
+            # speed is expected to be superior to the old macos-15-intel runner.
+            runner: macos-26
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
     if: >-
       github.event.pull_request.user.login == 'selfup-runner[bot]' ||
       contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
@@ -25,25 +38,63 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
-      - uses: cachix/install-nix-action@v30
-      - uses: actions/setup-go@v5.3.0
+      - uses: ./.github/actions/setup-nix
         with:
-          go-version-file: 'go.mod'
-          cache: true
-      - name: Generate diff report
-        id: report
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Generate diff snippet
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
-          # Use tee to show progress in logs while capturing for the report
-          go run ./cmd/nix-diff/main.go -base "$BASE_FLAKE" | tee diff_report.md
 
-          if grep -q "<details" diff_report.md; then
-            echo "has_diff=true" >> $GITHUB_OUTPUT
+          # Explicitly target x86_64-darwin only on ARM runner
+          if [[ "${{ matrix.runner }}" == "macos-26" ]]; then
+            nix build ".#packages.x86_64-darwin.nix-diff"
           else
-            echo "has_diff=false" >> $GITHUB_OUTPUT
+            nix build .#nix-diff
+          fi
+
+          ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
+          cat "snippet-${{ matrix.target }}.md"
+      - name: Upload snippet
+        uses: actions/upload-artifact@v7
+        with:
+          name: snippet-${{ matrix.target }}
+          path: snippet-${{ matrix.target }}.md
+
+  report:
+    needs: diff
+    runs-on: ubuntu-24.04
+    if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Download all snippets
+        uses: actions/download-artifact@v7
+        with:
+          pattern: snippet-*
+          merge-multiple: true
+
+      - name: Combine report
+        run: |
+          echo "## ❄️ Nix Package Version Changes" > diff_report.md
+          echo "<!-- nix-diff-report -->" >> diff_report.md
+          echo "" >> diff_report.md
+
+          for t in DevShell NixOS home-manager-linux home-manager-darwin; do
+            if [ -f "snippet-$t.md" ]; then
+              cat "snippet-$t.md" >> diff_report.md
+            fi
+          done
+
+          if ! grep -q "<details" diff_report.md; then
+            echo "No package version changes detected in monitored targets." >> diff_report.md
           fi
 
       - name: Minimize old diff comments
@@ -62,11 +113,14 @@ jobs:
                       --raw-field query='mutation($subjectId:ID!) {
                         minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
                           clientMutationId
+                          minimizedComment {
+                            isMinimized
+                          }
                         }
                       }'
 
       - name: Post new diff report
-        if: steps.report.outputs.has_diff == 'true'
+        if: github.event.pull_request.user.login == 'selfup-runner[bot]' || contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}

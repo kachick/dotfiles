@@ -18,6 +18,7 @@ type Target struct {
 func main() {
 	baseFlake := flag.String("base", "", "The base flake to compare against (e.g. github:owner/repo/main)")
 	currentFlake := flag.String("current", ".", "The current flake to compare (default '.')")
+	targetName := flag.String("target", "", "Optional: specific target name to run (DevShell, NixOS, home-manager-linux, home-manager-darwin)")
 	flag.Parse()
 
 	if *baseFlake == "" {
@@ -25,15 +26,35 @@ func main() {
 		os.Exit(1)
 	}
 
-	targets := []Target{
+	allTargets := []Target{
 		{Name: "DevShell", Attribute: "devShells.x86_64-linux.default"},
 		{Name: "NixOS", Attribute: "nixosConfigurations.algae.config.system.build.toplevel"},
-		{Name: "Home Manager", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
+		{Name: "home-manager-linux", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
+		{Name: "home-manager-darwin", Attribute: `homeConfigurations."github-actions@macos-15-intel".activationPackage`},
 	}
 
-	fmt.Println("## ❄️ Nix Package Version Changes")
-	fmt.Println("<!-- nix-diff-report -->")
-	fmt.Println("")
+	var targets []Target
+	if *targetName != "" {
+		for _, t := range allTargets {
+			if t.Name == *targetName {
+				targets = append(targets, t)
+				break
+			}
+		}
+		if len(targets) == 0 {
+			fmt.Fprintf(os.Stderr, "Error: target %s not found\n", *targetName)
+			os.Exit(1)
+		}
+	} else {
+		targets = allTargets
+	}
+
+	// Only print header if running all or as part of a joined report
+	if *targetName == "" {
+		fmt.Println("## ❄️ Nix Package Version Changes")
+		fmt.Println("<!-- nix-diff-report -->")
+		fmt.Println("")
+	}
 
 	hasDiff := false
 	for _, target := range targets {
@@ -48,7 +69,7 @@ func main() {
 		}
 	}
 
-	if !hasDiff {
+	if !hasDiff && *targetName == "" {
 		fmt.Println("No package version changes detected in monitored targets.")
 	}
 }
@@ -70,8 +91,9 @@ func compareTarget(base, current string, target Target) (string, bool) {
 		return "", false
 	}
 
-	// Use dix to diff the derivations
-	cmd := exec.Command("nix", "run", "nixpkgs#dix", "--", oldDrv, newDrv)
+	// Use dix to diff the derivations.
+	// Dix is guaranteed to be in PATH by the nix packaging (wrapProgram).
+	cmd := exec.Command("dix", oldDrv, newDrv)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
