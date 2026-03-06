@@ -43,6 +43,8 @@ jobs:
         run: |
           nix flake show
           nix flake show . --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
+      - name: Verify flake outputs and overlays
+        run: ./scripts/verify-outputs.bash
       - run: nix flake check --impure
         env:
           # Required to clarify allowing unfree even in check ... :<
