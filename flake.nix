@@ -79,17 +79,6 @@
     let
       inherit (self) outputs;
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
-      forAllSystems = nixpkgs.lib.genAttrs (
-        nixpkgs.lib.intersectLists [
-          "x86_64-linux"
-          "x86_64-darwin"
-        ] nixpkgs.lib.systems.flakeExposed
-      );
-
-      mkNixpkgs =
-        system: if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
-
       overlays =
         import ./overlays {
           inherit
@@ -101,40 +90,54 @@
         }
         ++ [ llm-agents.overlays.default ];
 
-      mkPkgs = system: import (mkNixpkgs system) { inherit system overlays; };
+      mkPkgs =
+        system:
+        let
+          base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
+        in
+        import base { inherit system overlays; };
 
-      mkApp =
-        { system, pkg }:
-        {
-          type = "app";
-          program = (mkNixpkgs system).lib.getExe pkg;
-        };
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
+      forAllSystems =
+        f:
+        nixpkgs.lib.genAttrs
+          (nixpkgs.lib.intersectLists [
+            "x86_64-linux"
+            "x86_64-darwin"
+          ] nixpkgs.lib.systems.flakeExposed)
+          (
+            system:
+            f {
+              inherit system;
+              pkgs = mkPkgs system;
+            }
+          );
     in
     {
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems (system: (mkPkgs system).unstable.nixfmt-tree);
+      formatter = forAllSystems ({ pkgs, ... }: pkgs.unstable.nixfmt-tree);
 
-      devShells = forAllSystems (system: import ./devShells.nix { pkgs = mkPkgs system; });
+      devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        system:
-        let
-          pkgs = mkPkgs system;
-          # Don't include unfree packages, it will fail in `nix flake check`
-        in
+        { pkgs, ... }:
+        # Don't include unfree packages, it will fail in `nix flake check`
         pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
       );
 
-      apps = forAllSystems (system: {
-        home-manager = mkApp {
-          inherit system;
-          pkg = (mkPkgs system).home-manager;
-        };
-        gen-nix-cache-conf = mkApp {
-          inherit system;
-          pkg = (mkPkgs system).local.gen-nix-cache-conf;
-        };
-      });
+      apps = forAllSystems (
+        { pkgs, ... }:
+        {
+          home-manager = {
+            type = "app";
+            program = pkgs.lib.getExe pkgs.home-manager;
+          };
+          gen-nix-cache-conf = {
+            type = "app";
+            program = pkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
+          };
+        }
+      );
 
       nixosConfigurations = import ./nixos {
         inherit
