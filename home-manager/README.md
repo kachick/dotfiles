@@ -3,6 +3,26 @@
 This directory contains Home Manager configurations.
 These settings are exported as `homeManagerModules`.
 
+## Directory Structure
+
+This directory follows the standard NixOS/Home Manager project layout:
+
+- `targets/`: **Where** to run (Environment-specific: OS, WSL, VMs)
+- `profiles/`: **Who** is running (Identities: `$USER`, `ephemeral`, and shared base)
+- `programs/`: **What** to install (Application-specific settings)
+- `services/`: **How** to run (Background tasks and user services)
+
+## Notes on configuration files
+
+### Where to put settings?
+
+For tools used only in Nix, you can write settings directly in Nix files here.
+
+However, for tools shared with other OSs like Windows (e.g., `starship.toml`), I keep raw configuration files in the root `config/` directory.
+In these cases, Home Manager creates a symlink to the raw file.
+
+This makes it easy to use the same settings in environments that do not have Nix.
+
 ## How to use from other flakes (Inheritance)
 
 ```nix
@@ -82,6 +102,6 @@ It maybe occurred with home-manager module and manually specified `pkgs.*`, try 
 
 ## Writable config management (HomeManagerInit pattern)
 
-To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, Karabiner, SSH), we use a pattern involving `onChange`.
+To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, Karabiner, SSH), a pattern is used involving `onChange`.
 
-We provide a helper `hmInit` in `home-manager/lib.nix` that automates this pattern. See the comments in that file for more details.
+A helper `hmInit` in `home-manager/lib.nix` that automates this pattern. See the comments in that file for more details.

@@ -84,7 +84,7 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.genericUser
+        outputs.homeManagerModules.ephemeral
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.systemd
