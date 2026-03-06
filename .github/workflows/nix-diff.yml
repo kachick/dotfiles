@@ -49,17 +49,15 @@ jobs:
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
 
-          # Explicitly target x86_64-darwin even on ARM runner
+          # Explicitly target x86_64-darwin only on ARM runner
           if [[ "${{ matrix.runner }}" == "macos-26" ]]; then
-            TARGET_SYSTEM="x86_64-darwin"
+            nix build ".#packages.x86_64-darwin.nix-diff"
           else
-            TARGET_SYSTEM="x86_64-linux"
+            nix build .#nix-diff
           fi
 
-          nix build ".#packages.''${TARGET_SYSTEM}.nix-diff"
           ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
           cat "snippet-${{ matrix.target }}.md"
-
       - name: Upload snippet
         uses: actions/upload-artifact@v7
         with:
