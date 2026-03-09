@@ -84,8 +84,6 @@
           inherit
             nixpkgs-unstable
             kanata-tray
-            home-manager-linux
-            home-manager-darwin
             ;
         }
         ++ [ llm-agents.overlays.default ];
@@ -127,10 +125,17 @@
 
       apps = forAllSystems (
         { pkgs, ... }:
+        let
+          hm-src = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
+          # Rebuild Home Manager CLI using the current 'pkgs' to ensure it respects overlays.
+          # This automatically applies fixes to HM's core dependencies (e.g., inetutils)
+          # if they are patched in our overlays (see https://github.com/NixOS/nixpkgs/issues/488689 for a historical case).
+          overridden-hm = pkgs.callPackage (hm-src + "/home-manager") { };
+        in
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe pkgs.home-manager;
+            program = pkgs.lib.getExe overridden-hm;
           };
           gen-nix-cache-conf = {
             type = "app";
