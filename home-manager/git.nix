@@ -80,6 +80,7 @@ in
       # https://agents.md/#examples
       "AGENTS.md"
       "/.gemini/"
+      "/.agents/"
 
       # Editor
       "/.helix/"
@@ -88,7 +89,7 @@ in
 
       # Nix
       ".direnv/"
-      "/result/"
+      "/result" # Don't append trailing "/" because It is symlink
 
       # Major
       "node_modules/"
