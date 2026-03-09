@@ -124,18 +124,14 @@
       );
 
       apps = forAllSystems (
-        { pkgs, ... }:
+        { pkgs, system }:
         let
-          hm-src = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
-          # Rebuild Home Manager CLI using the current 'pkgs' to ensure it respects overlays.
-          # This automatically applies fixes to HM's core dependencies (e.g., inetutils)
-          # if they are patched in our overlays (see https://github.com/NixOS/nixpkgs/issues/488689 for a historical case).
-          overridden-hm = pkgs.callPackage (hm-src + "/home-manager") { };
+          hm = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
         in
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe overridden-hm;
+            program = pkgs.lib.getExe hm.packages.${system}.home-manager;
           };
           gen-nix-cache-conf = {
             type = "app";
