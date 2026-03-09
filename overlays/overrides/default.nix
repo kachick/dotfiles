@@ -1,10 +1,8 @@
-{ home-manager-linux, home-manager-darwin }:
+{ ... }:
 final: prev:
 let
   inherit (prev) lib;
-  callPackage = lib.callPackageWith (
-    final // { inherit prev home-manager-linux home-manager-darwin; }
-  );
+  callPackage = lib.callPackageWith (final // { inherit prev; });
 
   # Read all .nix files in this directory except default.nix
   files = builtins.readDir ./.;

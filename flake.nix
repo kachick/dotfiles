@@ -84,8 +84,6 @@
           inherit
             nixpkgs-unstable
             kanata-tray
-            home-manager-linux
-            home-manager-darwin
             ;
         }
         ++ [ llm-agents.overlays.default ];
@@ -126,11 +124,14 @@
       );
 
       apps = forAllSystems (
-        { pkgs, ... }:
+        { pkgs, system }:
+        let
+          hm = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
+        in
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe pkgs.home-manager;
+            program = pkgs.lib.getExe hm.packages.${system}.home-manager;
           };
           gen-nix-cache-conf = {
             type = "app";
