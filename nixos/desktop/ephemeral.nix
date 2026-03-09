@@ -24,7 +24,7 @@ in
     backupFileExtension = "backup";
     users.user = {
       imports = [
-        ../../home-manager/ephemeral.nix.nix
+        ../../home-manager/ephemeral.nix
         {
           targets.genericLinux.enable = false;
         }

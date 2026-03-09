@@ -40,12 +40,12 @@
     backupFileExtension = "backup";
     users.nixos = {
       imports = [
-        outputs.homeManagerModules.profiles.kachick
-        outputs.homeManagerModules.targets.linux
+        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.linux
         {
           home.username = "nixos";
         }
-        outputs.homeManagerModules.targets.wsl
+        outputs.homeManagerModules.wsl
       ];
     };
     extraSpecialArgs = {

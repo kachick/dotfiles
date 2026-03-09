@@ -1,45 +1,44 @@
 { overlays }:
 let
-  # Explicitly list the module files.
-  # This avoids complex readDir logic while keeping the attribute mapping clean.
-  modules = [
-    "bash"
+  inherit (builtins) listToAttrs;
+
+  # Modules located in the parent directory
+  rootModules = [
     "common"
-    "darwin"
-    "desktop"
-    "editors"
-    "encryption"
-    "ephemeral"
-    "firefox"
-    "fzf"
+    "linux"
     "genericLinux"
-    "git"
-    "gnome"
-    "helix"
-    "kachick"
+    "ephemeral"
+    "darwin"
+    "systemd"
+    "wsl"
     "lima-guest"
     "lima-host"
-    "linux"
-    "micro"
-    "packages"
-    "ssh"
-    "systemd"
-    "telemetry"
-    "television"
-    "terminals"
-    "vim"
-    "wsl"
-    "zsh"
   ];
 
-  autoModules = builtins.listToAttrs (
+  # Modules located in the current directory (wrappers)
+  localModules = [
+    "desktop"
+    "kachick"
+  ];
+
+  rootAttrs = listToAttrs (
     map (name: {
       inherit name;
       value = ../. + "/${name}.nix";
-    }) modules
+    }) rootModules
+  );
+
+  localAttrs = listToAttrs (
+    map (name: {
+      inherit name;
+      value = ./. + "/${name}.nix";
+    }) localModules
   );
 in
-autoModules
+rootAttrs
+// localAttrs
 // {
-  inherit overlays;
+  overlays = {
+    nixpkgs.overlays = [ overlays.default ];
+  };
 }
