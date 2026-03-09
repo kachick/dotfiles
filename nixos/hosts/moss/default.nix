@@ -69,5 +69,7 @@
     # Prefer "AVX2" rather than "ZEN3". Because of ZEN3 does not need workaround about PEXT problems
     # See also https://yaneuraou.yaneu.com/2020/08/02/yaneuraou-ryzen-threadripper-3990x-optimization/
     local.yaneuraou-avx2 # For AMD Ryzen 5 7530U
+
+    local.hcpu_shogi
   ];
 }
