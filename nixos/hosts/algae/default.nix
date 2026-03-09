@@ -71,5 +71,7 @@
     # Although the CPU is ZEN2, we use AVX2 to leverage the GHA cache and avoid long local builds.
     # Standard GHA runners (ubuntu-24.04) support AVX2, allowing us to run installCheckPhase in CI.
     local.yaneuraou-avx2 # For AMD Ryzen 7 4700GE
+
+    local.hcpu_shogi
   ];
 }

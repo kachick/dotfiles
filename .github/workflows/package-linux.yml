@@ -43,6 +43,7 @@ jobs:
           - zed-editor
           - mozc
           - yaneuraou-avx2
+          - hcpu_shogi
         # Skip tests for heavy packages to avoid long build times in CI.
         # We trust upstream/hydra for these packages since we're just pinning/patching them.
         include:
