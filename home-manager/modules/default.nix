@@ -1,43 +1,23 @@
 { overlays }:
-let
-  inherit (builtins) listToAttrs;
+{
+  common = ../common.nix;
+  desktop = ./desktop.nix;
+  # All Linux (NixOS + non-NixOS)
+  linux = ../linux.nix;
+  # Only for non-NixOS Linux (Home Manager convention)
+  genericLinux = ../genericLinux.nix;
 
-  # Modules located in the parent directory
-  rootModules = [
-    "common"
-    "linux"
-    "genericLinux"
-    "ephemeral"
-    "darwin"
-    "systemd"
-    "wsl"
-    "lima-guest"
-    "lima-host"
-  ];
+  # Personal profile
+  kachick = ./kachick.nix;
 
-  # Modules located in the current directory (wrappers)
-  localModules = [
-    "desktop"
-    "kachick"
-  ];
+  # Platform/Environment specific
+  ephemeral = ../ephemeral.nix;
+  darwin = ../darwin.nix;
+  systemd = ../systemd.nix;
+  wsl = ../wsl.nix;
+  lima-guest = ../lima-guest.nix;
+  lima-host = ../lima-host.nix;
 
-  rootAttrs = listToAttrs (
-    map (name: {
-      inherit name;
-      value = ../. + "/${name}.nix";
-    }) rootModules
-  );
-
-  localAttrs = listToAttrs (
-    map (name: {
-      inherit name;
-      value = ./. + "/${name}.nix";
-    }) localModules
-  );
-in
-rootAttrs
-// localAttrs
-// {
   overlays = {
     nixpkgs.overlays = [ overlays.default ];
   };

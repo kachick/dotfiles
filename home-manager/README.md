@@ -3,15 +3,6 @@
 This directory contains Home Manager configurations.
 These settings are exported as `homeManagerModules`.
 
-## Directory Structure
-
-This directory follows the standard NixOS/Home Manager project layout:
-
-- `targets/`: **Where** to run (Environment-specific: OS, WSL, VMs)
-- `profiles/`: **Who** is running (Identities: `$USER`, `ephemeral`, and shared base)
-- `programs/`: **What** to install (Application-specific settings)
-- `services/`: **How** to run (Background tasks and user services)
-
 ## Notes on configuration files
 
 ### Where to put settings?
