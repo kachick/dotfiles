@@ -11,7 +11,7 @@
   kachick = ./kachick.nix;
 
   # Platform/Environment specific
-  genericUser = ../genericUser.nix;
+  ephemeral = ../ephemeral.nix;
   darwin = ../darwin.nix;
   systemd = ../systemd.nix;
   wsl = ../wsl.nix;
