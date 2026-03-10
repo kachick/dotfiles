@@ -38,6 +38,15 @@ jobs:
           key: lychee-cache-${{ github.run_id }}
           restore-keys: |
             lychee-cache-
+      - name: Debug cache
+        run: |
+          if [ -f .lycheecache ]; then
+            echo "--- .lycheecache content ---"
+            cat .lycheecache
+            echo "----------------------------"
+          else
+            echo "No .lycheecache found"
+          fi
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
@@ -46,6 +55,7 @@ jobs:
           # Consider to prefer App tokens or PAT rather than the restricted github.token
           # Or just accept 429 as following
           GITHUB_TOKEN: ${{ github.token }}
+          RUST_BACKTRACE: 1
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
           git ls-files | xargs lychee --
