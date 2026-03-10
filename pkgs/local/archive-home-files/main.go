@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,18 +11,32 @@ import (
 	"strings"
 )
 
-// Injected by Nix ldflags
-var (
-	GitleaksConfigPath string
-	AgeRecipients      string // Comma separated recipients
-)
-
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Printf("Usage: %s <archive_basename>\n", os.Args[0])
+	var (
+		gitleaksConfig string
+		ageRecipients  string
+	)
+
+	// Prefer flags, then environment variables
+	flag.StringVar(&gitleaksConfig, "gitleaks-config", os.Getenv("GITLEAKS_CONFIG"), "Path to gitleaks config file")
+	flag.StringVar(&ageRecipients, "age-recipients", os.Getenv("AGE_RECIPIENTS"), "Comma separated age recipients")
+	flag.Parse()
+
+	if flag.NArg() < 1 {
+		fmt.Printf("Usage: %s [options] <archive_basename>\n", os.Args[0])
+		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	archiveBasename := os.Args[1]
+	archiveBasename := flag.Arg(0)
+
+	if gitleaksConfig == "" {
+		fmt.Fprintf(os.Stderr, "Error: GITLEAKS_CONFIG is not set. Use -gitleaks-config flag or set GITLEAKS_CONFIG environment variable.\n")
+		os.Exit(1)
+	}
+	if ageRecipients == "" {
+		fmt.Fprintf(os.Stderr, "Error: AGE_RECIPIENTS is not set. Use -age-recipients flag or set AGE_RECIPIENTS environment variable.\n")
+		os.Exit(1)
+	}
 
 	fmt.Printf("Step 1: Resolving home-manager generation path...\n")
 	hmPath, err := resolveHMPath()
@@ -38,7 +53,7 @@ func main() {
 	}
 
 	fmt.Printf("\nStep 2: Running gitleaks check...\n")
-	if err := runGitleaks(homeFilesPath); err != nil {
+	if err := runGitleaks(homeFilesPath, gitleaksConfig); err != nil {
 		fmt.Fprintf(os.Stderr, "Gitleaks check failed: %v\n", err)
 		os.Exit(1)
 	}
@@ -52,7 +67,7 @@ func main() {
 
 	ageFile := tarFile + ".age"
 	fmt.Printf("\nStep 4: Encrypting with age: %s\n", ageFile)
-	if err := encryptWithAge(tarFile, ageFile); err != nil {
+	if err := encryptWithAge(tarFile, ageFile, ageRecipients); err != nil {
 		fmt.Fprintf(os.Stderr, "Encryption failed: %v\n", err)
 		os.Exit(1)
 	}
@@ -90,9 +105,9 @@ func resolveHMPath() (string, error) {
 	return match[1], nil
 }
 
-func runGitleaks(source string) error {
+func runGitleaks(source, config string) error {
 	// 'dir' is the modern command to scan directories without git context
-	args := []string{"dir", source, "--config", GitleaksConfigPath, "--follow-symlinks", "--verbose", "--redact=100"}
+	args := []string{"dir", source, "--config", config, "--follow-symlinks", "--verbose", "--redact=100"}
 	cmd := exec.Command("gitleaks", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -116,10 +131,13 @@ func createTarball(source, output string) error {
 	return nil
 }
 
-func encryptWithAge(source, output string) error {
-	recipients := strings.Split(AgeRecipients, ",")
+func encryptWithAge(source, output, recipientsStr string) error {
+	recipients := strings.Split(recipientsStr, ",")
 	args := []string{}
 	for _, r := range recipients {
+		if r == "" {
+			continue
+		}
 		args = append(args, "--recipient", r)
 	}
 	// Use -- to ensure source is not treated as a flag even if it starts with -

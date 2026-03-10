@@ -32,11 +32,12 @@ buildGo126Module (finalAttrs: {
   );
 
   postFixup = ''
-    wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \
-      --prefix PATH : "${finalAttrs.wrapperPath}"
+    wrapProgram $out/bin/archive-home-files \
+      --prefix PATH : "${finalAttrs.wrapperPath}" \
+      --set-default GITLEAKS_CONFIG "${gitleaksConfig}" \
+      --set-default AGE_RECIPIENTS "${lib.concatStringsSep "," keys}"
   '';
 
-  # vendorHash = lib.fakeHash;
   vendorHash = "sha256-8kO79VawdMhdP5JczC9Yh1Dqva7EarOQHHCuuiWNF7U="; # same as other local go tools since they share go.mod
   src =
     with lib.fileset;
@@ -45,7 +46,6 @@ buildGo126Module (finalAttrs: {
       fileset = unions [
         ../../../go.mod
         ../../../go.sum
-        ../../../internal
         ./.
       ];
     };
@@ -59,9 +59,12 @@ buildGo126Module (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
-    "-X 'main.GitleaksConfigPath=${gitleaksConfig}'"
-    "-X 'main.AgeRecipients=${lib.concatStringsSep "," keys}'"
   ];
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    $out/bin/archive-home-files --help > /dev/null
+  '';
 
   meta = {
     description = "Backup and encrypt dotfiles generated with home-manager";
@@ -70,6 +73,6 @@ buildGo126Module (finalAttrs: {
       - Scans for secrets with gitleaks (follows symlinks to Nix store).
       - Encrypts the archive with age using all SSH public keys from config/ssh/keys.nix.
     '';
-    mainProgram = finalAttrs.pname;
+    mainProgram = "archive-home-files";
   };
 })
