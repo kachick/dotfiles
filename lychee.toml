@@ -53,6 +53,9 @@ exclude = [
 
   # Requires login
   "account.microsoft.com",
+
+  # There is no landing page
+  "cache.garnix.io",
 ]
 
 exclude_all_private = true
