@@ -61,8 +61,8 @@ jobs:
       - name: Upload snippet
         uses: actions/upload-artifact@v7
         with:
+          name: snippet-${{ matrix.target }}
           path: snippet-${{ matrix.target }}.md
-          archive: false
 
   report:
     needs: diff
