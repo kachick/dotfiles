@@ -59,8 +59,8 @@ buildGo126Module (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
-    "-X main.GitleaksConfigPath=${gitleaksConfig}"
-    "-X main.AgeRecipients=${lib.concatStringsSep "," keys}"
+    "-X 'main.GitleaksConfigPath=${gitleaksConfig}'"
+    "-X 'main.AgeRecipients=${lib.concatStringsSep "," keys}'"
   ];
 
   meta = {

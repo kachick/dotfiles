@@ -76,8 +76,8 @@ func resolveHMPath() (string, error) {
 
 	// Regex to match: id 181 -> /nix/store/...-home-manager-generation
 	re := regexp.MustCompile(`id \d+ -> (/nix/store/[^ ]+)`)
-	lines := strings.Split(out.String(), "\n")
-	if len(lines) == 0 {
+	lines := strings.Split(strings.TrimSpace(out.String()), "\n")
+	if len(lines) == 0 || lines[0] == "" {
 		return "", fmt.Errorf("no output from 'home-manager generations'")
 	}
 
@@ -91,7 +91,8 @@ func resolveHMPath() (string, error) {
 }
 
 func runGitleaks(source string) error {
-	args := []string{"detect", "--source", source, "--config", GitleaksConfigPath, "--follow-symlinks", "--verbose", "--redact=100"}
+	// --no-git is required as home-files is not a git repository
+	args := []string{"detect", "--source", source, "--config", GitleaksConfigPath, "--no-git", "--follow-symlinks", "--verbose", "--redact=100"}
 	cmd := exec.Command("gitleaks", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -121,7 +122,8 @@ func encryptWithAge(source, output string) error {
 	for _, r := range recipients {
 		args = append(args, "--recipient", r)
 	}
-	args = append(args, "--output", output, source)
+	// Use -- to ensure source is not treated as a flag even if it starts with -
+	args = append(args, "--output", output, "--", source)
 
 	cmd := exec.Command("age", args...)
 	cmd.Stdout = os.Stdout
