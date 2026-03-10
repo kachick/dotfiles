@@ -7,10 +7,14 @@ on:
     paths:
       - '.github/workflows/check-link.yml'
       - 'lychee.toml'
+      - '**.md'
+      - '**.nix'
   pull_request:
     paths:
       - '.github/workflows/check-link.yml'
       - 'lychee.toml'
+      - '**.md'
+      - '**.nix'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST
@@ -25,7 +29,7 @@ jobs:
   lychee:
     runs-on: ubuntu-24.04
     env:
-      CLI_VERSION: '0.21.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
+      CLI_VERSION: '0.22.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -37,6 +41,13 @@ jobs:
           mkdir --parents /home/runner/.lychee/bin
           mv lychee /home/runner/.lychee/bin
           echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
+      - name: Restore lychee cache
+        uses: actions/cache/restore@v5
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ github.run_id }}
+          restore-keys: |
+            lychee-cache-
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
@@ -48,3 +59,19 @@ jobs:
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
           git ls-files '*.md' '*.nix' | xargs lychee --
+      - name: Upload cache artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          path: .lycheecache
+          retention-days: 1
+          archive: false
+          if-no-files-found: error
+          include-hidden-files: true
+      - name: Save lychee cache
+
+        if: always()
+        uses: actions/cache/save@v5
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ github.run_id }}
