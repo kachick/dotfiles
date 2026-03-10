@@ -68,11 +68,20 @@ jobs:
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
           git ls-files '*.md' '*.nix' | xargs lychee --
+      - name: Debug cache (post-run)
+        if: always()
+        run: |
+          if [ -f .lycheecache ]; then
+            echo "--- .lycheecache final content ---"
+            cat .lycheecache
+            echo "----------------------------------"
+          else
+            echo "No .lycheecache found after run"
+          fi
       - name: Upload cache artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: lycheecache
           path: .lycheecache
           retention-days: 1
           archive: false
