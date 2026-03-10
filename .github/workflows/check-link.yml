@@ -4,13 +4,7 @@ name: 🔗
 on:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/check-link.yml'
-      - 'lychee.toml'
   pull_request:
-    paths:
-      - '.github/workflows/check-link.yml'
-      - 'lychee.toml'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST
@@ -25,7 +19,7 @@ jobs:
   lychee:
     runs-on: ubuntu-24.04
     env:
-      CLI_VERSION: '0.21.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
+      CLI_VERSION: '0.22.0' # selfup {"extract":"\\d\\.\\d+\\.\\d+","replacer":["lychee", "--version"], "nth": 2}
     steps:
       - uses: actions/checkout@v6.0.2
         with:
@@ -37,6 +31,13 @@ jobs:
           mkdir --parents /home/runner/.lychee/bin
           mv lychee /home/runner/.lychee/bin
           echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
+      - name: Cache lychee
+        uses: actions/cache@v5
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            lychee-cache-${{ runner.os }}-
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
