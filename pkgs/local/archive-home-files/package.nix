@@ -1,7 +1,7 @@
 {
   pkgs,
   lib,
-  home-manager,
+  pinned,
   ...
 }:
 let
@@ -25,7 +25,7 @@ pkgs.writeShellApplication rec {
     coreutils
     age
     unstable.gitleaks
-    home-manager
+    pinned.home-manager
   ];
   meta = {
     description = "Backup and encrypt dotfiles generated with home-manager";

@@ -1,4 +1,8 @@
-{ kanata-tray }:
+{
+  kanata-tray,
+  home-manager-linux,
+  home-manager-darwin,
+}:
 final: _prev:
 let
   system = final.stdenvNoCC.hostPlatform.system;
@@ -20,5 +24,12 @@ in
 
     # Expose the patched mozc for CI building
     inherit (final) mozc;
+
+    # Pinning home-manager from the flake input
+    home-manager =
+      if final.stdenv.hostPlatform.isDarwin then
+        home-manager-darwin.packages.${system}.home-manager
+      else
+        home-manager-linux.packages.${system}.home-manager;
   };
 }
