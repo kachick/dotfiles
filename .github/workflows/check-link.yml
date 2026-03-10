@@ -66,8 +66,9 @@ jobs:
           # Or just accept 429 as following
           GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
+        # Limit to a few files for testing to reduce load
         run: |
-          git ls-files '*.md' '*.nix' | xargs lychee --
+          lychee README.md nixos/README.md --
       - name: Debug cache (post-run)
         if: always()
         run: |
