@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -22,12 +23,14 @@ func main() {
 	flag.StringVar(&ageRecipients, "age-recipients", os.Getenv("AGE_RECIPIENTS"), "Comma separated age recipients")
 	flag.Parse()
 
+	var archiveBasename string
 	if flag.NArg() < 1 {
-		fmt.Printf("Usage: %s [options] <archive_basename>\n", os.Args[0])
-		flag.PrintDefaults()
-		os.Exit(1)
+		// Default to a timestamp-based name if no argument is provided
+		archiveBasename = fmt.Sprintf("home-files-%s", time.Now().Format("20060102-150405"))
+		fmt.Printf("No archive name provided. Using default: %s\n", archiveBasename)
+	} else {
+		archiveBasename = flag.Arg(0)
 	}
-	archiveBasename := flag.Arg(0)
 
 	if gitleaksConfig == "" {
 		fmt.Fprintf(os.Stderr, "Error: GITLEAKS_CONFIG is not set. Use -gitleaks-config flag or set GITLEAKS_CONFIG environment variable.\n")
@@ -58,22 +61,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	tarFile := archiveBasename + ".tar.gz"
-	fmt.Printf("\nStep 3: Creating tarball: %s\n", tarFile)
+	// Create a temporary directory for the intermediate tarball
+	tmpDir, err := os.MkdirTemp("", "archive-home-files-")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating temporary directory: %v\n", err)
+		os.Exit(1)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	tarFile := filepath.Join(tmpDir, "intermediate.tar.gz")
+	fmt.Printf("\nStep 3: Creating temporary tarball...\n")
 	if err := createTarball(homeFilesPath, tarFile); err != nil {
 		fmt.Fprintf(os.Stderr, "Tarball creation failed: %v\n", err)
 		os.Exit(1)
 	}
 
-	ageFile := tarFile + ".age"
+	ageFile := archiveBasename + ".tar.gz.age"
 	fmt.Printf("\nStep 4: Encrypting with age: %s\n", ageFile)
 	if err := encryptWithAge(tarFile, ageFile, ageRecipients); err != nil {
 		fmt.Fprintf(os.Stderr, "Encryption failed: %v\n", err)
 		os.Exit(1)
-	}
-
-	if err := os.Remove(tarFile); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: Failed to remove temporary tarball %s: %v\n", tarFile, err)
 	}
 
 	fmt.Printf("\nSuccessfully created encrypted archive: %s\n", ageFile)
