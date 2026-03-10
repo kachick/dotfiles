@@ -38,7 +38,7 @@ buildGo126Module (finalAttrs: {
       --set-default AGE_RECIPIENTS "${lib.concatStringsSep "," keys}"
   '';
 
-  vendorHash = "sha256-8kO79VawdMhdP5JczC9Yh1Dqva7EarOQHHCuuiWNF7U="; # same as other local go tools since they share go.mod
+  vendorHash = "sha256-LbiBeNcOfL6aseor5rR0ao/3WQvk703b6SU5Pjr7L90=";
   src =
     with lib.fileset;
     toSource {
