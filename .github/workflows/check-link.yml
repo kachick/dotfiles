@@ -48,16 +48,6 @@ jobs:
           key: lychee-cache-${{ github.run_id }}
           restore-keys: |
             lychee-cache-
-      - name: Prune error entries from cache
-        run: |
-          if [ -f .lycheecache ]; then
-            echo "Before pruning:"
-            wc -l .lycheecache
-            # Keep only entries with 200 status code to ensure retries for any failures
-            sed -i '/ 200 [0-9]\{10\}$/!d' .lycheecache
-            echo "After pruning:"
-            wc -l .lycheecache
-          fi
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
