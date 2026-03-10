@@ -1,3 +1,8 @@
+if [ $# -eq 0 ]; then
+	echo "Usage: archive-home-files <archive_basename>"
+	exit 1
+fi
+
 archive_basename="$1"
 home_files_path="$(home-manager generations | rg 'id \d+ -> /nix/store' | head -n1 | cut -d ' ' -f 7)/home-files"
 
