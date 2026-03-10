@@ -6,7 +6,7 @@ scheme = ["https", "http"]
 
 cache = true
 max_cache_age = "14d"
-cache_exclude_status = ["429", "500..599"]
+cache_exclude_status = ["400..599"]
 
 exclude = [
   # It returns 403 error against lychee requests for each word
