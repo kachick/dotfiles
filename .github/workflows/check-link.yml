@@ -86,7 +86,8 @@ jobs:
           path: .lycheecache
           retention-days: 1
           archive: false
-          overwrite: true
+          if-no-files-found: error
+          include-hidden-files: true
       - name: Save lychee cache
 
         if: always()
