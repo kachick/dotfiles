@@ -4,21 +4,21 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/'
-      - '!home-manager/**/*.md'
+      - 'home-manager/**'
       - '!home-manager/darwin.nix'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
+      - '!**.md'
   pull_request:
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - 'home-manager/'
-      - '!home-manager/**/*.md'
+      - 'home-manager/**'
       - '!home-manager/darwin.nix'
       - 'flake.*'
       - 'pkgs/**'
       - 'go.*'
+      - '!**.md'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

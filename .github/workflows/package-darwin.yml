@@ -5,19 +5,17 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/package-darwin.yml'
-      - 'pkgs/'
+      - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
-      - '!overlays/*.md'
-      - '!overlays/**/*.md'
+      - '!**.md'
   pull_request:
     paths:
       - '.github/workflows/package-darwin.yml'
-      - 'pkgs/'
+      - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
-      - '!overlays/*.md'
-      - '!overlays/**/*.md'
+      - '!**.md'
     types: [opened, synchronize, reopened, labeled]
   schedule:
     # Every 10:42 JST

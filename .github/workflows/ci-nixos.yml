@@ -5,15 +5,15 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
-      - '!nixos/**/*.md'
       - 'flake.*'
+      - '!**.md'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
     paths:
       - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
-      - '!nixos/**/*.md'
       - 'flake.*'
+      - '!**.md'
   workflow_dispatch:
   schedule:
     # Every 10:42 JST
