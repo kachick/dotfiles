@@ -70,11 +70,13 @@ jobs:
           git ls-files '*.md' '*.nix' | xargs lychee --
       - name: Upload cache artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lycheecache
           path: .lycheecache
           retention-days: 1
+          compression-level: 0 # it's small enough
+          overwrite: true
       - name: Save lychee cache
 
         if: always()
