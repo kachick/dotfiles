@@ -100,11 +100,10 @@ jobs:
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
       - name: Backup generated config
         run: |
-          nix run .#archive-home-files home-manager-generation-home-files
+          nix run .#archive-home-files 'home-manager-generation-home-files-${{ matrix.runner }}'
       - name: Upload artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
-          name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
-          path: home-manager-generation-home-files.tar.gz.age
+          path: home-manager-generation-home-files-${{ matrix.runner }}.tar.gz.age
           if-no-files-found: 'error'
           archive: false
