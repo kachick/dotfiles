@@ -84,6 +84,8 @@
           inherit
             nixpkgs-unstable
             kanata-tray
+            home-manager-linux
+            home-manager-darwin
             ;
         }
         ++ [ llm-agents.overlays.default ];

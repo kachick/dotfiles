@@ -1,13 +1,74 @@
-{ pkgs, ... }:
-pkgs.writeShellApplication rec {
-  name = "archive-home-files";
-  text = builtins.readFile ./${name}.bash;
-  runtimeInputs = with pkgs; [
-    gnutar
-    ripgrep
-    coreutils
+{
+  pkgs,
+  lib,
+  pinned,
+  makeWrapper,
+  ...
+}:
+
+let
+  inherit (pkgs.unstable) buildGo126Module;
+  keys = import ../../../config/ssh/keys.nix;
+  gitleaksConfig = ../../../config/gitleaks/.gitleaks.toml;
+in
+buildGo126Module (finalAttrs: {
+  pname = "archive-home-files";
+  version = "0.1.0";
+
+  nativeBuildInputs = [
+    makeWrapper
   ];
+
+  wrapperPath = lib.makeBinPath (
+    with pkgs;
+    [
+      gnutar
+      ripgrep
+      coreutils
+      age
+      unstable.gitleaks
+      pinned.home-manager
+    ]
+  );
+
+  postFixup = ''
+    wrapProgram $out/bin/archive-home-files \
+      --prefix PATH : "${finalAttrs.wrapperPath}" \
+      --set-default GITLEAKS_CONFIG "${gitleaksConfig}" \
+      --set-default AGE_RECIPIENTS "${lib.concatStringsSep "," keys}"
+  '';
+
+  vendorHash = "sha256-LbiBeNcOfL6aseor5rR0ao/3WQvk703b6SU5Pjr7L90=";
+  src =
+    with lib.fileset;
+    toSource {
+      root = ../../../.;
+      fileset = unions [
+        ../../../go.mod
+        ../../../go.sum
+        ./.
+      ];
+    };
+
+  env.CGO_ENABLED = 0;
+
+  ldflags = [
+    "-s"
+    "-w"
+  ];
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    $out/bin/archive-home-files --help > /dev/null
+  '';
+
   meta = {
-    description = "Backup dotfiles they are generated with home-manager. See #243";
+    description = "Backup and encrypt dotfiles generated with home-manager";
+    longDescription = ''
+      Backup dotfiles generated with home-manager.
+      - Scans for secrets with gitleaks (follows symlinks to Nix store).
+      - Encrypts the archive with age using all SSH public keys from config/ssh/keys.nix.
+    '';
+    mainProgram = "archive-home-files";
   };
-}
+})
