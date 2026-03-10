@@ -17,6 +17,7 @@ nix-update git-hooks-commit-msg --version=skip --flake
 nix-update git-hooks-pre-push --version=skip --flake
 nix-update reponame --version=skip --flake
 nix-update run_local_hook --version=skip --flake
+nix-update archive-home-files --version=skip --flake
 git ls-files --modified 'pkgs/**.nix' | xargs git add
 git update-index -q --really-refresh
 git diff-index --quiet HEAD || git commit -m 'Bump vendorHash in go packages'

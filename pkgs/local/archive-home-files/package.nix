@@ -50,10 +50,6 @@ buildGo126Module (finalAttrs: {
       ];
     };
 
-  subPackages = [
-    "pkgs/local/${finalAttrs.pname}"
-  ];
-
   env.CGO_ENABLED = 0;
 
   ldflags = [
