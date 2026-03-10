@@ -91,8 +91,8 @@ func resolveHMPath() (string, error) {
 }
 
 func runGitleaks(source string) error {
-	// --no-git is required as home-files is not a git repository
-	args := []string{"detect", "--source", source, "--config", GitleaksConfigPath, "--no-git", "--follow-symlinks", "--verbose", "--redact=100"}
+	// 'dir' is the modern command to scan directories without git context
+	args := []string{"dir", source, "--config", GitleaksConfigPath, "--follow-symlinks", "--verbose", "--redact=100"}
 	cmd := exec.Command("gitleaks", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
