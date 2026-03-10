@@ -107,3 +107,4 @@ jobs:
           name: 'home-files-${{ github.sha }}-${{ matrix.runner }}'
           path: home-manager-generation-home-files.tar.gz.age
           if-no-files-found: 'error'
+          archive: false
