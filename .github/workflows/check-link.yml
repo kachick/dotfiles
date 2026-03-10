@@ -48,6 +48,15 @@ jobs:
           key: lychee-cache-${{ github.run_id }}
           restore-keys: |
             lychee-cache-
+      - name: Debug cache (log)
+        run: |
+          if [ -f .lycheecache ]; then
+            echo "--- .lycheecache content ---"
+            cat .lycheecache
+            echo "----------------------------"
+          else
+            echo "No .lycheecache found"
+          fi
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
@@ -59,7 +68,15 @@ jobs:
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
           git ls-files '*.md' '*.nix' | xargs lychee --
+      - name: Upload cache artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lycheecache
+          path: .lycheecache
+          retention-days: 1
       - name: Save lychee cache
+
         if: always()
         uses: actions/cache/save@v5
         with:
