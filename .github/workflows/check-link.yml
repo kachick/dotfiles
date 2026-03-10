@@ -75,7 +75,7 @@ jobs:
           name: lycheecache
           path: .lycheecache
           retention-days: 1
-          compression-level: 0 # it's small enough
+          archive: false
           overwrite: true
       - name: Save lychee cache
 
