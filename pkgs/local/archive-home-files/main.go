@@ -61,12 +61,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("\nStep 2: Running gitleaks check...\n")
-	if err := runGitleaks(homeFilesPath, gitleaksConfig); err != nil {
-		fmt.Fprintf(os.Stderr, "Gitleaks check failed: %v\n", err)
-		os.Exit(1)
-	}
-
 	// Create a temporary directory for the intermediate tarball
 	tmpDir, err := os.MkdirTemp("", "archive-home-files-")
 	if err != nil {
@@ -76,9 +70,15 @@ func main() {
 	defer os.RemoveAll(tmpDir)
 
 	tarFile := filepath.Join(tmpDir, "intermediate.tar.gz")
-	fmt.Printf("\nStep 3: Creating temporary tarball...\n")
+	fmt.Printf("\nStep 2: Creating temporary tarball for scanning...\n")
 	if err := createTarball(homeFilesPath, tarFile); err != nil {
 		fmt.Fprintf(os.Stderr, "Tarball creation failed: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("\nStep 3: Running gitleaks check on the generated archive...\n")
+	if err := runGitleaksOnArchive(tarFile, gitleaksConfig); err != nil {
+		fmt.Fprintf(os.Stderr, "Gitleaks check failed: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -131,15 +131,16 @@ func resolveHMPath() (string, error) {
 	return match[1], nil
 }
 
-func runGitleaks(source, config string) error {
-	// 'dir' is the modern command to scan directories without git context
-	args := []string{"dir", source, "--config", config, "--follow-symlinks", "--verbose", "--redact=100"}
+func runGitleaksOnArchive(archivePath, config string) error {
+	// Scan inside the archive by setting --max-archive-depth=1.
+	// This is more reliable than scanning symlinked directories.
+	args := []string{"dir", archivePath, "--config", config, "--max-archive-depth=1", "--verbose", "--redact=100"}
 	cmd := exec.Command("gitleaks", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("gitleaks detected secrets or failed: %w", err)
+		return fmt.Errorf("gitleaks detected secrets in archive or failed: %w", err)
 	}
 	return nil
 }
