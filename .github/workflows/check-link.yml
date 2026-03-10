@@ -48,7 +48,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         # Don't use glob. It often ignores .gitignore (why?)
         run: |
-          git ls-files '*.md' '*.nix' | xargs lychee --
+          git ls-files | xargs lychee --
       - name: Save lychee cache
         if: always()
         uses: actions/cache/save@v5
