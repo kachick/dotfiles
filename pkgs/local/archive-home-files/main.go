@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"crypto/rand"
 	"flag"
 	"fmt"
 	"os"
@@ -25,8 +26,13 @@ func main() {
 
 	var archiveBasename string
 	if flag.NArg() < 1 {
-		// Default to a timestamp-based name if no argument is provided
-		archiveBasename = fmt.Sprintf("home-files-%s", time.Now().Format("20060102-150405"))
+		// Default to a timestamp-based name with random suffix if no argument is provided
+		randomSuffix, err := generateRandomString(4)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error generating random suffix: %v\n", err)
+			os.Exit(1)
+		}
+		archiveBasename = fmt.Sprintf("home-files-%s-%s", time.Now().Format("20060102-150405"), randomSuffix)
 		fmt.Printf("No archive name provided. Using default: %s\n", archiveBasename)
 	} else {
 		archiveBasename = flag.Arg(0)
@@ -84,6 +90,19 @@ func main() {
 	}
 
 	fmt.Printf("\nSuccessfully created encrypted archive: %s\n", ageFile)
+}
+
+func generateRandomString(n int) (string, error) {
+	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	var result strings.Builder
+	for _, v := range b {
+		result.WriteByte(charset[int(v)%len(charset)])
+	}
+	return result.String(), nil
 }
 
 func resolveHMPath() (string, error) {
