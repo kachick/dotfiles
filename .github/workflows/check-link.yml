@@ -4,7 +4,17 @@ name: 🔗
 on:
   push:
     branches: [main]
+    paths:
+      - '.github/workflows/check-link.yml'
+      - 'lychee.toml'
+      - '**.md'
+      - '**.nix'
   pull_request:
+    paths:
+      - '.github/workflows/check-link.yml'
+      - 'lychee.toml'
+      - '**.md'
+      - '**.nix'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST
@@ -35,18 +45,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: .lycheecache
-          key: lychee-cache-${{ github.run_id }}
+          key: lychee-cache-v2-${{ github.run_id }}
           restore-keys: |
-            lychee-cache-
-      - name: Debug cache
-        run: |
-          if [ -f .lycheecache ]; then
-            echo "--- .lycheecache content ---"
-            cat .lycheecache
-            echo "----------------------------"
-          else
-            echo "No .lycheecache found"
-          fi
+            lychee-cache-v2-
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
@@ -55,15 +56,12 @@ jobs:
           # Consider to prefer App tokens or PAT rather than the restricted github.token
           # Or just accept 429 as following
           GITHUB_TOKEN: ${{ github.token }}
-          RUST_BACKTRACE: 1
         # Don't use glob. It often ignores .gitignore (why?)
-        # Filter to text-based files to avoid panic on binary files, while maintaining coverage.
-        # Use -n 50 to avoid panic on large inputs and --verbose to identify culprit files.
         run: |
-          git ls-files '**.md' '**.nix' '**.yml' '**.toml' '**.go' '**.bash' '**.sh' | xargs -n 50 lychee --verbose --
+          git ls-files '*.md' '*.nix' | xargs lychee --
       - name: Save lychee cache
         if: always()
         uses: actions/cache/save@v5
         with:
           path: .lycheecache
-          key: lychee-cache-${{ github.run_id }}
+          key: lychee-cache-v2-${{ github.run_id }}
