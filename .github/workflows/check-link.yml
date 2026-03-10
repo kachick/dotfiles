@@ -45,9 +45,19 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: .lycheecache
-          key: lychee-cache-v2-${{ github.run_id }}
+          key: lychee-cache-${{ github.run_id }}
           restore-keys: |
-            lychee-cache-v2-
+            lychee-cache-
+      - name: Prune error entries from cache
+        run: |
+          if [ -f .lycheecache ]; then
+            echo "Before pruning:"
+            wc -l .lycheecache
+            # Keep only entries with 200 status code to ensure retries for any failures
+            sed -i '/ 200 [0-9]\{10\}$/!d' .lycheecache
+            echo "After pruning:"
+            wc -l .lycheecache
+          fi
       - name: Run
         env:
           # Not GH_TOKEN for lychee.
@@ -64,4 +74,4 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: .lycheecache
-          key: lychee-cache-v2-${{ github.run_id }}
+          key: lychee-cache-${{ github.run_id }}
