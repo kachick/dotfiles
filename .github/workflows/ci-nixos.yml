@@ -99,10 +99,8 @@ jobs:
 
           nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result > to_push.txt
 
-          echo "::group::Push list summary"
-          echo "Total: $(wc -l < to_push.txt) paths will be pushed."
-          head -n 20 to_push.txt
-          echo "..."
+          echo "::group::Full list of paths to be pushed ($(wc -l < to_push.txt) paths)"
+          cat to_push.txt
           echo "::endgroup::"
 
           cat to_push.txt | cachix push kachick-dotfiles
