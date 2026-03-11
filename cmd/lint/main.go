@@ -40,7 +40,6 @@ func main() {
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
-	markdownPaths := walker.GetAllMarkdown()
 
 	// Don't add secrets scanner here. It should be done in pre-push hook now.
 	linters := runner.Commands{
@@ -52,7 +51,7 @@ func main() {
 	heavyOrTrivial := runner.Commands{
 		// FIXME: Adding lychee here making Network error
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
-		{Path: "rumdl", Args: append([]string{"check"}, markdownPaths...)},
+		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "zizmor", Args: []string{"."}},
 		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
