@@ -31,12 +31,20 @@ jobs:
       special_tag: ${{ steps.tags.outputs.special }}
       timestamp_tag: ${{ steps.tags.outputs.timestamp }}
       require_comments: ${{ steps.comments.outputs.require }}
+      containers_hash: ${{ steps.containers-hash.outputs.hash }}
     steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
       - name: Get started timestamp
         id: timestamp
         run: |
           # Do not use ":" delimiter as iso-8601/rfc-3339, it cannot be used in container tag
           echo started_at="$(date --utc '+%Y%m%d-%H%M%S-%Z')" | ruby -pe '$_.downcase!' | tee -a "$GITHUB_OUTPUT"
+      - name: Calculate containers directory hash
+        id: containers-hash
+        run: |
+          echo "hash=${{ hashFiles('containers/**', '!containers/**/*.md') }}" | tee -a "$GITHUB_OUTPUT"
       - name: Judge to post comments or not
         id: comments
         if: >-
@@ -105,6 +113,15 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
+      - name: Restore last pushed metadata
+        id: cache-metadata
+        uses: actions/cache/restore@v4
+        with:
+          path: last_metadata.txt
+          # Using specific key for the hash, but fall back to the most recent metadata
+          key: container-metadata-${{ needs.get-meta.outputs.containers_hash }}
+          restore-keys: |
+            container-metadata-
       - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
@@ -158,6 +175,29 @@ jobs:
           podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
       - name: Inspect the created image
         run: 'podman inspect home'
+      - name: Check for significant changes
+        id: check-changes
+        run: |
+          # Extract metadata from the new image using the same logic as archive-home-files
+          # The binary is already installed in the image via home-manager
+          podman run --rm home /home/user/.nix-profile/bin/archive-home-files --metadata-hash > current_metadata.txt
+
+          if [ ! -f last_metadata.txt ]; then
+            echo "No previous metadata found. Initial push required."
+            echo "should_push=true" | tee -a "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "Not a scheduled run. Push anyway."
+            echo "should_push=true" | tee -a "$GITHUB_OUTPUT"
+          else
+            # Compare metadata
+            if diff last_metadata.txt current_metadata.txt; then
+              echo "No significant changes detected in home-files."
+              echo "should_push=false" | tee -a "$GITHUB_OUTPUT"
+            else
+              echo "Significant changes detected in home-files."
+              echo "should_push=true" | tee -a "$GITHUB_OUTPUT"
+            fi
+          fi
       - name: Test the created image
         run: |
           set -euxo pipefail
@@ -169,7 +209,7 @@ jobs:
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
       - name: Push To ghcr.io
         id: push-to-ghcr
-        if: ${{ github.actor == github.repository_owner }}
+        if: ${{ (github.actor == github.repository_owner) && (steps.check-changes.outputs.should_push == 'true') }}
         # Using this method makes ghcr.io warning
         # `No description provided`
         # `To provide a description, add the following line to your Dockerfile:`
@@ -184,7 +224,7 @@ jobs:
           password: ${{ github.token }}
       - name: Inspect the package
         id: inspect-package
-        if: ${{ github.actor == github.repository_owner }}
+        if: ${{ (github.actor == github.repository_owner) && (steps.check-changes.outputs.should_push == 'true') }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: | # shell
@@ -228,7 +268,15 @@ jobs:
 
           This image will be automatically 🤖 removed from ghcr.io 🗑️ if you merged/closed this PR 😌
           EOF
-          ) | gh pr comment ${{ github.event.number }} --body-file -
+          gh pr comment ${{ github.event.number }} --body-file -
+
+      - name: Save current metadata to cache
+        if: ${{ steps.push-to-ghcr.outcome == 'success' }}
+        uses: actions/cache/save@v4
+        with:
+          path: current_metadata.txt
+          # Using timestamp to ensure a new cache entry is created, but key is descriptive
+          key: container-metadata-${{ needs.get-meta.outputs.containers_hash }}-${{ github.run_id }}
 
       - name: Logging disk space
         run: df -h
