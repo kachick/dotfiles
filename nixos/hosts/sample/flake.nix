@@ -35,6 +35,11 @@
           # Import modules from the dotfiles input
           # Note: These modules automatically include dependencies (Home Manager, Overlays, Bootloader)
 
+          # Be careful to add unfree packages if you want to use them in CI.
+          # You can easily add your own unfree packages by:
+          #   nixpkgs.allowedUnfreePackageNames = [ "steam" ];
+          # This list will be merged with the default allowed packages.
+
           # dotfiles.nixosModules.common  # Basic CLI set (Included in desktop)
           dotfiles.nixosModules.desktop # Desktop set (Includes common. Comment out for servers)
           dotfiles.nixosModules.hardware # Shared hardware tweaks (Keyboard remaps, etc.)
