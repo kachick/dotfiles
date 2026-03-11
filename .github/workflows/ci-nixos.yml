@@ -71,12 +71,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
         with:
-          # IMPORTANT: Do not provide auth token for NixOS system builds.
-          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
-          # To avoid licensing issues with public binary caches, we only perform build verification
-          # without pushing the resulting system closures.
-          cachix-auth-token: ''
-          skip-push: true
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build NixOS system [${{ matrix.host }}]
         run: |
           nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
@@ -95,8 +90,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
         with:
-          cachix-auth-token: ''
-          skip-push: true
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Verify sample configuration template
         # Using `nix develop` to ensure `task` is available from devShell
         run: nix develop --command task test-sample-nixos

@@ -217,6 +217,8 @@
 
       # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
       unstable.mdns-scanner
+
+      local.chrome-with-profile-by-name
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator

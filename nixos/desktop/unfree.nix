@@ -42,8 +42,6 @@
     # `rm -rf ~/.config/google-chrome/Singleton*`
     #
     google-chrome
-
-    local.chrome-with-profile-by-name
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
