@@ -72,11 +72,8 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
         with:
-          # IMPORTANT: Do not provide auth token for NixOS system builds.
-          # Some configurations include unfree/non-redistributable packages (e.g., cloudflare-warp, ludii).
-          # To avoid licensing issues with public binary caches, we only perform build verification
-          # without pushing the resulting system closures.
-          cachix-auth-token: ''
+          # Enable manual push with auth token, but skip automatic push to use the filter utility.
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skip-push: true
       - name: Build NixOS system [${{ matrix.host }}]
         run: |
@@ -86,6 +83,17 @@ jobs:
             echo "❌ Nix evaluation warnings detected!"
             exit 1
           fi
+      - name: Push free licensed paths to Cachix
+        # Pushing only free-licensed paths to avoid license issues with public caches.
+        # This step uses our custom utility to accurately filter the closure.
+        run: |
+          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | cachix push kachick-dotfiles
+      - name: Log excluded unfree packages
+        if: always()
+        run: |
+          echo "::group::Excluded Unfree Packages [${{ matrix.host }}]"
+          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --eval-allowed-unfree-package-names
+          echo "::endgroup::"
 
   test-sample:
     runs-on: ubuntu-24.04
