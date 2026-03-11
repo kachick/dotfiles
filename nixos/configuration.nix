@@ -39,6 +39,7 @@
       builtins.elem (lib.getName pkg) [
         "cloudflare-warp"
         "google-chrome"
+        "libfprint-2-tod1-goodix-550a"
         "ludii-bin"
         "vscode"
       ];
