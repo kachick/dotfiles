@@ -93,8 +93,18 @@ jobs:
         # Pushing only free-licensed paths to avoid license issues with public caches.
         # This step uses our custom utility to accurately filter the closure.
         run: |
+          echo "::group::Target unfree store paths to exclude"
+          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --eval-allowed-unfree-package-outpaths
+          echo "::endgroup::"
+
           nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result > to_push.txt
-          echo "Summary: $(wc -l < to_push.txt) paths will be pushed."
+
+          echo "::group::Push list summary"
+          echo "Total: $(wc -l < to_push.txt) paths will be pushed."
+          head -n 20 to_push.txt
+          echo "..."
+          echo "::endgroup::"
+
           cat to_push.txt | cachix push kachick-dotfiles
 
   test-sample:
