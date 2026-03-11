@@ -83,17 +83,20 @@ jobs:
             echo "❌ Nix evaluation warnings detected!"
             exit 1
           fi
-      - name: Push free licensed paths to Cachix
-        # Pushing only free-licensed paths to avoid license issues with public caches.
-        # This step uses our custom utility to accurately filter the closure.
-        run: |
-          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | cachix push kachick-dotfiles
       - name: Log excluded unfree packages
         if: always()
         run: |
           echo "::group::Excluded Unfree Packages [${{ matrix.host }}]"
           nix run .#list-system-packages-by-license -- ${{ matrix.host }} --eval-allowed-unfree-package-names
           echo "::endgroup::"
+      - name: Push free licensed paths to Cachix
+        # Pushing only free-licensed paths to avoid license issues with public caches.
+        # This step uses our custom utility to accurately filter the closure.
+        # TODO: Enable actual push after verifying logs in CI.
+        run: |
+          # nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | cachix push kachick-dotfiles
+          echo "Verification mode: The following number of paths would be pushed:"
+          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | wc -l
 
   test-sample:
     runs-on: ubuntu-24.04
