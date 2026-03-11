@@ -92,11 +92,11 @@ jobs:
       - name: Push free licensed paths to Cachix
         # Pushing only free-licensed paths to avoid license issues with public caches.
         # This step uses our custom utility to accurately filter the closure.
-        # TODO: Enable actual push after verifying logs in CI.
         run: |
-          # nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | cachix push kachick-dotfiles
-          echo "Verification mode: The following number of paths would be pushed:"
-          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result | wc -l
+          nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result > to_push.txt
+          echo "Summary: $(wc -l < to_push.txt) paths will be pushed."
+          # Use nix run nixpkgs#cachix to ensure the command is available regardless of the environment setup.
+          cat to_push.txt | nix run nixpkgs#cachix -- push kachick-dotfiles
 
   test-sample:
     runs-on: ubuntu-24.04
