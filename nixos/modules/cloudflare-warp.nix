@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 {
   # This module enables Cloudflare WARP.
   # While it is suitable for both servers and desktops, we separate it into a module

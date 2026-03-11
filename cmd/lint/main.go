@@ -40,11 +40,13 @@ func main() {
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
+	nixPaths := walker.GetAllNix()
 
 	// Don't add secrets scanner here. It should be done in pre-push hook now.
 	linters := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
+		{Path: "nixf-diagnose", Args: append([]string{"--"}, nixPaths...)},
 		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.2 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
 	}
 
@@ -54,7 +56,6 @@ func main() {
 		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "zizmor", Args: []string{"."}},
-		{Path: "nix", Args: []string{"run", ".#check_nixf"}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
 		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
 	}

@@ -5,14 +5,20 @@ on:
     paths:
       - '.github/workflows/devshell-linux.yml'
       - 'flake.*'
-      - 'devShells.nix'
       - 'cmd/**'
+      - 'internal/**'
+      - '**.nix'
+      - 'Taskfile.yml'
+      - 'go.*'
   pull_request:
     paths:
       - '.github/workflows/devshell-linux.yml'
       - 'flake.*'
-      - 'devShells.nix'
       - 'cmd/**'
+      - 'internal/**'
+      - '**.nix'
+      - 'Taskfile.yml'
+      - 'go.*'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
