@@ -34,7 +34,14 @@
 
     # Allow unfree packages
     # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
-    config.allowUnfree = true;
+    config.allowUnfreePredicate =
+      pkg:
+      builtins.elem (lib.getName pkg) [
+        "cloudflare-warp"
+        "google-chrome"
+        "ludii-bin"
+        "vscode"
+      ];
   };
 
   systemd = {
