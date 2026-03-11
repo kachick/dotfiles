@@ -1,4 +1,8 @@
-{ writeShellApplication, nix, jq }:
+{
+  writeShellApplication,
+  nix,
+  jq,
+}:
 
 writeShellApplication {
   name = "list-system-packages-by-license";
