@@ -95,8 +95,7 @@ jobs:
         run: |
           nix run .#list-system-packages-by-license -- ${{ matrix.host }} --filter-free-licensed-closure-from-build-result > to_push.txt
           echo "Summary: $(wc -l < to_push.txt) paths will be pushed."
-          # Use nix run nixpkgs#cachix to ensure the command is available regardless of the environment setup.
-          cat to_push.txt | nix run nixpkgs#cachix -- push kachick-dotfiles
+          cat to_push.txt | cachix push kachick-dotfiles
 
   test-sample:
     runs-on: ubuntu-24.04
