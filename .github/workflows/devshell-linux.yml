@@ -56,9 +56,6 @@ jobs:
           NIXPKGS_ALLOW_UNFREE: '1'
 
   tasks:
-    defaults:
-      run:
-        shell: nix develop --command bash -eu -o pipefail {0}
     strategy:
       matrix:
         runner: [ubuntu-24.04]
@@ -77,6 +74,6 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Measure nix shell initialization time
-        run: echo 'This step should be done before any other "nix develop" steps'
+      - name: Install CI tools
+        run: nix profile install .#ci
       - run: task ci-dev
