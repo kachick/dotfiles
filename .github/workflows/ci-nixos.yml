@@ -65,7 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [moss, algae, wsl]
+        host: [desktop-free, wsl]
     steps:
       - uses: actions/checkout@v6.0.2
         with:
