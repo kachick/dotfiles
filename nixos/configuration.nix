@@ -13,6 +13,7 @@
     (import ./console.nix { inherit pkgs; })
     (import ./locale.nix { })
     ./nix.nix
+    ./modules/allow-unfree.nix
   ];
 
   # Bootloader.
@@ -31,10 +32,6 @@
 
   nixpkgs = {
     inherit overlays;
-
-    # Allow unfree packages
-    # Be careful to deploy containers if true, and it may take longtime in CI for non binary caches
-    config.allowUnfree = true;
   };
 
   systemd = {
@@ -59,13 +56,6 @@
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
-  };
-
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/cloudflare-warp.nix
-  services.cloudflare-warp = {
-    enable = true;
-    # This should probably use `nixos-unstable`. But using the `nixpkgs-unstable` is okay for this package because Hydra does not test unfree packages.
-    package = pkgs.unstable.cloudflare-warp;
   };
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/shells-environment.nix

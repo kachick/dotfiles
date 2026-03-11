@@ -7,9 +7,9 @@
 
 {
   imports = [
-    (import ./font.nix { inherit pkgs; })
-    (import ./vm.nix { inherit pkgs; })
-    (import ./game.nix { inherit pkgs; })
+    ./font.nix
+    ./vm.nix
+    ./game.nix
   ];
 
   # GH-1255 for NVMe SSD
@@ -266,6 +266,11 @@
       dash-to-dock
       lock-keys
     ]);
+
+  nixpkgs.allowedUnfreePackageNames = [
+    "google-chrome"
+    "vscode"
+  ];
 
   # https://askubuntu.com/a/88947
   #

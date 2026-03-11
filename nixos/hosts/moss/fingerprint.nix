@@ -26,4 +26,6 @@
   # https://sbulav.github.io/nix/nix-fingerprint-authentication/
   security.pam.services.swaylock = { };
   security.pam.services.swaylock.fprintAuth = true;
+
+  nixpkgs.allowedUnfreePackageNames = [ "libfprint-2-tod1-goodix-550a" ];
 }
