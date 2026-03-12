@@ -33,6 +33,8 @@ buildGo126Module (finalAttrs: {
 
   env.CGO_ENABLED = 0;
 
+  passthru.shared-gomod = true;
+
   meta = {
     description = "GH-545. Run local git hook from global hook";
     mainProgram = finalAttrs.pname;

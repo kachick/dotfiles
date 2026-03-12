@@ -30,18 +30,52 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
+  planning:
+    runs-on: ubuntu-24.04
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - id: set-matrix
+        run: |
+          # Hardcoded packages that are always built
+          TARGET_PACKAGES=(
+            "kanata-tray"
+            "lima-full"
+            "zed-editor"
+            "mozc"
+            "yaneuraou-avx2"
+            "hcpu_shogi"
+          )
+
+          # Dynamically add all shared-gomod packages
+          SHARED_GOMOD_PKGS=$(nix run .#list-shared-gomod-pkgs)
+          for pkg in $SHARED_GOMOD_PKGS; do
+            TARGET_PACKAGES+=("$pkg")
+          done
+
+          # Deduplicate and format as JSON
+          # Use a temporary associative array for deduplication (requires bash 4+)
+          declare -A unique_pkgs
+          for pkg in "${TARGET_PACKAGES[@]}"; do
+            unique_pkgs["$pkg"]=1
+          done
+
+          JSON_PKGS=$(printf '%s\n' "${!unique_pkgs[@]}" | jq -R . | jq -s -c .)
+          echo "packages=$JSON_PKGS" >> $GITHUB_OUTPUT
+
   build:
+    needs: planning
     strategy:
       fail-fast: false
       matrix:
         runner: [ubuntu-24.04]
-        pname:
-          - kanata-tray
-          - lima-full
-          - zed-editor
-          - mozc
-          - yaneuraou-avx2
-          - hcpu_shogi
+        pname: ${{ fromJSON(needs.planning.outputs.packages) }}
         # Skip tests for heavy packages to avoid long build times in CI.
         # We trust upstream/hydra for these packages since we're just pinning/patching them.
         include:
@@ -57,18 +91,23 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Build package
-        run: nix build '.#${{ matrix.pname }}'
+        env:
+          PNAME: ${{ matrix.pname }}
+        run: nix build ".#$PNAME"
       - name: Run passthru tests
         # Use nix-build via flake-compat for simpler recursive building.
         # It automatically detects system architecture and skips if no tests exist.
+        env:
+          PNAME: ${{ matrix.pname }}
+          SKIP_TESTS: ${{ matrix.skip_tests }}
         run: |
-          if [[ "${{ matrix.skip_tests }}" == "true" ]]; then
-            echo "Skipping tests for ${{ matrix.pname }} as requested in matrix."
+          if [[ "$SKIP_TESTS" == "true" ]]; then
+            echo "Skipping tests for $PNAME as requested in matrix."
             exit 0
           fi
 
-          if nix eval '.#${{ matrix.pname }}.passthru.tests' >/dev/null 2>&1; then
-            nix-build --attr 'packages.x86_64-linux.${{ matrix.pname }}.passthru.tests'
+          if nix eval ".#$PNAME.passthru.tests" >/dev/null 2>&1; then
+            nix-build --attr "packages.x86_64-linux.$PNAME.passthru.tests"
           else
-            echo 'No passthru.tests found for ${{ matrix.pname }}, skipping.'
+            echo "No passthru.tests found for $PNAME, skipping."
           fi

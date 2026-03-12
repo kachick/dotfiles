@@ -49,6 +49,8 @@ buildGo126Module (finalAttrs: {
 
   env.CGO_ENABLED = 0;
 
+  passthru.shared-gomod = true;
+
   ldflags = [
     "-s"
     "-w"
