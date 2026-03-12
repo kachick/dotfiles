@@ -139,6 +139,16 @@
             type = "app";
             program = pkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
           };
+          list-shared-gomod-pkgs = {
+            type = "app";
+            program =
+              let
+                script = pkgs.writeShellScriptBin "list-shared-gomod-pkgs" ''
+                  ${pkgs.lib.getExe pkgs.unstable.nix} eval --raw ".#packages.${system}" --apply 'ps: builtins.concatStringsSep "\n" (builtins.filter (n: ps.''${n}.passthru.shared-gomod or false) (builtins.attrNames ps))'
+                '';
+              in
+              pkgs.lib.getExe script;
+          };
         }
       );
 

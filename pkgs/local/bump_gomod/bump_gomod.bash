@@ -12,12 +12,12 @@ git update-index -q --really-refresh
 git diff-index --quiet HEAD || git commit -m 'Update go.mod and go.sum'
 
 # See https://github.com/kachick/dotfiles/issues/1174
-# This logics might be extracted. Put at here is my laziness
-nix-update git-hooks-commit-msg --version=skip --flake
-nix-update git-hooks-pre-push --version=skip --flake
-nix-update reponame --version=skip --flake
-nix-update run_local_hook --version=skip --flake
-nix-update archive-home-files --version=skip --flake
+# Find packages which depends on the root go.mod and update their vendorHash
+shared_gomod_pkgs=$(nix run .#list-shared-gomod-pkgs)
+for pkg in $shared_gomod_pkgs; do
+	nix-update "$pkg" --version=skip --flake
+done
+
 git ls-files --modified 'pkgs/**.nix' | xargs git add
 git update-index -q --really-refresh
 git diff-index --quiet HEAD || git commit -m 'Bump vendorHash in go packages'
