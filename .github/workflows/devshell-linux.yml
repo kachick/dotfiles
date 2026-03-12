@@ -65,7 +65,7 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           # Nix shell provides the Go binary. This step is only for enabling standard GitHub Actions caching
           # for Go modules and builds which are not covered by Nix/Cachix in the 'tasks' job.
