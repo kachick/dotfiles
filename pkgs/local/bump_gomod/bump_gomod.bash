@@ -11,11 +11,18 @@ git ls-files '**go.mod' '**go.sum' | xargs git add
 git update-index -q --really-refresh
 git diff-index --quiet HEAD || git commit -m 'Update go.mod and go.sum'
 
-# See https://github.com/kachick/dotfiles/issues/1174
 # Find packages which depends on the root go.mod and update their vendorHash
 shared_gomod_pkgs=$(nix run .#list-shared-gomod-pkgs)
+sample_pkg=$(echo "$shared_gomod_pkgs" | head --lines 1)
+
+nix-update "$sample_pkg" --version=skip --flake
+
+new_hash=$(grep --only-matching --perl-regexp 'vendorHash = "\K[^"]+' "pkgs/local/$sample_pkg/package.nix")
+
 for pkg in $shared_gomod_pkgs; do
-	nix-update "$pkg" --version=skip --flake
+	if [ "$pkg" != "$sample_pkg" ]; then
+		sed -i -E 's|vendorHash = "[^"]+"|vendorHash = "'"$new_hash"'"|' "pkgs/local/$pkg/package.nix"
+	fi
 done
 
 git ls-files --modified 'pkgs/**.nix' | xargs git add

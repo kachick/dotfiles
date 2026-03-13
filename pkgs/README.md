@@ -28,6 +28,9 @@ This directory contains Nix package definitions, organized by their origin and p
 - **Fileset Usage**:
   - Avoid `fileset.gitTracked root` as it triggers rebuilds even for unrelated changes (like `README.md`).
   - [nix-update does not yet support `fileset.gitTracked`](https://github.com/Mic92/nix-update/issues/335), so avoid using it if you need automated updates.
+- **Go Vendoring**:
+  - Prefer `proxyVendor = true` for local Go packages sharing the same `go.mod` (marked with `passthru.shared-gomod = true`).
+  - This ensures they all have the same `vendorHash`, allowing `bump_gomod.bash` to update all of them by running `nix-update` only once, significantly reducing update time in local environments.
 
 ## How to update
 
