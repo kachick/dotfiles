@@ -72,3 +72,22 @@ jobs:
       - name: Install CI tools
         run: nix profile install .#ci
       - run: task ci-dev
+
+  linters:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-slim
+          - ubuntu-24.04
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: NixOS/nix-installer-action@main # There are no tagged releases
+      - name: Install CI tools
+        run: nix profile install .#linters
+      - run: dprint check
+      - run: typos . .github .vscode
