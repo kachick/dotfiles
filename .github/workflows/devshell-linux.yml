@@ -33,7 +33,7 @@ permissions:
 jobs:
   inspect:
     # Only on Linux is enough to check the flake
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6.0.2
@@ -74,13 +74,7 @@ jobs:
       - run: task ci-dev
 
   linters:
-    strategy:
-      fail-fast: false
-      matrix:
-        runner:
-          - ubuntu-slim
-          - ubuntu-24.04
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-24.04 # ubuntu-slim works, but 3x slower
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6.0.2
