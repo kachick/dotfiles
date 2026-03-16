@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-darwin.yml'
+      - '.github/actions/setup-nix'
       - 'home-manager/darwin.nix'
       - 'home-manager/kachick.nix'
       - 'home-manager/common.nix'
@@ -15,6 +16,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ci-home-darwin.yml'
+      - '.github/actions/setup-nix'
       - 'home-manager/darwin.nix'
       - 'home-manager/kachick.nix'
       - 'home-manager/common.nix'
