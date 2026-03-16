@@ -70,7 +70,7 @@ jobs:
           persist-credentials: false
       - uses: NixOS/nix-installer-action@main # There are no tagged releases
       - name: Install CI tools
-        run: nix profile add .#ci
+        run: nix profile add ".#ci"
       - run: task ci-dev
 
   linters:
@@ -88,6 +88,6 @@ jobs:
       - name: Install CI tools
         run: |
           URL=$(jq -r '.nodes."nixpkgs-unstable".locked.url' flake.lock)
-          nix profile add "tarball+$URL#typos" "tarball+$URL#dprint"
+          nix profile add "${URL}?flake=1#legacyPackages.x86_64-linux.typos" "${URL}?flake=1#legacyPackages.x86_64-linux.dprint"
       - run: dprint check
       - run: typos . .github .vscode
