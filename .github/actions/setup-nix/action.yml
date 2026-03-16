@@ -9,9 +9,9 @@ runs:
   steps:
     - name: Install Nix
       # "DeterminateSystems/nix-installer-action" does not run on x86_64-darwin: https://github.com/DeterminateSystems/nix-src/issues/224
-      uses: cachix/install-nix-action@19effe9fe722874e6d46dd7182e4b8b7a43c4a99 # v31.10.0
+      uses: NixOS/nix-installer-action@main # There are no tagged releases
       with:
-        extra_nix_config: |
+        extra-conf: |
           sandbox = true
           accept-flake-config = true
     - name: Configure Cachix
