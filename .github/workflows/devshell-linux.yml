@@ -86,6 +86,8 @@ jobs:
           # restore and save a cache using this key
           primary-key: nix-${{ runner.os }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
       - name: Install CI tools
-        run: nix profile install .#linters
+        run: |
+          URL=$(jq -r '.nodes."nixpkgs-unstable".locked.url' flake.lock)
+          nix profile add "$URL#typos" "$URL#dprint"
       - run: dprint check
       - run: typos . .github .vscode
