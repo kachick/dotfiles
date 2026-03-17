@@ -10,7 +10,7 @@ in
 buildGo126Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";
-  vendorHash = "sha256-E7K6HFyIogQe6PwgvKj3VAhNzBN4tC5pc45UEwLccEA=";
+  vendorHash = "sha256-LojV0ygHI2gr9q4PGh7eW0wDvQfISJDIr7jlOPSAfD4=";
   src =
     with lib.fileset;
     toSource {
