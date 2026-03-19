@@ -6,6 +6,7 @@
   installShellFiles,
   qemu,
   darwin,
+  xorriso,
   makeWrapper,
   apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
   writableTmpDirAsHomeHook,
@@ -90,7 +91,14 @@ buildGo126Module (finalAttrs: {
     mkdir -p $out
     cp -r _output/* $out
     wrapProgram $out/bin/limactl \
-      --prefix PATH : ${lib.makeBinPath [ qemu ]}
+      --prefix PATH : ${
+        lib.makeBinPath [
+          qemu
+
+          # For FreeBSD guests: https://github.com/lima-vm/lima/commit/bca658c36d757487472b3321a13f14bac26fee77
+          xorriso
+        ]
+      }
   ''
   + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd limactl \
