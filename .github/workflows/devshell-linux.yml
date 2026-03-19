@@ -76,6 +76,12 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Install CI tools
-        run: nix profile install .#ci
+      - name: Install direnv
+        run: |
+          curl -sfL https://direnv.net/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Load environment variables
+        run: |
+          direnv allow .
+          direnv export gha > "$GITHUB_ENV"
       - run: task ci-dev
