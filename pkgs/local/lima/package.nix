@@ -121,10 +121,7 @@ buildGo126Module (finalAttrs: {
         # `nix build .#lima.passthru.tests.minimalAgent`
         minimalAgent = testers.testEqualContents {
           assertion = "limactl only detects host's architecture guest agent by default";
-          # Ignore GID mismatches on macOS runners.
-          # `writeText` and `runCommand` have different GIDs (0/wheel vs 350/nixbld) on darwin.
-          # See also: https://github.com/NixOS/nixpkgs/issues/393375
-          checkMetadata = false;
+          checkMetadata = false; # Ignore GID mismatches on macOS runners: https://github.com/NixOS/nixpkgs/pull/452948
           expected = writeText "expected" ''
             true
             1
