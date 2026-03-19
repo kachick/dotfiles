@@ -13,25 +13,24 @@ buildGo126Module (finalAttrs: {
 
   inherit (lima) version src vendorHash;
 
-  # This is mainly not needed because the upstream repository forces the value:
-  #   - https://github.com/lima-vm/lima/blob/v2.0.2/Makefile#L393-L399
-  # However, clarifying the value prevents confusion and specifically guards against regressions, such as the one that previously occurred:
-  #   - https://github.com/NixOS/nixpkgs/pull/458867
-  env.CGO_ENABLED = "0";
+  env = {
+    # This is mainly not needed because the upstream repository forces the value:
+    #   - https://github.com/lima-vm/lima/blob/v2.1.0/Makefile#L421-L428
+    # However, clarifying the value prevents confusion and specifically guards against regressions, such as the one that previously occurred:
+    #   - https://github.com/NixOS/nixpkgs/pull/458867
+    CGO_ENABLED = "0";
 
-  buildPhase =
-    let
-      makeFlags = [
-        "VERSION=v${finalAttrs.version}"
-      ];
-    in
-    ''
-      runHook preBuild
+    # See also: https://github.com/lima-vm/lima/issues/4654
+    VERSION = "v${finalAttrs.version}";
+  };
 
-      make ${lib.escapeShellArgs makeFlags} additional-guestagents
+  buildPhase = ''
+    runHook preBuild
 
-      runHook postBuild
-    '';
+    make additional-guestagents
+
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
