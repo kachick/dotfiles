@@ -3,14 +3,14 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci-nixos.yaml'
+      - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
     paths:
-      - '.github/workflows/ci-nixos.yaml'
+      - '.github/workflows/ci-nixos.yml'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -39,7 +39,7 @@ jobs:
           # Only wait for workflows that provide binary caches to avoid deadlocks
           wait-list: |
             [
-              { "workflowFile": "package-linux.yaml", "optional": true }
+              { "workflowFile": "package-linux.yml", "optional": true }
             ]
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
 

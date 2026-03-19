@@ -11,10 +11,10 @@ rules:
         cachix/*: any
   excessive-permissions:
     ignore:
-      - merge-bot-pr.yaml
-      - cleanup-staging-packages.yaml
-      - container.yaml
+      - merge-bot-pr.yml
+      - cleanup-staging-packages.yml
+      - container.yml
   template-injection:
     ignore:
-      - container.yaml
-      - cleanup-staging-packages.yaml
+      - container.yml
+      - cleanup-staging-packages.yml

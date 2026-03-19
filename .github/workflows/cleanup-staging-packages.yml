@@ -36,7 +36,7 @@ jobs:
           fi
   minimize-old-comments:
     needs: [get-meta]
-    uses: ./.github/workflows/minimize-staging-deploy-comments.yaml
+    uses: ./.github/workflows/minimize-staging-deploy-comments.yml
     with:
       pr-number: ${{ fromJSON(needs.get-meta.outputs.pr-number) }}
   ghcr:
