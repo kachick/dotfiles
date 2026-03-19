@@ -25,16 +25,16 @@ let
 in
 buildGo126Module (finalAttrs: {
   pname = "lima";
-  version = "2.0.3";
+  version = "2.1.0";
 
   src = fetchFromGitHub {
     owner = "lima-vm";
     repo = "lima";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-NoHNmJ6z7eZTzjl8ps3wFY2e68FcoBsu5ZhE0NXt95g=";
+    hash = "sha256-oauy/imyNYIlvi9iGFVjZFqcFd9sByhECvvl9dyWWDM=";
   };
 
-  vendorHash = "sha256-SeLYVQI+ZIbR9qVaNyF89VUvXdfv1M5iM+Cbas6e2E0=";
+  vendorHash = "sha256-+2IppdiISlpSTijX88sYI1AC/Ux1m1b0o81NFWjnAh8=";
 
   nativeBuildInputs = [
     makeWrapper
