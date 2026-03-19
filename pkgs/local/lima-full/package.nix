@@ -33,6 +33,8 @@ symlinkJoin {
         # `nix build .#lima-full.passthru.tests.additionalAgents`
         additionalAgents = testers.testEqualContents {
           assertion = "limactl also detects additional guest agents if specified";
+          # Skip metadata checks to avoid GID mismatches on macOS. See lima's tests for detail.
+          checkMetadata = false;
           expected = writeText "expected" ''
             true
             true
