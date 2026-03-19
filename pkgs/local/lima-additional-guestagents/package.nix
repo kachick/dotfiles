@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   findutils,
 }:
 
@@ -18,13 +19,19 @@ buildGo126Module (finalAttrs: {
   #   - https://github.com/NixOS/nixpkgs/pull/458867
   env.CGO_ENABLED = "0";
 
-  buildPhase = ''
-    runHook preBuild
+  buildPhase =
+    let
+      makeFlags = [
+        "VERSION=v${finalAttrs.version}"
+      ];
+    in
+    ''
+      runHook preBuild
 
-    make additional-guestagents
+      make ${lib.escapeShellArgs makeFlags} additional-guestagents
 
-    runHook postBuild
-  '';
+      runHook postBuild
+    '';
 
   installPhase = ''
     runHook preInstall
