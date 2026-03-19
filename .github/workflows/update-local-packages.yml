@@ -76,8 +76,11 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Install dependencies
+        run: |
+          nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
       - name: Update packages
-        shell: nix develop --command bash -eu -o pipefail {0}
         run: |
           nix-update --commit --flake "${PACKAGE}"
         env:
