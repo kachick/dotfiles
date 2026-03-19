@@ -25,16 +25,16 @@ let
 in
 buildGo126Module (finalAttrs: {
   pname = "lima";
-  version = "2.0.3";
+  version = "2.1.0";
 
   src = fetchFromGitHub {
     owner = "lima-vm";
     repo = "lima";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-NoHNmJ6z7eZTzjl8ps3wFY2e68FcoBsu5ZhE0NXt95g=";
+    hash = "sha256-oauy/imyNYIlvi9iGFVjZFqcFd9sByhECvvl9dyWWDM=";
   };
 
-  vendorHash = "sha256-SeLYVQI+ZIbR9qVaNyF89VUvXdfv1M5iM+Cbas6e2E0=";
+  vendorHash = "sha256-+2IppdiISlpSTijX88sYI1AC/Ux1m1b0o81NFWjnAh8=";
 
   nativeBuildInputs = [
     makeWrapper
@@ -62,20 +62,28 @@ buildGo126Module (finalAttrs: {
   #   - guest agents(include native-agent): CGO_ENABLED=0
   # See also passthru.tests
 
-  buildPhase =
-    let
-      makeFlags = [
-        "VERSION=v${finalAttrs.version}"
-        "CC=${stdenv.cc.targetPrefix}cc"
-      ];
-    in
-    ''
-      runHook preBuild
+  env = {
+    # This is mainly not needed because the upstream repository forces the value:
+    #   - limactl: CGO_ENABLED=1
+    #   - guest agents(include native-agent): CGO_ENABLED=0
+    # See also passthru.tests
+    #
+    # CGO_ENABLED = "1"; # 1 by buildGoModule's default.
 
-      make ${lib.escapeShellArgs makeFlags} native
+    # See also: https://github.com/lima-vm/lima/issues/4654
+    VERSION = "v${finalAttrs.version}";
 
-      runHook postBuild
-    '';
+    # See also: https://github.com/NixOS/nixpkgs/pull/356050
+    CC = "${stdenv.cc.targetPrefix}cc";
+  };
+
+  buildPhase = ''
+    runHook preBuild
+
+    make native
+
+    runHook postBuild
+  '';
 
   installPhase = ''
     runHook preInstall
