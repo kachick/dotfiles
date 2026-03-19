@@ -201,7 +201,7 @@ in
         {
           name = "yaml";
           auto-format = true;
-          formatter = mkDprint "yml";
+          formatter = mkDprint "yaml";
           language-servers = [
             "yaml-language-server"
             "ansible-language-server"

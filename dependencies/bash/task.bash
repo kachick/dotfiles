@@ -27,7 +27,7 @@ function _task()
     ;;
     -t|--taskfile)
       _filedir yaml || return $?
-      _filedir yml
+      _filedir yaml
       return $?
     ;;
     -o|--output)
