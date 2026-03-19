@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/package-linux.yml'
+      - '.github/workflows/package-linux.yaml'
       - '.github/actions/setup-nix'
       - 'pkgs/**'
       - 'flake.lock'
@@ -12,7 +12,7 @@ on:
       - '!**.md'
   pull_request:
     paths:
-      - '.github/workflows/package-linux.yml'
+      - '.github/workflows/package-linux.yaml'
       - '.github/actions/setup-nix'
       - 'pkgs/**'
       - 'flake.lock'

@@ -3,23 +3,23 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/devshell-linux.yml'
+      - '.github/workflows/devshell-linux.yaml'
       - '.github/actions/setup-nix'
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
       - '**.nix'
-      - 'Taskfile.yml'
+      - 'Taskfile.yaml'
       - 'go.*'
   pull_request:
     paths:
-      - '.github/workflows/devshell-linux.yml'
+      - '.github/workflows/devshell-linux.yaml'
       - '.github/actions/setup-nix'
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
       - '**.nix'
-      - 'Taskfile.yml'
+      - 'Taskfile.yaml'
       - 'go.*'
   schedule:
     # Every 10:42 JST

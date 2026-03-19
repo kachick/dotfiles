@@ -11,7 +11,7 @@ Basically following codes will be done in PowerShell
    sudo pwsh --command '[Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", "$HOME\.config", "Machine")'
    ```
 
-1. Download windows helper binary from [artifacts](https://github.com/kachick/dotfiles/actions/workflows/windows.yml)
+1. Download windows helper binary from [artifacts](https://github.com/kachick/dotfiles/actions/workflows/windows.yaml)
 1. New session of pwsh
 
    ```pwsh

@@ -7,7 +7,7 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/windows.yml'
+      - '.github/workflows/windows.yaml'
       - 'windows**'
       - '**.go'
       - 'go.*'
@@ -15,7 +15,7 @@ on:
       - '!**.md'
   pull_request:
     paths:
-      - '.github/workflows/windows.yml'
+      - '.github/workflows/windows.yaml'
       - 'windows**'
       - '**.go'
       - 'go.*'

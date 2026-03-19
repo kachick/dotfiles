@@ -7,13 +7,13 @@ on:
       - 'nixos/nix.nix'
       - 'pkgs/local/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
-      - '.github/workflows/lima-guest.yml'
+      - '.github/workflows/lima-guest.yaml'
   pull_request:
     paths:
       - 'nixos/nix.nix'
       - 'pkgs/local/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
-      - '.github/workflows/lima-guest.yml'
+      - '.github/workflows/lima-guest.yaml'
   workflow_dispatch:
   schedule:
     # Every 10:42 on Tuesday JST

@@ -24,7 +24,6 @@ includes = [
   "*.toml",
   "*.md",
   "*.yaml",
-  "*.yml",
   "*.kdl",
 ]
 

@@ -1,13 +1,13 @@
 # dotfiles
 
-[![~/ on Linux](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml?query=branch%3Amain+)
-[![~/ on Darwin](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml?query=branch%3Amain+)
-[![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
-[![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
-[![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml?query=branch%3Amain+)
-[![Package on Darwin](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml?query=branch%3Amain+)
-[![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
-[![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
+[![~/ on Linux](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yaml?query=branch%3Amain+)
+[![~/ on Darwin](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yaml?query=branch%3Amain+)
+[![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yaml?query=branch%3Amain+)
+[![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yaml?query=branch%3Amain+)
+[![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yaml?query=branch%3Amain+)
+[![Package on Darwin](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yaml?query=branch%3Amain+)
+[![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yaml?query=branch%3Amain+)
+[![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yaml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yaml?query=branch%3Amain+)
 
 Personal dotfiles that can be placed in the public repository\
 Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
@@ -170,7 +170,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
 1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
-1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further detail.
+1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yaml) for further detail.
 
 ## Multi-booting on Windows and Linux
 
