@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"slices"
 	"strings"
 )
@@ -43,7 +44,15 @@ func main() {
 	}
 	trustedPaths := strings.Split(os.Getenv("GIT_HOOKS_TRUST_REPOS"), ":")
 
-	localHookPath := fmt.Sprintf("%s/.git/hooks/%s", repoPath, hookName)
+	hooksDir := filepath.Join(repoPath, ".git", "hooks")
+	localHookPath := filepath.Join(hooksDir, hookName)
+
+	// Ensure the resulting path is still within the .git/hooks directory to prevent path traversal
+	rel, err := filepath.Rel(hooksDir, localHookPath)
+	if err != nil || strings.HasPrefix(rel, "..") || filepath.IsAbs(rel) {
+		log.Fatalf("invalid hook name: %s\n", hookName)
+	}
+
 	if _, err := os.Stat(localHookPath); os.IsNotExist(err) {
 		return
 	}
