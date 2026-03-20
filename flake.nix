@@ -93,24 +93,9 @@
       mkPkgs =
         system:
         let
-          importPkgs = channel: import channel { inherit system overlays; };
           base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
-          bootstrap = importPkgs base;
-
-          # Apply nixpkgs commits or PRs as urgent patches. It is especially helpful when a commit has not even reached the unstable channels.
-          patched = bootstrap.applyPatches {
-            name = "patched-nixpkgs-unstable";
-            src = nixpkgs-unstable;
-            patches = [
-              (bootstrap.fetchpatch2 {
-                name = "electron_39-fix-patch_dir.patch";
-                url = "https://github.com/NixOS/nixpkgs/commit/a499dfba7b52aac86504356512836550e9d49a5a.patch?full_index=1";
-                hash = "sha256-vRb0uf927IR5knjFkH6Jsm24ZPFnhq58l4DAV0HMieM=";
-              })
-            ];
-          };
         in
-        importPkgs patched;
+        import base { inherit system overlays; };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
       forAllSystems =
