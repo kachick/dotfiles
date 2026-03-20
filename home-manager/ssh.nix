@@ -120,6 +120,7 @@ in
 
             # For WSL2 instances like default Ubuntu and podman-machine
             "localhost" = gitHostingService // {
+              forwardAgent = true;
               extraOptions = {
                 StrictHostKeyChecking = "ask";
                 UserKnownHostsFile = "/dev/null";
@@ -130,10 +131,16 @@ in
         domains = {
           # mDNS via avahi.
           "*.local" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
+            forwardAgent = true;
             extraOptions = {
               # NixOS rebuilds change the host key
               StrictHostKeyChecking = "accept-new";
             };
+          };
+
+          # tailscale
+          "*.ts.net" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
+            forwardAgent = true;
           };
         };
 
@@ -149,7 +156,7 @@ in
             # unit: seconds
             serverAliveInterval = 60;
 
-            forwardAgent = true;
+            forwardAgent = false;
 
             controlMaster = "auto";
             controlPersist = "10m";
