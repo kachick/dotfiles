@@ -15,7 +15,10 @@ stdenvNoCC.mkDerivation {
 
   dontUnpack = true;
 
-  nativeBuildInputs = [ yq-go gnugrep ];
+  nativeBuildInputs = [
+    yq-go
+    gnugrep
+  ];
 
   buildPhase = ''
     runHook preBuild
@@ -58,7 +61,7 @@ stdenvNoCC.mkDerivation {
     longDescription = ''
       Most standard Lima templates (except for a few like k3s) inherit `template:_default/mounts`, which cannot be excluded via `default.yaml`.
       To improve security, this package creates templates with those mounts removed by default.
-      While Lima 2.0+ supports avoiding default mounts via CLI flags like `--mount-only`, it is safer to have them disabled by default in the template.
+      While Lima 2.1+ supports avoiding default mounts via CLI flags like `--mount-only`, `--mount-none` it is safer to have them disabled by default in the template.
       Revisit once https://github.com/lima-vm/lima/discussions/4372 is resolved.
     '';
     inherit (lima.meta) platforms;
