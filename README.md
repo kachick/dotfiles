@@ -194,29 +194,29 @@ However I should keep the minimum environment for now.
 
 ## Lima
 
-1. Start a standard Docker guest with Lima:
+1. Start a custom Docker guest with Lima:
 
    ```bash
-   limactl start --name=docker-nix template:docker
+   limactl start --name=homeless-docker-nix template:homeless-docker
    ```
 
 1. Install and configure Nix in the guest:
 
    ```bash
    REV=main; \
-     curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
+     curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell homeless-docker-nix bash -s -- "$REV"
    ```
 
 1. Apply home-manager:
 
    ```bash
-   limactl shell docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
+   limactl shell homeless-docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
    ```
 
 1. Run containers:
 
    ```bash
-   limactl shell docker-nix docker run --rm hello-world
+   limactl shell homeless-docker-nix docker run --rm hello-world
    ```
 
 ## How to setup secrets

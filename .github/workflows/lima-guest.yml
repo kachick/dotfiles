@@ -33,6 +33,8 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: ./.github/actions/setup-nix
+
       - uses: lima-vm/lima-actions/setup@55627e31b78637bf254a8b2a14da8ea7d12564e5 # v1
         id: lima-setup
         with:
@@ -48,10 +50,16 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Create Lima Instance from standard template
+      - name: Generate homeless-docker template
         run: |
-          limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix template:docker
+          mkdir -p ~/.lima/_templates
+          nix build .#lima-custom-templates
+          cp result/share/lima/templates/homeless-docker.yaml ~/.lima/_templates/
+
+      - name: Create Lima Instance from custom template
+        run: |
+          limactl delete -f homeless-docker-nix || true
+          limactl create --yes --name=homeless-docker-nix template:homeless-docker
 
   test-provisioning:
     needs: prepare-image
@@ -76,25 +84,25 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Start docker-nix
-        run: limactl start --name=docker-nix --tty=false
+      - name: Start homeless-docker-nix
+        run: limactl start --name=homeless-docker-nix --tty=false
 
       - name: Install and configure Nix in Guest
         env:
           REV: ${{ github.head_ref || github.ref_name }}
         run: |
           # Use the same pipe-based command as in README, passing the current branch.
-          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REV}"
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell homeless-docker-nix bash -s -- "${REV}"
 
       - name: Verify Nix installation in Guest
-        run: limactl shell docker-nix nix --version
+        run: limactl shell homeless-docker-nix nix --version
 
       - name: Show Binary Cache effectiveness in Guest
         env:
           REV: ${{ github.head_ref || github.ref_name }}
         run: |
           FLAKE_URI="github:kachick/dotfiles/${REV}"
-          limactl shell docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
+          limactl shell homeless-docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
 
       - name: Show Docker works in Guest
-        run: limactl shell docker-nix docker run --rm hello-world
+        run: limactl shell homeless-docker-nix docker run --rm hello-world
