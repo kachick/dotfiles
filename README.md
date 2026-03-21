@@ -210,7 +210,7 @@ However I should keep the minimum environment for now.
 1. Apply home-manager:
 
    ```bash
-   limactl shell docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#kachick@lima"
+   limactl shell docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
    ```
 
 1. Run containers:

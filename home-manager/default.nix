@@ -13,6 +13,7 @@ let
     };
   };
 in
+# Users on NixOS are separated from this file.
 {
   "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
     shared
@@ -38,17 +39,28 @@ in
     }
   );
 
-  # Lima guest username is forced to match the host username by design.
-  # Revisit once https://github.com/lima-vm/lima/issues/1015 has resolved
-  "kachick@lima" = home-manager-linux.lib.homeManagerConfiguration (
+  "user@lima" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.ephemeral
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.lima-guest
+      ];
+    }
+  );
+
+  "user@container" = home-manager-linux.lib.homeManagerConfiguration (
+    shared
+    // {
+      pkgs = x86-Linux-pkgs;
+      modules = [
+        outputs.homeManagerModules.ephemeral
+        outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
+        outputs.homeManagerModules.systemd
       ];
     }
   );
@@ -75,19 +87,6 @@ in
         outputs.homeManagerModules.kachick
         outputs.homeManagerModules.darwin
         { home.username = "runner"; }
-      ];
-    }
-  );
-
-  "user@container" = home-manager-linux.lib.homeManagerConfiguration (
-    shared
-    // {
-      pkgs = x86-Linux-pkgs;
-      modules = [
-        outputs.homeManagerModules.ephemeral
-        outputs.homeManagerModules.linux
-        outputs.homeManagerModules.genericLinux
-        outputs.homeManagerModules.systemd
       ];
     }
   );
