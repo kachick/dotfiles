@@ -50,11 +50,13 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
-      - name: Generate homeless-docker template
+      - name: Generate homeless templates
         run: |
-          mkdir -p ~/.lima/_templates
           nix build .#lima-custom-templates
-          cp result/share/lima/templates/homeless-docker.yaml ~/.lima/_templates/
+          # Remove potential read-only symlink from cache
+          rm -rf ~/.lima/_templates
+          mkdir -p ~/.lima/_templates
+          cp result/share/lima/templates/homeless-*.yaml ~/.lima/_templates/
 
       - name: Create Lima Instance from custom template
         run: |

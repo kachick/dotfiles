@@ -2,6 +2,7 @@
   lib,
   stdenvNoCC,
   yq-go,
+  gnugrep,
   pkgs,
 }:
 
@@ -14,12 +15,17 @@ stdenvNoCC.mkDerivation {
 
   dontUnpack = true;
 
-  nativeBuildInputs = [ yq-go ];
+  nativeBuildInputs = [ yq-go gnugrep ];
 
   buildPhase = ''
     runHook preBuild
 
-    yq 'del(.base[] | select(. == "template:_default/mounts"))' ${lima}/share/lima/templates/docker.yaml > homeless-docker.yaml
+    for template_path in ${lima}/share/lima/templates/*.yaml; do
+      template_name=$(basename "$template_path")
+      if yq '.base[] | select(. == "template:_default/mounts")' "$template_path" | grep -q .; then
+        yq 'del(.base[] | select(. == "template:_default/mounts"))' "$template_path" > "homeless-$template_name"
+      fi
+    done
 
     runHook postBuild
   '';
@@ -29,8 +35,7 @@ stdenvNoCC.mkDerivation {
   checkPhase = ''
     runHook preCheck
 
-    # Verify that the deletion actually happened by comparing the logical structure.
-    # If the structure is exactly the same, the 'del' command silently failed (e.g. target string changed).
+    # Verify that the deletion actually happened for a representative template.
     if [ "$(yq -o=json -I=0 '.' ${lima}/share/lima/templates/docker.yaml)" = "$(yq -o=json -I=0 '.' homeless-docker.yaml)" ]; then
       echo "Error: The template was not modified. The target string might not exist anymore." >&2
       exit 1
@@ -43,7 +48,7 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
 
     mkdir -p $out/share/lima/templates
-    cp homeless-docker.yaml $out/share/lima/templates/
+    cp homeless-*.yaml $out/share/lima/templates/
 
     runHook postInstall
   '';
