@@ -3,8 +3,9 @@ mounts:
   # TODO: Disable default mounting host home to keep secure even if it is not writable
   # - location: '~' # Just comment out still respects template default. And setting mountPoint as false handles the false as string...
   - location: '~/repos' # See git.nix in this repo
-    # Don't hardcode it as '{{.Home}}/repos' to consider different username usecase of host and guests.
-    # Also consider and tests ghq and the wrapped scripts(cdrepo).
+    # Avoid hardcoding '{{.Home}}/repos' to ensure 'limactl shell' can
+    # synchronize the working directory by matching the host's absolute path.
+    # Also, consider and test compatibility with ghq and wrapped scripts (e.g., cdrepo).
     # mountPoint: '{{.Home}}/repos'
     writable: true # For developing purpose, writable should be reasonable. And my system does not directly include these files
 
