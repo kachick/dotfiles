@@ -25,6 +25,10 @@ stdenvNoCC.mkDerivation {
 
     for template_path in ${lima}/share/lima/templates/*.yaml; do
       template_name=$(basename "$template_path")
+      # Skip default.yaml as it has a special configuration and isn't intended to be a standalone homeless template.
+      if [ "$template_name" = "default.yaml" ]; then
+        continue
+      fi
       if yq '.base[] | select(. == "template:_default/mounts")' "$template_path" | grep -q .; then
         yq 'del(.base[] | select(. == "template:_default/mounts"))' "$template_path" > "homeless-$template_name"
       fi
