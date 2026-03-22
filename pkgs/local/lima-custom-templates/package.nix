@@ -3,6 +3,7 @@
   stdenvNoCC,
   yq-go,
   gnugrep,
+  writableTmpDirAsHomeHook,
   pkgs,
 }:
 
@@ -16,6 +17,10 @@ stdenvNoCC.mkDerivation {
   dontUnpack = true;
 
   nativeBuildInputs = [
+    # Use yq-go instead of `limactl template yq` because the latter fills in
+    # default values and resolves external references before evaluation,
+    # which would result in large, static YAML files rather than templates
+    # that inherit from bases.
     yq-go
     gnugrep
   ];
@@ -58,6 +63,28 @@ stdenvNoCC.mkDerivation {
     cp homeless-*.yaml $out/share/lima/templates/
 
     runHook postInstall
+  '';
+
+  doInstallCheck = true;
+
+  nativeInstallCheckInputs = [
+    lima
+    # Workaround for: "panic: $HOME is not defined" in limactl
+    writableTmpDirAsHomeHook
+  ];
+
+  installCheckPhase = ''
+    runHook preInstallCheck
+
+    for template in $out/share/lima/templates/*.yaml; do
+      limactl validate "$template"
+    done
+
+    runHook postInstallCheck
+  '';
+
+  preInstallCheck = ''
+    export USER=nix
   '';
 
   meta = {
