@@ -27,6 +27,11 @@ in
     # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for detail
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
 
+    file.".lima/_templates" = {
+      source = "${pkgs.local.lima-custom-templates}/share/lima/templates";
+      recursive = true;
+    };
+
     shellAliases = {
       "lc" = "limactl";
     };
