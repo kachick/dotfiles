@@ -101,25 +101,7 @@
     # Don't put shell delegation code into early phase than interactive check such as profileExtra and bashrcExtra , it blocks applying home.file on NixOS. See GH-680 for details
     # There is no ideal option in home-manager bash module for realizing first entry of the interactive shell. https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/bash.nix#L227-L240
     # However initExtra is still better option than profileExtra.
-    initExtra = ''
-      # Don't delegate shell execution before interactive shell checks.
-      # Auto-switch to Zsh if Bash is the login shell.
-      # Inspired by Arch Wiki's Fish setup:
-      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-      #
-      # --- Optimization & Cross-Platform Compatibility ---
-      # The order of these checks matters for two reasons:
-      # 1. Performance: Prioritize internal checks to minimize external 'ps' calls.
-      # 2. Cross-Platform Reliability: 'ps' acts differently across systems.
-      #    Even with 'procps' from nixpkgs, the package is not the same on Linux and Darwin, though it has the same name in Nixpkgs.
-      # 3. Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
-      # This approach is also beneficial since Bash isn't typically a login shell on macOS.
-      if [[ -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && $PPID -gt 0 && $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ]]
-      then
-        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
-      fi
-
+    initExtra = (builtins.readFile pkgs.local.bash-zsh-switcher) + ''
       # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
       if [[ -n "$SSH_CONNECTION" && "$OSTYPE" == darwin* && "$TERM" == "xterm-ghostty" ]]; then
         export TERM=xterm-256color
