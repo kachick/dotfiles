@@ -11,6 +11,9 @@
 # 3. Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
 # This approach is also beneficial since Bash isn't typically a login shell on macOS.
 if [[ -z "${BASH_EXECUTION_STRING}" && "${SHLVL}" == 1 && $PPID -gt 0 && "$(@ps@ --no-header --pid=$PPID --format=comm)" != "zsh" ]]; then
-	shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-	exec @zsh@ "$LOGIN_OPTION"
+	LOGIN_OPTIONS=()
+	if shopt -q login_shell; then
+		LOGIN_OPTIONS+=("--login")
+	fi
+	exec @zsh@ "${LOGIN_OPTIONS[@]}"
 fi
