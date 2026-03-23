@@ -12,5 +12,5 @@
 # This approach is also beneficial since Bash isn't typically a login shell on macOS.
 if [[ -z "${BASH_EXECUTION_STRING}" && "${SHLVL}" == 1 && $PPID -gt 0 && "$(@ps@ --no-header --pid=$PPID --format=comm)" != "zsh" ]]; then
 	shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-	exec @zsh@ $LOGIN_OPTION
+	exec @zsh@ "$LOGIN_OPTION"
 fi
