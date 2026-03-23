@@ -104,43 +104,46 @@
     initExtra =
       (builtins.readFile pkgs.local.bash-zsh-switcher)
       + ''
+        run_bash_zsh_switcher
+        unset -f run_bash_zsh_switcher
+
         # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
-        if [[ -n "$SSH_CONNECTION" && "$OSTYPE" == darwin* && "$TERM" == "xterm-ghostty" ]]; then
-          export TERM=xterm-256color
-        fi
+          if [[ -n "$SSH_CONNECTION" && "$OSTYPE" == darwin* && "$TERM" == "xterm-ghostty" ]]; then
+            export TERM=xterm-256color
+          fi
 
-        # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-        function set_win_title() {
-        	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
-        }
-        # shellcheck disable=SC2034
-        starship_precmd_user_func="set_win_title"
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          function set_win_title() {
+          	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
+          }
+          # shellcheck disable=SC2034
+          starship_precmd_user_func="set_win_title"
 
-        # Workaround for issues likely https://github.com/reubeno/brush/issues/380
-        # Don't use the "command -v", it made much slow. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
-        if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
-        	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
-        	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
-        	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-        fi
+          # Workaround for issues likely https://github.com/reubeno/brush/issues/380
+          # Don't use the "command -v", it made much slow. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
+          if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+          	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
+          	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
+          	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
+          fi
 
-        # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile
-        for file in ${../dependencies/bash}/*; do
-        	source "$file"
-        done
+          # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile
+          for file in ${../dependencies/bash}/*; do
+          	source "$file"
+          done
 
-        # Disable `Ctrl + S(no output tty)`
-        ${lib.getExe' pkgs.coreutils "stty"} stop undef
+          # Disable `Ctrl + S(no output tty)`
+          ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
-        source "${pkgs.local.posix_shared_functions}"
+          source "${pkgs.local.posix_shared_functions}"
 
-        # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-        # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
-        export LC_TIME='en_DK.UTF-8'
+          # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+          # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
+          export LC_TIME='en_DK.UTF-8'
 
-        if [ 'linux' = "$TERM" ]; then
-          adjust_to_linux_vt
-        fi
+          if [ 'linux' = "$TERM" ]; then
+            adjust_to_linux_vt
+          fi
       ''
       + builtins.readFile ./initExtra.bash;
 
