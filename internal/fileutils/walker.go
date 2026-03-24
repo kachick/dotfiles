@@ -48,8 +48,8 @@ func (w Walker) GetAllBash() []string {
 	paths := []string{}
 
 	for _, r := range w.reports {
-		if strings.HasSuffix(r.Dir.Name(), ".bash") ||
-			(strings.HasPrefix(r.Dir.Name(), "bash") && !strings.HasSuffix(r.Dir.Name(), ".nix")) {
+		if !r.Dir.IsDir() && (strings.HasSuffix(r.Dir.Name(), ".bash") ||
+			(strings.HasPrefix(r.Dir.Name(), "bash") && !strings.HasSuffix(r.Dir.Name(), ".nix"))) {
 			paths = append(paths, r.Path)
 		}
 	}
@@ -61,7 +61,7 @@ func (w Walker) GetAllNix() []string {
 	paths := []string{}
 
 	for _, r := range w.reports {
-		if strings.HasSuffix(r.Dir.Name(), ".nix") {
+		if !r.Dir.IsDir() && strings.HasSuffix(r.Dir.Name(), ".nix") {
 			paths = append(paths, r.Path)
 		}
 	}
