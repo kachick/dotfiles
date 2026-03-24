@@ -3,8 +3,10 @@ package main
 import (
 	"bytes"
 	"crypto/rand"
+	"crypto/sha256"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,11 +19,15 @@ func main() {
 	var (
 		gitleaksConfig string
 		ageRecipients  string
+		metadataHash   bool
+		printPath      bool
 	)
 
 	// Prefer flags, then environment variables
 	flag.StringVar(&gitleaksConfig, "gitleaks-config", os.Getenv("GITLEAKS_CONFIG"), "Path to gitleaks config file")
 	flag.StringVar(&ageRecipients, "age-recipients", os.Getenv("AGE_RECIPIENTS"), "Comma separated age recipients")
+	flag.BoolVar(&metadataHash, "metadata-hash", false, "Output the SHA-256 hash of the metadata and exit")
+	flag.BoolVar(&printPath, "print-latest-generation-path", false, "Print the path of the latest home-manager generation and exit")
 	flag.Parse()
 
 	var archiveBasename string
@@ -33,28 +39,40 @@ func main() {
 			os.Exit(1)
 		}
 		archiveBasename = fmt.Sprintf("home-files-%s-%s", time.Now().Format("20060102-150405"), randomSuffix)
-		fmt.Printf("No archive name provided. Using default: %s\n", archiveBasename)
+		if !metadataHash && !printPath {
+			fmt.Printf("No archive name provided. Using default: %s\n", archiveBasename)
+		}
 	} else {
 		archiveBasename = flag.Arg(0)
 	}
 
-	if gitleaksConfig == "" {
-		fmt.Fprintf(os.Stderr, "Error: GITLEAKS_CONFIG is not set. Use -gitleaks-config flag or set GITLEAKS_CONFIG environment variable.\n")
-		os.Exit(1)
-	}
-	if ageRecipients == "" {
-		fmt.Fprintf(os.Stderr, "Error: AGE_RECIPIENTS is not set. Use -age-recipients flag or set AGE_RECIPIENTS environment variable.\n")
-		os.Exit(1)
+	if !metadataHash && !printPath {
+		if gitleaksConfig == "" {
+			fmt.Fprintf(os.Stderr, "Error: GITLEAKS_CONFIG is not set. Use -gitleaks-config flag or set GITLEAKS_CONFIG environment variable.\n")
+			os.Exit(1)
+		}
+		if ageRecipients == "" {
+			fmt.Fprintf(os.Stderr, "Error: AGE_RECIPIENTS is not set. Use -age-recipients flag or set AGE_RECIPIENTS environment variable.\n")
+			os.Exit(1)
+		}
 	}
 
-	fmt.Printf("Step 1: Resolving home-manager generation path...\n")
+	if !metadataHash && !printPath {
+		fmt.Printf("Step 1: Resolving home-manager generation path...\n")
+	}
 	hmPath, err := resolveHMPath()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error resolving HM path: %v\n", err)
 		os.Exit(1)
 	}
+	if printPath {
+		fmt.Print(hmPath)
+		return
+	}
 	homeFilesPath := filepath.Join(hmPath, "home-files")
-	fmt.Printf("Resolved home-files path: %s\n", homeFilesPath)
+	if !metadataHash {
+		fmt.Printf("Resolved home-files path: %s\n", homeFilesPath)
+	}
 
 	if _, err := os.Stat(homeFilesPath); os.IsNotExist(err) {
 		fmt.Fprintf(os.Stderr, "Error: home-files directory does not exist: %s\n", homeFilesPath)
@@ -70,10 +88,22 @@ func main() {
 	defer os.RemoveAll(tmpDir)
 
 	tarFile := filepath.Join(tmpDir, "intermediate.tar.gz")
-	fmt.Printf("\nStep 2: Creating temporary tarball for scanning...\n")
+	if !metadataHash {
+		fmt.Printf("\nStep 2: Creating temporary tarball for scanning...\n")
+	}
 	if err := createTarball(homeFilesPath, tarFile); err != nil {
 		fmt.Fprintf(os.Stderr, "Tarball creation failed: %v\n", err)
 		os.Exit(1)
+	}
+
+	if metadataHash {
+		hash, err := calculateSHA256(tarFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to calculate hash: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Print(hash)
+		return
 	}
 
 	fmt.Printf("\nStep 3: Running gitleaks check on the generated archive...\n")
@@ -178,4 +208,19 @@ func encryptWithAge(source, output, recipientsStr string) error {
 		return fmt.Errorf("age failed: %w", err)
 	}
 	return nil
+}
+
+func calculateSHA256(filePath string) (string, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
