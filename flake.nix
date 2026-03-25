@@ -2,6 +2,7 @@
   description = "kachick's dotfiles that can be placed in the public repository";
 
   nixConfig = {
+    # Project-specific 'extra-substituters'. Works without warnings if these are in the system-wide 'extra-trusted-substituters'.
     extra-substituters = [
       "https://kachick-dotfiles.cachix.org"
     ];
