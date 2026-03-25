@@ -50,6 +50,22 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help]' \
 && ret=0
 ;;
+(add)
+_arguments "${_arguments_options[@]}" \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(--config-discovery)-g[Add to the global dprint configuration file.]' \
+'(--config-discovery)--global[Add to the global dprint configuration file.]' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
+'-h[Print help]' \
+'--help[Print help]' \
+'*::url-or-plugin-name:' \
+&& ret=0
+;;
 (fmt)
 _arguments "${_arguments_options[@]}" \
 '--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
@@ -166,7 +182,7 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'::url-or-plugin-name:' \
+'*::url-or-plugin-name:' \
 && ret=0
 ;;
 (edit)
@@ -385,6 +401,10 @@ _arguments "${_arguments_options[@]}" \
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
+(add)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
 (fmt)
 _arguments "${_arguments_options[@]}" \
 && ret=0
@@ -482,6 +502,7 @@ esac
 _dprint_commands() {
     local commands; commands=(
 'init:Initializes a configuration file in the current directory.' \
+'add:Adds a plugin to the configuration file.' \
 'fmt:Formats the source files and writes the result to the file system.' \
 'check:Checks for any files that haven'\''t been formatted.' \
 'config:Functionality related to the configuration file.' \
@@ -499,6 +520,11 @@ _dprint_commands() {
     )
     _describe -t commands 'dprint commands' commands "$@"
 }
+(( $+functions[_dprint__add_commands] )) ||
+_dprint__add_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint add commands' commands "$@"
+}
 (( $+functions[_dprint__config__add_commands] )) ||
 _dprint__config__add_commands() {
     local commands; commands=()
@@ -508,6 +534,11 @@ _dprint__config__add_commands() {
 _dprint__config__help__add_commands() {
     local commands; commands=()
     _describe -t commands 'dprint config help add commands' commands "$@"
+}
+(( $+functions[_dprint__help__add_commands] )) ||
+_dprint__help__add_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint help add commands' commands "$@"
 }
 (( $+functions[_dprint__help__config__add_commands] )) ||
 _dprint__help__config__add_commands() {
@@ -630,6 +661,7 @@ _dprint__config__help__help_commands() {
 _dprint__help_commands() {
     local commands; commands=(
 'init:Initializes a configuration file in the current directory.' \
+'add:Adds a plugin to the configuration file.' \
 'fmt:Formats the source files and writes the result to the file system.' \
 'check:Checks for any files that haven'\''t been formatted.' \
 'config:Functionality related to the configuration file.' \
