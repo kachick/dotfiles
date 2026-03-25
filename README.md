@@ -118,7 +118,7 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Apply dotfiles
 
    ```bash
-   NIX_CONFIG="accept-flake-config = true" nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
+   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
 1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
@@ -210,7 +210,7 @@ However I should keep the minimum environment for now.
 1. Apply home-manager:
 
    ```bash
-   limactl shell docker-nix nix run --accept-flake-config "github:kachick/dotfiles#home-manager" -- switch -b backup --flake "github:kachick/dotfiles#user@lima"
+   limactl shell docker-nix NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@lima'
    ```
 
 1. Run containers:
