@@ -16,7 +16,7 @@ import (
 func main() {
 	var (
 		betterleaksConfig string
-		ageRecipients  string
+		ageRecipients     string
 	)
 
 	// Prefer flags, then environment variables
