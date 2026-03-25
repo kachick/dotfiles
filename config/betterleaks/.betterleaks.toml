@@ -1,11 +1,11 @@
-title = "Custom Gitleaks configuration"
+title = "Custom Betterleaks configuration"
 
 # You have basically two options for your custom configuration:
 #
 # 1. define your own configuration, default rules do not apply
 #
 #    use e.g., the default configuration as starting point:
-#    https://github.com/gitleaks/gitleaks/blob/master/config/gitleaks.toml
+#    https://github.com/betterleaks/betterleaks/blob/main/betterleaks.toml
 #
 # 2. extend a configuration, the rules are overwritten or extended
 #
@@ -19,9 +19,9 @@ title = "Custom Gitleaks configuration"
 
 # useDefault and path can NOT be used at the same time. Choose one.
 [extend]
-# useDefault will extend the default gitleaks config built in to the binary
+# useDefault will extend the default betterleaks config built in to the binary
 # the latest version is located at:
-# https://github.com/gitleaks/gitleaks/blob/master/config/gitleaks.toml
+# https://github.com/betterleaks/betterleaks/blob/main/betterleaks.toml
 useDefault = true
 
 # Remove after https://github.com/gitleaks/gitleaks/pull/1808 is available

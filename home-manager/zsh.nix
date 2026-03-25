@@ -321,7 +321,7 @@ in
 
           # NOTE: Removed command existence check. Because of syntax highlighting prevents that troubles and I would keep minimum hooks
           zshaddhistory() {
-            "${lib.getExe pkgs.unstable.gitleaks}" stdin <<<"$1" &>| /dev/null || return 1
+            "${lib.getExe pkgs.unstable.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
           }
 
           # Same as .zshenv.local

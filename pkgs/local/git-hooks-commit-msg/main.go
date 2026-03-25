@@ -41,8 +41,8 @@ func main() {
 
 func initializeLinters(msgPath string) map[string]githooks.Linter {
 	return map[string]githooks.Linter{
-		"prevent secrets in the message": githooks.Linter{Tag: "gitleaks", Script: func() error {
-			cmd := exec.Command("gitleaks", "--verbose", "stdin", msgPath)
+		"prevent secrets in the message": githooks.Linter{Tag: "betterleaks", Script: func() error {
+			cmd := exec.Command("betterleaks", "--verbose", "stdin", msgPath)
 			f, err := os.Open(msgPath)
 			if err != nil {
 				return err

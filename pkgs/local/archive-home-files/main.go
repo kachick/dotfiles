@@ -15,12 +15,12 @@ import (
 
 func main() {
 	var (
-		gitleaksConfig string
+		betterleaksConfig string
 		ageRecipients  string
 	)
 
 	// Prefer flags, then environment variables
-	flag.StringVar(&gitleaksConfig, "gitleaks-config", os.Getenv("GITLEAKS_CONFIG"), "Path to gitleaks config file")
+	flag.StringVar(&betterleaksConfig, "betterleaks-config", os.Getenv("BETTERLEAKS_CONFIG"), "Path to betterleaks config file")
 	flag.StringVar(&ageRecipients, "age-recipients", os.Getenv("AGE_RECIPIENTS"), "Comma separated age recipients")
 	flag.Parse()
 
@@ -38,8 +38,8 @@ func main() {
 		archiveBasename = flag.Arg(0)
 	}
 
-	if gitleaksConfig == "" {
-		fmt.Fprintf(os.Stderr, "Error: GITLEAKS_CONFIG is not set. Use -gitleaks-config flag or set GITLEAKS_CONFIG environment variable.\n")
+	if betterleaksConfig == "" {
+		fmt.Fprintf(os.Stderr, "Error: BETTERLEAKS_CONFIG is not set. Use -betterleaks-config flag or set BETTERLEAKS_CONFIG environment variable.\n")
 		os.Exit(1)
 	}
 	if ageRecipients == "" {
@@ -76,9 +76,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("\nStep 3: Running gitleaks check on the generated archive...\n")
-	if err := runGitleaksOnArchive(tarFile, gitleaksConfig); err != nil {
-		fmt.Fprintf(os.Stderr, "Gitleaks check failed: %v\n", err)
+	fmt.Printf("\nStep 3: Running betterleaks check on the generated archive...\n")
+	if err := runBetterleaksOnArchive(tarFile, betterleaksConfig); err != nil {
+		fmt.Fprintf(os.Stderr, "Betterleaks check failed: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -131,16 +131,16 @@ func resolveHMPath() (string, error) {
 	return match[1], nil
 }
 
-func runGitleaksOnArchive(archivePath, config string) error {
+func runBetterleaksOnArchive(archivePath, config string) error {
 	// Scan inside the archive by setting --max-archive-depth=1.
 	// This is more reliable than scanning symlinked directories.
 	args := []string{"dir", archivePath, "--config", config, "--max-archive-depth=1", "--verbose", "--redact=100"}
-	cmd := exec.Command("gitleaks", args...)
+	cmd := exec.Command("betterleaks", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("gitleaks detected secrets in archive or failed: %w", err)
+		return fmt.Errorf("betterleaks detected secrets in archive or failed: %w", err)
 	}
 	return nil
 }

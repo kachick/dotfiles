@@ -68,7 +68,7 @@ in
       # Workaround to detect tailscale kyes
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
       # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
-      GITLEAKS_CONFIG = "${../config/gitleaks/.gitleaks.toml}";
+      BETTERLEAKS_CONFIG = "${../config/betterleaks/.betterleaks.toml}";
     };
 
     sessionPath = [

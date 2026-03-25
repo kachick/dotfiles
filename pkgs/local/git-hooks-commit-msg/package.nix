@@ -20,7 +20,7 @@ buildGo126Module (finalAttrs: {
     with pkgs;
     [
       unstable.typos
-      unstable.gitleaks
+      unstable.betterleaks
       local.run_local_hook
     ]
   );
