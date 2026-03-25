@@ -58,7 +58,19 @@ func main() {
 
 	hasDiff := false
 	for _, target := range targets {
-		if diff, ok := compareTarget(*baseFlake, *currentFlake, target); ok {
+		diff, err := compareTarget(*baseFlake, *currentFlake, target)
+		if err != nil {
+			fmt.Printf("<details><summary>⚠️ <b>%s</b> (Failed to evaluate)</summary>\n\n", target.Name)
+			fmt.Println("```text")
+			fmt.Println(err)
+			fmt.Println("```")
+			fmt.Println("</details>")
+			fmt.Println("")
+			hasDiff = true // Treat error as a change to be reported
+			continue
+		}
+
+		if diff != "" {
 			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", target.Name)
 			fmt.Println("```text")
 			fmt.Print(diff)
@@ -74,21 +86,19 @@ func main() {
 	}
 }
 
-func compareTarget(base, current string, target Target) (string, bool) {
+func compareTarget(base, current string, target Target) (string, error) {
 	oldDrv, err := getDerivation(fmt.Sprintf("%s#%s", base, target.Attribute))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: failed to get old derivation for %s: %v\n", target.Name, err)
-		return "", false
+		return "", fmt.Errorf("failed to get old derivation: %w", err)
 	}
 
 	newDrv, err := getDerivation(fmt.Sprintf("%s#%s", current, target.Attribute))
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: failed to get new derivation for %s: %v\n", target.Name, err)
-		return "", false
+		return "", fmt.Errorf("failed to get new derivation: %w", err)
 	}
 
 	if oldDrv == newDrv {
-		return "", false
+		return "", nil
 	}
 
 	// Use dix to diff the derivations.
@@ -98,19 +108,19 @@ func compareTarget(base, current string, target Target) (string, bool) {
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "Warning: dix failed for %s: %v\n", target.Name, err)
-		return "", false
+		return "", fmt.Errorf("dix failed: %w", err)
 	}
 
-	return out.String(), true
+	return out.String(), nil
 }
 
 func getDerivation(flakePath string) (string, error) {
 	cmd := exec.Command("nix", "path-info", flakePath, "--derivation")
-	var out bytes.Buffer
+	var out, errOut bytes.Buffer
 	cmd.Stdout = &out
+	cmd.Stderr = &errOut
 	if err := cmd.Run(); err != nil {
-		return "", err
+		return "", fmt.Errorf("%v: %s", err, strings.TrimSpace(errOut.String()))
 	}
 	return strings.TrimSpace(out.String()), nil
 }
