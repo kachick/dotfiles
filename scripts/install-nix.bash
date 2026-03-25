@@ -38,7 +38,7 @@ fi
 # We run the gen-nix-cache-conf app from the flake.
 # NOTE: This assumes /etc/nix/nix.conf has 'include nix.custom.conf' or similar setup.
 echo "Configuring binary caches from ${TARGET_FLAKE}..."
-NIX_CONFIG="accept-flake-config = true" nix run --accept-flake-config "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
+nix run --accept-flake-config "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
 
 if command -v systemctl >/dev/null 2>&1; then
 	sudo systemctl restart nix-daemon
