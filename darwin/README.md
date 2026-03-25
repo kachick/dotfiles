@@ -63,58 +63,6 @@ else
 fi
 ```
 
-## Troubleshooting: Binary Cache and Trusted Users
-
-If Nix builds packages from source instead of fetching from Cachix on Darwin, it's often because the user is not recognized as a "trusted user", which prevents the use of flake-provided binary caches (`accept-flake-config`).
-
-### 1. Check if you are a "trusted-user" in Nix
-
-Run the following command to see the current Nix configuration:
-
-```bash
-nix show-config | grep trusted-users
-```
-
-The output should include `@admin` or your username. If not, you need to edit `/etc/nix/nix.conf`.
-
-### 2. Verify your group membership
-
-On macOS, administrators are typically in the `admin` group, not `wheel`. Check your groups:
-
-```bash
-id -Gn | tr ' ' '\n' | grep -E 'admin|wheel'
-```
-
-### 3. Test if --accept-flake-config is allowed
-
-Run a metadata check on this flake. If you are NOT a trusted user, Nix will show a warning or ignore the custom cache settings:
-
-```bash
-nix flake metadata . --accept-flake-config
-```
-
-If you see `warning: ignoring untrusted flake configuration`, it means you are not trusted.
-
-### 4. How to fix
-
-1. Edit `/etc/nix/nix.conf` (requires sudo) and ensure `trusted-users` includes `@admin`:
-
-   ```conf
-   trusted-users = root @admin @wheel <your-username>
-   ```
-
-2. Restart the Nix daemon:
-
-   ```bash
-   sudo launchctl kickstart -k system/org.nixos.nix-daemon
-   ```
-
-3. (Optional) Update your local cache configuration:
-
-   ```bash
-   nix run --accept-flake-config ".#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
-   ```
-
 ## Removed: Devshell on Darwin
 
 The `devshell-darwin.yml` workflow was removed in 2026-02 because implementing a reliable "Planning Job" (cache detection) for `devShells` proved to be excessively complex.
