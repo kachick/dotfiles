@@ -63,16 +63,6 @@ else
 fi
 ```
 
-## Troubleshooting: Binary Cache on Darwin
-
-If Nix builds packages from source instead of fetching from Cachix on Darwin during the initial setup, it's often because the newly configured `trusted-users` in `/etc/nix/nix.conf` is not yet respected by the current process or the Nix daemon.
-
-To force using the binary cache specified in `flake.nix`, you can prepend `NIX_CONFIG="accept-flake-config = true"` to the application command:
-
-```bash
-NIX_CONFIG="accept-flake-config = true" task home-manager
-```
-
 ## Removed: Devshell on Darwin
 
 The `devshell-darwin.yml` workflow was removed in 2026-02 because implementing a reliable "Planning Job" (cache detection) for `devShells` proved to be excessively complex.

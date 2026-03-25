@@ -118,7 +118,7 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Apply dotfiles
 
    ```bash
-   nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
+   NIX_CONFIG="accept-flake-config = true" nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
    ```
 
 1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
