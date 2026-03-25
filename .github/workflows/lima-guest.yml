@@ -94,7 +94,7 @@ jobs:
           REV: ${{ github.head_ref || github.ref_name }}
         run: |
           FLAKE_URI="github:kachick/dotfiles/${REV}"
-          limactl shell docker-nix nix run --accept-flake-config "${FLAKE_URI}#la" -- --version
+          NIX_CONFIG='accept-flake-config = true' limactl shell docker-nix nix run "${FLAKE_URI}#la" -- --version
 
       - name: Show Docker works in Guest
         run: limactl shell docker-nix docker run --rm hello-world
