@@ -12,7 +12,7 @@ TARGET_FLAKE="github:kachick/dotfiles/${TARGET_REV}"
 if ! command -v nix >/dev/null 2>&1; then
 	echo "Installing Nix..."
 
-	TRUSTED_USERS="root $USER"
+	TRUSTED_USERS="root"
 	if [ "$(uname)" = "Darwin" ]; then
 		TRUSTED_USERS="${TRUSTED_USERS} @admin"
 	elif [ "$(uname)" = "Linux" ]; then
@@ -38,7 +38,7 @@ fi
 # We run the gen-nix-cache-conf app from the flake.
 # NOTE: This assumes /etc/nix/nix.conf has 'include nix.custom.conf' or similar setup.
 echo "Configuring binary caches from ${TARGET_FLAKE}..."
-nix run --accept-flake-config "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
+NIX_CONFIG="accept-flake-config = true" nix run --accept-flake-config "${TARGET_FLAKE}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
 
 if command -v systemctl >/dev/null 2>&1; then
 	sudo systemctl restart nix-daemon
