@@ -13,6 +13,15 @@ nixpkgs-unstable: final: _prev: {
             url = "https://patch-diff.githubusercontent.com/raw/nixos/nixpkgs/pull/502638.patch?full_index=1";
             hash = "sha256-icunLMLCg17gQZHWwbMpHnkg94ZkOJkWW6pmZCHCC7A=";
           })
+
+          # https://github.com/kachick/dotfiles/pull/1518#issuecomment-4123441635
+          # https://github.com/NixOS/nixpkgs/issues/503112
+          # https://github.com/kachick/nixpkgs/pull/6
+          (final.fetchpatch2 {
+            name = "winboat-pin-deps.patch";
+            url = "https://patch-diff.githubusercontent.com/raw/kachick/nixpkgs/pull/6.patch?full_index=1";
+            hash = "sha256-yJpcO1ZeK65HlJl+mv6b3U/aHGIyEyKCLFOGURbU9vA=";
+          })
         ];
       };
     in
