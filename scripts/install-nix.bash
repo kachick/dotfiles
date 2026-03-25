@@ -24,6 +24,7 @@ if ! command -v nix >/dev/null 2>&1; then
 	curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install \
 		--extra-conf "sandbox = false" \
 		--extra-conf "trusted-users = ${TRUSTED_USERS}" \
+		--extra-conf "accept-flake-config = true" \
 		--no-confirm
 
 	# shellcheck source=/dev/null
