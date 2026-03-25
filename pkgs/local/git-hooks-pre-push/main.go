@@ -79,8 +79,8 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	// remoteOid := fields[3]
 
 	return map[string]githooks.Linter{
-		"prevent secrets in log and diff": githooks.Linter{Tag: "gitleaks", Script: func() error {
-			cmd := exec.Command("gitleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
+		"prevent secrets in log and diff": githooks.Linter{Tag: "betterleaks", Script: func() error {
+			cmd := exec.Command("betterleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
