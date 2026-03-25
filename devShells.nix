@@ -42,7 +42,7 @@ in
         ])
         ++ (with pkgs.unstable; [
           nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for detail
-          gitleaks
+          betterleaks # Available since https://github.com/NixOS/nixpkgs/pull/500481
           typos
           lychee
           dprint
