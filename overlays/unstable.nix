@@ -7,10 +7,11 @@ nixpkgs-unstable: final: _prev: {
         name = "patched-nixpkgs-unstable";
         src = nixpkgs-unstable;
         patches = [
+          # Using dprint 0.52.1 does not run on official GHA. See https://github.com/dprint/dprint/issues/1113#issuecomment-4110214566 for detail
           (final.fetchpatch2 {
-            name = "electron_39-fix-patch_dir.patch";
-            url = "https://github.com/NixOS/nixpkgs/commit/a499dfba7b52aac86504356512836550e9d49a5a.patch?full_index=1";
-            hash = "sha256-vRb0uf927IR5knjFkH6Jsm24ZPFnhq58l4DAV0HMieM=";
+            name = "dprint-0.53.0.patch";
+            url = "https://patch-diff.githubusercontent.com/raw/nixos/nixpkgs/pull/502638.patch?full_index=1";
+            hash = "sha256-icunLMLCg17gQZHWwbMpHnkg94ZkOJkWW6pmZCHCC7A=";
           })
         ];
       };
