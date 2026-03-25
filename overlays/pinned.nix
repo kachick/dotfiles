@@ -16,11 +16,16 @@ in
     # It seems kanata-tray flake provides 'kanata-tray' and 'default' (which is kanata-tray)
     kanata-tray = kanata-tray.packages.${system}.default;
 
-    # See GH-1085, GH-1134, and GH-1402
-    # The zed-editor package has been very flaky in Hydra: https://discourse.nixos.org/t/why-is-zed-editor-not-cached/60452/4
-    # Since I can't trust stable channels, I use the unstable channel to resolve package-level issues faster,
-    # and I build and cache it myself.
-    inherit (_prev.unstable) zed-editor;
+    inherit (_prev.unstable)
+      # See GH-1085, GH-1134, and GH-1402
+      # The zed-editor package has been very flaky in Hydra: https://discourse.nixos.org/t/why-is-zed-editor-not-cached/60452/4
+      # Since I can't trust stable channels, I use the unstable channel to resolve package-level issues faster,
+      # and I build and cache it myself.
+      zed-editor
+
+      # https://github.com/kachick/dotfiles/pull/1518 and the https://github.com/NixOS/nixpkgs/issues/503112
+      winboat
+      ;
 
     # Expose the patched mozc for CI building
     inherit (final) mozc;
