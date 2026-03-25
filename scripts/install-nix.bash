@@ -11,11 +11,19 @@ TARGET_FLAKE="github:kachick/dotfiles/${TARGET_REV}"
 # 1. Install Nix in multi-user mode
 if ! command -v nix >/dev/null 2>&1; then
 	echo "Installing Nix..."
+
+	TRUSTED_USERS="root $USER"
+	if [ "$(uname)" = "Darwin" ]; then
+		TRUSTED_USERS="${TRUSTED_USERS} @admin"
+	elif [ "$(uname)" = "Linux" ]; then
+		TRUSTED_USERS="${TRUSTED_USERS} @wheel @sudo"
+	fi
+
 	# https://github.com/NixOS/nix-installer
 	# The installer will auto-detect the OS if not specified.
 	curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install \
 		--extra-conf "sandbox = false" \
-		--extra-conf "trusted-users = root @wheel @sudo $USER" \
+		--extra-conf "trusted-users = ${TRUSTED_USERS}" \
 		--no-confirm
 
 	# shellcheck source=/dev/null
