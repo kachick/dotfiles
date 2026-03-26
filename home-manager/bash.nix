@@ -114,7 +114,7 @@
       #    Even with 'procps' from nixpkgs, the package is not the same on Linux and Darwin, though it has the same name in Nixpkgs.
       # 3. Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
       # This approach is also beneficial since Bash isn't typically a login shell on macOS.
-      if [[ -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && $PPID -gt 0 && $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ]]
+      if [[ $- == *i* && -t 0 && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && ( $PPID -eq 0 || $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ) ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
         exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
