@@ -8,7 +8,7 @@ let
   typos-lsp = pkgs.unstable.typos-lsp;
 in
 {
-  default = pkgs.mkShellNoCC {
+  default = pkgs.mkShell {
     env = {
       # Correct pkgs versions in the nixd inlay hints
       NIX_PATH = "nixpkgs=${pkgs.path}";
@@ -49,6 +49,11 @@ in
           zizmor
           rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
           go_1_26
+          ocaml
+          dune_3
+          ocamlformat
+          ocamlPackages.ocaml-lsp
+          ocamlPackages.cmdliner
         ])
         ++ (with pkgs.local; [
           nix-hash-url

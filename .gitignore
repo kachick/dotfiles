@@ -38,3 +38,6 @@ winget-pkgs-*-raw.json
 *.backup
 
 .task
+
+# OCaml
+cmd-ocaml/_build/

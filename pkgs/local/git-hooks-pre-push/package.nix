@@ -5,61 +5,37 @@
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo126Module;
-in
-buildGo126Module (finalAttrs: {
-  pname = "git-hooks-pre-push";
+pkgs.unstable.ocamlPackages.buildDunePackage {
+  pname = "git_hooks_pre_push";
   version = "0.0.1";
+
+  src = ../../../cmd-ocaml;
 
   nativeBuildInputs = [
     makeWrapper
   ];
 
-  wrapperPath = lib.makeBinPath (
-    with pkgs;
-    [
-      gitMinimal
-      unstable.typos
-      unstable.betterleaks
-      local.run_local_hook
-    ]
-  );
-
-  postFixup = ''
-    wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \
-      --prefix PATH : "${finalAttrs.wrapperPath}"
-  '';
-
-  vendorHash = "sha256-8R2SjxvqJEfofp2Tbw0+GFMHJD1V27YaZ95+YaVFr98=";
-  src =
-    with lib.fileset;
-    toSource {
-      root = ../../../.;
-      fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
-        ../../../internal
-        ./.
-      ];
-    };
-
-  subPackages = [
-    "pkgs/local/${finalAttrs.pname}"
-  ];
-
-  env.CGO_ENABLED = 0;
-
-  passthru.shared-gomod = true;
-
-  ldflags = [
-    "-s"
-    "-w"
-    "-X main.TyposConfigPath=${../../../typos.toml}"
-  ];
+  postFixup =
+    let
+      # Use lib.escapeShellArg if the path contains spaces, but here it is a nix store path.
+      path = lib.makeBinPath (
+        with pkgs;
+        [
+          gitMinimal
+          unstable.typos
+          unstable.betterleaks
+          local.run_local_hook
+        ]
+      );
+    in
+    ''
+      wrapProgram $out/bin/git_hooks_pre_push \
+        --prefix PATH : "${path}" \
+        --set TYPOS_CONFIG_PATH "${../../../typos.toml}"
+    '';
 
   meta = {
-    description = "GH-540 and GH-699";
-    mainProgram = finalAttrs.pname;
+    description = "GH-540 and GH-699 (OCaml port)";
+    mainProgram = "git_hooks_pre_push";
   };
-})
+}

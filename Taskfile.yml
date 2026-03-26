@@ -102,21 +102,28 @@ tasks:
       - mkdir
     sources:
       - ./cmd/**.go
+      - ./cmd-ocaml/**/*.ml
     generates:
       - dist/**
     # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
     cmds:
       - go build -v -o dist ./...
+      - cd cmd-ocaml && dune build mksym/main.exe lint/main.exe run_local_hook/main.exe git_hooks_commit_msg/main.exe git_hooks_pre_push/main.exe --profile release
+      - cp cmd-ocaml/_build/default/mksym/main.exe dist/mksym
+      - cp cmd-ocaml/_build/default/lint/main.exe dist/lint
+      - cp cmd-ocaml/_build/default/run_local_hook/main.exe dist/run_local_hook
+      - cp cmd-ocaml/_build/default/git_hooks_commit_msg/main.exe dist/git_hooks_commit_msg
+      - cp cmd-ocaml/_build/default/git_hooks_pre_push/main.exe dist/git_hooks_pre_push
 
   build-lint:
     internal: true
     deps:
       - mkdir
     cmds:
-      - go build -v -o dist/lint ./cmd/lint
+      - cd cmd-ocaml && dune build lint/main.exe --profile release
+      - cp cmd-ocaml/_build/default/lint/main.exe dist/lint
     sources:
-      - internal/**/*.go
-      - ./cmd/lint/*.go
+      - cmd-ocaml/**/*.ml
     generates:
       - dist/lint
 

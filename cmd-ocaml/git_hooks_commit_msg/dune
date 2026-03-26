@@ -1,0 +1,4 @@
+(executable
+ (name main)
+ (public_name git_hooks_commit_msg)
+ (libraries unix githooks_lib))

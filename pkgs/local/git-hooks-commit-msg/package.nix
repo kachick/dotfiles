@@ -5,60 +5,35 @@
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo126Module;
-in
-buildGo126Module (finalAttrs: {
-  pname = "git-hooks-commit-msg";
+pkgs.unstable.ocamlPackages.buildDunePackage {
+  pname = "git_hooks_commit_msg";
   version = "0.0.1";
+
+  src = ../../../cmd-ocaml;
 
   nativeBuildInputs = [
     makeWrapper
   ];
 
-  wrapperPath = lib.makeBinPath (
-    with pkgs;
-    [
-      unstable.typos
-      unstable.betterleaks
-      local.run_local_hook
-    ]
-  );
-
-  postFixup = ''
-    wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \
-      --prefix PATH : "${finalAttrs.wrapperPath}"
-  '';
-
-  vendorHash = "sha256-koI/HJB/BwSoZo73qfnB+djOoKIE14oCXFWGpcci/f4=";
-  src =
-    with lib.fileset;
-    toSource {
-      root = ../../../.;
-      fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
-        ../../../internal
-        ./.
-      ];
-    };
-
-  subPackages = [
-    "pkgs/local/${finalAttrs.pname}"
-  ];
-
-  env.CGO_ENABLED = 0;
-
-  passthru.shared-gomod = true;
-
-  ldflags = [
-    "-s"
-    "-w"
-    "-X main.TyposConfigPath=${../../../typos.toml}"
-  ];
+  postFixup =
+    let
+      path = lib.makeBinPath (
+        with pkgs;
+        [
+          unstable.typos
+          unstable.betterleaks
+          local.run_local_hook
+        ]
+      );
+    in
+    ''
+      wrapProgram $out/bin/git_hooks_commit_msg \
+        --prefix PATH : "${path}" \
+        --set TYPOS_CONFIG_PATH "${../../../typos.toml}"
+    '';
 
   meta = {
-    description = "Git hook for commit-msg. See GH-325";
-    mainProgram = finalAttrs.pname;
+    description = "Git hook for commit-msg. See GH-325 (OCaml port)";
+    mainProgram = "git_hooks_commit_msg";
   };
-})
+}

@@ -1,0 +1,4 @@
+(library
+ (name githooks_lib)
+ (public_name dotfiles_tools.githooks_lib)
+ (libraries unix))

@@ -1,0 +1,16 @@
+(lang dune 3.0)
+(name dotfiles_tools)
+(generate_opam_files true)
+
+(source
+ (github kachick/dotfiles))
+
+(maintainers "kachick")
+
+(package
+ (name dotfiles_tools)
+ (synopsis "Dotfiles internal tools in OCaml")
+ (description "Internal CLI tools for dotfiles")
+ (depends
+  (ocaml (>= 5.0.0))
+  cmdliner))

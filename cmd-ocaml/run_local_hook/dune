@@ -1,0 +1,4 @@
+(executable
+ (name main)
+ (public_name run_local_hook)
+ (libraries unix))
