@@ -125,6 +125,7 @@ jobs:
       - name: Run Nix commands and cleanup provisioners
         run: |
           set -euxo pipefail
+          podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' nix run '/provisioner/dotfiles#apply-system'
           podman exec --user=user -it '${{ steps.start-systemd.outputs.container_id }}' /provisioner/needs_systemd.bash
           podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
       - name: Check no personal name in that config
