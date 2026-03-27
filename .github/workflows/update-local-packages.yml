@@ -80,9 +80,15 @@ jobs:
       - name: Install dependencies
         run: |
           nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
+      # Use manual commit because `nix-update --commit` performs strict evaluation
+      # which causes "path ... is not valid" errors in GHA for patched nixpkgs.
       - name: Update packages
         run: |
-          nix-update --commit --flake "${PACKAGE}"
+          title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add .
+            git commit -m "${title}"
+          fi
         env:
           PACKAGE: ${{ matrix.package }}
 
