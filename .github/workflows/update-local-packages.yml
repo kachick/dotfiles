@@ -1,5 +1,8 @@
 name: 🆙 local packages
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/update-local-packages.yml'
   workflow_dispatch:
     inputs:
       dry-run:
@@ -10,7 +13,7 @@ on:
   workflow_call:
     inputs:
       dry-run:
-        default: ${{ github.event_name == 'pull_request' }}
+        default: false
         required: false
         type: boolean
     secrets:
@@ -34,10 +37,12 @@ jobs:
     timeout-minutes: 60
     env:
       PR_BRANCH: bot-update-${{ matrix.package }}
+      IS_DRY_RUN: ${{ (inputs.dry-run || github.event_name == 'pull_request') && 'true' || 'false' }}
     steps:
       # To push workflow changes and trigger CIs
       - name: Generate GitHub Apps token
         id: publish-token
+        if: env.IS_DRY_RUN == 'false'
         uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         with:
           # Required to set workflow permission for the APP
@@ -52,13 +57,14 @@ jobs:
           fetch-depth: 0
           # Needed to specify token for checkout phase, only in pushing phase is too late
           # https://github.com/orgs/community/discussions/27072#discussioncomment-3254515
-          token: ${{ steps.publish-token.outputs.token }}
+          token: ${{ steps.publish-token.outputs.token || github.token }}
           # This value is explicitly set to true to prevent regression that occurred in selfup v1.2.1, even though it is the default for actions/checkout.
           # Many linters recommend setting this to false, and most users have requested it as the new default (see https://github.com/actions/checkout/issues/485).
           # However, this workflow depends on the stored credentials for the subsequent git push command.
           # For this reason, true is required for now.
           persist-credentials: true
       - name: Fetch active PRs by me
+        if: env.IS_DRY_RUN == 'false'
         id: fetch-active-prs
         env:
           GITHUB_TOKEN: ${{ steps.publish-token.outputs.token }}
@@ -80,6 +86,15 @@ jobs:
       - name: Install dependencies
         run: |
           nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
+
+      # Perform evaluation before nix-update to ensure IFD (like patched nixpkgs) is built and valid in store.
+      # This addresses the "path ...-patched-nixpkgs-unstable.drv is not valid" error in GHA.
+      - name: Pre-evaluate package
+        run: |
+          nix eval --raw ".#${PACKAGE}.pname"
+        env:
+          PACKAGE: ${{ matrix.package }}
+
       # Use manual commit because `nix-update --commit` performs strict evaluation
       # which causes "path ... is not valid" errors in GHA for patched nixpkgs.
       - name: Update packages
@@ -109,9 +124,9 @@ jobs:
               ;;
           esac
       - run: git push origin "${PR_BRANCH}" --force
-        if: (! inputs.dry-run) && (steps.count-commits.outputs.count > 0)
+        if: (env.IS_DRY_RUN == 'false') && (steps.count-commits.outputs.count > 0)
       - name: Create PR
-        if: (! inputs.dry-run) && (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
+        if: (env.IS_DRY_RUN == 'false') && (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
         env:
           GITHUB_TOKEN: '${{ steps.publish-token.outputs.token }}'
           PR_TITLE: ${{ steps.count-commits.outputs.title }}
