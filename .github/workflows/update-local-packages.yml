@@ -85,7 +85,6 @@ jobs:
           nix-update --flake "${PACKAGE}"
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            # Use same format as nix-update --commit
             title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
             git commit -m "${title}"
           fi
