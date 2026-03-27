@@ -82,10 +82,9 @@ jobs:
           nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
       - name: Update packages
         run: |
-          nix-update --flake "${PACKAGE}"
+          title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
             git commit -m "${title}"
           fi
         env:
