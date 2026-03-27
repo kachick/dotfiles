@@ -82,13 +82,7 @@ jobs:
           nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
       - name: Update packages
         run: |
-          nix-update --flake "${PACKAGE}"
-          if [[ -n "$(git status --porcelain)" ]]; then
-            git add .
-            # Use same format as nix-update --commit
-            title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
-            git commit -m "${title}" -m "Assisted-by: Gemini CLI <gemini-cli@google.com>"
-          fi
+          nix-update --commit --flake "${PACKAGE}"
         env:
           PACKAGE: ${{ matrix.package }}
 
