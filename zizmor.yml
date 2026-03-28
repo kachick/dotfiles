@@ -18,3 +18,5 @@ rules:
     ignore:
       - container.yml
       - cleanup-staging-packages.yml
+  secrets-outside-env:
+    disable: true
