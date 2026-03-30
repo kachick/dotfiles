@@ -85,10 +85,15 @@ jobs:
     steps:
       - name: Logging disk space
         run: df -h
-      - name: Disable AppArmor restriction for unprivileged user namespaces
-        # Nix based podman requires this on Ubuntu 24.04
-        # https://github.com/kachick/dotfiles/issues/1517
-        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Update AppArmor profile for Nix-installed Podman
+        # Ubuntu 24.04 restricts unprivileged user namespaces.
+        # The default AppArmor profile only covers /usr/bin/podman.
+        # We need to add the nix-profile path to the profile.
+        # https://github.com/containers/podman/issues/24642
+        run: |
+          set -euxo pipefail
+          sudo sed -i 's|/usr/bin/podman|{/usr/bin/podman,/home/runner/.nix-profile/bin/podman}|' /etc/apparmor.d/podman
+          sudo systemctl reload apparmor.service
       - name: Install uidmap
         # - Nix based podman requires uidmap on the host
         # - "shadow" in nixpkgs is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
