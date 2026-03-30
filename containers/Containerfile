@@ -1,5 +1,5 @@
 # https://github.com/kachick/containers
-FROM ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:b1e529b73dfaf44935127bd3902fb91e9d761b7f750632f6a704ff0ee23564ed
+FROM ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:74d175412283ff2e8672a2557c4a01af1b5785a253fc0be330d0c7857c936375
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
 LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
