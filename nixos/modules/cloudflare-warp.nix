@@ -12,4 +12,8 @@
   };
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
+
+  # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
+  # https://github.com/NixOS/nixpkgs/issues/504119#issuecomment-4143108440
+  networking.firewall.checkReversePath = "loose";
 }
