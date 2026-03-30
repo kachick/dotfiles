@@ -12,6 +12,7 @@
     outputs.nixosModules.desktop
     outputs.nixosModules.desktop-unfree
     outputs.nixosModules.hardware
+    outputs.nixosModules.cloudflare-warp
     ../../desktop/kachick.nix
 
     ./hardware-configuration.nix

@@ -227,6 +227,19 @@
       lock-keys
     ]);
 
+  # https://askubuntu.com/a/88947
+  #
+  # Don't add unstable or long or waiting(interactive) CLI here such as warp-cli.
+  # A bad example warp-cli, the first execution requires agreement for their policy with y/n interactive mode.\
+  # It blocks the starting GNOME with black screen with white and frozen cursor after login via GDM.
+  # See GH-1110 for detail
+  # Consider to use xdg.autostart home-manager module instead
+  #
+  # environment.etc."gdm/PostLogin/Default".source = lib.getExe (
+  #   pkgs.writeShellApplication {
+  #   }
+  # );
+
   environment.variables = {
     # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
     VISUAL = "${pkgs.zed-editor.meta.mainProgram} --wait";

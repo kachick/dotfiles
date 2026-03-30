@@ -162,6 +162,7 @@ in
     enable = true;
     entries = [
       ../config/keyboards/kanata-tray.desktop
+      ../config/cloudflare-warp/connect.desktop
     ];
   };
 }
