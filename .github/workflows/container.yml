@@ -14,6 +14,11 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 14 * * *'
   workflow_dispatch:
+    inputs:
+      force_full_rebuild:
+        description: 'Force a full rebuild from the clean base image'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -109,12 +114,40 @@ jobs:
       - uses: actions/checkout@v6.0.2
         with:
           persist-credentials: false
+      - name: Determine base image
+        id: base
+        run: |
+          # The clean base image
+          CLEAN_BASE="ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:b1e529b73dfaf44935127bd3902fb91e9d761b7f750632f6a704ff0ee23564ed"
+          # The latest provisioned image
+          PREV_IMAGE="ghcr.io/kachick/dotfiles/home:latest"
+
+          # Conditions for full rebuild
+          # 1. Manual trigger with force_full_rebuild: true
+          # 2. Scheduled run on even weeks (2-week cycle)
+          FORCE_FULL="${{ github.event.inputs.force_full_rebuild }}"
+          if [[ "${{ github.event_name }}" == "schedule" ]] && [[ $(( (10#$(date +%V)) % 2 )) -eq 0 ]]; then
+            FORCE_FULL="true"
+          fi
+
+          if [[ "$FORCE_FULL" != "true" ]]; then
+            # Check if the previous image exists on GHCR
+            # GitHub token can pull the image from GHCR
+            if podman pull "$PREV_IMAGE"; then
+              echo "BASE_IMAGE=$PREV_IMAGE" | tee -a "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          echo "BASE_IMAGE=$CLEAN_BASE" | tee -a "$GITHUB_OUTPUT"
       - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           image: systemd-prepared
           containerfiles: |
             containers/Containerfile
+          build-args: |
+            BASE_IMAGE=${{ steps.base.outputs.BASE_IMAGE }}
           oci: true
       - name: Inspect the created image
         run: 'podman inspect systemd-prepared'
