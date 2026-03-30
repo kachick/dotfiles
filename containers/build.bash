@@ -3,27 +3,25 @@
 set -euxo pipefail
 
 # The latest provisioned image
-readonly PREV_IMAGE="ghcr.io/kachick/dotfiles/provisioned-systemd-home:latest"
-# The clean base image
-readonly CLEAN_BASE="ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:b1e529b73dfaf44935127bd3902fb91e9d761b7f750632f6a704ff0ee23564ed"
+readonly PREV_IMAGE="ghcr.io/kachick/dotfiles/home:latest"
 
 build() {
-	local base_image="${CLEAN_BASE}"
+	local build_args=()
 
 	# Try to use the previous image as a base for incremental build unless forced to full rebuild
 	if [[ "${FORCE_FULL_REBUILD:-false}" != "true" ]]; then
 		if podman pull "${PREV_IMAGE}"; then
-			base_image="${PREV_IMAGE}"
-			echo "Using previous image as base for incremental build: ${base_image}"
+			build_args=("--build-arg" "BASE_IMAGE=${PREV_IMAGE}")
+			echo "Using previous image as base for incremental build: ${PREV_IMAGE}"
 		else
-			echo "Previous image not found. Falling back to full build."
+			echo "Previous image not found. Falling back to the default in Containerfile."
 		fi
 	else
-		echo "Forcing full rebuild from clean base."
+		echo "Forcing full rebuild using the default in Containerfile."
 	fi
 
 	podman build \
-		--build-arg "BASE_IMAGE=${base_image}" \
+		"${build_args[@]}" \
 		--tag nix-systemd \
 		--file containers/Containerfile .
 

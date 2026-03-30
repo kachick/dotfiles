@@ -117,8 +117,6 @@ jobs:
       - name: Determine base image
         id: base
         run: |
-          # The clean base image
-          CLEAN_BASE="ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:b1e529b73dfaf44935127bd3902fb91e9d761b7f750632f6a704ff0ee23564ed"
           # The latest provisioned image
           PREV_IMAGE="ghcr.io/kachick/dotfiles/home:latest"
 
@@ -134,12 +132,13 @@ jobs:
             # Check if the previous image exists on GHCR
             # GitHub token can pull the image from GHCR
             if podman pull "$PREV_IMAGE"; then
-              echo "BASE_IMAGE=$PREV_IMAGE" | tee -a "$GITHUB_OUTPUT"
+              echo "BASE_IMAGE=${PREV_IMAGE}" | tee -a "$GITHUB_OUTPUT"
               exit 0
             fi
           fi
 
-          echo "BASE_IMAGE=$CLEAN_BASE" | tee -a "$GITHUB_OUTPUT"
+          # Fallback to empty string, let Containerfile use its default ARG BASE_IMAGE
+          echo "BASE_IMAGE=" | tee -a "$GITHUB_OUTPUT"
       - name: Build base Image
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
@@ -147,7 +146,7 @@ jobs:
           containerfiles: |
             containers/Containerfile
           build-args: |
-            BASE_IMAGE=${{ steps.base.outputs.BASE_IMAGE }}
+            ${{ steps.base.outputs.BASE_IMAGE != '' && format('BASE_IMAGE={0}', steps.base.outputs.BASE_IMAGE) || '' }}
           oci: true
       - name: Inspect the created image
         run: 'podman inspect systemd-prepared'
