@@ -8,12 +8,12 @@ nixpkgs-unstable: final: _prev: {
         src = nixpkgs-unstable;
         patches = [
           # https://github.com/kachick/dotfiles/pull/1518#issuecomment-4123441635
-          # https://github.com/NixOS/nixpkgs/issues/503112
-          # https://github.com/kachick/nixpkgs/pull/6
+          # https://hydra.nixos.org/build/325252976
+          # https://nixpkgs-tracker.ocfox.me/?pr=503185
           (final.fetchpatch2 {
             name = "winboat-pin-deps.patch";
-            url = "https://patch-diff.githubusercontent.com/raw/kachick/nixpkgs/pull/6.patch?full_index=1";
-            hash = "sha256-yJpcO1ZeK65HlJl+mv6b3U/aHGIyEyKCLFOGURbU9vA=";
+            url = "https://github.com/NixOS/nixpkgs/commit/92c21151c05ebf78230780f2df7e8c303f170e0a.patch?full_index=1";
+            hash = "sha256-v6wwrRtTGXG7WXgxym3hd6RbVhxGTL5NRB54hb4ezGQ=";
           })
         ];
       };
