@@ -85,25 +85,10 @@ jobs:
     steps:
       - name: Logging disk space
         run: df -h
-      - name: Update AppArmor profile for Nix-installed Podman
-        # Ubuntu 24.04 restricts unprivileged user namespaces.
-        # The default AppArmor profile only covers /usr/bin/podman.
-        # We need to add the nix-profile path to the profile.
-        # https://github.com/containers/podman/issues/24642
-        run: |
-          set -euxo pipefail
-          sudo sed -i 's|/usr/bin/podman|{/usr/bin/podman,/home/runner/.nix-profile/bin/podman}|' /etc/apparmor.d/podman
-          sudo systemctl reload apparmor.service
-      - name: Install uidmap
-        # - Nix based podman requires uidmap on the host
-        # - "shadow" in nixpkgs is not enough for podman - https://github.com/NixOS/nixpkgs/issues/138423
-        run: sudo apt-get install -y uidmap
-      - name: Install Nix
-        uses: NixOS/nix-installer-action@main
       - name: Install Podman
-        # nixpkgs version is used to avoid podman-install action and control versions
+        # Use official action to avoid complexity of Nix+AppArmor on Ubuntu 24.04
         # https://github.com/kachick/dotfiles/issues/1517
-        run: nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#podman'
+        uses: redhat-actions/podman-install@0b0ebeccb256851665136971d7782ba7180773df # commit-0b0ebec
       - name: Clean space as per https://github.com/actions/virtual-environments/issues/709
         # NOTE: This workflow removed 14 Gib in 50sec
         # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
