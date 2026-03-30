@@ -1,5 +1,5 @@
 # https://github.com/kachick/containers
-ARG BASE_IMAGE=ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:b1e529b73dfaf44935127bd3902fb91e9d761b7f750632f6a704ff0ee23564ed
+ARG BASE_IMAGE=ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:74d175412283ff2e8672a2557c4a01af1b5785a253fc0be330d0c7857c936375
 FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
