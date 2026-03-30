@@ -2,8 +2,14 @@
 
 set -euxo pipefail
 
-# The latest provisioned image
-readonly PREV_IMAGE="ghcr.io/kachick/dotfiles/home:latest"
+# Fallback to defaults if not set (e.g., local build)
+# The image name in GHCR
+readonly IMAGE_NAME="${IMAGE_NAME:-home}"
+# The base URL for GHCR
+readonly GHCR_BASE="${GHCR_BASE:-ghcr.io/kachick}"
+
+# The latest provisioned image used for incremental builds
+readonly PREV_IMAGE="${GHCR_BASE}/${IMAGE_NAME}:latest"
 
 build() {
 	local build_args=()

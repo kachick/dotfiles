@@ -25,6 +25,12 @@ permissions:
   pull-requests: write
   packages: write
 
+env:
+  # The image name in GHCR
+  IMAGE_NAME: home
+  # The base URL for GHCR
+  GHCR_BASE: ghcr.io/${{ github.repository_owner }}
+
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
@@ -118,7 +124,7 @@ jobs:
         id: base
         run: |
           # The latest provisioned image
-          PREV_IMAGE="ghcr.io/kachick/dotfiles/home:latest"
+          PREV_IMAGE="${{ env.GHCR_BASE }}/${{ env.IMAGE_NAME }}:latest"
 
           # Conditions for full rebuild
           # 1. Manual trigger with force_full_rebuild: true
@@ -211,8 +217,8 @@ jobs:
           set -euxo pipefail
 
           tags="${{ needs.get-meta.outputs.special_tag }} ${{ needs.get-meta.outputs.ref_tag }} ${{ needs.get-meta.outputs.timestamp_tag }}"
-          registry="ghcr.io/${{ github.repository_owner }}"
-          image_name="home"
+          registry="${{ env.GHCR_BASE }}"
+          image_name="${{ env.IMAGE_NAME }}"
 
           for tag in $tags; do
             full_image_name="${registry}/${image_name}:${tag}"
