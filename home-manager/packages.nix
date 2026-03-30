@@ -46,6 +46,7 @@
 
   # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
   passage
+  prs # Test GH-1531
 
   # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
   # See following issues
