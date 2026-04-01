@@ -22,9 +22,6 @@ in
       # Since I can't trust stable channels, I use the unstable channel to resolve package-level issues faster,
       # and I build and cache it myself.
       zed-editor
-
-      # https://github.com/kachick/dotfiles/pull/1518 and the https://github.com/NixOS/nixpkgs/issues/503112
-      winboat
       ;
 
     # Expose the patched mozc for CI building
