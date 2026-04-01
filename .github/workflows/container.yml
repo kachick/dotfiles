@@ -149,18 +149,19 @@ jobs:
         uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
         with:
           image: systemd-prepared
+          tags: ${{ needs.get-meta.outputs.ref_tag }}
           containerfiles: |
             containers/Containerfile
           build-args: |
             ${{ steps.base.outputs.BASE_IMAGE != '' && format('BASE_IMAGE={0}', steps.base.outputs.BASE_IMAGE) || '' }}
           oci: true
       - name: Inspect the created image
-        run: 'podman inspect systemd-prepared'
+        run: 'podman inspect systemd-prepared:${{ needs.get-meta.outputs.ref_tag }}'
       - name: Start systemd
         id: start-systemd
         run: |
           set -euxo pipefail
-          container_id="$(podman run --detach --rm systemd-prepared)"
+          container_id="$(podman run --detach --rm systemd-prepared:${{ needs.get-meta.outputs.ref_tag }})"
           echo container_id="$container_id" | tee -a "$GITHUB_OUTPUT"
       - name: Wait for the systemd to be ready
         run: 'sleep 2'
@@ -194,13 +195,12 @@ jobs:
         run: |
           podman commit \
             --author 'https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}' \
-            '${{ steps.start-systemd.outputs.container_id }}' home
+            '${{ steps.start-systemd.outputs.container_id }}' home:${{ needs.get-meta.outputs.ref_tag }}
           podman kill '${{ steps.start-systemd.outputs.container_id }}'
-          podman tag home home:${{ needs.get-meta.outputs.special_tag }}
-          podman tag home home:${{ needs.get-meta.outputs.ref_tag}}
-          podman tag home home:${{ needs.get-meta.outputs.timestamp_tag }}
+          podman tag home:${{ needs.get-meta.outputs.ref_tag }} home:${{ needs.get-meta.outputs.special_tag }}
+          podman tag home:${{ needs.get-meta.outputs.ref_tag }} home:${{ needs.get-meta.outputs.timestamp_tag }}
       - name: Inspect the created image
-        run: 'podman inspect home'
+        run: 'podman inspect home:${{ needs.get-meta.outputs.ref_tag }}'
       - name: Test the created image
         run: |
           set -euxo pipefail
@@ -222,7 +222,7 @@ jobs:
 
           for tag in $tags; do
             full_image_name="${registry}/${image_name}:${tag}"
-            podman tag "${image_name}" "${full_image_name}"
+            podman tag "${image_name}:${{ needs.get-meta.outputs.ref_tag }}" "${full_image_name}"
             # Using --creds to avoid podman login
             # --digestfile is used to capture the digest for the next step
             podman push --creds="${{ github.repository_owner }}:${{ github.token }}" --digestfile=digest.txt "${full_image_name}"
