@@ -99,11 +99,13 @@ jobs:
       # which causes "path ... is not valid" errors in GHA for patched nixpkgs.
       - name: Update packages
         run: |
-          title="$(nix-update --flake "${PACKAGE}" --print-commit-message)"
+          msg_file="$(mktemp)"
+          nix-update --flake "${PACKAGE}" --write-commit-message "${msg_file}"
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit -m "${title}"
+            git commit --file "${msg_file}"
           fi
+          rm "${msg_file}"
         env:
           PACKAGE: ${{ matrix.package }}
 
