@@ -3,6 +3,7 @@
   "dependencyDashboard": true,
   "extends": [
     "config:recommended",
+    ":semanticCommitsDisabled",
     "github>kachick/renovate-config-dprint#1.3.0",
     "github>kachick/renovate-config-dprint:self"
   ],
