@@ -85,7 +85,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          nix profile add 'https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz#nix-update'
+          unstable="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs-unstable.locked.url')"
+          nix profile add "${unstable}#nix-update"
 
       # Perform evaluation before nix-update to ensure IFD (like patched nixpkgs) is built and valid in store.
       # This addresses the "path ...-patched-nixpkgs-unstable.drv is not valid" error in GHA.
