@@ -14,6 +14,14 @@ runs:
         extra-conf: |
           sandbox = true
           accept-flake-config = true
+    - name: Cache Nix Evaluation and Tarballs
+      uses: actions/cache@v5
+      with:
+        path: ~/.cache/nix
+        key: nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
+        restore-keys: |
+          nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock') }}-
+          nix-eval-and-tarball-${{ runner.os }}-
     - name: Configure Cachix
       uses: cachix/cachix-action@1eb2ef646ac0255473d23a5907ad7b04ce94065c # v17
       with:
