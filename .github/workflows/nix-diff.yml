@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'flake.lock'
+      - '.github/actions/setup-nix/**'
     types: [opened, synchronize, reopened, labeled]
 
 concurrency:

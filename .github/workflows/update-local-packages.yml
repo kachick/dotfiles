@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/update-local-packages.yml'
+      - '.github/actions/setup-nix/**'
   workflow_dispatch:
     inputs:
       dry-run:

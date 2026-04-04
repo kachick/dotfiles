@@ -5,6 +5,7 @@ on:
     paths:
       - 'go.mod'
       - 'go.sum'
+      - '.github/actions/setup-nix/**'
 
 permissions:
   contents: write
