@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - '.github/actions/setup-nix'
+      - '.github/actions/setup-nix/**'
       - 'home-manager/**'
       - '!home-manager/darwin.nix'
       - 'flake.*'
@@ -14,7 +14,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ci-home-linux.yml'
-      - '.github/actions/setup-nix'
+      - '.github/actions/setup-nix/**'
       - 'home-manager/**'
       - '!home-manager/darwin.nix'
       - 'flake.*'

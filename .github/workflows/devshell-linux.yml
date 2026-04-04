@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/devshell-linux.yml'
-      - '.github/actions/setup-nix'
+      - '.github/actions/setup-nix/**'
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
@@ -14,7 +14,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/devshell-linux.yml'
-      - '.github/actions/setup-nix'
+      - '.github/actions/setup-nix/**'
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
