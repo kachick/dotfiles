@@ -94,8 +94,8 @@ jobs:
 
       - name: Install direnv
         run: |
-          curl -sfL https://direnv.net/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
+          nix profile add "${url}#direnv"
       - name: Load environment variables
         run: |
           direnv allow .
