@@ -61,7 +61,7 @@ nix-hash-url https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/
 See [this comment](https://gist.github.com/spencerpogo/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4999658#gistcomment-4999658)
 
 ```bash
-nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./dprint.json)' | nixfmt
+nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./dprint.jsonc)' | nixfmt
 ```
 
 ## How to make executable? `.text =` makes a sym, that links to non executable file

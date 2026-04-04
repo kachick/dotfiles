@@ -13,7 +13,7 @@ let
     args = [
       "fmt"
       "--config"
-      "${../dprint.json}"
+      "${../dprint.jsonc}"
       "--stdin"
       # No need to specify all extensions, just providing a hint to detect language
       extension

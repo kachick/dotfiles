@@ -80,7 +80,6 @@ in
       # https://agents.md/#examples
       "AGENTS.md"
       "/.gemini/"
-      "/.agents/"
 
       # Editor
       "/.helix/"

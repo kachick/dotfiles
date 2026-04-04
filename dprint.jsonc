@@ -11,12 +11,14 @@
   },
   "toml": {
   },
+  // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
   "excludes": [
     ".git",
     ".direnv",
     "dist",
     "result",
-    "dependencies"
+    "dependencies",
+    "tmp"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.21.3.wasm",
