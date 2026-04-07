@@ -21,7 +21,7 @@ if ! command -v nix >/dev/null 2>&1; then
 
 	# https://github.com/NixOS/nix-installer
 	# The installer will auto-detect the OS if not specified.
-	curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install \
+	curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install --enable-flakes \
 		--extra-conf "sandbox = false" \
 		--extra-conf "trusted-users = ${TRUSTED_USERS}" \
 		--no-confirm
