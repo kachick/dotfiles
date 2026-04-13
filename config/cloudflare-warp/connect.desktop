@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Startup Settings
+Type=Application
+Exec=warp-cli connect
+OnlyShowIn=GNOME;
+NoDisplay=true

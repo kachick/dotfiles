@@ -227,6 +227,20 @@
       lock-keys
     ]);
 
+  # https://askubuntu.com/a/88947
+  #
+  # Be careful when modifying gdm/PostLogin/Default.
+  # Do not add unstable, long-running, or waiting (interactive) CLI commands here.
+  # For example, adding `warp-cli` caused GNOME to be blocked with a black screen and a frozen white cursor after login
+  # because its first execution required user agreement via an interactive y/n prompt.
+  # See GH-1110 for detail.
+  # Consider using the xdg.autostart home-manager module instead for startup applications.
+  #
+  # environment.etc."gdm/PostLogin/Default".source = lib.getExe (
+  #   pkgs.writeShellApplication {
+  #   }
+  # );
+
   environment.variables = {
     # Avoid absolute path for $EDITOR and $VISUAL to make applying easy new package with current $PATH.
     VISUAL = "${pkgs.zed-editor.meta.mainProgram} --wait";
