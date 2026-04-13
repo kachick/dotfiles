@@ -233,7 +233,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --allow-no-files --staged --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --allow-no-files --staged --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -721,7 +721,7 @@ _dprint() {
             return 0
             ;;
         dprint__fmt)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1187,7 +1187,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__file__paths)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1237,7 +1237,7 @@ _dprint() {
             return 0
             ;;
         dprint__output__format__times)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --allow-no-files --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --allow-no-files --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
