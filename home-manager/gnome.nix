@@ -9,15 +9,15 @@
         disable-user-extensions = false;
 
         # Why needed an empty list?
-        # I don't know why Gnome have both disabled and enabled, but disabled by settings menu inserts here and it ignores enabled-extensions...
+        # I don't know why GNOME has both disabled and enabled, but disabled by settings menu inserts here and it ignores enabled-extensions...
         disabled-extensions = [ ];
 
         enabled-extensions = map (ext: ext.extensionUuid) (
           with pkgs.gnomeExtensions;
           [
             appindicator
-            # blur-my-shell # Don't use this extension, it often makes flicker. See GH-775
-            # paperwm # Don't use this extension, it might made crashes. See GH-1114
+            # blur-my-shell # Don't use this extension, it often causes flickering. See GH-775
+            # paperwm # Don't use this extension, it might cause crashes. See GH-1114
             clipboard-history
             removable-drive-menu
             # system-monitor
@@ -26,16 +26,16 @@
             workspace-indicator
             applications-menu
             auto-move-windows
-            # just-perfection # Don't use this extension, it made crashes. See GH-1114. And it always displays donation pop-up after updating
+            # just-perfection # Don't use this extension, it causes crashes. See GH-1114. And it always displays donation pop-up after updating
             dash-to-dock
-            # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for detail
+            # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for details
             # user-themes # the package name is not the `user-theme`, required `s` suffix
             lock-keys
           ]
         );
 
         # - Might be needed to reboot to enable icons
-        # - Using fixed profile shortcut is difficult in chrome. So don't add PWA here. See GH-813 and GH-968 for detail.
+        # - Using fixed profile shortcut is difficult in chrome. So don't add PWA here. See GH-813 and GH-968 for details.
         favorite-apps = [
           "com.mitchellh.ghostty.desktop"
           "org.gnome.TextEditor.desktop"

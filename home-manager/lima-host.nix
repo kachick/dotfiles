@@ -18,13 +18,13 @@ in
   home = {
     packages = [
       # lima package includes qemu in the PATH.
-      # But required to specify qemu in your Linux. See GH-1049 and NixOS config for detail.
-      # As far as I know, not required the global qemu in darwin.
+      # But it is required to specify qemu in your Linux. See GH-1049 and NixOS config for details.
+      # As far as I know, global qemu is not required in darwin.
       lima
     ];
 
     # Lima and the yaml config does not have importing feature. However it prefers some files to realize overriding.
-    # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for detail
+    # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for details
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
 
     shellAliases = {

@@ -18,7 +18,7 @@ in
   programs.starship.enableZshIntegration = true;
   programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
-  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
+  programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
   programs.television.enableZshIntegration = false; # Conflict with fzf by default
   programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
 
@@ -291,7 +291,7 @@ in
           source_sh "${pkgs.local.posix_shared_functions}"
 
           # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-          # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
+          # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
           export LC_TIME='en_DK.UTF-8'
 
           if [ 'linux' = "$TERM" ]; then

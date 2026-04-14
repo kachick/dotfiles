@@ -61,7 +61,7 @@ func RegainVerboseContextMenu() {
 	}
 	defer newKey.Close()
 	if isExists {
-		log.Println("Skipped to create registry key, because it is already exists")
+		log.Println("Skipped creating registry key because it already exists")
 		return
 	}
 

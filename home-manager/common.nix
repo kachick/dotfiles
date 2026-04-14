@@ -86,12 +86,12 @@ in
     # https://github.com/nix-community/home-manager/blob/fe56302339bb28e3471632379d733547caec8103/modules/home-environment.nix#L11
     language = {
       base = "ja_JP.UTF-8";
-      # Don't set another locale such as time here, it makes unstable behaviors even if I set it in environment.d
-      # So if required them, it should be specified in each shell rc files. See GH-1116 for detail
+      # Don't set another locale such as time here, it results in unstable behavior even if I set it in environment.d
+      # So if you require them, they should be specified in each shell's rc file. See GH-1116 for details
     };
 
     # Prefer this rather than adding wrapped script to make zsh possible to complete
-    # Take care if I you adding nushell in the Unix dependencies again
+    # Take care if you add nushell to the Unix dependencies again
     shellAliases = {
       "g" = "git";
 

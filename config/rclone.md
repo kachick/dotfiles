@@ -20,7 +20,7 @@ For example
 ```
 
 If you are actually setting up Google Drive as this, you should get client_id and the client_secret in [Google API Console](https://console.developers.google.com/).\
-See [rclone with Google Drive](https://rclone.org/drive) for detail.
+See [rclone with Google Drive](https://rclone.org/drive) for details.
 
 [This article](https://zenn.dev/milly/books/rclone-crypt-gdrive/viewer/b366c4) also helps to setup.
 

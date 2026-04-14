@@ -158,7 +158,7 @@ buildGo126Module (finalAttrs: {
         };
 
         # Regression test for https://github.com/NixOS/nixpkgs/issues/456953.
-        # See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for detail
+        # See https://github.com/NixOS/nixpkgs/pull/461178#issuecomment-3551957460 for details
         staticallyLinkedAgent =
           runCommand "${finalAttrs.pname}-guestagent-linked-test"
             {

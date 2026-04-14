@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
 LABEL org.opencontainers.image.licenses=MIT
 
 USER user
-# Docker/Podman doesn't set $USER in USER instruction, and it makes failure in home-manager activation
+# Docker/Podman doesn't set $USER in the USER instruction, which results in home-manager activation failure
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 

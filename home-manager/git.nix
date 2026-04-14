@@ -20,7 +20,7 @@ let
       runtimeInputs = [ pkgs.local.run_local_hook ];
     }
   );
-  # NOTE: Don't use the home-manager module. Enabling it forces to set programs.git.iniContent.pager.log, it makes much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
+  # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
 in
 {
@@ -31,7 +31,7 @@ in
   programs.git = {
     enable = true;
 
-    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for detail
+    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for details
     # Candidates: https://github.com/git/git/tree/v2.44.1/templates
     hooks = {
       commit-msg = lib.getExe pkgs.local.git-hooks-commit-msg;
@@ -106,7 +106,7 @@ in
 
       gpg = {
         # I prefer PGP sign rather than SSH key to consider revocation and expiration usecase.
-        # See https://github.com/kachick/dotfiles/issues/289 for detail.
+        # See https://github.com/kachick/dotfiles/issues/289 for details.
         format = "openpgp";
 
         program = lib.getExe pkgs.sequoia-chameleon-gnupg; # GH-830
@@ -162,7 +162,7 @@ in
       pager = {
         diff = riff;
         show = riff;
-        # log = riff; # Don't set this. It makes much slow in large repositories such as NixOS/nixpkgs
+        # log = riff; # Don't set this. It makes it much slower in large repositories such as NixOS/nixpkgs
       };
 
       interactive = {

@@ -32,4 +32,4 @@ If you encounter connection problems such as [GH-749](https://github.com/kachick
 warp-cli tunnel host add plugins.dprint.dev
 ```
 
-See [official document](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) for detail.
+See [official document](https://developers.cloudflare.com/cloudflare-one/connections/connect-devices/warp/configure-warp/route-traffic/split-tunnels/) for details.

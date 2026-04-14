@@ -149,7 +149,7 @@ in
             # https://groups.google.com/g/opensshunixdev/c/e5-kTKpxcaI/m/bdVNyL4BBAAJ
             hashKnownHosts = false;
 
-            # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for detail
+            # - It accepts multiple files separated by whitespace. See https://man.openbsd.org/ssh_config#UserKnownHostsFile for details
             # - First path should be writable for the `StrictHostKeyChecking != yes` use-case
             userKnownHostsFile = "${localKnownHostsPath} ${../config/ssh/known_hosts}";
 
@@ -160,7 +160,7 @@ in
 
             controlMaster = "auto";
             controlPersist = "10m";
-            # Used %r by default. And it makes `ControlPath too long` especially using upterm.
+            # Using %r by default often causes `ControlPath too long` errors, especially when using upterm.
             # See following resources and GH-1030
             # https://github.com/nix-community/home-manager/blob/20665c6efa83d71020c8730f26706258ba5c6b2a/modules/programs/ssh.nix#L424-L430
             # https://github.com/owenthereal/upterm/issues/283#issuecomment-2508582116

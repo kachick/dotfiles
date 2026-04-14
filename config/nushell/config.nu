@@ -1,5 +1,5 @@
 # Since nushell 0.101, we can only specify changed values from default
-# See https://github.com/nushell/nushell/pull/14249 for detail
+# See https://github.com/nushell/nushell/pull/14249 for details
 
 $env.config = {
     show_banner: false

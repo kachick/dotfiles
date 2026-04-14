@@ -3,7 +3,7 @@ on:
   push:
     tags:
       - 'v*'
-    # Don't add branch trigger, this workflow is heavy and required to consider concurrency
+    # Don't add branch triggers; this workflow is resource-intensive and requires considering concurrency.
     # branches:
     #   - main
   pull_request:
