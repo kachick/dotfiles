@@ -100,7 +100,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 		"prevent typos in branch name": githooks.Linter{Tag: "typos", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
 			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
-			// See https://github.com/crate-ci/typos/issues/758 for detail
+			// See https://github.com/crate-ci/typos/issues/758 for details
 			cmd.Stdin = strings.NewReader(path.Base(remoteRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(string(out))

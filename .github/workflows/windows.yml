@@ -40,13 +40,13 @@ jobs:
   inspect_runner:
     runs-on: windows-2025
     steps:
-      - name: Print some variables which is applied in GH-617
+      - name: Print some variables that were applied in GH-617
         run: |
           $PSVersionTable
           $PSNativeCommandUseErrorActionPreference
           $ErrorActionPreference
-  # This job has many comment-out style note, agree to ugly, but do NOT remove for now.
-  # See #443 for detail.
+  # This job has many commented-out style notes; I agree it's ugly, but do NOT remove them for now.
+  # See #443 for details.
   #
   # Not Terraform :)
   terraform:
@@ -154,7 +154,7 @@ jobs:
         run: |
           winget --version
           wsl --version
-      - name: Install tools which is called in profile
+      - name: Install tools which are called in the profile
         run: |
           winget import .\windows\winget\winget-pkgs-ci.json --disable-interactivity --accept-package-agreements --accept-source-agreements --verbose
         # GH-1150. Disabling until https://github.com/microsoft/winget-cli/issues/5366 is fixed
@@ -163,7 +163,7 @@ jobs:
         run: |
           .\dist\winit-reg.exe list
           .\dist\winit-reg.exe run --all
-      # This logics can be finished even if tools are not installed
+      # This logic can finish even if tools are not installed
       - name: Put config files around terminals
         run: |
           Write-Host "$PROFILE"

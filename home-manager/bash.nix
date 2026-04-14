@@ -9,7 +9,7 @@
   programs.starship.enableBashIntegration = true;
   programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
-  programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, it makes shell startup slower. Load only key-bindings if required.
+  programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
   programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
@@ -133,10 +133,10 @@
       starship_precmd_user_func="set_win_title"
 
       # Workaround for issues likely https://github.com/reubeno/brush/issues/380
-      # Don't use the "command -v", it made much slow. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
+      # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
       if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
       	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
-      	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It much made shell startup slower
+      	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It makes shell startup much slower
       	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
       fi
 
@@ -151,9 +151,8 @@
       source "${pkgs.local.posix_shared_functions}"
 
       # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-      # And don't set this in home-manager's sessionVariables. It makes much confusion behavior or bugs when using GNOME (or all of DE)
+      # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
       export LC_TIME='en_DK.UTF-8'
-
       if [ 'linux' = "$TERM" ]; then
         adjust_to_linux_vt
       fi

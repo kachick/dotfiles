@@ -66,7 +66,7 @@ nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.
 
 Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
 
-**NOTICE: This command might drop all existing users except which defined in configurations.**
+**NOTICE: This command might drop all existing users except those defined in the configurations.**
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-25.11#gitMinimal' \
@@ -99,11 +99,11 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
    ```
 
-1. If you forgot something adding in the installation phase, manually add it.\
-   Some config needs rebooting to apply it such as `trusted-users`.
+1. If you forgot to add something during the installation phase, manually add it.\
+   Some configurations require a reboot to be applied, such as `trusted-users`.
 
 1. Make sure there is a nix directory that is used in the home-manager.\
-   This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for detail
+   This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for details
 
    ```bash
    mkdir -p ~/.local/state/nix/profiles
@@ -143,13 +143,13 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
    sudo apt-get install --assume-yes uidmap
    ```
 
-1. Make sure the cgroup v1 is disabled if you on WSL, See [the docs](windows/WSL/README.md)
+1. Make sure the cgroup v1 is disabled if you are on WSL, See [the docs](windows/WSL/README.md)
 
 1. Make sure you can run containers as `podman run public.ecr.aws/debian/debian:stable-slim cat /etc/os-release`
 
 ## Debian
 
-After installing missing tools, you can complete same steps as Ubuntu
+After installing missing tools, you can complete the same steps as on Ubuntu
 
 ```bash
 sudo apt update
@@ -158,7 +158,7 @@ sudo apt install --assume-yes curl
 sudo apt install --assume-yes dbus-user-session # For podman
 ```
 
-Remember to set special config and reboot if you on WSL
+Remember to set special config and reboot if you are on WSL
 
 ```bash
 echo '
@@ -170,7 +170,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
 1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
-1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further detail.
+1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further details.
 
 ## Multi-booting on Windows and Linux
 
@@ -184,10 +184,10 @@ You can exit the full-screen RDP session with `Ctrl + Alt + Enter`. (Not the `En
 
 ## macOS
 
-I basically [give up](https://github.com/kachick/dotfiles/issues/911) to maintain my old Intel Mac.\
+I have basically [given up](https://github.com/kachick/dotfiles/issues/911) on maintaining my old Intel Mac.\
 However I should keep the minimum environment for now.
 
-1. Make sure installing official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
+1. Make sure you install the official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
 1. Apply home-manager with `kachick@macbook` for minimum packages.
 1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
 1. Use [Lima](#lima) for development tasks.

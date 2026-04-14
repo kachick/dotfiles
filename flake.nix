@@ -16,7 +16,7 @@
     #   - Avoid rate limit
     #   - nixos.org distributing tar.xz is smaller than GitHub's zip
     #   - nixos.org distributing tar.xz might ensure stable binary caches
-    # See https://github.com/kachick/dotfiles/issues/1262#issuecomment-3302717297 for detail
+    # See https://github.com/kachick/dotfiles/issues/1262#issuecomment-3302717297 for details
     #
     # Candidate channels
     #   - https://github.com/kachick/anylang-template/issues/17

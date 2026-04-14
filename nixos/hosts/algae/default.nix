@@ -51,8 +51,8 @@
     ACTION=="add", SUBSYSTEM=="usb", DRIVERS=="usb", ATTRS{idVendor}=="17ef", ATTRS{idProduct}=="6047", ATTR{power/wakeup}="enabled"
   '';
 
-  # Useful to free-up spaces, however ruunning it causes frozen device with high I/O :<
-  # However I may need to enable this on algae again, 1TiB disk is too small for Nix Life
+  # Useful to free up space, however running it causes the device to freeze with high I/O :<
+  # However I may need to enable this on algae again, 1 TiB disk is too small for Nix Life
   # nix.optimise = {
   #   automatic = true;
   #   # It seems the timezone is handled automatically, so don't manually adjust with +09:00

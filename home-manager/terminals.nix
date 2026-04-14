@@ -15,7 +15,7 @@
         '';
       in
       {
-        # Make sure to enable the NixOS module with empty file. See xdg.terminal-exec for detail
+        # Make sure to enable the NixOS module with empty file. See xdg.terminal-exec for details
         "xdg-terminals.list".text = "";
 
         "alacritty/alacritty.toml".source = ../config/alacritty/alacritty-unix.toml;
