@@ -1,8 +1,16 @@
 { pkgs, ... }:
 {
+  nixpkgs.allowedUnfreePackageNames = [
+    "ludii-bin"
+    "steam"
+    "steam-unwrapped"
+  ];
+
   environment.systemPackages = with pkgs; [
     local.ludii-bin
   ];
 
-  nixpkgs.allowedUnfreePackageNames = [ "ludii-bin" ];
+  programs.steam = {
+    enable = true;
+  };
 }
