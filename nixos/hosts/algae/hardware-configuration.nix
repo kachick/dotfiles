@@ -36,6 +36,14 @@
     fsType = "vfat";
   };
 
+  fileSystems."/mnt/archive" = {
+    device = "/dev/mapper/archive";
+    fsType = "ext4";
+  };
+
+  boot.initrd.luks.devices."archive".device =
+    "/dev/disk/by-uuid/4ee41fba-4ab8-4865-8521-acfe56022ae0";
+
   swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
