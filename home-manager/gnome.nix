@@ -271,6 +271,14 @@
           lib.hm.gvariant.mkUint32 (minutes * 60);
       };
 
+      # Disable automatic sleep/hibernation to prevent unintended disconnections.
+      # This is crucial for devices serving as a jump host for development, accessed via SSH or Tailscale-SSH.
+      # These settings should be device-specific in the future.
+      "org/gnome/settings-daemon/plugins/power" = {
+        sleep-inactive-ac-timeout = 0;
+        sleep-inactive-battery-timeout = 0;
+      };
+
       "org/gnome/desktop/interface" = {
         # https://askubuntu.com/questions/701592/how-do-i-disable-activities-hot-corner-in-gnome-shell
         enable-hot-corners = false;

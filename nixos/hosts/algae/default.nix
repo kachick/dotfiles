@@ -77,15 +77,6 @@
   #   dates = [ "26:30" ];
   # };
 
-  # Disable sleep only on this device, even if it's a desktop.
-  # This device also serves as a jump host for development, used with SSH and Tailscale-SSH.
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=no
-    AllowHibernation=no
-    AllowHybridSleep=no
-    AllowSuspendThenHibernate=no
-  '';
-
   environment.systemPackages = with pkgs; [
     # See also https://yaneuraou.yaneu.com/2020/08/02/yaneuraou-ryzen-threadripper-3990x-optimization/
     # Although the CPU is ZEN2, we use AVX2 to leverage the GHA cache and avoid long local builds.
