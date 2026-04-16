@@ -26,7 +26,12 @@
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/luksroot.nix
   boot.initrd.luks.devices."luks-9b94a10b-7ca3-4e4f-b52d-b1cf5104b519" = {
+    # fstrim is enabled by default for each week:
+    # https://github.com/NixOS/nixpkgs/blob/35b4600dfe916d64506ad6dfad275faeca833a6f/nixos/modules/services/misc/fstrim.nix#L16-L22
+    # See also the result of "Size/Capacity" and "Utilization": `sudo smartctl -a /dev/nvme0n1`
+    # If you want to run fstrim immediately: `sudo fstrim -av`
     allowDiscards = true;
+
     bypassWorkqueues = true;
   };
 
