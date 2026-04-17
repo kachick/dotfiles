@@ -42,7 +42,7 @@ jobs:
           mv lychee /home/runner/.lychee/bin
           echo '/home/runner/.lychee/bin' >> $GITHUB_PATH
       - name: Restore lychee cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v5.0.4
         with:
           path: .lycheecache
           key: lychee-cache-${{ github.run_id }}
@@ -71,7 +71,7 @@ jobs:
       - name: Save lychee cache
 
         if: always()
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v5.0.4
         with:
           path: .lycheecache
           key: lychee-cache-${{ github.run_id }}
