@@ -36,3 +36,4 @@ jobs:
         with:
           name: nixos-installer-iso
           path: result/iso/*.iso
+          compression-level: 0
