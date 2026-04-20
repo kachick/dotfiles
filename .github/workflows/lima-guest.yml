@@ -39,7 +39,7 @@ jobs:
           version: 'latest'
 
       - name: Cache Lima
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: |
             ~/.cache/lima
@@ -67,7 +67,7 @@ jobs:
           version: 'latest'
 
       - name: Cache Lima
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: |
             ~/.cache/lima
