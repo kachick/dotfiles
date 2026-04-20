@@ -1,10 +1,7 @@
-name: 💿 Package NixOS ISO
+name: 💿 NixOS ISO
 on:
   pull_request:
     types: [labeled, opened, synchronize, reopened]
-    paths:
-      - '.github/workflows/package-iso.yml'
-      - 'nixos/hosts/installer/**'
   workflow_dispatch:
   schedule:
     # Every 12:42 JST
@@ -15,13 +12,13 @@ permissions:
 
 jobs:
   build:
-    # Trigger only on PR with label 'package-iso' OR non-PR events
+    # Trigger on:
+    # 1. Schedule or manual dispatch
+    # 2. Pull request ONLY IF the 'nixos-iso' label is present
     if: >-
-      github.event_name != 'pull_request' ||
-      (github.event_name == 'pull_request' && (
-        contains(github.event.pull_request.labels.*.name, 'package-iso') ||
-        github.event.action != 'labeled'
-      ))
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'nixos-iso'))
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     steps:
