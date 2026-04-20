@@ -25,14 +25,7 @@ in
     users.user = {
       imports = [
         ../../home-manager/ephemeral.nix
-        {
-          targets.genericLinux.enable = false;
-        }
-        ../../home-manager/linux.nix
-        ../../home-manager/lima-host.nix
-        ../../home-manager/systemd.nix
-        ../../home-manager/desktop.nix
-        ../../home-manager/firefox.nix
+        ../../home-manager/nixos-desktop-set.nix
       ];
     };
     extraSpecialArgs = {

@@ -22,24 +22,25 @@
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
   users.users.root.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
 
-  # Project specific requirement: Standard sudo without password for the live environment
-  security.sudo.enable = lib.mkForce true;
-  security.sudo-rs.enable = lib.mkForce false;
-  security.sudo.wheelNeedsPassword = lib.mkForce false;
+  # Project specific requirement: Use sudo-rs (project standard) without password
+  # Explicitly force sudo-rs to resolve conflict with standard sudo in the ISO profile
+  security.sudo.enable = lib.mkForce false;
+  security.sudo-rs = {
+    enable = lib.mkForce true;
+    wheelNeedsPassword = false;
+  };
 
   # Project specific requirement: Apply HM to the default 'nixos' user
   users.users.nixos.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    backupFileExtension = "backup";
     users.nixos = {
       imports = [
-        ../../../home-manager/common.nix
-        ../../../home-manager/linux.nix
-        { targets.genericLinux.enable = false; }
-        ../../../home-manager/systemd.nix
-        ../../../home-manager/desktop.nix
-        ../../../home-manager/firefox.nix
+        ../../../home-manager/ephemeral.nix
+        ../../../home-manager/nixos-desktop-set.nix
+        { home.username = "nixos"; }
       ];
     };
     extraSpecialArgs = { inherit pkgs; };

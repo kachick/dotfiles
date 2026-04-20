@@ -1,10 +1,5 @@
 name: 💿 Package NixOS ISO
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/package-iso.yml'
-      - 'nixos/hosts/installer/**'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
     paths:
@@ -16,15 +11,15 @@ on:
     - cron: '42 3 * * *'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
-    # Trigger only on PR with label 'nixos-rebuild' OR non-PR events
+    # Trigger only on PR with label 'package-iso' OR non-PR events
     if: >-
       github.event_name != 'pull_request' ||
       (github.event_name == 'pull_request' && (
-        contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
+        contains(github.event.pull_request.labels.*.name, 'package-iso') ||
         github.event.action != 'labeled'
       ))
     runs-on: ubuntu-24.04
@@ -39,29 +34,8 @@ jobs:
       - name: Build NixOS ISO
         run: |
           nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
-      - name: Prepare ISO for upload
-        run: |
-          mkdir -p dist
-          # Move and rename for clarity in assets
-          cp -v result/iso/*.iso dist/nixos-installer-x86_64.iso
       - name: Upload ISO as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nixos-installer-iso
-          path: dist/*.iso
-          retention-days: 7
-      - name: Update Nightly Release
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: nightly-iso
-          name: 'Nightly NixOS Installer ISO'
-          body: |
-            Automatic build of custom NixOS Installer ISO.
-            Build Date: ${{ github.event.repository.updated_at }}
-            Based on: ${{ github.sha }}
-          files: dist/*.iso
-          prerelease: true
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: result/iso/*.iso
