@@ -11,25 +11,36 @@
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
 
     outputs.nixosModules.desktop
-    ../../desktop/kachick.nix
   ];
-
-  # desktop-free is a generic NixOS configuration that contains only free software.
-  networking.hostName = "installer";
 
   system.stateVersion = "25.11";
 
-  # ISO specific optimizations from NixOS Wiki
-  isoImage.makeEfiBootable = true;
-  isoImage.makeUsbBootable = true;
+  # Use standard sudo for the installer environment
+  security.sudo.enable = lib.mkForce true;
+  security.sudo-rs.enable = lib.mkForce false;
 
-  # Resolve conflict between installation-device.nix (sudo) and our common config (sudo-rs)
-  security.sudo.enable = lib.mkForce false;
-  security.sudo-rs.enable = lib.mkForce true;
+  # Ensure the live 'nixos' user can use sudo without a password
+  # Note: installation-cd-minimal.nix usually sets this up via profiles/installation-device.nix
+  # but we force it here to be certain given the common config's sudo-rs settings.
+  security.sudo.wheelNeedsPassword = false;
 
-  # Enable SSH in the boot process as recommended by Wiki
-  systemd.services.sshd.wantedBy = pkgs.lib.mkForce [ "multi-user.target" ];
+  # Set up authorized keys for the default 'nixos' user
+  users.users.nixos.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
 
-  # Force use the same authorized keys as kachick user for root as well
-  users.users.root.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
+  # Apply home-manager settings to the live 'nixos' user
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    users.nixos = {
+      imports = [
+        ../../../home-manager/kachick.nix
+        ../../../home-manager/linux.nix
+        { targets.genericLinux.enable = false; }
+        ../../../home-manager/systemd.nix
+        ../../../home-manager/desktop.nix
+        ../../../home-manager/firefox.nix
+      ];
+    };
+    extraSpecialArgs = { inherit pkgs; };
+  };
 }

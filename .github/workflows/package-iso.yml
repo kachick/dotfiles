@@ -1,0 +1,61 @@
+name: 💿 Package NixOS ISO
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/package-iso.yml'
+      - 'nixos/hosts/installer/**'
+  pull_request:
+    types: [labeled, opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/package-iso.yml'
+      - 'nixos/hosts/installer/**'
+  workflow_dispatch:
+  schedule:
+    # Every 11:42 JST
+    - cron: '42 2 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # PR trigger condition: only when labeled 'nixos-rebuild' OR it's not a labeling event (i.e. normal push/sync)
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event_name == 'pull_request' && (
+        contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
+        github.event.action != 'labeled'
+      ))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6.0.2
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-nix
+        with:
+          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Build NixOS ISO
+        run: |
+          nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
+      - name: Prepare ISO for upload
+        run: |
+          mkdir -p dist
+          cp -v result/iso/*.iso dist/
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nixos-installer-iso
+          path: dist/*.iso
+          retention-days: 7
+      - name: Upload to GitHub Release (Nightly)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly-iso
+          files: dist/*.iso
+          prerelease: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
