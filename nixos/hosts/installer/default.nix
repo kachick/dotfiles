@@ -6,6 +6,9 @@
   ...
 }:
 
+let
+  mkUser = import ../../desktop/mkUser.nix { inherit lib; };
+in
 {
   imports = [
     # Strictly follow the "Nix Flakes" section of the Wiki
@@ -30,8 +33,13 @@
     wheelNeedsPassword = false;
   };
 
-  # Project specific requirement: Apply HM to the default 'nixos' user
-  users.users.nixos.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
+  # Set up the 'nixos' user with mkUser to ensure correct groups (e.g. uinput for kanata)
+  users.users.nixos = mkUser {
+    description = "NixOS Live User";
+    openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
+  };
+
+  # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
