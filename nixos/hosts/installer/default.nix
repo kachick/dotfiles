@@ -6,11 +6,6 @@
   ...
 }:
 
-let
-  mkUserRaw = import ../../desktop/mkUser.nix { inherit lib; };
-  # Get only the groups from the helper
-  userDefaults = mkUserRaw { };
-in
 {
   imports = [
     # Strictly follow the "Nix Flakes" section of the Wiki
@@ -35,12 +30,16 @@ in
     wheelNeedsPassword = false;
   };
 
-  # Complement the existing 'nixos' user with required groups and keys.
-  # Use mkAfter to ensure we add to the groups defined in the ISO profile (e.g., wheel, video).
-  users.users.nixos = {
-    extraGroups = lib.mkAfter userDefaults.extraGroups;
-    openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
+  # Safe way to add 'nixos' user to groups without overwriting the base user definition
+  users.groups = {
+    uinput.members = [ "nixos" ];
+    input.members = [ "nixos" ];
+    scanner.members = [ "nixos" ];
+    lp.members = [ "nixos" ];
   };
+
+  # Ensure the keys are set without overwriting the user definition
+  users.users.nixos.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
 
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager = {
