@@ -12,15 +12,15 @@ on:
       - 'nixos/hosts/installer/**'
   workflow_dispatch:
   schedule:
-    # Every 11:42 JST
-    - cron: '42 2 * * *'
+    # Every 12:42 JST
+    - cron: '42 3 * * *'
 
 permissions:
   contents: write
 
 jobs:
   build:
-    # PR trigger condition: only when labeled 'nixos-rebuild' OR it's not a labeling event (i.e. normal push/sync)
+    # Trigger only on PR with label 'nixos-rebuild' OR non-PR events
     if: >-
       github.event_name != 'pull_request' ||
       (github.event_name == 'pull_request' && (
@@ -42,20 +42,26 @@ jobs:
       - name: Prepare ISO for upload
         run: |
           mkdir -p dist
-          cp -v result/iso/*.iso dist/
+          # Move and rename for clarity in assets
+          cp -v result/iso/*.iso dist/nixos-installer-x86_64.iso
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
           name: nixos-installer-iso
           path: dist/*.iso
           retention-days: 7
-      - name: Upload to GitHub Release (Nightly)
+      - name: Update Nightly Release
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nightly-iso
+          name: 'Nightly NixOS Installer ISO'
+          body: |
+            Automatic build of custom NixOS Installer ISO.
+            Build Date: ${{ github.event.repository.updated_at }}
+            Based on: ${{ github.sha }}
           files: dist/*.iso
           prerelease: true
-          generate_release_notes: true
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
