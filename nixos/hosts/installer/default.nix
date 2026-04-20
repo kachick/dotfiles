@@ -7,9 +7,8 @@
 }:
 
 let
-  # Extract the logic to compute groups from mkUser.nix without overwriting the whole user set
   mkUserRaw = import ../../desktop/mkUser.nix { inherit lib; };
-  # Apply a dummy set to mkUser to get the default extraGroups it computes
+  # Get only the groups from the helper
   userDefaults = mkUserRaw { };
 in
 {
@@ -36,10 +35,10 @@ in
     wheelNeedsPassword = false;
   };
 
-  # Complement the existing 'nixos' user with required groups and keys,
-  # while keeping its ISO-profile defaults (like empty password and autologin).
+  # Complement the existing 'nixos' user with required groups and keys.
+  # Use mkAfter to ensure we add to the groups defined in the ISO profile (e.g., wheel, video).
   users.users.nixos = {
-    extraGroups = userDefaults.extraGroups;
+    extraGroups = lib.mkAfter userDefaults.extraGroups;
     openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
 
