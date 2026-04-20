@@ -7,7 +7,10 @@
   ];
 
   # Default bootloader for desktop systems
-  boot.loader.systemd-boot.enable = lib.mkDefault true;
+  boot.loader.systemd-boot = {
+    enable = lib.mkDefault true;
+    memtest86.enable = true;
+  };
 
   nixpkgs.overlays = [ outputs.overlays.default ];
 
