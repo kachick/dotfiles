@@ -6,6 +6,9 @@
   ...
 }:
 
+let
+  mkUser = import ../../desktop/mkUser.nix { inherit lib; };
+in
 {
   imports = [
     # Strictly follow the "Nix Flakes" section of the Wiki
@@ -30,16 +33,12 @@
     wheelNeedsPassword = false;
   };
 
-  # Safe way to add 'nixos' user to groups without overwriting the base user definition
-  users.groups = {
-    uinput.members = [ "nixos" ];
-    input.members = [ "nixos" ];
-    scanner.members = [ "nixos" ];
-    lp.members = [ "nixos" ];
+  # Set up the 'nixos' user using the project's standard mkUser helper.
+  # This ensures consistency with kachick/ephemeral users, including group memberships like uinput.
+  users.users.nixos = mkUser {
+    description = "NixOS Live User";
+    openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
-
-  # Ensure the keys are set without overwriting the user definition
-  users.users.nixos.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
 
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager = {
