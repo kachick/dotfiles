@@ -27,7 +27,6 @@ in
       imports = [
         ../../home-manager/kachick.nix
         ../../home-manager/nixos-desktop-set.nix
-        ../../home-manager/lima-host.nix
       ];
     };
     extraSpecialArgs = {
