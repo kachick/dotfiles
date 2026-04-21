@@ -148,6 +148,7 @@ in
     packages = with pkgs; [
       kanata # Don't require kanata-with-cmd for now
       pinned.kanata-tray
+      local.ibus-engine-selector
     ];
 
     sessionVariables = {
