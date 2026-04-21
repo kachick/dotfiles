@@ -10,17 +10,19 @@ let
   mkUser = import ../../desktop/mkUser.nix { inherit lib; };
 in
 {
+  # Strictly follow the "Nix Flakes" section of the Wiki
   imports = [
-    # Strictly follow the "Nix Flakes" section of the Wiki
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
 
     # Project specific desktop tools/settings
     outputs.nixosModules.desktop
+    outputs.nixosModules.options
   ];
+
+  profiles.recovery = true;
 
   # Wiki "Building faster" section
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
-
   # Wiki "SSH" section: Enable SSH and set keys for root
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
   users.users.root.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;

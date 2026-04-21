@@ -2,6 +2,7 @@
   lib,
   pkgs,
   config,
+  osConfig,
   ...
 }:
 
@@ -29,9 +30,8 @@ let
     "firefox.desktop"
     # Chrome is heavy when open large PDF files
     "google-chrome.desktop"
-
-    "org.gnome.Papers.desktop"
-  ];
+  ]
+  ++ lib.optional (!(osConfig.profiles.recovery or false)) "org.gnome.Papers.desktop";
 
   terminalEmulator = [
     "com.mitchellh.ghostty.desktop"

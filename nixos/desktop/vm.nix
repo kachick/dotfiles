@@ -1,6 +1,11 @@
 # This file defines GUI VM management on NixOS desktop. See also lima related files in home-manager
 
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   # Why not other candidates?
   #
@@ -15,17 +20,17 @@
 
   virtualisation.spiceUSBRedirection.enable = true;
 
-  environment.systemPackages = with pkgs; [
-    # Ensure existing qemu-img with lima for use of systemd.
-    # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
-    # See GH-1049 for details.
-    qemu
+  environment.systemPackages =
+    with pkgs;
+    [
+      # Ensure existing qemu-img with lima for use of systemd.
+      # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
+      # See GH-1049 for details.
+      qemu
 
-    # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
-    # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db
-    unstable.gnome-boxes
-
-    # Best experience when considering clipboard behaviors. See GH-1310 for details
-    unstable.winboat
-  ];
+      # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
+      # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db
+      unstable.gnome-boxes
+    ]
+    ++ lib.optional (!config.profiles.recovery) unstable.winboat;
 }

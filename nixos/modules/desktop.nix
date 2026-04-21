@@ -3,6 +3,7 @@
   imports = [
     ../configuration.nix
     outputs.nixosModules.home-manager
+    outputs.nixosModules.options
     ../desktop
   ];
 
