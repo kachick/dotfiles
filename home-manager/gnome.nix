@@ -189,6 +189,10 @@
         command = pkgs.ghostty.meta.mainProgram;
       };
 
+      "org/gnome/settings-daemon/plugins/housekeeping" = {
+        donation-reminder-enabled = false; # Disable because it always popup on Live installer/recovery ISO image.
+      };
+
       "org/gnome/shell/extensions/clipboard-history" = {
         history-size = 100;
         toggle-menu = [ "<Super>v" ]; # default: ['<Super><Shift>v']
