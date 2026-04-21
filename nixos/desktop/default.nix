@@ -212,9 +212,6 @@
       # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
       unstable.signal-desktop
 
-      # Use latest as the package mainatiner
-      unstable.bitsnpicas
-
       # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
       unstable.mdns-scanner
 
