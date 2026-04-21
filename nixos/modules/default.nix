@@ -7,4 +7,5 @@
   ephemeral = ../desktop/ephemeral.nix;
   home-manager = inputs.home-manager-linux.nixosModules.home-manager;
   cloudflare-warp = ./cloudflare-warp.nix;
+  options = ./options.nix;
 }

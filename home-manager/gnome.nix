@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  osConfig,
+  ...
+}:
 
 {
   # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix
@@ -42,8 +47,12 @@
           "google-chrome.desktop"
           "firefox.desktop"
           "signal.desktop"
+        ]
+        ++ lib.optionals (!(osConfig.profiles.recovery or false)) [
           "winboat.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
+        ]
+        ++ [
           "org.gnome.Nautilus.desktop"
           "io.missioncenter.MissionCenter.desktop"
         ];
@@ -332,7 +341,7 @@
           let
             music = "3";
           in
-          [
+          lib.optionals (!(osConfig.profiles.recovery or false)) [
             "org.gnome.Rhythmbox3.desktop:${music}"
           ];
       };

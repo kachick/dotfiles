@@ -135,88 +135,77 @@
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
-    (with pkgs; [
-      firefox
+    (
+      with pkgs;
+      [
+        firefox
 
-      # https://github.com/NixOS/nixpkgs/issues/33282
-      xdg-user-dirs
+        # https://github.com/NixOS/nixpkgs/issues/33282
+        xdg-user-dirs
 
-      cyme
-      lshw
-      pciutils # `lspci`
-      smartmontools # `sudo smartctl -a /dev/nvme0n1`
-      nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
+        cyme
+        lshw
+        pciutils # `lspci`
+        smartmontools # `sudo smartctl -a /dev/nvme0n1`
+        nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
 
-      # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
-      # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
-      #   See package-linux/darwin workflows for the dedicated building.
-      unstable.zed-editor
+        # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
+        # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
+        #   See package-linux/darwin workflows for the dedicated building.
+        unstable.zed-editor
 
-      gdm-settings
-      desktop-file-utils # `desktop-file-validate`
+        gdm-settings
+        desktop-file-utils # `desktop-file-validate`
 
-      ghostty
+        ghostty
 
-      alacritty
+        alacritty
 
-      lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
+        lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
 
-      mission-center
+        mission-center
+      ]
+      ++ lib.optionals (!config.profiles.recovery) [
+        # Add LSP global for zed-editor. Prefer external package for helix
+        vscode-langservers-extracted
+        # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
 
-      # Add LSP global for zed-editor. Prefer external package for helix
-      vscode-langservers-extracted
-      # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
+        # gnome-music does not support flac.
 
-      # gnome-music does not support flac.
-      # tramhao/termusic and tsirysndr/music-player does not figure how to use.
-      rhythmbox
+        # tramhao/termusic and tsirysndr/music-player does not figure how to use.
+        rhythmbox
 
-      evtest # To debug keyremapper as GH-786
-      psmisc # e.g. `fuser -v /dev/input/event17` when want to know event17 is grabbed by which process
+        newsflash # `io.gitlab.news_flash.NewsFlash`
 
-      newsflash # `io.gitlab.news_flash.NewsFlash`
+        # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
+        readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 
-      # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
-      readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
+        # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
+        unstable.podman-desktop
 
-      gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
-      dconf-editor
+        # Install one of PDF reader to enable PDF thumbnails on nautilus.
+        # It should have `share/thumbnailers/`
+        # See https://github.com/NixOS/nixpkgs/issues/200714#issuecomment-1318003798 and https://github.com/NixOS/nixpkgs/issues/275046 for details
+        papers # PDF reader. Successor of evince. Slow, but the default in GNOME 49.
 
-      # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
-      unstable.podman-desktop
+        # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
+        unstable.signal-desktop
+      ]
+      ++ [
+        evtest # To debug keyremapper as GH-786
+        psmisc # e.g. `fuser -v /dev/input/event17` when want to know event17 is grabbed by which process
 
-      # Install one of PDF reader to enable PDF thumbnails on nautilus.
-      # It should have `share/thumbnailers/`
-      # See https://github.com/NixOS/nixpkgs/issues/200714#issuecomment-1318003798 and https://github.com/NixOS/nixpkgs/issues/275046 for details
-      papers # PDF reader. Successor of evince. Slow, but the default in GNOME 49.
+        gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
+        dconf-editor
 
-      gnome-epub-thumbnailer
+        gnome-epub-thumbnailer
 
-      loupe # image viewer
+        # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
+        unstable.mdns-scanner
 
-      contrast # Check two color contrast. Also using as a color-picker
-
-      # Clipboard
-      #
-      # Don't use clipcat, copyq for wayland problem
-      # Dont' use cliphist for electron problem: https://www.reddit.com/r/NixOS/comments/1d57zbj/problem_with_cliphist_and_electron_apps/
-      # Don't use clipse it made flickers on GNOME
-      #
-      # So prefer clipboard gnome extension except below tools
-      #
-      # Don't use `wl-clipboard-rs`, it doesn't work on GNOME.
-      #   - "Error: A required Wayland protocol (zwlr_data_control_manager_v1 version 2) is not supported by the compositor"
-      #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
-      wl-clipboard # `wl-copy` and `wl-paste`
-
-      # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
-      unstable.signal-desktop
-
-      # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
-      unstable.mdns-scanner
-
-      local.chrome-with-profile-by-name
-    ])
+        local.chrome-with-profile-by-name
+      ]
+    )
     ++ (with pkgs.gnomeExtensions; [
       appindicator
       clipboard-history

@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   fonts = {
     enableDefaultPackages = true;
@@ -11,23 +16,31 @@
     # ```
     fontDir.enable = true;
 
-    packages = with pkgs; [
-      ibm-plex
-      plemoljp-nf
-      inconsolata
-      mplus-outline-fonts.githubRelease
-      # sarasa-gothic # Drop this because of the large filesize
+    packages =
+      with pkgs;
+      [
+        ibm-plex
+        plemoljp-nf
+        inconsolata
+        mplus-outline-fonts.githubRelease
+        # sarasa-gothic # Drop this because of the large filesize
 
-      # emoji
-      noto-fonts-color-emoji
-      twemoji-color-font
-      beedii
-
-      # Source Han family includes many definitions, useful for fallback
-      source-han-code-jp
-      source-han-sans
-      source-han-serif
-    ];
+        # emoji
+        noto-fonts-color-emoji
+        twemoji-color-font
+      ]
+      ++ lib.optional (!config.profiles.recovery) beedii
+      ++ (
+        if config.profiles.recovery then
+          [ noto-fonts-cjk-sans ]
+        else
+          [
+            # Source Han family includes many definitions, useful for fallback
+            source-han-code-jp
+            source-han-sans
+            source-han-serif
+          ]
+      );
 
     # Same as home-manager module?
     # https://github.com/nix-community/home-manager/issues/605
