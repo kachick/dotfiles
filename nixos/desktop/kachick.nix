@@ -26,12 +26,7 @@ in
     users.kachick = {
       imports = [
         ../../home-manager/kachick.nix
-        ../../home-manager/linux.nix
-        { targets.genericLinux.enable = false; }
-        ../../home-manager/lima-host.nix
-        ../../home-manager/systemd.nix
-        ../../home-manager/desktop.nix
-        ../../home-manager/firefox.nix
+        ../../home-manager/nixos-desktop-set.nix
       ];
     };
     extraSpecialArgs = {
