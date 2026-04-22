@@ -44,8 +44,10 @@
 
       # You can also use 0 = `Slashed zero style` with enabling `"editor.fontLigatures": "'zero'"` in vscode
       # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
-      plemoljp-nf
-      ibm-plex # For sans-serif, use plemoljp for developing
+      plemoljp-nf # For developing
+      local.ibm-plex-sans-jp
+      local.ibm-plex-mono
+      local.ibm-plex-serif-variable
     ];
   };
 

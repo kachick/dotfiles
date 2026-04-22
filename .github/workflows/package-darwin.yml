@@ -43,6 +43,9 @@ jobs:
       # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.
       TARGET_PACKAGES: >-
         lima-full
+        ibm-plex-sans-jp
+        ibm-plex-mono
+        ibm-plex-serif-variable
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}
     steps:

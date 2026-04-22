@@ -16,7 +16,9 @@
       # While the Source Han series offers even more extensive fallback definitions,
       # adding them all leads to significant disk bloat.
       # Thus, I've opted for IBM Plex as the primary set and omitted most Source Han variants.
-      ibm-plex
+      local.ibm-plex-sans-jp
+      local.ibm-plex-mono
+      local.ibm-plex-serif-variable
       plemoljp-nf
 
       # emoji
@@ -39,13 +41,12 @@
       # Without it often made troubles, such as chrome bookmarkbar uses monochrome emojis
       defaultFonts = {
         serif = [
-          "IBM Plex Serif"
+          "IBM Plex Serif Var"
           "Source Han Sans" # Fallback to Sans if Serif not found
           "Noto Color Emoji"
         ];
         sansSerif = [
           "IBM Plex Sans JP"
-          "IBM Plex Sans"
           "Source Han Sans"
           "Noto Color Emoji"
         ];
