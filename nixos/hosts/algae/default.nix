@@ -13,6 +13,7 @@
     outputs.nixosModules.desktop-unfree
     outputs.nixosModules.hardware
     outputs.nixosModules.cloudflare-warp
+    outputs.nixosModules.swap
     ../../desktop/kachick.nix
 
     ./hardware-configuration.nix
@@ -52,6 +53,16 @@
   services.fstrim.enable = true;
 
   services.fwupd.enable = true;
+
+  # Enable swap file for hibernation.
+  # The size should be larger than physical RAM (32GiB) to ensure hibernation works reliably.
+  # See also: https://chrisdown.name/ja/2018/01/02/in-defence-of-swap.html
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 38 * 1024;
+    }
+  ];
 
   # Required to reboot if you want to apply changes
   # Prevent GH-894
