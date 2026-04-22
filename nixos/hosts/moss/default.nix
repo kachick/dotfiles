@@ -15,6 +15,7 @@
     outputs.nixosModules.desktop-unfree
     outputs.nixosModules.hardware
     outputs.nixosModules.cloudflare-warp
+    outputs.nixosModules.swap
     ../../desktop/kachick.nix
 
     ./hardware-configuration.nix
@@ -38,6 +39,16 @@
   services.fstrim.enable = true;
 
   services.fwupd.enable = true;
+
+  # Enable swap file for hibernation.
+  # The size should be larger than physical RAM (40GiB) to ensure hibernation works reliably.
+  # See also: https://chrisdown.name/ja/2018/01/02/in-defence-of-swap.html
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 48 * 1024;
+    }
+  ];
 
   # Don't use this charge_control_*_threshold config for now, while GNOME and UPower integrations are working
   # However GNOME's "Preserve Battery Health" seems incomplete the UI and behavior for me.
