@@ -53,6 +53,9 @@ jobs:
             "mozc"
             "yaneuraou-avx2"
             "hcpu_shogi"
+            "ibm-plex-sans-jp"
+            "ibm-plex-mono"
+            "ibm-plex-serif-variable"
           )
 
           # Dynamically add all shared-gomod packages
