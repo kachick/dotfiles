@@ -46,9 +46,6 @@
       # but cannot use it in alacritty https://github.com/alacritty/alacritty/issues/50
       plemoljp-nf
       ibm-plex # For sans-serif, use plemoljp for developing
-
-      source-han-code-jp # Includes many definitions, useful for fallback
-      inconsolata
     ];
   };
 

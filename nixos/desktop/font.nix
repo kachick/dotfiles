@@ -12,21 +12,21 @@
     fontDir.enable = true;
 
     packages = with pkgs; [
+      # IBM Plex family provides broad character coverage and I prefer its design.
+      # While the Source Han series offers even more extensive fallback definitions,
+      # adding them all leads to significant disk bloat.
+      # Thus, I've opted for IBM Plex as the primary set and omitted most Source Han variants.
       ibm-plex
       plemoljp-nf
-      inconsolata
-      mplus-outline-fonts.githubRelease
-      # sarasa-gothic # Drop this because of the large filesize
 
       # emoji
       noto-fonts-color-emoji
-      twemoji-color-font
-      beedii
 
-      # Source Han family includes many definitions, useful for fallback
-      source-han-code-jp
+      # Source Han family includes many definitions, useful for fallback.
+      # Keep minimal packages for disk space.
+      # Other fonts should be used on-demand in each repository or development environment:
+      #   mplus-outline-fonts.githubRelease, inconsolata, beedii, biz-ud-gothic, ipamjfont, etc...
       source-han-sans
-      source-han-serif
     ];
 
     # Same as home-manager module?
@@ -40,21 +40,22 @@
       defaultFonts = {
         serif = [
           "IBM Plex Serif"
-          "Source Han Serif"
+          "Source Han Sans" # Fallback to Sans if Serif not found
           "Noto Color Emoji"
         ];
         sansSerif = [
+          "IBM Plex Sans JP"
           "IBM Plex Sans"
           "Source Han Sans"
           "Noto Color Emoji"
         ];
         monospace = [
           "PlemolJP Console NF"
-          "Source Han Code JP"
+          "IBM Plex Mono" # Source Han Code JP is omitted to avoid disk bloat, despite its superior fallback coverage
           "Noto Color Emoji"
         ];
         emoji = [
-          # monochrome fonts such as "Beedii" will be disabled by color fonts even in adjusted order
+          # NOTE: Monochrome emoji/symbol fonts (e.g. "Beedii") will be disabled by color fonts even in adjusted order
           "Noto Color Emoji"
         ];
       };
