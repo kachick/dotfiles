@@ -70,6 +70,8 @@
       enable = true;
       terminal = "ghostty";
     };
+
+    coolercontrol.enable = true;
   };
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/wireshark.nix
