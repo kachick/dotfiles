@@ -100,6 +100,8 @@ jobs:
         # Use official action to avoid complexity of Nix+AppArmor on Ubuntu 24.04
         # https://github.com/kachick/dotfiles/issues/1517
         uses: redhat-actions/podman-install@0b0ebeccb256851665136971d7782ba7180773df # commit-0b0ebec
+        with:
+          ubuntu-version: '24.04'
       - name: Clean space as per https://github.com/actions/virtual-environments/issues/709
         # NOTE: This workflow removed 14 Gib in 50sec
         # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
