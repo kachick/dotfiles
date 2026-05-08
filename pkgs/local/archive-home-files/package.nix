@@ -38,7 +38,7 @@ buildGo126Module (finalAttrs: {
       --set-default AGE_RECIPIENTS "${lib.concatStringsSep "," keys}"
   '';
 
-  vendorHash = "sha256-tvq951p9pznSyLeQDYHbo4PvXLR0VrgUXR2j4AW5Ir0=";
+  vendorHash = "sha256-bf4ZygJK7cNWkNxs97pOchT8x2EPeW0VQ1CMoYyoAHo=";
   src =
     with lib.fileset;
     toSource {

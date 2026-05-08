@@ -12,7 +12,7 @@ buildGo126Module (finalAttrs: {
   pname = "nix-diff";
   version = "0.0.1";
 
-  vendorHash = "sha256-W9z2ZmthPlcNY4LeKi/pVxvr3UJTz9300CAZznWm1no=";
+  vendorHash = "sha256-uAEDdBuihA9qZVZjcayToV1MgiWi5VQVhmC6lR/V6Qg=";
 
   src =
     with lib.fileset;
