@@ -19,6 +19,9 @@ stdenvNoCC.mkDerivation rec {
 
   nativeBuildInputs = [ installFonts ];
 
+  # Unnecessary for dotfiles
+  dontInstallWebfonts = true;
+
   meta = {
     description = "IBM Plex Mono";
     homepage = "https://github.com/IBM/plex";
