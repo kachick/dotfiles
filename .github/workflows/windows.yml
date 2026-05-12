@@ -38,7 +38,7 @@ defaults:
 
 jobs:
   inspect_runner:
-    runs-on: windows-2025
+    runs-on: windows-2025-vs2026
     steps:
       - name: Print some variables that were applied in GH-617
         run: |
@@ -50,7 +50,7 @@ jobs:
   #
   # Not Terraform :)
   terraform:
-    runs-on: windows-2025
+    runs-on: windows-2025-vs2026
     steps:
       - name: Prepare Windows Defender
         # https://github.com/actions/runner-images/issues/855#issuecomment-626692949 may help to understand
