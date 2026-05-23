@@ -60,8 +60,6 @@ exclude = [
 
   # There is no landing page
   "cache.garnix.io",
-
-  "example.*",
 ]
 
 exclude_all_private = true
