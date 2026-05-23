@@ -50,7 +50,7 @@ exclude = [
   "https://ludii.games/downloads",
 
   # Having strict spam checker, it also rejeccts lychee requests from GitHub Actions
-  "https://gitlab.freedesktop.org/",
+  "freedesktop.org",
 
   # Slow network
   "wiki.gnupg.org",
