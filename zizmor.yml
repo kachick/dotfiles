@@ -20,5 +20,3 @@ rules:
       - cleanup-staging-packages.yml
   secrets-outside-env:
     disable: true
-  github-app:
-    disable: true # TODO: Enable: https://github.com/kachick/dotfiles/pull/1580#issuecomment-4526205969

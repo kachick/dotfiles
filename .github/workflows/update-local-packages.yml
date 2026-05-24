@@ -50,6 +50,7 @@ jobs:
           # Why replaced from secrets?: https://github.com/github/docs/commit/eaac671cdd9189afd410366e9eb5edd4ee815194#diff-19d2b329775bf781d0cf19fabafa7f231bd85f133cbf9e23594036ea68f7021dL53-R54
           app-id: ${{ vars.APP_ID }}
           private-key: ${{ secrets.PRIVATE_KEY }}
+          permission-contents: write
 
       - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v6.0.1
         with:
