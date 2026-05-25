@@ -17,7 +17,7 @@
   hardware.block.defaultScheduler = "kyber";
 
   # `wpa_cli`. I don't know what is the `wpa_gui`
-  networking.wireless.userControlled.enable = true;
+  networking.wireless.userControlled = true;
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/xserver.nix
   services = {
