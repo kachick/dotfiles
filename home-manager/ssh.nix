@@ -95,7 +95,7 @@ in
     # Realizing the ordering can not be done in Nix's attribute set. `DAG` by home-manager will be required for this purpose.
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L100-L102
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L531-L547
-    matchBlocks =
+    settings =
       let
         hosts =
           let
