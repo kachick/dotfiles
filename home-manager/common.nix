@@ -43,7 +43,7 @@ in
     #
     # TODO: Bump to 26.05 *carefully* once both NixOS and Home Manager 26.05 are out.
     #       This setting is similar to but not identical in purpose to NixOS’s `system.stateVersion`.
-    stateVersion = "25.11";
+    stateVersion = "26.05";
     enableNixpkgsReleaseCheck = true;
 
     sessionVariables = {
