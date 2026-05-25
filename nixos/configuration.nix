@@ -131,15 +131,15 @@
   # or avoid conflicts with their own network management.
   services.resolved = {
     enable = lib.mkDefault true;
-    llmnr = "false";
 
     # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
     # - https://github.com/systemd/systemd/pull/40133
     # - https://www.freedesktop.org/software/systemd/man/latest/resolved.conf.html
-    extraConfig = ''
-      MulticastDNS=resolve
-      DNSStubListener=false
-    '';
+    settings.Resolve = {
+      LLMNR = false;
+      DNSStubListener = false;
+      MulticastDNS = "resolve";
+    };
   };
 
   # Avahi module has openFirewall, but resolved module does not have it
