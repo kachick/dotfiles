@@ -23,18 +23,16 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz"; # TODO: Switch to nixos-26.05 once available
+    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
     nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.xz";
     home-manager-linux = {
-      # url = "github:nix-community/home-manager/release-26.06"; # TODO: Use stable channel once available
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      # url = "github:nix-community/home-manager/release-26.06"; # TODO: Use stable channel once available
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
