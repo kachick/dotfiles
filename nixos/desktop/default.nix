@@ -287,7 +287,9 @@
       type = "ibus";
 
       # mozc and ibus config files will be put on `$XDG_CONFIG_HOME/mozc`
-      ibus.engines = with pkgs.ibus-engines; [ mozc ];
+      ibus.engines = with pkgs.ibus-engines; [
+        (mozc.override { withIbus = true; })
+      ];
     };
   };
 
