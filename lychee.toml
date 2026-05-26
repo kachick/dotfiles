@@ -46,8 +46,8 @@ exclude = [
   # e.g., "http://github.com/owner/repo/releases/download/v${version}/asset"
   '\$%7',
 
-  # Nix's version interpolation URL is not a standard URL
-  "https://ludii.games/downloads",
+  # Often timeouts
+  "ludii.games",
 
   # Having strict spam checker, it also rejeccts lychee requests from GitHub Actions
   "freedesktop.org",
