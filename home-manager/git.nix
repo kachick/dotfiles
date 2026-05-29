@@ -9,19 +9,30 @@
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
 let
-  mkPassthruHook = (
-    hook_name:
-    pkgs.writeShellApplication {
-      name = "passthru-hook-for-the-local-hook";
-      text = ''
-        run_local_hook '${hook_name}' "$@"
-      '';
-      meta.description = "GH-545";
-      runtimeInputs = [ pkgs.local.run_local_hook ];
-    }
-  );
   # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
+  typos = lib.getExe pkgs.unstable.typos;
+  betterleaks = lib.getExe pkgs.unstable.betterleaks;
+  typos_toml = ../typos.toml;
+
+  # Git 2.54 complex hooks
+  prePushHook = pkgs.writeShellScript "pre-push-hook" ''
+    set -euo pipefail
+    email=$(git config user.email)
+    # Get remote default branch, fallback to origin/HEAD
+    remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "origin/HEAD")
+
+    while read -r local_ref _local_oid remote_ref _remote_oid; do
+      # betterleaks
+      ${betterleaks} --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
+      
+      # typos (diff)
+      git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | ${typos} --config ${typos_toml} -
+      
+      # typos (branch name)
+      basename "$remote_ref" | ${typos} --config ${typos_toml} -
+    done
+  '';
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -31,27 +42,7 @@ in
   programs.git = {
     enable = true;
 
-    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for details
-    # Candidates: https://github.com/git/git/tree/v2.44.1/templates
-    hooks = {
-      commit-msg = lib.getExe pkgs.local.git-hooks-commit-msg;
-
-      # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-      pre-push = lib.getExe pkgs.local.git-hooks-pre-push;
-
-      pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
-      pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
-      post-update = lib.getExe (mkPassthruHook "post-update");
-      pre-receive = lib.getExe (mkPassthruHook "pre-receive");
-      push-to-checkout = lib.getExe (mkPassthruHook "push-to-checkout");
-      pre-commit = lib.getExe (mkPassthruHook "pre-commit");
-      prepare-commit-msg = lib.getExe (mkPassthruHook "prepare-commit-msg");
-      fsmonitor-watchman = lib.getExe (mkPassthruHook "fsmonitor-watchman");
-      update = lib.getExe (mkPassthruHook "update");
-      applypatch-msg = lib.getExe (mkPassthruHook "applypatch-msg");
-      pre-rebase = lib.getExe (mkPassthruHook "pre-rebase");
-      sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
-    };
+    # No more `hooks` block! Git 2.54 uses [hook] section in settings.
 
     # Global: "$HOME/.config/git/ignore"
     # Local:
@@ -96,6 +87,24 @@ in
 
     # NOTE: `extraConfig` was renamed and restructured to `settings`: https://github.com/nix-community/home-manager/pull/8006
     settings = {
+      hook = {
+        # commit-msg
+        betterleaks-commit-msg = {
+          event = "commit-msg";
+          command = "${betterleaks} --verbose stdin \"$1\"";
+        };
+        typos-commit-msg = {
+          event = "commit-msg";
+          command = "${typos} --config ${typos_toml} \"$1\"";
+        };
+
+        # pre-push
+        global-pre-push = {
+          event = "pre-push";
+          command = "${prePushHook}";
+        };
+      };
+
       user = {
         # - Visibility
         #   - https://stackoverflow.com/questions/48065535/should-i-keep-gitconfigs-signingkey-private
