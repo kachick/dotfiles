@@ -6,7 +6,7 @@
     ## Unfree packages
 
     # Don't use unstable channel as possible. It frequently backported to stable channel
-    # ref: https://github.com/NixOS/nixpkgs/commits/nixos-25.11/pkgs/applications/editors/vscode/vscode.nix
+    # ref: https://github.com/NixOS/nixpkgs/commits/nixos-26.05/pkgs/applications/editors/vscode/vscode.nix
     #
     # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
     # This restriction might be related to
@@ -35,7 +35,7 @@
     # Don't use chromium, it does not provide built-in cloud translations
     #
     # Don't use unstable channel. It frequently backported to stable channel
-    #  - https://github.com/NixOS/nixpkgs/commits/nixos-25.11/pkgs/by-name/go/google-chrome/package.nix
+    #  - https://github.com/NixOS/nixpkgs/commits/nixos-26.05/pkgs/by-name/go/google-chrome/package.nix
     #  - Actually unstable is/was broken. See GH-776
     #
     # if you changed hostname and chrome doesn't run, see https://askubuntu.com/questions/476918/google-chrome-wont-start-after-changing-hostname

@@ -17,7 +17,7 @@ in
 # - id_*: Do NOT share in different machines, do NOT tell to anyone. They are secrets.
 # - id_*.pub: I CAN register them for different services.
 {
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/services/ssh-agent.nix
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/services/ssh-agent.nix
   services.ssh-agent.enable = pkgs.stdenv.isLinux;
 
   home.sessionVariables = {
@@ -67,7 +67,7 @@ in
       run touch '${localKnownHostsPath}'
     '';
   };
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/ssh.nix
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/ssh.nix
   programs.ssh = {
     enable = true;
 
@@ -95,7 +95,7 @@ in
     # Realizing the ordering can not be done in Nix's attribute set. `DAG` by home-manager will be required for this purpose.
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L100-L102
     #   - https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/ssh.nix#L531-L547
-    matchBlocks =
+    settings =
       let
         hosts =
           let
@@ -121,10 +121,8 @@ in
             # For WSL2 instances like default Ubuntu and podman-machine
             "localhost" = gitHostingService // {
               forwardAgent = true;
-              extraOptions = {
-                StrictHostKeyChecking = "ask";
-                UserKnownHostsFile = "/dev/null";
-              };
+              StrictHostKeyChecking = "ask";
+              UserKnownHostsFile = "/dev/null";
             };
           };
 
@@ -132,10 +130,9 @@ in
           # mDNS via avahi.
           "*.local" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
             forwardAgent = true;
-            extraOptions = {
-              # NixOS rebuilds change the host key
-              StrictHostKeyChecking = "accept-new";
-            };
+
+            # NixOS rebuilds change the host key
+            StrictHostKeyChecking = "accept-new";
           };
 
           # tailscale

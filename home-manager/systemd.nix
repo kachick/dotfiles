@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 
 {
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/systemd.nix#L287-L299
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/systemd.nix#L287-L299
   systemd = {
     user = {
       # GNOME and other DE respect this `environment.d` values

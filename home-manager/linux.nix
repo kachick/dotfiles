@@ -34,7 +34,7 @@
 
         iputils # `ping` etc
 
-        # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/iw/iw/package.nix
+        # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/pkgs/by-name/iw/iw/package.nix
         iw # replacement of wireless-tools(iwconfig)
 
         unstable.rclone
@@ -100,7 +100,7 @@
 
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
   # Check your `~/.config/user-dirs.dirs` if you faced any trouble
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/xdg-user-dirs.nix
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/xdg-user-dirs.nix
   xdg = {
     userDirs = {
       enable = true;

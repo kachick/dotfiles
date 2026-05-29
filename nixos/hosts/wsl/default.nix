@@ -16,7 +16,7 @@
 
   wsl.enable = true;
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 
   # Resolvconf is managed by WSL by default.
   # Avoid conflict warning: "systemd-resolved is enabled, but resolv.conf is managed by WSL"

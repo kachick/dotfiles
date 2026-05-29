@@ -23,20 +23,21 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "https://channels.nixos.org/nixos-25.11/nixexprs.tar.xz";
+    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
     # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
     nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-25.11-darwin/nixexprs.tar.xz";
+    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.xz";
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/release-25.11";
+      # url = "github:nix-community/NixOS-WSL/release-26.05"; # TODO: Use stable channel once available
+      url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -98,7 +99,7 @@
         in
         import base { inherit system overlays; };
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
         f:
         nixpkgs.lib.genAttrs

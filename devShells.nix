@@ -42,12 +42,12 @@ in
         ])
         ++ (with pkgs.unstable; [
           nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for details
-          betterleaks # Available since https://github.com/NixOS/nixpkgs/pull/500481
+          betterleaks
           typos
           lychee
           dprint
           zizmor
-          rumdl # Available since https://github.com/NixOS/nixpkgs/pull/446292
+          rumdl
           go_1_26
         ])
         ++ (with pkgs.local; [

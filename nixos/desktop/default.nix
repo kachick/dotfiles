@@ -13,19 +13,19 @@
   ];
 
   # GH-1255 for NVMe SSD
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/hardware/iosched.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/hardware/iosched.nix
   hardware.block.defaultScheduler = "kyber";
 
   # `wpa_cli`. I don't know what is the `wpa_gui`
-  networking.wireless.userControlled.enable = true;
+  networking.wireless.userControlled = true;
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/xserver.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/x11/xserver.nix
   services = {
     # Don't use other DM like SDDM, LightDM, lemurs for now. They don't start GNOME for now... (AFAIK)
     # And when I was using KDE, GDM only worked, SDDM didn't work
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/display-managers/gdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/display-managers/gdm.nix
     displayManager.gdm.enable = true;
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/x11/display-managers/lightdm.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/x11/display-managers/lightdm.nix
     # displayManager.lightdm.enable = false;
 
     desktopManager.gnome = {
@@ -63,7 +63,7 @@
   hardware.uinput.enable = true;
 
   programs = {
-    # https://github.com/nix-community/home-manager/blob/release-25.11/modules/misc/dconf.nix#L39-L42
+    # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/dconf.nix#L39-L42
     dconf.enable = true;
 
     nautilus-open-any-terminal = {
@@ -74,7 +74,7 @@
     coolercontrol.enable = true;
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/wireshark.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/programs/wireshark.nix
   # Wireshark is still the best tool for my use case, as other modern tools like Sniffnet didn't satisfy my needs.
   programs.wireshark = {
     enable = true;
@@ -106,13 +106,13 @@
     # Disabling SSH_AUTH_SOCK by gnome-keyring. If you avoid GH-714 but need GH-1015, you also need this
     # See also https://github.com/NixOS/nixpkgs/pull/379731
     #
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/pkgs/by-name/gn/gnome-keyring/package.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/pkgs/by-name/gn/gnome-keyring/package.nix
     gcr-ssh-agent.enable = false;
 
     # I disables GOA since nixos-25.11(GNOME 49.1) because of GOA is broken on Nautilus: https://gitlab.gnome.org/GNOME/gnome-build-meta/-/issues/960
     # Use rclone and the helpers for cloud storages
     #
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/desktops/gnome/gnome-online-accounts.nix
     gnome-online-accounts.enable = false;
   };
 
@@ -270,7 +270,7 @@
   '';
 
   # Require add-on for built-in Japanese translations and multiple containers. It is a disadvantage than Chrome
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/programs/firefox.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/programs/firefox.nix
   programs.firefox = {
     enable = true;
     languagePacks = [
@@ -280,7 +280,7 @@
   };
 
   i18n = {
-    # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/i18n/input-method/ibus.nix
+    # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/i18n/input-method/ibus.nix
     inputMethod = {
       enable = true;
       # Don't use fcitx5. It always made systemd-coredump. See GH-1114
@@ -307,7 +307,7 @@
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/xdg/terminal-exec.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338
   #
   # NOTE:

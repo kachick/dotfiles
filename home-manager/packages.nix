@@ -35,9 +35,8 @@
   # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
   ghq
 
-  sequoia-sq # Alt `gpg`
-  sequoia-chameleon-gnupg
-  gnupg # Also keep original GPG for now. sequoia-chameleon-gnupg does not support some crucial toolset. etc: `gpg --edit-key`, `gpgconf`
+  sequoia-sq # Alt `gpg(gnupg)`
+  sequoia-chameleon-gnupg # Don't add gnupg package together since https://github.com/NixOS/nixpkgs/pull/507547
 
   age # Candidates: rage
 

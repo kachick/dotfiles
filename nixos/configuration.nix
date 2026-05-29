@@ -20,7 +20,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   # GH-1255 for HDD
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/hardware/iosched.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/hardware/iosched.nix
   hardware.block.defaultSchedulerRotational = "bfq";
 
   # Configure network proxy if necessary
@@ -58,7 +58,7 @@
     #media-session.enable = true;
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/shells-environment.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/shells-environment.nix
   # The final definition will be put on /etc/set-environment
   # And you can custom it with /etc/profile.local and/or /etc/bashrc.local
   environment.variables = {
@@ -94,7 +94,7 @@
   );
 
   ## Avahi (Classic, supported by CUPS)
-  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/avahi-daemon.nix
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/avahi-daemon.nix
   # - https://wiki.archlinux.org/title/Avahi
   #
   # If you faced to any troubles around this context, Also see following issues
@@ -125,27 +125,27 @@
 
   ## systemd-resolved (Modern, not supported by CUPS)
   # - Check the behavior with `resolvectl status`
-  # - https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/resolved.nix
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/system/boot/resolved.nix
   # - https://wiki.archlinux.org/title/Systemd-resolved
   # Use mkDefault to allow specialized environments (like WSL2) to opt-out
   # or avoid conflicts with their own network management.
   services.resolved = {
     enable = lib.mkDefault true;
-    llmnr = "false";
 
     # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
     # - https://github.com/systemd/systemd/pull/40133
     # - https://www.freedesktop.org/software/systemd/man/latest/resolved.conf.html
-    extraConfig = ''
-      MulticastDNS=resolve
-      DNSStubListener=false
-    '';
+    settings.Resolve = {
+      LLMNR = false;
+      DNSStubListener = false;
+      MulticastDNS = "resolve";
+    };
   };
 
   # Avahi module has openFirewall, but resolved module does not have it
   networking.firewall.allowedUDPPorts = [ 5353 ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/networkmanager.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/networkmanager.nix
   networking.networkmanager = {
     enable = true;
 
@@ -164,8 +164,8 @@
 
   # List services that you want to enable:
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/networking/ssh/sshd.nix
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/doc/manual/configuration/ssh.section.md
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/ssh/sshd.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/doc/manual/configuration/ssh.section.md
   services.openssh = {
     enable = true;
     settings = {
@@ -186,7 +186,7 @@
 
   # Didn't use podman NixOS module on nixos-24.05. It worked under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
   # I may reconsider to use the latest NixOS module now, however current home-manager based setup seems working for me. It is also useful on WSL2 and Lima
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/virtualisation/containers.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/virtualisation/containers.nix
   virtualisation.containers = {
     enable = true;
     policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
@@ -197,6 +197,6 @@
     enable = true;
   };
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/security/sudo-rs.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
 }

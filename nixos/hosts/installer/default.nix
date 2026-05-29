@@ -18,6 +18,8 @@ in
     outputs.nixosModules.desktop
   ];
 
+  programs.command-not-found.enable = false; # TODO: Reconsider once https://github.com/NixOS/nixpkgs/pull/512785 has available
+
   # Wiki "Building faster" section
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 
@@ -55,5 +57,5 @@ in
     extraSpecialArgs = { inherit pkgs; };
   };
 
-  system.stateVersion = "25.11";
+  system.stateVersion = "26.05";
 }
