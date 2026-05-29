@@ -64,6 +64,7 @@ jobs:
         with:
           name: snippet-${{ matrix.target }}
           path: snippet-${{ matrix.target }}.md
+          archive: false
 
   report:
     needs: diff
@@ -88,13 +89,25 @@ jobs:
           echo "<!-- nix-diff-report -->" >> diff_report.md
           echo "" >> diff_report.md
 
-          for t in DevShell NixOS home-manager-linux home-manager-darwin; do
-            if [ -f "snippet-$t.md" ]; then
-              cat "snippet-$t.md" >> diff_report.md
+          HAS_ANY_DIFF=false
+          # Dynamically process all downloaded snippets
+          for f in snippet-*.md; do
+            [ -e "$f" ] || continue
+            t=${f#snippet-}
+            t=${t%.md}
+
+            if [ -s "$f" ]; then
+              echo "- $t: ✅ CHANGED" >> diff_report.md
+              HAS_ANY_DIFF=true
+            else
+              echo "- $t: ∅ No change" >> diff_report.md
             fi
           done
 
-          if ! grep -q "<details" diff_report.md; then
+          echo "" >> diff_report.md
+          if [ "$HAS_ANY_DIFF" = "true" ] || ls snippet-*.md >/dev/null 2>&1; then
+            echo "Detailed diffs are available in the [Job Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)." >> diff_report.md
+          else
             echo "No package version changes detected in monitored targets." >> diff_report.md
           fi
 
