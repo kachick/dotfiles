@@ -1,4 +1,4 @@
-name: ❄️🏠 🍎
+name: ❄️🏠 🍎 # Trigger CI
 on:
   push:
     branches: [main]
