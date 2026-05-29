@@ -1,4 +1,4 @@
-# https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/config/nix.nix
+# https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/nix.nix
 {
   nix = {
     settings = {
@@ -7,7 +7,7 @@
         "flakes"
       ];
 
-      # `trusted-users = root` by default on NixOS 25.11
+      # `trusted-users = root` by default on NixOS 26.05
       # Setting another helps us to use binary cache substituters in flake.nix
       # Only using `--accept-flake-config` is not enough
       trusted-users = [

@@ -21,7 +21,7 @@ let
   };
 in
 {
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/helix.nix
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {
     # Enabling this may cause collisions. Do not add in packages list

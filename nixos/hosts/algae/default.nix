@@ -25,7 +25,7 @@
   # https://github.com/NixOS/nixpkgs/issues/219239
   boot.initrd.kernelModules = [ "amdgpu" ];
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/system/boot/luksroot.nix
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/system/boot/luksroot.nix
   boot.initrd.luks.devices = {
     "luks-9b94a10b-7ca3-4e4f-b52d-b1cf5104b519" = {
       # fstrim is enabled weekly by default:

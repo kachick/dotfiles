@@ -31,7 +31,7 @@ in
 
   # https://wiki.nixos.org/wiki/Zsh
   # https://zsh.sourceforge.io/Doc/Release/Options.html
-  # https://github.com/nix-community/home-manager/blob/release-25.11/modules/programs/zsh
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/zsh
   # You should consider the loading order: https://medium.com/@rajsek/zsh-bash-startup-files-loading-order-bashrc-zshrc-etc-e30045652f2e
   programs.zsh = {
     enable = true;

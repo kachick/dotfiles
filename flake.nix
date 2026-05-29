@@ -36,7 +36,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      # url = "github:nix-community/NixOS-WSL/release-26.06"; # TODO: Use stable channel once available
+      # url = "github:nix-community/NixOS-WSL/release-26.05"; # TODO: Use stable channel once available
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -99,7 +99,7 @@
         in
         import base { inherit system overlays; };
 
-      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-25.11/lib/systems/flake-systems.nix
+      # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
         f:
         nixpkgs.lib.genAttrs
