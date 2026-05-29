@@ -125,7 +125,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        # Don't use `gh pr comment` to avoid `GraphQL: Body is too long (maximum is 65536 characters) (addComment)`
         run: |
-          jq -n --arg body "$(<diff_report.md)" '{body: $body}' | \
-            gh api "repos/{owner}/{repo}/issues/$PR_NUMBER/comments" --input -
+          gh pr comment "$PR_NUMBER" --body-file diff_report.md
