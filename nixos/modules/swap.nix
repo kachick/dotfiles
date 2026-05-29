@@ -1,4 +1,4 @@
-{ }:
+{ ... }:
 {
   # https://wiki.nixos.org/wiki/Swap#Zram_swap
   zramSwap.enable = true;
