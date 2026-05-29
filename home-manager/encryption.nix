@@ -61,6 +61,8 @@ in
     # package = pkgs.sequoia-chameleon-gnupg; # Also will be respected in gpg-agent: https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/services/gpg-agent.nix#L8C3-L8C9
     # However I prefer original gnupg for now, sequoia-chameleon-gnupg does not support crucial features for GPG toolset (etc. `gpg --edit-key`, `gpgconf`)
 
+    package = pkgs.sequoia-chameleon-gnupg; # Original gnupg conflicts after https://github.com/NixOS/nixpkgs/pull/507547. Revisit once https://github.com/nix-community/home-manager/issues/8345 has resolved
+
     # Preferring XDG_DATA_HOME rather than XDG_CONFIG_HOME from following examples
     #   - https://wiki.archlinux.org/title/XDG_Base_Directory
     #   - https://github.com/nix-community/home-manager/blob/5171f5ef654425e09d9c2100f856d887da595437/modules/programs/gpg.nix#L192
