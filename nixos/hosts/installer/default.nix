@@ -58,4 +58,8 @@ in
   };
 
   system.stateVersion = "26.05";
+
+  # Disable to avoid SC2174 for `mkdir -m 0700 -p /root/.nix-defexpr`
+  # Revisit once using 26.11 or later
+  systemd.enableStrictShellChecks = lib.mkForce false;
 }
