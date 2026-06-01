@@ -15,27 +15,30 @@ let
   betterleaks = lib.getExe pkgs.unstable.betterleaks;
   typos_toml = ../typos.toml;
 
-  # Git 2.54 complex hooks
-  prePushHook = pkgs.writeShellScript "pre-push-hook" ''
+  # Atomic hook scripts for betterleaks
+  betterleaks-pre-push = pkgs.writeShellScript "betterleaks-pre-push" ''
     set -euo pipefail
     email=$(git config user.email)
-    # Get remote default branch, fallback to origin/HEAD
     remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "origin/HEAD")
-
-    while read -r local_ref _local_oid remote_ref _remote_oid; do
-      # betterleaks
+    while read -r local_ref _local_oid _remote_ref _remote_oid; do
       ${betterleaks} --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
-      
-      # typos (diff)
+    done
+  '';
+
+  # Atomic hook scripts for typos
+  typos-pre-push = pkgs.writeShellScript "typos-pre-push" ''
+    set -euo pipefail
+    email=$(git config user.email)
+    remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "origin/HEAD")
+    while read -r local_ref _local_oid remote_ref _remote_oid; do
       git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | ${typos} --config ${typos_toml} -
-      
-      # typos (branch name)
       basename "$remote_ref" | ${typos} --config ${typos_toml} -
     done
   '';
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
+
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/git.nix
   # `xdg.configFile` will be respected: https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/git.nix#L351-L352
