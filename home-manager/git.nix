@@ -14,31 +14,10 @@ let
   typos = lib.getExe pkgs.unstable.typos;
   betterleaks = lib.getExe pkgs.unstable.betterleaks;
   typos_toml = ../typos.toml;
-
-  # Atomic hook scripts for betterleaks
-  betterleaks-pre-push = pkgs.writeShellScript "betterleaks-pre-push" ''
-    set -euo pipefail
-    email=$(git config user.email)
-    remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "origin/HEAD")
-    while read -r local_ref _local_oid _remote_ref _remote_oid; do
-      ${betterleaks} --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
-    done
-  '';
-
-  # Atomic hook scripts for typos
-  typos-pre-push = pkgs.writeShellScript "typos-pre-push" ''
-    set -euo pipefail
-    email=$(git config user.email)
-    remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null || echo "origin/HEAD")
-    while read -r local_ref _local_oid remote_ref _remote_oid; do
-      git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | ${typos} --config ${typos_toml} -
-      basename "$remote_ref" | ${typos} --config ${typos_toml} -
-    done
-  '';
+  betterleaks_toml = ../config/betterleaks/.betterleaks.toml;
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
-
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/git.nix
   # `xdg.configFile` will be respected: https://github.com/nix-community/home-manager/blob/295d90e22d557ccc3049dc92460b82f372cd3892/modules/programs/git.nix#L351-L352
@@ -46,6 +25,7 @@ in
     enable = true;
 
     # No more `hooks` block! Git 2.54 uses [hook] section in settings.
+
 
     # Global: "$HOME/.config/git/ignore"
     # Local:
@@ -91,20 +71,31 @@ in
     # NOTE: `extraConfig` was renamed and restructured to `settings`: https://github.com/nix-community/home-manager/pull/8006
     settings = {
       hook = {
-        # commit-msg
+        # Parallel execution: use all cores
+        jobs = -1;
+
+        # Betterleaks: commit-msg
         betterleaks-commit-msg = {
           event = "commit-msg";
-          command = "${betterleaks} --verbose stdin \"$1\"";
+          command = "${betterleaks} --config ${betterleaks_toml} --verbose stdin \"$1\"";
         };
+
+        # Typos: commit-msg
         typos-commit-msg = {
           event = "commit-msg";
           command = "${typos} --config ${typos_toml} \"$1\"";
         };
 
-        # pre-push
-        global-pre-push = {
+        # Betterleaks: pre-push
+        betterleaks-pre-push = {
           event = "pre-push";
-          command = "${prePushHook}";
+          command = "${betterleaks} --config ${betterleaks_toml} --verbose git .";
+        };
+
+        # Typos: pre-push
+        typos-pre-push = {
+          event = "pre-push";
+          command = "${typos} --config ${typos_toml} .";
         };
       };
 
