@@ -41,9 +41,14 @@ includes = ["*.go"]
 command = "shfmt"
 options = [
   "--language-dialect",
-  # shfmt is not supporting zsh even through specified "auto"
-  # https://github.com/mvdan/sh/issues/120
-  "bash",
+  "auto",
   "--write",
 ]
-includes = ["*.sh", "*.bash", "*.envrc"]
+includes = [
+  "*.sh",
+  "*.bash",
+  "*.envrc",
+
+  # shfmt supports zsh since 3.13.0. See GH-1482
+  "*.zsh",
+]
