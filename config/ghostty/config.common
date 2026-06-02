@@ -1,6 +1,5 @@
 # How to reload:
 #   Linux: ctrl+shift+,
-#   macOS: cmd+shift+,
 
 # See also 899be8e51cb288fe0ae91267f495ade7bfb80bc9
 # This disabling does not work on `nix run`. Installed in nixos and ran from launcher worked (from shell or gnome difference?.

@@ -16,7 +16,7 @@
     "editor.defaultFormatter": "golang.go"
   },
   "gopls": {
-    "build.buildFlags": ["-tags=linux,windows,darwin"]
+    "build.buildFlags": ["-tags=linux,windows"]
   },
   "[crystal]": {
     "editor.defaultFormatter": "crystal-lang-tools.crystal-lang"
@@ -102,7 +102,7 @@
   "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
-  "update.mode": "none", // NixOS: flake, Windows: winget, macOS: Manually
+  "update.mode": "none", // NixOS: flake, Windows: winget
   "githubIssues.issueCompletions.enabled": false,
   "github.copilot.enable": {
     "*": false

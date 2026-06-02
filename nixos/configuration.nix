@@ -104,7 +104,6 @@
   # I don't know how to use both in NixOS likely https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
   services.avahi = {
     # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
-    # - https://github.com/apple/cups/issues/5452
     # - https://github.com/OpenPrinting/libcups/issues/81
     enable = true; # If enabled, you should care the conflict with systemd-resolved
 

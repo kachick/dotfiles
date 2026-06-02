@@ -129,27 +129,6 @@
         "type": "github"
       }
     },
-    "home-manager-darwin": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs-darwin"
-        ]
-      },
-      "locked": {
-        "lastModified": 1779726825,
-        "narHash": "sha256-RUkMrREjKDQrA+dA9+xZviGAxM5W1aVdyOr/bSYpHrE=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "b179bde238977f7d4454fc770b1a727eaf55111c",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "release-26.05",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "home-manager-linux": {
       "inputs": {
         "nixpkgs": [
@@ -252,19 +231,6 @@
         "url": "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz"
       }
     },
-    "nixpkgs-darwin": {
-      "locked": {
-        "lastModified": 1780180721,
-        "narHash": "sha256-XRfQ9KKKh7Zi7NwSqfdyoUoh3jpzxZNsaSkuZ0N2X6M=",
-        "rev": "9396caa0b59af6a17cac62008a72255b25e1e9a8",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/26.05-darwin/nixpkgs-darwin-26.05pre1005174.9396caa0b59a/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.xz"
-      }
-    },
     "nixpkgs-unstable": {
       "locked": {
         "lastModified": 1780030872,
@@ -281,13 +247,11 @@
     "root": {
       "inputs": {
         "flake-compat": "flake-compat",
-        "home-manager-darwin": "home-manager-darwin",
         "home-manager-linux": "home-manager-linux",
         "kanata-tray": "kanata-tray",
         "llm-agents": "llm-agents",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-unstable": "nixpkgs-unstable"
       }
     },

@@ -12,7 +12,6 @@
 
   # Platform/Environment specific
   ephemeral = ../ephemeral.nix;
-  darwin = ../darwin.nix;
   systemd = ../systemd.nix;
   wsl = ../wsl.nix;
   lima-guest = ../lima-guest.nix;

@@ -18,7 +18,7 @@ type Target struct {
 func main() {
 	baseFlake := flag.String("base", "", "The base flake to compare against (e.g. github:owner/repo/main)")
 	currentFlake := flag.String("current", ".", "The current flake to compare (default '.')")
-	targetName := flag.String("target", "", "Optional: specific target name to run (DevShell, NixOS, home-manager-linux, home-manager-darwin)")
+	targetName := flag.String("target", "", "Optional: specific target name to run (DevShell, NixOS, home-manager-linux)")
 	flag.Parse()
 
 	if *baseFlake == "" {
@@ -30,7 +30,6 @@ func main() {
 		{Name: "DevShell", Attribute: "devShells.x86_64-linux.default"},
 		{Name: "NixOS", Attribute: "nixosConfigurations.algae.config.system.build.toplevel"},
 		{Name: "home-manager-linux", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
-		{Name: "home-manager-darwin", Attribute: `homeConfigurations."github-actions@macos-15-intel".activationPackage`},
 	}
 
 	var targets []Target

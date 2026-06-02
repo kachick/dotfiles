@@ -22,7 +22,7 @@
   };
 
   # http://www.sane-project.org/sane-mfgs.html#Z-EPSON
-  # Apple AirScan supported devices: https://support.apple.com/ja-jp/HT201311
+  # AirScan (eSCL) supported devices
   hardware.sane = {
     enable = true;
     extraBackends = [ pkgs.sane-airscan ];

@@ -1,4 +1,4 @@
-# Don't use mount command to support darwin with same implementation
+# List rclone mountpoints
 ps --long
   | where name =~ rclone and command =~ mount
   | select pid ppid command

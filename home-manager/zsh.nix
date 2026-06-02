@@ -144,34 +144,16 @@ in
 
     # home-manager path will set in `programs.home-manager.enable = true`;
     envExtra = ''
-      case ''${OSTYPE} in
-      darwin*)
-        # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
-        # - Even after this option, /etc/zshenv will be loaded
-        # - Some crucial PATH will be hidden they are installed by non nix layer. For example: vscode
-        setopt no_global_rcs
-
-        # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
-        if [[ -n "$SSH_CONNECTION" && "$TERM" == "xterm-ghostty" ]]; then
-          export TERM=xterm-256color
-        fi
-
-        # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
-        # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
-        if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-        fi
-
-        ;;
-      esac
-
       # https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=3401477#gistcomment-3401477
       skip_global_compinit=1
 
       if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
 
       # Put the special config in each machine if you want to avoid symlinks by Nix
-      # https://github.com/nix-community/home-manager/issues/3090#issue-1303753447
+      # https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/zsh.nix#L325C7-L329
+      # https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/zsh.nix#L368-L372
+      # The default is "autoload -U compinit && compinit", I can not accept the path and speed
+      # Replacement of initExtraBeforeCompInit, it looks bit hacky. Track discussion in https://github.com/nix-community/home-manager/pull/6664
       if [ -f '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
         source '${config.xdg.configHome}/zsh/.zshenv.local'
       fi
@@ -227,7 +209,7 @@ in
           setopt hist_reduce_blanks
           setopt hist_no_store
           setopt HIST_NO_FUNCTIONS
-          # https://apple.stackexchange.com/questions/405246/zsh-comment-character
+          # Enable comments in interactive shells
           setopt interactivecomments
 
           # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871

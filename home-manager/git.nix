@@ -40,10 +40,6 @@ in
       # https://github.com/github/gitignore/blob/main/Global/Windows.gitignore
       "Thumbs.db*"
 
-      # https://github.com/github/gitignore/blob/main/Global/macOS.gitignore
-      ".DS_Store"
-      "__MACOSX/"
-
       # https://agents.md/#examples
       "AGENTS.md"
       "/.gemini/"

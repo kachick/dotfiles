@@ -17,7 +17,7 @@
 # https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
 
 # Actually this file is not a bash script, but dash mode is unuseful. Expecting mostly bash code will work even in zsh...
-# Ensure absolute Nix path even if coreutils for darwin
+# Ensure absolute Nix path
 # Use replaceVars to enable basic shellscript helpers such as shfmt, shellcheck and syntax highlighters
 #
 # Note: Using `replaceVars` directly avoids Import From Derivation (IFD) which was caused by the previous `builtins.readFile` + `writeText` wrapper.

@@ -13,9 +13,7 @@ if ! command -v nix >/dev/null 2>&1; then
 	echo "Installing Nix..."
 
 	TRUSTED_USERS="root"
-	if [ "$(uname)" = "Darwin" ]; then
-		TRUSTED_USERS="${TRUSTED_USERS} @admin"
-	elif [ "$(uname)" = "Linux" ]; then
+	if [ "$(uname)" = "Linux" ]; then
 		TRUSTED_USERS="${TRUSTED_USERS} @wheel @sudo"
 	fi
 
@@ -29,8 +27,6 @@ if ! command -v nix >/dev/null 2>&1; then
 	# shellcheck source=/dev/null
 	if [ "$(uname)" = "Linux" ]; then
 		. /etc/profile.d/nix.sh
-	elif [ "$(uname)" = "Darwin" ]; then
-		. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	fi
 fi
 

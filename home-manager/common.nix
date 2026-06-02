@@ -81,7 +81,6 @@ in
     };
 
     # You can check the candidates in `locale -a`
-    # pkgs.glibc installs many candidates, but it does not support darwin
     # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
     # https://github.com/nix-community/home-manager/blob/fe56302339bb28e3471632379d733547caec8103/modules/home-environment.nix#L11
     language = {

@@ -1,11 +1,9 @@
 # dotfiles
 
 [![~/ on Linux](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml?query=branch%3Amain+)
-[![~/ on Darwin](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml?query=branch%3Amain+)
 [![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
 [![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
 [![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml?query=branch%3Amain+)
-[![Package on Darwin](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml?query=branch%3Amain+)
 [![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 [![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
@@ -14,22 +12,21 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ```mermaid
 block-beta
-    columns 3
+    columns 2
 
-    block:os:3
-        nixos(("❄")) macos(("🍎")) windows(("🪟"))
+    block:os:2
+        nixos(("❄")) windows(("🪟"))
     end
 
-    block:vm:3
+    block:vm:2
         lima("Lima") wsl2("WSL2")
     end
 
-    block:container:3
+    block:container:2
         podman("🦭") k8s("☸️") 
     end
 
     nixos --> lima
-    macos --> lima
     windows --> wsl2
 
     vm --> container
@@ -181,16 +178,6 @@ Check [traps](./windows/Multi-booting.md)
 Use [winboat](https://github.com/TibixDev/winboat).\
 The full-desktop feature is powered-by [FreeRDP](https://github.com/FreeRDP/FreeRDP).\
 You can exit the full-screen RDP session with `Ctrl + Alt + Enter`. (Not the `End` or `Pause/Break` keys)
-
-## macOS
-
-I have basically [given up](https://github.com/kachick/dotfiles/issues/911) on maintaining my old Intel Mac.\
-However I should keep the minimum environment for now.
-
-1. Make sure you install the official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
-1. Apply home-manager with `kachick@macbook` for minimum packages.
-1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-1. Use [Lima](#lima) for development tasks.
 
 ## Lima
 

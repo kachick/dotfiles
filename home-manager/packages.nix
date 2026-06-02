@@ -24,7 +24,7 @@
   less # container base image doesn't have less even for ubuntu official
   procps # `ps`
 
-  # Use same tools even in macOS
+  # Generic tools
   findutils
   diffutils
   gnugrep
@@ -94,7 +94,6 @@
 
   # How to get the installed font names
   # fontconfig by nix: `fc-list : family style`
-  # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
   fastfetch # active replacement of neofetch
