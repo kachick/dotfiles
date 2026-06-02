@@ -28,7 +28,7 @@ jobs:
           - target: home-manager-darwin
             # Use macos-26 (ARM) for faster evaluation of x86_64-darwin configurations.
             # While this may trigger Rosetta 2 for IFD builds, the overall evaluation
-            # speed is expected to be superior to the old macos-15-intel runner.
+            # speed is expected to be superior to the old macos-26-intel runner.
             runner: macos-26
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60

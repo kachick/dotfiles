@@ -95,7 +95,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [macos-15-intel]
+        runner: [macos-26-intel]
         pname: ${{ fromJSON(needs.planning.outputs.packages) }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180

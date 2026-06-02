@@ -79,7 +79,7 @@ in
     }
   );
 
-  "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration (
+  "github-actions@macos-26-intel" = home-manager-darwin.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = mkPkgs "x86_64-darwin";

@@ -30,7 +30,7 @@ func main() {
 		{Name: "DevShell", Attribute: "devShells.x86_64-linux.default"},
 		{Name: "NixOS", Attribute: "nixosConfigurations.algae.config.system.build.toplevel"},
 		{Name: "home-manager-linux", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
-		{Name: "home-manager-darwin", Attribute: `homeConfigurations."github-actions@macos-15-intel".activationPackage`},
+		{Name: "home-manager-darwin", Attribute: `homeConfigurations."github-actions@macos-26-intel".activationPackage`},
 	}
 
 	var targets []Target

@@ -68,7 +68,7 @@ jobs:
           fi
 
           # Use a common script to check if the home-manager configuration needs a rebuild.
-          if ! ./scripts/check-nix-cache.bash '.#homeConfigurations."github-actions@macos-15-intel".activationPackage'; then
+          if ! ./scripts/check-nix-cache.bash '.#homeConfigurations."github-actions@macos-26-intel".activationPackage'; then
             echo "Home manager configuration needs a rebuild. Running on Darwin."
             echo "should_run=true" >> $GITHUB_OUTPUT
           else
@@ -88,10 +88,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-15-intel is the last x86_64-darwin runner. It is very slow, but we must use it.
+        # macos-26-intel is the last x86_64-darwin runner. It is very slow, but we must use it.
         # See darwin/README.md for the reason why we don't use ARM runners for cross-builds.
         runner:
-          - macos-15-intel
+          - macos-26-intel
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v6.0.2

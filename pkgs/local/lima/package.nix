@@ -8,7 +8,7 @@
   darwin,
   xorriso,
   makeWrapper,
-  apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
+  apple-sdk_26,
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
@@ -46,7 +46,7 @@ buildGo126Module (finalAttrs: {
   ]
   ++ lib.optionals stdenv.hostPlatform.isDarwin [ darwin.sigtool ];
 
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ apple-sdk_15 ];
+  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ apple-sdk_26 ];
 
   postPatch = ''
     substituteInPlace Makefile \
