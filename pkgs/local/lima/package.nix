@@ -8,7 +8,7 @@
   darwin,
   xorriso,
   makeWrapper,
-  apple-sdk_15, # Use 15 over 26 to consider GHA. macos-15-intel is the last x86_64-darwin runner for GitHub Actions.
+  apple-sdk_15, # Use 15 over 26 to keep consistency with my old device
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,

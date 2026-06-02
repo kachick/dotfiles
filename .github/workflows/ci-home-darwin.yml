@@ -88,7 +88,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macos-15-intel is the last x86_64-darwin runner. It is very slow, but we must use it.
+        # macos-26-intel and macos-15-intel are last x86_64-darwin runners. It is very slow, but we must use it.
         # See darwin/README.md for the reason why we don't use ARM runners for cross-builds.
         runner:
           - macos-15-intel
