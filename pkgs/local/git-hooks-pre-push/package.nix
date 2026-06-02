@@ -22,7 +22,6 @@ buildGo126Module (finalAttrs: {
       gitMinimal
       unstable.typos
       unstable.betterleaks
-      local.run_local_hook
     ]
   );
 

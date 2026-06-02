@@ -30,8 +30,6 @@ func main() {
 		log.Fatalf("Can't get git email: %+v", err)
 	}
 
-	shouldSkip := githooks.MakeSkipChecker()
-
 	scanner := bufio.NewScanner(os.Stdin)
 	linters := map[string]githooks.Linter{}
 	lineNumber := 0
@@ -52,7 +50,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
+	if err := githooks.RunLinters(linters); err != nil {
 		log.Fatalf("Failed to run global hook: %+v", err)
 	}
 }

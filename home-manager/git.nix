@@ -186,7 +186,7 @@ in
           command = ''${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' "$1"'';
         };
 
-        # TODO: Consider to split by tools
+        # TODO: Split and run for each tool. Currently optimized for each setup, but the maintenance cost is not small
         pre-push-all = {
           event = "pre-push"; # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
           command = lib.getExe pkgs.local.git-hooks-pre-push;
