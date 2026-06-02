@@ -90,8 +90,11 @@ tasks:
       - help
       - build-cmd
     cmds:
-      - cp .githooks/* .git/hooks/
-      - git config --local core.whitespace cr-at-eol
+      - git config --local include.path ../.gitconfig
+
+      # Check commands
+      - git config --list --local --includes --show-origin
+      - git hook list pre-commit
 
   fmt:
     cmds:

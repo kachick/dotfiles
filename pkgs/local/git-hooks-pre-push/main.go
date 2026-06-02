@@ -30,8 +30,6 @@ func main() {
 		log.Fatalf("Can't get git email: %+v", err)
 	}
 
-	shouldSkip := githooks.MakeSkipChecker()
-
 	scanner := bufio.NewScanner(os.Stdin)
 	linters := map[string]githooks.Linter{}
 	lineNumber := 0
@@ -52,17 +50,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := githooks.RunLinters(linters, shouldSkip); err != nil {
+	if err := githooks.RunLinters(linters); err != nil {
 		log.Fatalf("Failed to run global hook: %+v", err)
-	}
-
-	// Don't include localhooks into above parallel tasks, because of we don't assume local hooks are not having any side-effect
-	if shouldSkip("localhook") {
-		return
-	}
-
-	if err := runLocalHook(); err != nil {
-		log.Fatalf("Failed to run local hook: %+v", err)
 	}
 }
 
@@ -125,13 +114,4 @@ func getEmail() (string, error) {
 		return "", fmt.Errorf("failed to get git email: %w", err)
 	}
 	return strings.TrimSpace(string(out)), nil
-}
-
-// Don't run global and local hooks together in parallel tasks, because of we don't assume local hooks do not have any side-effect
-func runLocalHook() error {
-	cmd := exec.Command("run_local_hook", append([]string{"pre-push"}, os.Args[1:]...)...)
-	cmd.Stdin = os.Stdin
-	out, err := cmd.CombinedOutput()
-	log.Println(string(out))
-	return err
 }
