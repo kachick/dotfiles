@@ -20,15 +20,6 @@ in
   programs.git = {
     enable = true;
 
-    # Required to provide all global hooks to respect local hooks even if it is empty. See GH-545 for details
-    # Candidates: https://github.com/git/git/tree/v2.44.1/templates
-    hooks = {
-      commit-msg = lib.getExe pkgs.local.git-hooks-commit-msg;
-
-      # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-      pre-push = lib.getExe pkgs.local.git-hooks-pre-push;
-    };
-
     # Global: "$HOME/.config/git/ignore"
     # Local:
     #  - ".git/info/exclude"
@@ -179,6 +170,27 @@ in
             git checkout -b main
         '';
         resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
+      };
+
+      # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
+      # Config based hooks: https://github.blog/open-source/git/highlights-from-git-2-54/
+      # Candidates: https://github.com/git/git/tree/v2.54.0/templates/hooks
+      hook = {
+        commit-msg-no-leaks = {
+          event = "commit-msg";
+          command = ''${lib.getExe pkgs.unstable.betterleaks} --verbose stdin <"$1"'';
+        };
+
+        commit-msg-no-typos = {
+          event = "commit-msg";
+          command = ''${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' "$1"'';
+        };
+
+        # TODO: Consider to split by tools
+        pre-push-all = {
+          event = "pre-push"; # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
+          command = lib.getExe pkgs.local.git-hooks-pre-push;
+        };
       };
     };
   };
