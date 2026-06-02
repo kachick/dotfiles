@@ -9,17 +9,6 @@
 # tig cannot be used as a standard UNIX filter tools, it prints with ncurses, not to STDOUT
 
 let
-  mkPassthruHook = (
-    hook_name:
-    pkgs.writeShellApplication {
-      name = "passthru-hook-for-the-local-hook";
-      text = ''
-        run_local_hook '${hook_name}' "$@"
-      '';
-      meta.description = "GH-545";
-      runtimeInputs = [ pkgs.local.run_local_hook ];
-    }
-  );
   # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
 in
@@ -38,19 +27,6 @@ in
 
       # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
       pre-push = lib.getExe pkgs.local.git-hooks-pre-push;
-
-      pre-merge-commit = lib.getExe (mkPassthruHook "pre-merge-commit");
-      pre-applypatch = lib.getExe (mkPassthruHook "pre-applypatch");
-      post-update = lib.getExe (mkPassthruHook "post-update");
-      pre-receive = lib.getExe (mkPassthruHook "pre-receive");
-      push-to-checkout = lib.getExe (mkPassthruHook "push-to-checkout");
-      pre-commit = lib.getExe (mkPassthruHook "pre-commit");
-      prepare-commit-msg = lib.getExe (mkPassthruHook "prepare-commit-msg");
-      fsmonitor-watchman = lib.getExe (mkPassthruHook "fsmonitor-watchman");
-      update = lib.getExe (mkPassthruHook "update");
-      applypatch-msg = lib.getExe (mkPassthruHook "applypatch-msg");
-      pre-rebase = lib.getExe (mkPassthruHook "pre-rebase");
-      sendemail-validate = lib.getExe (mkPassthruHook "sendemail-validate");
     };
 
     # Global: "$HOME/.config/git/ignore"
