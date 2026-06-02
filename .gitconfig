@@ -1,0 +1,10 @@
+[core]
+  whitespace = cr-at-eol
+
+[hook "fmt"]
+  event = "pre-commit"
+  command = "task fmt"
+
+[hook "lint"]
+  event = "pre-commit"
+  command = "task lint"
