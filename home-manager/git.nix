@@ -189,53 +189,12 @@ in
 
         pre-push-no-leaks = {
           event = "pre-push";
-          command = lib.getExe (
-            pkgs.writeShellApplication {
-              name = "git-hook-pre-push-no-leaks";
-              runtimeInputs = with pkgs; [
-                gitMinimal
-                unstable.betterleaks
-              ];
-              text = ''
-                remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
-                email=$(git config user.email)
-                while read -r local_ref local_oid _remote_ref _remote_oid; do
-                  if [ "$local_ref" = "(delete)" ] || [ "$local_oid" = "0000000000000000000000000000000000000000" ]; then
-                    continue
-                  fi
-                  betterleaks --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
-                done
-              '';
-            }
-          );
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
         };
 
         pre-push-no-typos = {
           event = "pre-push";
-          command = lib.getExe (
-            pkgs.writeShellApplication {
-              name = "git-hook-pre-push-no-typos";
-              runtimeInputs = with pkgs; [
-                gitMinimal
-                unstable.typos
-                coreutils
-              ];
-              text = ''
-                remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
-                email=$(git config user.email)
-                while read -r local_ref local_oid remote_ref _remote_oid; do
-                  if [ "$local_ref" = "(delete)" ] || [ "$local_oid" = "0000000000000000000000000000000000000000" ]; then
-                    continue
-                  fi
-                  # Filtering with author email for large repository such as NixOS/nixpkgs
-                  # prevent typos in log and diff
-                  git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | typos --config "${../typos.toml}" -
-                  # prevent typos in branch name
-                  basename "$remote_ref" | typos --config "${../typos.toml}" -
-                done
-              '';
-            }
-          );
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos";
         };
       };
     };
