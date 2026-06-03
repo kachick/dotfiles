@@ -5,6 +5,9 @@
     {
       "Packages": [
         {
+          "PackageIdentifier": "Microsoft.Coreutils"
+        },
+        {
           "PackageIdentifier": "Starship.Starship"
         },
         {

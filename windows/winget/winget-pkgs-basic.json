@@ -56,7 +56,7 @@
           "PackageIdentifier": "zyedidia.micro"
         },
         {
-          "PackageIdentifier": "uutils.coreutils"
+          "PackageIdentifier": "Microsoft.Coreutils"
         },
         {
           "PackageIdentifier": "WerWolv.ImHex"
