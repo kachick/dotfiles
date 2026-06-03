@@ -20,11 +20,24 @@ var (
 
 // Spec of Git: https://git-scm.com/docs/githooks#_pre_push
 func main() {
-	flag.Parse()
-	subcommand := flag.Arg(0)
-	if subcommand == "" {
-		log.Fatalf("Usage: %s <betterleaks|typos-log|typos-branch>", os.Args[0])
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand>\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Subcommands:\n")
+		fmt.Fprintf(os.Stderr, "  betterleaks   Prevent secrets in log and diff\n")
+		fmt.Fprintf(os.Stderr, "  typos-log     Prevent typos in log and diff\n")
+		fmt.Fprintf(os.Stderr, "  typos-branch  Prevent typos in branch name\n")
 	}
+
+	if len(os.Args) < 2 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	subcommand := os.Args[1]
+	// Using NewFlagSet for subcommands is a Go best practice.
+	// ExitOnError automatically handles -h and unknown flags.
+	subCmd := flag.NewFlagSet(subcommand, flag.ExitOnError)
+	subCmd.Parse(os.Args[2:])
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
