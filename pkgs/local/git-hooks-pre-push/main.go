@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,10 +20,11 @@ var (
 
 // Spec of Git: https://git-scm.com/docs/githooks#_pre_push
 func main() {
-	if len(os.Args) < 2 {
+	flag.Parse()
+	subcommand := flag.Arg(0)
+	if subcommand == "" {
 		log.Fatalf("Usage: %s <betterleaks|typos>", os.Args[0])
 	}
-	subcommand := os.Args[1]
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
@@ -74,6 +76,11 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	remoteRef := fields[2]
 	// remoteOid := fields[3]
 
+	// Handle branch deletions and initial pushes.
+	// - localOid == 00...0: The branch is being deleted, so there's no local history to scan.
+	// - localRef == "(delete)": Some environments/tools use this as a placeholder for deletions.
+	// Skipping these prevents "git log" from failing with "fatal: bad revision" when the reference is gone.
+	// This also fixes issues where pushing an empty repository or first-time branch creation might trigger errors.
 	if localRef == "(delete)" || localOid == "0000000000000000000000000000000000000000" {
 		return nil, nil
 	}
