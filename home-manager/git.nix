@@ -199,7 +199,10 @@ in
               text = ''
                 remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
                 email=$(git config user.email)
-                while read -r local_ref _local_oid _remote_ref _remote_oid; do
+                while read -r local_ref local_oid _remote_ref _remote_oid; do
+                  if [ "$local_ref" = "(delete)" ] || [ "$local_oid" = "0000000000000000000000000000000000000000" ]; then
+                    continue
+                  fi
                   betterleaks --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
                 done
               '';
@@ -220,8 +223,14 @@ in
               text = ''
                 remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
                 email=$(git config user.email)
-                while read -r local_ref _local_oid remote_ref _remote_oid; do
+                while read -r local_ref local_oid remote_ref _remote_oid; do
+                  if [ "$local_ref" = "(delete)" ] || [ "$local_oid" = "0000000000000000000000000000000000000000" ]; then
+                    continue
+                  fi
+                  # Filtering with author email for large repository such as NixOS/nixpkgs
+                  # prevent typos in log and diff
                   git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | typos --config "${../typos.toml}" -
+                  # prevent typos in branch name
                   basename "$remote_ref" | typos --config "${../typos.toml}" -
                 done
               '';
