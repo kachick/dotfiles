@@ -187,10 +187,46 @@ in
           command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
         };
 
-        # TODO: Split and run for each tool. Currently optimized for each setup, but the maintenance cost is not small
-        pre-push-all = {
-          event = "pre-push"; # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-          command = lib.getExe pkgs.local.git-hooks-pre-push;
+        pre-push-no-leaks = {
+          event = "pre-push";
+          command = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "git-hook-pre-push-no-leaks";
+              runtimeInputs = with pkgs; [
+                gitMinimal
+                unstable.betterleaks
+              ];
+              text = ''
+                remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
+                email=$(git config user.email)
+                while read -r local_ref _local_oid _remote_ref _remote_oid; do
+                  betterleaks --verbose git --log-opts="--author=$email $remote_branch..$local_ref"
+                done
+              '';
+            }
+          );
+        };
+
+        pre-push-no-typos = {
+          event = "pre-push";
+          command = lib.getExe (
+            pkgs.writeShellApplication {
+              name = "git-hook-pre-push-no-typos";
+              runtimeInputs = with pkgs; [
+                gitMinimal
+                unstable.typos
+                coreutils
+              ];
+              text = ''
+                remote_branch=$(git symbolic-ref refs/remotes/origin/HEAD)
+                email=$(git config user.email)
+                while read -r local_ref _local_oid remote_ref _remote_oid; do
+                  git log --author="$email" --patch --unified=0 "$remote_branch..$local_ref" | typos --config "${../typos.toml}" -
+                  basename "$remote_ref" | typos --config "${../typos.toml}" -
+                done
+              '';
+            }
+          );
         };
       };
     };
