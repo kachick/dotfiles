@@ -23,11 +23,16 @@ func main() {
 	flag.Parse()
 	subcommand := flag.Arg(0)
 	if subcommand == "" {
-		log.Fatalf("Usage: %s <betterleaks|typos>", os.Args[0])
+		log.Fatalf("Usage: %s <betterleaks|typos-log|typos-branch>", os.Args[0])
 	}
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
+	// Performance note:
+	// Splitting into separate hooks results in multiple executions of this program,
+	// leading to redundant calls to "git config user.email" and "git symbolic-ref".
+	// However, we prioritize manageability and individual skip-ability (e.g., skipping branch name typos
+	// while keeping log checks) over micro-performance, as the overhead is negligible for humans.
 	remoteDefaultBranch, err := getRemoteDefaultBranch()
 	if err != nil {
 		log.Fatalf("Can't get default branch of the remote repository: %+v", err)
@@ -93,7 +98,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in log and diff": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in log and diff": githooks.Linter{Tag: "typos-log", Script: func() error {
 			out, err := pipeline.CombinedOutput(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
@@ -104,7 +109,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in branch name": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in branch name": githooks.Linter{Tag: "typos-branch", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
 			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
 			// See https://github.com/crate-ci/typos/issues/758 for details

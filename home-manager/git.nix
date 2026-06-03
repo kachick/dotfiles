@@ -192,9 +192,14 @@ in
           command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
         };
 
-        pre-push-no-typos = {
+        pre-push-no-typos-in-log = {
           event = "pre-push";
-          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-log";
+        };
+
+        pre-push-no-typos-in-branch = {
+          event = "pre-push";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-branch";
         };
       };
     };
