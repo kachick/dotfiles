@@ -178,12 +178,13 @@ in
       hook = {
         commit-msg-no-leaks = {
           event = "commit-msg";
-          command = ''${lib.getExe pkgs.unstable.betterleaks} --verbose stdin <"$1"'';
+          # betterleaks dir accepts file paths despite its name
+          command = "${lib.getExe pkgs.unstable.betterleaks} --verbose dir";
         };
 
         commit-msg-no-typos = {
           event = "commit-msg";
-          command = ''${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' "$1"'';
+          command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
         };
 
         # TODO: Split and run for each tool. Currently optimized for each setup, but the maintenance cost is not small
