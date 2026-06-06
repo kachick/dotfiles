@@ -36,8 +36,7 @@
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
-      # url = "github:nix-community/NixOS-WSL/release-26.05"; # TODO: Use stable channel once available
-      url = "github:nix-community/NixOS-WSL";
+      url = "github:nix-community/NixOS-WSL/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
