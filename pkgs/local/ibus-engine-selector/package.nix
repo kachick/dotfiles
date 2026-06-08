@@ -26,7 +26,7 @@ buildGo126Module (finalAttrs: {
       ];
     };
 
-  vendorHash = "sha256-cjL9GcR0jLb071ffr2PnldZoSQfdzER1bwq4kv/cgt8=";
+  vendorHash = "sha256-9GrdHFha8sZejbHUOYAwnpf61sJmPiG5Lmhj9yfLkwM=";
 
   subPackages = [ "pkgs/local/${finalAttrs.pname}" ];
 
