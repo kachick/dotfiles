@@ -37,7 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         runner:
-          - ubuntu-24.04
+          - ubuntu-26.04
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Logging disk space

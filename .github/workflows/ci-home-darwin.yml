@@ -39,7 +39,7 @@ jobs:
   # This planning job avoids booting the extremely slow Darwin runner if the
   # home-manager configuration hasn't changed (exists in Cachix).
   planning:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       should_run: ${{ steps.check.outputs.should_run }}
     steps:

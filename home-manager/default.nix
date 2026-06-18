@@ -68,7 +68,7 @@ in
     }
   );
 
-  "github-actions@ubuntu-24.04" = home-manager-linux.lib.homeManagerConfiguration (
+  "github-actions@ubuntu-26.04" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;

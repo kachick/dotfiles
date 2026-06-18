@@ -33,7 +33,7 @@ concurrency:
 
 jobs:
   planning:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}
     steps:
@@ -79,7 +79,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-24.04]
+        runner: [ubuntu-26.04]
         pname: ${{ fromJSON(needs.planning.outputs.packages) }}
         # Skip tests for heavy packages to avoid long build times in CI.
         # We trust upstream/hydra for these packages since we're just pinning/patching them.

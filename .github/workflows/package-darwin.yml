@@ -37,7 +37,7 @@ jobs:
   # are already in the Cachix cache. If they are, it will skip the slow Darwin job
   # to avoid the overhead of booting the Intel Mac runner and unpacking nixpkgs.
   planning:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       # List of packages to check for Darwin builds.
       # kanata-tray: I'm using Karabiner-Elements on macOS, so exclude it here.

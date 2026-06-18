@@ -33,7 +33,7 @@ permissions:
 jobs:
   inspect:
     # Only on Linux is enough to check the flake
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v6.0.3
@@ -60,7 +60,7 @@ jobs:
   tasks:
     strategy:
       matrix:
-        runner: [ubuntu-24.04]
+        runner: [ubuntu-26.04]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -77,9 +77,11 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Install direnv
+        # Installing git via nix to make sure it supports config based hooks
+        # Because of ubuntu-slim and ubuntu-26.04 remains on 2.53 or before at 2026-06-18
         run: |
           url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
-          nix profile add "${url}#direnv"
+          nix profile add "${url}#direnv" "${url}#git"
       - name: Load environment variables
         run: |
           direnv allow .

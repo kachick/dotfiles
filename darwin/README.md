@@ -14,7 +14,7 @@ As of early 2026, this repository prioritizes Linux, and macOS (Darwin) maintena
 
 ## CI Optimization: Cache Detection on Linux
 
-To minimize the usage of the slow and expensive Darwin runners, we use a "Planning Job" on a fast Linux runner (`ubuntu-24.04`) to detect if a rebuild is actually necessary.
+To minimize the usage of the slow and expensive Darwin runners, we use a "Planning Job" on a fast Linux runner (`ubuntu-26.04`) to detect if a rebuild is actually necessary.
 
 ### How it works
 
