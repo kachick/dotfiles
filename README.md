@@ -169,7 +169,7 @@ systemd=true' | sudo tee /etc/wsl.conf
 ## Windows
 
 1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
-1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
+1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Apply NixOS config.
 1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further details.
 
 ## Multi-booting on Windows and Linux

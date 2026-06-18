@@ -31,7 +31,7 @@ You should remember that does not have `/etc/nixos/hardware-configuration.nix` a
 
 ```pwsh
 wsl.exe --install --no-distribution
-curl -OL "https://github.com/nix-community/NixOS-WSL/releases/download/2405.5.4/nixos-wsl.tar.gz"
+curl -OL "https://github.com/nix-community/NixOS-WSL/archive/refs/heads/release-26.05.tar.gz"
 wsl.exe --import NixOS $env:USERPROFILE\NixOS\ nixos-wsl.tar.gz
 wsl.exe --distribution "NixOS"
 ```
@@ -39,8 +39,6 @@ wsl.exe --distribution "NixOS"
 ```bash
 sudo nix-channel --update
 ```
-
-Setup nix and activate home-manager as written in [README](../README.md) with `kachick@wsl-nixos`
 
 ## Setup Ubuntu on WSL2
 
