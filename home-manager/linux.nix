@@ -74,8 +74,6 @@
         #
         # coredump can be output with `coredumpctl list` and `coredumpctl dump <ID> --output path`
         lldb
-
-        llm-agents.gemini-cli
       ])
       ++ (with pkgs.local; [
         rclone-list-mounted
