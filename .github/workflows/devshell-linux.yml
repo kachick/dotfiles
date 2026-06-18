@@ -77,9 +77,11 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Install direnv
+        # Installing git via nix to make sure it supports config based hooks
+        # Because of ubuntu-slim and ubuntu-26.04 remains on 2.53 or before at 2026-06-18
         run: |
           url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
-          nix profile add "${url}#direnv"
+          nix profile add "${url}#direnv" "${url}#git"
       - name: Load environment variables
         run: |
           direnv allow .
