@@ -42,10 +42,13 @@
     # `rm -rf ~/.config/google-chrome/Singleton*`
     #
     google-chrome
+
+    llm-agents.antigravity-cli
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
     "google-chrome"
     "vscode"
+    "antigravity-cli"
   ];
 }
