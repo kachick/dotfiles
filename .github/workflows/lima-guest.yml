@@ -27,7 +27,7 @@ jobs:
   # IMPORTANT: These jobs MUST remain split.
   # GitHub Actions only saves the cache if the job completes successfully.
   prepare-image:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6.0.3
         with:
@@ -55,7 +55,7 @@ jobs:
 
   test-provisioning:
     needs: prepare-image
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v6.0.3
         with:

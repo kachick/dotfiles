@@ -20,11 +20,11 @@ jobs:
       matrix:
         include:
           - target: DevShell
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: NixOS
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: home-manager-linux
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: home-manager-darwin
             # Use macos-26 (ARM) for faster evaluation of x86_64-darwin configurations.
             # While this may trigger Rosetta 2 for IFD builds, the overall evaluation
@@ -68,7 +68,7 @@ jobs:
 
   report:
     needs: diff
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
     permissions:
       pull-requests: write
