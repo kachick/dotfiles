@@ -43,8 +43,8 @@ sudo nix-channel --update
 ## Setup Ubuntu on WSL2
 
 ```pwsh
-wsl.exe --install "Ubuntu-24.04"
-wsl.exe --distribution "Ubuntu-24.04"
+wsl.exe --install "Ubuntu-26.04"
+wsl.exe --distribution "Ubuntu-26.04"
 ```
 
 Setup nix and activate home-manager as written in [README](../README.md) with `user@wsl-ubuntu`
