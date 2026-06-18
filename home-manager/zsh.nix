@@ -144,27 +144,6 @@ in
 
     # home-manager path will set in `programs.home-manager.enable = true`;
     envExtra = ''
-      case ''${OSTYPE} in
-      darwin*)
-        # Disables the annoy /usr/libexec/path_helper in /etc/zprofile
-        # - Even after this option, /etc/zshenv will be loaded
-        # - Some crucial PATH will be hidden they are installed by non nix layer. For example: vscode
-        setopt no_global_rcs
-
-        # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
-        if [[ -n "$SSH_CONNECTION" && "$TERM" == "xterm-ghostty" ]]; then
-          export TERM=xterm-256color
-        fi
-
-        # See https://github.com/kachick/dotfiles/issues/159 and https://github.com/NixOS/nix/issues/3616
-        # nix loaded programs may be used in zshrc and non interactive mode, so this workaround should be included in zshenv
-        if [ -f '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-        fi
-
-        ;;
-      esac
-
       # https://gist.github.com/ctechols/ca1035271ad134841284?permalink_comment_id=3401477#gistcomment-3401477
       skip_global_compinit=1
 

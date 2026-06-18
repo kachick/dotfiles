@@ -24,16 +24,10 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
-    # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.xz";
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
     home-manager-linux = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL/release-26.05";
@@ -70,9 +64,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
-      nixpkgs-darwin,
       home-manager-linux,
-      home-manager-darwin,
       kanata-tray,
       llm-agents,
       ...
@@ -86,26 +78,17 @@
             nixpkgs-unstable
             kanata-tray
             home-manager-linux
-            home-manager-darwin
             ;
         }
         ++ [ llm-agents.overlays.default ];
 
-      mkPkgs =
-        system:
-        let
-          base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
-        in
-        import base { inherit system overlays; };
+      mkPkgs = system: import nixpkgs { inherit system overlays; };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
         f:
         nixpkgs.lib.genAttrs
-          (nixpkgs.lib.intersectLists [
-            "x86_64-linux"
-            "x86_64-darwin"
-          ] nixpkgs.lib.systems.flakeExposed)
+          (nixpkgs.lib.intersectLists [ "x86_64-linux" ] nixpkgs.lib.systems.flakeExposed)
           (
             system:
             f {
@@ -128,13 +111,10 @@
 
       apps = forAllSystems (
         { pkgs, system }:
-        let
-          hm = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
-        in
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe hm.packages.${system}.home-manager;
+            program = pkgs.lib.getExe home-manager-linux.packages.${system}.home-manager;
           };
           gen-nix-cache-conf = {
             type = "app";
@@ -165,7 +145,6 @@
       homeConfigurations = import ./home-manager {
         inherit
           home-manager-linux
-          home-manager-darwin
           mkPkgs
           outputs
           ;

@@ -1,6 +1,5 @@
 {
   home-manager-linux,
-  home-manager-darwin,
   mkPkgs,
   outputs,
 }:
@@ -27,17 +26,6 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
-      ];
-    }
-  );
-
-  "kachick@macbook" = home-manager-darwin.lib.homeManagerConfiguration (
-    shared
-    // {
-      pkgs = mkPkgs "x86_64-darwin";
-      modules = [
-        outputs.homeManagerModules.kachick
-        outputs.homeManagerModules.darwin
       ];
     }
   );
@@ -78,18 +66,6 @@ in
         outputs.homeManagerModules.genericLinux
         { home.username = "runner"; }
         outputs.homeManagerModules.systemd
-      ];
-    }
-  );
-
-  "github-actions@macos-15-intel" = home-manager-darwin.lib.homeManagerConfiguration (
-    shared
-    // {
-      pkgs = mkPkgs "x86_64-darwin";
-      modules = [
-        outputs.homeManagerModules.kachick
-        outputs.homeManagerModules.darwin
-        { home.username = "runner"; }
       ];
     }
   );

@@ -6,8 +6,8 @@ This directory contains Nixpkgs overlays used to customize, fix, or extend the d
 
 - `default.nix`: The entry point that imports all other overlays.
 - `local.nix`: Exposes packages defined in `pkgs/local/` under the `pkgs.local` namespace.
-- `pinned.nix`: Explicitly exposes and pins specific external packages (e.g., from `nixpkgs-unstable` or external flake inputs) under the `pkgs.pinned` namespace.
-- `unstable.nix`: Imports and exposes the `nixpkgs-unstable` channel as `pkgs.unstable`.
+- `pinned.nix`: Explicitly exposes and pins specific external packages (e.g., from `nixos-unstable` or external flake inputs) under the `pkgs.pinned` namespace.
+- `unstable.nix`: Imports and exposes the `nixos-unstable` channel as `pkgs.unstable`.
 - `overrides/`: Contains transparent overlays that override existing package names in `nixpkgs` (e.g., `mozc`).
 
 ## Guidelines

@@ -5,10 +5,8 @@
   fetchFromGitHub,
   installShellFiles,
   qemu,
-  darwin,
   xorriso,
   makeWrapper,
-  apple-sdk_15, # Use 15 over 26 to keep consistency with my old device
   writableTmpDirAsHomeHook,
   versionCheckHook,
   testers,
@@ -43,20 +41,13 @@ buildGo126Module (finalAttrs: {
 
     # For checkPhase, and installPhase(required to build completion)
     writableTmpDirAsHomeHook
-  ]
-  ++ lib.optionals stdenv.hostPlatform.isDarwin [ darwin.sigtool ];
-
-  buildInputs = lib.optionals stdenv.hostPlatform.isDarwin [ apple-sdk_15 ];
+  ];
 
   postPatch = ''
     substituteInPlace Makefile \
       --replace-fail 'codesign -f -v --entitlements vz.entitlements -s -' 'codesign -f --entitlements vz.entitlements -s -' \
       --replace-fail 'rm -rf _output vendor' 'rm -rf _output'
   '';
-
-  # It attaches entitlements with codesign and strip removes those,
-  # voiding the entitlements and making it non-operational.
-  dontStrip = stdenv.hostPlatform.isDarwin;
 
   # Setting env.CGO_ENABLED does not work, because the upstream forces the value.
   #   - limactl: CGO_ENABLED=1
@@ -137,7 +128,6 @@ buildGo126Module (finalAttrs: {
         # `nix build .#lima.passthru.tests.minimalAgent`
         minimalAgent = testers.testEqualContents {
           assertion = "limactl only detects host's architecture guest agent by default";
-          checkMetadata = false; # Ignore GID mismatches on macOS runners: https://github.com/NixOS/nixpkgs/pull/452948
           expected = writeText "expected" ''
             true
             1

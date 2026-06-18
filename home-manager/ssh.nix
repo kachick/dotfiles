@@ -2,7 +2,6 @@
   pkgs,
   lib,
   config,
-  mkWritableConfig,
   ...
 }:
 
@@ -39,28 +38,9 @@ in
     );
   };
 
-  home.file =
-    let
-      authorizedKeys = pkgs.writeText "authorized_keys" (
-        lib.strings.concatLines (import ../config/ssh/keys.nix)
-      );
-    in
-    {
-      "${sshDir}/control/.keep".text = "Make ControlPath shorter";
-    }
-    // (lib.optionalAttrs pkgs.stdenv.hostPlatform.isDarwin (
-      # NixOS handles authorized_keys at the system level during user creation.
-      # However, since this project doesn't use nix-darwin, we need to manage it via Home Manager on Darwin.
-      #
-      # Note that you also need to manually enable "Remote Login" in
-      # macOS System Settings -> General -> Sharing to start the sshd service.
-      #
-      # Use mkWritableConfig to bypass the symlink issue on Darwin's sshd.
-      # macOS sshd strictly checks permissions of authorized_keys and rejects it if it's a symlink
-      # to the Nix store (which has 755 permissions), resulting in:
-      # "Permission denied (publickey,password,keyboard-interactive)."
-      mkWritableConfig.file "${sshDir}/authorized_keys" authorizedKeys { perm = "600"; }
-    ));
+  home.file = {
+    "${sshDir}/control/.keep".text = "Make ControlPath shorter";
+  };
 
   home.activation = {
     ensureWritableKnownHosts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -85,10 +65,6 @@ in
       # default: "ask"
       # Candidates: "accept-new". Don't use "no" as possible
       StrictHostKeyChecking yes
-
-      # `UseKeychain` only provided by darwin ssh agent, in Linux and pkgs.openssh, it isn't
-      IgnoreUnknown UseKeychain
-      UseKeychain yes
     '';
 
     # You should consider the order of entries. ssh_config(client) prefers `first wins last`. It means fallbacking `*` should be last.

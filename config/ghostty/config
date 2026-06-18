@@ -1,6 +1,5 @@
 # How to reload:
 #   Linux: ctrl+shift+,
-#   macOS: cmd+shift+,
 
 # See also 899be8e51cb288fe0ae91267f495ade7bfb80bc9
 # This disabling does not work on `nix run`. Installed in nixos and ran from launcher worked (from shell or gnome difference?.
@@ -47,3 +46,6 @@ split-divider-color = #9DA5B4
 keybind = ctrl+shift+-=new_split:down
 keybind = ctrl+shift+|=new_split:right
 keybind = ctrl+shift+s=new_split:auto
+
+# bash with --login should be better for Linux rather than respecting $SHELL. See GH-452
+command = "bash --login"

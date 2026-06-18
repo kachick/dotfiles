@@ -1,4 +1,3 @@
-# Don't use mount command to support darwin with same implementation
 ps --long
   | where name =~ rclone and command =~ mount
   | select pid ppid command

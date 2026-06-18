@@ -8,5 +8,5 @@
 ## How
 
 - Avoid `vendor` for this dirname while using golang
-- They might be different result with actually using. Prefer Linux rather than Darwin when select a channel
+- They might be different result with actually using.
 - Keep convention the filenames for easy use of `source`

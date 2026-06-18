@@ -16,7 +16,7 @@
       ];
 
       # Enabled by default on https://github.com/DeterminateSystems/nix-installer/releases/tag/v3.8.5
-      # Therefore enable also on NixOS to keep consistency against other Linux distros and macOS
+      # Therefore enable also on NixOS to keep consistency against other Linux distros
       # See https://github.com/NixOS/nix/pull/8047 for background
       always-allow-substitutes = true;
 

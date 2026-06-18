@@ -40,8 +40,7 @@
   programs.bash = {
     enable = true;
 
-    # In macOS, default login shell is zsh now.
-    # Keep the default as possible, but if you change the bash is the default even in macOS, you should care the path_helper problems
+    # Keep the default as possible
     # #503 and https://superuser.com/a/583502 may help you.
 
     sessionVariables = {
@@ -107,22 +106,13 @@
       # Inspired by Arch Wiki's Fish setup:
       # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
       #
-      # --- Optimization & Cross-Platform Compatibility ---
-      # The order of these checks matters for two reasons:
-      # 1. Performance: Prioritize internal checks to minimize external 'ps' calls.
-      # 2. Cross-Platform Reliability: 'ps' acts differently across systems.
-      #    Even with 'procps' from nixpkgs, the package is not the same on Linux and Darwin, though it has the same name in Nixpkgs.
-      # 3. Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
-      # This approach is also beneficial since Bash isn't typically a login shell on macOS.
+      # --- Optimization & Compatibility ---
+      # The order of these checks matters for performance. Prioritize internal checks to minimize external 'ps' calls.
+      # Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
       if [[ $- == *i* && -t 0 && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && ( $PPID -eq 0 || $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ) ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
         exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
-      fi
-
-      # As a safety measure, force a widely recognized TERM in SSH sessions to avoid terminal initialization issues. See GH-1433
-      if [[ -n "$SSH_CONNECTION" && "$OSTYPE" == darwin* && "$TERM" == "xterm-ghostty" ]]; then
-        export TERM=xterm-256color
       fi
 
       # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title

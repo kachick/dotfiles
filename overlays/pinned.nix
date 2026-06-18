@@ -1,7 +1,6 @@
 {
   kanata-tray,
   home-manager-linux,
-  home-manager-darwin,
 }:
 final: _prev:
 let
@@ -28,10 +27,6 @@ in
     inherit (final) mozc;
 
     # Pinning home-manager from the flake input
-    home-manager =
-      if final.stdenv.hostPlatform.isDarwin then
-        home-manager-darwin.packages.${system}.home-manager
-      else
-        home-manager-linux.packages.${system}.home-manager;
+    home-manager = home-manager-linux.packages.${system}.home-manager;
   };
 }

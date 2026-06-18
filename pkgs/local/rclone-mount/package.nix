@@ -4,13 +4,12 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     coreutils # `mktemp`
-    util-linux # `mountpoint` (Not available on Darwin)
+    util-linux # `mountpoint`
     unstable.rclone
   ];
   meta = {
     description = "Mount rclone to my usual directory";
-    # Didn't work on Darwin. It might work when disabling --daemon or replacing the default NFS with FUSE. However, I'm very tired to consider Darwin.
-    # If supporting Darwin in the future, keep in mind that `mountpoint` command is not available.
+    # If supporting Darwin again in the future, keep in mind that `mountpoint` command is not available.
     platforms = lib.platforms.linux;
   };
 }

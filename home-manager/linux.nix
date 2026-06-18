@@ -73,8 +73,6 @@
         # ```
         #
         # coredump can be output with `coredumpctl list` and `coredumpctl dump <ID> --output path`
-        #
-        # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
 
         llm-agents.gemini-cli
