@@ -1,4 +1,3 @@
-# List rclone mountpoints
 ps --long
   | where name =~ rclone and command =~ mount
   | select pid ppid command

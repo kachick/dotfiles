@@ -128,7 +128,6 @@ buildGo126Module (finalAttrs: {
         # `nix build .#lima.passthru.tests.minimalAgent`
         minimalAgent = testers.testEqualContents {
           assertion = "limactl only detects host's architecture guest agent by default";
-          checkMetadata = false;
           expected = writeText "expected" ''
             true
             1

@@ -27,8 +27,6 @@
 ;; GH-963 - Escape hatch for use of caps
 ;; "Both Shifts together enable Caps Lock" without "one Shift key disables it"
 ;; Inspired by gnome-tweaks providing "shift:both_capslock_cancel"
-;; This config is mainly for Linux and Windows.
-;; Use kanata-tray on Windows.
 (defchordsv2
   (lsft rsft) caps 300 all-released ()
 )

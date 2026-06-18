@@ -150,10 +150,7 @@ in
       if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then . "$HOME/.nix-profile/etc/profile.d/nix.sh"; fi # added by Nix installer
 
       # Put the special config in each machine if you want to avoid symlinks by Nix
-      # https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/zsh.nix#L325C7-L329
-      # https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/zsh.nix#L368-L372
-      # The default is "autoload -U compinit && compinit", I can not accept the path and speed
-      # Replacement of initExtraBeforeCompInit, it looks bit hacky. Track discussion in https://github.com/nix-community/home-manager/pull/6664
+      # https://github.com/nix-community/home-manager/issues/3090#issue-1303753447
       if [ -f '${config.xdg.configHome}/zsh/.zshenv.local' ]; then
         source '${config.xdg.configHome}/zsh/.zshenv.local'
       fi
@@ -209,7 +206,7 @@ in
           setopt hist_reduce_blanks
           setopt hist_no_store
           setopt HIST_NO_FUNCTIONS
-          # Enable comments in interactive shells
+          # https://apple.stackexchange.com/questions/405246/zsh-comment-character
           setopt interactivecomments
 
           # Needed in my env for `Ctrl + </>` https://unix.stackexchange.com/a/58871

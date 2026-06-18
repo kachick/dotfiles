@@ -24,7 +24,6 @@
   less # container base image doesn't have less even for ubuntu official
   procps # `ps`
 
-  # Generic tools
   findutils
   diffutils
   gnugrep

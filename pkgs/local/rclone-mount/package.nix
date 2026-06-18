@@ -9,6 +9,7 @@ pkgs.writeShellApplication rec {
   ];
   meta = {
     description = "Mount rclone to my usual directory";
+    # If supporting Darwin again in the future, keep in mind that `mountpoint` command is not available.
     platforms = lib.platforms.linux;
   };
 }
