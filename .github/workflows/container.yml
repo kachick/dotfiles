@@ -119,7 +119,7 @@ jobs:
           podman version
           crun --version
           buildah version
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - name: Determine base image
