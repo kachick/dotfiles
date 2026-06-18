@@ -15,11 +15,11 @@ permissions:
 
 jobs:
   minimize:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:
       # Need checkout before using gh and repo placeholders
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - name: Minimize old deploy comments

@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   get-meta:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
       pr-number: ${{ steps.get-meta.outputs.pr-number }}
@@ -41,7 +41,7 @@ jobs:
       pr-number: ${{ fromJSON(needs.get-meta.outputs.pr-number) }}
   ghcr:
     needs: [get-meta]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)
     timeout-minutes: 15
     steps:
@@ -67,7 +67,7 @@ jobs:
           package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
       - name: Prepare git to run gh commands
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - name: Post comments to the PR

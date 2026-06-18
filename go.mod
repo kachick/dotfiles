@@ -5,7 +5,7 @@ go 1.26.3
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/yusufpapurcu/wmi v1.2.4
-	golang.org/x/sys v0.45.0
+	golang.org/x/sys v0.46.0
 )
 
 require github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
@@ -14,7 +14,7 @@ require (
 	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
-	github.com/mattn/go-runewidth v0.0.23
+	github.com/mattn/go-runewidth v0.0.24
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect

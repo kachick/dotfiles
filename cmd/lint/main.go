@@ -51,7 +51,6 @@ func main() {
 	}
 
 	heavyOrTrivial := runner.Commands{
-		// FIXME: Adding lychee here making Network error
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},

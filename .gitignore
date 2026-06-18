@@ -19,7 +19,6 @@ dist/
 tmp/
 
 .direnv
-.lycheecache
 
 # Nix
 result

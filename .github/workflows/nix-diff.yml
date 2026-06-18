@@ -20,18 +20,18 @@ jobs:
       matrix:
         include:
           - target: DevShell
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: NixOS
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: home-manager-linux
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     if: >-
       github.event.pull_request.user.login == 'selfup-runner[bot]' ||
       contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
@@ -58,12 +58,12 @@ jobs:
 
   report:
     needs: diff
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
 

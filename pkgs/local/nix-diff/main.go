@@ -29,7 +29,7 @@ func main() {
 	allTargets := []Target{
 		{Name: "DevShell", Attribute: "devShells.x86_64-linux.default"},
 		{Name: "NixOS", Attribute: "nixosConfigurations.algae.config.system.build.toplevel"},
-		{Name: "home-manager-linux", Attribute: `homeConfigurations."github-actions@ubuntu-24.04".activationPackage`},
+		{Name: "home-manager-linux", Attribute: `homeConfigurations."github-actions@ubuntu-26.04".activationPackage`},
 	}
 
 	var targets []Target

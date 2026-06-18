@@ -35,7 +35,7 @@ jobs:
       fail-fast: false
       matrix:
         runner:
-          - ubuntu-24.04
+          - ubuntu-26.04
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Logging disk space
@@ -53,7 +53,7 @@ jobs:
              '/usr/local/share/boost'
       - name: Logging disk space after clean
         run: df -h
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix

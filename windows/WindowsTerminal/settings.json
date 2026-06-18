@@ -99,16 +99,10 @@
         "source": "Windows.Terminal.PowershellCore"
       },
       {
-        "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+        "guid": "{ed05345e-6b34-59bc-8ee9-cf3ea2df9b7d}",
         "hidden": false,
-        "name": "Ubuntu 24.04.1 LTS",
-        "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
-      },
-      {
-        "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
-        "hidden": true,
-        "name": "Ubuntu-24.04",
-        "source": "Windows.Terminal.Wsl"
+        "name": "Ubuntu-26.04",
+        "source": "Microsoft.WSL"
       },
       {
         "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",

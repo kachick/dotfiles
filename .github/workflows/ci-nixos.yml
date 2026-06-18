@@ -32,7 +32,7 @@ concurrency:
 
 jobs:
   wait:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Wait other jobs to leverage binary caches
         uses: kachick/wait-other-jobs@v4
@@ -61,7 +61,7 @@ jobs:
          contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
          github.event.action != 'labeled'
        )))
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     strategy:
       fail-fast: false
@@ -83,7 +83,7 @@ jobs:
              '/usr/local/share/boost'
       - name: Logging disk space after clean
         run: df -h
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
@@ -99,10 +99,10 @@ jobs:
           fi
 
   test-sample:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix

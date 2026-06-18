@@ -19,10 +19,25 @@ jobs:
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'nixos-iso'))
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     steps:
-      - uses: actions/checkout@v6.0.2
+      - name: Logging disk space
+        run: df -h
+      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
+      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
+        # NOTE: This workflow removed 14 Gib in 50sec
+        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
+        run: |
+          docker image prune --all --force
+          sudo rm -rf '/opt/ghc' \
+            '/usr/share/dotnet' \
+            "$AGENT_TOOLSDIRECTORY" \
+             '/usr/local/lib/android' \
+             '/usr/local/share/boost'
+      - name: Logging disk space after clean
+        run: df -h
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix

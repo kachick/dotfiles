@@ -11,9 +11,6 @@
           "PackageIdentifier": "Valve.Steam"
         },
         {
-          "PackageIdentifier": "TrackerSoftware.PDF-XChangeEditor"
-        },
-        {
           "PackageIdentifier": "calibre.calibre"
         }
       ],

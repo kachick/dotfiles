@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   sync-hash:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
@@ -24,7 +24,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           permission-contents: write
 
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           token: ${{ steps.publish-token.outputs.token }}
           ref: ${{ github.event.pull_request.head.sha }}

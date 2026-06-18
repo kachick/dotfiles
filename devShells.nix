@@ -36,6 +36,7 @@ in
           treefmt
 
           trivy
+          skopeo
 
           desktop-file-utils # `desktop-file-validate` as a linter
           kanata # Enable on devshell for using the --check as a linter
@@ -44,7 +45,6 @@ in
           nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for details
           betterleaks
           typos
-          lychee
           dprint
           zizmor
           rumdl

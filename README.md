@@ -115,7 +115,7 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Apply dotfiles
 
    ```bash
-   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
+   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
    ```
 
 1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
@@ -165,8 +165,8 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## Windows
 
-1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
-1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
+1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `user@wsl-ubuntu`
+1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Apply NixOS config.
 1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further details.
 
 ## Multi-booting on Windows and Linux

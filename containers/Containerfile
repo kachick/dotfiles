@@ -1,6 +1,7 @@
 # https://github.com/kachick/containers
-ARG BASE_IMAGE=ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:353fd33f85bf98b458f8e43fbf174e960cad1594458f7308933d35b60e082f2a
-FROM ${BASE_IMAGE}
+# You can get the digest by using:
+# skopeo inspect docker://ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest | jq -r '.Digest'
+FROM ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest@sha256:7591c9b42b27b5f752c9eeb64185a3632a476d7537d7f60110db2660d435e533
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
 LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
@@ -19,4 +20,4 @@ COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
 
 # Should back to original of kachick/ubuntu-nix-systemd, we need to run systemd first
 USER root
-CMD [ "/bin/systemd", "--system" ]
+CMD ["/usr/lib/systemd/systemd", "--system"]
