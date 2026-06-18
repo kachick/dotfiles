@@ -15,12 +15,15 @@ let
 in
 # Users on NixOS are separated from this file.
 {
-  "kachick@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
+  "user@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.kachick
+        outputs.homeManagerModules.kachick # Intentionally use a specific user config in WSL despite using the ephemeral "user" username
+        {
+          home.username = "user"; # Enforce the ephemeral "user" username
+        }
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
