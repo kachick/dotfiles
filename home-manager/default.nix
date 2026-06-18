@@ -25,6 +25,8 @@ in
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
       ];
+
+      home.username = "user"; # Enforce the ephemeral "user" username
     }
   );
 
