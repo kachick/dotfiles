@@ -8,7 +8,7 @@
   services.cloudflare-warp = {
     enable = true;
     # This should probably use `nixos-unstable`. But using the `nixpkgs-unstable` is okay for this package because Hydra does not test unfree packages.
-    package = pkgs.unstable.cloudflare-warp;
+    package = pkgs.local.cloudflare-warp;
   };
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
