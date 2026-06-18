@@ -37,7 +37,7 @@ jobs:
              '/usr/local/share/boost'
       - name: Logging disk space after clean
         run: df -h
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6.0.3
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
