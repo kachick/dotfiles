@@ -1,5 +1,5 @@
 # https://github.com/kachick/containers
-ARG BASE_IMAGE=ghcr.io/kachick/ubuntu-24.04-nix-systemd:latest@sha256:353fd33f85bf98b458f8e43fbf174e960cad1594458f7308933d35b60e082f2a
+ARG BASE_IMAGE=ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest@sha256:8c961752e4bcf46087f21e5a032929af7c7088088a21dfb0c511d8c0cc914e27
 FROM ${BASE_IMAGE}
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
@@ -19,4 +19,4 @@ COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
 
 # Should back to original of kachick/ubuntu-nix-systemd, we need to run systemd first
 USER root
-CMD ["/bin/systemd", "--system"]
+CMD ["/usr/lib/systemd/systemd", "--system"]
