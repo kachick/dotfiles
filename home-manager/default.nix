@@ -20,7 +20,7 @@ in
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.kachick # Intentionally uses specific username in WSL even through using "user" as ephemeral
+        outputs.homeManagerModules.kachick # Intentionally use a specific user config in WSL despite using the ephemeral "user" username
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
