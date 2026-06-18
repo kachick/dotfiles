@@ -11,6 +11,11 @@
   },
   "toml": {
   },
+  "dockerfile": {
+    "associations": [
+      "Containerfile"
+    ]
+  },
   // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
   "excludes": [
     ".git",
