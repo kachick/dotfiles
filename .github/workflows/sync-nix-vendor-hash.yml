@@ -24,7 +24,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           permission-contents: write
 
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.0
         with:
           token: ${{ steps.publish-token.outputs.token }}
           ref: ${{ github.event.pull_request.head.sha }}
