@@ -69,6 +69,7 @@
   dust # `dust`, alt du
   bottom # `btm`, alt top
   xh # alt HTTPie
+  unstable.herdr
   zellij
   sad
   pik # alt pkill

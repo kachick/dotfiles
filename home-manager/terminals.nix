@@ -38,6 +38,7 @@
         '';
       };
     }
-    // (mkWritableConfig.xdg "ghostty/config" ../config/ghostty/config { });
+    // (mkWritableConfig.xdg "ghostty/config" ../config/ghostty/config { })
+    // (mkWritableConfig.xdg "herdr/config.toml" ../config/herdr/config.toml { });
   };
 }
