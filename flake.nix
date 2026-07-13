@@ -66,7 +66,6 @@
       nixpkgs-unstable,
       home-manager-linux,
       kanata-tray,
-      llm-agents,
       ...
     }@inputs:
     let
