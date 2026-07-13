@@ -72,6 +72,16 @@
     let
       inherit (self) outputs;
 
+      llmAgentsOverlay =
+        if llm-agents ? overlays && llm-agents.overlays ? default then
+          llm-agents.overlays.default
+        else
+          final: _prev:
+            if llm-agents ? packages then
+              llm-agents.packages.${final.system} or { }
+            else
+              { };
+
       overlays =
         import ./overlays {
           inherit
@@ -80,7 +90,7 @@
             home-manager-linux
             ;
         }
-        ++ [ llm-agents.overlays.default ];
+        ++ [ llmAgentsOverlay ];
 
       mkPkgs = system: import nixpkgs { inherit system overlays; };
 
