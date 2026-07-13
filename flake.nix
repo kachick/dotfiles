@@ -73,17 +73,13 @@
       inherit (self) outputs;
 
       llmAgentsOverlay =
-        if llm-agents ? overlays && llm-agents.overlays ? default then
-          llm-agents.overlays.default
-        else
-          final: _prev:
-            {
-              llm-agents =
-                if llm-agents ? packages then
-                  llm-agents.packages.${final.stdenv.hostPlatform.system} or { }
-                else
-                  { };
+        final: _prev: {
+          llm-agents = {
+            antigravity-cli = final.callPackage "${llm-agents}/packages/antigravity-cli/package.nix" {
+              flake = llm-agents;
             };
+          };
+        };
 
       overlays =
         import ./overlays {
