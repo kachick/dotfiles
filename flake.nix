@@ -77,10 +77,13 @@
           llm-agents.overlays.default
         else
           final: _prev:
-            if llm-agents ? packages then
-              llm-agents.packages.${final.system} or { }
-            else
-              { };
+            {
+              llm-agents =
+                if llm-agents ? packages then
+                  llm-agents.packages.${final.stdenv.hostPlatform.system} or { }
+                else
+                  { };
+            };
 
       overlays =
         import ./overlays {
