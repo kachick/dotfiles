@@ -1,4 +1,8 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
@@ -43,7 +47,7 @@
     #
     google-chrome
 
-    llm-agents.antigravity-cli
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
   ];
 
   nixpkgs.allowedUnfreePackageNames = [

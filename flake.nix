@@ -66,7 +66,6 @@
       nixpkgs-unstable,
       home-manager-linux,
       kanata-tray,
-      llm-agents,
       ...
     }@inputs:
     let
@@ -80,7 +79,7 @@
             home-manager-linux
             ;
         }
-        ++ [ llm-agents.overlays.default ];
+        ;
 
       mkPkgs = system: import nixpkgs { inherit system overlays; };
 
