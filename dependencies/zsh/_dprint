@@ -45,6 +45,8 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Initialize the global dprint configuration file.]' \
 '(--config-discovery)--global[Initialize the global dprint configuration file.]' \
+'-y[Skip the interactive plugin prompt and accept the plugins selected based on the files in the current directory.]' \
+'--yes[Skip the interactive plugin prompt and accept the plugins selected based on the files in the current directory.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -60,6 +62,9 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Add to the global dprint configuration file.]' \
 '(--config-discovery)--global[Add to the global dprint configuration file.]' \
+'--no-version[For npm\: specifiers, write the unversioned form instead of pinning dist-tags.latest. Defers version management to node_modules / package.json.]' \
+'--package-json[Like --no-version, and also add the package to the nearest package.json'\''s devDependencies as a caret range.]' \
+'(--no-version --package-json)--checksum[Add a checksum to the plugin entry, even for Wasm plugins (which are otherwise added without one).]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -72,17 +77,19 @@ _arguments "${_arguments_options[@]}" \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
-'--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path: ' \
+'(--stdin-files)--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
+'(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--diff[Outputs a check-like diff of every formatted file.]' \
 '--staged[Format only the staged files.]' \
+'(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--skip-stable-format[Whether to skip formatting a file multiple times until the output is stable]' \
 '--fail-on-change[Exit with exit code 20 if files were formatted.]' \
@@ -105,10 +112,12 @@ _arguments "${_arguments_options[@]}" \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
+'(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--staged[Format only the staged files.]' \
+'(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '--list-different[Only outputs file paths that aren'\''t formatted and doesn'\''t output diffs.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
@@ -147,6 +156,8 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Initialize the global dprint configuration file.]' \
 '(--config-discovery)--global[Initialize the global dprint configuration file.]' \
+'-y[Skip the interactive plugin prompt and accept the plugins selected based on the files in the current directory.]' \
+'--yes[Skip the interactive plugin prompt and accept the plugins selected based on the files in the current directory.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -162,6 +173,7 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '-y[Upgrade process plugins without prompting to confirm checksums.]' \
 '--yes[Upgrade process plugins without prompting to confirm checksums.]' \
+'--dry-run[Print the updates that would be made without modifying any files.]' \
 '(--config-discovery)-g[Update the global dprint configuration file.]' \
 '(--config-discovery)--global[Update the global dprint configuration file.]' \
 '(--config-discovery -g --global)-r[Update configuration files in the current directory and all descendant directories.]' \
@@ -181,6 +193,9 @@ _arguments "${_arguments_options[@]}" \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Add to the global dprint configuration file.]' \
 '(--config-discovery)--global[Add to the global dprint configuration file.]' \
+'--no-version[For npm\: specifiers, write the unversioned form instead of pinning dist-tags.latest. Defers version management to node_modules / package.json.]' \
+'--package-json[Like --no-version, and also add the package to the nearest package.json'\''s devDependencies as a caret range.]' \
+'(--no-version --package-json)--checksum[Add a checksum to the plugin entry, even for Wasm plugins (which are otherwise added without one).]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -242,7 +257,7 @@ esac
     ;;
 esac
 ;;
-(output-file-paths)
+(file-paths)
 _arguments "${_arguments_options[@]}" \
 '--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
@@ -253,16 +268,32 @@ _arguments "${_arguments_options[@]}" \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
+'(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--staged[Format only the staged files.]' \
+'(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
 && ret=0
 ;;
-(output-resolved-config)
+(resolved-config)
+_arguments "${_arguments_options[@]}" \
+'--file=[Limit the output to only the plugins that would format this file.]:file: ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'-L+[Set log level]: :(debug info warn error silent)' \
+'--log-level=[Set log level]: :(debug info warn error silent)' \
+'(-L --log-level)--verbose[Alias for --log-level=debug]' \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(incremental-state)
 _arguments "${_arguments_options[@]}" \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
@@ -275,7 +306,7 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help]' \
 && ret=0
 ;;
-(output-format-times)
+(format-times)
 _arguments "${_arguments_options[@]}" \
 '--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
@@ -286,10 +317,12 @@ _arguments "${_arguments_options[@]}" \
 '--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
+'(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
 '--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--staged[Format only the staged files.]' \
+'(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -449,15 +482,19 @@ _arguments "${_arguments_options[@]}" \
     ;;
 esac
 ;;
-(output-file-paths)
+(file-paths)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(output-resolved-config)
+(resolved-config)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(output-format-times)
+(incremental-state)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(format-times)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
@@ -510,9 +547,10 @@ _dprint_commands() {
 'fmt:Formats the source files and writes the result to the file system.' \
 'check:Checks for any files that haven'\''t been formatted.' \
 'config:Functionality related to the configuration file.' \
-'output-file-paths:Prints the resolved file paths for the plugins based on the args and configuration.' \
-'output-resolved-config:Prints the resolved configuration for the plugins based on the args and configuration.' \
-'output-format-times:Prints the amount of time it takes to format each file. Use this for debugging.' \
+'file-paths:Prints the resolved file paths for the plugins based on the args and configuration.' \
+'resolved-config:Prints the resolved configuration for the plugins based on the args and configuration.' \
+'incremental-state:Prints the state used to determine whether the incremental cache would be invalidated.' \
+'format-times:Prints the amount of time it takes to format each file. Use this for debugging.' \
 'clear-cache:Deletes the plugin cache directory.' \
 'upgrade:Upgrades the dprint executable.' \
 'completions:Generate shell completions script for dprint' \
@@ -635,6 +673,16 @@ _dprint__help__editor-service_commands() {
     local commands; commands=()
     _describe -t commands 'dprint help editor-service commands' commands "$@"
 }
+(( $+functions[_dprint__file-paths_commands] )) ||
+_dprint__file-paths_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint file-paths commands' commands "$@"
+}
+(( $+functions[_dprint__help__file-paths_commands] )) ||
+_dprint__help__file-paths_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint help file-paths commands' commands "$@"
+}
 (( $+functions[_dprint__fmt_commands] )) ||
 _dprint__fmt_commands() {
     local commands; commands=()
@@ -644,6 +692,16 @@ _dprint__fmt_commands() {
 _dprint__help__fmt_commands() {
     local commands; commands=()
     _describe -t commands 'dprint help fmt commands' commands "$@"
+}
+(( $+functions[_dprint__format-times_commands] )) ||
+_dprint__format-times_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint format-times commands' commands "$@"
+}
+(( $+functions[_dprint__help__format-times_commands] )) ||
+_dprint__help__format-times_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint help format-times commands' commands "$@"
 }
 (( $+functions[_dprint__config__help_commands] )) ||
 _dprint__config__help_commands() {
@@ -669,9 +727,10 @@ _dprint__help_commands() {
 'fmt:Formats the source files and writes the result to the file system.' \
 'check:Checks for any files that haven'\''t been formatted.' \
 'config:Functionality related to the configuration file.' \
-'output-file-paths:Prints the resolved file paths for the plugins based on the args and configuration.' \
-'output-resolved-config:Prints the resolved configuration for the plugins based on the args and configuration.' \
-'output-format-times:Prints the amount of time it takes to format each file. Use this for debugging.' \
+'file-paths:Prints the resolved file paths for the plugins based on the args and configuration.' \
+'resolved-config:Prints the resolved configuration for the plugins based on the args and configuration.' \
+'incremental-state:Prints the state used to determine whether the incremental cache would be invalidated.' \
+'format-times:Prints the amount of time it takes to format each file. Use this for debugging.' \
 'clear-cache:Deletes the plugin cache directory.' \
 'upgrade:Upgrades the dprint executable.' \
 'completions:Generate shell completions script for dprint' \
@@ -687,6 +746,16 @@ _dprint__help_commands() {
 _dprint__help__help_commands() {
     local commands; commands=()
     _describe -t commands 'dprint help help commands' commands "$@"
+}
+(( $+functions[_dprint__help__incremental-state_commands] )) ||
+_dprint__help__incremental-state_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint help incremental-state commands' commands "$@"
+}
+(( $+functions[_dprint__incremental-state_commands] )) ||
+_dprint__incremental-state_commands() {
+    local commands; commands=()
+    _describe -t commands 'dprint incremental-state commands' commands "$@"
 }
 (( $+functions[_dprint__config__help__init_commands] )) ||
 _dprint__config__help__init_commands() {
@@ -733,35 +802,15 @@ _dprint__lsp_commands() {
     local commands; commands=()
     _describe -t commands 'dprint lsp commands' commands "$@"
 }
-(( $+functions[_dprint__help__output-file-paths_commands] )) ||
-_dprint__help__output-file-paths_commands() {
+(( $+functions[_dprint__help__resolved-config_commands] )) ||
+_dprint__help__resolved-config_commands() {
     local commands; commands=()
-    _describe -t commands 'dprint help output-file-paths commands' commands "$@"
+    _describe -t commands 'dprint help resolved-config commands' commands "$@"
 }
-(( $+functions[_dprint__output-file-paths_commands] )) ||
-_dprint__output-file-paths_commands() {
+(( $+functions[_dprint__resolved-config_commands] )) ||
+_dprint__resolved-config_commands() {
     local commands; commands=()
-    _describe -t commands 'dprint output-file-paths commands' commands "$@"
-}
-(( $+functions[_dprint__help__output-format-times_commands] )) ||
-_dprint__help__output-format-times_commands() {
-    local commands; commands=()
-    _describe -t commands 'dprint help output-format-times commands' commands "$@"
-}
-(( $+functions[_dprint__output-format-times_commands] )) ||
-_dprint__output-format-times_commands() {
-    local commands; commands=()
-    _describe -t commands 'dprint output-format-times commands' commands "$@"
-}
-(( $+functions[_dprint__help__output-resolved-config_commands] )) ||
-_dprint__help__output-resolved-config_commands() {
-    local commands; commands=()
-    _describe -t commands 'dprint help output-resolved-config commands' commands "$@"
-}
-(( $+functions[_dprint__output-resolved-config_commands] )) ||
-_dprint__output-resolved-config_commands() {
-    local commands; commands=()
-    _describe -t commands 'dprint output-resolved-config commands' commands "$@"
+    _describe -t commands 'dprint resolved-config commands' commands "$@"
 }
 (( $+functions[_dprint__config__help__update_commands] )) ||
 _dprint__config__help__update_commands() {

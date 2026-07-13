@@ -33,11 +33,20 @@ _dprint() {
             dprint,editor-service)
                 cmd="dprint__editor__service"
                 ;;
+            dprint,file-paths)
+                cmd="dprint__file__paths"
+                ;;
             dprint,fmt)
                 cmd="dprint__fmt"
                 ;;
+            dprint,format-times)
+                cmd="dprint__format__times"
+                ;;
             dprint,help)
                 cmd="dprint__help"
+                ;;
+            dprint,incremental-state)
+                cmd="dprint__incremental__state"
                 ;;
             dprint,init)
                 cmd="dprint__init"
@@ -48,14 +57,8 @@ _dprint() {
             dprint,lsp)
                 cmd="dprint__lsp"
                 ;;
-            dprint,output-file-paths)
-                cmd="dprint__output__file__paths"
-                ;;
-            dprint,output-format-times)
-                cmd="dprint__output__format__times"
-                ;;
-            dprint,output-resolved-config)
-                cmd="dprint__output__resolved__config"
+            dprint,resolved-config)
+                cmd="dprint__resolved__config"
                 ;;
             dprint,upgrade)
                 cmd="dprint__upgrade"
@@ -111,11 +114,20 @@ _dprint() {
             dprint__help,editor-service)
                 cmd="dprint__help__editor__service"
                 ;;
+            dprint__help,file-paths)
+                cmd="dprint__help__file__paths"
+                ;;
             dprint__help,fmt)
                 cmd="dprint__help__fmt"
                 ;;
+            dprint__help,format-times)
+                cmd="dprint__help__format__times"
+                ;;
             dprint__help,help)
                 cmd="dprint__help__help"
+                ;;
+            dprint__help,incremental-state)
+                cmd="dprint__help__incremental__state"
                 ;;
             dprint__help,init)
                 cmd="dprint__help__init"
@@ -126,14 +138,8 @@ _dprint() {
             dprint__help,lsp)
                 cmd="dprint__help__lsp"
                 ;;
-            dprint__help,output-file-paths)
-                cmd="dprint__help__output__file__paths"
-                ;;
-            dprint__help,output-format-times)
-                cmd="dprint__help__output__format__times"
-                ;;
-            dprint__help,output-resolved-config)
-                cmd="dprint__help__output__resolved__config"
+            dprint__help,resolved-config)
+                cmd="dprint__help__resolved__config"
                 ;;
             dprint__help,upgrade)
                 cmd="dprint__help__upgrade"
@@ -157,7 +163,7 @@ _dprint() {
 
     case "${cmd}" in
         dprint)
-            opts="-c -L -h -V --config --config-discovery --plugins --log-level --verbose --help --version init add fmt check config output-file-paths output-resolved-config output-format-times clear-cache upgrade completions license editor-info editor-service lsp help"
+            opts="-c -L -h -V --config --config-discovery --plugins --log-level --verbose --help --version init add fmt check config file-paths resolved-config incremental-state format-times clear-cache upgrade completions license editor-info editor-service lsp help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -195,7 +201,7 @@ _dprint() {
             return 0
             ;;
         dprint__add)
-            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
+            opts="-g -c -L -h --global --no-version --package-json --checksum --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -233,7 +239,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --allow-no-files --staged --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --allow-no-files --staged --dirty --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -405,7 +411,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__add)
-            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
+            opts="-g -c -L -h --global --no-version --package-json --checksum --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -565,7 +571,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__init)
-            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -y -c -L -h --global --yes --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -603,7 +609,7 @@ _dprint() {
             return 0
             ;;
         dprint__config__update)
-            opts="-y -g -r -c -L -h --yes --global --recursive --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-y -g -r -c -L -h --yes --dry-run --global --recursive --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -720,8 +726,58 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dprint__file__paths)
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --staged --dirty --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --includes-override)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --excludes)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --excludes-override)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --plugins)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dprint__fmt)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --stdin --diff --staged --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --stdin --diff --staged --dirty --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -778,8 +834,58 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dprint__format__times)
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --allow-no-files --staged --dirty --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --includes-override)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --excludes)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --excludes-override)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --plugins)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dprint__help)
-            opts="init add fmt check config output-file-paths output-resolved-config output-format-times clear-cache upgrade completions license editor-info editor-service lsp help"
+            opts="init add fmt check config file-paths resolved-config incremental-state format-times clear-cache upgrade completions license editor-info editor-service lsp help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -946,6 +1052,20 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dprint__help__file__paths)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dprint__help__fmt)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
@@ -960,7 +1080,35 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dprint__help__format__times)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dprint__help__help)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dprint__help__incremental__state)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -1016,35 +1164,7 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dprint__help__output__file__paths)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dprint__help__output__format__times)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dprint__help__output__resolved__config)
+        dprint__help__resolved__config)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -1072,8 +1192,46 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dprint__incremental__state)
+            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --config)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --config-discovery)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --plugins)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --log-level)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                -L)
+                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dprint__init)
-            opts="-g -c -L -h --global --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -y -c -L -h --global --yes --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -1186,113 +1344,17 @@ _dprint() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dprint__output__file__paths)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
+        dprint__resolved__config)
+            opts="-c -L -h --file --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --includes-override)
+                --file)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                --excludes)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --excludes-override)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -c)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-discovery)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --plugins)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --log-level)
-                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
-                    return 0
-                    ;;
-                -L)
-                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dprint__output__format__times)
-            opts="-c -L -h --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --allow-no-files --staged --config --config-discovery --plugins --log-level --verbose --help [files]..."
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --includes-override)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --excludes)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --excludes-override)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -c)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config-discovery)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --plugins)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --log-level)
-                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
-                    return 0
-                    ;;
-                -L)
-                    COMPREPLY=($(compgen -W "debug info warn error silent" -- "${cur}"))
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dprint__output__resolved__config)
-            opts="-c -L -h --config --config-discovery --plugins --log-level --verbose --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
