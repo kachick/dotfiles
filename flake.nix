@@ -72,15 +72,6 @@
     let
       inherit (self) outputs;
 
-      llmAgentsOverlay =
-        final: _prev: {
-          llm-agents = {
-            antigravity-cli = final.callPackage "${llm-agents}/packages/antigravity-cli/package.nix" {
-              flake = llm-agents;
-            };
-          };
-        };
-
       overlays =
         import ./overlays {
           inherit
@@ -89,7 +80,7 @@
             home-manager-linux
             ;
         }
-        ++ [ llmAgentsOverlay ];
+        ;
 
       mkPkgs = system: import nixpkgs { inherit system overlays; };
 
