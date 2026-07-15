@@ -71,15 +71,13 @@
     let
       inherit (self) outputs;
 
-      overlays =
-        import ./overlays {
-          inherit
-            nixpkgs-unstable
-            kanata-tray
-            home-manager-linux
-            ;
-        }
-        ;
+      overlays = import ./overlays {
+        inherit
+          nixpkgs-unstable
+          kanata-tray
+          home-manager-linux
+          ;
+      };
 
       mkPkgs = system: import nixpkgs { inherit system overlays; };
 
