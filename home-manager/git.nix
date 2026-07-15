@@ -183,10 +183,19 @@ in
           command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
         };
 
-        # TODO: Split and run for each tool. Currently optimized for each setup, but the maintenance cost is not small
-        pre-push-all = {
-          event = "pre-push"; # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-          command = lib.getExe pkgs.local.git-hooks-pre-push;
+        pre-push-no-leaks = {
+          event = "pre-push";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
+        };
+
+        pre-push-no-typos-in-log = {
+          event = "pre-push";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-log";
+        };
+
+        pre-push-no-typos-in-branch = {
+          event = "pre-push";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-branch";
         };
       };
     };

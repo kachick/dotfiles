@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -19,8 +20,32 @@ var (
 
 // Spec of Git: https://git-scm.com/docs/githooks#_pre_push
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand>\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Subcommands:\n")
+		fmt.Fprintf(os.Stderr, "  betterleaks   Prevent secrets in log and diff\n")
+		fmt.Fprintf(os.Stderr, "  typos-log     Prevent typos in log and diff\n")
+		fmt.Fprintf(os.Stderr, "  typos-branch  Prevent typos in branch name\n")
+	}
+
+	if len(os.Args) < 2 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	subcommand := os.Args[1]
+	// Using NewFlagSet for subcommands is a Go best practice.
+	// ExitOnError automatically handles -h and unknown flags.
+	subCmd := flag.NewFlagSet(subcommand, flag.ExitOnError)
+	subCmd.Parse(os.Args[2:])
+
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
+	// Performance note:
+	// Splitting into separate hooks results in multiple executions of this program,
+	// leading to redundant calls to "git config user.email" and "git symbolic-ref".
+	// However, we prioritize manageability and individual skip-ability (e.g., skipping branch name typos
+	// while keeping log checks) over micro-performance, as the overhead is negligible for humans.
 	remoteDefaultBranch, err := getRemoteDefaultBranch()
 	if err != nil {
 		log.Fatalf("Can't get default branch of the remote repository: %+v", err)
@@ -41,7 +66,9 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 		for desc, linter := range lintersForEntry {
-			linters[fmt.Sprintf("L%d:%s:%s", lineNumber, line, desc)] = linter
+			if linter.Tag == subcommand {
+				linters[fmt.Sprintf("L%d:%s:%s", lineNumber, line, desc)] = linter
+			}
 		}
 	}
 
@@ -63,9 +90,18 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	}
 
 	localRef := fields[0]
-	// localOid := fields[1]
+	localOid := fields[1]
 	remoteRef := fields[2]
 	// remoteOid := fields[3]
+
+	// Handle branch deletions and initial pushes.
+	// - localOid == 00...0: The branch is being deleted, so there's no local history to scan.
+	// - localRef == "(delete)": Some environments/tools use this as a placeholder for deletions.
+	// Skipping these prevents "git log" from failing with "fatal: bad revision" when the reference is gone.
+	// This also fixes issues where pushing an empty repository or first-time branch creation might trigger errors.
+	if localRef == "(delete)" || localOid == "0000000000000000000000000000000000000000" {
+		return nil, nil
+	}
 
 	return map[string]githooks.Linter{
 		"prevent secrets in log and diff": githooks.Linter{Tag: "betterleaks", Script: func() error {
@@ -75,7 +111,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in log and diff": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in log and diff": githooks.Linter{Tag: "typos-log", Script: func() error {
 			out, err := pipeline.CombinedOutput(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
@@ -86,7 +122,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in branch name": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in branch name": githooks.Linter{Tag: "typos-branch", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
 			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
 			// See https://github.com/crate-ci/typos/issues/758 for details
