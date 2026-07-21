@@ -80,6 +80,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Prepare Git branch
+        if: env.IS_DRY_RUN == 'false'
         run: |
           git switch -C "${PR_BRANCH}" "origin/${{ env.DEFAULT_BRANCH }}"
 
@@ -126,8 +127,12 @@ jobs:
               echo "title=$(git log -1 --format=%s)" | tee -a "$GITHUB_OUTPUT"
               ;;
             *)
-              echo "::error::Unexpected commit count: ${count}"
-              exit 1
+              if [[ "${IS_DRY_RUN}" == "true" ]]; then
+                echo "::notice::Unexpected commit count in dry-run mode: ${count}"
+              else
+                echo "::error::Unexpected commit count: ${count}"
+                exit 1
+              fi
               ;;
           esac
       - run: git push origin "${PR_BRANCH}" --force
