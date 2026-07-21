@@ -67,6 +67,9 @@
     SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
 
+  # Support modern terminal definitions (e.g. xterm-ghostty, kitty, foot) globally for SSH clients
+  environment.enableAllTerminfo = true;
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = (

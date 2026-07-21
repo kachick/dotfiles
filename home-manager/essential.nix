@@ -1,3 +1,6 @@
+# Minimal CLI/Server essential module for Home Manager
+# Excludes desktop/GUI applications, heavy dev toolchains (ruby, fontconfig, etc.), powershell/nushell, mdcat/dust, direnv/nixfmt, telemetry (go toolchain), and encryption tools.
+
 {
   config,
   pkgs,
@@ -16,17 +19,13 @@ in
   imports = [
     ./bash.nix
     ./zsh.nix
-    ./encryption.nix
     ./ssh.nix
     ./git.nix
-    ./editors.nix
-    ./terminals.nix
+    ./editor.nix
+    ./terminal-multiplexer.nix
     ./fzf.nix
     ./television.nix
-    ./telemetry.nix
   ];
-
-  # home.username = "<UPDATE_ME_IN_FLAKE>";
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/xdg.nix
   xdg.enable = true;
@@ -62,13 +61,6 @@ in
 
       # https://github.com/coreos/bugs/issues/365#issuecomment-105638617
       LESSCHARSET = "utf-8";
-
-      STACK_XDG = "https://github.com/commercialhaskell/stack/blob/72f0a1273dd1121740501a159988fc23df2fb362/doc/stack_root.md?plain=1#L7-L11";
-
-      # Workaround to detect tailscale kyes
-      # Setting this is not an ideal state. Because of this env ignores configs on $PWD
-      # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
-      BETTERLEAKS_CONFIG = "${../config/betterleaks/.betterleaks.toml}";
     };
 
     sessionPath = [
@@ -76,9 +68,68 @@ in
       "${config.xdg.dataHome}/tmpbin"
     ];
 
-    packages = import ./packages.nix {
-      inherit pkgs;
-    };
+    packages =
+      (with pkgs; [
+        # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+        bashInteractive
+        zsh
+        unstable.brush # Use unstable version because I maintain
+        starship
+        file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
+
+        fzf # History: CTRL+R, Walker: CTRL+T
+        # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
+        # Use same nixpkgs channel as same as fzf
+        television # `tv`. Alt fzf
+        zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
+
+        # Used in anywhere
+        coreutils
+        less # container base image doesn't have less even for ubuntu official
+        procps # `ps`
+
+        findutils
+        diffutils
+        gnugrep
+        netcat # `nc`
+        dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
+
+        git
+        # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
+
+        # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.
+        # See following issues
+        # - https://github.com/kachick/dotfiles/issues/280
+        # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
+
+        msedit # `edit`
+        unstable.fresh-editor # `fresh`
+
+        micro
+
+        tree
+        eza # alt ls
+        curl
+        wget
+        jq
+        ripgrep # `rg`
+        bat # alt cat
+        dysk # alt df
+        dust # `dust`, alt du
+        fd # alt find
+        bottom # `btm`, alt top
+        xh # alt HTTPie
+        unstable.herdr
+        zellij
+        pik # alt pkill
+      ])
+      ++ (with pkgs.local; [
+        la
+        lat
+        p
+        rg-fzf
+        tree-diff
+      ]);
 
     # You can check the candidates in `locale -a`
     # https://wiki.archlinux.jp/index.php/%E3%83%AD%E3%82%B1%E3%83%BC%E3%83%AB
@@ -92,18 +143,8 @@ in
     # Prefer this rather than adding wrapped script to make zsh possible to complete
     # Take care if you add nushell to the Unix dependencies again
     shellAliases = {
-      "g" = "git";
-
-      # https://github.com/NixOS/nixpkgs/pull/344193
-      "zed" = "zeditor";
-
       # https://www.reddit.com/r/NixOS/comments/yr3jje/comment/ivswbex/
       "sudoc" = "sudo --preserve-env=PATH env";
-
-      "gH" = "git show HEAD";
-
-      # GH-897
-      "ddis" = "direnv disallow";
 
       # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
       #       adding `--disable-event unimplemented` might be required.
@@ -122,48 +163,10 @@ in
 
   programs.lesspipe.enable = true;
 
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
-  programs.direnv = {
-    enable = true;
-
-    config.global = {
-      # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
-      hide_env_diff = true;
-    };
-
-    # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
-    #
-    # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
-    # See following reference
-    #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
-    #   - https://github.com/kachick/ruby-ulid/pull/410
-    nix-direnv = {
-      enable = true;
-    };
-  };
-
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/zoxide.nix
   programs.zoxide = {
     enable = true;
   };
-
-  # No home-manager module exists https://github.com/nix-community/home-manager/issues/2890
-  # TODO: Automate that needs to call `Install-Module -Name PSFzfHistory` first
-  xdg.configFile."powershell/Microsoft.PowerShell_profile.ps1".source =
-    ../config/powershell/Profile.ps1;
-
-  # Don't use nushell Nix modules. Because of the interface and API is much unstable
-  # I prefer to use stable home-manager channel. So nushell integration should be done manually
-  #
-  # Don't use `recursive` here. We can't expect any nushell changes for now
-  xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
-  xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
-  xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
-
-  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
-  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
-  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
@@ -210,18 +213,5 @@ in
       "--glob"
       "!.git"
     ];
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/yazi.nix
-  programs.yazi = {
-    enable = true;
-    shellWrapperName = "y";
-    settings = {
-      # https://github.com/sxyazi/yazi/pull/2803
-      # https://github.com/nix-community/home-manager/pull/7160
-      mgr = {
-        sort_dir_first = true;
-      };
-    };
   };
 }

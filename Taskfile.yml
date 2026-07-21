@@ -66,6 +66,7 @@ tasks:
       - nix build .#nixosConfigurations.moss.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.vps.config.system.build.toplevel --dry-run
 
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
