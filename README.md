@@ -173,12 +173,6 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 Check [traps](./windows/Multi-booting.md)
 
-## Windows on Linux
-
-Use [winboat](https://github.com/TibixDev/winboat).\
-The full-desktop feature is powered-by [FreeRDP](https://github.com/FreeRDP/FreeRDP).\
-You can exit the full-screen RDP session with `Ctrl + Alt + Enter`. (Not the `End` or `Pause/Break` keys)
-
 ## Lima
 
 1. Start a standard Docker guest with Lima:

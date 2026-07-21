@@ -42,7 +42,6 @@
           "google-chrome.desktop"
           "firefox.desktop"
           "signal.desktop"
-          "winboat.desktop"
           "io.gitlab.news_flash.NewsFlash.desktop"
           "org.gnome.Nautilus.desktop"
           "io.missioncenter.MissionCenter.desktop"
