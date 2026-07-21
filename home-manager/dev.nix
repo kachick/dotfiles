@@ -23,19 +23,15 @@
     packages =
       (with pkgs; [
         mdcat # pipe friendly markdown viewer rather than glow
-        dust # `dust`, alt du
         ruby_4_0
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
         ghq
-        sequoia-sq # Alt `gpg(gnupg)`
-        sequoia-chameleon-gnupg # Don't add gnupg package together since https://github.com/NixOS/nixpkgs/pull/507547
-        age # Candidates: rage
-        gopass
-        passage
         unstable.nixfmt
         direnv
         yazi
+        hexyl # hex viewer
+        sad
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562
@@ -54,8 +50,6 @@
         unstable.hydra-check
         unstable.nix-tree
 
-        # Use unstable version in my maintained packages
-        unstable.brush
         unstable.somo
         unstable.typescript-go
         unstable.typos
@@ -77,6 +71,15 @@
         preview
         renmark
       ]);
+
+    shellAliases = {
+      "g" = "git";
+
+      "gH" = "git show HEAD";
+
+      # GH-897
+      "ddis" = "direnv disallow";
+    };
   };
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
@@ -124,9 +127,4 @@
   xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
   xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
-
-  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
-  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
-  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
 }

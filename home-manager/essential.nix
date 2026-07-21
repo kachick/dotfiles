@@ -21,8 +21,8 @@ in
     ./zsh.nix
     ./ssh.nix
     ./git.nix
-    ./editors.nix
-    ./terminals.nix
+    ./editor.nix
+    ./terminal-multiplexer.nix
     ./fzf.nix
     ./television.nix
   ];
@@ -73,6 +73,7 @@ in
         # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
         bashInteractive
         zsh
+        unstable.brush # Use unstable version because I maintain
         starship
         file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
 
@@ -113,14 +114,13 @@ in
         jq
         ripgrep # `rg`
         bat # alt cat
-        hexyl # hex viewer
         dysk # alt df
+        dust # `dust`, alt du
         fd # alt find
         bottom # `btm`, alt top
         xh # alt HTTPie
         unstable.herdr
         zellij
-        sad
         pik # alt pkill
       ])
       ++ (with pkgs.local; [
@@ -143,18 +143,8 @@ in
     # Prefer this rather than adding wrapped script to make zsh possible to complete
     # Take care if you add nushell to the Unix dependencies again
     shellAliases = {
-      "g" = "git";
-
-      # https://github.com/NixOS/nixpkgs/pull/344193
-      "zed" = "zeditor";
-
       # https://www.reddit.com/r/NixOS/comments/yr3jje/comment/ivswbex/
       "sudoc" = "sudo --preserve-env=PATH env";
-
-      "gH" = "git show HEAD";
-
-      # GH-897
-      "ddis" = "direnv disallow";
 
       # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
       #       adding `--disable-event unimplemented` might be required.
