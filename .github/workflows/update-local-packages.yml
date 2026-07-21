@@ -34,6 +34,7 @@ jobs:
       matrix:
         package:
           - lima
+          - conoha-cli
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
