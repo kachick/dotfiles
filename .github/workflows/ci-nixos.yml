@@ -88,7 +88,7 @@ jobs:
       - parallel:
           - name: Build NixOS - vps
             run: |
-              nix build ".#nixosConfigurations.vps.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr-vps >&2)
+              nix build ".#nixosConfigurations.vps.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-vps >&2)
               # Fail if evaluation warnings were detected
               if grep -i "warning:" /tmp/nix-stderr-vps; then
                 echo "❌ Nix evaluation warnings detected!"
@@ -97,7 +97,7 @@ jobs:
 
           - name: Build NixOS - desktop-free
             run: |
-              nix build ".#nixosConfigurations.desktop-free.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr-desktop-free >&2)
+              nix build ".#nixosConfigurations.desktop-free.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-desktop-free >&2)
               # Fail if evaluation warnings were detected
               if grep -i "warning:" /tmp/nix-stderr-desktop-free; then
                 echo "❌ Nix evaluation warnings detected!"
@@ -106,7 +106,7 @@ jobs:
 
           - name: Build NixOS - wsl
             run: |
-              nix build ".#nixosConfigurations.wsl.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr-wsl >&2)
+              nix build ".#nixosConfigurations.wsl.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-wsl >&2)
               # Fail if evaluation warnings were detected
               if grep -i "warning:" /tmp/nix-stderr-wsl; then
                 echo "❌ Nix evaluation warnings detected!"
