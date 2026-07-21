@@ -63,10 +63,6 @@ jobs:
        )))
     runs-on: ubuntu-26.04
     timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        host: [desktop-free, wsl]
     steps:
       - name: Logging disk space
         run: df -h
@@ -89,14 +85,33 @@ jobs:
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Build NixOS system [${{ matrix.host }}]
-        run: |
-          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
-          # Fail if evaluation warnings were detected
-          if grep -i "warning:" /tmp/nix-stderr; then
-            echo "❌ Nix evaluation warnings detected!"
-            exit 1
-          fi
+      - parallel:
+          - name: Build NixOS - vps
+            run: |
+              nix build ".#nixosConfigurations.vps.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-vps >&2)
+              # Fail if evaluation warnings were detected
+              if grep -i "warning:" /tmp/nix-stderr-vps; then
+                echo "❌ Nix evaluation warnings detected!"
+                exit 1
+              fi
+
+          - name: Build NixOS - desktop-free
+            run: |
+              nix build ".#nixosConfigurations.desktop-free.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-desktop-free >&2)
+              # Fail if evaluation warnings were detected
+              if grep -i "warning:" /tmp/nix-stderr-desktop-free; then
+                echo "❌ Nix evaluation warnings detected!"
+                exit 1
+              fi
+
+          - name: Build NixOS - wsl
+            run: |
+              nix build ".#nixosConfigurations.wsl.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-wsl >&2)
+              # Fail if evaluation warnings were detected
+              if grep -i "warning:" /tmp/nix-stderr-wsl; then
+                echo "❌ Nix evaluation warnings detected!"
+                exit 1
+              fi
 
   test-sample:
     runs-on: ubuntu-26.04
@@ -119,5 +134,5 @@ jobs:
           direnv export gha > "$GITHUB_ENV"
 
       - name: Verify sample configuration template
-        # USe direnv or `nix develop` to ensure `task` is available from devShell
+        # Use direnv or `nix develop` to ensure `task` is available from devShell
         run: task test-sample-nixos
