@@ -123,4 +123,5 @@
   preview
   renmark
   tree-diff
+  conoha-cli
 ])
