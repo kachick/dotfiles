@@ -28,7 +28,7 @@ This makes it easy to use the same settings in environments that do not have Nix
     homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
       modules = [
-        # Standard Desktop Linux set (Includes common CLI settings)
+        # Standard Desktop Linux set (Includes essential & dev CLI settings)
         dotfiles.homeManagerModules.desktop
         # Add Linux specific tools
         dotfiles.homeManagerModules.linux

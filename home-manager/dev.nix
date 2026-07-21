@@ -1,5 +1,5 @@
-# Extended Home Manager configuration for Desktop/Developer environments
-# Inherits essential CLI/Server configurations and adds desktop/full dev toolchains.
+# Development Home Manager module for CLI tools and dev toolchains
+# Inherits essential CLI/Server configurations and adds full dev toolchains.
 
 { pkgs, ... }:
 

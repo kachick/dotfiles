@@ -1,6 +1,6 @@
 { overlays }:
 {
-  common = ../common.nix;
+  dev = ../dev.nix;
   essential = ../essential.nix;
   server = ../essential.nix;
   desktop = ./desktop.nix;
