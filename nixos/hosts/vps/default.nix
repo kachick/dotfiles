@@ -143,14 +143,14 @@
     openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
 
-  # Integrate lightweight home-manager modules (shell & editor configs only, omitting heavy dev tools)
+  # Integrate minimal home-manager essential module (CLI, shell, editor configs without desktop/dev toolchains)
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
     users.user = {
       imports = [
-        outputs.homeManagerModules.common
+        outputs.homeManagerModules.essential
         {
           home.username = "user";
         }
