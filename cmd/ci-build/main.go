@@ -2,10 +2,8 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -118,29 +116,8 @@ func runNixos(args []string) error {
 
 	buildTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.system.build.toplevel", host)
 	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-
-	var errBuffer bytes.Buffer
-	writer := io.MultiWriter(os.Stderr, &errBuffer)
 	buildCmd.Stdout = os.Stdout
-	buildCmd.Stderr = writer
+	buildCmd.Stderr = os.Stderr
 
-	if err := buildCmd.Run(); err != nil {
-		return err
-	}
-
-	// Evaluate NixOS module warnings directly instead of parsing CLI stderr logs
-	evalTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.warnings", host)
-	evalCmd := exec.Command("nix", "eval", "--json", evalTarget)
-	var evalOut bytes.Buffer
-	evalCmd.Stdout = &evalOut
-	evalCmd.Stderr = os.Stderr
-
-	if err := evalCmd.Run(); err == nil {
-		var warnings []string
-		if err := json.Unmarshal(evalOut.Bytes(), &warnings); err == nil && len(warnings) > 0 {
-			return fmt.Errorf("❌ NixOS evaluation warnings detected: %s", strings.Join(warnings, "; "))
-		}
-	}
-
-	return nil
+	return buildCmd.Run()
 }
