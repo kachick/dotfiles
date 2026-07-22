@@ -196,6 +196,12 @@ Check [traps](./windows/Multi-booting.md)
    limactl shell docker-nix docker run --rm hello-world
    ```
 
+### Windows on Lima
+
+Check [latest instruction](https://github.com/lima-vm/lima/blob/master/templates/windows-11.yaml) for Windows guests.\
+If you want windows-11 rather than windows-2025, you should manually download the **"English ISO file"** from [microsoft](https://www.microsoft.com/en-us/software-download/windows11).\
+Also check `swtpm` was enabled on your environment. I did it in NixOS.
+
 ## How to setup secrets
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)

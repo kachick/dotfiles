@@ -11,7 +11,10 @@
 
   users.groups.libvirtd.members = [ "kachick" ];
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    qemu.swtpm.enable = true; # Needed for Windows 11 VM guest image
+  };
 
   virtualisation.spiceUSBRedirection.enable = true;
 
