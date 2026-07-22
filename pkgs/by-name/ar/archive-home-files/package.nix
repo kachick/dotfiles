@@ -15,6 +15,8 @@ buildGo126Module (finalAttrs: {
   pname = "archive-home-files";
   version = "0.1.0";
 
+  __structuredAttrs = true;
+
   nativeBuildInputs = [
     makeWrapper
   ];

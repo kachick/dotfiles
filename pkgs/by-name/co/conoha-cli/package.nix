@@ -16,6 +16,8 @@ buildGo126Module (finalAttrs: {
   pname = "conoha-cli";
   version = "0.8.0";
 
+  __structuredAttrs = true;
+
   src = fetchFromGitHub {
     owner = "crowdy";
     repo = "conoha-cli";

@@ -19,6 +19,9 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "hcpu_shogi";
   inherit version;
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "kachick"; # Upstream appears not supporting onnxruntime on Linux, so I forked
     repo = "hcpu_shogi";
@@ -31,7 +34,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   makeFlags = [
-    "-C usi"
+    "-C"
+    "usi"
     "ONNXRUNTIME=1"
   ];
 

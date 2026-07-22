@@ -6,6 +6,10 @@
 
 stdenvNoCC.mkDerivation {
   name = "micro-nordcolors";
+
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "KiranWells";
     repo = "micro-nord-tc-colors";

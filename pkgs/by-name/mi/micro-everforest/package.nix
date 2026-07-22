@@ -6,6 +6,10 @@
 
 stdenvNoCC.mkDerivation {
   name = "micro-everforest";
+
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "atomashevic";
     repo = "everforest-micro";
