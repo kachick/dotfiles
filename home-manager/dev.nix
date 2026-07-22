@@ -88,6 +88,9 @@
   programs.direnv = {
     enable = true;
 
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+
     config.global = {
       # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
       hide_env_diff = true;
