@@ -49,24 +49,6 @@ func getCurrentNixSystem() (string, error) {
 	return system, nil
 }
 
-func runBuildAndCheckWarnings(name string, cmd *exec.Cmd) error {
-	var errBuffer bytes.Buffer
-	writer := io.MultiWriter(os.Stderr, &errBuffer)
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = writer
-
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("command execution failed for %s: %w", name, err)
-	}
-
-	if strings.Contains(strings.ToLower(errBuffer.String()), "warning:") {
-		return fmt.Errorf("❌ Nix evaluation warnings detected in %s!", name)
-	}
-
-	return nil
-}
-
 func runPackage(args []string) error {
 	fs := flag.NewFlagSet("package", flag.ExitOnError)
 	archFlag := fs.String("arch", "", "Target system architecture (defaults to nix builtins.currentSystem)")
@@ -90,11 +72,11 @@ func runPackage(args []string) error {
 		arch = detectedArch
 	}
 
-	fmt.Printf("Building package: %s (%s)\n", pname, arch)
-
 	buildTarget := fmt.Sprintf(".#%s", pname)
 	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-	if err := runBuildAndCheckWarnings(pname, buildCmd); err != nil {
+	buildCmd.Stdout = os.Stdout
+	buildCmd.Stderr = os.Stderr
+	if err := buildCmd.Run(); err != nil {
 		return err
 	}
 
@@ -115,7 +97,7 @@ func runPackage(args []string) error {
 	testCmd.Stdout = os.Stdout
 	testCmd.Stderr = os.Stderr
 	if err := testCmd.Run(); err != nil {
-		return fmt.Errorf("passthru.tests failed for %s: %w", pname, err)
+		return err
 	}
 
 	return nil
@@ -132,9 +114,22 @@ func runNixos(args []string) error {
 	}
 
 	host := fs.Arg(0)
-	fmt.Printf("Building NixOS configuration: %s\n", host)
 
 	buildTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.system.build.toplevel", host)
 	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-	return runBuildAndCheckWarnings(host, buildCmd)
+
+	var errBuffer bytes.Buffer
+	writer := io.MultiWriter(os.Stderr, &errBuffer)
+	buildCmd.Stdout = os.Stdout
+	buildCmd.Stderr = writer
+
+	if err := buildCmd.Run(); err != nil {
+		return err
+	}
+
+	if strings.Contains(strings.ToLower(errBuffer.String()), "warning:") {
+		return fmt.Errorf("❌ Nix evaluation warnings detected!")
+	}
+
+	return nil
 }
