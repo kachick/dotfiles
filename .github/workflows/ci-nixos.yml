@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
-      - '.github/scripts/ci-build-nixos.bash'
+      - 'cmd/ci-build/**'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -14,7 +14,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
-      - '.github/scripts/ci-build-nixos.bash'
+      - 'cmd/ci-build/**'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -89,13 +89,13 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - parallel:
           - name: Build NixOS - vps
-            run: ./.github/scripts/ci-build-nixos.bash vps
+            run: go run ./cmd/ci-build nixos vps
 
           - name: Build NixOS - desktop-free
-            run: ./.github/scripts/ci-build-nixos.bash desktop-free
+            run: go run ./cmd/ci-build nixos desktop-free
 
           - name: Build NixOS - wsl
-            run: ./.github/scripts/ci-build-nixos.bash wsl
+            run: go run ./cmd/ci-build nixos wsl
 
   test-sample:
     runs-on: ubuntu-26.04

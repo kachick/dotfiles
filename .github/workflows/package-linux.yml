@@ -6,7 +6,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
-      - '.github/scripts/ci-build-package.bash'
+      - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -15,7 +15,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
-      - '.github/scripts/ci-build-package.bash'
+      - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -48,46 +48,46 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - parallel:
           - name: Build package - archive-home-files
-            run: ./.github/scripts/ci-build-package.bash archive-home-files x86_64-linux
+            run: go run ./cmd/ci-build package archive-home-files --arch=x86_64-linux
 
           - name: Build package - conoha-cli
-            run: ./.github/scripts/ci-build-package.bash conoha-cli x86_64-linux
+            run: go run ./cmd/ci-build package conoha-cli --arch=x86_64-linux
 
           - name: Build package - git-hooks-pre-push
-            run: ./.github/scripts/ci-build-package.bash git-hooks-pre-push x86_64-linux
+            run: go run ./cmd/ci-build package git-hooks-pre-push --arch=x86_64-linux
 
           - name: Build package - hcpu_shogi
-            run: ./.github/scripts/ci-build-package.bash hcpu_shogi x86_64-linux
+            run: go run ./cmd/ci-build package hcpu_shogi --arch=x86_64-linux
 
           - name: Build package - ibm-plex-mono
-            run: ./.github/scripts/ci-build-package.bash ibm-plex-mono x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-mono --arch=x86_64-linux
 
           - name: Build package - ibm-plex-sans-jp
-            run: ./.github/scripts/ci-build-package.bash ibm-plex-sans-jp x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-sans-jp --arch=x86_64-linux
 
           - name: Build package - ibm-plex-serif-variable
-            run: ./.github/scripts/ci-build-package.bash ibm-plex-serif-variable x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-serif-variable --arch=x86_64-linux
 
           - name: Build package - ibus-engine-selector
-            run: ./.github/scripts/ci-build-package.bash ibus-engine-selector x86_64-linux
+            run: go run ./cmd/ci-build package ibus-engine-selector --arch=x86_64-linux
 
           - name: Build package - kanata-tray
-            run: ./.github/scripts/ci-build-package.bash kanata-tray x86_64-linux
+            run: go run ./cmd/ci-build package kanata-tray --arch=x86_64-linux
 
           - name: Build package - lima-full
-            run: ./.github/scripts/ci-build-package.bash lima-full x86_64-linux
+            run: go run ./cmd/ci-build package lima-full --arch=x86_64-linux
 
           - name: Build package - mozc
-            run: ./.github/scripts/ci-build-package.bash mozc x86_64-linux
+            run: go run ./cmd/ci-build package mozc --arch=x86_64-linux
 
           - name: Build package - nix-diff
-            run: ./.github/scripts/ci-build-package.bash nix-diff x86_64-linux
+            run: go run ./cmd/ci-build package nix-diff --arch=x86_64-linux
 
           - name: Build package - reponame
-            run: ./.github/scripts/ci-build-package.bash reponame x86_64-linux
+            run: go run ./cmd/ci-build package reponame --arch=x86_64-linux
 
           - name: Build package - yaneuraou-avx2
-            run: ./.github/scripts/ci-build-package.bash yaneuraou-avx2 x86_64-linux
+            run: go run ./cmd/ci-build package yaneuraou-avx2 --arch=x86_64-linux
 
           - name: Build package - zed-editor
-            run: ./.github/scripts/ci-build-package.bash zed-editor x86_64-linux true
+            run: go run ./cmd/ci-build package zed-editor --arch=x86_64-linux --skip-tests
