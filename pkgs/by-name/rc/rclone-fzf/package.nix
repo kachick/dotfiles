@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "rclone-fzf";
-  text = builtins.readFile ./rclone-fzf.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fzf
     unstable.rclone

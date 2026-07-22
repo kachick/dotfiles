@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "tree-diff";
-  text = builtins.readFile ./tree-diff.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     tree
     gitMinimal

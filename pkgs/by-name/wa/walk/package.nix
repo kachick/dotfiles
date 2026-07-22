@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "walk";
-  text = builtins.readFile ./walk.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fzf
     fd

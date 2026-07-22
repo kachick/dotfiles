@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "fzf-bind-posix-shell-history-to-git-commit-message";
-  text = builtins.readFile ./fzf-bind-posix-shell-history-to-git-commit-message.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     local.safe_quote_backtik
     gitMinimal

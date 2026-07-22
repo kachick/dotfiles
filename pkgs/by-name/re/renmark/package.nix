@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "renmark";
-  text = builtins.readFile ./renmark.bash;
+  text = builtins.readFile ./${name}.bash;
   # Old candidates
   # - glow, pandoc, inlyne, chawan built-in markdown renderer, mdcat, gh-markdown-preview, Lynx, w3m
   #

@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "rclone-mount";
-  text = builtins.readFile ./rclone-mount.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     coreutils # `mktemp`
     util-linux # `mountpoint`

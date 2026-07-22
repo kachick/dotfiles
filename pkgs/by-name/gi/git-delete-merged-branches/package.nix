@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "git-delete-merged-branches";
-  text = builtins.readFile ./git-delete-merged-branches.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     gitMinimal
     coreutils

@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "todo";
-  text = builtins.readFile ./todo.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     git # Don't use `gitMinimal` here. PCRE support is required
     fzf

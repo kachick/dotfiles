@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "p";
-  text = builtins.readFile ./p.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeEnv = {
     # Intentionally avoiding use of the global NIX_PATH to prevent confusion:
     # * I deliberately don't set this env var on non-NixOS systems, even though home-manager provides a module for it:

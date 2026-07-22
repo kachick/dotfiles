@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "bench_shells";
-  text = builtins.readFile ./bench_shells.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     hyperfine
     zsh

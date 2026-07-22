@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "git-log-fzf";
-  text = builtins.readFile ./git-log-fzf.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fzf
     coreutils

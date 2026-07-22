@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "ghqf";
-  text = builtins.readFile ./ghqf.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     ghq
     fzf

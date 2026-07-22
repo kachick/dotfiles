@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "nix-hash-url";
-  text = builtins.readFile ./nix-hash-url.bash;
+  text = builtins.readFile ./${name}.bash;
   # nix includes `nix-prefetch-url`
   meta = {
     # References

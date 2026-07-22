@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "ir";
-  text = builtins.readFile ./ir.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fd
 

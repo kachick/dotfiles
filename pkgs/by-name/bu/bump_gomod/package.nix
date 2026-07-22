@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "bump_gomod";
-  text = builtins.readFile ./bump_gomod.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     gitMinimal
     unstable.go_1_26

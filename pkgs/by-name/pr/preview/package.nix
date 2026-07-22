@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "preview";
-  text = builtins.readFile ./preview.bash;
+  text = builtins.readFile ./${name}.bash;
   # TODO: Support KDL highlight
   # - bat does not support KDL, however TUI editors with pipe is not to be easy handled
   # - Helix does not have readonly mode and the KDL highlighting is not correct

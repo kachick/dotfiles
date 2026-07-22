@@ -1,7 +1,7 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "rg-fzf";
-  text = builtins.readFile ./rg-fzf.bash;
+  text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fzf
     ripgrep

@@ -1,5 +1,5 @@
 { pkgs, ... }:
-pkgs.writeShellApplication {
+pkgs.writeShellApplication rec {
   name = "apply-system";
   # - Required to remove `errexit` for `||` operator
   # Don't add `xtrace` here, it displays much long `export`. Add it in code if you want
@@ -7,7 +7,7 @@ pkgs.writeShellApplication {
     "nounset"
     "pipefail"
   ];
-  text = (builtins.readFile ./apply-system.bash) + ''
+  text = (builtins.readFile ./${name}.bash) + ''
     mkdir --parents /etc/containers
     ln --symbolic --force '${../../../../config/containers/policy.json}' '/etc/containers/policy.json'
     ln --symbolic --force '${../../../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'
