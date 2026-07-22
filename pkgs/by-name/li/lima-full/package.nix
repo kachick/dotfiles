@@ -17,6 +17,8 @@ symlinkJoin {
 
   pname = "lima-full";
 
+  __structuredAttrs = true;
+
   paths = [
     lima
     lima-additional-guestagents
