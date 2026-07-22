@@ -7,6 +7,7 @@
   imports = [
     ./essential.nix
     ./encryption.nix
+    ./git.nix
     ./telemetry.nix
   ];
 
