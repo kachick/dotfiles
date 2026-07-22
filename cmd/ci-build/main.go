@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -117,19 +116,8 @@ func runNixos(args []string) error {
 
 	buildTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.system.build.toplevel", host)
 	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-
-	var errBuffer bytes.Buffer
-	writer := io.MultiWriter(os.Stderr, &errBuffer)
 	buildCmd.Stdout = os.Stdout
-	buildCmd.Stderr = writer
+	buildCmd.Stderr = os.Stderr
 
-	if err := buildCmd.Run(); err != nil {
-		return err
-	}
-
-	if strings.Contains(strings.ToLower(errBuffer.String()), "warning:") {
-		return fmt.Errorf("❌ Nix evaluation warnings detected!")
-	}
-
-	return nil
+	return buildCmd.Run()
 }

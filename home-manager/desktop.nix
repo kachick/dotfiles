@@ -177,4 +177,7 @@ in
       ../config/cloudflare-warp/connect.desktop
     ];
   };
+
+  # Use full Vim (with GTK3/X11 clipboard support) for desktop environments
+  programs.vim.packageConfigurable = pkgs.vim-full;
 }

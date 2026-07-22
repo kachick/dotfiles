@@ -5,9 +5,7 @@
   ...
 }:
 {
-  services.gpg-agent.enableBashIntegration = true;
   programs.starship.enableBashIntegration = true;
-  programs.direnv.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
   programs.television.enableBashIntegration = false; # Conflict with fzf by default

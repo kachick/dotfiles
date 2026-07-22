@@ -20,7 +20,7 @@ in
     ./bash.nix
     ./zsh.nix
     ./ssh.nix
-    ./git.nix
+    # ./git.nix # Don't import git.nix here even if requires git package. The module is heavily customized for dev purpose
     ./editor.nix
     ./terminal-multiplexer.nix
     ./fzf.nix
@@ -94,7 +94,7 @@ in
         netcat # `nc`
         dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
 
-        git
+        git # git is required even if not the dev.nix
         # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
 
         # Do not specify vim and the plugins at here, it made collisions from home-manager vim module.

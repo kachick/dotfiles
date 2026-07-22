@@ -14,9 +14,7 @@ let
   ZCOMPDUMP_CACHE_PATH = "${ZCOMPDUMP_CACHE_DIR}/zcompdump-${pkgs.zsh.version}";
 in
 {
-  services.gpg-agent.enableZshIntegration = true;
   programs.starship.enableZshIntegration = true;
-  programs.direnv.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
   programs.television.enableZshIntegration = false; # Conflict with fzf by default

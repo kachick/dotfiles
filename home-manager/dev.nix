@@ -7,6 +7,8 @@
   imports = [
     ./essential.nix
     ./encryption.nix
+    ./git.nix
+    ./helix-lsp.nix
     ./telemetry.nix
   ];
 
@@ -85,6 +87,9 @@
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
   programs.direnv = {
     enable = true;
+
+    enableBashIntegration = true;
+    enableZshIntegration = true;
 
     config.global = {
       # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
