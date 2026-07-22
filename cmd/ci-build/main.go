@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -127,11 +128,17 @@ func runNixos(args []string) error {
 		return err
 	}
 
-	// Filter out harmless Nix CLI warnings (e.g. dirty git tree in CI environments)
-	for _, line := range strings.Split(errBuffer.String(), "\n") {
-		lower := strings.ToLower(line)
-		if strings.Contains(lower, "warning:") && !strings.Contains(lower, "git tree") {
-			return fmt.Errorf("❌ Nix evaluation warnings detected: %s", strings.TrimSpace(line))
+	// Evaluate NixOS module warnings directly instead of parsing CLI stderr logs
+	evalTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.warnings", host)
+	evalCmd := exec.Command("nix", "eval", "--json", evalTarget)
+	var evalOut bytes.Buffer
+	evalCmd.Stdout = &evalOut
+	evalCmd.Stderr = os.Stderr
+
+	if err := evalCmd.Run(); err == nil {
+		var warnings []string
+		if err := json.Unmarshal(evalOut.Bytes(), &warnings); err == nil && len(warnings) > 0 {
+			return fmt.Errorf("❌ NixOS evaluation warnings detected: %s", strings.Join(warnings, "; "))
 		}
 	}
 
