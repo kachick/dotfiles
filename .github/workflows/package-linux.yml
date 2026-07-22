@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
+      - '.github/scripts/ci-build-package.bash'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -14,6 +15,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
+      - '.github/scripts/ci-build-package.bash'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -32,88 +34,60 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  planning:
-    runs-on: ubuntu-26.04
-    outputs:
-      packages: ${{ steps.set-matrix.outputs.packages }}
-    steps:
-      - uses: actions/checkout@v7.0.0
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - id: set-matrix
-        run: |
-          # Hardcoded packages that are always built
-          TARGET_PACKAGES=(
-            "kanata-tray"
-            "lima-full"
-            "zed-editor"
-            "mozc"
-            "yaneuraou-avx2"
-            "hcpu_shogi"
-            "ibm-plex-sans-jp"
-            "ibm-plex-mono"
-            "ibm-plex-serif-variable"
-            "conoha-cli"
-          )
-
-          # Dynamically add all shared-gomod packages
-          SHARED_GOMOD_PKGS=$(nix run .#list-shared-gomod-pkgs)
-          for pkg in $SHARED_GOMOD_PKGS; do
-            TARGET_PACKAGES+=("$pkg")
-          done
-
-          # Deduplicate and format as JSON
-          # Use a temporary associative array for deduplication (requires bash 4+)
-          declare -A unique_pkgs
-          for pkg in "${TARGET_PACKAGES[@]}"; do
-            unique_pkgs["$pkg"]=1
-          done
-
-          JSON_PKGS=$(printf '%s\n' "${!unique_pkgs[@]}" | jq -R . | jq -s -c .)
-          echo "packages=$JSON_PKGS" >> $GITHUB_OUTPUT
-
   build:
-    needs: planning
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [ubuntu-26.04]
-        pname: ${{ fromJSON(needs.planning.outputs.packages) }}
-        # Skip tests for heavy packages to avoid long build times in CI.
-        # We trust upstream/hydra for these packages since we're just pinning/patching them.
-        include:
-          - pname: zed-editor
-            skip_tests: true
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     steps:
+      - name: Logging disk space
+        run: df -h
       - uses: actions/checkout@v7.0.0
         with:
           persist-credentials: false
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Build package
-        env:
-          PNAME: ${{ matrix.pname }}
-        run: nix build ".#$PNAME"
-      - name: Run passthru tests
-        # Use nix-build via flake-compat for simpler recursive building.
-        # It automatically detects system architecture and skips if no tests exist.
-        env:
-          PNAME: ${{ matrix.pname }}
-          SKIP_TESTS: ${{ matrix.skip_tests }}
-        run: |
-          if [[ "$SKIP_TESTS" == "true" ]]; then
-            echo "Skipping tests for $PNAME as requested in matrix."
-            exit 0
-          fi
+      - parallel:
+          - name: Build package - archive-home-files
+            run: ./.github/scripts/ci-build-package.bash archive-home-files x86_64-linux
 
-          if nix eval ".#$PNAME.passthru.tests" >/dev/null 2>&1; then
-            nix-build --attr "packages.x86_64-linux.$PNAME.passthru.tests"
-          else
-            echo "No passthru.tests found for $PNAME, skipping."
-          fi
+          - name: Build package - conoha-cli
+            run: ./.github/scripts/ci-build-package.bash conoha-cli x86_64-linux
+
+          - name: Build package - git-hooks-pre-push
+            run: ./.github/scripts/ci-build-package.bash git-hooks-pre-push x86_64-linux
+
+          - name: Build package - hcpu_shogi
+            run: ./.github/scripts/ci-build-package.bash hcpu_shogi x86_64-linux
+
+          - name: Build package - ibm-plex-mono
+            run: ./.github/scripts/ci-build-package.bash ibm-plex-mono x86_64-linux
+
+          - name: Build package - ibm-plex-sans-jp
+            run: ./.github/scripts/ci-build-package.bash ibm-plex-sans-jp x86_64-linux
+
+          - name: Build package - ibm-plex-serif-variable
+            run: ./.github/scripts/ci-build-package.bash ibm-plex-serif-variable x86_64-linux
+
+          - name: Build package - ibus-engine-selector
+            run: ./.github/scripts/ci-build-package.bash ibus-engine-selector x86_64-linux
+
+          - name: Build package - kanata-tray
+            run: ./.github/scripts/ci-build-package.bash kanata-tray x86_64-linux
+
+          - name: Build package - lima-full
+            run: ./.github/scripts/ci-build-package.bash lima-full x86_64-linux
+
+          - name: Build package - mozc
+            run: ./.github/scripts/ci-build-package.bash mozc x86_64-linux
+
+          - name: Build package - nix-diff
+            run: ./.github/scripts/ci-build-package.bash nix-diff x86_64-linux
+
+          - name: Build package - reponame
+            run: ./.github/scripts/ci-build-package.bash reponame x86_64-linux
+
+          - name: Build package - yaneuraou-avx2
+            run: ./.github/scripts/ci-build-package.bash yaneuraou-avx2 x86_64-linux
+
+          - name: Build package - zed-editor
+            run: ./.github/scripts/ci-build-package.bash zed-editor x86_64-linux true

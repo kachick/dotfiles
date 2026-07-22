@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
+      - '.github/scripts/ci-build-nixos.bash'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -13,6 +14,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
+      - '.github/scripts/ci-build-nixos.bash'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -87,31 +89,13 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - parallel:
           - name: Build NixOS - vps
-            run: |
-              nix build ".#nixosConfigurations.vps.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-vps >&2)
-              # Fail if evaluation warnings were detected
-              if grep -i "warning:" /tmp/nix-stderr-vps; then
-                echo "❌ Nix evaluation warnings detected!"
-                exit 1
-              fi
+            run: ./.github/scripts/ci-build-nixos.bash vps
 
           - name: Build NixOS - desktop-free
-            run: |
-              nix build ".#nixosConfigurations.desktop-free.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-desktop-free >&2)
-              # Fail if evaluation warnings were detected
-              if grep -i "warning:" /tmp/nix-stderr-desktop-free; then
-                echo "❌ Nix evaluation warnings detected!"
-                exit 1
-              fi
+            run: ./.github/scripts/ci-build-nixos.bash desktop-free
 
           - name: Build NixOS - wsl
-            run: |
-              nix build ".#nixosConfigurations.wsl.config.system.build.toplevel" --no-link --show-trace 2> >(tee /tmp/nix-stderr-wsl >&2)
-              # Fail if evaluation warnings were detected
-              if grep -i "warning:" /tmp/nix-stderr-wsl; then
-                echo "❌ Nix evaluation warnings detected!"
-                exit 1
-              fi
+            run: ./.github/scripts/ci-build-nixos.bash wsl
 
   test-sample:
     runs-on: ubuntu-26.04
