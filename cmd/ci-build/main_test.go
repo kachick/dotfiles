@@ -1,10 +1,15 @@
 package main
 
 import (
+	"os/exec"
 	"testing"
 )
 
 func TestGetCurrentNixSystem(t *testing.T) {
+	if _, err := exec.LookPath("nix"); err != nil {
+		t.Skip("skipping test: nix is not installed in PATH")
+	}
+
 	sys, err := getCurrentNixSystem()
 	if err != nil {
 		t.Fatalf("unexpected error getting current nix system: %v", err)
