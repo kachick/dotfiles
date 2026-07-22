@@ -8,6 +8,9 @@ stdenvNoCC.mkDerivation rec {
   pname = "micro-fzfinder";
   version = "0.2.0";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "MuratovAS";
     repo = "micro-fzfinder";

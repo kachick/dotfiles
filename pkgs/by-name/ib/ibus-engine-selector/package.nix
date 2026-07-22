@@ -15,6 +15,8 @@ buildGo126Module (finalAttrs: {
   pname = "ibus-engine-selector";
   version = "0.1.0";
 
+  __structuredAttrs = true;
+
   src =
     with lib.fileset;
     toSource {

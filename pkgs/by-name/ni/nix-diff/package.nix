@@ -12,6 +12,8 @@ buildGo126Module (finalAttrs: {
   pname = "nix-diff";
   version = "0.0.1";
 
+  __structuredAttrs = true;
+
   vendorHash = "sha256-rFGxLB/Z4HlKiWp1pK80yZKDJxHmuZaf5lg8dKuLIgE=";
 
   src =

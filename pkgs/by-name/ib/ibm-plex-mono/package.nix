@@ -8,6 +8,9 @@ stdenvNoCC.mkDerivation rec {
   pname = "ibm-plex-mono";
   version = "1.1.0";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   # REVISIT: https://github.com/NixOS/nixpkgs/pull/505549
   # As of 2026-04-22, the upstream PR combines all IBM Plex fonts into a single package,
   # which leads to unnecessary disk bloat. We use individual packages here to minimize the footprint.

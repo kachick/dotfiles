@@ -10,6 +10,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "tanuki-hao";
   version = "2023-05-08";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchurl {
     # - Compatible with NNUE_halfkp_256x2_32_32 such as Suisho5, nixpkgs's YaneuraOu binary can't open Lí's NNUE_halfkp_1024x2_8_32 format
     # - Stronger than Suisho5

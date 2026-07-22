@@ -8,6 +8,9 @@ stdenvNoCC.mkDerivation rec {
   pname = "micro-kdl";
   version = "0.1.0";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   src = fetchFromGitHub {
     owner = "kachick";
     repo = "micro-kdl";

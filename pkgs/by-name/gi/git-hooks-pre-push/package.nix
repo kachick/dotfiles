@@ -12,6 +12,8 @@ buildGo126Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
 
+  __structuredAttrs = true;
+
   nativeBuildInputs = [
     makeWrapper
   ];

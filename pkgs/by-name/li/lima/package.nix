@@ -26,6 +26,8 @@ buildGo126Module (finalAttrs: {
   pname = "lima";
   version = "2.2.0";
 
+  __structuredAttrs = true;
+
   src = fetchFromGitHub {
     owner = "lima-vm";
     repo = "lima";

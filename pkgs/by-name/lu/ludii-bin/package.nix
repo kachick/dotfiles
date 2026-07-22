@@ -17,6 +17,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "ludii-bin";
   version = "1.3.14";
 
+  __structuredAttrs = true;
+  strictDeps = true;
+
   # Prefer official release assets from ludii.games.
   # - GitHub repository lacks versioned tags except v1.3.14
   # - The Ludii*-src.jar from ludii.games does not contain PlayerDesktop/build.xml

@@ -12,6 +12,8 @@ buildGo126Module (finalAttrs: {
 
   inherit (lima) version src vendorHash;
 
+  __structuredAttrs = true;
+
   env = {
     # This is mainly not needed because the upstream repository forces the value:
     #   - https://github.com/lima-vm/lima/blob/v2.1.0/Makefile#L421-L428
