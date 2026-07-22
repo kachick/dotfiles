@@ -5,13 +5,13 @@ on:
     branches: [main]
     paths:
       - 'nixos/nix.nix'
-      - 'pkgs/local/gen-nix-cache-conf/**'
+      - 'pkgs/by-name/ge/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
       - '.github/workflows/lima-guest.yml'
   pull_request:
     paths:
       - 'nixos/nix.nix'
-      - 'pkgs/local/gen-nix-cache-conf/**'
+      - 'pkgs/by-name/ge/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
       - '.github/workflows/lima-guest.yml'
   workflow_dispatch:

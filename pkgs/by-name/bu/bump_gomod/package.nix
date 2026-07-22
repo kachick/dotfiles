@@ -1,0 +1,15 @@
+{ pkgs, ... }:
+pkgs.writeShellApplication {
+  name = "bump_gomod";
+  text = builtins.readFile ./bump_gomod.bash;
+  runtimeInputs = with pkgs; [
+    gitMinimal
+    unstable.go_1_26
+    gnugrep
+    findutils # `xargs`
+    nix-update
+  ];
+  meta = {
+    description = "Update go.mod with method of https://github.com/kachick/times_kachick/issues/265";
+  };
+}

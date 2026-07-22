@@ -4,7 +4,7 @@ This directory contains Nix package definitions, organized by their origin and p
 
 ## Directory Structure
 
-- `local/`: Packages where the source code is managed in this repository, or where we provide our own packaging logic (e.g., `default.nix`) for external sources not found in `nixpkgs`.
+- `by-name/`: Packages where the source code is managed in this repository, organized in nixpkgs standard by-name structure (`by-name/<2-prefix>/<pname>`).
   - Examples: `la`, `lat`, `tanuki-hao`, `lima-full`.
   - Exposed as: `pkgs.local.<name>`.
 - `pinned/`: (Virtual/Implicit) External packages from `nixpkgs` or other flakes that we explicitly want to build and cache in CI, often for stability or specific versioning.
