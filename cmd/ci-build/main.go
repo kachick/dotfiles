@@ -127,8 +127,12 @@ func runNixos(args []string) error {
 		return err
 	}
 
-	if strings.Contains(strings.ToLower(errBuffer.String()), "warning:") {
-		return fmt.Errorf("❌ Nix evaluation warnings detected!")
+	// Filter out harmless Nix CLI warnings (e.g. dirty git tree in CI environments)
+	for _, line := range strings.Split(errBuffer.String(), "\n") {
+		lower := strings.ToLower(line)
+		if strings.Contains(lower, "warning:") && !strings.Contains(lower, "git tree") {
+			return fmt.Errorf("❌ Nix evaluation warnings detected: %s", strings.TrimSpace(line))
+		}
 	}
 
 	return nil
