@@ -6,6 +6,7 @@
   installShellFiles,
   qemu,
   xorriso,
+  swtpm,
   makeWrapper,
   writableTmpDirAsHomeHook,
   versionCheckHook,
@@ -90,6 +91,9 @@ buildGo126Module (finalAttrs: {
 
           # For FreeBSD guests: https://github.com/lima-vm/lima/commit/bca658c36d757487472b3321a13f14bac26fee77
           xorriso
+
+          # For Windows 11 guest: https://github.com/lima-vm/lima/blob/de0816ea4bdc5267b428ab21025889b8dd785526/website/content/en/docs/usage/guests/windows.md?plain=1#L6
+          swtpm
         ]
       }
   ''
