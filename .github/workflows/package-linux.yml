@@ -48,46 +48,46 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - parallel:
           - name: Build package - archive-home-files
-            run: go run ./cmd/ci-build package archive-home-files --arch=x86_64-linux
+            run: go run ./cmd/ci-build package archive-home-files
 
           - name: Build package - conoha-cli
-            run: go run ./cmd/ci-build package conoha-cli --arch=x86_64-linux
+            run: go run ./cmd/ci-build package conoha-cli
 
           - name: Build package - git-hooks-pre-push
-            run: go run ./cmd/ci-build package git-hooks-pre-push --arch=x86_64-linux
+            run: go run ./cmd/ci-build package git-hooks-pre-push
 
           - name: Build package - hcpu_shogi
-            run: go run ./cmd/ci-build package hcpu_shogi --arch=x86_64-linux
+            run: go run ./cmd/ci-build package hcpu_shogi
 
           - name: Build package - ibm-plex-mono
-            run: go run ./cmd/ci-build package ibm-plex-mono --arch=x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-mono
 
           - name: Build package - ibm-plex-sans-jp
-            run: go run ./cmd/ci-build package ibm-plex-sans-jp --arch=x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-sans-jp
 
           - name: Build package - ibm-plex-serif-variable
-            run: go run ./cmd/ci-build package ibm-plex-serif-variable --arch=x86_64-linux
+            run: go run ./cmd/ci-build package ibm-plex-serif-variable
 
           - name: Build package - ibus-engine-selector
-            run: go run ./cmd/ci-build package ibus-engine-selector --arch=x86_64-linux
+            run: go run ./cmd/ci-build package ibus-engine-selector
 
           - name: Build package - kanata-tray
-            run: go run ./cmd/ci-build package kanata-tray --arch=x86_64-linux
+            run: go run ./cmd/ci-build package kanata-tray
 
           - name: Build package - lima-full
-            run: go run ./cmd/ci-build package lima-full --arch=x86_64-linux
+            run: go run ./cmd/ci-build package lima-full
 
           - name: Build package - mozc
-            run: go run ./cmd/ci-build package mozc --arch=x86_64-linux
+            run: go run ./cmd/ci-build package mozc
 
           - name: Build package - nix-diff
-            run: go run ./cmd/ci-build package nix-diff --arch=x86_64-linux
+            run: go run ./cmd/ci-build package nix-diff
 
           - name: Build package - reponame
-            run: go run ./cmd/ci-build package reponame --arch=x86_64-linux
+            run: go run ./cmd/ci-build package reponame
 
           - name: Build package - yaneuraou-avx2
-            run: go run ./cmd/ci-build package yaneuraou-avx2 --arch=x86_64-linux
+            run: go run ./cmd/ci-build package yaneuraou-avx2
 
           - name: Build package - zed-editor
-            run: go run ./cmd/ci-build package zed-editor --arch=x86_64-linux --skip-tests
+            run: go run ./cmd/ci-build package zed-editor --skip-tests

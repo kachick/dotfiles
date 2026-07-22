@@ -34,6 +34,21 @@ func main() {
 	}
 }
 
+func getCurrentNixSystem() (string, error) {
+	cmd := exec.Command("nix", "eval", "--raw", "--impure", "--expr", "builtins.currentSystem")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("failed to detect current Nix system: %w", err)
+	}
+	system := strings.TrimSpace(out.String())
+	if system == "" {
+		return "", fmt.Errorf("current Nix system output was empty")
+	}
+	return system, nil
+}
+
 func runBuildAndCheckWarnings(name string, cmd *exec.Cmd) error {
 	var errBuffer bytes.Buffer
 	writer := io.MultiWriter(os.Stderr, &errBuffer)
@@ -54,7 +69,7 @@ func runBuildAndCheckWarnings(name string, cmd *exec.Cmd) error {
 
 func runPackage(args []string) error {
 	fs := flag.NewFlagSet("package", flag.ExitOnError)
-	arch := fs.String("arch", "x86_64-linux", "Target system architecture")
+	archFlag := fs.String("arch", "", "Target system architecture (defaults to nix builtins.currentSystem)")
 	skipTests := fs.Bool("skip-tests", false, "Skip running passthru.tests")
 
 	if err := fs.Parse(args); err != nil {
@@ -66,7 +81,16 @@ func runPackage(args []string) error {
 	}
 
 	pname := fs.Arg(0)
-	fmt.Printf("Building package: %s (%s)\n", pname, *arch)
+	arch := *archFlag
+	if arch == "" {
+		detectedArch, err := getCurrentNixSystem()
+		if err != nil {
+			return err
+		}
+		arch = detectedArch
+	}
+
+	fmt.Printf("Building package: %s (%s)\n", pname, arch)
 
 	buildTarget := fmt.Sprintf(".#%s", pname)
 	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
@@ -86,7 +110,7 @@ func runPackage(args []string) error {
 		return nil
 	}
 
-	testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", *arch, pname)
+	testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
 	testCmd := exec.Command("nix-build", "--attr", testAttr)
 	testCmd.Stdout = os.Stdout
 	testCmd.Stderr = os.Stderr

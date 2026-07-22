@@ -4,6 +4,16 @@ import (
 	"testing"
 )
 
+func TestGetCurrentNixSystem(t *testing.T) {
+	sys, err := getCurrentNixSystem()
+	if err != nil {
+		t.Fatalf("unexpected error getting current nix system: %v", err)
+	}
+	if sys == "" {
+		t.Error("expected non-empty nix system, got empty string")
+	}
+}
+
 func TestRunPackage_MissingArg(t *testing.T) {
 	err := runPackage([]string{})
 	if err == nil {
