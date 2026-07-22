@@ -17,11 +17,11 @@ buildGo126Module (finalAttrs: {
   src =
     with lib.fileset;
     toSource {
-      root = ../../../.;
+      root = ../../../../.;
       fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
-        ../../../internal
+        ../../../../go.mod
+        ../../../../go.sum
+        ../../../../internal
         ./.
       ];
     };

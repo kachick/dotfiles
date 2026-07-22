@@ -8,7 +8,7 @@
 }:
 
 let
-  configPath = ../../../config/mozc/ibus_config.textproto;
+  configPath = ../../../../config/mozc/ibus_config.textproto;
   inherit (pkgs.unstable) buildGo126Module;
 in
 buildGo126Module (finalAttrs: {
@@ -18,17 +18,17 @@ buildGo126Module (finalAttrs: {
   src =
     with lib.fileset;
     toSource {
-      root = ../../../.;
+      root = ../../../../.;
       fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
+        ../../../../go.mod
+        ../../../../go.sum
         ./.
       ];
     };
 
   vendorHash = "sha256-FoG9n6d1fTwmWCE4V5AvSXYGZgZ5fw0RuzLDMv2MSY4=";
 
-  subPackages = [ "pkgs/local/${finalAttrs.pname}" ];
+  subPackages = [ "pkgs/by-name/ib/${finalAttrs.pname}" ];
 
   ldflags = [ "-s" ];
 

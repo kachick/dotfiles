@@ -6,7 +6,7 @@
 let
   # Directly import the Nix module to extract binary cache settings.
   # This works because nix.nix is a pure attribute set.
-  nixConfig = (import ../../../nixos/nix.nix).nix.settings;
+  nixConfig = (import ../../../../nixos/nix.nix).nix.settings;
   conf = ''
     # Use 'extra-trusted-substituters' for system-wide configuration.
     # This marks these URLs as trusted but does not enable them globally.

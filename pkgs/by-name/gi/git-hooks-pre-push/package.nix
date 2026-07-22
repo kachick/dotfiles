@@ -34,17 +34,17 @@ buildGo126Module (finalAttrs: {
   src =
     with lib.fileset;
     toSource {
-      root = ../../../.;
+      root = ../../../../.;
       fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
-        ../../../internal
+        ../../../../go.mod
+        ../../../../go.sum
+        ../../../../internal
         ./.
       ];
     };
 
   subPackages = [
-    "pkgs/local/${finalAttrs.pname}"
+    "pkgs/by-name/gi/${finalAttrs.pname}"
   ];
 
   env.CGO_ENABLED = 0;
@@ -54,7 +54,7 @@ buildGo126Module (finalAttrs: {
   ldflags = [
     "-s"
     "-w"
-    "-X main.TyposConfigPath=${../../../typos.toml}"
+    "-X main.TyposConfigPath=${../../../../typos.toml}"
   ];
 
   meta = {

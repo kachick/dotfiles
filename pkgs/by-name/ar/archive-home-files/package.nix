@@ -8,8 +8,8 @@
 
 let
   inherit (pkgs.unstable) buildGo126Module;
-  keys = import ../../../config/ssh/keys.nix;
-  betterleaksConfig = ../../../config/betterleaks/.betterleaks.toml;
+  keys = import ../../../../config/ssh/keys.nix;
+  betterleaksConfig = ../../../../config/betterleaks/.betterleaks.toml;
 in
 buildGo126Module (finalAttrs: {
   pname = "archive-home-files";
@@ -42,10 +42,10 @@ buildGo126Module (finalAttrs: {
   src =
     with lib.fileset;
     toSource {
-      root = ../../../.;
+      root = ../../../../.;
       fileset = unions [
-        ../../../go.mod
-        ../../../go.sum
+        ../../../../go.mod
+        ../../../../go.sum
         ./.
       ];
     };
