@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
+      - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -14,6 +15,7 @@ on:
     paths:
       - '.github/workflows/package-linux.yml'
       - '.github/actions/setup-nix/**'
+      - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
@@ -32,88 +34,64 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  planning:
-    runs-on: ubuntu-26.04
-    outputs:
-      packages: ${{ steps.set-matrix.outputs.packages }}
-    steps:
-      - uses: actions/checkout@v7.0.0
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - id: set-matrix
-        run: |
-          # Hardcoded packages that are always built
-          TARGET_PACKAGES=(
-            "kanata-tray"
-            "lima-full"
-            "zed-editor"
-            "mozc"
-            "yaneuraou-avx2"
-            "hcpu_shogi"
-            "ibm-plex-sans-jp"
-            "ibm-plex-mono"
-            "ibm-plex-serif-variable"
-            "conoha-cli"
-          )
-
-          # Dynamically add all shared-gomod packages
-          SHARED_GOMOD_PKGS=$(nix run .#list-shared-gomod-pkgs)
-          for pkg in $SHARED_GOMOD_PKGS; do
-            TARGET_PACKAGES+=("$pkg")
-          done
-
-          # Deduplicate and format as JSON
-          # Use a temporary associative array for deduplication (requires bash 4+)
-          declare -A unique_pkgs
-          for pkg in "${TARGET_PACKAGES[@]}"; do
-            unique_pkgs["$pkg"]=1
-          done
-
-          JSON_PKGS=$(printf '%s\n' "${!unique_pkgs[@]}" | jq -R . | jq -s -c .)
-          echo "packages=$JSON_PKGS" >> $GITHUB_OUTPUT
-
   build:
-    needs: planning
-    strategy:
-      fail-fast: false
-      matrix:
-        runner: [ubuntu-26.04]
-        pname: ${{ fromJSON(needs.planning.outputs.packages) }}
-        # Skip tests for heavy packages to avoid long build times in CI.
-        # We trust upstream/hydra for these packages since we're just pinning/patching them.
-        include:
-          - pname: zed-editor
-            skip_tests: true
-    runs-on: ${{ matrix.runner }}
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     steps:
+      - name: Logging disk space
+        run: df -h
       - uses: actions/checkout@v7.0.0
         with:
           persist-credentials: false
+      - uses: actions/setup-go@v6.5.0 # zizmor: ignore[cache-poisoning]
+        with:
+          go-version-file: 'go.mod'
+          cache: true
       - uses: ./.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Build package
-        env:
-          PNAME: ${{ matrix.pname }}
-        run: nix build ".#$PNAME"
-      - name: Run passthru tests
-        # Use nix-build via flake-compat for simpler recursive building.
-        # It automatically detects system architecture and skips if no tests exist.
-        env:
-          PNAME: ${{ matrix.pname }}
-          SKIP_TESTS: ${{ matrix.skip_tests }}
-        run: |
-          if [[ "$SKIP_TESTS" == "true" ]]; then
-            echo "Skipping tests for $PNAME as requested in matrix."
-            exit 0
-          fi
+      - parallel:
+          - name: Build package - archive-home-files
+            run: go run ./cmd/ci-build package archive-home-files
 
-          if nix eval ".#$PNAME.passthru.tests" >/dev/null 2>&1; then
-            nix-build --attr "packages.x86_64-linux.$PNAME.passthru.tests"
-          else
-            echo "No passthru.tests found for $PNAME, skipping."
-          fi
+          - name: Build package - conoha-cli
+            run: go run ./cmd/ci-build package conoha-cli
+
+          - name: Build package - git-hooks-pre-push
+            run: go run ./cmd/ci-build package git-hooks-pre-push
+
+          - name: Build package - hcpu_shogi
+            run: go run ./cmd/ci-build package hcpu_shogi
+
+          - name: Build package - ibm-plex-mono
+            run: go run ./cmd/ci-build package ibm-plex-mono
+
+          - name: Build package - ibm-plex-sans-jp
+            run: go run ./cmd/ci-build package ibm-plex-sans-jp
+
+          - name: Build package - ibm-plex-serif-variable
+            run: go run ./cmd/ci-build package ibm-plex-serif-variable
+
+          - name: Build package - ibus-engine-selector
+            run: go run ./cmd/ci-build package ibus-engine-selector
+
+          - name: Build package - kanata-tray
+            run: go run ./cmd/ci-build package kanata-tray
+
+          - name: Build package - lima-full
+            run: go run ./cmd/ci-build package lima-full
+
+          - name: Build package - mozc
+            run: go run ./cmd/ci-build package mozc
+
+          - name: Build package - nix-diff
+            run: go run ./cmd/ci-build package nix-diff
+
+          - name: Build package - reponame
+            run: go run ./cmd/ci-build package reponame
+
+          - name: Build package - yaneuraou-avx2
+            run: go run ./cmd/ci-build package yaneuraou-avx2
+
+          - name: Build package - zed-editor
+            run: go run ./cmd/ci-build package zed-editor --skip-tests
