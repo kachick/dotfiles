@@ -34,7 +34,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   makeFlags = [
-    "-C usi"
+    "-C"
+    "usi"
     "ONNXRUNTIME=1"
   ];
 
