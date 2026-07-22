@@ -39,25 +39,6 @@
     enableStrictShellChecks = true;
   };
 
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
-
-  # Avoid conflicting since using pipewire for enabling sound.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/shells-environment.nix
   # The final definition will be put on /etc/set-environment
   # And you can custom it with /etc/profile.local and/or /etc/bashrc.local

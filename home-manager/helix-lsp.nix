@@ -197,6 +197,44 @@ in
 
       # https://github.com/helix-editor/helix/blob/25.07.1/languages.toml#L115
       systemd-lsp
+
+      ## Not helpful. Didn't activated?
+      #
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
+      # yaml-language-server
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
+      # taplo
+
+      ## Keep minimum for global use. Inject in each project repositories if you need these
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
+      # typescript-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
+      # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
+      # nodePackages.dockerfile-language-server-nodejs
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
+      # nodePackages.graphql-language-service-cli
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
+      # crystalline
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
+      # solargraph # Can we prefer steep here?
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
+      # nu-lsp
+
+      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
+      # elm-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
+      # haskell-language-server
+
+      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
+      # zls
     ];
   };
 }
