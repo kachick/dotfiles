@@ -8,6 +8,7 @@
     ./essential.nix
     ./encryption.nix
     ./git.nix
+    ./helix-lsp.nix
     ./telemetry.nix
   ];
 
