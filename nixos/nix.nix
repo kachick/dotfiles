@@ -1,6 +1,11 @@
+{ pkgs, ... }:
+
 # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/nix.nix
 {
   nix = {
+    # TODO: Use stable version once nixos-26.11 release. Currently bumping to use lazy tree: https://github.com/NixOS/nix/commit/891ef140b8564a7848a3d75976e172c3e15ec14b
+    package = pkgs.unstable.nixVersions.latest;
+
     settings = {
       experimental-features = [
         "nix-command"
