@@ -192,8 +192,9 @@ tasks:
     desc: Provided for CI
     deps:
       - 'default'
-      - 'setup'
+      - 'fmt'
+    cmds:
+      - task: setup
       # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
-      - 'lint-all'
-      - 'fmt'
+      - task: lint-all
