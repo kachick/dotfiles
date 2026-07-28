@@ -115,7 +115,7 @@ tasks:
   build-lint:
     internal: true
     deps:
-      - mkdir
+      - build-cmd
     cmds:
       - go build -v -o dist/lint ./cmd/lint
     sources:
@@ -126,14 +126,14 @@ tasks:
 
   lint:
     deps:
-      - build-cmd
+      - build-lint
     cmds:
       - ./dist/lint
 
   lint-all:
     desc: Includes heavy linters
     deps:
-      - build-cmd
+      - build-lint
     cmds:
       - ./dist/lint -all
 
