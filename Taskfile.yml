@@ -126,14 +126,14 @@ tasks:
 
   lint:
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint
 
   lint-all:
     desc: Includes heavy linters
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint -all
 
@@ -192,9 +192,8 @@ tasks:
     desc: Provided for CI
     deps:
       - 'default'
-      - 'fmt'
-    cmds:
-      - task: setup
+      - 'setup'
       # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
-      - task: lint-all
+      - 'lint-all'
+      - 'fmt'
