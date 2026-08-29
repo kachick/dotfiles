@@ -146,13 +146,9 @@
 
   services.blueman.enable = true;
 
-  # You can use the Web UI via http://localhost:631/admin/
-  # See also CUPS, Avahi and systemd-resolved section
-  # AFAIK, require CUPS even if using "IPP Everywhere"
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.epson-escpr2 ];
-  };
+  # Use IPP Everywhere (driverless) via http://localhost:631/admin/
+  # See nixos/desktop/PRINTING.md for details and local verification procedures
+  services.printing.enable = true;
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
