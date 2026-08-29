@@ -27,22 +27,85 @@ In NixOS, the `/etc/cups/` directory is managed as a stateful directory. Configu
 
 To verify the print conversion pipeline without sending jobs to a physical printer or wasting paper and ink, you can simulate CUPS filter chains locally.
 
-### 1. Automated Test Task
+### 1. Dump Intermediate CUPS Raster
 
-Run the test task to automatically generate a sample 1-page PDF, execute `cupsfilter`, and assert the raster page count:
+Run `cupsfilter` to convert a test PDF into a CUPS Raster file:
 
 ```bash
-task test-printer
+cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd -m application/vnd.cups-raster test_page.pdf > /tmp/test.raster
 ```
 
-### 2. Custom Testing with Specific PPD or Input PDF
+### 2. Inspect and Assert Page Counts
 
-You can also pass custom PPD files or existing PDF documents to verify specific printer definitions:
+You can programmatically verify that a 1-page input produces exactly 1 page in the raster output by reading the CUPS Raster header using Python:
 
-```bash
-# Test with a specific PPD file
-go run ./cmd/test-printer --ppd /etc/cups/ppd/<Printer-Name>.ppd
+```python
+import ctypes
 
-# Test with a specific input PDF
-go run ./cmd/test-printer --input /path/to/document.pdf
+class CupsHeader2(ctypes.Structure):
+    _fields_ = [
+        ('MediaClass', ctypes.c_char * 64),
+        ('MediaColor', ctypes.c_char * 64),
+        ('MediaType', ctypes.c_char * 64),
+        ('OutputType', ctypes.c_char * 64),
+        ('AdvanceDistance', ctypes.c_uint32),
+        ('AdvanceMedia', ctypes.c_uint32),
+        ('Collate', ctypes.c_uint32),
+        ('CutMedia', ctypes.c_uint32),
+        ('Duplex', ctypes.c_uint32),
+        ('HWResolution', ctypes.c_uint32 * 2),
+        ('ImagingBoundingBox', ctypes.c_uint32 * 4),
+        ('InsertSheet', ctypes.c_uint32),
+        ('Jog', ctypes.c_uint32),
+        ('LeadingEdge', ctypes.c_uint32),
+        ('Margins', ctypes.c_uint32 * 2),
+        ('ManualFeed', ctypes.c_uint32),
+        ('MediaPosition', ctypes.c_uint32),
+        ('MediaWeight', ctypes.c_uint32),
+        ('MirrorPrint', ctypes.c_uint32),
+        ('NegativePrint', ctypes.c_uint32),
+        ('NumCopies', ctypes.c_uint32),
+        ('Orientation', ctypes.c_uint32),
+        ('OutputFaceUp', ctypes.c_uint32),
+        ('PageSize', ctypes.c_uint32 * 2),
+        ('Separations', ctypes.c_uint32),
+        ('TraySwitch', ctypes.c_uint32),
+        ('Tumble', ctypes.c_uint32),
+        ('cupsWidth', ctypes.c_uint32),
+        ('cupsHeight', ctypes.c_uint32),
+        ('cupsMediaType', ctypes.c_uint32),
+        ('cupsBitsPerColor', ctypes.c_uint32),
+        ('cupsBitsPerPixel', ctypes.c_uint32),
+        ('cupsBytesPerLine', ctypes.c_uint32),
+        ('cupsColorOrder', ctypes.c_uint32),
+        ('cupsColorSpace', ctypes.c_uint32),
+        ('cupsCompression', ctypes.c_uint32),
+        ('cupsRowCount', ctypes.c_uint32),
+        ('cupsRowFeed', ctypes.c_uint32),
+        ('cupsRowStep', ctypes.c_uint32),
+        ('cupsNumColors', ctypes.c_uint32),
+        ('cupsBorderlessScalingFactor', ctypes.c_float),
+        ('cupsPageSize', ctypes.c_float * 2),
+        ('cupsImagingBBox', ctypes.c_float * 4),
+        ('cupsInteger', ctypes.c_uint32 * 16),
+        ('cupsReal', ctypes.c_float * 16),
+        ('cupsString', (ctypes.c_char * 64) * 16),
+        ('cupsMarkerType', ctypes.c_char * 64),
+        ('cupsRenderingIntent', ctypes.c_char * 64),
+        ('cupsPageSizeName', ctypes.c_char * 64)
+    ]
+
+with open('/tmp/test.raster', 'rb') as f:
+    data = f.read()
+
+offset = 4  # Skip magic bytes
+pages = 0
+while offset + ctypes.sizeof(CupsHeader2) <= len(data):
+    hdr = CupsHeader2.from_buffer_copy(data[offset:offset+ctypes.sizeof(CupsHeader2)])
+    pages += 1
+    bitmap_size = hdr.cupsBytesPerLine * hdr.cupsHeight
+    offset += ctypes.sizeof(CupsHeader2) + bitmap_size
+
+assert pages == 1, f"Expected 1 page, got {pages}"
+print(f"Verified: raster contains exactly {pages} page(s).")
 ```

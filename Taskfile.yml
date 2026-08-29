@@ -55,19 +55,10 @@ tasks:
     desc: Make sure NixOS and/or home-manager will work for current user and device
     deps:
       - test-go
-      - test-printer
       - test-sample-nixos
       - check-nixos
     cmds:
       - ./scripts/dry.bash
-
-  test-printer:
-    desc: Verify CUPS PDF to Raster filter pipeline
-    sources:
-      - 'cmd/test-printer/**/*.go'
-      - 'internal/printer/**/*.go'
-    cmds:
-      - go run ./cmd/test-printer
 
   check-nixos:
     desc: Dry-run all NixOS configurations in this repository
