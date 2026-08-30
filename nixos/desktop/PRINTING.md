@@ -1,111 +1,35 @@
 # Printing (CUPS)
 
-## Overview
+## Setup
 
-Modern network printers support **IPP Everywhere (driverless printing)**.
-We prefer driverless printing over proprietary CUPS wrapper drivers for the following reasons:
+1. Enable CUPS without proprietary driver packages:
+   ```nix
+   services.printing.enable = true;
+   ```
+2. Open `http://localhost:631/admin/` and click **Add Printer**.
+3. Select your network printer with **IPP Everywhere** (driverless).
+4. Set default options (e.g. A4 paper size):
+   ```bash
+   lpoptions -p <Printer-Name> -o PageSize=A4
+   ```
 
-- **Stability across system upgrades**: Proprietary filters often lag behind or fail to handle updated CUPS Raster headers/color spaces when `cups-filters` or `ghostscript` is upgraded in major NixOS releases (e.g. causing jobs to split into multiple blank or distorted pages).
-- **Simplicity**: No extra driver packages (`drivers = [ ... ]`) need to be managed in NixOS configurations.
+## Troubleshooting & Tips
 
-## Persistence in NixOS
+### Quarter-sized Prints (Scaling issues)
 
-Printers registered via the CUPS Web interface (`http://localhost:631/admin/`) are stored in `/etc/cups/printers.conf` and `/etc/cups/ppd/`.
+Some network printers do not have a built-in PDF interpreter. Sending raw PDF files directly can cause the printer to misinterpret 72 dpi coordinates as 360 dpi, shrinking the output to roughly 1/4 size.
 
-In NixOS, the `/etc/cups/` directory is managed as a stateful directory. Configuration changes made through the CUPS Web UI or CLI (`lpadmin`) **persist across system reboots and `nixos-rebuild switch` invocations**.
+- **Solution**: Enable **"Print as Image" (画像として印刷)** in the print dialog (e.g. Evince, Chrome). GTK dialogs will remember this option per printer.
 
-## Setup via CUPS Web UI
+### Check if print jobs are rasterized (without Python)
 
-1. Make sure your printer is powered on and connected to the local network (Wi-Fi or Ethernet).
-2. Open `http://localhost:631/admin/` in your browser.
-3. Click **Add Printer** (you may be prompted for your local user credentials).
-4. Under **Discovered Network Printers**, select your printer model with the `(driverless)` suffix or `ipp://...`.
-5. In the model selection step, choose **IPP Everywhere** (or let CUPS auto-generate the driverless PPD).
-6. Complete the setup and set default print options if desired.
-
-## Local Pipeline Verification (Testing without Paper/Ink)
-
-To verify the print conversion pipeline without sending jobs to a physical printer or wasting paper and ink, you can simulate CUPS filter chains locally.
-
-### 1. Dump Intermediate CUPS Raster
-
-Run `cupsfilter` to convert a test PDF into a CUPS Raster file:
+Run `cupsfilter` against your PPD to inspect how CUPS processes a PDF:
 
 ```bash
-cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd -m application/vnd.cups-raster test_page.pdf > /tmp/test.raster
+cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd test.pdf > /dev/null
 ```
 
-### 2. Inspect and Assert Page Counts
+Inspect the `DEBUG` logs on stderr:
 
-You can programmatically verify that a 1-page input produces exactly 1 page in the raster output by reading the CUPS Raster header using Python:
-
-```python
-import ctypes
-
-class CupsHeader2(ctypes.Structure):
-    _fields_ = [
-        ('MediaClass', ctypes.c_char * 64),
-        ('MediaColor', ctypes.c_char * 64),
-        ('MediaType', ctypes.c_char * 64),
-        ('OutputType', ctypes.c_char * 64),
-        ('AdvanceDistance', ctypes.c_uint32),
-        ('AdvanceMedia', ctypes.c_uint32),
-        ('Collate', ctypes.c_uint32),
-        ('CutMedia', ctypes.c_uint32),
-        ('Duplex', ctypes.c_uint32),
-        ('HWResolution', ctypes.c_uint32 * 2),
-        ('ImagingBoundingBox', ctypes.c_uint32 * 4),
-        ('InsertSheet', ctypes.c_uint32),
-        ('Jog', ctypes.c_uint32),
-        ('LeadingEdge', ctypes.c_uint32),
-        ('Margins', ctypes.c_uint32 * 2),
-        ('ManualFeed', ctypes.c_uint32),
-        ('MediaPosition', ctypes.c_uint32),
-        ('MediaWeight', ctypes.c_uint32),
-        ('MirrorPrint', ctypes.c_uint32),
-        ('NegativePrint', ctypes.c_uint32),
-        ('NumCopies', ctypes.c_uint32),
-        ('Orientation', ctypes.c_uint32),
-        ('OutputFaceUp', ctypes.c_uint32),
-        ('PageSize', ctypes.c_uint32 * 2),
-        ('Separations', ctypes.c_uint32),
-        ('TraySwitch', ctypes.c_uint32),
-        ('Tumble', ctypes.c_uint32),
-        ('cupsWidth', ctypes.c_uint32),
-        ('cupsHeight', ctypes.c_uint32),
-        ('cupsMediaType', ctypes.c_uint32),
-        ('cupsBitsPerColor', ctypes.c_uint32),
-        ('cupsBitsPerPixel', ctypes.c_uint32),
-        ('cupsBytesPerLine', ctypes.c_uint32),
-        ('cupsColorOrder', ctypes.c_uint32),
-        ('cupsColorSpace', ctypes.c_uint32),
-        ('cupsCompression', ctypes.c_uint32),
-        ('cupsRowCount', ctypes.c_uint32),
-        ('cupsRowFeed', ctypes.c_uint32),
-        ('cupsRowStep', ctypes.c_uint32),
-        ('cupsNumColors', ctypes.c_uint32),
-        ('cupsBorderlessScalingFactor', ctypes.c_float),
-        ('cupsPageSize', ctypes.c_float * 2),
-        ('cupsImagingBBox', ctypes.c_float * 4),
-        ('cupsInteger', ctypes.c_uint32 * 16),
-        ('cupsReal', ctypes.c_float * 16),
-        ('cupsString', (ctypes.c_char * 64) * 16),
-        ('cupsMarkerType', ctypes.c_char * 64),
-        ('cupsRenderingIntent', ctypes.c_char * 64),
-        ('cupsPageSizeName', ctypes.c_char * 64)
-    ]
-
-with open('/tmp/test.raster', 'rb') as f:
-    data = f.read()
-
-offset = 4  # Skip magic bytes
-pages = 0
-while offset + ctypes.sizeof(CupsHeader2) <= len(data):
-    hdr = CupsHeader2.from_buffer_copy(data[offset:offset+ctypes.sizeof(CupsHeader2)])
-    pages += 1
-    bitmap_size = hdr.cupsBytesPerLine * hdr.cupsHeight
-    offset += ctypes.sizeof(CupsHeader2) + bitmap_size
-
-assert pages == 1, f"Expected 1 page, got {pages}"
-print(f"Verified: raster contains exactly {pages} page(s).")
-```
+- **Rasterized (Image mode)**: `FINAL_CONTENT_TYPE=image/urf` (or `application/vnd.cups-raster`) with filters like `pdftopdf` and `ghostscript`.
+- **Raw Passthrough**: `FINAL_CONTENT_TYPE=application/pdf` with only `gziptoany` (raw PDF sent directly).
