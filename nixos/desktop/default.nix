@@ -146,8 +146,10 @@
 
   services.blueman.enable = true;
 
-  # Use IPP Everywhere (driverless) via http://localhost:631/admin/
-  # See nixos/desktop/PRINTING.md for details and local verification procedures
+  # Avoid proprietary driver packages like epson-escpr2 because their wrapper filters
+  # often break or produce distorted multi-page output across cups-filters/ghostscript updates.
+  # Prefer driverless printing (IPP Everywhere) configured via http://localhost:631/admin/
+  # See nixos/desktop/PRINTING.md for setup and troubleshooting
   services.printing.enable = true;
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix

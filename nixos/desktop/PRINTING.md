@@ -17,15 +17,19 @@ Some network printers lack a built-in PDF interpreter. Sending raw PDF files dir
 
 - **Solution**: Enable **"Print as Image" (画像として印刷)** in the print dialog (e.g. Evince, Chrome). GTK dialogs will remember this option per printer.
 
-### Check if print jobs are rasterized
+### Check if a printer supports PDF or requires rasterization (CLI)
 
-Run `cupsfilter` against your PPD to inspect how CUPS processes a PDF:
+1. Check the printer's supported formats via mDNS/DNS-SD:
+   ```bash
+   avahi-browse -rt _ipp._tcp
+   ```
+   Inspect the `pdl=` field in the TXT record:
+   - If `application/pdf` is **missing** (e.g. only `image/urf`, `image/pwg-raster`, `image/jpeg`), the printer cannot directly interpret PDF files and requires rasterized input (Print as Image).
 
-```bash
-cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd test.pdf > /dev/null
-```
-
-Inspect the `DEBUG` logs on stderr:
-
-- **Rasterized (Image mode)**: `FINAL_CONTENT_TYPE=image/urf` (or `application/vnd.cups-raster`) with filters like `pdftopdf` and `ghostscript`.
-- **Raw Passthrough**: `FINAL_CONTENT_TYPE=application/pdf` with only `gziptoany` (raw PDF sent directly).
+2. Inspect how CUPS processes a PDF job:
+   ```bash
+   cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd test.pdf > /dev/null
+   ```
+   Check the `DEBUG` logs on stderr:
+   - **Rasterized (Image mode)**: `FINAL_CONTENT_TYPE=image/urf` (or `application/vnd.cups-raster`) with filters like `pdftopdf` and `ghostscript`.
+   - **Raw Passthrough (Missing rasterization)**: `FINAL_CONTENT_TYPE=application/pdf` with only `gziptoany` (raw PDF sent directly, leading to 1/4 scaling).
