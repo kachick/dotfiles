@@ -149,10 +149,10 @@
   # You can use the Web UI via http://localhost:631/admin/
   # See also CUPS, Avahi and systemd-resolved section
   # AFAIK, require CUPS even if using "IPP Everywhere"
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.epson-escpr2 ];
-  };
+  # Prefer driverless printing (IPP Everywhere) over proprietary driver packages like epson-escpr2
+  # because wrapper filters often break or produce distorted multi-page output across updates.
+  # See nixos/desktop/PRINTING.md for setup and troubleshooting
+  services.printing.enable = true;
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
