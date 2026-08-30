@@ -146,9 +146,11 @@
 
   services.blueman.enable = true;
 
-  # Avoid proprietary driver packages like epson-escpr2 because their wrapper filters
-  # often break or produce distorted multi-page output across cups-filters/ghostscript updates.
-  # Prefer driverless printing (IPP Everywhere) configured via http://localhost:631/admin/
+  # You can use the Web UI via http://localhost:631/admin/
+  # See also CUPS, Avahi and systemd-resolved section
+  # AFAIK, require CUPS even if using "IPP Everywhere"
+  # Prefer driverless printing (IPP Everywhere) over proprietary driver packages like epson-escpr2
+  # because wrapper filters often break or produce distorted multi-page output across updates.
   # See nixos/desktop/PRINTING.md for setup and troubleshooting
   services.printing.enable = true;
 
