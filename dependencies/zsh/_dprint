@@ -15,10 +15,10 @@ _dprint() {
 
     local context curcontext="$curcontext" state line
     _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -37,10 +37,10 @@ _dprint() {
         case $line[1] in
             (init)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Initialize the global dprint configuration file.]' \
@@ -54,10 +54,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (add)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Add to the global dprint configuration file.]' \
@@ -68,7 +68,7 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::url-or-plugin-name:' \
+'*::url-or-plugin-name:_files' \
 && ret=0
 ;;
 (fmt)
@@ -77,15 +77,15 @@ _arguments "${_arguments_options[@]}" \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
-'(--stdin-files)--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path: ' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'(--stdin-files)--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path:_files' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
-'--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
+'--allow-node-modules[Allows traversing node module directories. This is implicit when the current working directory is within one (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--diff[Outputs a check-like diff of every formatted file.]' \
 '--staged[Format only the staged files.]' \
@@ -96,7 +96,7 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
+'*::files -- List of files, directories, or file patterns to format. This can be a subset of what is found in the config file.:_files' \
 && ret=0
 ;;
 (check)
@@ -106,14 +106,14 @@ _arguments "${_arguments_options[@]}" \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
 '--fail-fast=[Stop checking files and exit on the first file that isn'\''t formatted.]' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
-'--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
+'--allow-node-modules[Allows traversing node module directories. This is implicit when the current working directory is within one (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--staged[Format only the staged files.]' \
@@ -122,15 +122,15 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
+'*::files -- List of files, directories, or file patterns to format. This can be a subset of what is found in the config file.:_files' \
 && ret=0
 ;;
 (config)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -148,10 +148,10 @@ _arguments "${_arguments_options[@]}" \
         case $line[1] in
             (init)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Initialize the global dprint configuration file.]' \
@@ -165,10 +165,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (update)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '-y[Upgrade process plugins without prompting to confirm checksums.]' \
@@ -185,10 +185,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (add)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Add to the global dprint configuration file.]' \
@@ -199,15 +199,15 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::url-or-plugin-name:' \
+'*::url-or-plugin-name:_files' \
 && ret=0
 ;;
 (edit)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--config-discovery)-g[Edit the global dprint configuration file.]' \
@@ -262,30 +262,30 @@ _arguments "${_arguments_options[@]}" \
 '--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
-'--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
+'--allow-node-modules[Allows traversing node module directories. This is implicit when the current working directory is within one (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--staged[Format only the staged files.]' \
 '(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
+'*::files -- List of files, directories, or file patterns to format. This can be a subset of what is found in the config file.:_files' \
 && ret=0
 ;;
 (resolved-config)
 _arguments "${_arguments_options[@]}" \
-'--file=[Limit the output to only the plugins that would format this file.]:file: ' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'--file=[Limit the output to only the plugins that would format this file.]:file:_files' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -295,10 +295,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (incremental-state)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -311,14 +311,14 @@ _arguments "${_arguments_options[@]}" \
 '--includes-override=[List of file patterns in quotes to format. This overrides what is specified in the config file.]:patterns: ' \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(--staged --dirty)--stdin-files[Read a newline-separated list of file paths to format from stdin instead of from the command line arguments.]' \
-'--allow-node-modules[Allows traversing node module directories (unstable - This flag will be renamed to be non-node specific in the future).]' \
+'--allow-node-modules[Allows traversing node module directories. This is implicit when the current working directory is within one (unstable - This flag will be renamed to be non-node specific in the future).]' \
 '--no-gitignore[Disables respecting .gitignore files.]' \
 '--allow-no-files[Causes dprint to exit with exit code 0 when no files are found instead of exit code 14.]' \
 '--staged[Format only the staged files.]' \
@@ -326,15 +326,15 @@ _arguments "${_arguments_options[@]}" \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
-'*::files -- List of file patterns in quotes to format. This can be a subset of what is found in the config file.:' \
+'*::files -- List of files, directories, or file patterns to format. This can be a subset of what is found in the config file.:_files' \
 && ret=0
 ;;
 (clear-cache)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -344,10 +344,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (upgrade)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -357,10 +357,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (completions)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -371,10 +371,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (license)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -384,10 +384,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (editor-info)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -398,10 +398,10 @@ _arguments "${_arguments_options[@]}" \
 (editor-service)
 _arguments "${_arguments_options[@]}" \
 '--parent-pid=[]: : ' \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
@@ -411,10 +411,10 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (lsp)
 _arguments "${_arguments_options[@]}" \
-'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
-'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: : ' \
+'-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
+'--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
-'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files: ' \
+'--plugins=[List of urls or file paths of plugins to use. This overrides what is specified in the config file.]:urls/files:_files' \
 '-L+[Set log level]: :(debug info warn error silent)' \
 '--log-level=[Set log level]: :(debug info warn error silent)' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
