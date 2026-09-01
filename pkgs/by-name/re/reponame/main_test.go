@@ -17,6 +17,10 @@ func TestExtractRepo(t *testing.T) {
 			input: "kachick/dotfiles",
 			repo:  "dotfiles",
 		},
+		"nested/owner/repo": {
+			input: "gitlab.com/group/subgroup/repo",
+			repo:  "repo",
+		},
 		"repo": {
 			input: "dotfiles",
 			repo:  "dotfiles",

@@ -13,8 +13,7 @@ func extractRepo(line string) string {
 	base := strings.TrimPrefix(line, "git@github.com:")
 	base = strings.TrimPrefix(base, "https://github.com/")
 	base = strings.TrimSuffix(base, ".git")
-	// Using Cut cannot handle `multiple sep as foo/bar/baz`, but I don't need to conisder it for `owner/repo` or `repo` patterns.
-	_, after, found := strings.Cut(base, "/")
+	_, after, found := strings.CutLast(base, "/")
 	if found {
 		return after
 	} else {

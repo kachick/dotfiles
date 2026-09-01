@@ -65,13 +65,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("cannot get uname: %+v\n", err)
 	}
-	unameStr := ""
+	var unameStr strings.Builder
 	// So here, using uname, as I understand it is same as `uname -r`
 	for _, i8 := range uname.Release {
-		unameStr += string(rune(int(i8)))
+		unameStr.WriteString(string(rune(int(i8))))
 	}
-	if !strings.Contains(unameStr, "microsoft-standard-WSL2") {
-		log.Fatalf("Looks executed on non WSL systems: %s", unameStr)
+	if !strings.Contains(unameStr.String(), "microsoft-standard-WSL2") {
+		log.Fatalf("Looks executed on non WSL systems: %s", unameStr.String())
 	}
 
 	mustActivateSystemdOnWSL()
