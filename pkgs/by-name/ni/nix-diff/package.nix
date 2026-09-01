@@ -6,9 +6,9 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo126Module;
+  inherit (pkgs.unstable) buildGo127Module;
 in
-buildGo126Module (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "nix-diff";
   version = "0.0.1";
 

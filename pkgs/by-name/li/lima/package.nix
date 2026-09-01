@@ -20,10 +20,10 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo126Module;
+  inherit (pkgs.unstable) buildGo127Module;
   inherit (pkgs.local) lima;
 in
-buildGo126Module (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "lima";
   version = "2.2.0";
 
