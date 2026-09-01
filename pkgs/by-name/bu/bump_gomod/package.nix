@@ -4,7 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     gitMinimal
-    unstable.go_1_26
+    unstable.go_1_27
     gnugrep
     findutils # `xargs`
     nix-update

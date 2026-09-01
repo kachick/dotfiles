@@ -7,11 +7,11 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo126Module;
+  inherit (pkgs.unstable) buildGo127Module;
   keys = import ../../../../config/ssh/keys.nix;
   betterleaksConfig = ../../../../config/betterleaks/.betterleaks.toml;
 in
-buildGo126Module (finalAttrs: {
+buildGo127Module (finalAttrs: {
   pname = "archive-home-files";
   version = "0.1.0";
 

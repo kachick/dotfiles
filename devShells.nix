@@ -48,7 +48,7 @@ in
           dprint
           zizmor
           rumdl
-          go_1_26
+          go_1_27
         ])
         ++ (with pkgs.local; [
           nix-hash-url
