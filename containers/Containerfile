@@ -1,7 +1,7 @@
 # https://github.com/kachick/containers
 # You can get the digest by using:
 # skopeo inspect docker://ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest | jq -r '.Digest'
-FROM ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest@sha256:a20860ffbcaa48219537bd54f7313bf88da844336e33cca6159109a773a69e22
+FROM ghcr.io/kachick/ubuntu-26.04-nix-systemd:latest@sha256:99230df35e5186272c324dfe9d1e5cfe0db5786dc46f37503bd6e1ba81950630
 
 LABEL org.opencontainers.image.source=https://github.com/kachick/dotfiles
 LABEL org.opencontainers.image.description="Example by kachick/dotfiles"
