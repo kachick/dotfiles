@@ -1,4 +1,4 @@
-"$schema" = "https://starship.rs/config-schema.json"
+"$schema" = 'https://starship.rs/config-schema.json'
 
 format = """
 $username\
@@ -42,10 +42,10 @@ style = "blue"
 [direnv]
 disabled = false
 # https://github.com/direnv/direnv-logo/blob/0949c12bafa532da0b23482a1bb042cf41b654fc/direnv-logo.png
-symbol = "📁"
-loaded_msg = "🍃"
-unloaded_msg = "🍂"
-format = "[$symbol$loaded]($style) "
+symbol = '📁'
+loaded_msg = '🍃'
+unloaded_msg = '🍂'
+format = '[$symbol$loaded]($style) '
 
 # Starship doesn't have brush support, it is reasonable since brush is a bash compatible shell.
 # However I want to clarify the brush only in shell name likely `bash_indicator` in shell module.
@@ -88,7 +88,7 @@ style = "yellow"
 
 [shell]
 disabled = false
-bash_indicator = "bash"
+bash_indicator = 'bash'
 
 [container]
 disabled = false
@@ -101,5 +101,5 @@ disabled = false
 
 [nix_shell]
 # Set another character with NixOS and keep short
-symbol = "☃️ "
-format = "[$symbol]($style) "
+symbol = '☃️ '
+format = '[$symbol]($style) '

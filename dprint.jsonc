@@ -10,6 +10,7 @@
     "trimTrailingWhitespaces": false
   },
   "toml": {
+    "quoteStyle": "maintain"
   },
   "dockerfile": {
     "associations": [
