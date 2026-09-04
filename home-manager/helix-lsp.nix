@@ -25,6 +25,8 @@ in
     # https://docs.helix-editor.com/lang-support.html
     # https://github.com/helix-editor/helix/blob/25.01.1/languages.toml
     languages = {
+      # How to check the LSP log for debugging: https://github.com/helix-editor/helix/discussions/7203
+      # `tail --follow ~/.cache/helix/helix.log`
       language-server = {
         # Helix cannot set global LSP.
         # - https://github.com/helix-editor/helix/discussions/8850
