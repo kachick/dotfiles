@@ -168,6 +168,7 @@ in
           name = "typescript";
           language-servers = [
             "tsc"
+            "typos"
           ];
         }
       ];
