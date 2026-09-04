@@ -50,7 +50,7 @@ in
           ];
         };
 
-        tsgo = {
+        tsc = {
           command = lib.getExe pkgs.unstable.typescript-go;
           args = [
             "--lsp"
@@ -167,7 +167,7 @@ in
         {
           name = "typescript";
           language-servers = [
-            "tsgo"
+            "tsc"
           ];
         }
       ];
