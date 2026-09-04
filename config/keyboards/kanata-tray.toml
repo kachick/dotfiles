@@ -11,5 +11,5 @@ defaults.tcp_port = 5829
 [defaults.layer_icons]
 
 [presets.'Default Preset']
-kanata_config = '~/.config/kanata/kanata.kbd'
+kanata_config = "~/.config/kanata/kanata.kbd"
 autorun = true
