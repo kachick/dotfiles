@@ -84,7 +84,7 @@ jobs:
         run: |
           git switch -C "${PR_BRANCH}" "origin/${{ env.DEFAULT_BRANCH }}"
 
-      - uses: ./.github/actions/setup-nix
+      - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
