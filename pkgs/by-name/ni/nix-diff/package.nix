@@ -32,7 +32,12 @@ buildGo127Module (finalAttrs: {
 
   postInstall = ''
     wrapProgram $out/bin/nix-diff \
-      --prefix PATH : ${lib.makeBinPath [ unstable.dix ]}
+      --prefix PATH : ${
+        lib.makeBinPath [
+          unstable.dix
+          unstable.nix-diff
+        ]
+      }
   '';
 
   env.CGO_ENABLED = 0;
