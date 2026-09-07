@@ -18,6 +18,6 @@ jobs:
   local-packages:
     permissions:
       contents: write
-    uses: ./.github/workflows/update-local-packages.yml
+    uses: $/.github/workflows/update-local-packages.yml
     secrets:
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
