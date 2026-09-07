@@ -71,9 +71,7 @@ func main() {
 
 		if diff != "" {
 			fmt.Printf("<details open><summary><b>%s</b></summary>\n\n", target.Name)
-			fmt.Println("```text")
 			fmt.Print(diff)
-			fmt.Println("```")
 			fmt.Println("</details>")
 			fmt.Println("")
 			hasDiff = true
@@ -100,17 +98,74 @@ func compareTarget(base, current string, target Target) (string, error) {
 		return "", nil
 	}
 
-	// Use dix to diff the derivations.
-	// Dix is guaranteed to be in PATH by the nix packaging (wrapProgram).
-	cmd := exec.Command("dix", oldDrv, newDrv)
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return "", fmt.Errorf("dix failed: %w", err)
+	dixOut, dixErr := runDix(oldDrv, newDrv)
+	nixDiffOut, nixDiffErr := runNixDiff(oldDrv, newDrv)
+
+	if dixErr != nil && nixDiffErr != nil {
+		return "", fmt.Errorf("both dix and nix-diff failed (dix: %v, nix-diff: %v)", dixErr, nixDiffErr)
 	}
 
+	return formatReport(dixOut, nixDiffOut, dixErr, nixDiffErr), nil
+}
+
+func runDix(oldDrv, newDrv string) (string, error) {
+	cmd := exec.Command("dix", oldDrv, newDrv)
+	var out, errOut bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errOut
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("dix failed: %w: %s", err, strings.TrimSpace(errOut.String()))
+	}
 	return out.String(), nil
+}
+
+func runNixDiff(oldDrv, newDrv string) (string, error) {
+	cmd := exec.Command("nix-diff", "--color", "never", oldDrv, newDrv)
+	var out, errOut bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &errOut
+	if err := cmd.Run(); err != nil {
+		return "", fmt.Errorf("nix-diff failed: %w: %s", err, strings.TrimSpace(errOut.String()))
+	}
+	return out.String(), nil
+}
+
+func formatReport(dixOut, nixDiffOut string, dixErr, nixDiffErr error) string {
+	var buf strings.Builder
+	buf.WriteString("### Package Version Changes (dix)\n\n")
+	if dixErr != nil {
+		buf.WriteString("```text\n")
+		buf.WriteString(dixErr.Error())
+		buf.WriteString("\n```\n\n")
+	} else if strings.TrimSpace(dixOut) != "" {
+		buf.WriteString("```text\n")
+		buf.WriteString(dixOut)
+		if !strings.HasSuffix(dixOut, "\n") {
+			buf.WriteString("\n")
+		}
+		buf.WriteString("```\n\n")
+	} else {
+		buf.WriteString("No version changes detected.\n\n")
+	}
+
+	buf.WriteString("<details><summary>Detailed Derivation Diff (nix-diff)</summary>\n\n")
+	if nixDiffErr != nil {
+		buf.WriteString("```text\n")
+		buf.WriteString(nixDiffErr.Error())
+		buf.WriteString("\n```\n")
+	} else if strings.TrimSpace(nixDiffOut) != "" {
+		buf.WriteString("```text\n")
+		buf.WriteString(nixDiffOut)
+		if !strings.HasSuffix(nixDiffOut, "\n") {
+			buf.WriteString("\n")
+		}
+		buf.WriteString("```\n")
+	} else {
+		buf.WriteString("No derivation changes detected.\n")
+	}
+	buf.WriteString("</details>\n")
+
+	return buf.String()
 }
 
 func getDerivation(flakePath string) (string, error) {
