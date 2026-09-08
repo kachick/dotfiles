@@ -28,7 +28,7 @@ buildGo127Module (finalAttrs: {
       ];
     };
 
-  vendorHash = "sha256-8bIz7WNYrgRnct7uUxes2onQD6pyK5wKHytfWZ8nrkk=";
+  vendorHash = "sha256-u14a2YTY8zOaVKE9uAI0nLzeeqZoMTTu6U49PGiCllU=";
 
   subPackages = [ "pkgs/by-name/ib/${finalAttrs.pname}" ];
 
