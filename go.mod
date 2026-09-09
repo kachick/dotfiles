@@ -5,7 +5,7 @@ go 1.27.1
 require (
 	github.com/google/go-cmp v0.7.0
 	github.com/mattn/go-pipeline v0.0.0-20190323144519-32d779b32768
-	github.com/mattn/go-runewidth v0.0.28
+	github.com/mattn/go-runewidth v0.0.29
 	github.com/yusufpapurcu/wmi v1.2.4
 	golang.org/x/sys v0.48.0
 )
