@@ -51,7 +51,7 @@ in
         };
 
         tsc = {
-          command = lib.getExe pkgs.unstable.typescript-go;
+          command = lib.getExe pkgs.unstable.typescript_7;
           args = [
             "--lsp"
             "--stdio"

@@ -53,7 +53,7 @@
         unstable.nix-tree
 
         unstable.somo
-        unstable.typescript-go
+        unstable.typescript_7
         unstable.typos
         hyperfine
         riffdiff # `riff`
