@@ -31,14 +31,14 @@ func TestFormatReport(t *testing.T) {
 		{
 			name:       "dix empty but nix-diff has changes",
 			dixOut:     "",
-			nixDiffOut: "• typescript-go differs\n",
+			nixDiffOut: "• typescript_7 differs\n",
 			dixErr:     nil,
 			nixDiffErr: nil,
 			wantSub: []string{
 				"### Package Version Changes (dix)",
 				"No version changes detected.",
 				"<details><summary>Detailed Derivation Diff (nix-diff)</summary>",
-				"• typescript-go differs",
+				"• typescript_7 differs",
 			},
 		},
 		{

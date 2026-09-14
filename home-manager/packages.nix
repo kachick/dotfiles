@@ -105,7 +105,7 @@
   # Use unstable version in my maintained packages
   unstable.brush
   unstable.somo
-  unstable.typescript-go
+  unstable.typescript_7
 ])
 ++ (with pkgs.local; [
   la
