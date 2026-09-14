@@ -201,12 +201,16 @@ _dprint() {
             return 0
             ;;
         dprint__add)
-            opts="-g -c -L -h --global --no-version --package-json --checksum --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
+            opts="-g -c -L -h --global --no-version --package-json --checksum --minimum-dependency-age --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --minimum-dependency-age)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -239,7 +243,7 @@ _dprint() {
             return 0
             ;;
         dprint__check)
-            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --allow-no-files --staged --dirty --list-different --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --allow-no-files --staged --dirty --list-different --json --diff-format --fail-fast --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -259,6 +263,10 @@ _dprint() {
                     ;;
                 --incremental)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --diff-format)
+                    COMPREPLY=($(compgen -W "pretty unified" -- "${cur}"))
                     return 0
                     ;;
                 --fail-fast)
@@ -411,12 +419,16 @@ _dprint() {
             return 0
             ;;
         dprint__config__add)
-            opts="-g -c -L -h --global --no-version --package-json --checksum --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
+            opts="-g -c -L -h --global --no-version --package-json --checksum --minimum-dependency-age --config --config-discovery --plugins --log-level --verbose --help [url-or-plugin-name]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --minimum-dependency-age)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -571,12 +583,16 @@ _dprint() {
             return 0
             ;;
         dprint__config__init)
-            opts="-g -y -c -L -h --global --yes --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -y -c -L -h --global --yes --minimum-dependency-age --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --minimum-dependency-age)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -609,12 +625,16 @@ _dprint() {
             return 0
             ;;
         dprint__config__update)
-            opts="-y -g -r -c -L -h --yes --dry-run --global --recursive --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-y -g -r -c -L -h --yes --dry-run --global --recursive --minimum-dependency-age --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --minimum-dependency-age)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
@@ -777,7 +797,7 @@ _dprint() {
             return 0
             ;;
         dprint__fmt)
-            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --stdin --diff --staged --dirty --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
+            opts="-c -L -h --stdin-files --includes-override --excludes --excludes-override --allow-node-modules --no-gitignore --incremental --stdin --diff --diff-format --staged --dirty --allow-no-files --skip-stable-format --fail-on-change --config --config-discovery --plugins --log-level --verbose --help [files]..."
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -801,6 +821,10 @@ _dprint() {
                     ;;
                 --stdin)
                     COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --diff-format)
+                    COMPREPLY=($(compgen -W "pretty unified" -- "${cur}"))
                     return 0
                     ;;
                 --config)
@@ -1231,12 +1255,16 @@ _dprint() {
             return 0
             ;;
         dprint__init)
-            opts="-g -y -c -L -h --global --yes --config --config-discovery --plugins --log-level --verbose --help"
+            opts="-g -y -c -L -h --global --yes --minimum-dependency-age --config --config-discovery --plugins --log-level --verbose --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --minimum-dependency-age)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --config)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0

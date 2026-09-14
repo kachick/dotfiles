@@ -37,6 +37,7 @@ _dprint() {
         case $line[1] in
             (init)
 _arguments "${_arguments_options[@]}" \
+'--minimum-dependency-age=[Don'\''t resolve npm plugin versions published more recently than this. Accepts an ISO-8601 duration (ex. '\''P3D'\'', '\''PT72H'\''), a number of minutes (ex. '\''1440'\''), a date or RFC3339 timestamp (ex. '\''2026-01-15'\''), or '\''0'\'' to disable. Defaults to min-release-age in .npmrc, otherwise no minimum.]:AGE: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
@@ -54,6 +55,7 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (add)
 _arguments "${_arguments_options[@]}" \
+'--minimum-dependency-age=[Don'\''t resolve npm plugin versions published more recently than this. Accepts an ISO-8601 duration (ex. '\''P3D'\'', '\''PT72H'\''), a number of minutes (ex. '\''1440'\''), a date or RFC3339 timestamp (ex. '\''2026-01-15'\''), or '\''0'\'' to disable. Defaults to min-release-age in .npmrc, otherwise no minimum.]:AGE: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
@@ -78,6 +80,7 @@ _arguments "${_arguments_options[@]}" \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
 '(--stdin-files)--stdin=[Format stdin and output the result to stdout. Provide an absolute file path to apply the inclusion and exclusion rules or an extension or file name to always format the text.]:extension/file-name/file-path:_files' \
+'--diff-format=[The format to output diffs in. Use \`unified\` to output a standard unified diff that can be piped to other tools or applied with \`patch\`. Defaults to \`pretty\`, or \`unified\` when outputting json.]: :(pretty unified)' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
@@ -105,6 +108,7 @@ _arguments "${_arguments_options[@]}" \
 '--excludes=[List of file patterns or directories in quotes to exclude when formatting. This excludes in addition to what is found in the config file.]:patterns: ' \
 '--excludes-override=[List of file patterns or directories in quotes to exclude when formatting. This overrides what is specified in the config file.]:patterns: ' \
 '--incremental=[Only format files when they change. This may alternatively be specified in the configuration file.]' \
+'--diff-format=[The format to output diffs in. Use \`unified\` to output a standard unified diff that can be piped to other tools or applied with \`patch\`. Defaults to \`pretty\`, or \`unified\` when outputting json.]: :(pretty unified)' \
 '--fail-fast=[Stop checking files and exit on the first file that isn'\''t formatted.]' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
@@ -119,6 +123,7 @@ _arguments "${_arguments_options[@]}" \
 '--staged[Format only the staged files.]' \
 '(--staged)--dirty[Format only the files with uncommitted changes in the git working directory (staged, unstaged, and untracked).]' \
 '--list-different[Only outputs file paths that aren'\''t formatted and doesn'\''t output diffs.]' \
+'(--list-different)--json[Outputs a JSON object per line for each file that isn'\''t formatted.]' \
 '(-L --log-level)--verbose[Alias for --log-level=debug]' \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -148,6 +153,7 @@ _arguments "${_arguments_options[@]}" \
         case $line[1] in
             (init)
 _arguments "${_arguments_options[@]}" \
+'--minimum-dependency-age=[Don'\''t resolve npm plugin versions published more recently than this. Accepts an ISO-8601 duration (ex. '\''P3D'\'', '\''PT72H'\''), a number of minutes (ex. '\''1440'\''), a date or RFC3339 timestamp (ex. '\''2026-01-15'\''), or '\''0'\'' to disable. Defaults to min-release-age in .npmrc, otherwise no minimum.]:AGE: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
@@ -165,6 +171,7 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (update)
 _arguments "${_arguments_options[@]}" \
+'--minimum-dependency-age=[Don'\''t resolve npm plugin versions published more recently than this. Accepts an ISO-8601 duration (ex. '\''P3D'\'', '\''PT72H'\''), a number of minutes (ex. '\''1440'\''), a date or RFC3339 timestamp (ex. '\''2026-01-15'\''), or '\''0'\'' to disable. Defaults to min-release-age in .npmrc, otherwise no minimum.]:AGE: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
@@ -185,6 +192,7 @@ _arguments "${_arguments_options[@]}" \
 ;;
 (add)
 _arguments "${_arguments_options[@]}" \
+'--minimum-dependency-age=[Don'\''t resolve npm plugin versions published more recently than this. Accepts an ISO-8601 duration (ex. '\''P3D'\'', '\''PT72H'\''), a number of minutes (ex. '\''1440'\''), a date or RFC3339 timestamp (ex. '\''2026-01-15'\''), or '\''0'\'' to disable. Defaults to min-release-age in .npmrc, otherwise no minimum.]:AGE: ' \
 '-c+[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config=[Path or url to JSON configuration file. Defaults to dprint.json(c) or .dprint.json(c) in current or ancestor directory when not provided.]: :_files' \
 '--config-discovery=[Sets the config discovery mode. Set to \`false\` to completely disable, \`ignore-descendants\` to avoid finding config files in child directories, or \`global\` to only use the global config file.]:BOOLEAN: ' \
