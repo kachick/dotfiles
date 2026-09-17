@@ -48,46 +48,7 @@ unstable.antigravity-cli.overrideAttrs (old: {
         nix
       ];
 
-      text = ''
-        set -euo pipefail
-
-        packageFile="pkgs/by-name/an/antigravity-cli/package.nix"
-        baseUrl="https://storage.googleapis.com/antigravity-public/antigravity-cli"
-
-        currentVersion="$(sed -n 's/.*version = "\([^"]*\)";.*/\1/p' "$packageFile")"
-        latestVersion="$(curl -sSfL "$baseUrl/latest")"
-
-        if [[ "$currentVersion" == "$latestVersion" ]]; then
-          echo "antigravity-cli is up-to-date: $currentVersion"
-          exit 0
-        fi
-
-        echo "Updating antigravity-cli: $currentVersion -> $latestVersion"
-
-        manifestUrl="$baseUrl/$latestVersion/manifest.json"
-        manifest="$(curl -sSfL "$manifestUrl")"
-
-        latestWholeVersion="$(echo "$manifest" | jq -r '.platforms."linux-x64".url' | cut -d/ -f6)"
-        latestBuildId="''${latestWholeVersion#*-}"
-        currentBuildId="$(sed -n 's/.*buildId = "\([^"]*\)";.*/\1/p' "$packageFile")"
-
-        sed -i "s/version = \"$currentVersion\";/version = \"$latestVersion\";/" "$packageFile"
-        sed -i "s/buildId = \"$currentBuildId\";/buildId = \"$latestBuildId\";/" "$packageFile"
-
-        x86_64_linux_url="$(echo "$manifest" | jq -r '.platforms."linux-x64".url')"
-        aarch64_linux_url="$(echo "$manifest" | jq -r '.platforms."linux-arm".url')"
-        aarch64_darwin_url="$(echo "$manifest" | jq -r '.platforms."darwin-arm".url')"
-
-        x86_64_linux_hash="$(nix store prefetch-file --json --hash-type sha256 "$x86_64_linux_url" | jq -r .hash)"
-        aarch64_linux_hash="$(nix store prefetch-file --json --hash-type sha256 "$aarch64_linux_url" | jq -r .hash)"
-        aarch64_darwin_hash="$(nix store prefetch-file --json --hash-type sha256 "$aarch64_darwin_url" | jq -r .hash)"
-
-        sed -i "/x86_64-linux = fetchurl/,/};/ s|hash = \"[^\"]*\";|hash = \"$x86_64_linux_hash\";|" "$packageFile"
-        sed -i "/aarch64-linux = fetchurl/,/};/ s|hash = \"[^\"]*\";|hash = \"$aarch64_linux_hash\";|" "$packageFile"
-        sed -i "/aarch64-darwin = fetchurl/,/};/ s|hash = \"[^\"]*\";|hash = \"$aarch64_darwin_hash\";|" "$packageFile"
-
-        echo "antigravity-cli updated to $latestVersion ($latestWholeVersion)"
-      '';
+      text = builtins.readFile ./update.bash;
     };
   };
 })
