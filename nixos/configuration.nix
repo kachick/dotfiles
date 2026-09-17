@@ -102,6 +102,14 @@
     # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+    #
+    # TODO: Stalls when finding wireless printer ("Unable to locate printer ...")
+    # 1. Sleeping Wi-Fi devices drop mDNS multicast queries until unicast packets (ping/ARP) wake them.
+    # 2. Both avahi-daemon and systemd-resolved bind UDP 5353 concurrently; unicast mDNS responses (QU)
+    #    can get misrouted, causing 5s getaddrinfo timeouts in systemd-resolved.
+    # 3. Dual-stack IPv6 AAAA timeouts and link-local fe80:: (missing scope ID) trigger CUPS ipp backend retry loops.
+    # If discovery remains unstable, consider unifying mDNS onto `services.avahi.nssmdns4 = true;` with
+    # `services.resolved.settings.Resolve.MulticastDNS = "off";`, or using a static IP for printer device URI.
 
     nssmdns4 = false;
     nssmdns6 = false;

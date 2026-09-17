@@ -107,6 +107,10 @@ in
           "*.local" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
             forwardAgent = true;
 
+            # Avoid connection hangs caused by missing IPv6 scope ID on link-local (fe80::)
+            # and unstable dual-stack SLAAC privacy addresses on local mDNS hosts
+            addressFamily = "inet";
+
             # NixOS rebuilds change the host key
             StrictHostKeyChecking = "accept-new";
           };
