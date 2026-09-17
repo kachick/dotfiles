@@ -37,6 +37,13 @@ func main() {
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
+	// Format checks should run before parallel linters to fail early and avoid conflicts.
+	// Prefer --fail-on-change over --ci to keep the evaluation cache for local runs (e.g. pre-commit).
+	formatters := runner.Commands{
+		{Path: "treefmt", Args: []string{"--fail-on-change"}},
+	}
+	formatters.SequentialRun()
+
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
