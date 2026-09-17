@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   ...
 }:
 
@@ -47,7 +46,7 @@
     #
     google-chrome
 
-    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
+    local.antigravity-cli
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
