@@ -4,7 +4,8 @@
 # Rely on the editor's format-on-save for daily workflow.
 # Run `task lint` (which verifies formatting via `treefmt --fail-on-change` in cmd/lint)
 # instead of running `task fmt` here, avoiding duplicate formatter runs and unstaged diffs.
-# If format-on-save was not triggered, run `task fmt` manually when pre-commit fails.
+# If this fails, do not just run `task fmt` to work around it. Always investigate and fix
+# the root cause of why format-on-save did not run in your editor.
 [hook "lint"]
   event = "pre-commit"
   command = "task lint"
