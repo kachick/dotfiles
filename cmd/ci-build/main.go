@@ -182,15 +182,8 @@ func maybePushToCachix(pname string, isFree bool, outPaths []string) error {
 		return nil
 	}
 
-	token := os.Getenv("CACHIX_AUTH_TOKEN")
-	if token == "" {
-		fmt.Printf("CACHIX_AUTH_TOKEN not set, skipping Cachix push for %s\n", pname)
-		return nil
-	}
-
 	if len(outPaths) == 0 {
-		fmt.Printf("No output paths to push for %s\n", pname)
-		return nil
+		return fmt.Errorf("no output paths to push for %s", pname)
 	}
 
 	args := append([]string{"push", "kachick-dotfiles"}, outPaths...)
