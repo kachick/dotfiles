@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -71,9 +72,27 @@ func runPackage(args []string) error {
 		arch = detectedArch
 	}
 
+	isFree, err := isPackageFree(pname, arch)
+	if err != nil {
+		return fmt.Errorf("checking license for %s: %w", pname, err)
+	}
+
 	buildTarget := fmt.Sprintf(".#%s", pname)
-	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-	buildCmd.Stdout = os.Stdout
+	var outBuf bytes.Buffer
+	buildArgs := []string{"build", buildTarget, "--no-link", "--print-out-paths", "--show-trace"}
+	var buildEnv []string
+
+	if !isFree {
+		// Only unfree packages require --impure and NIXPKGS_ALLOW_UNFREE=1.
+		buildArgs = append(buildArgs, "--impure")
+		buildEnv = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+	}
+
+	buildCmd := exec.Command("nix", buildArgs...)
+	if len(buildEnv) > 0 {
+		buildCmd.Env = buildEnv
+	}
+	buildCmd.Stdout = io.MultiWriter(os.Stdout, &outBuf)
 	buildCmd.Stderr = os.Stderr
 	if err := buildCmd.Run(); err != nil {
 		return err
@@ -81,25 +100,98 @@ func runPackage(args []string) error {
 
 	if *skipTests {
 		fmt.Printf("Skipping tests for %s as requested.\n", pname)
-		return nil
+	} else {
+		evalTarget := fmt.Sprintf(".#%s.passthru.tests", pname)
+		evalArgs := []string{"eval", evalTarget}
+		if !isFree {
+			evalArgs = append(evalArgs, "--impure")
+		}
+		evalCmd := exec.Command("nix", evalArgs...)
+		if !isFree {
+			evalCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+		}
+		if err := evalCmd.Run(); err != nil {
+			fmt.Printf("No passthru.tests found for %s, skipping.\n", pname)
+		} else {
+			testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
+			testCmd := exec.Command("nix-build", "--attr", testAttr)
+			if !isFree {
+				testCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+			}
+			testCmd.Stdout = os.Stdout
+			testCmd.Stderr = os.Stderr
+			if err := testCmd.Run(); err != nil {
+				return err
+			}
+		}
 	}
 
-	evalTarget := fmt.Sprintf(".#%s.passthru.tests", pname)
-	evalCmd := exec.Command("nix", "eval", evalTarget)
-	if err := evalCmd.Run(); err != nil {
-		fmt.Printf("No passthru.tests found for %s, skipping.\n", pname)
-		return nil
-	}
-
-	testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
-	testCmd := exec.Command("nix-build", "--attr", testAttr)
-	testCmd.Stdout = os.Stdout
-	testCmd.Stderr = os.Stderr
-	if err := testCmd.Run(); err != nil {
+	outPaths := strings.Fields(outBuf.String())
+	if err := maybePushToCachix(pname, isFree, outPaths); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func isPackageFree(pname string, arch string) (bool, error) {
+	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		return false, fmt.Errorf("failed to detect repository root: %w", err)
+	}
+	repoRoot := strings.TrimSpace(string(repoRootBytes))
+
+	expr := fmt.Sprintf(`
+let
+  flake = builtins.getFlake "%s";
+  pkgs = flake.inputs.nixpkgs.legacyPackages.%s;
+  lib = pkgs.lib;
+  pkg = flake.packages.%s.%s;
+  licenses = pkg.meta.license or lib.licenses.free;
+in
+if lib.isAttrs licenses && licenses ? "licenseType" then
+  lib.licenses.isFree licenses
+else if lib.isAttrs licenses then
+  licenses.free or true
+else if lib.isString licenses then
+  true
+else
+  lib.all (l: l.free or true) licenses
+`, repoRoot, arch, arch, pname)
+
+	cmd := exec.Command("nix", "eval", "--impure", "--expr", expr)
+	cmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+	out, err := cmd.Output()
+	if err != nil {
+		return false, fmt.Errorf("failed to evaluate license for %s: %w", pname, err)
+	}
+	result := strings.TrimSpace(string(out))
+	switch result {
+	case "true":
+		return true, nil
+	case "false":
+		return false, nil
+	default:
+		return false, fmt.Errorf("unexpected license evaluation result for %s: %s", pname, result)
+	}
+}
+
+func maybePushToCachix(pname string, isFree bool, outPaths []string) error {
+	if !isFree {
+		fmt.Printf("Skipping Cachix push for unfree package: %s\n", pname)
+		return nil
+	}
+
+	if len(outPaths) == 0 {
+		return fmt.Errorf("no output paths to push for %s", pname)
+	}
+
+	args := append([]string{"push", "kachick-dotfiles"}, outPaths...)
+	fmt.Printf("Pushing %s to Cachix (%d paths)...\n", pname, len(outPaths))
+	cmd := exec.Command("cachix", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func runNixos(args []string) error {

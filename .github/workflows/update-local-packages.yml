@@ -35,6 +35,7 @@ jobs:
         package:
           - lima
           - conoha-cli
+          - antigravity-cli
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
@@ -97,23 +98,38 @@ jobs:
       # This addresses the "path ...-patched-nixpkgs-unstable.drv is not valid" error in GHA.
       - name: Pre-evaluate package
         run: |
-          nix eval --raw ".#${PACKAGE}.pname"
+          nix eval --raw --impure ".#${PACKAGE}.pname"
         env:
           PACKAGE: ${{ matrix.package }}
+          NIXPKGS_ALLOW_UNFREE: '1'
 
       # Use manual commit because `nix-update --commit` performs strict evaluation
       # which causes "path ... is not valid" errors in GHA for patched nixpkgs.
       - name: Update packages
         run: |
           msg_file="$(mktemp)"
-          nix-update --flake "${PACKAGE}" --write-commit-message "${msg_file}"
+          if [[ "${PACKAGE}" == "antigravity-cli" ]]; then
+            old_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
+            nix run --impure ".#${PACKAGE}.passthru.updateScript"
+            new_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
+            if [[ "${old_version}" != "${new_version}" ]]; then
+              echo "${PACKAGE}: ${old_version} -> ${new_version}" > "${msg_file}"
+            fi
+          else
+            nix-update --flake "${PACKAGE}" --write-commit-message "${msg_file}"
+          fi
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
-            git commit --file "${msg_file}"
+            if [[ -s "${msg_file}" ]]; then
+              git commit --file "${msg_file}"
+            else
+              git commit -m "${PACKAGE}: update"
+            fi
           fi
           rm "${msg_file}"
         env:
           PACKAGE: ${{ matrix.package }}
+          NIXPKGS_ALLOW_UNFREE: '1'
 
       - name: Count added commits
         id: count-commits

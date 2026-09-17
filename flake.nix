@@ -48,15 +48,6 @@
       url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-
-      # This repo provides binary cache and I already allows the cache.numtide.com.
-      # However, to reduce nodes in flake.lock, I prefer my own channel for now.
-      # Revisit once introducing other agents which takes long time to build.
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
   };
 
   outputs =
