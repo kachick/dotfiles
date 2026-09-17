@@ -45,12 +45,7 @@
     };
 
     kanata-tray = {
-      # TODO: Prefer https://github.com/NixOS/nixpkgs/pull/458994 once it's in a suitable channel.
-      url = "github:rszyma/kanata-tray/v0.8.0";
-
-      # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
-      # However using follows disables the upstream caches. And I'm okay to build it my self
-      # Prefer unstable channel since also using latest kanata
+      url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
