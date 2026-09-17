@@ -1,10 +1,10 @@
 [core]
   whitespace = cr-at-eol
 
-[hook "fmt"]
-  event = "pre-commit"
-  command = "task fmt"
-
+# Rely on the editor's format-on-save for daily workflow.
+# Run `task lint` (which verifies formatting via `treefmt --fail-on-change` in cmd/lint)
+# instead of running `task fmt` here, avoiding duplicate formatter runs and unstaged diffs.
+# If format-on-save was not triggered, run `task fmt` manually when pre-commit fails.
 [hook "lint"]
   event = "pre-commit"
   command = "task lint"

@@ -196,4 +196,3 @@ tasks:
       # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
-      - 'fmt'
