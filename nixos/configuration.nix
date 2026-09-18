@@ -141,6 +141,11 @@
   networking.networkmanager = {
     enable = true;
 
+    # Wi-Fi powersave drops mDNS multicast queries on idle devices.
+    # It seems to operate even when plugged into AC power.
+    # Note: If battery drains too fast on laptops, disabling this might be a factor.
+    wifi.powersave = false;
+
     dns = "systemd-resolved";
     # 1 means 'resolve' (resolve only, no announcement)
     # See https://networkmanager.dev/docs/api/latest/nm-settings-nmcli.html
