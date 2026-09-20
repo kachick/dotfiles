@@ -19,6 +19,9 @@
     "diagnostics": false,
     "metrics": false
   },
+  "project_panel": {
+    "dock": "left"
+  },
   // "features" key is not available in Zed's JSON schema at Zed 0.223.3. However it works! (Seems Zed's bug)
   "features": {
     "edit_prediction_provider": "none"
