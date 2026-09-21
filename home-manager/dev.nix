@@ -24,7 +24,12 @@
 
     packages =
       (with pkgs; [
-        mdcat # pipe friendly markdown viewer rather than glow
+        # TODO: Replace or drop this mdcat.
+        # Upstream is archived, and startup is slow. Piping to chawan is also not comfortable enough.
+        # Plan to replace with https://github.com/RivoLink/leaf (leaf-markdown-viewer).
+        # Keeping for now because $EDITOR support is unreleased (https://github.com/RivoLink/leaf/commit/a146f09be4567ce81beb530e27cbf340d1f9f13e)
+        # and it is not yet in nixpkgs (https://github.com/NixOS/nixpkgs/pull/564648).
+        mdcat
         ruby_4_0
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
