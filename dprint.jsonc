@@ -17,6 +17,9 @@
       "Containerfile"
     ]
   },
+  "kdl": {
+    "kdlVersion": "v1"
+  },
   // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
   "excludes": [
     ".git",
@@ -31,7 +34,7 @@
     "https://plugins.dprint.dev/markdown-0.24.0.wasm",
     "https://plugins.dprint.dev/toml-0.8.0.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
-    "https://plugins.dprint.dev/kachick/kdl-0.2.1.wasm",
+    "https://plugins.dprint.dev/kachick/kdl-0.4.0.wasm",
     "https://plugins.dprint.dev/dockerfile-0.6.0.wasm"
   ]
 }
