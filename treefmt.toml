@@ -26,11 +26,8 @@ includes = [
   "*.yaml",
   "*.yml",
   "*.kdl",
+  "*.nix",
 ]
-
-[formatter.nixfmt]
-command = "nixfmt"
-includes = ["*.nix"]
 
 [formatter.go]
 command = "gofmt"

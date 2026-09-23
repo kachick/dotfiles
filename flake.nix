@@ -87,6 +87,7 @@
     in
     {
       # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
+      # TODO: Replace to dprint
       formatter = forAllSystems ({ pkgs, ... }: pkgs.unstable.nixfmt-tree);
 
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });

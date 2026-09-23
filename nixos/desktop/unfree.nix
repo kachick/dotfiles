@@ -26,10 +26,10 @@
           "--password-store=gnome-libsecret" # Required for GitHub Authentication. For example gnome-keyring, kwallet5, KeepassXC, pass-secret-service
         ];
       }).overrideAttrs
-        (prevAttrs: {
-          # https://incipe.dev/blog/post/using-visual-studio-code-insiders-under-home-manager/#an-os-keyring-couldnt-be-identified-for-storing-the-encryption-related-data-in-your-current-desktop-environment
-          runtimeDependencies = prevAttrs.runtimeDependencies ++ [ pkgs.libsecret ];
-        })
+      (prevAttrs: {
+        # https://incipe.dev/blog/post/using-visual-studio-code-insiders-under-home-manager/#an-os-keyring-couldnt-be-identified-for-storing-the-encryption-related-data-in-your-current-desktop-environment
+        runtimeDependencies = prevAttrs.runtimeDependencies ++ [ pkgs.libsecret ];
+      })
     )
 
     # NOTE: Google might extract chrome from themself with `Antitrust` penalties
