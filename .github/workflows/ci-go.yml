@@ -43,6 +43,8 @@ jobs:
           cache-dependency-path: 'go.sum'
       - run: go test ./...
       - run: go build -v -race ./...
+
+  # We don't need `go fmt` here because of the formatting is checked on dprint
   lint:
     runs-on: ubuntu-26.04
     steps:
@@ -54,8 +56,6 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
-      - name: check format
-        run: go fmt ./... && git add --intent-to-add . && git diff --exit-code
       - name: 'Ensure installing go tool is done. Without this step, `go: downloading ...` logs appears in the extracting command path'
         run: go tool -n exhaustruct
       - run: go vet -vettool "$(go tool -n exhaustruct)" ./...
