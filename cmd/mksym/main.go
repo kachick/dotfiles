@@ -40,7 +40,7 @@ func main() {
 	}
 
 	parent := filepath.Dir(linker)
-	err = os.MkdirAll(parent, 0755)
+	err = os.MkdirAll(parent, 0o755)
 	if err != nil {
 		log.Fatalf("failed in creating directory structure - %+v", err)
 	}
