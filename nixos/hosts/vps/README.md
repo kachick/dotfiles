@@ -18,10 +18,9 @@ Deploy NixOS to a fresh VPS 3.0 instance (Ubuntu etc.):
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
 	--flake .#vps \
-	--target-host root@ \
-	"-c" \
-	--debug <YOUR_VPS_IP > \
-	--kexec-extra-flags
+	--target-host 'root@<YOUR_VPS_IP>' \
+	--kexec-extra-flags "-c" \
+	--debug
 ```
 
 > **Note**: `--kexec-extra-flags "-c"` forces legacy `kexec_load` syscall to prevent `kexec_file_load` errors on certain Linux kernels.
