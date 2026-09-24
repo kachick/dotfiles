@@ -6,12 +6,12 @@
   "markdown": {
     "tags": {
       "nix": "nix",
-      "shell": "sh",
       "sh": "sh",
-      "shell-script": "sh",
-      "bash": "sh",
-      "zsh": "sh",
-      "envrc": "sh"
+      "bash": "bash",
+      "zsh": "zsh",
+      "envrc": "bash",
+      "shell": "sh",
+      "shell-script": "sh"
     }
   },
   "yaml": {
