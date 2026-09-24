@@ -8,17 +8,19 @@ let
   # Alternative global dprint
   #   - https://github.com/dprint/dprint/issues/355
   #   - https://github.com/dprint/dprint-vscode/issues/13
-  mkDprint = extension: {
-    command = lib.getExe pkgs.unstable.dprint;
-    args = [
-      "fmt"
-      "--config"
-      "${../dprint.jsonc}"
-      "--stdin"
-      # No need to specify all extensions, just providing a hint to detect language
-      extension # TODO: Set correct path for Bash and Zsh
-    ];
-  };
+  mkDprint =
+    # Helix expands `%{buffer_name}` to the path of the active buffer.
+    # We can pass an extension (e.g. "json") or `%{buffer_name}` to help dprint detect the file type.
+    pathOrExtension: {
+      command = lib.getExe pkgs.unstable.dprint;
+      args = [
+        "fmt"
+        "--config"
+        "${../dprint.jsonc}"
+        "--stdin"
+        pathOrExtension
+      ];
+    };
 in
 {
   programs.helix = {
@@ -71,17 +73,11 @@ in
         {
           name = "bash";
           auto-format = true;
-          formatter = mkDprint "bash";
+          # Helix has no built-in "zsh" language. It handles zsh files (like .zsh and .zshrc) under "bash".
+          # We pass %{buffer_name} so dprint can detect bash or zsh from the file path.
+          formatter = mkDprint "%{buffer_name}";
           language-servers = [
             # "bash-language-server"
-            "typos"
-          ];
-        }
-        {
-          name = "zsh";
-          auto-format = true;
-          formatter = mkDprint "zsh";
-          language-servers = [
             "typos"
           ];
         }
