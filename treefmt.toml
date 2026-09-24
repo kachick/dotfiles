@@ -27,6 +27,7 @@ includes = [
   "*.yml",
   "*.kdl",
   "*.nix",
+  "*.go",
 ]
 
 [formatter.shfmt]
