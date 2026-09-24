@@ -36,14 +36,8 @@
     "langVersion": "go1.27",
     "modulePath": "github.com/kachick/dotfiles"
   },
-  // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
   "excludes": [
-    ".git",
-    ".direnv",
-    "dist",
-    "result",
-    "dependencies",
-    "tmp"
+    "dependencies"
   ],
   "plugins": [
     "https://plugins.dprint.dev/json-0.24.0.wasm",
