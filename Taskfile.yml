@@ -99,7 +99,7 @@ tasks:
 
   fmt:
     cmds:
-      - dprint
+      - dprint fmt
 
   build-cmd:
     deps:
