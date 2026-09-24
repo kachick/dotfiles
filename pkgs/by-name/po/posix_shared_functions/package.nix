@@ -21,7 +21,7 @@
 # Use replaceVars to enable basic shellscript helpers such as shfmt, shuck, shellcheck or syntax highlighters
 #
 # Note: Using `replaceVars` directly avoids Import From Derivation (IFD) which was caused by the previous `builtins.readFile` + `writeText` wrapper.
-replaceVars ./posix_shared_functions.bash {
+replaceVars ./posix_shared_functions.sh {
   reponame = lib.getExe pkgs.local.reponame;
   ghqf = lib.getExe pkgs.local.ghqf;
   ghq = lib.getExe pkgs.ghq;
