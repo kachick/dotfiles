@@ -19,6 +19,8 @@
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
   "gopls": {
+    // Use dprint once https://github.com/golang/go/issues/74678 is resolved
+    "formatting.gofumpt": true,
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
   "shellformat.useEditorConfig": true,
