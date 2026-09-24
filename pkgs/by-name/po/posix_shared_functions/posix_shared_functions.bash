@@ -1,4 +1,8 @@
-# shellcheck disable=SC2148
+# shellcheck shell=bash
+# This file should keep compatibility for both bash and zsh even if specified only the `shell=bash`.
+# However shellcheck does not support multiple specifier for the directive.
+# Additionally both .sh and .dash does not cover the modern shell features.
+
 # How to stop blinking cursor in Linux console?
 # => https://web.archive.org/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/
 disable_blinking_cursor() {
