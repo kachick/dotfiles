@@ -11,5 +11,5 @@ This is same method as [tips](https://stackoverflow.com/a/60805086)
 ## How to backup the extensions
 
 ```bash
-code --list-extensions | sort > ./config/vscode/extensions.txt
+code --list-extensions | sort >./config/vscode/extensions.txt
 ```

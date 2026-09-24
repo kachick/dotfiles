@@ -4,6 +4,15 @@
     "trailingCommas": "never"
   },
   "markdown": {
+    "tags": {
+      "nix": "nix",
+      "shell": "sh",
+      "sh": "sh",
+      "shell-script": "sh",
+      "bash": "sh",
+      "zsh": "sh",
+      "envrc": "sh"
+    }
   },
   "yaml": {
     "quotes": "preferSingle",
