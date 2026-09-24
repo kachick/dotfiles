@@ -67,9 +67,9 @@ Using flake style is disabled in NixOS by default and [you should inject git com
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-26.05#gitMinimal' \
-  --command sudo nixos-rebuild switch \
-  --flake "github:kachick/dotfiles#$(hostname)" \
-  --show-trace
+	--command sudo nixos-rebuild switch \
+	--flake "github:kachick/dotfiles#$(hostname)" \
+	--show-trace
 ```
 
 Finally, reboot the device
@@ -184,8 +184,8 @@ Check [traps](./windows/Multi-booting.md)
 1. Install and configure Nix in the guest:
 
    ```bash
-   REV=main; \
-     curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
+   REV=main
+   curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
    ```
 
 1. Apply home-manager:
@@ -210,7 +210,7 @@ Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 If you are developing this repository, putting `.env` makes easy reactivations.
 
 ```bash
-echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
+echo 'HM_HOST_SLUG=wsl-ubuntu' >.env
 ```
 
 Then you can enable configurations with

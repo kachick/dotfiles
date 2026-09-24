@@ -23,7 +23,6 @@
     "formatting.gofumpt": true,
     "build.buildFlags": ["-tags=linux,windows,darwin"]
   },
-  "shellformat.useEditorConfig": true,
   "shellcheck.ignorePatterns": {
     "dependencies/**": true,
     "config/ghostty/config*": true

@@ -7,7 +7,7 @@
 3. Set the default paper size to A4 if needed:
 
    ```bash
-   lpoptions -p <Printer-Name> -o PageSize=A4
+   lpoptions -p '<Printer-Name>' -o PageSize=A4
    ```
 
 ## Troubleshooting & Tips
@@ -32,7 +32,7 @@ Some network printers lack a built-in PDF interpreter. Sending raw PDF files dir
 2. Inspect how CUPS processes a PDF job:
 
    ```bash
-   cupsfilter -p /etc/cups/ppd/<Printer-Name>.ppd test.pdf > /dev/null
+   cupsfilter -p '/etc/cups/ppd/<Printer-Name>.ppd' test.pdf >/dev/null
    ```
 
    Check the `DEBUG` logs on stderr:

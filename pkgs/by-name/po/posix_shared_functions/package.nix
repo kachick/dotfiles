@@ -16,9 +16,8 @@
 # NOTE: You should remember difference of bash and zsh for the arguments handling in completions
 # https://rcmdnk.com/blog/2015/05/15/computer-linux-mac-zsh/
 
-# Actually this file is not a bash script, but dash mode is unuseful. Expecting mostly bash code will work even in zsh...
 # Ensure absolute Nix path
-# Use replaceVars to enable basic shellscript helpers such as shfmt, shellcheck and syntax highlighters
+# Use replaceVars to enable basic shellscript helpers such as shfmt, shuck, shellcheck or syntax highlighters
 #
 # Note: Using `replaceVars` directly avoids Import From Derivation (IFD) which was caused by the previous `builtins.readFile` + `writeText` wrapper.
 replaceVars ./posix_shared_functions.bash {

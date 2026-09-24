@@ -88,11 +88,11 @@ rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.
 # Make sure the connection
 rclone lsd podman-machine:/home/user
 
-z project_path 
+z project_path
 rclone mount --daemon "podman-machine:repos/$(basename "$(pwd)")" .
 
 # If you want to unmount, use specific command instead of kill the background job
-# 
+#
 # Linux
 fusermount -u /path/to/local/mount
 # OS X

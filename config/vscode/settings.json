@@ -99,7 +99,6 @@
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "workbench.colorTheme": "Base16 Dark Ashes",
-  "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
   "update.mode": "none", // NixOS: flake, Windows: winget

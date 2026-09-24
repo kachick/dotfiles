@@ -99,7 +99,7 @@ tasks:
 
   fmt:
     cmds:
-      - treefmt
+      - dprint fmt
 
   build-cmd:
     deps:
