@@ -16,7 +16,7 @@ let
       "${../dprint.jsonc}"
       "--stdin"
       # No need to specify all extensions, just providing a hint to detect language
-      extension
+      extension # TODO: Set correct path for Bash and Zsh
     ];
   };
 in
@@ -71,15 +71,17 @@ in
         {
           name = "bash";
           auto-format = true;
-          formatter = {
-            command = lib.getExe pkgs.shfmt;
-            args = [
-              "--language-dialect"
-              "bash"
-            ];
-          };
+          formatter = mkDprint "bash";
           language-servers = [
             # "bash-language-server"
+            "typos"
+          ];
+        }
+        {
+          name = "zsh";
+          auto-format = true;
+          formatter = mkDprint "zsh";
+          language-servers = [
             "typos"
           ];
         }

@@ -12,6 +12,9 @@
   "toml": {
     "quoteStyle": "maintain"
   },
+  "sh": {
+    "useTabs": true
+  },
   "dockerfile": {
     "associations": [
       "Containerfile"
@@ -41,6 +44,7 @@
     "https://plugins.dprint.dev/kachick/kdl-0.4.0.wasm",
     "https://plugins.dprint.dev/dockerfile-0.6.0.wasm",
     "https://plugins.dprint.dev/kachick/nix-0.1.0.wasm",
-    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18"
+    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18",
+    "https://plugins.dprint.dev/kachick/sh-0.1.0.wasm"
   ]
 }

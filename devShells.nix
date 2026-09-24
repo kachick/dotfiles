@@ -30,10 +30,6 @@ in
           nix-update
 
           shellcheck
-          shfmt
-
-          # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
-          treefmt
 
           trivy
           skopeo

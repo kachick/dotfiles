@@ -1,3 +1,4 @@
+# shellcheck disable=SC2148
 # How to stop blinking cursor in Linux console?
 # => https://web.archive.org/web/20220318101402/https://nutr1t07.github.io/post/disable-cursor-blinking-on-linux-console/
 disable_blinking_cursor() {

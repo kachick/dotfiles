@@ -11,6 +11,7 @@ insert_final_newline = true
 [*.md]
 trim_trailing_whitespace = false
 
+# Prefer special formatters, this is a fallback setting if there are missing
 [{Makefile,*.mk,*.go,.gitmodules,*.*sh,.*shrc,*shenv,.bash_*,*.envrc}]
 indent_style = tab
 indent_size = 4

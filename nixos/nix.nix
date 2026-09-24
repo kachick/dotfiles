@@ -22,7 +22,7 @@
 
       extra-trusted-substituters = [
         "https://nix-community.cachix.org" # https://nix-community.org/cache/
-        "https://cache.numtide.com" # Replaced from https://numtide.cachix.org: https://github.com/numtide/treefmt/pull/655
+        "https://cache.numtide.com" # Replaced from https://numtide.cachix.org
         "https://selfup.cachix.org" # GH-1235
         "https://kachick-dotfiles.cachix.org"
       ];
