@@ -4,9 +4,6 @@
   "[nix]": {
     "editor.defaultFormatter": "jnoortheen.nix-ide"
   },
-  "[go]": {
-    "editor.defaultFormatter": "golang.go"
-  },
   "[kanata]": {
     "editor.defaultFormatter": "rszyma.vscode-kanata"
   },
