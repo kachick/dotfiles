@@ -27,12 +27,8 @@ includes = [
   "*.yml",
   "*.kdl",
   "*.nix",
+  "*.go",
 ]
-
-[formatter.go]
-command = "gofmt"
-options = ["-w"]
-includes = ["*.go"]
 
 [formatter.shfmt]
 command = "shfmt"

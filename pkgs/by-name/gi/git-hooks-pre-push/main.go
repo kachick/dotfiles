@@ -13,9 +13,7 @@ import (
 	pipeline "github.com/mattn/go-pipeline"
 )
 
-var (
-	TyposConfigPath string
-)
+var TyposConfigPath string
 
 // Spec of Git: https://git-scm.com/docs/githooks#_pre_push
 func main() {
@@ -68,14 +66,14 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	// remoteOid := fields[3]
 
 	return map[string]githooks.Linter{
-		"prevent secrets in log and diff": githooks.Linter{Tag: "betterleaks", Script: func() error {
+		"prevent secrets in log and diff": {Tag: "betterleaks", Script: func() error {
 			cmd := exec.Command("betterleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in log and diff": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in log and diff": {Tag: "typos", Script: func() error {
 			out, err := pipeline.CombinedOutput(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
@@ -86,7 +84,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in branch name": githooks.Linter{Tag: "typos", Script: func() error {
+		"prevent typos in branch name": {Tag: "typos", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
 			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
 			// See https://github.com/crate-ci/typos/issues/758 for details

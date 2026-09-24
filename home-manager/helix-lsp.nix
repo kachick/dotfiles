@@ -152,6 +152,7 @@ in
         }
         {
           name = "go";
+          formatter = mkDprint "go";
           language-servers = [
             "gopls"
             "golangci-lint-lsp"

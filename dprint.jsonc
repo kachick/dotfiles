@@ -20,6 +20,10 @@
   "kdl": {
     "kdlVersion": "v1"
   },
+  "gofumpt": {
+    "langVersion": "go1.27",
+    "modulePath": "github.com/kachick/dotfiles"
+  },
   // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
   "excludes": [
     ".git",
@@ -36,6 +40,7 @@
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
     "https://plugins.dprint.dev/kachick/kdl-0.4.0.wasm",
     "https://plugins.dprint.dev/dockerfile-0.6.0.wasm",
-    "https://plugins.dprint.dev/kachick/nix-0.1.0.wasm"
+    "https://plugins.dprint.dev/kachick/nix-0.1.0.wasm",
+    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18"
   ]
 }
