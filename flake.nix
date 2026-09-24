@@ -86,9 +86,12 @@
           );
     in
     {
-      # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
-      # TODO: Replace to dprint
-      formatter = forAllSystems ({ pkgs, ... }: pkgs.unstable.nixfmt-tree);
+      formatter = forAllSystems (
+        { pkgs, ... }:
+        pkgs.writeShellScriptBin "dprint-fmt" ''
+          exec "${pkgs.lib.getExe pkgs.unstable.dprint}" fmt "$@"
+        ''
+      );
 
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
