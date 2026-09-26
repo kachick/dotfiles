@@ -48,6 +48,6 @@
     "npm:@dprint/dockerfile@0.6.0",
     "npm:@kachick/dprint-plugin-nix@0.1.1",
     "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18",
-    "npm:@kachick/dprint-plugin-sh@0.1.1"
+    "npm:@kachick/dprint-plugin-sh@0.1.2"
   ]
 }
