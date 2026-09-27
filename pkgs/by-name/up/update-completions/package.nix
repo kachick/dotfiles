@@ -20,16 +20,11 @@ pkgs.writeShellApplication (
 
       # Begins for bash
 
-      # https://github.com/NixOS/nixpkgs/pull/362139
-      cp -f "${pkgs.unstable.dprint}/share/bash-completion/completions/dprint.bash" ${bashDir}
-
       # Adding only in devshell is not enough
       cp -f "${pkgs.go-task}/share/bash-completion/completions/task.bash" ${bashDir}
 
       # Begins for zsh
 
-      # https://github.com/NixOS/nixpkgs/pull/362139
-      cp -f "${pkgs.unstable.dprint}/share/zsh/site-functions/_dprint" ${zshDir}
       cp -f "${pkgs.go-task}/share/zsh/site-functions/_task" ${zshDir}
 
       # Commit them
