@@ -9,7 +9,6 @@
   zsh
   starship
   direnv
-  unstable.nixfmt
   file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
   nushell
 

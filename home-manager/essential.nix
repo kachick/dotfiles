@@ -1,5 +1,5 @@
 # Minimal CLI/Server essential module for Home Manager
-# Excludes desktop/GUI applications, heavy dev toolchains (ruby, fontconfig, etc.), powershell/nushell, mdcat/dust, direnv/nixfmt, telemetry (go toolchain), and encryption tools.
+# Excludes desktop/GUI applications, heavy dev toolchains (ruby, fontconfig, etc.), powershell/nushell, mdcat/dust, telemetry (go toolchain), and encryption tools.
 
 {
   config,
