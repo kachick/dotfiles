@@ -137,6 +137,4 @@
   xdg.configFile."nushell/env.nu".source = ../config/nushell/env.nu;
   xdg.configFile."nushell/config.nu".source = ../config/nushell/config.nu;
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
-
-  xdg.configFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
 }

@@ -17,6 +17,8 @@
   # Zed is now available on Windows and supports JSONC, so keeping the raw config file is beneficial for schema validation and comments.
   xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.json;
 
+  xdg.writableConfigFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
+
   home = {
     sessionVariables = {
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
