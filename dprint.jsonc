@@ -40,7 +40,7 @@
     "dependencies"
   ],
   "plugins": [
-    "npm:@dprint/json@0.24.0",
+    "npm:@dprint/json@0.25.0",
     "npm:@dprint/markdown@0.24.0",
     "npm:@dprint/toml@0.8.0",
     "npm:dprint-plugin-yaml@0.6.0",
