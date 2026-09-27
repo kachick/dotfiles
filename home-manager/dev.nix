@@ -34,11 +34,11 @@
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
         ghq
-        unstable.nixfmt
         direnv
         yazi
         hexyl # hex viewer
         sad
+        unstable.dprint
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562

@@ -84,9 +84,7 @@ in
         {
           name = "nix";
           auto-format = true;
-          formatter = {
-            command = lib.getExe pkgs.unstable.nixfmt;
-          };
+          formatter = mkDprint "nix";
           language-servers = [
             "nil" # Not using thesedays, however kept with helix default
             "nixd"
@@ -165,6 +163,8 @@ in
         }
         {
           name = "typescript";
+          auto-format = true;
+          formatter = mkDprint "typescript";
           language-servers = [
             "tsc"
             "typos"
