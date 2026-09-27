@@ -1,5 +1,4 @@
 {
-  mkWritableConfig,
   ...
 }:
 
@@ -16,7 +15,8 @@
         source = ../config/alacritty/themes;
         recursive = true;
       };
-    }
-    // (mkWritableConfig.xdg "ghostty/config" ../config/ghostty/config { });
+    };
+
+    writableConfigFile."ghostty/config".source = ../config/ghostty/config;
   };
 }

@@ -1,6 +1,5 @@
 {
   pkgs,
-  mkWritableConfig,
   ...
 }:
 
@@ -16,7 +15,7 @@
   # Intentionally avoiding to use Home Manager module (https://github.com/nix-community/home-manager/pull/5455)
   # for keeping sharable config in Windows and other non-Nix environments.
   # Zed is now available on Windows and supports JSONC, so keeping the raw config file is beneficial for schema validation and comments.
-  xdg.configFile = mkWritableConfig.xdg "zed/settings.json" ../config/zed/settings.json { };
+  xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.json;
 
   home = {
     sessionVariables = {
