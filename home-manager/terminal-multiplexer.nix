@@ -1,5 +1,4 @@
 {
-  mkWritableConfig,
   ...
 }:
 
@@ -26,7 +25,8 @@
           simplified_ui true
         '';
       };
-    }
-    // (mkWritableConfig.xdg "herdr/config.toml" ../config/herdr/config.toml { });
+    };
+
+    writableConfigFile."herdr/config.toml".source = ../config/herdr/config.toml;
   };
 }

@@ -8,15 +8,9 @@
   ...
 }:
 
-let
-  hmLib = import ./lib.nix { inherit config lib; };
-in
 {
-  _module.args = {
-    inherit (hmLib) mkWritableConfig;
-  };
-
   imports = [
+    ./writable-config.nix
     ./bash.nix
     ./zsh.nix
     ./ssh.nix
