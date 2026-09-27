@@ -101,4 +101,4 @@ It maybe occurred with home-manager module and manually specified `pkgs.*`, try 
 
 To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, SSH), a pattern is used involving `onChange`.
 
-A helper `hmInit` in `home-manager/lib.nix` that automates this pattern. See the comments in that file for more details.
+A module in `home-manager/writable-config.nix` automates this pattern. See the comments in that file for more details.
