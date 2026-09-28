@@ -5,9 +5,7 @@
 }:
 
 let
-  # Alternative global dprint
-  #   - https://github.com/dprint/dprint/issues/355
-  #   - https://github.com/dprint/dprint-vscode/issues/13
+  # Global dprint: https://github.com/dprint/dprint/issues/355
   mkDprint =
     # Helix expands `%{buffer_name}` to the path of the active buffer.
     # We can pass an extension (e.g. "json") or `%{buffer_name}` to help dprint detect the file type.
@@ -15,8 +13,6 @@ let
       command = lib.getExe pkgs.unstable.dprint;
       args = [
         "fmt"
-        "--config"
-        "${../dprint.jsonc}"
         "--stdin"
         pathOrExtension
       ];
