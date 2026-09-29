@@ -56,7 +56,7 @@
     "npm:@dprint/markdown@0.24.0",
     "npm:@dprint/toml@0.8.0",
     "npm:@dprint/dockerfile@0.6.0",
-    "npm:@dprint/ruff@0.8.9",
+    "npm:@dprint/ruff@0.9.0",
     "npm:dprint-plugin-markup@0.27.5",
     "npm:dprint-plugin-yaml@0.6.0",
     "npm:@kachick/dprint-plugin-nix@0.1.1",
