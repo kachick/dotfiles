@@ -13,12 +13,6 @@
       "remove_trailing_whitespace_on_save": false
     },
     "Nix": {
-      "formatter": {
-        "external": {
-          "command": "nixfmt",
-          "arguments": ["-"]
-        }
-      },
       "inlay_hints": {
         "enabled": true
       }
