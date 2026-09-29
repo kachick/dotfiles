@@ -58,13 +58,26 @@
         unstable.nix-tree
 
         unstable.somo
-        unstable.typescript_7
         unstable.typos
         hyperfine
         riffdiff # `riff`
         gnumake
         unstable.betterleaks
         nushell
+
+        # For editors
+        # Looks like required to enable gopls
+        unstable.go_1_27
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
+        unstable.gopls
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
+        golangci-lint-langserver
+        unstable.typescript_7
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
+        marksman
+        mpls
+        # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
+        vscode-langservers-extracted
       ])
       ++ (with pkgs.local; [
         fzf-bind-posix-shell-history-to-git-commit-message

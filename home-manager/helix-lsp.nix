@@ -25,13 +25,15 @@ in
     languages = {
       # How to check the LSP log for debugging: https://github.com/helix-editor/helix/discussions/7203
       # `tail --follow ~/.cache/helix/helix.log`
+      #
+      # NOTE: Don't use `command = lib.getExe ...` for the same reason as extraPackages. Install them via dev.nix
       language-server = {
         # Helix cannot set global LSP.
         # - https://github.com/helix-editor/helix/discussions/8850
         # - https://github.com/helix-editor/helix/issues/12721
         # So required to manually merge language-servers for each language
         typos = {
-          command = lib.getExe pkgs.unstable.typos-lsp;
+          command = "typos-lsp";
           config.config = "${../typos.toml}";
         };
 
@@ -46,7 +48,7 @@ in
 
         # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241
         mpls = {
-          command = lib.getExe pkgs.mpls;
+          command = "mpls";
           args = [
             "--no-auto"
             "--code-style"
@@ -58,7 +60,7 @@ in
         };
 
         tsc = {
-          command = lib.getExe pkgs.unstable.typescript_7;
+          command = "tsc";
           args = [
             "--lsp"
             "--stdio"
@@ -180,73 +182,20 @@ in
 
     # Locally injected versions are preferred: https://github.com/nix-community/home-manager/pull/5208
     # If we can use the package in another editor or other tools, it might be better to be in home.packages
-    extraPackages = with pkgs; [
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
-      nil
-      # nixd
+    # Adding here means I should use heavy toolsets even if the host is not for development purpose.
+    extraPackages = with pkgs.unstable; [
+      # TODO: Add shuck for lightweight alternative for bash-language-server
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L925
-      # bash-language-server
+      typos-lsp
 
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L207
-      rust-analyzer
+      # Used even in nixpkgs: https://github.com/NixOS/nixpkgs/commit/e9c59776b3d4824e13e9e0b9a96497bf18d0252a
+      nixd
 
-      # Looks like required to enable gopls
-      unstable.go_1_27
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
-      unstable.gopls
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
-      golangci-lint-langserver
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
-      marksman
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
-      vscode-langservers-extracted
-
-      unstable.rumdl
+      rumdl
 
       # Use unstable because it depends on external documents and bundled them.
       # See https://github.com/NixOS/nixpkgs/pull/567956 for detail
-      unstable.systemd-lsp
-
-      ## Not helpful. Didn't activated?
-      #
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1202
-      # yaml-language-server
-
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L271
-      # taplo
-
-      ## Keep minimum for global use. Inject in each project repositories if you need these
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
-      # typescript-language-server
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1547
-      # https://github.com/NixOS/nixpkgs/blob/733f5a9806175f86380b14529cb29e953690c148/pkgs/development/tools/language-servers/dockerfile-language-server-nodejs/default.nix#L28
-      # nodePackages.dockerfile-language-server-nodejs
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1651
-      # nodePackages.graphql-language-service-cli
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L509
-      # crystalline
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L870
-      # solargraph # Can we prefer steep here?
-
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1967
-      # nu-lsp
-
-      # # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1669
-      # elm-language-server
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1217
-      # haskell-language-server
-
-      # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1260
-      # zls
+      systemd-lsp
     ];
   };
 }
