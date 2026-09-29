@@ -1,4 +1,7 @@
-{ ... }:
+{
+  pkgs,
+  ...
+}:
 
 let
   # Global dprint: https://github.com/dprint/dprint/issues/355
@@ -6,7 +9,7 @@ let
     # Helix expands `%{buffer_name}` to the path of the active buffer.
     # We can pass an extension (e.g. "json") or `%{buffer_name}` to help dprint detect the file type.
     pathOrExtension: {
-      command = "dprint";
+      command = pkgs.unstable.dprint.meta.mainProgram;
       args = [
         "fmt"
         "--stdin"
@@ -22,21 +25,22 @@ in
       # How to check the LSP log for debugging: https://github.com/helix-editor/helix/discussions/7203
       # `tail --follow ~/.cache/helix/helix.log`
       #
-      # NOTE: Don't use `command = lib.getExe ...`. Install tools via editor.nix or dev.nix to share across tools.
+      # NOTE: Don't use `command = lib.getExe ...` because it hardcodes store paths into the closure.
+      # Use `pkg.meta.mainProgram` to reference the binary name from PATH without runtime dependencies.
       language-server = {
         # Helix cannot set global LSP.
         # - https://github.com/helix-editor/helix/discussions/8850
         # - https://github.com/helix-editor/helix/issues/12721
         # So required to manually merge language-servers for each language
         typos = {
-          command = "typos-lsp";
+          command = pkgs.unstable.typos-lsp.meta.mainProgram;
           config.config = "${../typos.toml}";
         };
 
         # TODO: Drop to use upstream definition once Helix released 26+:
         # https://github.com/helix-editor/helix/commit/14a8d46d41a31b05c5cef6bb90489a9dccce8950
         rumdl = {
-          command = "rumdl"; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
+          command = pkgs.unstable.rumdl.meta.mainProgram;
           args = [
             "server"
           ];
@@ -44,7 +48,7 @@ in
 
         # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241
         mpls = {
-          command = "mpls";
+          command = pkgs.mpls.meta.mainProgram;
           args = [
             "--no-auto"
             "--code-style"
@@ -56,7 +60,7 @@ in
         };
 
         tsc = {
-          command = "tsc";
+          command = pkgs.unstable.typescript_7.meta.mainProgram;
           args = [
             "--lsp"
             "--stdio"
