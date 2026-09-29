@@ -25,7 +25,8 @@ in
       # How to check the LSP log for debugging: https://github.com/helix-editor/helix/discussions/7203
       # `tail --follow ~/.cache/helix/helix.log`
       #
-      # NOTE: Don't use `command = lib.getExe ...` because it hardcodes store paths into the closure.
+      # NOTE: Don't use `command = lib.getExe ...` because it hardcodes store paths into the closure
+      # and ignores project devShells. Install tools via editor.nix or dev.nix to share across tools.
       # Use `pkg.meta.mainProgram` to reference the binary name from PATH without runtime dependencies.
       language-server = {
         # Helix cannot set global LSP.
@@ -40,7 +41,7 @@ in
         # TODO: Drop to use upstream definition once Helix released 26+:
         # https://github.com/helix-editor/helix/commit/14a8d46d41a31b05c5cef6bb90489a9dccce8950
         rumdl = {
-          command = pkgs.unstable.rumdl.meta.mainProgram;
+          command = pkgs.unstable.rumdl.meta.mainProgram; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
           args = [
             "server"
           ];
