@@ -35,6 +35,15 @@ in
           config.config = "${../typos.toml}";
         };
 
+        # TODO: Drop to use upstream definition once Helix released 26+:
+        # https://github.com/helix-editor/helix/commit/14a8d46d41a31b05c5cef6bb90489a9dccce8950
+        rumdl = {
+          command = "rumdl"; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
+          args = [
+            "server"
+          ];
+        };
+
         # https://github.com/mhersson/mpls/blob/v0.16.0/README.md?plain=1#L218-L241
         mpls = {
           command = lib.getExe pkgs.mpls;
@@ -112,7 +121,7 @@ in
           language-servers = [
             "marksman"
             "mpls"
-            # "rumdl" # TODO: Make it possible to use rumdl here
+            "rumdl"
             "typos"
           ];
         }
@@ -169,6 +178,8 @@ in
       ];
     };
 
+    # Locally injected versions are preferred: https://github.com/nix-community/home-manager/pull/5208
+    # If we can use the package in another editor or other tools, it might be better to be in home.packages
     extraPackages = with pkgs; [
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L714
       nil
@@ -192,6 +203,8 @@ in
 
       # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
       vscode-langservers-extracted
+
+      unstable.rumdl
 
       # https://github.com/helix-editor/helix/blob/25.07.1/languages.toml#L115
       systemd-lsp
