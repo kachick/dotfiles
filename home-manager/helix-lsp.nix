@@ -5,13 +5,13 @@
 
 let
   # Global dprint: https://github.com/dprint/dprint/issues/355
-  # Helix expands `%{buffer_name}` to the path of the active buffer.
-  # dprint automatically detects the file type from the file path.
   dprint = {
     command = pkgs.unstable.dprint.meta.mainProgram;
     args = [
       "fmt"
       "--stdin"
+      # Helix expands `%{buffer_name}` to the path of the active buffer.
+      # dprint automatically detects the file type from the file path.
       "%{buffer_name}"
     ];
   };
