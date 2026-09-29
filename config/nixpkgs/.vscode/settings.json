@@ -1,0 +1,13 @@
+{
+  "editor.formatOnSave": true,
+  "[nix]": {
+    // Avoid dprint-plugin-nix for these upstream repositories
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
+  // nixpkgs enables it only in devcontainer:
+  // https://github.com/NixOS/nixpkgs/blob/63e1af0a91258b05babd3c3645cba48173eb7a3b/.devcontainer/devcontainer.json#L27
+  "nix.serverPath": "nixd",
+  "nix.enableLanguageServer": true,
+  // Using rumdl global often made noise here
+  "rumdl.enable": false
+}
