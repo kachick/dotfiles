@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}:
+{ ... }:
 
 let
   # Global dprint: https://github.com/dprint/dprint/issues/355
@@ -10,7 +6,7 @@ let
     # Helix expands `%{buffer_name}` to the path of the active buffer.
     # We can pass an extension (e.g. "json") or `%{buffer_name}` to help dprint detect the file type.
     pathOrExtension: {
-      command = lib.getExe pkgs.unstable.dprint;
+      command = "dprint";
       args = [
         "fmt"
         "--stdin"
@@ -26,7 +22,7 @@ in
       # How to check the LSP log for debugging: https://github.com/helix-editor/helix/discussions/7203
       # `tail --follow ~/.cache/helix/helix.log`
       #
-      # NOTE: Don't use `command = lib.getExe ...` for the same reason as extraPackages. Install them via dev.nix
+      # NOTE: Don't use `command = lib.getExe ...`. Install tools via editor.nix or dev.nix to share across tools.
       language-server = {
         # Helix cannot set global LSP.
         # - https://github.com/helix-editor/helix/discussions/8850
@@ -179,25 +175,5 @@ in
         }
       ];
     };
-
-    # Prefer home.packages in dev.nix for general development language servers (Go, TS, etc.)
-    # to share them with other editors (like Zed) via PATH.
-    # Keep lightweight, system-maintenance language servers here so they remain available
-    # for editing system configurations without full language toolchains.
-    #
-    # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
-    # so a global rust-analyzer is rarely useful outside repositories.
-    extraPackages = with pkgs.unstable; [
-      # TODO: Add shuck for lightweight alternative for bash-language-server
-
-      # Used even in nixpkgs: https://github.com/NixOS/nixpkgs/commit/e9c59776b3d4824e13e9e0b9a96497bf18d0252a
-      nixd
-
-      rumdl
-
-      # Use unstable because it depends on external documents and bundled them.
-      # See https://github.com/NixOS/nixpkgs/pull/567956 for detail
-      systemd-lsp
-    ];
   };
 }

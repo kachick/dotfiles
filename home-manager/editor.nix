@@ -20,6 +20,12 @@
   xdg.writableConfigFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
 
   home = {
+    packages = with pkgs.unstable; [
+      # Keep editor tools here strictly minimal to keep disk usage small on non-development hosts like VPS.
+      # General language servers belong in dev.nix.
+      dprint
+    ];
+
     sessionVariables = {
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference

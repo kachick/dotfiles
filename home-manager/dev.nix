@@ -8,7 +8,6 @@
     ./essential.nix
     ./encryption.nix
     ./git.nix
-    ./helix-lsp.nix
     ./telemetry.nix
   ];
 
@@ -38,7 +37,6 @@
         yazi
         hexyl # hex viewer
         sad
-        unstable.dprint
 
         # Keybindigs: https://git.sr.ht/~bptato/chawan/tree/master/item/res/config.toml
         # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562
@@ -79,6 +77,11 @@
         mpls
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
         vscode-langservers-extracted
+        unstable.nixd
+        unstable.rumdl
+        unstable.systemd-lsp
+        # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
+        # so a global rust-analyzer is rarely useful outside repositories.
       ])
       ++ (with pkgs.local; [
         fzf-bind-posix-shell-history-to-git-commit-message

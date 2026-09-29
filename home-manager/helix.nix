@@ -5,11 +5,21 @@
 }:
 
 {
+  imports = [
+    ./helix-lsp.nix
+  ];
+
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/helix.nix
   # keybinds: https://docs.helix-editor.com/keymap.html
   programs.helix = {
     # Enabling this may cause collisions. Do not add in packages list
     enable = true;
+
+    # Why not programs.helix.extraPackages?
+    # extraPackages wraps the Helix binary with a private PATH suffix, making language servers
+    # hidden from other tools.
+    # We prefer regular packages in editor.nix or dev.nix so tools (dprint, gopls, etc.)
+    # are shared across all editors (Helix, Zed) and terminal CLI via standard PATH.
 
     settings = {
       theme = "base16_transparent";
