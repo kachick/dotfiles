@@ -180,13 +180,15 @@ in
       ];
     };
 
-    # Locally injected versions are preferred: https://github.com/nix-community/home-manager/pull/5208
-    # If we can use the package in another editor or other tools, it might be better to be in home.packages
-    # Adding here means I should use heavy toolsets even if the host is not for development purpose.
+    # Prefer home.packages in dev.nix for general development language servers (Go, TS, etc.)
+    # to share them with other editors (like Zed) via PATH.
+    # Keep lightweight, system-maintenance language servers here so they remain available
+    # for editing system configurations without full language toolchains.
+    #
+    # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
+    # so a global rust-analyzer is rarely useful outside repositories.
     extraPackages = with pkgs.unstable; [
       # TODO: Add shuck for lightweight alternative for bash-language-server
-
-      typos-lsp
 
       # Used even in nixpkgs: https://github.com/NixOS/nixpkgs/commit/e9c59776b3d4824e13e9e0b9a96497bf18d0252a
       nixd

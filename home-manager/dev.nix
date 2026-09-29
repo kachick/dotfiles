@@ -66,6 +66,7 @@
         nushell
 
         # For editors
+        unstable.typos-lsp
         # Looks like required to enable gopls
         unstable.go_1_27
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
