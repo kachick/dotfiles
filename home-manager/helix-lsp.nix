@@ -169,7 +169,7 @@ in
         {
           name = "typescript";
           auto-format = true;
-          formatter = mkDprint "typescript";
+          formatter = mkDprint "ts";
           language-servers = [
             "tsc"
             "typos"
