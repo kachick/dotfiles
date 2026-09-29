@@ -206,8 +206,9 @@ in
 
       unstable.rumdl
 
-      # https://github.com/helix-editor/helix/blob/25.07.1/languages.toml#L115
-      systemd-lsp
+      # Use unstable because it depends on external documents and bundled them.
+      # See https://github.com/NixOS/nixpkgs/pull/567956 for detail
+      unstable.systemd-lsp
 
       ## Not helpful. Didn't activated?
       #
