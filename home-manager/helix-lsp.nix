@@ -5,17 +5,16 @@
 
 let
   # Global dprint: https://github.com/dprint/dprint/issues/355
-  mkDprint =
-    # Helix expands `%{buffer_name}` to the path of the active buffer.
-    # We can pass an extension (e.g. "json") or `%{buffer_name}` to help dprint detect the file type.
-    pathOrExtension: {
-      command = pkgs.unstable.dprint.meta.mainProgram;
-      args = [
-        "fmt"
-        "--stdin"
-        pathOrExtension
-      ];
-    };
+  # Helix expands `%{buffer_name}` to the path of the active buffer.
+  # dprint automatically detects the file type from the file path.
+  dprint = {
+    command = pkgs.unstable.dprint.meta.mainProgram;
+    args = [
+      "fmt"
+      "--stdin"
+      "%{buffer_name}"
+    ];
+  };
 in
 {
   programs.helix = {
@@ -82,8 +81,8 @@ in
           name = "bash";
           auto-format = true;
           # Helix has no built-in "zsh" language. It handles zsh files (like .zsh and .zshrc) under "bash".
-          # We pass %{buffer_name} so dprint can detect bash or zsh from the file path.
-          formatter = mkDprint "%{buffer_name}";
+          # Passing %{buffer_name} lets dprint detect bash or zsh from the file path.
+          formatter = dprint;
           language-servers = [
             # "bash-language-server"
             "typos"
@@ -92,7 +91,7 @@ in
         {
           name = "nix";
           auto-format = true;
-          formatter = mkDprint "nix";
+          formatter = dprint;
           language-servers = [
             "nil" # Not using thesedays, however kept with helix default
             "nixd"
@@ -102,7 +101,7 @@ in
         {
           name = "json";
           auto-format = true;
-          formatter = mkDprint "json";
+          formatter = dprint;
           language-servers = [
             "vscode-json-language-server"
             "typos"
@@ -111,7 +110,7 @@ in
         {
           name = "jsonc";
           auto-format = true;
-          formatter = mkDprint "jsonc";
+          formatter = dprint;
           language-servers = [
             "vscode-json-language-server"
             "typos"
@@ -120,7 +119,7 @@ in
         {
           name = "markdown";
           auto-format = true;
-          formatter = mkDprint "md";
+          formatter = dprint;
           language-servers = [
             "marksman"
             "mpls"
@@ -131,7 +130,7 @@ in
         {
           name = "yaml";
           auto-format = true;
-          formatter = mkDprint "yml";
+          formatter = dprint;
           language-servers = [
             "yaml-language-server"
             "ansible-language-server"
@@ -141,7 +140,7 @@ in
         {
           name = "toml";
           auto-format = true;
-          formatter = mkDprint "toml";
+          formatter = dprint;
           language-servers = [
             "taplo"
             "typos"
@@ -156,7 +155,7 @@ in
         }
         {
           name = "go";
-          formatter = mkDprint "go";
+          formatter = dprint;
           language-servers = [
             "gopls"
             "golangci-lint-lsp"
@@ -166,13 +165,13 @@ in
         {
           name = "kdl";
           auto-format = true;
-          formatter = mkDprint "kdl";
+          formatter = dprint;
           language-servers = [ "typos" ];
         }
         {
           name = "typescript";
           auto-format = true;
-          formatter = mkDprint "typescript";
+          formatter = dprint;
           language-servers = [
             "tsc"
             "typos"
