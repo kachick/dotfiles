@@ -13,8 +13,28 @@
   "[yaml]": {
     "editor.defaultFormatter": "dprint.dprint"
   },
+  "[nix]": {
+    // "dprint.dprint" is often ignored for Nix, so explicitly set dprint formatting in the Nix extension.
+    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  },
   "nix.serverPath": "nixd",
   "nix.enableLanguageServer": true,
+  // To prefer dprint over nixfmt, we should override LS settings here.
+  // Because nix.formatterPath does not work if we use `enableLanguageServer`
+  "nix.serverSettings": {
+    "nil": {
+      "formatting": {
+        "command": ["dprint", "fmt", "--stdin", "nix"]
+      }
+    },
+    "nixd": {
+      "formatting": {
+        "command": ["dprint", "fmt", "--stdin", "nix"]
+      }
+    }
+  },
+  // Fallback or just a note for no LS
+  "nix.formatterPath": ["dprint", "fmt", "--stdin", "nix"],
   "gopls": {
     // Use dprint once https://github.com/golang/go/issues/74678 is resolved
     "formatting.gofumpt": true,
