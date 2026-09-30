@@ -2,6 +2,8 @@
   lib,
   pkgs,
   fetchFromGitHub,
+  fetchpatch2,
+  versionCheckHook,
   nix-update-script,
 }:
 
@@ -31,6 +33,14 @@ buildGo127Module (finalAttrs: {
       --replace-fail 'return info.Main.Version' 'return "v${finalAttrs.version}"'
   '';
 
+  patches = [
+    (fetchpatch2 {
+      name = "add-version-flag.patch";
+      url = "https://patch-diff.githubusercontent.com/raw/github/gh-actions-lock/pull/135.patch?full_index=1";
+      hash = "sha256-LbNkIY5NOfM37G6n59wE9kgCJh1BhfR+bMUTeK0tW5g=";
+    })
+  ];
+
   vendorHash = "sha256-AYrg81SYC2JBpRZgG8O9R5ymCAsX8hsipwoSS1mP/Uc=";
 
   ldflags = [
@@ -43,13 +53,10 @@ buildGo127Module (finalAttrs: {
   # ref: https://github.com/NixOS/nix/pull/1646
   __darwinAllowLocalNetworking = true;
 
-  # Cannot use versionCheckHook because there is no flag to show the CLI version.
-  # "--no-fix --json" shows it, but it requires a real GitHub account.
-  installCheckPhase = ''
-    runHook preInstallCheck
-    "$out/bin/${finalAttrs.meta.mainProgram}" --help
-    runHook postInstallCheck
-  '';
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+  doInstallCheck = true;
 
   passthru = {
     updateScript = nix-update-script {
