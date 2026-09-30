@@ -32,6 +32,10 @@ buildGo127Module (finalAttrs: {
 
   env.CGO_ENABLED = "0";
 
+  # Workaround for: panic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted
+  # ref: https://github.com/NixOS/nix/pull/1646
+  __darwinAllowLocalNetworking = true;
+
   # Avoid versionCheckHook because displaying the version requires the gh command.
   installCheckPhase = ''
     runHook preInstallCheck
@@ -58,5 +62,6 @@ buildGo127Module (finalAttrs: {
       kachick
     ];
     mainProgram = "gh-actions-lock";
+    platforms = with lib.platforms; unix ++ windows;
   };
 })
