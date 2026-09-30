@@ -24,6 +24,13 @@ buildGo127Module (finalAttrs: {
     hash = "sha256-OqxkuQPM0JwhTLWUgeNdaMRDj2uuAX/dGEDyanJV8iY=";
   };
 
+  # debug.ReadBuildInfo does not provide version information in buildGoModule.
+  # Keep the upstream "v" prefix format because the "--json" includes it.
+  postPatch = ''
+    substituteInPlace cmd/gh-actions-lock/run.go \
+      --replace-fail 'return info.Main.Version' 'return "v${finalAttrs.version}"'
+  '';
+
   vendorHash = "sha256-AYrg81SYC2JBpRZgG8O9R5ymCAsX8hsipwoSS1mP/Uc=";
 
   ldflags = [
@@ -36,13 +43,13 @@ buildGo127Module (finalAttrs: {
   # ref: https://github.com/NixOS/nix/pull/1646
   __darwinAllowLocalNetworking = true;
 
-  # Avoid versionCheckHook because displaying the version requires the gh command.
+  # Cannot use versionCheckHook because there is no flag to show the CLI version.
+  # "--no-fix --json" shows it, but it requires a real GitHub account.
   installCheckPhase = ''
     runHook preInstallCheck
     "$out/bin/${finalAttrs.meta.mainProgram}" --help
     runHook postInstallCheck
   '';
-  doInstallCheck = true;
 
   passthru = {
     updateScript = nix-update-script {
