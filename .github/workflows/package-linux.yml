@@ -99,3 +99,6 @@ jobs:
 
           - name: Build package - zed-editor
             run: go run ./cmd/ci-build package zed-editor --skip-tests
+
+          - name: Build package - gh-actions-lock
+            run: go run ./cmd/ci-build package gh-actions-lock
