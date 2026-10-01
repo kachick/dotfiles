@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos> [options] [args]")
+		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|sync-workflows> [options] [args]")
 		os.Exit(1)
 	}
 
@@ -28,8 +28,13 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
+	case "sync-workflows":
+		if err := runSyncWorkflows(os.Args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos> [options] [args]\n", subcommand)
+		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|sync-workflows> [options] [args]\n", subcommand)
 		os.Exit(1)
 	}
 }

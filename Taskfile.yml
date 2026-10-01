@@ -137,11 +137,25 @@ tasks:
     cmds:
       - ./dist/lint -all
 
+  sync-workflows:
+    aliases:
+      - sync-packages
+    desc: Synchronize workflow files with packages.toml
+    cmds:
+      - go run ./cmd/ci-build sync-workflows
+      - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
+
+  check-sync-workflows:
+    internal: true
+    cmds:
+      - go run ./cmd/ci-build sync-workflows --check
+
   check:
     deps:
       - 'build-cmd'
       - 'test'
       - 'lint-all'
+      - 'check-sync-workflows'
 
   update:
     desc: Bump dependencies

@@ -33,11 +33,13 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - lima
-          - conoha-cli
+          # BEGIN MANAGED PACKAGES
           - antigravity-cli
-          - gh-actions-lock
+          - conoha-cli
           - filen-cli-rs
+          - gh-actions-lock
+          - lima
+          # END MANAGED PACKAGES
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:

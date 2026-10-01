@@ -1,0 +1,25 @@
+# Package metadata for CI builds and automated updates.
+#
+# NOTE: Binary caching (Cachix) is automatically handled by `cmd/ci-build` based on licenses.
+# Do NOT configure caching flags here.
+
+[packages]
+antigravity-cli = { build = true, test = true, update = true }
+archive-home-files = { build = true, test = true, update = false }
+conoha-cli = { build = true, test = true, update = true }
+filen-cli-rs = { build = true, test = true, update = true }
+gh-actions-lock = { build = true, test = true, update = true }
+git-hooks-pre-push = { build = true, test = true, update = false }
+hcpu_shogi = { build = true, test = true, update = false }
+ibm-plex-mono = { build = true, test = true, update = false }
+ibm-plex-sans-jp = { build = true, test = true, update = false }
+ibm-plex-serif-variable = { build = true, test = true, update = false }
+ibus-engine-selector = { build = true, test = true, update = false }
+kanata-tray = { build = true, test = true, update = false }
+lima = { build = false, test = false, update = true }
+lima-full = { build = true, test = true, update = false }
+mozc = { build = true, test = true, update = false }
+nix-diff = { build = true, test = true, update = false }
+reponame = { build = true, test = true, update = false }
+yaneuraou-avx2 = { build = true, test = true, update = false }
+zed-editor = { build = true, test = false, update = false }
