@@ -45,29 +45,13 @@ func runSyncWorkflows(args []string) error {
 		return fmt.Errorf("loading packages.toml: %w", err)
 	}
 
-	// 1. Generate package-linux.yml parallel steps
 	sortedNames := make([]string, 0, len(packagesFile.Packages))
 	for name := range packagesFile.Packages {
 		sortedNames = append(sortedNames, name)
 	}
 	sort.Strings(sortedNames)
 
-	var packageLinuxEntries []string
-	for _, name := range sortedNames {
-		cfg := packagesFile.Packages[name]
-		if !cfg.Build {
-			continue
-		}
-		cmd := fmt.Sprintf("go run ./cmd/ci-build package %s", name)
-		if !cfg.Test {
-			cmd += " --skip-tests"
-		}
-		entry := fmt.Sprintf("          - name: %s\n            run: %s", name, cmd)
-		packageLinuxEntries = append(packageLinuxEntries, entry)
-	}
-	packageLinuxBlock := strings.Join(packageLinuxEntries, "\n\n")
-
-	// 2. Generate update-local-packages.yml matrix entries
+	// Generate update-local-packages.yml matrix entries
 	var updateEntries []string
 	for _, name := range sortedNames {
 		cfg := packagesFile.Packages[name]
@@ -82,7 +66,6 @@ func runSyncWorkflows(args []string) error {
 		relPath string
 		content string
 	}{
-		{relPath: ".github/workflows/package-linux.yml", content: packageLinuxBlock},
 		{relPath: ".github/workflows/update-local-packages.yml", content: updateBlock},
 	}
 

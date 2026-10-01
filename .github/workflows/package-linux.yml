@@ -10,6 +10,7 @@ on:
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
+      - 'packages.toml'
       - '!**.md'
   pull_request:
     paths:
@@ -19,6 +20,7 @@ on:
       - 'pkgs/**'
       - 'flake.lock'
       - 'overlays/**'
+      - 'packages.toml'
       - '!**.md'
   schedule:
     # Every 10:42 JST
@@ -51,59 +53,5 @@ jobs:
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skip-push: true
-      - parallel:
-          # BEGIN MANAGED PACKAGES
-          - name: antigravity-cli
-            run: go run ./cmd/ci-build package antigravity-cli
-
-          - name: archive-home-files
-            run: go run ./cmd/ci-build package archive-home-files
-
-          - name: conoha-cli
-            run: go run ./cmd/ci-build package conoha-cli
-
-          - name: filen-cli-rs
-            run: go run ./cmd/ci-build package filen-cli-rs
-
-          - name: gh-actions-lock
-            run: go run ./cmd/ci-build package gh-actions-lock
-
-          - name: git-hooks-pre-push
-            run: go run ./cmd/ci-build package git-hooks-pre-push
-
-          - name: hcpu_shogi
-            run: go run ./cmd/ci-build package hcpu_shogi
-
-          - name: ibm-plex-mono
-            run: go run ./cmd/ci-build package ibm-plex-mono
-
-          - name: ibm-plex-sans-jp
-            run: go run ./cmd/ci-build package ibm-plex-sans-jp
-
-          - name: ibm-plex-serif-variable
-            run: go run ./cmd/ci-build package ibm-plex-serif-variable
-
-          - name: ibus-engine-selector
-            run: go run ./cmd/ci-build package ibus-engine-selector
-
-          - name: kanata-tray
-            run: go run ./cmd/ci-build package kanata-tray
-
-          - name: lima-full
-            run: go run ./cmd/ci-build package lima-full
-
-          - name: mozc
-            run: go run ./cmd/ci-build package mozc
-
-          - name: nix-diff
-            run: go run ./cmd/ci-build package nix-diff
-
-          - name: reponame
-            run: go run ./cmd/ci-build package reponame
-
-          - name: yaneuraou-avx2
-            run: go run ./cmd/ci-build package yaneuraou-avx2
-
-          - name: zed-editor
-            run: go run ./cmd/ci-build package zed-editor --skip-tests
-          # END MANAGED PACKAGES
+      - name: Build and push packages
+        run: go run ./cmd/ci-build packages

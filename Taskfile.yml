@@ -143,7 +143,7 @@ tasks:
     desc: Synchronize workflow files with packages.toml
     cmds:
       - go run ./cmd/ci-build sync-workflows
-      - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
+      - dprint fmt .github/workflows/update-local-packages.yml
 
   check-sync-workflows:
     internal: true
