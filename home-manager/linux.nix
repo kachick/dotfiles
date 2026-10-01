@@ -73,6 +73,7 @@
         rclone-list-mounted
         rclone-mount
         rclone-fzf
+        filen-cli-rs
       ]);
   };
 
