@@ -102,3 +102,6 @@ jobs:
 
           - name: Build package - gh-actions-lock
             run: go run ./cmd/ci-build package gh-actions-lock
+
+          - name: Build package - filen-cli-rs
+            run: go run ./cmd/ci-build package filen-cli-rs
