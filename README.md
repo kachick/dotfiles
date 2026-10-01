@@ -1,9 +1,8 @@
 # dotfiles
 
-[![~/ on Linux](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml?query=branch%3Amain+)
+[![CI](https://github.com/kachick/dotfiles/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci.yml?query=branch%3Amain+)
 [![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
 [![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
-[![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml?query=branch%3Amain+)
 [![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 [![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
