@@ -30,7 +30,6 @@
     ]
   },
   "kdl": {
-    "kdlVersion": "v1"
   },
   "gofumpt": {
     "langVersion": "go1.27",
