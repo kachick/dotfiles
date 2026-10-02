@@ -30,7 +30,6 @@
     ]
   },
   "kdl": {
-    "kdlVersion": "v1"
   },
   "gofumpt": {
     "langVersion": "go1.27",
@@ -44,7 +43,7 @@
     "npm:@dprint/markdown@0.25.0",
     "npm:@dprint/toml@0.8.0",
     "npm:dprint-plugin-yaml@0.6.0",
-    "npm:@kachick/dprint-plugin-kdl@0.4.1",
+    "npm:@kachick/dprint-plugin-kdl@0.4.2",
     "npm:@dprint/dockerfile@0.6.0",
     "npm:@kachick/dprint-plugin-nix@0.1.1",
     "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18",
