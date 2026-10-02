@@ -70,19 +70,17 @@ code() {
   - Clears all CLI warnings immediately.
   - Desktop entries (`.desktop`) still run with `NIXOS_OZONE_WL=1`, keeping IME flags intact.
 
-### Approach 2: Clean up duplicate flags in Nix configuration
+### Approach 2: Use Plain `pkgs.vscode` Without Overrides
 
-In `nixos/desktop/unfree.nix`, `commandLineArgs` has `--wayland-text-input-version=3` and `--password-store=gnome-libsecret`.
+In `nixos/desktop/unfree.nix`, `vscode` previously used both `vscode.override` and `overrideAttrs`. Both are no longer needed:
 
-- `--wayland-text-input-version=3` is already added by Nixpkgs `generic.nix`, so it is duplicated.
-- `--password-store=gnome-libsecret` can move to `~/.vscode/argv.json` (see template in `config/vscode/argv.json`):
-  ```json
-  {
-    "password-store": "gnome-libsecret"
-  }
-  ```
+1. `commandLineArgs`:
+   - `--wayland-text-input-version=3` was redundant because Nixpkgs `generic.nix` already adds it when `NIXOS_OZONE_WL` is set.
+   - `--password-store=gnome-libsecret` can be set in `~/.vscode/argv.json` (see template in `config/vscode/argv.json`).
+2. `overrideAttrs` (`runtimeDependencies` with `libsecret`):
+   - Redundant because Nixpkgs `generic.nix` has included `libsecret` in `runtimeDependencies` by default since August 2023 (commit `ed2f5f18292f`).
 
-With this change, `commandLineArgs` only needs `--password-store` (or can be empty once moved to `argv.json`).
+Therefore, `nixos/desktop/unfree.nix` can simply use plain `vscode`.
 
 ### Approach 3: Override the Nixpkgs wrapper
 
