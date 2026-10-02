@@ -75,14 +75,14 @@ code() {
 In `nixos/desktop/unfree.nix`, `commandLineArgs` has `--wayland-text-input-version=3` and `--password-store=gnome-libsecret`.
 
 - `--wayland-text-input-version=3` is already added by Nixpkgs `generic.nix`, so it is duplicated.
-- `--password-store=gnome-libsecret` can move to `~/.vscode/argv.json`:
+- `--password-store=gnome-libsecret` can move to `~/.vscode/argv.json` (see template in `config/vscode/argv.json`):
   ```json
   {
     "password-store": "gnome-libsecret"
   }
   ```
 
-With this change, `commandLineArgs` can be empty.
+With this change, `commandLineArgs` only needs `--password-store` (or can be empty once moved to `argv.json`).
 
 ### Approach 3: Override the Nixpkgs wrapper
 

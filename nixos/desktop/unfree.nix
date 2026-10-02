@@ -17,10 +17,9 @@
     #   - https://github.com/archlinux/svntogit-community/commit/c8bf3ae2e3deab793cb8e8544250ef943d14c85e
     (
       (vscode.override {
-        # https://wiki.archlinux.org/title/Wayland#Electron
-        # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
+        # Note: Nixpkgs generic.nix already adds `--wayland-text-input-version=3` when NIXOS_OZONE_WL is set.
+        # See ./config/vscode/NOTE.md for background and details.
         commandLineArgs = [
-          "--wayland-text-input-version=3"
           # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/vs/platform/encryption/common/encryptionService.ts#L28-L71
           # https://github.com/microsoft/vscode/blob/5655a12f6af53c80ac9a3ad085677d6724761cab/src/main.ts#L244-L253
           "--password-store=gnome-libsecret" # Required for GitHub Authentication. For example gnome-keyring, kwallet5, KeepassXC, pass-secret-service
