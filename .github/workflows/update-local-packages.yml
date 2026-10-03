@@ -120,7 +120,7 @@ jobs:
               echo "${PACKAGE}: ${old_version} -> ${new_version}" > "${msg_file}"
             fi
           else
-            nix-update --flake "${PACKAGE}" --write-commit-message "${msg_file}"
+            nix-update --flake "${PACKAGE}" --use-update-script --write-commit-message "${msg_file}"
           fi
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
