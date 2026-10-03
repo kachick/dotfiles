@@ -25,7 +25,7 @@ let
 in
 buildGo127Module (finalAttrs: {
   pname = "lima";
-  version = "2.2.0";
+  version = "2.2.1";
 
   __structuredAttrs = true;
 
@@ -33,10 +33,10 @@ buildGo127Module (finalAttrs: {
     owner = "lima-vm";
     repo = "lima";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-4Wi+YzMdEN263jeBefEvizlF2k+nLVq3+AHyqagUeHw=";
+    hash = "sha256-2cqfQIB9FpI/PicH7P9fhtqHCnWosvWB3t2M+A2HhoA=";
   };
 
-  vendorHash = "sha256-gD9C0kupcEWCsU0nYOg+VcBCWR0oRf6Gaw0DDn0xits=";
+  vendorHash = "sha256-/6UZst+H/D0Dw1q/YTUZMN1jhCkZI1/vKuGQgrgy808=";
 
   nativeBuildInputs = [
     makeWrapper
