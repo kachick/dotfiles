@@ -1,8 +1,14 @@
-{
-  system ? builtins.currentSystem,
-  ...
-}:
-let
-  pkgs = import ./default.nix { inherit system; };
-in
-(import ./devShells.nix { inherit pkgs; }).default
+(import
+  (
+    let
+      lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+    in
+    fetchTarball {
+      url = "https://github.com/NixOS/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+      sha256 = lock.nodes.flake-compat.locked.narHash;
+    }
+  )
+  {
+    src = ./.;
+  }
+).shellNix

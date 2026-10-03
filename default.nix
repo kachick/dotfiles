@@ -1,29 +1,14 @@
-{
-  system ? builtins.currentSystem,
-  ...
-}:
-let
-  lock = builtins.fromJSON (builtins.readFile ./flake.lock);
-  nixpkgs-unstable = fetchTarball {
-    url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-    sha256 = lock.nodes.nixpkgs-unstable.locked.narHash;
-  };
-  pkgs =
-    import
-      (fetchTarball {
-        url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
-        sha256 = lock.nodes.nixpkgs.locked.narHash;
-      })
-      {
-        inherit system;
-        overlays = [
-          (import ./overlays/unstable.nix nixpkgs-unstable)
-          (import ./overlays/local.nix)
-        ];
-      };
-  allPkgs = pkgs.local // pkgs;
-in
-allPkgs
-// {
-  packages.${system} = allPkgs;
-}
+(import
+  (
+    let
+      lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+    in
+    fetchTarball {
+      url = "https://github.com/NixOS/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+      sha256 = lock.nodes.flake-compat.locked.narHash;
+    }
+  )
+  {
+    src = ./.;
+  }
+).defaultNix
