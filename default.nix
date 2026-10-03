@@ -21,5 +21,9 @@ let
           (import ./overlays/local.nix)
         ];
       };
+  allPkgs = pkgs.local // pkgs;
 in
-pkgs.local // pkgs
+allPkgs
+// {
+  packages.${system} = allPkgs;
+}
