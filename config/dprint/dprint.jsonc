@@ -53,7 +53,7 @@
   "plugins": [
     "npm:@dprint/typescript@0.96.1",
     "npm:@dprint/json@0.25.1",
-    "npm:@dprint/markdown@0.25.0",
+    "npm:@dprint/markdown@0.26.0",
     "npm:@dprint/toml@0.8.0",
     "npm:@dprint/dockerfile@0.6.0",
     "npm:@dprint/ruff@0.9.1",
