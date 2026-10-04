@@ -52,6 +52,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
+        # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+        "--flake"
         # Prefer filen-cli-releases over filen-rs to get the version.
         # - filen-rs is a monorepo with too many other tags (filen-js@*) that hide the target tags (filen-cli@v*).
         #   We can revisit once https://github.com/Mic92/nix-update/issues/231 is resolved.

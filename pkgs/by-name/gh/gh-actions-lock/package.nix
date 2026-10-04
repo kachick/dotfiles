@@ -61,6 +61,8 @@ buildGo127Module (finalAttrs: {
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
+        # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+        "--flake"
         "--use-github-releases"
         "--version-regex=^v([0-9.]+)$"
       ];
