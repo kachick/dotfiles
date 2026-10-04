@@ -20,6 +20,7 @@ lima = { build = false, test = false, update = true }
 lima-full = { build = true, test = true, update = false }
 mozc = { build = true, test = true, update = false }
 nix-diff = { build = true, test = true, update = false }
+nix-update = { build = true, test = true, update = false }
 reponame = { build = true, test = true, update = false }
 yaneuraou-avx2 = { build = true, test = true, update = false }
 zed-editor = { build = true, test = false, update = false }

@@ -26,6 +26,9 @@ in
     # Expose the patched mozc for CI building
     inherit (final) mozc;
 
+    # Expose the patched nix-update for CI building and workflows
+    inherit (final) nix-update;
+
     # Pinning home-manager from the flake input
     home-manager = home-manager-linux.packages.${system}.home-manager;
   };
