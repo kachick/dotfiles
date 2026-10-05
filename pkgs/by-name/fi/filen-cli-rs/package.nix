@@ -14,7 +14,7 @@ let
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "filen-cli-rs";
-  version = "0.2.8";
+  version = "0.2.9";
 
   __structuredAttrs = true;
 
@@ -22,10 +22,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "FilenCloudDienste";
     repo = "filen-rs";
     tag = "filen-cli@v${finalAttrs.version}";
-    hash = "sha256-aJOsstFXvfVZqdUu0T0hyec8vOIuU362DO+/4ufF2rE=";
+    hash = "sha256-OIqutQawSjowKp08A2pbsSLxHOmPESEWHi3Y/E2v0/Q=";
   };
 
-  cargoHash = "sha256-QChEPVDydJXZPm19rK4EnA9FwH62hZE6WBjQHCXJ/7E=";
+  cargoHash = "sha256-PNRj89hYOcBw1CsqWVn/HXtTQuz/afQq7ZwCzG7a16o=";
 
   buildAndTestSubdir = "filen-cli";
 
