@@ -61,7 +61,7 @@
     "npm:dprint-plugin-yaml@0.6.0",
     "npm:@kachick/dprint-plugin-nix@0.1.1",
     "npm:@kachick/dprint-plugin-sh@0.1.2",
-    "npm:@kachick/dprint-plugin-typstyle@0.5.1",
+    "npm:@kachick/dprint-plugin-typstyle@0.5.2",
     "npm:@kachick/dprint-plugin-kdl@0.4.2",
     "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18"
   ]
