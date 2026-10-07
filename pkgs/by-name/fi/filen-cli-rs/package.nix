@@ -2,6 +2,10 @@
   lib,
   fetchFromGitHub,
   pkgs,
+  pkg-config,
+  sqlite,
+  openssl,
+  zstd,
   versionCheckHook,
   nix-update-script,
 }:
@@ -29,6 +33,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   buildAndTestSubdir = "filen-cli";
 
+  nativeBuildInputs = [
+    pkg-config
+  ];
+
+  buildInputs = [
+    sqlite # libsqlite3-sys
+    openssl # openssl-sys
+    zstd # zstd-sys
+  ];
+
   env = {
     # Enable nightly features for higher-ranked-assumptions:
     # https://github.com/FilenCloudDienste/filen-rs/blob/29eb4bcd797229958dc0ef6ab12d9a8f8424b200/rust-toolchain.toml#L2
@@ -37,6 +51,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     # Upstream configures development-focused linker in .cargo/config.toml, but drops them in CD:
     # https://github.com/FilenCloudDienste/filen-rs/commit/29eb4bcd797229958dc0ef6ab12d9a8f8424b200
     RUSTFLAGS = "-Zhigher-ranked-assumptions";
+
+    LIBSQLITE3_SYS_USE_PKG_CONFIG = true;
+    OPENSSL_NO_VENDOR = true;
+    ZSTD_SYS_USE_PKG_CONFIG = true;
   };
 
   cargoTestFlags = [
