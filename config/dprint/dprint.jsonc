@@ -63,6 +63,6 @@
     "npm:@kachick/dprint-plugin-sh@0.1.2",
     "npm:@kachick/dprint-plugin-typstyle@0.5.2",
     "npm:@kachick/dprint-plugin-kdl@0.4.2",
-    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.18"
+    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.19"
   ]
 }
