@@ -8,18 +8,24 @@ on:
       - main
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows**'
-      - '**.go'
+      - '**windows**'
+      - 'cmd/winit-*/**'
+      - 'config/powershell/**'
+      - 'config/nushell/**'
+      - 'config/starship/**'
+      - 'config/alacritty/**'
       - 'go.*'
-      - 'config/**'
       - '!**.md'
   pull_request:
     paths:
       - '.github/workflows/windows.yml'
-      - 'windows**'
-      - '**.go'
+      - '**windows**'
+      - 'cmd/winit-*/**'
+      - 'config/powershell/**'
+      - 'config/nushell/**'
+      - 'config/starship/**'
+      - 'config/alacritty/**'
       - 'go.*'
-      - 'config/**'
       - '!**.md'
   workflow_dispatch:
 
