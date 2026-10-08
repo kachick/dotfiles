@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -17,6 +18,27 @@ var TyposConfigPath string
 
 // Spec of Git: https://git-scm.com/docs/githooks#_pre_push
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand>\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Subcommands:\n")
+		fmt.Fprintf(os.Stderr, "  betterleaks    Prevent secrets in commits (log and diff)\n")
+		fmt.Fprintf(os.Stderr, "  typos-commits  Prevent typos in commits (log and diff)\n")
+		fmt.Fprintf(os.Stderr, "  typos-branch   Prevent typos in branch names\n")
+	}
+
+	if len(os.Args) < 2 {
+		flag.Usage()
+		os.Exit(1)
+	}
+
+	subcommand := os.Args[1]
+	switch subcommand {
+	case "betterleaks", "typos-commits", "typos-branch":
+	default:
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
 	remoteDefaultBranch, err := getRemoteDefaultBranch()
@@ -39,7 +61,9 @@ func main() {
 			fmt.Println("Error:", err)
 		}
 		for desc, linter := range lintersForEntry {
-			linters[fmt.Sprintf("L%d:%s:%s", lineNumber, line, desc)] = linter
+			if linter.Tag == subcommand {
+				linters[fmt.Sprintf("L%d:%s:%s", lineNumber, line, desc)] = linter
+			}
 		}
 	}
 
@@ -53,6 +77,11 @@ func main() {
 	}
 }
 
+const (
+	zeroOIDSHA1   = "0000000000000000000000000000000000000000"
+	zeroOIDSHA256 = "0000000000000000000000000000000000000000000000000000000000000000"
+)
+
 // Filtering with author email for large repository such as NixOS/nixpkgs
 func initializeLinters(line string, remoteBranch string, email string) (map[string]githooks.Linter, error) {
 	fields := strings.Fields(line)
@@ -61,9 +90,15 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	}
 
 	localRef := fields[0]
-	// localOid := fields[1]
+	localOid := fields[1]
 	remoteRef := fields[2]
 	// remoteOid := fields[3]
+
+	// In Git githooks(5), a deleted ref supplies "(delete)" in <local-ref> and the all-zero object name in <local-oid>.
+	// Skip deleted refs so commands like "git log" do not fail with an invalid revision.
+	if localRef == "(delete)" || localOid == zeroOIDSHA1 || localOid == zeroOIDSHA256 {
+		return nil, nil
+	}
 
 	return map[string]githooks.Linter{
 		"prevent secrets in log and diff": {Tag: "betterleaks", Script: func() error {
@@ -73,7 +108,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in log and diff": {Tag: "typos", Script: func() error {
+		"prevent typos in log and diff": {Tag: "typos-commits", Script: func() error {
 			out, err := pipeline.CombinedOutput(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
@@ -84,7 +119,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in branch name": {Tag: "typos", Script: func() error {
+		"prevent typos in branch name": {Tag: "typos-branch", Script: func() error {
 			cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
 			// Git ref is not a filepath, but avoiding a typos limitation for slash included strings
 			// See https://github.com/crate-ci/typos/issues/758 for details
