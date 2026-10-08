@@ -1,49 +1,11 @@
 package main
 
 import (
-	"strings"
 	"testing"
 )
 
-func Test_isZeroOID(t *testing.T) {
-	tests := []struct {
-		name string
-		oid  string
-		want bool
-	}{
-		{
-			name: "SHA-1 null OID",
-			oid:  strings.Repeat("0", 40),
-			want: true,
-		},
-		{
-			name: "SHA-256 null OID",
-			oid:  strings.Repeat("0", 64),
-			want: true,
-		},
-		{
-			name: "empty string",
-			oid:  "",
-			want: false,
-		},
-		{
-			name: "SHA-1 non-zero OID",
-			oid:  strings.Repeat("0", 39) + "1",
-			want: false,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := isZeroOID(tt.oid); got != tt.want {
-				t.Errorf("isZeroOID(%q) = %v, want %v", tt.oid, got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_initializeLinters(t *testing.T) {
-	t.Run("returns linters for normal push", func(t *testing.T) {
+	t.Run("returns linters covering title, message body, and diff against secrets and typos", func(t *testing.T) {
 		line := "refs/heads/feature 1111111111111111111111111111111111111111 refs/heads/feature 2222222222222222222222222222222222222222"
 		linters, err := initializeLinters(line, "main", "dev@example.com")
 		if err != nil {
@@ -53,14 +15,20 @@ func Test_initializeLinters(t *testing.T) {
 			t.Fatalf("got %d linters, want 3", len(linters))
 		}
 
-		tags := map[string]bool{}
-		for _, l := range linters {
-			tags[l.Tag] = true
+		expectedKeyTags := map[string]string{
+			"prevent secrets in log and diff": "betterleaks",
+			"prevent typos in log and diff":   "typos-commits",
+			"prevent typos in branch name":    "typos-branch",
 		}
-		expectedTags := []string{"betterleaks", "typos-commits", "typos-branch"}
-		for _, tag := range expectedTags {
-			if !tags[tag] {
-				t.Errorf("missing expected tag: %s", tag)
+
+		for key, wantTag := range expectedKeyTags {
+			linter, ok := linters[key]
+			if !ok {
+				t.Errorf("missing expected linter key: %q", key)
+				continue
+			}
+			if linter.Tag != wantTag {
+				t.Errorf("linter %q tag = %q, want %q", key, linter.Tag, wantTag)
 			}
 		}
 	})
@@ -76,14 +44,25 @@ func Test_initializeLinters(t *testing.T) {
 		}
 	})
 
-	t.Run("skips deleted ref when localOid is all zero", func(t *testing.T) {
-		line := "refs/heads/feature 0000000000000000000000000000000000000000 refs/heads/feature 2222222222222222222222222222222222222222"
+	t.Run("skips deleted ref when localOid is SHA-1 zero OID", func(t *testing.T) {
+		line := "refs/heads/feature " + zeroOIDSHA1 + " refs/heads/feature 2222222222222222222222222222222222222222"
 		linters, err := initializeLinters(line, "main", "dev@example.com")
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 		if linters != nil {
-			t.Errorf("got %v, want nil for zero oid", linters)
+			t.Errorf("got %v, want nil for SHA-1 zero oid", linters)
+		}
+	})
+
+	t.Run("skips deleted ref when localOid is SHA-256 zero OID", func(t *testing.T) {
+		line := "refs/heads/feature " + zeroOIDSHA256 + " refs/heads/feature 2222222222222222222222222222222222222222"
+		linters, err := initializeLinters(line, "main", "dev@example.com")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if linters != nil {
+			t.Errorf("got %v, want nil for SHA-256 zero oid", linters)
 		}
 	})
 
