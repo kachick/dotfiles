@@ -106,7 +106,18 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
-			return err
+			if err != nil {
+				return err
+			}
+
+			// TODO: betterleaks v1 does not scan commit messages with the "git" subcommand.
+			// Consider replacing this separate stdin scan with --include=commit-messages when upgrading to betterleaks v2.
+			msgOut, msgErr := pipeline.CombinedOutput(
+				[]string{"git", "log", "--author=" + email, "--format=%B", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
+				[]string{"betterleaks", "--verbose", "stdin"},
+			)
+			log.Println(string(msgOut))
+			return msgErr
 		}},
 		"prevent typos in log and diff": {Tag: "typos-commits", Script: func() error {
 			out, err := pipeline.CombinedOutput(
