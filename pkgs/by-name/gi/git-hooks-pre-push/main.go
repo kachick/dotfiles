@@ -21,9 +21,9 @@ func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: %s <subcommand>\n\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Subcommands:\n")
-		fmt.Fprintf(os.Stderr, "  betterleaks   Prevent secrets in log and diff\n")
-		fmt.Fprintf(os.Stderr, "  typos-log     Prevent typos in log and diff\n")
-		fmt.Fprintf(os.Stderr, "  typos-branch  Prevent typos in branch name\n")
+		fmt.Fprintf(os.Stderr, "  betterleaks    Prevent secrets in commits (log and diff)\n")
+		fmt.Fprintf(os.Stderr, "  typos-commits  Prevent typos in commits (log and diff)\n")
+		fmt.Fprintf(os.Stderr, "  typos-branch   Prevent typos in branch names\n")
 	}
 
 	if len(os.Args) < 2 {
@@ -32,18 +32,15 @@ func main() {
 	}
 
 	subcommand := os.Args[1]
-	// Using NewFlagSet for subcommands is a Go best practice.
-	// ExitOnError automatically handles -h and unknown flags.
-	subCmd := flag.NewFlagSet(subcommand, flag.ExitOnError)
-	subCmd.Parse(os.Args[2:])
+	switch subcommand {
+	case "betterleaks", "typos-commits", "typos-branch":
+	default:
+		flag.Usage()
+		os.Exit(1)
+	}
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
-	// Performance note:
-	// Splitting into separate hooks results in multiple executions of this program,
-	// leading to redundant calls to "git config user.email" and "git symbolic-ref".
-	// However, we prioritize manageability and individual skip-ability (e.g., skipping branch name typos
-	// while keeping log checks) over micro-performance, as the overhead is negligible for humans.
 	remoteDefaultBranch, err := getRemoteDefaultBranch()
 	if err != nil {
 		log.Fatalf("Can't get default branch of the remote repository: %+v", err)
@@ -80,6 +77,18 @@ func main() {
 	}
 }
 
+func isZeroOID(oid string) bool {
+	if len(oid) == 0 {
+		return false
+	}
+	for _, r := range oid {
+		if r != '0' {
+			return false
+		}
+	}
+	return true
+}
+
 // Filtering with author email for large repository such as NixOS/nixpkgs
 func initializeLinters(line string, remoteBranch string, email string) (map[string]githooks.Linter, error) {
 	fields := strings.Fields(line)
@@ -92,24 +101,21 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	remoteRef := fields[2]
 	// remoteOid := fields[3]
 
-	// Handle branch deletions and initial pushes.
-	// - localOid == 00...0: The branch is being deleted, so there's no local history to scan.
-	// - localRef == "(delete)": Some environments/tools use this as a placeholder for deletions.
-	// Skipping these prevents "git log" from failing with "fatal: bad revision" when the reference is gone.
-	// This also fixes issues where pushing an empty repository or first-time branch creation might trigger errors.
-	if localRef == "(delete)" || localOid == "0000000000000000000000000000000000000000" {
+	// In Git githooks(5), a deleted ref supplies "(delete)" in <local-ref> and the all-zero object name in <local-oid>.
+	// Skip deleted refs so commands like "git log" do not fail with an invalid revision.
+	if localRef == "(delete)" || isZeroOID(localOid) {
 		return nil, nil
 	}
 
 	return map[string]githooks.Linter{
-		"prevent secrets in log and diff": {Tag: "betterleaks", Script: func() error {
+		"prevent secrets in commits": {Tag: "betterleaks", Script: func() error {
 			cmd := exec.Command("betterleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
 			return err
 		}},
-		"prevent typos in log and diff": {Tag: "typos-log", Script: func() error {
+		"prevent typos in commits": {Tag: "typos-commits", Script: func() error {
 			out, err := pipeline.CombinedOutput(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
@@ -126,6 +132,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			// See https://github.com/crate-ci/typos/issues/758 for details
 			cmd.Stdin = strings.NewReader(path.Base(remoteRef))
 			out, err := cmd.CombinedOutput()
+			log.Println(strings.Join(cmd.Args, " "))
 			log.Println(string(out))
 			return err
 		}},

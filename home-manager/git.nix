@@ -183,14 +183,22 @@ in
           command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
         };
 
+        # Split hooks so each check can be skipped individually with `hook.<name>.enabled=false`
+        # instead of skipping everything with `--no-verify`.
+        #
+        # Usage:
+        #   - Skip for a single push:
+        #     git -c hook.pre-push-no-typos-in-commits.enabled=false push
+        #   - Disable in a repository:
+        #     git config set hook.pre-push-no-typos-in-commits.enabled false
         pre-push-no-leaks = {
           event = "pre-push";
           command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
         };
 
-        pre-push-no-typos-in-log = {
+        pre-push-no-typos-in-commits = {
           event = "pre-push";
-          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-log";
+          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-commits";
         };
 
         pre-push-no-typos-in-branch = {
