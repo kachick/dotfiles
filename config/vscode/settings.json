@@ -1,12 +1,29 @@
 {
   "$schema": "vscode://schemas/settings/user",
+  "editor.defaultFormatter": "dprint.dprint",
+  "editor.formatOnSave": true,
   "[json]": {
     "editor.formatOnSave": true
   },
   "json.format.enable": false,
-  "[nix]": {
-    "editor.defaultFormatter": "jnoortheen.nix-ide"
+  "nix.serverPath": "nixd",
+  "nix.enableLanguageServer": true,
+  // To prefer dprint over nixfmt, we should override LS settings here.
+  // Because nix.formatterPath does not work if we use `enableLanguageServer`
+  "nix.serverSettings": {
+    "nil": {
+      "formatting": {
+        "command": ["dprint", "fmt", "--stdin", "nix"]
+      }
+    },
+    "nixd": {
+      "formatting": {
+        "command": ["dprint", "fmt", "--stdin", "nix"]
+      }
+    }
   },
+  // Fallback or just a note for no LS
+  "nix.formatterPath": ["dprint", "fmt", "--stdin", "nix"],
   "[rust]": {
     "editor.defaultFormatter": "rust-lang.rust-analyzer",
     "editor.formatOnSave": true,
@@ -16,7 +33,7 @@
     "editor.defaultFormatter": "golang.go"
   },
   "gopls": {
-    "build.buildFlags": ["-tags=linux,windows,darwin"]
+    "build.buildFlags": ["-tags=linux,windows"]
   },
   "[crystal]": {
     "editor.defaultFormatter": "crystal-lang-tools.crystal-lang"
@@ -99,10 +116,9 @@
   "files.defaultLanguage": "powershell",
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
   "workbench.colorTheme": "Base16 Dark Ashes",
-  "shellformat.useEditorConfig": true,
   "editor.cursorSurroundingLines": 5,
   "redhat.telemetry.enabled": false,
-  "update.mode": "none", // NixOS: flake, Windows: winget, macOS: Manually
+  "update.mode": "none", // NixOS: flake, Windows: winget
   "githubIssues.issueCompletions.enabled": false,
   "github.copilot.enable": {
     "*": false

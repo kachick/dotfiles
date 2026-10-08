@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
+      - 'cmd/ci-build/**'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -13,6 +14,7 @@ on:
     paths:
       - '.github/workflows/ci-nixos.yml'
       - '.github/actions/setup-nix/**'
+      - 'cmd/ci-build/**'
       - 'nixos/**'
       - 'flake.*'
       - '!**.md'
@@ -32,7 +34,7 @@ concurrency:
 
 jobs:
   wait:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Wait other jobs to leverage binary caches
         uses: kachick/wait-other-jobs@v4
@@ -61,12 +63,8 @@ jobs:
          contains(github.event.pull_request.labels.*.name, 'nixos-rebuild') ||
          github.event.action != 'labeled'
        )))
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
-    strategy:
-      fail-fast: false
-      matrix:
-        host: [desktop-free, wsl]
     steps:
       - name: Logging disk space
         run: df -h
@@ -83,29 +81,34 @@ jobs:
              '/usr/local/share/boost'
       - name: Logging disk space after clean
         run: df -h
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-nix
+      - uses: actions/setup-go@v7.0.0 # zizmor: ignore[cache-poisoning]
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Build NixOS system [${{ matrix.host }}]
-        run: |
-          nix build ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel" --show-trace 2> >(tee /tmp/nix-stderr >&2)
-          # Fail if evaluation warnings were detected
-          if grep -i "warning:" /tmp/nix-stderr; then
-            echo "❌ Nix evaluation warnings detected!"
-            exit 1
-          fi
+      - parallel:
+          - name: Build NixOS - vps
+            run: go run ./cmd/ci-build nixos vps
+
+          - name: Build NixOS - desktop-free
+            run: go run ./cmd/ci-build nixos desktop-free
+
+          - name: Build NixOS - wsl
+            run: go run ./cmd/ci-build nixos wsl
 
   test-sample:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-nix
+      - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
@@ -119,5 +122,5 @@ jobs:
           direnv export gha > "$GITHUB_ENV"
 
       - name: Verify sample configuration template
-        # USe direnv or `nix develop` to ensure `task` is available from devShell
+        # Use direnv or `nix develop` to ensure `task` is available from devShell
         run: task test-sample-nixos

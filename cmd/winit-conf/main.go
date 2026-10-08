@@ -22,7 +22,7 @@ $ winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
 $ winit-conf.exe run
 `
 
-const configFilePermission = 0600
+const configFilePermission = 0o600
 
 type provisioner struct {
 	FS        embed.FS
@@ -70,7 +70,7 @@ func provisioners() []provisioner {
 	}
 
 	// As I understand it, unix like permission masks will work even in windows...
-	const dirPerm = 0750
+	const dirPerm = 0o750
 
 	// TODO: Replace `filepath.Join(homePath, ".config"...` code with "$env.XDG_CONFIG_HOME" era even through Windows
 

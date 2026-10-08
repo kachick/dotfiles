@@ -69,7 +69,7 @@ No beautiful ways, I think. Read <https://stackoverflow.com/questions/19853340/p
 If you faced following error, needed to enable the permission from Administrator's PowerShell terminal
 
 ```plaintext
-.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-24.04\home\kachick\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
+.\windows\scripts\enable_verbose_context_menu.ps1: File \\wsl.localhost\Ubuntu-26.04\home\user\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 cannot be loaded. The file \\wsl.localhost\Ubuntu-26.04\home\user\repos\dotfiles\windows\scripts\enable_verbose_context_menu.ps1 is not digitally signed. You cannot run this script on the current system. For more information about running scripts and setting execution policy, see about_Execution_Policies at https://go.microsoft.com/fwlink/?LinkID=135170.
 ```
 
 Executing loccal scrips just requires "RemoteSigned", but in wsl path, it is remote, so needed to relax more.

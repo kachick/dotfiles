@@ -12,6 +12,25 @@
     ./game.nix
   ];
 
+  hardware.bluetooth.enable = true; # enables support for Bluetooth
+  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
+
+  # Avoid conflicting since using pipewire for enabling sound.
+  services.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
   # GH-1255 for NVMe SSD
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/hardware/iosched.nix
   hardware.block.defaultScheduler = "kyber";
@@ -130,10 +149,10 @@
   # You can use the Web UI via http://localhost:631/admin/
   # See also CUPS, Avahi and systemd-resolved section
   # AFAIK, require CUPS even if using "IPP Everywhere"
-  services.printing = {
-    enable = true;
-    drivers = [ pkgs.epson-escpr2 ];
-  };
+  # Prefer driverless printing (IPP Everywhere) over proprietary driver packages like epson-escpr2
+  # because wrapper filters often break or produce distorted multi-page output across updates.
+  # See nixos/desktop/PRINTING.md for setup and troubleshooting
+  services.printing.enable = true;
 
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
@@ -151,7 +170,7 @@
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
-      #   See package-linux/darwin workflows for the dedicated building.
+      #   See package-linux workflow for the dedicated building.
       unstable.zed-editor
 
       gdm-settings

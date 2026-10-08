@@ -11,7 +11,6 @@ rclone.conf
 
 # `local` files may have similar problems: https://github.com/github/gitignore/pull/3651
 *local
-!pkgs/local/
 !overlays/local.nix
 !*local_hook*
 
@@ -19,7 +18,6 @@ dist/
 tmp/
 
 .direnv
-.lycheecache
 
 # Nix
 result
@@ -27,10 +25,6 @@ result-*
 
 # Windows
 *.exe
-
-# macOS
-**/AppSupport
-.DS_Store
 
 winget-pkgs-*-raw.json
 

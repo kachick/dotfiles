@@ -1,4 +1,4 @@
-//go:build linux || darwin
+//go:build linux
 
 package main
 
@@ -37,6 +37,12 @@ func main() {
 
 	log.SetFlags(log.Flags() &^ (log.Ldate | log.Ltime))
 
+	// Format checks should run before parallel linters to fail early and avoid conflicts.
+	formatters := runner.Commands{
+		{Path: "dprint", Args: []string{"check"}},
+	}
+	formatters.SequentialRun()
+
 	walker := fileutils.GetWalker()
 
 	bashPaths := walker.GetAllBash()
@@ -51,7 +57,6 @@ func main() {
 	}
 
 	heavyOrTrivial := runner.Commands{
-		// FIXME: Adding lychee here making Network error
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},

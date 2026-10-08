@@ -1,0 +1,51 @@
+{
+  lib,
+  pkgs,
+  makeWrapper,
+  unstable,
+}:
+
+let
+  inherit (pkgs.unstable) buildGo127Module;
+in
+buildGo127Module (finalAttrs: {
+  pname = "nix-diff";
+  version = "0.0.1";
+
+  __structuredAttrs = true;
+
+  vendorHash = "sha256-6UMVvLjdJRCBbhgS/G2wQf59siJfFSZpQ2s203RoJmw=";
+
+  src =
+    with lib.fileset;
+    toSource {
+      root = ../../../../.;
+      fileset = unions [
+        ../../../../go.mod
+        ../../../../go.sum
+        ../../../../internal
+        ./.
+      ];
+    };
+
+  nativeBuildInputs = [ makeWrapper ];
+
+  postInstall = ''
+    wrapProgram $out/bin/nix-diff \
+      --prefix PATH : ${
+        lib.makeBinPath [
+          unstable.dix
+          unstable.nix-diff
+        ]
+      }
+  '';
+
+  env.CGO_ENABLED = 0;
+
+  passthru.shared-gomod = true;
+
+  meta = {
+    description = "Compare nix derivations and report package changes";
+    mainProgram = finalAttrs.pname;
+  };
+})

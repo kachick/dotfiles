@@ -4,18 +4,21 @@ inputs:
   cachix-auth-token:
     description: 'Authentication token for Cachix'
     required: true
+  skip-push:
+    description: 'Set to true to only pull from the cache without pushing any build results'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
     - name: Install Nix
-      # "DeterminateSystems/nix-installer-action" does not run on x86_64-darwin: https://github.com/DeterminateSystems/nix-src/issues/224
-      uses: NixOS/nix-installer-action@main # There are no tagged releases
+      uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
       with:
         extra-conf: |
           sandbox = true
           accept-flake-config = true
     - name: Cache Nix Evaluation and Tarballs
-      uses: actions/cache@v5.0.5
+      uses: actions/cache@v6.1.0
       with:
         path: ~/.cache/nix
         key: nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
@@ -23,9 +26,10 @@ runs:
           nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock') }}-
           nix-eval-and-tarball-${{ runner.os }}-
     - name: Configure Cachix
-      uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71 # v17
+      uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
       with:
         name: kachick-dotfiles
         authToken: ${{ inputs.cachix-auth-token }}
+        skipPush: ${{ inputs.skip-push }}
         # https://github.com/kachick/dotfiles/commit/deba9834efbef3aae2a61aa6ee2794d1eba6e985#r167396022
         pushFilter: '(-source$|nixpkgs\.tar\.gz$|-vendor|.iso$)'

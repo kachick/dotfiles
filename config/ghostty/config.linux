@@ -1,3 +1,0 @@
-# bash with --login should be better for Linux rather than respecting $SHELL. See GH-452
-# On the other hand, macOS having ancient bash. It might be appeared even if I installed newer with nix. So prefer $SHELL (zsh) in darwin
-command = "bash --login"

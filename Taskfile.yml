@@ -66,6 +66,7 @@ tasks:
       - nix build .#nixosConfigurations.moss.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.vps.config.system.build.toplevel --dry-run
 
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
@@ -98,7 +99,7 @@ tasks:
 
   fmt:
     cmds:
-      - treefmt
+      - dprint fmt
 
   build-cmd:
     deps:
@@ -136,11 +137,25 @@ tasks:
     cmds:
       - ./dist/lint -all
 
+  sync-workflows:
+    aliases:
+      - sync-packages
+    desc: Synchronize workflow files with packages.toml
+    cmds:
+      - go run ./cmd/ci-build sync-workflows
+      - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
+
+  check-sync-workflows:
+    internal: true
+    cmds:
+      - go run ./cmd/ci-build sync-workflows --check
+
   check:
     deps:
       - 'build-cmd'
       - 'test'
       - 'lint-all'
+      - 'check-sync-workflows'
 
   update:
     desc: Bump dependencies
@@ -195,9 +210,3 @@ tasks:
       # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
-      - 'fmt'
-
-  ci-darwin:
-    desc: Basically giveup to develop on macOS. However I need to use task-runner for minimum use.
-    cmds:
-      - task --version

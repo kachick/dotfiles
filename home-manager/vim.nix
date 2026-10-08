@@ -1,6 +1,7 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }:
 
@@ -13,6 +14,7 @@
   programs.vim = {
     # Enabling this may cause collisions. Do not add in packages list
     enable = true;
+    packageConfigurable = lib.mkDefault pkgs.vim;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins = with pkgs.vimPlugins; [
       iceberg-vim

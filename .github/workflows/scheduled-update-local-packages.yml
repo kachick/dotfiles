@@ -6,18 +6,14 @@ on:
       - '.github/workflows/scheduled-update-local-packages.yml'
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every Monday 9:17 JST
-    - cron: '17 0 * * 2'
-    # # Every Thursday 9:17 JST
-    - cron: '17 0 * * 4'
-    # # Every Saturday 9:17 JST
-    - cron: '17 0 * * 6'
+    # Every day 9:17 JST
+    - cron: '17 0 * * *'
   workflow_dispatch:
 
 jobs:
   local-packages:
     permissions:
       contents: write
-    uses: ./.github/workflows/update-local-packages.yml
+    uses: $/.github/workflows/update-local-packages.yml
     secrets:
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}

@@ -48,6 +48,7 @@ in
 {
   imports = [
     ./gnome.nix
+    ./terminal.nix
   ];
 
   xdg = {
@@ -144,6 +145,11 @@ in
   xdg.cacheFile."kanata-tray/.keep".text =
     "kanata-tray exits if the specified directory does not exist";
 
+  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
+  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
+  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
+  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
+
   home = {
     packages = with pkgs; [
       kanata # Don't require kanata-with-cmd for now
@@ -156,6 +162,11 @@ in
       # https://github.com/NixOS/nixpkgs/pull/458994#discussion_r2506875784
       KANATA_TRAY_LOG_DIR = "${config.xdg.cacheHome}/kanata-tray";
     };
+
+    shellAliases = {
+      # https://github.com/NixOS/nixpkgs/pull/344193
+      "zed" = "zeditor";
+    };
   };
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/xdg-autostart.nix
@@ -166,4 +177,7 @@ in
       ../config/cloudflare-warp/connect.desktop
     ];
   };
+
+  # Use full Vim (with GTK3/X11 clipboard support) for desktop environments
+  programs.vim.packageConfigurable = pkgs.vim-full;
 }

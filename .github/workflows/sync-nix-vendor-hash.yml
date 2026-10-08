@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   sync-hash:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
@@ -24,13 +24,13 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
           permission-contents: write
 
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           token: ${{ steps.publish-token.outputs.token }}
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: true
 
-      - uses: ./.github/actions/setup-nix
+      - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 

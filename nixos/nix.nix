@@ -16,22 +16,19 @@
       ];
 
       # Enabled by default on https://github.com/DeterminateSystems/nix-installer/releases/tag/v3.8.5
-      # Therefore enable also on NixOS to keep consistency against other Linux distros and macOS
+      # Therefore enable also on NixOS to keep consistency against other Linux distros
       # See https://github.com/NixOS/nix/pull/8047 for background
       always-allow-substitutes = true;
 
-      # Remember https://garnix.io/blog/stop-trusting-nix-caches/ if you adding new entry
       extra-trusted-substituters = [
         "https://nix-community.cachix.org" # https://nix-community.org/cache/
-        "https://cache.garnix.io"
-        "https://cache.numtide.com" # Replaced from https://numtide.cachix.org: https://github.com/numtide/treefmt/pull/655
+        "https://cache.numtide.com" # Replaced from https://numtide.cachix.org
         "https://selfup.cachix.org" # GH-1235
         "https://kachick-dotfiles.cachix.org"
       ];
 
       extra-trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
         "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
         "selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8="
         "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="

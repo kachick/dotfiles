@@ -15,6 +15,14 @@ extend-ignore-words-re = [
   "\\A[a-zA-Z]{1,3}\\z",
 ]
 
+[default.extend-words]
+typestyle = "typstyle"
+
+# Use extend-identifiers because extend-words is case-insensitive and causes false-positive errors on "Wasm" and "wasm":
+# https://github.com/crate-ci/typos/issues/899
+[default.extend-identifiers]
+WASM = "Wasm"
+
 [files]
 extend-exclude = [
   "go.mod",

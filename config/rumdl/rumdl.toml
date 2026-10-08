@@ -1,0 +1,18 @@
+# User global rumdl configuration
+#
+# Why exclude /tmp/**:
+# When editing PR descriptions with `gh pr create --editor`, GitHub CLI creates
+# a temporary file matching `*.md` under `/tmp` (e.g. `/tmp/12345678.md`).
+# `gh` hardcodes the `*.md` pattern, so we cannot change the extension.
+#
+# Because `/tmp` has no project `.rumdl.toml`, rumdl LSP falls back to this
+# global user configuration. We exclude `/tmp/**` here so rumdl LSP does not
+# show noise (errors or warnings) while drafting text in `gh`.
+#
+# Inside git repositories, project-local `.rumdl.toml` files take priority,
+# so normal markdown linting still works.
+
+[global]
+exclude = [
+  "/tmp/**",
+]

@@ -10,7 +10,7 @@ permissions:
 jobs:
   judge-dependabot:
     timeout-minutes: 5
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       merge: ${{ steps.conclusion.outputs.merge }}
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
@@ -35,7 +35,7 @@ jobs:
   # https://github.com/kachick/anylang-template/issues/51
   automerge:
     timeout-minutes: 90
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [judge-dependabot]
     if: >-
       always() &&

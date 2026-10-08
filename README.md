@@ -1,11 +1,9 @@
 # dotfiles
 
 [![~/ on Linux](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-linux.yml?query=branch%3Amain+)
-[![~/ on Darwin](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-home-darwin.yml?query=branch%3Amain+)
 [![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
 [![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
 [![Package on Linux](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-linux.yml?query=branch%3Amain+)
-[![Package on Darwin](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/package-darwin.yml?query=branch%3Amain+)
 [![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 [![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
@@ -14,22 +12,21 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ```mermaid
 block-beta
-    columns 3
+    columns 2
 
-    block:os:3
-        nixos(("❄")) macos(("🍎")) windows(("🪟"))
+    block:os:2
+        nixos(("❄")) windows(("🪟"))
     end
 
-    block:vm:3
+    block:vm:2
         lima("Lima") wsl2("WSL2")
     end
 
-    block:container:3
+    block:container:2
         podman("🦭") k8s("☸️") 
     end
 
     nixos --> lima
-    macos --> lima
     windows --> wsl2
 
     vm --> container
@@ -70,9 +67,9 @@ Using flake style is disabled in NixOS by default and [you should inject git com
 
 ```bash
 nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-26.05#gitMinimal' \
-  --command sudo nixos-rebuild switch \
-  --flake "github:kachick/dotfiles#$(hostname)" \
-  --show-trace
+	--command sudo nixos-rebuild switch \
+	--flake "github:kachick/dotfiles#$(hostname)" \
+	--show-trace
 ```
 
 Finally, reboot the device
@@ -118,7 +115,7 @@ nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.a
 1. Apply dotfiles
 
    ```bash
-   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#wsl-ubuntu'
+   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
    ```
 
 1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
@@ -168,29 +165,13 @@ systemd=true' | sudo tee /etc/wsl.conf
 
 ## Windows
 
-1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `kachick@wsl-ubuntu`
-1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Activate home-manager with `$(whoami)@wsl-nixos`
+1. Install [WSL2](windows/WSL/README.md) with default Ubuntu. Activate home-manager as `user@wsl-ubuntu`
+1. Install [NixOS-WSL](https://github.com/nix-community/NixOS-WSL). Apply NixOS config.
 1. Adjust Windows experience as written in [extracted steps](windows/README.md) and as written in [CI](.github/workflows/windows.yml) for further details.
 
 ## Multi-booting on Windows and Linux
 
 Check [traps](./windows/Multi-booting.md)
-
-## Windows on Linux
-
-Use [winboat](https://github.com/TibixDev/winboat).\
-The full-desktop feature is powered-by [FreeRDP](https://github.com/FreeRDP/FreeRDP).\
-You can exit the full-screen RDP session with `Ctrl + Alt + Enter`. (Not the `End` or `Pause/Break` keys)
-
-## macOS
-
-I have basically [given up](https://github.com/kachick/dotfiles/issues/911) on maintaining my old Intel Mac.\
-However I should keep the minimum environment for now.
-
-1. Make sure you install the official Nix. Determinate Nix dropped [x86_64-darwin](https://github.com/DeterminateSystems/nix-src/issues/224). It is earlier than [nixpkgs](https://github.com/NixOS/nixpkgs/pull/415566#issuecomment-3407311069).
-1. Apply home-manager with `kachick@macbook` for minimum packages.
-1. Install [some packages](https://github.com/kachick/dotfiles/wiki/macOS) without Nix
-1. Use [Lima](#lima) for development tasks.
 
 ## Lima
 
@@ -203,8 +184,8 @@ However I should keep the minimum environment for now.
 1. Install and configure Nix in the guest:
 
    ```bash
-   REV=main; \
-     curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
+   REV=main
+   curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
    ```
 
 1. Apply home-manager:
@@ -215,6 +196,11 @@ However I should keep the minimum environment for now.
    limactl shell docker-nix docker run --rm hello-world
    ```
 
+### Windows on Lima
+
+Check [latest instruction](https://github.com/lima-vm/lima/blob/master/templates/windows-11.yaml) for Windows guests.\
+If you want windows-11 rather than windows-2025, you should manually download the **"English ISO file"** from [microsoft](https://www.microsoft.com/en-us/software-download/windows11).
+
 ## How to setup secrets
 
 Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
@@ -224,7 +210,7 @@ Extracted to [wiki](https://github.com/kachick/dotfiles/wiki/Encryption)
 If you are developing this repository, putting `.env` makes easy reactivations.
 
 ```bash
-echo 'HM_HOST_SLUG=wsl-ubuntu' > .env
+echo 'HM_HOST_SLUG=wsl-ubuntu' >.env
 ```
 
 Then you can enable configurations with

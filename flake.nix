@@ -24,20 +24,18 @@
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
     nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
-    # darwin does not have desirable channel for that purpose. See https://github.com/NixOS/nixpkgs/issues/107466
-    nixpkgs-unstable.url = "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz";
-    nixpkgs-darwin.url = "https://channels.nixos.org/nixpkgs-26.05-darwin/nixexprs.tar.xz";
+    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
     home-manager-linux = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager-darwin = {
-      url = "github:nix-community/home-manager/release-26.05";
-      inputs.nixpkgs.follows = "nixpkgs-darwin";
-    };
     nixos-wsl = {
-      # url = "github:nix-community/NixOS-WSL/release-26.05"; # TODO: Use stable channel once available
-      url = "github:nix-community/NixOS-WSL";
+      url = "github:nix-community/NixOS-WSL/release-26.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    disko = {
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -47,21 +45,7 @@
     };
 
     kanata-tray = {
-      # TODO: Prefer https://github.com/NixOS/nixpkgs/pull/458994 once it's in a suitable channel.
-      url = "github:rszyma/kanata-tray/v0.8.0";
-
-      # This repo provides binary cache since 0.7.1: https://github.com/rszyma/kanata-tray/commit/f506a3d653a08affdf1f2f9c6f2d0d44181dc92b.
-      # However using follows disables the upstream caches. And I'm okay to build it my self
-      # Prefer unstable channel since also using latest kanata
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
-
-      # This repo provides binary cache and I already allows the cache.numtide.com.
-      # However, to reduce nodes in flake.lock, I prefer my own channel for now.
-      # Revisit once introducing other agents which takes long time to build.
+      url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
   };
@@ -71,42 +55,28 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
-      nixpkgs-darwin,
       home-manager-linux,
-      home-manager-darwin,
       kanata-tray,
-      llm-agents,
       ...
     }@inputs:
     let
       inherit (self) outputs;
 
-      overlays =
-        import ./overlays {
-          inherit
-            nixpkgs-unstable
-            kanata-tray
-            home-manager-linux
-            home-manager-darwin
-            ;
-        }
-        ++ [ llm-agents.overlays.default ];
+      overlays = import ./overlays {
+        inherit
+          nixpkgs-unstable
+          kanata-tray
+          home-manager-linux
+          ;
+      };
 
-      mkPkgs =
-        system:
-        let
-          base = if (nixpkgs.lib.strings.hasSuffix "-darwin" system) then nixpkgs-darwin else nixpkgs;
-        in
-        import base { inherit system overlays; };
+      mkPkgs = system: import nixpkgs { inherit system overlays; };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
         f:
         nixpkgs.lib.genAttrs
-          (nixpkgs.lib.intersectLists [
-            "x86_64-linux"
-            "x86_64-darwin"
-          ] nixpkgs.lib.systems.flakeExposed)
+          (nixpkgs.lib.intersectLists [ "x86_64-linux" ] nixpkgs.lib.systems.flakeExposed)
           (
             system:
             f {
@@ -116,8 +86,12 @@
           );
     in
     {
-      # Why not use `nixfmt`: https://github.com/NixOS/nixpkgs/pull/384857
-      formatter = forAllSystems ({ pkgs, ... }: pkgs.unstable.nixfmt-tree);
+      formatter = forAllSystems (
+        { pkgs, ... }:
+        pkgs.writeShellScriptBin "dprint-fmt" ''
+          exec "${pkgs.lib.getExe pkgs.unstable.dprint}" fmt "$@"
+        ''
+      );
 
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
@@ -129,13 +103,10 @@
 
       apps = forAllSystems (
         { pkgs, system }:
-        let
-          hm = if pkgs.stdenv.hostPlatform.isDarwin then home-manager-darwin else home-manager-linux;
-        in
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe hm.packages.${system}.home-manager;
+            program = pkgs.lib.getExe home-manager-linux.packages.${system}.home-manager;
           };
           gen-nix-cache-conf = {
             type = "app";
@@ -166,7 +137,6 @@
       homeConfigurations = import ./home-manager {
         inherit
           home-manager-linux
-          home-manager-darwin
           mkPkgs
           outputs
           ;

@@ -24,22 +24,32 @@ This makes it easy to use the same settings in environments that do not have Nix
     home-manager.follows = "dotfiles/home-manager-linux";
   };
 
-  outputs = { self, nixpkgs, home-manager, dotfiles, ... }: {
-    homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      modules = [
-        # Standard Desktop Linux set (Includes common CLI settings)
-        dotfiles.homeManagerModules.desktop
-        # Add Linux specific tools
-        dotfiles.homeManagerModules.linux
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      dotfiles,
+      ...
+    }:
+    {
+      homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+        modules = [
+          # Standard Desktop Linux set (Includes essential & dev CLI settings)
+          dotfiles.homeManagerModules.desktop
+          # Add Linux specific tools
+          dotfiles.homeManagerModules.linux
 
-        # Machine specific overrides
-        { home.username = "user"; }
-      ];
-      # Required for internal module cross-references
-      extraSpecialArgs = { outputs = dotfiles; };
+          # Machine specific overrides
+          { home.username = "user"; }
+        ];
+        # Required for internal module cross-references
+        extraSpecialArgs = {
+          outputs = dotfiles;
+        };
+      };
     };
-  };
 }
 ```
 
@@ -80,10 +90,6 @@ Read <https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d6
 
 See <https://github.com/nix-community/home-manager/issues/1538#issuecomment-1265293260>
 
-## I cannot find dot files in the macOS Finder
-
-<https://apple.stackexchange.com/a/250646>, consider to use [nix-darwin](https://github.com/LnL7/nix-darwin/blob/16c07487ac9bc59f58b121d13160c67befa3342e/modules/system/defaults/finder.nix#L8-L14)
-
 ## How to resolve collisions?
 
 It maybe occurred with home-manager module and manually specified `pkgs.*`, try to remove the added package.
@@ -93,6 +99,6 @@ It maybe occurred with home-manager module and manually specified `pkgs.*`, try 
 
 ## Writable config management (HomeManagerInit pattern)
 
-To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, Karabiner, SSH), a pattern is used involving `onChange`.
+To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, SSH), a pattern is used involving `onChange`.
 
-A helper `hmInit` in `home-manager/lib.nix` that automates this pattern. See the comments in that file for more details.
+A module in `home-manager/writable-config.nix` automates this pattern. See the comments in that file for more details.

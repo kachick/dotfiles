@@ -1,0 +1,51 @@
+# How to reload:
+#   Linux: ctrl+shift+,
+
+# See also 899be8e51cb288fe0ae91267f495ade7bfb80bc9
+# This disabling does not work on `nix run`. Installed in nixos and ran from launcher worked (from shell or gnome difference?.
+cursor-style-blink = false
+# no-cursor: https://github.com/ghostty-org/ghostty/discussions/2812
+# ssh-*: https://github.com/ghostty-org/ghostty/discussions/3161
+shell-integration-features = no-cursor,ssh-terminfo,ssh-env
+cursor-style = bar
+adjust-cursor-thickness = 400%
+
+# Looks not appeared in Linux. Why? However I can omit this trivial thing.
+background-opacity = 0.85
+
+# How to list
+# - `ghostty +list-themes`
+# - https://iterm2colorschemes.com/
+# - Takecare, upstream did broke some theme names:
+#   1. https://github.com/mbadolato/iTerm2-Color-Schemes/pull/597
+#   2. https://github.com/mbadolato/iTerm2-Color-Schemes/commit/15c43655b92eb442eeaa722d899fffa629697d29
+# ghostty can set both dark and light. However always use dark for terminals
+# theme = dark:ForestBlue,light:iTerm2 Tango Light
+# Candidates
+#   - Guezwhoz
+#   - IC Green PPL
+#   - Iceberg Dark
+#   - kanagawabones
+#   - kurokula
+#   - Rose Pine
+#   - wilmersdorf
+#   - Adventure
+theme = Iceberg Dark
+
+# Avoid the ligatures in "JetBrains Mono" by default
+font-family = "PlemolJP Console NF"
+
+# Use 1.2.0 or higher to avoid https://github.com/ghostty-org/ghostty/issues/4800
+copy-on-select = clipboard
+app-notifications = clipboard-copy
+
+# https://github.com/ghostty-org/ghostty/issues/4326
+split-divider-color = #9DA5B4
+
+# e=down, o=right by default. However I can't remember and guess them.
+keybind = ctrl+shift+-=new_split:down
+keybind = ctrl+shift+|=new_split:right
+keybind = ctrl+shift+s=new_split:auto
+
+# bash with --login should be better for Linux rather than respecting $SHELL. See GH-452
+command = "bash --login"

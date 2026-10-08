@@ -9,7 +9,6 @@
   zsh
   starship
   direnv
-  unstable.nixfmt
   file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
   nushell
 
@@ -24,7 +23,6 @@
   less # container base image doesn't have less even for ubuntu official
   procps # `ps`
 
-  # Use same tools even in macOS
   findutils
   diffutils
   gnugrep
@@ -70,6 +68,7 @@
   dust # `dust`, alt du
   bottom # `btm`, alt top
   xh # alt HTTPie
+  unstable.herdr
   zellij
   sad
   pik # alt pkill
@@ -94,7 +93,6 @@
 
   # How to get the installed font names
   # fontconfig by nix: `fc-list : family style`
-  # darwin: system_profiler SPFontsDataType
   fontconfig # `fc-list`, `fc-cache`
 
   fastfetch # active replacement of neofetch
@@ -106,7 +104,7 @@
   # Use unstable version in my maintained packages
   unstable.brush
   unstable.somo
-  unstable.typescript-go
+  unstable.typescript_7
 ])
 ++ (with pkgs.local; [
   la
@@ -124,4 +122,5 @@
   preview
   renmark
   tree-diff
+  conoha-cli
 ])

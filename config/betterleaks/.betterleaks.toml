@@ -24,13 +24,13 @@ title = "Custom Betterleaks configuration"
 # https://github.com/betterleaks/betterleaks/blob/main/betterleaks.toml
 useDefault = true
 
-# Remove after https://github.com/gitleaks/gitleaks/pull/1808 is available
+# 1. Initially imported from https://github.com/gitleaks/gitleaks/pull/1808
+# 2. Keeping this because betterleaks still does not support many tailscale keys except API: https://github.com/betterleaks/betterleaks/commit/f64b922294260c390e4d20442c239b52275247cb
 [[rules]]
 id = "tailscale-key"
-description = "Detected a Tailscale key, potentially allowing unauthorized access to your Tailscale network and connected devices."
-regex = '''\btskey-(api|auth|client|scim|webhook)-[0-9A-Za-z_]+-[0-9A-Za-z_]+\b'''
+description = "Detected a Tailscale non-API key, potentially allowing unauthorized access to your Tailscale network and connected devices."
+regex = '''\btskey-(auth|client|scim|webhook)-[0-9A-Za-z_]+-[0-9A-Za-z_]+\b'''
 keywords = [
-  "tskey-api",
   "tskey-auth",
   "tskey-client",
   "tskey-scim",

@@ -37,7 +37,7 @@ And create the new podman-machine-default
 Track the [official discussion](https://github.com/containers/podman/discussions/13537), but there are no simple solutions for now.\
 This repository provides a mount based solution, mount from another instance as /mnt/wsl/..., then podman-machine also can access there.
 
-1. Ubuntu: Activate the home-manager with `--flake '.#kachick@wsl-ubuntu'`.
+1. Ubuntu: Activate the home-manager with `--flake '.#user@wsl-ubuntu'`.
 2. Look the [definitions](../home-manager/wsl.nix), it includes how to mount with systemd.
 3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
 4. Ubuntu: `cdrepo project_path`
@@ -88,11 +88,11 @@ rclone config create podman-machine sftp host=localhost port=53061 publickey=~/.
 # Make sure the connection
 rclone lsd podman-machine:/home/user
 
-z project_path 
+z project_path
 rclone mount --daemon "podman-machine:repos/$(basename "$(pwd)")" .
 
 # If you want to unmount, use specific command instead of kill the background job
-# 
+#
 # Linux
 fusermount -u /path/to/local/mount
 # OS X

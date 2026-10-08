@@ -15,21 +15,31 @@ You can find a more detailed template in [nixos/hosts/sample](./hosts/sample/fla
     nixpkgs.follows = "dotfiles/nixpkgs";
   };
 
-  outputs = { self, nixpkgs, dotfiles, ... }@inputs: {
-    nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      # Pass 'dotfiles' as 'outputs' to specialArgs.
-      # This is required for internal module cross-references.
-      specialArgs = { inherit inputs; outputs = dotfiles; };
-      modules = [
-        # Desktop set (Includes common CLI, Desktop Environment, Fonts, and GUI Apps)
-        dotfiles.nixosModules.desktop
+  outputs =
+    {
+      self,
+      nixpkgs,
+      dotfiles,
+      ...
+    }@inputs:
+    {
+      nixosConfigurations.my-machine = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        # Pass 'dotfiles' as 'outputs' to specialArgs.
+        # This is required for internal module cross-references.
+        specialArgs = {
+          inherit inputs;
+          outputs = dotfiles;
+        };
+        modules = [
+          # Desktop set (Includes common CLI, Desktop Environment, Fonts, and GUI Apps)
+          dotfiles.nixosModules.desktop
 
-        # Your machine specific config (hostname, user, filesystems, etc.)
-        ./configuration.nix
-      ];
+          # Your machine specific config (hostname, user, filesystems, etc.)
+          ./configuration.nix
+        ];
+      };
     };
-  };
 }
 ```
 

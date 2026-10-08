@@ -4,27 +4,49 @@
     "trailingCommas": "never"
   },
   "markdown": {
+    "tags": {
+      "nix": "nix",
+      "sh": "sh",
+      "bash": "bash",
+      "zsh": "zsh",
+      "envrc": "bash",
+      "shell": "sh",
+      "shell-script": "sh"
+    }
   },
   "yaml": {
     "quotes": "preferSingle",
     "trimTrailingWhitespaces": false
   },
   "toml": {
+    "quoteStyle": "maintain"
   },
-  // Revisit once dprint supports fully gitignore: https://github.com/dprint/dprint/issues/1012
+  "sh": {
+    "useTabs": true
+  },
+  "dockerfile": {
+    "associations": [
+      "Containerfile"
+    ]
+  },
+  "kdl": {
+  },
+  "gofumpt": {
+    "langVersion": "go1.27",
+    "modulePath": "github.com/kachick/dotfiles"
+  },
   "excludes": [
-    ".git",
-    ".direnv",
-    "dist",
-    "result",
-    "dependencies",
-    "tmp"
+    "dependencies"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/json-0.21.3.wasm",
-    "https://plugins.dprint.dev/markdown-0.22.1.wasm",
-    "https://plugins.dprint.dev/toml-0.7.0.wasm",
-    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
-    "https://plugins.dprint.dev/kachick/kdl-0.2.1.wasm"
+    "npm:@dprint/json@0.25.2",
+    "npm:@dprint/markdown@0.26.0",
+    "npm:@dprint/toml@0.9.0",
+    "npm:dprint-plugin-yaml@0.6.0",
+    "npm:@kachick/dprint-plugin-kdl@0.4.2",
+    "npm:@dprint/dockerfile@0.7.0",
+    "npm:@kachick/dprint-plugin-nix@0.1.1",
+    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.19",
+    "npm:@kachick/dprint-plugin-sh@0.1.2"
   ]
 }

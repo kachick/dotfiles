@@ -30,25 +30,20 @@ in
           nix-update
 
           shellcheck
-          shfmt
-
-          # We don't need to consider about treefmt1 https://github.com/NixOS/nixpkgs/pull/387745
-          treefmt
 
           trivy
+          skopeo
 
           desktop-file-utils # `desktop-file-validate` as a linter
           kanata # Enable on devshell for using the --check as a linter
         ])
         ++ (with pkgs.unstable; [
-          nixfmt # Finally used this package name again. See https://github.com/NixOS/nixpkgs/pull/425068 for details
           betterleaks
           typos
-          lychee
           dprint
           zizmor
           rumdl
-          go_1_26
+          go_1_27
         ])
         ++ (with pkgs.local; [
           nix-hash-url

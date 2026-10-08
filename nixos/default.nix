@@ -18,4 +18,13 @@ in
   "desktop-free" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/desktop-free ]; });
   "installer" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/installer ]; });
   "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/wsl ]; });
+  "vps" = nixpkgs.lib.nixosSystem (
+    shared
+    // {
+      modules = [
+        inputs.disko.nixosModules.disko
+        ./hosts/vps
+      ];
+    }
+  );
 }

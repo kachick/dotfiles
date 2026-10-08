@@ -20,26 +20,21 @@ jobs:
       matrix:
         include:
           - target: DevShell
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: NixOS
-            runner: ubuntu-24.04
+            runner: ubuntu-26.04
           - target: home-manager-linux
-            runner: ubuntu-24.04
-          - target: home-manager-darwin
-            # Use macos-26 (ARM) for faster evaluation of x86_64-darwin configurations.
-            # While this may trigger Rosetta 2 for IFD builds, the overall evaluation
-            # speed is expected to be superior to the old macos-15-intel runner.
-            runner: macos-26
+            runner: ubuntu-26.04
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     if: >-
       github.event.pull_request.user.login == 'selfup-runner[bot]' ||
       contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: ./.github/actions/setup-nix
+      - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
@@ -50,12 +45,7 @@ jobs:
         run: |
           BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
 
-          # Explicitly target x86_64-darwin only on ARM runner
-          if [[ "${{ matrix.runner }}" == "macos-26" ]]; then
-            nix build ".#packages.x86_64-darwin.nix-diff"
-          else
-            nix build .#nix-diff
-          fi
+          nix build .#nix-diff
 
           ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
           cat "snippet-${{ matrix.target }}.md"
@@ -68,12 +58,12 @@ jobs:
 
   report:
     needs: diff
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
     permissions:
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
 

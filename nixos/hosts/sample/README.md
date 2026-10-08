@@ -10,7 +10,7 @@ If you want to manage your NixOS configuration in a separate repository (or a se
 2. **Generate Hardware Config**: Run the following command on your target machine:
 
    ```bash
-   nixos-generate-config --show-hardware-config > hardware-configuration.nix
+   nixos-generate-config --show-hardware-config >hardware-configuration.nix
    ```
 
 3. **Adjust `flake.nix`**:

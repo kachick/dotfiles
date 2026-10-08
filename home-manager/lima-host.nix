@@ -19,7 +19,6 @@ in
     packages = [
       # lima package includes qemu in the PATH.
       # But it is required to specify qemu in your Linux. See GH-1049 and NixOS config for details.
-      # As far as I know, global qemu is not required in darwin.
       lima
     ];
 
@@ -34,30 +33,22 @@ in
     activation = {
       # Required to avoid missing systemctl in NixOS
       # https://github.com/lima-vm/lima/blob/9248baf14a3208249ed38179cdd018ec288d1ef5/pkg/autostart/autostart.go#L91-L92
-      # In macOS, similar provision for /bin/launchctl
-      registerStartingLima =
-        if pkgs.stdenv.hostPlatform.isLinux then
-          (lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
-            run ${
-              pkgs.lib.getExe (
-                pkgs.writeShellApplication {
-                  name = "register-lima-service";
-                  text = "limactl start-at-login --enabled";
-                  meta.description = "Ensure mandatory $PATH when run lima helper command";
-                  runtimeInputs = [
-                    pkgs.systemd
-                    config.programs.ssh.package # Ensure the path before lima executables. See https://github.com/lima-vm/lima/pull/3637 for background
-                    lima
-                  ];
-                }
-              )
+      registerStartingLima = lib.hm.dag.entryBefore [ "reloadSystemd" ] ''
+        run ${
+          pkgs.lib.getExe (
+            pkgs.writeShellApplication {
+              name = "register-lima-service";
+              text = "limactl start-at-login --enabled";
+              meta.description = "Ensure mandatory $PATH when run lima helper command";
+              runtimeInputs = [
+                pkgs.systemd
+                config.programs.ssh.package # Ensure the path before lima executables. See https://github.com/lima-vm/lima/pull/3637 for background
+                lima
+              ];
             }
-          '')
-
-        else
-          (lib.hm.dag.entryBefore [ "setupLaunchAgents" ] ''
-            PATH="$PATH:/bin" run ${lib.getExe' lima "limactl"} start-at-login --enabled
-          '');
+          )
+        }
+      '';
     };
   };
 }

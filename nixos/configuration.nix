@@ -39,25 +39,6 @@
     enableStrictShellChecks = true;
   };
 
-  hardware.bluetooth.enable = true; # enables support for Bluetooth
-  hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
-
-  # Avoid conflicting since using pipewire for enabling sound.
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
-
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/shells-environment.nix
   # The final definition will be put on /etc/set-environment
   # And you can custom it with /etc/profile.local and/or /etc/bashrc.local
@@ -66,6 +47,9 @@
     EDITOR = pkgs.helix.meta.mainProgram;
     SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
+
+  # Support modern terminal definitions (e.g. xterm-ghostty, kitty, foot) globally for SSH clients
+  environment.enableAllTerminfo = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -118,6 +102,14 @@
     # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
     # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
     # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+    #
+    # TODO: Stalls when finding wireless printer ("Unable to locate printer ...")
+    # 1. Sleeping Wi-Fi devices drop mDNS multicast queries until unicast packets (ping/ARP) wake them.
+    # 2. Both avahi-daemon and systemd-resolved bind UDP 5353 concurrently; unicast mDNS responses (QU)
+    #    can get misrouted, causing 5s getaddrinfo timeouts in systemd-resolved.
+    # 3. Dual-stack IPv6 AAAA timeouts and link-local fe80:: (missing scope ID) trigger CUPS ipp backend retry loops.
+    # If discovery remains unstable, consider unifying mDNS onto `services.avahi.nssmdns4 = true;` with
+    # `services.resolved.settings.Resolve.MulticastDNS = "off";`, or using a static IP for printer device URI.
 
     nssmdns4 = false;
     nssmdns6 = false;
@@ -148,6 +140,11 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/networkmanager.nix
   networking.networkmanager = {
     enable = true;
+
+    # Wi-Fi powersave drops mDNS multicast queries on idle devices.
+    # It seems to operate even when plugged into AC power.
+    # Note: If battery drains too fast on laptops, disabling this might be a factor.
+    wifi.powersave = false;
 
     dns = "systemd-resolved";
     # 1 means 'resolve' (resolve only, no announcement)

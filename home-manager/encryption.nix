@@ -20,8 +20,9 @@ in
   services.gpg-agent = {
     enable = pkgs.stdenv.isLinux;
 
-    # Update [darwin.nix](darwin.nix) if changed this section
-    #
+    enableBashIntegration = true;
+    enableZshIntegration = true;
+
     # https://superuser.com/questions/624343/keep-gnupg-credentials-cached-for-entire-user-session
     defaultCacheTtl = day * 7;
     # https://github.com/openbsd/src/blob/862f3f2587ccb85ac6d8602dd1601a861ae5a3e8/usr.bin/ssh/ssh-agent.1#L167-L173
@@ -54,6 +55,14 @@ in
     # They will respect pass compatibility: https://github.com/gopasspw/gopass/issues/1365#issuecomment-719655627
     "pass" = "gopass";
   };
+
+  home.packages = with pkgs; [
+    sequoia-sq # Alt `gpg(gnupg)`
+    sequoia-chameleon-gnupg # Don't add gnupg package together since https://github.com/NixOS/nixpkgs/pull/507547
+    age # Candidates: rage
+    gopass
+    passage
+  ];
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/gpg.nix
   programs.gpg = {

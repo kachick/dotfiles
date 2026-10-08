@@ -52,16 +52,10 @@
 
         tailscale # Frequently backported to stable channel
 
-        # Enable LSP on global.
-        #   - nixd is useually required in all platforms even in WSL2
-        #   - Especially zed-editor is using for NixOS default VISUAL editor. It requires LSPs
-        nixd
-        unstable.typos-lsp
-        unstable.gopls
-        rust-analyzer
-        rustfmt
-
         shellcheck
+
+        # Keep shfmt or shuck for now even use dprint for the project formatting, dprint has no simple solution yet
+        # Revisit once https://github.com/dprint/dprint-vscode/issues/13 is resolved
         shfmt
 
         # Useful if facing to coredump likely https://github.com/NixOS/nixpkgs/pull/423716
@@ -73,16 +67,13 @@
         # ```
         #
         # coredump can be output with `coredumpctl list` and `coredumpctl dump <ID> --output path`
-        #
-        # LLDB also works on macOS, however omit it to keep lightweight and small dependencies
         lldb
-
-        llm-agents.gemini-cli
       ])
       ++ (with pkgs.local; [
         rclone-list-mounted
         rclone-mount
         rclone-fzf
+        filen-cli-rs
       ]);
   };
 

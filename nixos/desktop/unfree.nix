@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 
 {
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
@@ -42,10 +45,13 @@
     # `rm -rf ~/.config/google-chrome/Singleton*`
     #
     google-chrome
+
+    local.antigravity-cli
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
     "google-chrome"
     "vscode"
+    "antigravity-cli"
   ];
 }

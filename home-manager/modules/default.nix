@@ -1,6 +1,8 @@
 { overlays }:
 {
-  common = ../common.nix;
+  dev = ../dev.nix;
+  essential = ../essential.nix;
+  server = ../essential.nix;
   desktop = ./desktop.nix;
   # All Linux (NixOS + non-NixOS)
   linux = ../linux.nix;
@@ -12,7 +14,6 @@
 
   # Platform/Environment specific
   ephemeral = ../ephemeral.nix;
-  darwin = ../darwin.nix;
   systemd = ../systemd.nix;
   wsl = ../wsl.nix;
   lima-guest = ../lima-guest.nix;

@@ -1,7 +1,7 @@
 { outputs, ... }:
 {
   imports = [
-    outputs.homeManagerModules.common
+    outputs.homeManagerModules.dev
     ../desktop.nix
   ];
 }

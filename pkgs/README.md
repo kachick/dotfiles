@@ -4,7 +4,7 @@ This directory contains Nix package definitions, organized by their origin and p
 
 ## Directory Structure
 
-- `local/`: Packages where the source code is managed in this repository, or where we provide our own packaging logic (e.g., `default.nix`) for external sources not found in `nixpkgs`.
+- `by-name/`: Packages where the source code is managed in this repository, organized in nixpkgs standard by-name structure (`by-name/<2-prefix>/<pname>`).
   - Examples: `la`, `lat`, `tanuki-hao`, `lima-full`.
   - Exposed as: `pkgs.local.<name>`.
 - `pinned/`: (Virtual/Implicit) External packages from `nixpkgs` or other flakes that we explicitly want to build and cache in CI, often for stability or specific versioning.
@@ -40,3 +40,9 @@ Packages exposed in `packages` output can be updated using the standard CLI tool
   ```
 
 - Automated version updates are not currently considered for these local packages.
+
+## Why `nixpkgs-vet` is not enforced
+
+Although `pkgs/by-name/` follows the standard `nixpkgs` layout (`by-name/<2-prefix>/<pname>`), `nixpkgs-vet` is not enforced in CI.
+
+`nixpkgs-vet` strictly forbids packages from referencing files outside their package directory (rule `NPV-123`). In this monorepo, local packages intentionally share top-level resources such as `go.mod`, `internal/`, and shared configuration files under `config/` (via relative paths like `../../../../.`). Restructuring packages to satisfy `nixpkgs-vet` would require duplicating shared files or splitting Go modules, which conflicts with our monorepo design.

@@ -1,3 +1,4 @@
+/- kdl-version 1
 // Candidates: https://github.com/zellij-org/zellij/tree/v0.41.1/zellij-utils/assets/themes
 // Take care of the selection highlight. Much of themes have too low contrast. See GH-295
 // Acceptable: f75c11c109968becfe60a07998e73a451f4ccf92, catppuccin-frappe, onedark

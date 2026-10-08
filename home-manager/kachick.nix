@@ -4,7 +4,7 @@ let
   pgpFingerprint = "9BE4016A38165CCB";
 in
 {
-  imports = [ ./common.nix ];
+  imports = [ ./dev.nix ];
 
   home.username = lib.mkDefault "kachick";
 
