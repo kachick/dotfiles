@@ -19,7 +19,6 @@ $rust\
 $golang\
 $ruby\
 $python\
-$deno\
 $nodejs\
 $direnv\
 $nix_shell\
