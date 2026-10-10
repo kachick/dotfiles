@@ -1,0 +1,45 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
+  "extends": [
+    "config:recommended",
+    ":semanticCommitsDisabled",
+    "github>kachick/renovate-config-dprint#1.4.0"
+  ],
+  "labels": [
+    "dependencies",
+    "renovate"
+  ],
+  "enabledManagers": [
+    "custom.regex",
+    "dockerfile"
+  ],
+  "packageRules": [
+    {
+      "description": "General dprint plugins: monthly",
+      "matchManagers": [
+        "custom.regex"
+      ],
+      "matchPackageNames": [
+        "!@kachick/**",
+        "!kachick/**"
+      ],
+      "extends": [
+        "schedule:monthly"
+      ]
+    },
+    {
+      "description": "kachick's dprint plugins (except nix): weekly",
+      "matchPackageNames": [
+        "@kachick/**",
+        "kachick/**",
+        // Excluded from scheduled rules to keep the default schedule (run at any time) for quick updates.
+        "!@kachick/dprint-plugin-nix",
+        "!kachick/dprint-plugin-nix"
+      ],
+      "extends": [
+        "schedule:weekly"
+      ]
+    }
+  ]
+}
