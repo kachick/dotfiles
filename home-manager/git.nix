@@ -171,6 +171,12 @@ in
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
       # Config based hooks: https://github.blog/open-source/git/highlights-from-git-2-54/
       # Candidates: https://github.com/git/git/tree/v2.54.0/templates/hooks
+      #
+      # Why not hook managers like pre-commit or prek:
+      # - Git 2.54 natively supports multi-hook dispatch and individual toggles (`hook.<name>.enabled=false`).
+      # - Nix already manages and pins all required tool binaries.
+      # - Frameworks like pre-commit pass working-tree file paths rather than git diffs or refs.
+      #   They cannot directly inspect Git metadata, such as branch names or unified diffs with `--author` filtering.
       hook = {
         commit-msg-no-leaks = {
           event = "commit-msg";
