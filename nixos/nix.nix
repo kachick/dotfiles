@@ -62,4 +62,23 @@
       max-free = ${toString (1024 * 1024 * 1024)}
     '';
   };
+
+  # Throttle disk I/O to avoid freezing desktop operations during weekly store optimization.
+  #
+  # Why not rely on upstream IOSchedulingClass=idle?
+  # Upstream nix-optimise service sets IOSchedulingClass=idle.
+  # However, modern NVMe devices with blk-mq ignore ionice CFQ classes under kyber or none schedulers.
+  #
+  # Why cgroup v2 bandwidth limits?
+  # IOReadBandwidthMax and IOWriteBandwidthMax enforce cgroup v2 io.max limits
+  # regardless of the underlying I/O scheduler.
+  #
+  # Why 150M read and 50M write?
+  # Fast NVMe drives reach thousands of MB/s. Capping optimise to 150MB/s read and 50MB/s write
+  # leaves plenty of I/O headroom for desktop apps and page fault handling.
+  systemd.services.nix-optimise.serviceConfig = {
+    IOReadBandwidthMax = "/ 150M";
+    IOWriteBandwidthMax = "/ 50M";
+    IOWeight = 10;
+  };
 }
