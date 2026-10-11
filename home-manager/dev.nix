@@ -34,7 +34,6 @@
 
         ghq
         direnv
-        yazi
         hexyl # hex viewer
         sad
 
@@ -126,19 +125,6 @@
     #   - https://github.com/kachick/ruby-ulid/pull/410
     nix-direnv = {
       enable = true;
-    };
-  };
-
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/yazi.nix
-  programs.yazi = {
-    enable = true;
-    shellWrapperName = "y";
-    settings = {
-      # https://github.com/sxyazi/yazi/pull/2803
-      # https://github.com/nix-community/home-manager/pull/7160
-      mgr = {
-        sort_dir_first = true;
-      };
     };
   };
 

@@ -87,8 +87,6 @@
 
   unstable.gurk-rs
 
-  yazi
-
   pastel
 
   # How to get the installed font names
