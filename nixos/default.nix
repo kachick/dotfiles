@@ -18,6 +18,7 @@ in
   "desktop-free" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/desktop-free ]; });
   "installer" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/installer ]; });
   "wsl" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/wsl ]; });
+  "river-vm" = nixpkgs.lib.nixosSystem (shared // { modules = [ ./hosts/river-vm ]; });
   "vps" = nixpkgs.lib.nixosSystem (
     shared
     // {

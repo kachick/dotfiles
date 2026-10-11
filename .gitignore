@@ -30,5 +30,6 @@ winget-pkgs-*-raw.json
 
 *.bak
 *.backup
+*.qcow2
 
 .task
