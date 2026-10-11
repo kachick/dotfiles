@@ -180,8 +180,6 @@
 
       alacritty
 
-      lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
-
       mission-center
 
       # Add LSP global for zed-editor. Prefer external package for helix
