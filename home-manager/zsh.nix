@@ -157,6 +157,30 @@ in
     # https://github.com/nix-community/home-manager/blob/ae755329092c87369b9e9a1510a8cf1ce2b1c708/modules/programs/zsh.nix#L513-L527
     initContent =
       let
+        # Reload Home Manager session variables in new terminal windows without logging out.
+        # Home Manager guards hm-session-vars.sh with __HM_SESS_VARS_SOURCED, so new terminal windows
+        # in graphical sessions keep old environment variables after switch:
+        # - https://github.com/nix-community/home-manager/issues/1011
+        # - https://github.com/nix-community/home-manager/issues/3100
+        # - https://github.com/nix-community/home-manager/issues/8790
+        #
+        # Why SHLVL == 1:
+        # Avoid running in subshells or scripts. This protects temporary exports and direnv.
+        #
+        # Why typeset -U path PATH:
+        # Avoid duplicate PATH items when sourcing hm-session-vars.sh again.
+        reloadSessionVariables = lib.mkOrder 500 ''
+          if [[ "$SHLVL" -eq 1 ]]; then
+            typeset -U path PATH
+            unset __HM_SESS_VARS_SOURCED __HM_ZSH_SESS_VARS_SOURCED
+            if [ -f "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh" ]; then
+              . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+            elif [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+              . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+            fi
+          fi
+        '';
+
         # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L325C7-L329
         # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
         # The default is "autoload -U compinit && compinit", I can not accept the path and speed
@@ -308,6 +332,7 @@ in
         '';
       in
       lib.mkMerge [
+        reloadSessionVariables
         beforeCompInit
         generalAfterCompInit
       ];
