@@ -46,6 +46,10 @@ in
 
     # Create with: `age --decrypt "$PASSAGE_IDENTITIES_FILE" | age-keygen -y`
     PASSAGE_RECIPIENTS_FILE = "${PASSAGE_DIR}/.age-recipients";
+
+    # Prevent saving encrypted vault and local state to disk on poweroff or logout.
+    # Bitwarden CLI stores both config and encrypted vault cache together in data.json.
+    BITWARDENCLI_APPDATA_DIR = "$XDG_RUNTIME_DIR/bitwarden";
   };
 
   home.file."${passage_identity_dir}/.keep".text =
