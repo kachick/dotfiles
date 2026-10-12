@@ -102,6 +102,12 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 
 	return map[string]githooks.Linter{
 		"prevent secrets in log and diff": {Tag: "betterleaks", Script: func() error {
+			// NOTE: betterleaks runs `git log -p` without `--no-textconv` and `--no-ext-diff`.
+			// Repositories with textconv enabled (for example, `*.gpg diff=gpg`) decrypt files during scans,
+			// causing false positive leaks on encrypted secrets.
+			// Upstream is addressing this in https://github.com/betterleaks/betterleaks/pull/401.
+			// For now, repositories with such setups can bypass this hook with:
+			//   git config set hook.pre-push-no-leaks.enabled false
 			cmd := exec.Command("betterleaks", "--verbose", "git", fmt.Sprintf("--log-opts=--author=%s %s..%s", email, remoteBranch, localRef))
 			out, err := cmd.CombinedOutput()
 			log.Println(strings.Join(cmd.Args, " "))
