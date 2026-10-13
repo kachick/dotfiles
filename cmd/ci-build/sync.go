@@ -39,10 +39,10 @@ func runSyncWorkflows(args []string) error {
 	}
 	repoRoot := strings.TrimSpace(string(repoRootBytes))
 
-	packagesPath := filepath.Join(repoRoot, "packages.toml")
+	packagesPath := filepath.Join(repoRoot, "pkgs", "list.toml")
 	packagesFile, err := loadPackagesConfig(packagesPath)
 	if err != nil {
-		return fmt.Errorf("loading packages.toml: %w", err)
+		return fmt.Errorf("loading pkgs/list.toml: %w", err)
 	}
 
 	// 1. Generate package-linux.yml parallel steps
@@ -103,7 +103,7 @@ func runSyncWorkflows(args []string) error {
 		if orig != updated {
 			hasDiff = true
 			if *checkOnly {
-				fmt.Fprintf(os.Stderr, "%s is out of sync with packages.toml\n", target.relPath)
+				fmt.Fprintf(os.Stderr, "%s is out of sync with pkgs/list.toml\n", target.relPath)
 			} else {
 				if err := os.WriteFile(fullPath, []byte(updated), 0o644); err != nil {
 					return fmt.Errorf("writing %s: %w", target.relPath, err)
@@ -114,7 +114,7 @@ func runSyncWorkflows(args []string) error {
 	}
 
 	if *checkOnly && hasDiff {
-		return fmt.Errorf("workflows are not synchronized with packages.toml. Run 'go run ./cmd/ci-build sync-workflows' to update them")
+		return fmt.Errorf("workflows are not synchronized with pkgs/list.toml. Run 'go run ./cmd/ci-build sync-workflows' to update them")
 	}
 
 	if !hasDiff {

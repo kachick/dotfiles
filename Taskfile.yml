@@ -140,7 +140,7 @@ tasks:
   sync-workflows:
     aliases:
       - sync-packages
-    desc: Synchronize workflow files with packages.toml
+    desc: Synchronize workflow files with pkgs/list.toml
     cmds:
       - go run ./cmd/ci-build sync-workflows
       - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
