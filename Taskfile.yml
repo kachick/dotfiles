@@ -105,35 +105,24 @@ tasks:
     deps:
       - mkdir
     sources:
-      - ./cmd/**.go
+      - ./cmd/**/*.go
+      - internal/**/*.go
     generates:
       - dist/**
     # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
     cmds:
       - go build -v -o dist ./...
 
-  build-lint:
-    internal: true
-    deps:
-      - mkdir
-    cmds:
-      - go build -v -o dist/lint ./cmd/lint
-    sources:
-      - internal/**/*.go
-      - ./cmd/lint/*.go
-    generates:
-      - dist/lint
-
   lint:
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint
 
   lint-all:
     desc: Includes heavy linters
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint -all
 
