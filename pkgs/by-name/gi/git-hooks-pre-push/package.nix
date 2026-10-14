@@ -32,7 +32,7 @@ buildGo127Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-Dd0ZaKKMa1N8/miQt9aUzxgtJD9xD9PF3ZYp//MbJvU=";
+  vendorHash = "sha256-nHT6DqciP9ExfLrgujnZGf6Crcd2NC5yuw51PEN1l9o=";
   src =
     with lib.fileset;
     toSource {
