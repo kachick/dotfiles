@@ -41,7 +41,7 @@ buildGo127Module (finalAttrs: {
         ../../../../go.mod
         ../../../../go.sum
         ../../../../internal
-        ./.
+        (difference ./. (maybeMissing ./README.md))
       ];
     };
 

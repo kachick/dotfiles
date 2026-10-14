@@ -197,6 +197,8 @@ in
         #     git -c hook.pre-push-no-typos-in-commits.enabled=false push
         #   - Disable in a repository:
         #     git config set hook.pre-push-no-typos-in-commits.enabled false
+        #   - Skip a single commit safely:
+        #     See pkgs/by-name/gi/git-hooks-pre-push/README.md
         pre-push-no-leaks = {
           event = "pre-push";
           command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
