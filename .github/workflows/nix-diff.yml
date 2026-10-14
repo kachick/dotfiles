@@ -3,130 +3,18 @@ on:
   pull_request:
     paths:
       - 'flake.lock'
-      - '.github/actions/setup-nix/**'
-    types: [opened, synchronize, reopened, labeled]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+      - '.github/workflows/nix-diff.yml'
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   diff:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: DevShell
-            runner: ubuntu-26.04
-          - target: NixOS
-            runner: ubuntu-26.04
-          - target: home-manager-linux
-            runner: ubuntu-26.04
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
-    if: >-
-      github.event.pull_request.user.login == 'selfup-runner[bot]' ||
-      contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-
-      - name: Generate diff snippet
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_BASE_REF: ${{ github.base_ref }}
-        run: |
-          BASE_FLAKE="github:${GITHUB_REPOSITORY}/${GITHUB_BASE_REF}"
-
-          nix build .#nix-diff
-
-          ./result/bin/nix-diff -base "$BASE_FLAKE" -target "${{ matrix.target }}" > "snippet-${{ matrix.target }}.md"
-          cat "snippet-${{ matrix.target }}.md"
-      - name: Upload snippet
-        uses: actions/upload-artifact@v7
-        with:
-          name: snippet-${{ matrix.target }}
-          path: snippet-${{ matrix.target }}.md
-          archive: false
-
-  report:
-    needs: diff
-    runs-on: ubuntu-26.04
-    if: always() && (needs.diff.result == 'success' || needs.diff.result == 'skipped')
-    permissions:
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Download all snippets
-        uses: actions/download-artifact@v8
-        with:
-          pattern: snippet-*
-          merge-multiple: true
-
-      - name: Combine report
-        run: |
-          echo "## ❄️ Nix Package Version Changes" > diff_report.md
-          echo "<!-- nix-diff-report -->" >> diff_report.md
-          echo "" >> diff_report.md
-
-          HAS_ANY_DIFF=false
-          # Dynamically process all downloaded snippets
-          for f in snippet-*.md; do
-            [ -e "$f" ] || continue
-            t=${f#snippet-}
-            t=${t%.md}
-
-            if [ -s "$f" ]; then
-              echo "- $t: ✅ CHANGED" >> diff_report.md
-              HAS_ANY_DIFF=true
-            else
-              echo "- $t: ∅ No change" >> diff_report.md
-            fi
-          done
-
-          echo "" >> diff_report.md
-          if [ "$HAS_ANY_DIFF" = "true" ] || ls snippet-*.md >/dev/null 2>&1; then
-            echo "Detailed diffs are available in the [Job Artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts)." >> diff_report.md
-          else
-            echo "No package version changes detected in monitored targets." >> diff_report.md
-          fi
-
-      - name: Minimize old diff comments
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh api -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "repos/{owner}/{repo}/issues/${PR_NUMBER}/comments" --paginate | \
-              jq '.[] |
-                select(.user.login == "github-actions[bot]" and (.body | contains("nix-diff-report"))) |
-                .node_id' | \
-                  xargs --no-run-if-empty --replace='{node_id}' \
-                    gh api graphql --raw-field subjectId="{node_id}" \
-                      --raw-field query='mutation($subjectId:ID!) {
-                        minimizeComment(input: { subjectId: $subjectId, classifier: OUTDATED }) {
-                          clientMutationId
-                          minimizedComment {
-                            isMinimized
-                          }
-                        }
-                      }'
-
-      - name: Post new diff report
-        if: github.event.pull_request.user.login == 'selfup-runner[bot]' || contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          gh pr comment "$PR_NUMBER" --body-file diff_report.md
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main
+    with:
+      runs-on: ubuntu-26.04
+      targets: |
+        devShells.x86_64-linux.default
+        nixosConfigurations.algae.config.system.build.toplevel
+        homeConfigurations."github-actions@ubuntu-26.04".activationPackage
