@@ -1,6 +1,7 @@
 {
   kanata-tray,
   home-manager-linux,
+  selfup,
 }:
 final: _prev:
 let
@@ -14,6 +15,9 @@ in
     # Pinning kanata-tray from the flake input
     # It seems kanata-tray flake provides 'kanata-tray' and 'default' (which is kanata-tray)
     kanata-tray = kanata-tray.packages.${system}.default;
+
+    # Pinning selfup from the flake input
+    selfup = selfup.packages.${system}.default;
 
     inherit (_prev.unstable)
       # See GH-1085, GH-1134, and GH-1402

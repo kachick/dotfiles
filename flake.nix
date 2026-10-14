@@ -5,9 +5,11 @@
     # Project-specific 'extra-substituters'. Works without warnings if these are in the system-wide 'extra-trusted-substituters'.
     extra-substituters = [
       "https://kachick-dotfiles.cachix.org"
+      "https://selfup.cachix.org"
     ];
     extra-trusted-public-keys = [
       "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+      "selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8="
     ];
   };
 
@@ -48,6 +50,11 @@
       url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    selfup = {
+      url = "github:kachick/selfup/v1.3.1";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -57,6 +64,7 @@
       nixpkgs-unstable,
       home-manager-linux,
       kanata-tray,
+      selfup,
       ...
     }@inputs:
     let
@@ -67,6 +75,7 @@
           nixpkgs-unstable
           kanata-tray
           home-manager-linux
+          selfup
           ;
       };
 

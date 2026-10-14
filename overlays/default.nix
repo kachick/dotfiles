@@ -2,6 +2,7 @@
   nixpkgs-unstable,
   kanata-tray,
   home-manager-linux,
+  selfup,
 }:
 [
   (import ./local.nix)
@@ -10,6 +11,7 @@
     inherit
       kanata-tray
       home-manager-linux
+      selfup
       ;
   })
   (import ./overrides { })

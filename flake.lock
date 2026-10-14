@@ -150,7 +150,29 @@
         "kanata-tray": "kanata-tray",
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-unstable": "nixpkgs-unstable"
+        "nixpkgs-unstable": "nixpkgs-unstable",
+        "selfup": "selfup"
+      }
+    },
+    "selfup": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770710253,
+        "narHash": "sha256-s/b+r+mNPFoyNMsNAr8K0PEnEzmSGcP7JFmR1ixmPIw=",
+        "owner": "kachick",
+        "repo": "selfup",
+        "rev": "06a37ddb70ce25ec28b75ce500e15e7fb4d7c4a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "kachick",
+        "ref": "v1.3.1",
+        "repo": "selfup",
+        "type": "github"
       }
     }
   },

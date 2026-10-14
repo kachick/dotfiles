@@ -22,10 +22,7 @@ jobs:
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
       dry-run: ${{ github.event_name == 'pull_request' }}
-      post-commit-lock-file: |
-        git ls-files -z .github | xargs --null nix run github:kachick/selfup/v1.3.1 -- run --
-        nix run .#bump_gomod -- .
-        nix run .#update-completions
+      post-commit-lock-file: nix run .#update-deps
       post-commit-lock-file-title: 'Sync CI dependencies with nixpkgs'
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
