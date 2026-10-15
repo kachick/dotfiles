@@ -20,18 +20,21 @@
       # See https://github.com/NixOS/nix/pull/8047 for background
       always-allow-substitutes = true;
 
+      extra-substituters = [
+        "https://kachick-dotfiles.cachix.org"
+        "https://kachick.cachix.org"
+      ];
+
       extra-trusted-substituters = [
         "https://nix-community.cachix.org" # https://nix-community.org/cache/
         "https://cache.numtide.com" # Replaced from https://numtide.cachix.org
-        "https://selfup.cachix.org" # GH-1235
-        "https://kachick-dotfiles.cachix.org"
       ];
 
       extra-trusted-public-keys = [
+        "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
+        "kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-        "selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8="
-        "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
       ];
 
       accept-flake-config = true;

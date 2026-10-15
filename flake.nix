@@ -2,14 +2,13 @@
   description = "kachick's dotfiles that can be placed in the public repository";
 
   nixConfig = {
-    # Project-specific 'extra-substituters'. Works without warnings if these are in the system-wide 'extra-trusted-substituters'.
     extra-substituters = [
       "https://kachick-dotfiles.cachix.org"
-      "https://selfup.cachix.org"
+      "https://kachick.cachix.org"
     ];
     extra-trusted-public-keys = [
       "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
-      "selfup.cachix.org-1:eY2eEd955BmRI7SultbRIV81vApqpJixunkV3XlXuT8="
+      "kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ="
     ];
   };
 
