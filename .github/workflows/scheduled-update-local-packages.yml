@@ -16,4 +16,4 @@ jobs:
       contents: write
     uses: $/.github/workflows/update-local-packages.yml
     secrets:
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
