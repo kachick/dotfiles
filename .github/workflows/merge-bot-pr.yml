@@ -16,5 +16,7 @@ jobs:
     uses: kachick/workflows/.github/workflows/reusable-automerge.yml@main
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
+      llm-final-veto: true
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
