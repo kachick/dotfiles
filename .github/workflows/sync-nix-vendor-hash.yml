@@ -1,20 +1,17 @@
 name: 🔄 Sync Nix vendorHash
 on:
-  pull_request:
-    types: [opened, synchronize]
-    paths:
-      - 'go.mod'
-      - 'go.sum'
-      - '.github/actions/setup-nix/**'
+  schedule:
+    # Run every 2 hours at minute 47 to avoid traffic peaks and prepare bot PRs before automerge runs at minute 17
+    - cron: '47 */2 * * *'
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   sync-hash:
     runs-on: ubuntu-26.04
     timeout-minutes: 30
-    if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' }}
     steps:
       - name: Generate GitHub Apps token
         id: publish-token
@@ -24,10 +21,9 @@ jobs:
           private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
           permission-contents: write
 
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ steps.publish-token.outputs.token }}
-          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: true
 
       - uses: $/.github/actions/setup-nix
@@ -36,21 +32,45 @@ jobs:
 
       - name: Prepare Git user
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Run bump_gomod
-        run: |
-          nix run .#bump_gomod -- .
-
-      - name: Push changes
+      - name: Sync vendorHash for open Dependabot PRs
         env:
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ steps.publish-token.outputs.token }}
         run: |
-          # bump_gomod already commits if there are changes
-          # We just need to push if the head has moved
-          CURRENT_SHA=$(git rev-parse HEAD)
-          if [ "${CURRENT_SHA}" != "${HEAD_SHA}" ]; then
-            git push origin HEAD:"${HEAD_REF}"
+          set -euo pipefail
+
+          branches=$(gh pr list \
+            --author "app/dependabot" \
+            --state open \
+            --json headRefName \
+            --jq '.[] | select(.headRefName | startswith("dependabot/go_modules/")) | .headRefName')
+
+          if [ -z "${branches}" ]; then
+            echo "No open Dependabot Go PRs found"
+            exit 0
           fi
+
+          for branch in ${branches}; do
+            echo "Checking ${branch}..."
+            git fetch origin "${branch}"
+            git checkout -B "${branch}" "origin/${branch}"
+            git reset --hard HEAD
+            git clean -fd
+
+            if [ "$(git log -1 --format=%s)" = "Bump vendorHash in go packages" ]; then
+              echo "Branch ${branch} is already synced"
+              continue
+            fi
+
+            before_sha=$(git rev-parse HEAD)
+            nix run .#bump_gomod -- .
+
+            if [ "$(git rev-parse HEAD)" != "${before_sha}" ]; then
+              echo "Pushing updated vendorHash for ${branch}..."
+              git push origin "${branch}"
+            else
+              echo "No vendorHash changes needed for ${branch}"
+            fi
+          done
