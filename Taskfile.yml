@@ -67,6 +67,19 @@ tasks:
       - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.vps.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.river-vm.config.system.build.toplevel --dry-run
+
+  vm-river:
+    aliases:
+      - river-vm
+    desc: Launch River VM in a graphical window for manual testing
+    cmds:
+      - nix run .#nixosConfigurations.river-vm.config.system.build.vm
+
+  test-river-vm:
+    desc: Run automated headless verification of River VM and capture screenshot
+    cmds:
+      - ./scripts/test-river-vm.bash
 
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
