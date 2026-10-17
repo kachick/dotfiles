@@ -356,7 +356,7 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 		args = append(args, "--stdin")
 		pushCmd = exec.Command(niks3Bin, args...)
 	} else {
-		args := []string{"run", "nixpkgs#niks3", "--", "push", "--server-url", serverURL}
+		args := []string{"run", ".#niks3", "--", "push", "--server-url", serverURL}
 		args = append(args, tokenArgs...)
 		args = append(args, "--stdin")
 		pushCmd = exec.Command("nix", args...)
