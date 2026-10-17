@@ -82,9 +82,10 @@ jobs:
       - name: Install and configure Nix in Guest
         env:
           REV: ${{ github.head_ref || github.ref_name }}
+          NIX_CONFIG: access-tokens = github.com=${{ github.token }}
         run: |
           # Use the same pipe-based command as in README, passing the current branch.
-          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "${REV}"
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | LIMA_SHELLENV_ALLOW='NIX_CONFIG' limactl shell --preserve-env docker-nix bash -s -- "${REV}"
 
       - name: Verify Nix installation in Guest
         run: limactl shell docker-nix nix --version
@@ -92,9 +93,9 @@ jobs:
       - name: Show Binary Cache effectiveness in Guest
         env:
           REV: ${{ github.head_ref || github.ref_name }}
+          NIX_CONFIG: access-tokens = github.com=${{ github.token }}
         run: |
           FLAKE_URI="github:kachick/dotfiles/${REV}"
-          export NIX_CONFIG='accept-flake-config = true'
           LIMA_SHELLENV_ALLOW='NIX_CONFIG' limactl shell --preserve-env docker-nix nix run "${FLAKE_URI}#la" -- --version
 
       - name: Show Docker works in Guest
