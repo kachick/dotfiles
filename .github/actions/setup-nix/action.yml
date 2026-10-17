@@ -1,13 +1,5 @@
-name: 'Setup Nix and Cachix'
-description: 'Installs Nix and configures Cachix for caching'
-inputs:
-  cachix-auth-token:
-    description: 'Authentication token for Cachix'
-    required: true
-  skip-push:
-    description: 'Set to true to only pull from the cache without pushing any build results'
-    required: false
-    default: 'false'
+name: 'Setup Nix'
+description: 'Installs Nix and configures evaluation cache'
 runs:
   using: 'composite'
   steps:
@@ -25,11 +17,3 @@ runs:
         restore-keys: |
           nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock') }}-
           nix-eval-and-tarball-${{ runner.os }}-
-    - name: Configure Cachix
-      uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
-      with:
-        name: kachick-dotfiles
-        authToken: ${{ inputs.cachix-auth-token }}
-        skipPush: ${{ inputs.skip-push }}
-        # https://github.com/kachick/dotfiles/commit/deba9834efbef3aae2a61aa6ee2794d1eba6e985#r167396022
-        pushFilter: '(-source$|nixpkgs\.tar\.gz$|-vendor|.iso$)'

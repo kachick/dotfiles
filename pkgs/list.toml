@@ -1,6 +1,6 @@
 # Package metadata for CI builds and automated updates.
 #
-# NOTE: Binary caching (Cachix) is automatically handled by `cmd/ci-build` based on licenses.
+# NOTE: Binary caching is automatically handled by `cmd/ci-build` based on licenses.
 # Do NOT configure caching flags here.
 
 [packages]

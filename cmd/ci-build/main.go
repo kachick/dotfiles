@@ -139,9 +139,6 @@ func runPackage(args []string) error {
 	}
 
 	outPaths := strings.Fields(outBuf.String())
-	if err := maybePushToCachix(pname, isFree, outPaths); err != nil {
-		return err
-	}
 	if err := maybePushToNiks3(pname, isFree, outPaths); err != nil {
 		return err
 	}
@@ -191,24 +188,6 @@ else
 	}
 }
 
-func maybePushToCachix(pname string, isFree bool, outPaths []string) error {
-	if !isFree {
-		fmt.Printf("Skipping Cachix push for unfree package: %s\n", pname)
-		return nil
-	}
-
-	if len(outPaths) == 0 {
-		return fmt.Errorf("no output paths to push for %s", pname)
-	}
-
-	args := append([]string{"push", "kachick-dotfiles"}, outPaths...)
-	fmt.Printf("Pushing %s to Cachix (%d paths)...\n", pname, len(outPaths))
-	cmd := exec.Command("cachix", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
 func runNixos(args []string) error {
 	fs := flag.NewFlagSet("nixos", flag.ExitOnError)
 	if err := fs.Parse(args); err != nil {
@@ -232,9 +211,6 @@ func runNixos(args []string) error {
 	}
 
 	outPaths := strings.Fields(outBuf.String())
-	if err := maybePushToCachix(host, true, outPaths); err != nil {
-		return err
-	}
 	if err := maybePushToNiks3(host, true, outPaths); err != nil {
 		return err
 	}

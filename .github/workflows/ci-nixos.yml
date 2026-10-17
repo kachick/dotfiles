@@ -96,8 +96,6 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Connect Tailscale
         if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
@@ -120,8 +118,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Install direnv
         run: |

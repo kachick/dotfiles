@@ -135,7 +135,7 @@ func TestFilterUpstreamPaths(t *testing.T) {
 			Signatures: []string{},
 		},
 		"/nix/store/kachick-pkg": {
-			Signatures: []string{"kachick-dotfiles.cachix.org-1:sig456"},
+			Signatures: []string{"cache.kachick.dev-1:sig456"},
 		},
 		"/nix/store/multi-sig": {
 			Signatures: []string{"other-cache:abc", "cache.nixos.org-1:xyz"},
