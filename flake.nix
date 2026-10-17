@@ -3,10 +3,12 @@
 
   nixConfig = {
     extra-substituters = [
+      "https://cache.kachick.dev"
       "https://kachick-dotfiles.cachix.org"
       "https://kachick.cachix.org"
     ];
     extra-trusted-public-keys = [
+      "cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY="
       "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
       "kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ="
     ];
