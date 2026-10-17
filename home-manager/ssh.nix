@@ -115,10 +115,10 @@ in
             StrictHostKeyChecking = "accept-new";
           };
 
-          # tailscale
-          "*.ts.net" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
-            forwardAgent = true;
-          };
+          # Do not enable forwardAgent for wildcard "*.ts.net" here.
+          # Tailscale networks can include shared or lower-trust hosts where root could
+          # use a forwarded local SSH agent socket. Enable ForwardAgent per host in
+          # ~/.ssh/config.local when needed.
         };
 
         fallbacks = {

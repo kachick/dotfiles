@@ -9,6 +9,7 @@ runs:
         extra-conf: |
           sandbox = true
           accept-flake-config = true
+          keep-build-log = false
     - name: Cache Nix Evaluation and Tarballs
       uses: actions/cache@v6.1.0
       with:

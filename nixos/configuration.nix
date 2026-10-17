@@ -5,7 +5,8 @@
 {
   lib,
   pkgs,
-  overlays,
+  outputs,
+  overlays ? [ outputs.overlays.default ],
   ...
 }:
 {
@@ -17,7 +18,7 @@
   ];
 
   # Bootloader.
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.canTouchEfiVariables = lib.mkDefault true;
 
   # GH-1255 for HDD
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/hardware/iosched.nix
@@ -60,8 +61,6 @@
       helix
       micro
 
-      usbutils # `lsusb` to get IDs
-
       wget
       curl
       git
@@ -72,48 +71,8 @@
       fzf
       ripgrep
       dig
-
-      dmidecode # `sudo dmidecode -s bios-version`
     ]
   );
-
-  ## Avahi (Classic, supported by CUPS)
-  # - https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/avahi-daemon.nix
-  # - https://wiki.archlinux.org/title/Avahi
-  #
-  # If you faced to any troubles around this context, Also see following issues
-  # - https://github.com/NixOS/nixpkgs/issues/118628
-  # - https://github.com/NixOS/nixpkgs/issues/412777
-  # - https://github.com/NixOS/nixpkgs/issues/291108
-  # I don't know how to use both in NixOS likely https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
-  services.avahi = {
-    # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
-    # - https://github.com/apple/cups/issues/5452
-    # - https://github.com/OpenPrinting/libcups/issues/81
-    enable = true; # If enabled, you should care the conflict with systemd-resolved
-
-    publish = {
-      enable = true;
-      addresses = true;
-      workstation = true;
-    };
-
-    # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
-    # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
-    # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
-    # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
-    #
-    # TODO: Stalls when finding wireless printer ("Unable to locate printer ...")
-    # 1. Sleeping Wi-Fi devices drop mDNS multicast queries until unicast packets (ping/ARP) wake them.
-    # 2. Both avahi-daemon and systemd-resolved bind UDP 5353 concurrently; unicast mDNS responses (QU)
-    #    can get misrouted, causing 5s getaddrinfo timeouts in systemd-resolved.
-    # 3. Dual-stack IPv6 AAAA timeouts and link-local fe80:: (missing scope ID) trigger CUPS ipp backend retry loops.
-    # If discovery remains unstable, consider unifying mDNS onto `services.avahi.nssmdns4 = true;` with
-    # `services.resolved.settings.Resolve.MulticastDNS = "off";`, or using a static IP for printer device URI.
-
-    nssmdns4 = false;
-    nssmdns6 = false;
-  };
 
   ## systemd-resolved (Modern, not supported by CUPS)
   # - Check the behavior with `resolvectl status`
@@ -124,35 +83,13 @@
   services.resolved = {
     enable = lib.mkDefault true;
 
-    # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
     # - https://github.com/systemd/systemd/pull/40133
     # - https://www.freedesktop.org/software/systemd/man/latest/resolved.conf.html
     settings.Resolve = {
       LLMNR = false;
       DNSStubListener = false;
-      MulticastDNS = "resolve";
+      MulticastDNS = lib.mkDefault false;
     };
-  };
-
-  # Avahi module has openFirewall, but resolved module does not have it
-  networking.firewall.allowedUDPPorts = [ 5353 ];
-
-  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/networkmanager.nix
-  networking.networkmanager = {
-    enable = true;
-
-    # Wi-Fi powersave drops mDNS multicast queries on idle devices.
-    # It seems to operate even when plugged into AC power.
-    # Note: If battery drains too fast on laptops, disabling this might be a factor.
-    wifi.powersave = false;
-
-    dns = "systemd-resolved";
-    # 1 means 'resolve' (resolve only, no announcement)
-    # See https://networkmanager.dev/docs/api/latest/nm-settings-nmcli.html
-    connectionConfig."connection.mdns" = 1;
-
-    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
-    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -180,19 +117,6 @@
   # networking.firewall.enable = false;
 
   # programs.nix-ld.enable = false;
-
-  # Didn't use podman NixOS module on nixos-24.05. It worked under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
-  # I may reconsider to use the latest NixOS module now, however current home-manager based setup seems working for me. It is also useful on WSL2 and Lima
-  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/virtualisation/containers.nix
-  virtualisation.containers = {
-    enable = true;
-    policy = builtins.fromJSON (builtins.readFile ../config/containers/policy.json);
-  };
-
-  # To test https://github.com/NixOS/nixpkgs/pull/459211
-  virtualisation.containerd = {
-    enable = true;
-  };
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;

@@ -33,6 +33,11 @@
     enable = true;
   };
 
+  virtualisation.containers = {
+    enable = true;
+    policy = builtins.fromJSON (builtins.readFile ../../../config/containers/policy.json);
+  };
+
   home-manager = {
     # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506/4
     useGlobalPkgs = true;
