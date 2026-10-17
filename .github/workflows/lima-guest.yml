@@ -85,7 +85,7 @@ jobs:
           NIX_CONFIG: access-tokens = github.com=${{ github.token }}
         run: |
           # Use the same pipe-based command as in README, passing the current branch.
-          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | LIMA_SHELLENV_ALLOW='NIX_CONFIG' limactl shell --preserve-env docker-nix bash -s -- "${REV}"
+          curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/${REV}/scripts/install-nix.bash" | limactl shell docker-nix env NIX_CONFIG="${NIX_CONFIG}" bash -s -- "${REV}"
 
       - name: Verify Nix installation in Guest
         run: limactl shell docker-nix nix --version
@@ -96,7 +96,7 @@ jobs:
           NIX_CONFIG: access-tokens = github.com=${{ github.token }}
         run: |
           FLAKE_URI="github:kachick/dotfiles/${REV}"
-          LIMA_SHELLENV_ALLOW='NIX_CONFIG' limactl shell --preserve-env docker-nix nix run "${FLAKE_URI}#la" -- --version
+          limactl shell docker-nix env NIX_CONFIG="${NIX_CONFIG}" nix run "${FLAKE_URI}#la" -- --version
 
       - name: Show Docker works in Guest
         run: limactl shell docker-nix docker run --rm hello-world
