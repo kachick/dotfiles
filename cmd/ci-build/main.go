@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -273,27 +274,30 @@ func filterUpstreamPaths(parsed map[string]pathInfoEntry) []string {
 			candidatePaths = append(candidatePaths, p)
 		}
 	}
+	sort.Strings(candidatePaths)
 	return candidatePaths
 }
 
+// Query only top-level paths here. niks3 push walks closures itself and checks
+// /api/present per root before uploading.
 func queryPathInfoJSON(paths []string) ([]byte, error) {
-	args := append([]string{"path-info", "--json-format", "1", "--json", "--recursive"}, paths...)
+	args := append([]string{"path-info", "--json-format", "1", "--json", "--"}, paths...)
 	out, err := exec.Command("nix", args...).Output()
 	if err == nil {
 		return out, nil
 	}
 	// Fallback for older Nix versions without --json-format
-	fallbackArgs := append([]string{"path-info", "--json", "--recursive"}, paths...)
+	fallbackArgs := append([]string{"path-info", "--json", "--"}, paths...)
 	return exec.Command("nix", fallbackArgs...).Output()
 }
 
-func getStorePathClosure(paths []string) ([]string, error) {
+func getUncachedRootPaths(paths []string) ([]string, error) {
 	if len(paths) == 0 {
 		return nil, nil
 	}
 	out, err := queryPathInfoJSON(paths)
 	if err != nil {
-		return nil, fmt.Errorf("failed to query closure: %w", err)
+		return nil, fmt.Errorf("failed to query path-info: %w", err)
 	}
 	var parsed map[string]pathInfoEntry
 	if err := json.Unmarshal(out, &parsed); err != nil {
@@ -319,12 +323,12 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 		return fmt.Errorf("no output paths to push to niks3 for %s", targetName)
 	}
 
-	closurePaths, err := getStorePathClosure(outPaths)
+	rootPaths, err := getUncachedRootPaths(outPaths)
 	if err != nil {
-		return fmt.Errorf("collecting closure for %s: %w", targetName, err)
+		return fmt.Errorf("filtering root paths for %s: %w", targetName, err)
 	}
 
-	if len(closurePaths) == 0 {
+	if len(rootPaths) == 0 {
 		fmt.Printf("No cacheable paths found for %s, skipping niks3 push\n", targetName)
 		return nil
 	}
@@ -346,23 +350,26 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 		tokenArgs = []string{"--auth-token-path", tokenFile.Name()}
 	}
 
-	fmt.Printf("Pushing %s to niks3 (%d paths)...\n", targetName, len(closurePaths))
+	fmt.Printf("Pushing %s to niks3 (%d root paths)...\n", targetName, len(rootPaths))
 
+	// Avoid --stdin here because niks3 StreamPusher reports upload failures as
+	// JSON lines on stdout and still exits with status 0.
 	niks3Bin, err := exec.LookPath("niks3")
 	var pushCmd *exec.Cmd
 	if err == nil {
 		args := []string{"push", "--server-url", serverURL}
 		args = append(args, tokenArgs...)
-		args = append(args, "--stdin")
+		args = append(args, "--")
+		args = append(args, rootPaths...)
 		pushCmd = exec.Command(niks3Bin, args...)
 	} else {
 		args := []string{"run", ".#niks3", "--", "push", "--server-url", serverURL}
 		args = append(args, tokenArgs...)
-		args = append(args, "--stdin")
+		args = append(args, "--")
+		args = append(args, rootPaths...)
 		pushCmd = exec.Command("nix", args...)
 	}
 
-	pushCmd.Stdin = strings.NewReader(strings.Join(closurePaths, "\n") + "\n")
 	pushCmd.Stdout = os.Stdout
 	pushCmd.Stderr = os.Stderr
 
