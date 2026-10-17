@@ -41,8 +41,6 @@ jobs:
           - ubuntu-26.04
     runs-on: ${{ matrix.runner }}
     env:
-      NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-      NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
       TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
       - name: Logging disk space
@@ -68,13 +66,6 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-      - name: Connect Tailscale
-        if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
-        with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
-          tags: ${{ secrets.TAILSCALE_TAGS }}
 
       - name: Print some dotfiles overviews
         run: |
@@ -84,9 +75,6 @@ jobs:
       # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
       - run: mkdir -p ~/.local/state/nix/profiles
       - run: nix run .#home-manager -- switch -b backup --flake '.#github-actions@${{ matrix.runner }}'
-      - name: Push home-manager generation to niks3
-        if: success()
-        run: go run ./cmd/ci-build push ~/.local/state/nix/profiles/home-manager
       - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
       - name: Print some paths and versions
         run: |
@@ -122,3 +110,16 @@ jobs:
           path: home-manager-generation-home-files-${{ matrix.runner }}.tar.gz.age
           if-no-files-found: 'error'
           archive: false
+      - name: Connect Tailscale
+        if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tags: ${{ secrets.TAILSCALE_TAGS }}
+      - name: Push home-manager generation to niks3
+        if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        env:
+          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
+          NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
+        run: go run ./cmd/ci-build push ~/.local/state/nix/profiles/home-manager
