@@ -43,6 +43,7 @@ jobs:
     env:
       NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
       NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
+      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
       - name: Logging disk space
         run: df -h
@@ -58,7 +59,7 @@ jobs:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
           skip-push: true
       - name: Connect Tailscale
-        if: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
         with:
           oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
