@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 180
     env:
-      CI_BUILD_OUT_PATHS_DIR: ${{ runner.temp }}/ci-build-out-paths
+      CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
       TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
       - name: Logging disk space
