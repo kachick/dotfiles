@@ -122,7 +122,7 @@
           };
           niks3 = {
             type = "app";
-            program = pkgs.lib.getExe' pkgs.niks3 "niks3";
+            program = pkgs.lib.getExe' pkgs.unstable.niks3 "niks3";
           };
           list-shared-gomod-pkgs = {
             type = "app";
