@@ -163,3 +163,22 @@ func TestFilterUpstreamPaths(t *testing.T) {
 		t.Error("expected /nix/store/kachick-pkg to be kept, but was missing")
 	}
 }
+
+func TestRecordAndReadOutPaths(t *testing.T) {
+	dir := t.TempDir()
+
+	if err := recordOutPaths(dir, "pkg-a", []string{"/nix/store/aaa-pkg-a", "/nix/store/bbb-doc"}); err != nil {
+		t.Fatalf("recordOutPaths(pkg-a) failed: %v", err)
+	}
+	if err := recordOutPaths(dir, "pkg-b", []string{"/nix/store/bbb-doc", "/nix/store/ccc-pkg-b"}); err != nil {
+		t.Fatalf("recordOutPaths(pkg-b) failed: %v", err)
+	}
+
+	got, err := readRecordedOutPaths(dir)
+	if err != nil {
+		t.Fatalf("readRecordedOutPaths() failed: %v", err)
+	}
+	if len(got) != 3 {
+		t.Fatalf("readRecordedOutPaths() length = %d, want 3 (got: %v)", len(got), got)
+	}
+}

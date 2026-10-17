@@ -140,7 +140,7 @@ func runPackage(args []string) error {
 	}
 
 	outPaths := strings.Fields(outBuf.String())
-	if err := maybePushToNiks3(pname, isFree, outPaths); err != nil {
+	if err := handleBuiltPaths(pname, isFree, outPaths); err != nil {
 		return err
 	}
 
@@ -212,11 +212,72 @@ func runNixos(args []string) error {
 	}
 
 	outPaths := strings.Fields(outBuf.String())
-	if err := maybePushToNiks3(host, true, outPaths); err != nil {
+	if err := handleBuiltPaths(host, true, outPaths); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func handleBuiltPaths(targetName string, isFree bool, outPaths []string) error {
+	if outPathsDir := os.Getenv("CI_BUILD_OUT_PATHS_DIR"); outPathsDir != "" {
+		if !isFree {
+			fmt.Printf("Skipping output path recording for unfree package: %s\n", targetName)
+			return nil
+		}
+		return recordOutPaths(outPathsDir, targetName, outPaths)
+	}
+	return maybePushToNiks3(targetName, isFree, outPaths)
+}
+
+func recordOutPaths(dir string, targetName string, outPaths []string) error {
+	if len(outPaths) == 0 {
+		return nil
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return fmt.Errorf("creating output paths directory %s: %w", dir, err)
+	}
+	f, err := os.CreateTemp(dir, "paths-*.txt")
+	if err != nil {
+		return fmt.Errorf("creating output paths file for %s: %w", targetName, err)
+	}
+	defer f.Close()
+
+	content := strings.Join(outPaths, "\n") + "\n"
+	if _, err := f.WriteString(content); err != nil {
+		return fmt.Errorf("writing output paths for %s: %w", targetName, err)
+	}
+	fmt.Printf("Recorded %d output path(s) for %s\n", len(outPaths), targetName)
+	return nil
+}
+
+func readRecordedOutPaths(dir string) ([]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("reading output paths directory %s: %w", dir, err)
+	}
+
+	var paths []string
+	seen := make(map[string]bool)
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			return nil, fmt.Errorf("reading %s: %w", entry.Name(), err)
+		}
+		for _, field := range strings.Fields(string(data)) {
+			if !seen[field] {
+				seen[field] = true
+				paths = append(paths, field)
+			}
+		}
+	}
+	return paths, nil
 }
 
 func isCacheableStorePath(path string) bool {
@@ -378,12 +439,25 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 
 func runPush(args []string) error {
 	fs := flag.NewFlagSet("push", flag.ExitOnError)
+	fromDir := fs.String("from-dir", "", "Directory containing recorded output path files")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
+	if *fromDir != "" {
+		paths, err := readRecordedOutPaths(*fromDir)
+		if err != nil {
+			return err
+		}
+		if len(paths) == 0 {
+			fmt.Printf("No recorded output paths found in %s, skipping niks3 push\n", *fromDir)
+			return nil
+		}
+		return maybePushToNiks3("recorded-paths", true, paths)
+	}
+
 	if fs.NArg() < 1 {
-		return fmt.Errorf("at least one path is required")
+		return fmt.Errorf("at least one path or --from-dir is required")
 	}
 
 	paths := fs.Args()
