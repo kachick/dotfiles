@@ -125,3 +125,41 @@ func TestRunPush_MissingArg(t *testing.T) {
 		t.Error("expected error when path is missing, got nil")
 	}
 }
+
+func TestFilterUpstreamPaths(t *testing.T) {
+	input := map[string]pathInfoEntry{
+		"/nix/store/glibc": {
+			Signatures: []string{"cache.nixos.org-1:sig123"},
+		},
+		"/nix/store/local-pkg": {
+			Signatures: []string{},
+		},
+		"/nix/store/kachick-pkg": {
+			Signatures: []string{"kachick-dotfiles.cachix.org-1:sig456"},
+		},
+		"/nix/store/multi-sig": {
+			Signatures: []string{"other-cache:abc", "cache.nixos.org-1:xyz"},
+		},
+	}
+
+	got := filterUpstreamPaths(input)
+
+	// Sort or check set presence since map iteration order is non-deterministic
+	gotSet := make(map[string]bool)
+	for _, p := range got {
+		gotSet[p] = true
+	}
+
+	if gotSet["/nix/store/glibc"] {
+		t.Error("expected /nix/store/glibc to be filtered out, but got it")
+	}
+	if gotSet["/nix/store/multi-sig"] {
+		t.Error("expected /nix/store/multi-sig to be filtered out, but got it")
+	}
+	if !gotSet["/nix/store/local-pkg"] {
+		t.Error("expected /nix/store/local-pkg to be kept, but was missing")
+	}
+	if !gotSet["/nix/store/kachick-pkg"] {
+		t.Error("expected /nix/store/kachick-pkg to be kept, but was missing")
+	}
+}

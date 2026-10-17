@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -278,18 +279,52 @@ func filterCacheablePaths(paths []string) []string {
 	return filtered
 }
 
+type pathInfoEntry struct {
+	Signatures []string `json:"signatures"`
+}
+
+func filterUpstreamPaths(parsed map[string]pathInfoEntry) []string {
+	var candidatePaths []string
+	for p, info := range parsed {
+		isUpstream := false
+		for _, sig := range info.Signatures {
+			if strings.HasPrefix(sig, "cache.nixos.org-1:") {
+				isUpstream = true
+				break
+			}
+		}
+		if !isUpstream {
+			candidatePaths = append(candidatePaths, p)
+		}
+	}
+	return candidatePaths
+}
+
+func queryPathInfoJSON(paths []string) ([]byte, error) {
+	args := append([]string{"path-info", "--json-format", "1", "--json", "--recursive"}, paths...)
+	out, err := exec.Command("nix", args...).Output()
+	if err == nil {
+		return out, nil
+	}
+	// Fallback for older Nix versions without --json-format
+	fallbackArgs := append([]string{"path-info", "--json", "--recursive"}, paths...)
+	return exec.Command("nix", fallbackArgs...).Output()
+}
+
 func getStorePathClosure(paths []string) ([]string, error) {
 	if len(paths) == 0 {
 		return nil, nil
 	}
-	args := append([]string{"path-info", "--recursive"}, paths...)
-	cmd := exec.Command("nix", args...)
-	out, err := cmd.Output()
+	out, err := queryPathInfoJSON(paths)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query closure: %w", err)
 	}
-	allPaths := strings.Fields(string(out))
-	return filterCacheablePaths(allPaths), nil
+	var parsed map[string]pathInfoEntry
+	if err := json.Unmarshal(out, &parsed); err != nil {
+		return nil, fmt.Errorf("failed to parse path-info json: %w", err)
+	}
+	candidates := filterUpstreamPaths(parsed)
+	return filterCacheablePaths(candidates), nil
 }
 
 func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
