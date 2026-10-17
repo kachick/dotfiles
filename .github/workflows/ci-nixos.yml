@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 # Ensure only one run per branch/PR at a time.
 # Queue new runs instead of cancelling existing ones to ensure heavy builds complete.
@@ -65,6 +66,9 @@ jobs:
        )))
     runs-on: ubuntu-26.04
     timeout-minutes: 180
+    env:
+      NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
+      NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
     steps:
       - name: Logging disk space
         run: df -h
@@ -91,6 +95,13 @@ jobs:
       - uses: $/.github/actions/setup-nix
         with:
           cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Connect Tailscale
+        if: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tags: ${{ secrets.TAILSCALE_TAGS }}
       - parallel:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free
