@@ -91,7 +91,7 @@ func runPackage(args []string) error {
 
 	buildTarget := fmt.Sprintf(".#%s", pname)
 	var outBuf bytes.Buffer
-	buildArgs := []string{"build", buildTarget, "--no-link", "--print-out-paths", "--show-trace"}
+	buildArgs := []string{"build", buildTarget, "--no-link", "--print-out-paths", "--no-keep-build-log", "--show-trace"}
 	var buildEnv []string
 
 	if !isFree {
@@ -126,7 +126,7 @@ func runPackage(args []string) error {
 			fmt.Printf("No passthru.tests found for %s, skipping.\n", pname)
 		} else {
 			testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
-			testCmd := exec.Command("nix-build", "--attr", testAttr)
+			testCmd := exec.Command("nix-build", "--no-keep-build-log", "--attr", testAttr)
 			if !isFree {
 				testCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
 			}
@@ -202,7 +202,7 @@ func runNixos(args []string) error {
 
 	buildTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.system.build.toplevel", host)
 	var outBuf bytes.Buffer
-	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--print-out-paths", "--show-trace")
+	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--print-out-paths", "--no-keep-build-log", "--show-trace")
 	buildCmd.Stdout = io.MultiWriter(os.Stdout, &outBuf)
 	buildCmd.Stderr = os.Stderr
 
