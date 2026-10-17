@@ -25,7 +25,6 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 # Ensure only one run per branch/PR at a time.
 # Queue new runs instead of cancelling existing ones to ensure heavy builds complete.
@@ -50,6 +49,9 @@ jobs:
 
   build:
     needs: [wait]
+    permissions:
+      contents: read
+      id-token: write
     # Run if:
     # 1. Previous 'wait' job succeeded OR was skipped (non-PR case).
     # 2. It's not a pull request (push, schedule, etc.)

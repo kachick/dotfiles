@@ -27,10 +27,12 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   home-manager:
+    permissions:
+      contents: read
+      id-token: write
     timeout-minutes: 60
     strategy:
       fail-fast: false
