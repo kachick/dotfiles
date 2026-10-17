@@ -95,9 +95,6 @@ jobs:
           - name: mozc
             run: go run ./cmd/ci-build package mozc
 
-          - name: nix-diff
-            run: go run ./cmd/ci-build package nix-diff
-
           - name: nix-update
             run: go run ./cmd/ci-build package nix-update
 
