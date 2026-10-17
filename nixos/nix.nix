@@ -22,7 +22,6 @@
 
       extra-substituters = [
         "https://cache.kachick.dev"
-        "https://kachick-dotfiles.cachix.org"
         "https://kachick.cachix.org"
       ];
 
@@ -33,7 +32,6 @@
 
       extra-trusted-public-keys = [
         "cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY="
-        "kachick-dotfiles.cachix.org-1:XhiP3JOkqNFGludaN+/send30shcrn1UMDeRL9XttkI="
         "kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="

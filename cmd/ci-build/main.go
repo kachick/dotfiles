@@ -2,17 +2,19 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|sync-workflows> [options] [args]")
+		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|sync-workflows> [options] [args]")
 		os.Exit(1)
 	}
 
@@ -28,13 +30,18 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
+	case "push":
+		if err := runPush(os.Args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 	case "sync-workflows":
 		if err := runSyncWorkflows(os.Args[2:]); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|sync-workflows> [options] [args]\n", subcommand)
+		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|sync-workflows> [options] [args]\n", subcommand)
 		os.Exit(1)
 	}
 }
@@ -132,7 +139,7 @@ func runPackage(args []string) error {
 	}
 
 	outPaths := strings.Fields(outBuf.String())
-	if err := maybePushToCachix(pname, isFree, outPaths); err != nil {
+	if err := maybePushToNiks3(pname, isFree, outPaths); err != nil {
 		return err
 	}
 
@@ -181,24 +188,6 @@ else
 	}
 }
 
-func maybePushToCachix(pname string, isFree bool, outPaths []string) error {
-	if !isFree {
-		fmt.Printf("Skipping Cachix push for unfree package: %s\n", pname)
-		return nil
-	}
-
-	if len(outPaths) == 0 {
-		return fmt.Errorf("no output paths to push for %s", pname)
-	}
-
-	args := append([]string{"push", "kachick-dotfiles"}, outPaths...)
-	fmt.Printf("Pushing %s to Cachix (%d paths)...\n", pname, len(outPaths))
-	cmd := exec.Command("cachix", args...)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
 func runNixos(args []string) error {
 	fs := flag.NewFlagSet("nixos", flag.ExitOnError)
 	if err := fs.Parse(args); err != nil {
@@ -212,9 +201,184 @@ func runNixos(args []string) error {
 	host := fs.Arg(0)
 
 	buildTarget := fmt.Sprintf(".#nixosConfigurations.%s.config.system.build.toplevel", host)
-	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--show-trace")
-	buildCmd.Stdout = os.Stdout
+	var outBuf bytes.Buffer
+	buildCmd := exec.Command("nix", "build", buildTarget, "--no-link", "--print-out-paths", "--show-trace")
+	buildCmd.Stdout = io.MultiWriter(os.Stdout, &outBuf)
 	buildCmd.Stderr = os.Stderr
 
-	return buildCmd.Run()
+	if err := buildCmd.Run(); err != nil {
+		return err
+	}
+
+	outPaths := strings.Fields(outBuf.String())
+	if err := maybePushToNiks3(host, true, outPaths); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func isCacheableStorePath(path string) bool {
+	// Exclude source tarballs, git clones, vendor directories, and large ISOs
+	base := filepath.Base(path)
+	if strings.HasSuffix(base, "-source") {
+		return false
+	}
+	if strings.HasSuffix(base, "-vendor") {
+		return false
+	}
+	if strings.HasSuffix(base, ".iso") {
+		return false
+	}
+	if strings.HasSuffix(base, "nixpkgs.tar.gz") {
+		return false
+	}
+	return true
+}
+
+func filterCacheablePaths(paths []string) []string {
+	seen := make(map[string]bool)
+	var filtered []string
+	for _, p := range paths {
+		trimmed := strings.TrimSpace(p)
+		if trimmed == "" {
+			continue
+		}
+		if seen[trimmed] {
+			continue
+		}
+		seen[trimmed] = true
+		if isCacheableStorePath(trimmed) {
+			filtered = append(filtered, trimmed)
+		}
+	}
+	return filtered
+}
+
+type pathInfoEntry struct {
+	Signatures []string `json:"signatures"`
+}
+
+func filterUpstreamPaths(parsed map[string]pathInfoEntry) []string {
+	var candidatePaths []string
+	for p, info := range parsed {
+		isUpstream := false
+		for _, sig := range info.Signatures {
+			if strings.HasPrefix(sig, "cache.nixos.org-1:") {
+				isUpstream = true
+				break
+			}
+		}
+		if !isUpstream {
+			candidatePaths = append(candidatePaths, p)
+		}
+	}
+	return candidatePaths
+}
+
+func queryPathInfoJSON(paths []string) ([]byte, error) {
+	args := append([]string{"path-info", "--json-format", "1", "--json", "--recursive"}, paths...)
+	out, err := exec.Command("nix", args...).Output()
+	if err == nil {
+		return out, nil
+	}
+	// Fallback for older Nix versions without --json-format
+	fallbackArgs := append([]string{"path-info", "--json", "--recursive"}, paths...)
+	return exec.Command("nix", fallbackArgs...).Output()
+}
+
+func getStorePathClosure(paths []string) ([]string, error) {
+	if len(paths) == 0 {
+		return nil, nil
+	}
+	out, err := queryPathInfoJSON(paths)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query closure: %w", err)
+	}
+	var parsed map[string]pathInfoEntry
+	if err := json.Unmarshal(out, &parsed); err != nil {
+		return nil, fmt.Errorf("failed to parse path-info json: %w", err)
+	}
+	candidates := filterUpstreamPaths(parsed)
+	return filterCacheablePaths(candidates), nil
+}
+
+func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
+	if !isFree {
+		fmt.Printf("Skipping niks3 push for unfree package: %s\n", targetName)
+		return nil
+	}
+
+	serverURL := os.Getenv("NIKS3_SERVER_URL")
+	if serverURL == "" {
+		fmt.Printf("Skipping niks3 push for %s: NIKS3_SERVER_URL not set\n", targetName)
+		return nil
+	}
+
+	if len(outPaths) == 0 {
+		return fmt.Errorf("no output paths to push to niks3 for %s", targetName)
+	}
+
+	closurePaths, err := getStorePathClosure(outPaths)
+	if err != nil {
+		return fmt.Errorf("collecting closure for %s: %w", targetName, err)
+	}
+
+	if len(closurePaths) == 0 {
+		fmt.Printf("No cacheable paths found for %s, skipping niks3 push\n", targetName)
+		return nil
+	}
+
+	authToken := os.Getenv("NIKS3_AUTH_TOKEN")
+	var tokenArgs []string
+	if authToken != "" {
+		tokenFile, err := os.CreateTemp("", "niks3-token-*")
+		if err != nil {
+			return fmt.Errorf("creating temp token file: %w", err)
+		}
+		defer os.Remove(tokenFile.Name())
+		if _, err := tokenFile.WriteString(authToken); err != nil {
+			return fmt.Errorf("writing temp token file: %w", err)
+		}
+		if err := tokenFile.Close(); err != nil {
+			return fmt.Errorf("closing temp token file: %w", err)
+		}
+		tokenArgs = []string{"--auth-token-path", tokenFile.Name()}
+	}
+
+	fmt.Printf("Pushing %s to niks3 (%d paths)...\n", targetName, len(closurePaths))
+
+	niks3Bin, err := exec.LookPath("niks3")
+	var pushCmd *exec.Cmd
+	if err == nil {
+		args := []string{"push", "--server-url", serverURL}
+		args = append(args, tokenArgs...)
+		args = append(args, "--stdin")
+		pushCmd = exec.Command(niks3Bin, args...)
+	} else {
+		args := []string{"run", "nixpkgs#niks3", "--", "push", "--server-url", serverURL}
+		args = append(args, tokenArgs...)
+		args = append(args, "--stdin")
+		pushCmd = exec.Command("nix", args...)
+	}
+
+	pushCmd.Stdin = strings.NewReader(strings.Join(closurePaths, "\n") + "\n")
+	pushCmd.Stdout = os.Stdout
+	pushCmd.Stderr = os.Stderr
+
+	return pushCmd.Run()
+}
+
+func runPush(args []string) error {
+	fs := flag.NewFlagSet("push", flag.ExitOnError)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	if fs.NArg() < 1 {
+		return fmt.Errorf("at least one path is required")
+	}
+
+	paths := fs.Args()
+	return maybePushToNiks3("manual-push", true, paths)
 }

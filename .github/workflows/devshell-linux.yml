@@ -40,8 +40,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Print some dotfiles overviews
         shell: bash -eu -o pipefail {0}
         run: |
@@ -70,12 +68,10 @@ jobs:
       - uses: actions/setup-go@v7.0.0
         with:
           # Nix shell provides the Go binary. This step is only for enabling standard GitHub Actions caching
-          # for Go modules and builds which are not covered by Nix/Cachix in the 'tasks' job.
+          # for Go modules and builds which are not covered by the Nix binary cache in the 'tasks' job.
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Install direnv
         # Installing git via nix to make sure it supports config based hooks
         # Because of ubuntu-slim and ubuntu-26.04 remains on 2.53 or before at 2026-06-18

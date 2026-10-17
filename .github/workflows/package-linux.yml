@@ -35,8 +35,15 @@ concurrency:
 
 jobs:
   build:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-26.04
     timeout-minutes: 180
+    env:
+      NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
+      NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
+      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
       - name: Logging disk space
         run: df -h
@@ -48,9 +55,13 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
+      - name: Connect Tailscale
+        if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0
         with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-          skip-push: true
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tags: ${{ secrets.TAILSCALE_TAGS }}
       - parallel:
           # BEGIN MANAGED PACKAGES
           - name: antigravity-cli

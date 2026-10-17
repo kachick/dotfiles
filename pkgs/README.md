@@ -52,7 +52,7 @@ When testing tools from the Nix ecosystem (such as `nix-update`, `nixpkgs-vet`, 
 
 This repository does not publish packages to the [Nix User Repository (NUR)](https://github.com/nix-community/NUR):
 
-- NUR only checks evaluation. It does not run full builds or host binary caches. This repository wants to run rich CI builds with tests and push results to Cachix.
+- NUR only checks evaluation. It does not run full builds or host binary caches. This repository wants to run rich CI builds with tests and push results to the binary cache.
 - NUR asks to keep repositories small ("Keep your repositories slim") for its evaluator. This repository maintains many CI workflows to test packages and verify that they work inside Home Manager and NixOS configurations. A minimal repository structure does not fit this heavy testing setup alongside dotfiles, system configs, and Go tools.
 - Calling packages directly with `nix run github:kachick/dotfiles#<pname>` or using the Flake inputs works well without an external index.
 

@@ -27,8 +27,6 @@ jobs:
           persist-credentials: true
 
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Prepare Git user
         run: |
