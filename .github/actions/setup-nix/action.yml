@@ -6,9 +6,11 @@ runs:
     - name: Install Nix
       uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
       with:
+        # access-tokens: Prevent GitHub API rate limiting during `nix run github:`
         extra-conf: |
-          sandbox = true
-          accept-flake-config = true
+          access-tokens = github.com=${{ github.token }}
+          extra-substituters = https://cache.kachick.dev https://kachick.cachix.org
+          extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ=
           keep-build-log = false
     - name: Cache Nix Evaluation and Tarballs
       uses: actions/cache@v6.1.0
