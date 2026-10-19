@@ -31,7 +31,7 @@ pkgs.writeShellApplication (
 
       git add ${bashDir} ${zshDir}
       git update-index -q --really-refresh
-      git diff-index --quiet HEAD || git commit -m 'Bump shell completions'
+      git diff-index --cached --quiet HEAD || git commit -m 'Bump shell completions'
     '';
 
     meta = {
