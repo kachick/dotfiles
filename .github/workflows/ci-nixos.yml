@@ -126,8 +126,7 @@ jobs:
 
       - name: Install direnv
         run: |
-          url="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs.locked.url')"
-          nix profile add "${url}#direnv"
+          nix profile add --inputs-from . nixpkgs#direnv
       - name: Load environment variables
         run: |
           direnv allow .
