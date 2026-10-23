@@ -30,6 +30,7 @@ permissions:
 
 jobs:
   home-manager:
+    name: ❄️🏠 Home Manager
     permissions:
       contents: read
       id-token: write

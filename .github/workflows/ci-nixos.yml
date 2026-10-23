@@ -34,6 +34,7 @@ concurrency:
 
 jobs:
   wait:
+    name: ⏳ Wait
     runs-on: ubuntu-26.04
     steps:
       - name: Wait other jobs to leverage binary caches
@@ -48,6 +49,7 @@ jobs:
           event-list: '[ "${{ github.event_name }}", "dynamic" ]'
 
   build:
+    name: 🔨 Build
     needs: [wait]
     permissions:
       contents: read
@@ -122,6 +124,7 @@ jobs:
           go run ./cmd/ci-build pin dotfiles-main-nixos-desktop-free "$TOPLEVEL"
 
   test-sample:
+    name: 🧪 Test Sample
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:

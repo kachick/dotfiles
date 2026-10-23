@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   get-meta:
+    name: 📋 Meta
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
@@ -40,6 +41,7 @@ jobs:
     with:
       pr-number: ${{ fromJSON(needs.get-meta.outputs.pr-number) }}
   ghcr:
+    name: 🗑️ GHCR
     needs: [get-meta]
     runs-on: ubuntu-26.04
     if: (github.event_name != 'pull_request') || (github.event.pull_request.merged == true)

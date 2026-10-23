@@ -29,6 +29,7 @@ env:
 
 jobs:
   create-pr:
+    name: 🆙 Create PR
     strategy:
       fail-fast: false
       matrix:
