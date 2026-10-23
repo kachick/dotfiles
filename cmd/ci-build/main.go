@@ -20,7 +20,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|sync-workflows> [options] [args]")
+		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|pin|sync-workflows> [options] [args]")
 		os.Exit(1)
 	}
 
@@ -41,13 +41,18 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
+	case "pin":
+		if err := runPin(os.Args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 	case "sync-workflows":
 		if err := runSyncWorkflows(os.Args[2:]); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|sync-workflows> [options] [args]\n", subcommand)
+		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows> [options] [args]\n", subcommand)
 		os.Exit(1)
 	}
 }
@@ -501,11 +506,15 @@ func fetchGHAOIDCToken(ctx context.Context, reqURL, reqToken, audience string) (
 func runPush(args []string) error {
 	fs := flag.NewFlagSet("push", flag.ExitOnError)
 	fromDir := fs.String("from-dir", "", "Directory containing recorded output path files")
+	pinName := fs.String("pin", "", "Name of the pin to create for the pushed store path (single path only)")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 
 	if *fromDir != "" {
+		if *pinName != "" {
+			return errors.New("--pin cannot be used with --from-dir")
+		}
 		paths, err := readRecordedOutPaths(*fromDir)
 		if err != nil {
 			return err
@@ -522,5 +531,126 @@ func runPush(args []string) error {
 	}
 
 	paths := fs.Args()
-	return maybePushToNiks3("manual-push", true, paths)
+	if *pinName != "" && len(paths) > 1 {
+		return errors.New("--pin requires exactly one store path")
+	}
+
+	if err := maybePushToNiks3("manual-push", true, paths); err != nil {
+		return err
+	}
+
+	if *pinName != "" {
+		serverURL := os.Getenv("NIKS3_SERVER_URL")
+		if serverURL == "" {
+			return errors.New("NIKS3_SERVER_URL not set")
+		}
+		token, err := getNiks3OIDCToken()
+		if err != nil {
+			return fmt.Errorf("getting OIDC token for pin: %w", err)
+		}
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+		if err := createPin(ctx, serverURL, token, *pinName, paths[0]); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func runPin(args []string) error {
+	fs := flag.NewFlagSet("pin", flag.ExitOnError)
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if fs.NArg() < 2 {
+		return fmt.Errorf("pin name and store path are required (usage: ci-build pin <name> <store-path>)")
+	}
+
+	pinName := fs.Arg(0)
+	storePath := fs.Arg(1)
+
+	serverURL := os.Getenv("NIKS3_SERVER_URL")
+	if serverURL == "" {
+		return errors.New("NIKS3_SERVER_URL not set")
+	}
+
+	token, err := getNiks3OIDCToken()
+	if err != nil {
+		return fmt.Errorf("getting OIDC token for pin: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	return createPin(ctx, serverURL, token, pinName, storePath)
+}
+
+func createPin(ctx context.Context, serverURL, token, pinName, rawStorePath string) error {
+	storePath, err := resolveStorePath(rawStorePath)
+	if err != nil {
+		return fmt.Errorf("resolving store path %q: %w", rawStorePath, err)
+	}
+
+	u := fmt.Sprintf("%s/api/pins/%s", strings.TrimRight(serverURL, "/"), url.PathEscape(pinName))
+	payload, err := json.Marshal(map[string]string{"store_path": storePath})
+	if err != nil {
+		return fmt.Errorf("marshaling pin request: %w", err)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u, bytes.NewReader(payload))
+	if err != nil {
+		return fmt.Errorf("creating pin request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("requesting create pin: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusNoContent && resp.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("create pin returned %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+
+	fmt.Printf("Created pin %q for %s\n", pinName, storePath)
+	return nil
+}
+
+func resolveStorePath(path string) (string, error) {
+	if strings.HasPrefix(path, "~/") {
+		home, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("resolving home directory: %w", err)
+		}
+		path = filepath.Join(home, path[2:])
+	}
+
+	resolved, err := filepath.EvalSymlinks(path)
+	if err == nil {
+		path = resolved
+	} else if errors.Is(err, os.ErrNotExist) {
+		// If the target doesn't exist on disk (e.g. in unit tests or mocked paths),
+		// fall back to reading the symlink target directly.
+		if target, readErr := os.Readlink(path); readErr == nil {
+			path = target
+		}
+	} else {
+		return "", fmt.Errorf("evaluating symlinks for %s: %w", path, err)
+	}
+
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return "", fmt.Errorf("getting absolute path for %s: %w", path, err)
+	}
+	cleanPath := filepath.ToSlash(abs)
+	idx := strings.Index(cleanPath, "/nix/store/")
+	if idx == -1 {
+		return "", fmt.Errorf("store path must start with /nix/store/, got: %s", cleanPath)
+	}
+	return cleanPath[idx:], nil
 }

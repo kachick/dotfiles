@@ -4,7 +4,9 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"testing"
 )
 
@@ -236,4 +238,82 @@ func TestGetNiks3OIDCToken_MissingEnv(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error when OIDC env vars are missing, got nil")
 	}
+}
+
+func TestCreatePin_Success(t *testing.T) {
+	expectedPin := "dotfiles-main-test"
+	expectedPath := "/nix/store/test-store-path"
+	expectedToken := "test-oidc-token"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "bad method", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/api/pins/"+expectedPin {
+			http.Error(w, "bad path: "+r.URL.Path, http.StatusNotFound)
+			return
+		}
+		if r.Header.Get("Authorization") != "Bearer "+expectedToken {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	if err := createPin(ctx, server.URL, expectedToken, expectedPin, expectedPath); err != nil {
+		t.Fatalf("unexpected error creating pin: %v", err)
+	}
+}
+
+func TestCreatePin_Error(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "forbidden: pin reserved", http.StatusForbidden)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	err := createPin(ctx, server.URL, "token", "dotfiles-main-test", "/nix/store/test")
+	if err == nil {
+		t.Fatal("expected error on 403 response, got nil")
+	}
+}
+
+func TestResolveStorePath(t *testing.T) {
+	t.Run("ValidDirectStorePath", func(t *testing.T) {
+		got, err := resolveStorePath("/nix/store/test-package")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "/nix/store/test-package" {
+			t.Errorf("expected /nix/store/test-package, got %s", got)
+		}
+	})
+
+	t.Run("InvalidNonStorePath", func(t *testing.T) {
+		_, err := resolveStorePath("/tmp/some-path")
+		if err == nil {
+			t.Error("expected error for non-store path, got nil")
+		}
+	})
+
+	t.Run("SymlinkToStorePath", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		symlinkPath := filepath.Join(tmpDir, "profile-link")
+		targetStorePath := "/nix/store/symlink-target-pkg"
+
+		if err := os.Symlink(targetStorePath, symlinkPath); err != nil {
+			t.Skipf("skipping symlink test: %v", err)
+		}
+
+		got, err := resolveStorePath(symlinkPath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != targetStorePath {
+			t.Errorf("expected %s, got %s", targetStorePath, got)
+		}
+	})
 }

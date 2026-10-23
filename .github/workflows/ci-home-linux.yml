@@ -121,4 +121,9 @@ jobs:
         if: ${{ env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         env:
           NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: go run ./cmd/ci-build push ~/.local/state/nix/profiles/home-manager
+        run: |
+          PIN_ARGS=()
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            PIN_ARGS=(--pin dotfiles-main-home-manager)
+          fi
+          go run ./cmd/ci-build push "${PIN_ARGS[@]}" ~/.local/state/nix/profiles/home-manager
