@@ -30,6 +30,13 @@
       # Do NOT set GIT_EDITOR, it overrides `core.editor` in git config
       # https://unix.stackexchange.com/questions/4859/visual-vs-editor-what-s-the-difference
       EDITOR = pkgs.helix.meta.mainProgram;
+
+      # Workaround until dprint >= 0.64.1 and the wrapper arrive in this dotfiles repository.
+      # Older dprint embeds outdated root certs (webpki-roots), ignoring OS CA trust store changes.
+      # See https://github.com/NixOS/nixpkgs/issues/576544,
+      # https://github.com/NixOS/nixpkgs/pull/576933,
+      # and https://github.com/NixOS/nixpkgs/pull/577184
+      DPRINT_TLS_CA_STORE = "system";
     };
 
     # Should have `root = true` in the file. - https://github.com/kachick/anylang-template/blob/45d7ef685ac4fd3836c3b32b8ce8fb45e909b771/.editorconfig#L1

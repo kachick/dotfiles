@@ -120,4 +120,22 @@
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
+
+  # Temporary workaround for CVE-2026-111943 (eMudhra Intermediate CA Compromise).
+  # Upstream fixed this in https://github.com/NixOS/nixpkgs/pull/576390
+  # (and backported in https://github.com/NixOS/nixpkgs/pull/576401),
+  # but this dotfiles repository has not received the updated channel yet.
+  # Explicitly blacklist these certificates until the channel update arrives.
+  # Tracked in GH-1755.
+  # See also https://emudhra.we-have-a-problem.com/
+  # and https://github.com/NixOS/nixpkgs/issues/576485
+  security.pki.caCertificateBlacklist = [
+    # CVE-2026-111943
+    "Comodo AAA Services root"
+    # https://hg-edge.mozilla.org/projects/nss/rev/26d38a0c3fb81e7fb2acedbaf4c42dd21dce0517
+    "emSign ECC Root CA - G3"
+    # https://hg-edge.mozilla.org/projects/nss/rev/8159223c48ceeb1273a1915bca95a517294ab0e0
+    "emSign Root CA - C1"
+    "emSign ECC Root CA - C3"
+  ];
 }
