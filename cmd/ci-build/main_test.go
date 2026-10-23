@@ -1,6 +1,9 @@
 package main
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"os/exec"
 	"testing"
 )
@@ -180,5 +183,57 @@ func TestRecordAndReadOutPaths(t *testing.T) {
 	}
 	if len(got) != 3 {
 		t.Fatalf("readRecordedOutPaths() length = %d, want 3 (got: %v)", len(got), got)
+	}
+}
+
+func TestFetchGHAOIDCToken_Success(t *testing.T) {
+	expectedToken := "dummy-oidc-jwt-token"
+	expectedAudience := "https://cache.kachick.dev"
+	expectedBearer := "secret-request-token"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") != "Bearer "+expectedBearer {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		if r.URL.Query().Get("audience") != expectedAudience {
+			http.Error(w, "bad audience", http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"count": 1, "value": "` + expectedToken + `"}`))
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	token, err := fetchGHAOIDCToken(ctx, server.URL, expectedBearer, expectedAudience)
+	if err != nil {
+		t.Fatalf("unexpected error fetching OIDC token: %v", err)
+	}
+	if token != expectedToken {
+		t.Errorf("token = %q, want %q", token, expectedToken)
+	}
+}
+
+func TestFetchGHAOIDCToken_Error(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "server error", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	_, err := fetchGHAOIDCToken(ctx, server.URL, "token", "audience")
+	if err == nil {
+		t.Fatal("expected error on 500 response, got nil")
+	}
+}
+
+func TestGetNiks3OIDCToken_MissingEnv(t *testing.T) {
+	t.Setenv("ACTIONS_ID_TOKEN_REQUEST_URL", "")
+	t.Setenv("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "")
+
+	_, err := getNiks3OIDCToken()
+	if err == nil {
+		t.Fatal("expected error when OIDC env vars are missing, got nil")
 	}
 }

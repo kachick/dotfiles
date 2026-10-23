@@ -2,15 +2,20 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -394,22 +399,22 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 		return nil
 	}
 
-	authToken := os.Getenv("NIKS3_AUTH_TOKEN")
-	var tokenArgs []string
-	if authToken != "" {
-		tokenFile, err := os.CreateTemp("", "niks3-token-*")
-		if err != nil {
-			return fmt.Errorf("creating temp token file: %w", err)
-		}
-		defer os.Remove(tokenFile.Name())
-		if _, err := tokenFile.WriteString(authToken); err != nil {
-			return fmt.Errorf("writing temp token file: %w", err)
-		}
-		if err := tokenFile.Close(); err != nil {
-			return fmt.Errorf("closing temp token file: %w", err)
-		}
-		tokenArgs = []string{"--auth-token-path", tokenFile.Name()}
+	authToken, err := getNiks3OIDCToken()
+	if err != nil {
+		return fmt.Errorf("getting niks3 OIDC token: %w", err)
 	}
+	tokenFile, err := os.CreateTemp("", "niks3-token-*")
+	if err != nil {
+		return fmt.Errorf("creating temp token file: %w", err)
+	}
+	defer os.Remove(tokenFile.Name())
+	if _, err := tokenFile.WriteString(authToken); err != nil {
+		return fmt.Errorf("writing temp token file: %w", err)
+	}
+	if err := tokenFile.Close(); err != nil {
+		return fmt.Errorf("closing temp token file: %w", err)
+	}
+	tokenArgs := []string{"--auth-token-path", tokenFile.Name()}
 
 	fmt.Printf("Pushing %s to niks3 (%d root paths)...\n", targetName, len(rootPaths))
 
@@ -435,6 +440,62 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 	pushCmd.Stderr = os.Stderr
 
 	return pushCmd.Run()
+}
+
+func getNiks3OIDCToken() (string, error) {
+	reqURL := os.Getenv("ACTIONS_ID_TOKEN_REQUEST_URL")
+	reqToken := os.Getenv("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+	if reqURL == "" || reqToken == "" {
+		return "", errors.New("GitHub Actions OIDC environment variables (ACTIONS_ID_TOKEN_REQUEST_URL, ACTIONS_ID_TOKEN_REQUEST_TOKEN) are not set")
+	}
+
+	audience := os.Getenv("NIKS3_OIDC_AUDIENCE")
+	if audience == "" {
+		audience = "https://cache.kachick.dev"
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	return fetchGHAOIDCToken(ctx, reqURL, reqToken, audience)
+}
+
+func fetchGHAOIDCToken(ctx context.Context, reqURL, reqToken, audience string) (string, error) {
+	u, err := url.Parse(reqURL)
+	if err != nil {
+		return "", fmt.Errorf("parsing ACTIONS_ID_TOKEN_REQUEST_URL: %w", err)
+	}
+	q := u.Query()
+	q.Set("audience", audience)
+	u.RawQuery = q.Encode()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
+	if err != nil {
+		return "", fmt.Errorf("creating OIDC request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+reqToken)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("requesting OIDC token: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("OIDC endpoint returned %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+
+	var res struct {
+		Value string `json:"value"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
+		return "", fmt.Errorf("decoding OIDC response: %w", err)
+	}
+	if res.Value == "" {
+		return "", errors.New("OIDC response value is empty")
+	}
+	return res.Value, nil
 }
 
 func runPush(args []string) error {

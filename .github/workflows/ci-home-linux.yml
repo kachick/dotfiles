@@ -121,5 +121,4 @@ jobs:
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         env:
           NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-          NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
         run: go run ./cmd/ci-build push ~/.local/state/nix/profiles/home-manager

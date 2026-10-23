@@ -112,7 +112,6 @@ jobs:
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         env:
           NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-          NIKS3_AUTH_TOKEN: ${{ secrets.NIKS3_AUTH_TOKEN }}
         run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
 
   test-sample:
