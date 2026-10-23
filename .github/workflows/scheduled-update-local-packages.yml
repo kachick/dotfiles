@@ -16,7 +16,7 @@ permissions:
 jobs:
   local-packages:
     permissions:
-      contents: write
+      contents: write # Required for updating and pushing local package changes
     uses: $/.github/workflows/update-local-packages.yml
     secrets:
       PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}

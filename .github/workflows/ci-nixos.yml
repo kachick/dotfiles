@@ -53,7 +53,7 @@ jobs:
     needs: [wait]
     permissions:
       contents: read
-      id-token: write
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
     # Run if:
     # 1. Previous 'wait' job succeeded OR was skipped (non-PR case).
     # 2. It's not a pull request (push, schedule, etc.)

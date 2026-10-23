@@ -37,7 +37,7 @@ jobs:
     name: ❄️🏠 Home Manager
     permissions:
       contents: read
-      id-token: write
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
     timeout-minutes: 60
     strategy:
       fail-fast: false

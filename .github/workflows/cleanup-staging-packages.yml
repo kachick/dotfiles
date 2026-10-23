@@ -16,8 +16,8 @@ defaults:
     shell: bash -Ceuxo pipefail {0}
 
 permissions:
-  pull-requests: write
-  packages: write
+  pull-requests: write # Required for minimizing staging deploy comments
+  packages: write # Required for deleting staging package versions
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

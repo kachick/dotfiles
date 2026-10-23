@@ -16,7 +16,7 @@ jobs:
   minimize:
     name: 💬 Minimize
     permissions:
-      pull-requests: write
+      pull-requests: write # Required for minimizing outdated PR comments
     runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:

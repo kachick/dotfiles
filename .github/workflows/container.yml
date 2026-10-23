@@ -17,8 +17,8 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  packages: write
+  pull-requests: write # Required for posting and minimizing deploy comments
+  packages: write # Required for pushing container images to GHCR
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

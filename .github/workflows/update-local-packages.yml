@@ -35,7 +35,7 @@ jobs:
   create-pr:
     name: 🆙 Create PR
     permissions:
-      contents: write
+      contents: write # Required for pushing branches and creating PRs
     strategy:
       fail-fast: false
       matrix:
