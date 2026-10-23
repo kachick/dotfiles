@@ -23,10 +23,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   # IMPORTANT: These jobs MUST remain split.
   # GitHub Actions only saves the cache if the job completes successfully.
   prepare-image:
+    name: 📦 Prepare Image
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7.0.1
@@ -54,6 +59,7 @@ jobs:
           limactl create --yes --name=docker-nix template:docker
 
   test-provisioning:
+    name: 🧪 Test Provisioning
     needs: prepare-image
     runs-on: ubuntu-26.04
     steps:

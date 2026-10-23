@@ -23,8 +23,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   test:
+    name: 🧪 Test
     strategy:
       fail-fast: false
       matrix:
@@ -46,6 +51,7 @@ jobs:
 
   # We don't need `go fmt` here because of the formatting is checked on dprint
   lint:
+    name: 👕 Lint
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7.0.1

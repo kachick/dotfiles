@@ -32,6 +32,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 defaults:
   run:
     # To respect exit code and make fail-fast behaviors. See GH-617
@@ -44,6 +48,7 @@ defaults:
 
 jobs:
   inspect_runner:
+    name: 🔍 Inspect Runner
     runs-on: windows-2025-vs2026
     steps:
       - name: Print some variables that were applied in GH-617
@@ -56,6 +61,7 @@ jobs:
   #
   # Not Terraform :)
   terraform:
+    name: 🪐 Terraform
     runs-on: windows-2025-vs2026
     steps:
       - name: Prepare Windows Defender

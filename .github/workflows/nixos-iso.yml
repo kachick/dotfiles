@@ -10,8 +10,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
+    name: 🔨 Build
     # Trigger on:
     # 1. Schedule or manual dispatch
     # 2. Pull request ONLY IF the 'nixos-iso' label is present

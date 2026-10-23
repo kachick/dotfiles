@@ -30,8 +30,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 jobs:
   inspect:
+    name: 🔍 Inspect
     # Only on Linux is enough to check the flake
     runs-on: ubuntu-26.04
     timeout-minutes: 30
@@ -56,6 +61,7 @@ jobs:
           NIXPKGS_ALLOW_UNFREE: '1'
 
   tasks:
+    name: 🏃 Tasks
     strategy:
       matrix:
         runner: [ubuntu-26.04]

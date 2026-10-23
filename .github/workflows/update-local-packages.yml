@@ -22,13 +22,20 @@ on:
         required: true
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   DEFAULT_BRANCH: main
 
 jobs:
   create-pr:
+    name: 🆙 Create PR
+    permissions:
+      contents: write # Required for pushing branches and creating PRs
     strategy:
       fail-fast: false
       matrix:
@@ -87,7 +94,7 @@ jobs:
       - name: Prepare Git branch
         if: env.IS_DRY_RUN == 'false'
         run: |
-          git switch -C "${PR_BRANCH}" "origin/${{ env.DEFAULT_BRANCH }}"
+          git switch -C "${PR_BRANCH}" "origin/${DEFAULT_BRANCH}"
 
       - uses: $/.github/actions/setup-nix
 
@@ -135,7 +142,7 @@ jobs:
       - name: Count added commits
         id: count-commits
         run: |
-          count="$(git rev-list --count 'origin/${{ env.DEFAULT_BRANCH }}..')"
+          count="$(git rev-list --count "origin/${DEFAULT_BRANCH}..")"
           echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
           case "${count}" in
             0)
@@ -163,6 +170,6 @@ jobs:
             Updating ${{ matrix.package }} to the latest version.
         run: |
           gh pr create \
-            --base '${{ env.DEFAULT_BRANCH }}' \
+            --base "${DEFAULT_BRANCH}" \
             --title "${PR_TITLE}" \
             --body "${PR_BODY}"

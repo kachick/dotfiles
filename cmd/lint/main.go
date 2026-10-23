@@ -60,7 +60,7 @@ func main() {
 		{Path: "go", Args: []string{"vet", "-vettool", getExhaustructPath(), "./..."}},
 		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
-		{Path: "zizmor", Args: []string{"."}},
+		{Path: "zizmor", Args: []string{"--pedantic", "."}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
 		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
 	}

@@ -16,10 +16,17 @@ on:
         type: number
 
 permissions:
-  packages: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   ghcr:
+    name: 🗑️ GHCR
+    permissions:
+      packages: write # Required for deleting old GHCR package versions
     runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:
