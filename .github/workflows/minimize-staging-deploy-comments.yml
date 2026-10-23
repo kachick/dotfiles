@@ -10,12 +10,13 @@ on:
         type: number
 
 permissions:
-  pull-requests: write
-  packages: write
+  contents: read
 
 jobs:
   minimize:
     name: 💬 Minimize
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:

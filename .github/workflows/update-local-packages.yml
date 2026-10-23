@@ -22,7 +22,7 @@ on:
         required: true
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,6 +34,8 @@ env:
 jobs:
   create-pr:
     name: 🆙 Create PR
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
