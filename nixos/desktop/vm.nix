@@ -37,6 +37,10 @@
     # See GH-1049 for details.
     qemu
 
+    # Enable swtpm for user session libvirt/QEMU (e.g. virt-manager, gnome-boxes, cockpit-machines)
+    # virtualisation.libvirtd.qemu.swtpm.enable only adds it to system-level libvirtd.service PATH
+    swtpm
+
     # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
     # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db
     unstable.gnome-boxes
