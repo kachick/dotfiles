@@ -4,14 +4,23 @@
 {
   # Why not other candidates?
   #
-  # * cockpit: Might be the primary candidate if cockpit-machines is also available. ref: https://github.com/NixOS/nixpkgs/issues/287644
   # * quickemu: Having another definitions and release cycle than osinfo-db. And seems not actively maintained in these days.
 
   programs.virt-manager.enable = true;
 
+  services.cockpit = {
+    enable = true;
+    plugins = with pkgs; [
+      cockpit-machines
+    ];
+  };
+
   users.groups.libvirtd.members = [ "kachick" ];
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd = {
+    enable = true;
+    dbus.enable = true;
+  };
 
   virtualisation.spiceUSBRedirection.enable = true;
 
