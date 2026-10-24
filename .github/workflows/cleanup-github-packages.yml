@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: cleanup-github-packages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:

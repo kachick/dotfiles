@@ -16,6 +16,7 @@ defaults:
     shell: bash -Ceuxo pipefail {0}
 
 permissions:
+  contents: read # Required for actions/checkout and calling reusable workflows
   pull-requests: write # Required for minimizing staging deploy comments
   packages: write # Required for deleting staging package versions
 
