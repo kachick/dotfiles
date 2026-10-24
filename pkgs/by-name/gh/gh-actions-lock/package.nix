@@ -14,7 +14,7 @@ let
 in
 buildGo127Module (finalAttrs: {
   pname = "gh-actions-lock";
-  version = "0.3.0";
+  version = "0.4.0";
 
   __structuredAttrs = true;
 
@@ -22,7 +22,7 @@ buildGo127Module (finalAttrs: {
     owner = "github";
     repo = "gh-actions-lock";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-hbduX3k4PHJzGj9o84EcDV2+tYedXVB1FW1clHQslAs=";
+    hash = "sha256-+J5nA1kzwmjY98u0HoJ2rsYD5hLNBhNnwmIT34Gxha4=";
   };
 
   # debug.ReadBuildInfo does not provide version information in buildGoModule.
