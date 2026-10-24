@@ -392,6 +392,15 @@
     QT_IM_MODULE = lib.mkForce ""; # FIXME: Did not work even through applied in /etc/set-environment, and cannot be override in home-manager systemd module.
   };
 
+  services.cockpit = {
+    enable = true;
+    # NixOS/nixpkgs#453337: allow websocket connections from localhost and 127.0.0.1
+    allowed-origins = [
+      "https://localhost:9090"
+      "https://127.0.0.1:9090"
+    ];
+  };
+
   # Alternative candidates: headscale
   services.tailscale = {
     enable = true;

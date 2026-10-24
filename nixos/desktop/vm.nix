@@ -4,14 +4,30 @@
 {
   # Why not other candidates?
   #
-  # * cockpit: Might be the primary candidate if cockpit-machines is also available. ref: https://github.com/NixOS/nixpkgs/issues/287644
   # * quickemu: Having another definitions and release cycle than osinfo-db. And seems not actively maintained in these days.
 
   programs.virt-manager.enable = true;
 
-  users.groups.libvirtd.members = [ "kachick" ];
+  services.cockpit.plugins = with pkgs; [
+    cockpit-machines
+  ];
 
-  virtualisation.libvirtd.enable = true;
+  # Allow libvirt-dbus service to access libvirtd without interactive polkit agent
+  users.users.libvirtdbus.extraGroups = [ "libvirtd" ];
+  systemd.services.libvirt-dbus.serviceConfig.SupplementaryGroups = [ "libvirtd" ];
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.libvirt.unix.manage" && subject.user == "libvirtdbus") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
+
+  virtualisation.libvirtd = {
+    enable = true;
+    dbus.enable = true;
+    qemu.swtpm.enable = true;
+  };
 
   virtualisation.spiceUSBRedirection.enable = true;
 
@@ -20,6 +36,10 @@
     # Because of lima might be started with systemd, and then the Nix wrapped qemu PATH will be ignored.
     # See GH-1049 for details.
     qemu
+
+    # Enable swtpm for user session libvirt/QEMU (e.g. virt-manager, gnome-boxes, cockpit-machines)
+    # virtualisation.libvirtd.qemu.swtpm.enable only adds it to system-level libvirtd.service PATH
+    swtpm
 
     # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
     # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db

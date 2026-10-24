@@ -54,6 +54,13 @@
 
   services.fwupd.enable = true;
 
+  systemd.tmpfiles.rules = [
+    # Ensure VM disk image storage directory on the secondary SATA SSD
+    "d /mnt/archive/libvirt/images 0770 root libvirtd -"
+    # Shared ISO installation media storage readable by all users and writable by libvirtd
+    "d /mnt/archive/libvirt/isos 0775 root libvirtd -"
+  ];
+
   # Enable swap file for hibernation.
   # The size should be larger than physical RAM (32GiB) to ensure hibernation works reliably.
   # See also: https://chrisdown.name/ja/2018/01/02/in-defence-of-swap.html
