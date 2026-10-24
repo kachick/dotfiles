@@ -158,13 +158,7 @@ in
         refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
         all = "!git refresh && git-delete-merged-branches";
         lf = "!${lib.getExe pkgs.local.git-log-fzf}";
-        reset-main = ''
-          !git fetch origin && \
-            git switch main && \
-            git branch -m "backup-main-$(${lib.getExe pkgs.nushell} --commands 'random uuid')" && \
-            git checkout origin/main && \
-            git checkout -b main
-        '';
+        reset-branch = "!${lib.getExe pkgs.local.git-reset-branch}";
         resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
       };
 
