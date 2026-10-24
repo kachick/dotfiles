@@ -57,6 +57,8 @@
   systemd.tmpfiles.rules = [
     # Ensure VM disk image storage directory on the secondary SATA SSD
     "d /mnt/archive/libvirt/images 0770 root libvirtd -"
+    # Shared ISO installation media storage readable by all users and writable by libvirtd
+    "d /mnt/archive/libvirt/isos 0775 root libvirtd -"
   ];
 
   # Enable swap file for hibernation.
