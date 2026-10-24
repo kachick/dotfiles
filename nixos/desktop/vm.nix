@@ -12,7 +12,20 @@
     cockpit-machines
   ];
 
-  users.groups.libvirtd.members = [ "kachick" ];
+  users.groups.libvirtd.members = [
+    "kachick"
+    "libvirtdbus"
+  ];
+
+  # Allow libvirt-dbus service to access libvirtd without interactive polkit agent
+  systemd.services.libvirt-dbus.serviceConfig.SupplementaryGroups = [ "libvirtd" ];
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.libvirt.unix.manage" && subject.user == "libvirtdbus") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   virtualisation.libvirtd = {
     enable = true;
