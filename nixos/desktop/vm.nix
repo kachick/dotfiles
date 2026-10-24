@@ -8,19 +8,9 @@
 
   programs.virt-manager.enable = true;
 
-  services.cockpit = {
-    enable = true;
-    plugins = with pkgs; [
-      cockpit-machines
-    ];
-    # NixOS/nixpkgs#453337: allow websocket connections from common local addresses
-    allowed-origins = [
-      "https://localhost:9090"
-      "http://localhost:9090"
-      "https://127.0.0.1:9090"
-      "http://127.0.0.1:9090"
-    ];
-  };
+  services.cockpit.plugins = with pkgs; [
+    cockpit-machines
+  ];
 
   users.groups.libvirtd.members = [ "kachick" ];
 
