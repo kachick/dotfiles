@@ -9,7 +9,8 @@
   programs.virt-manager.enable = true;
 
   services.cockpit.plugins = with pkgs; [
-    cockpit-machines
+    # Use latest to apply latest osinfo-db
+    unstable.cockpit-machines
   ];
 
   users.groups.libvirtd.members = [ "kachick" ];
