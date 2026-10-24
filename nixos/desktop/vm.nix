@@ -17,6 +17,7 @@
   virtualisation.libvirtd = {
     enable = true;
     dbus.enable = true;
+    qemu.swtpm.enable = true;
   };
 
   virtualisation.spiceUSBRedirection.enable = true;
