@@ -42,6 +42,7 @@ jobs:
         package:
           # BEGIN MANAGED PACKAGES
           - antigravity-cli
+          - cloudflare-warp
           - conoha-cli
           - filen-cli-rs
           - gh-actions-lock

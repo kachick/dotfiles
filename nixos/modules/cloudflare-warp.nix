@@ -17,7 +17,7 @@
 
   services.cloudflare-warp = {
     enable = true;
-    package = pkgs.unstable.cloudflare-warp;
+    package = pkgs.local.cloudflare-warp;
   };
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
