@@ -27,7 +27,8 @@ in
       zed-editor
       ;
 
-    # Expose the patched mozc for CI building
+    # TODO: Revisit once nixos-26.11 is released
+    # Expose mozc for CI building
     inherit (final) mozc;
 
     # Expose the patched nix-update for CI building and workflows
