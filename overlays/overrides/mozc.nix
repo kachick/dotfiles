@@ -1,16 +1,9 @@
-{ prev, fetchpatch, ... }:
-# Patched and override existing name because of it is not configurable
-# https://github.com/NixOS/nixpkgs/blob/nixos-26.05/pkgs/by-name/mo/mozc/package.nix
-# The mozc package in nixpkgs often remains on old versions, primarily due to bazel dependency issues.
-# However, the latest mozc(2.31.5712.102 or later) includes a crucial patch to fix the Super key hijacking.
-(prev.mozc.override { withIbus = true; }).overrideAttrs (
-  _finalAttrs: _previousAttrs: {
-    patches = [
-      (fetchpatch {
-        name = "GH-1277.patch";
-        url = "https://patch-diff.githubusercontent.com/raw/google/mozc/pull/1059.patch?full_index=1";
-        hash = "sha256-c67WPdvPDMxcduKOlD2z0M33HLVq8uO8jzJVQfBoxSY=";
-      })
-    ];
-  }
-)
+{
+  unstable,
+  ...
+}:
+
+# TODO: Drop this override and restore the stable package after nixos-26.11 is released.
+# https://github.com/NixOS/nixpkgs/pull/531687 updated mozc to 3.35.6354 in nixpkgs-unstable,
+# which includes the fix for Super key hijacking (google/mozc#1059) and resolves the Bazel build issues.
+unstable.mozc

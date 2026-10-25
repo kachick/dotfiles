@@ -272,6 +272,10 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
+      # Expose mozc_tool in /run/current-system/sw/lib/mozc/mozc_tool for manual GUI configuration.
+      # ibus-mozc already depends on mozc, so this adds zero extra closure size.
+      mozc
+
       # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
       readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 

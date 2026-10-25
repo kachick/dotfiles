@@ -27,9 +27,6 @@ in
       zed-editor
       ;
 
-    # Expose the patched mozc for CI building
-    inherit (final) mozc;
-
     # Expose the patched nix-update for CI building and workflows
     inherit (final) nix-update;
 
