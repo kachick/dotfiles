@@ -10,17 +10,6 @@
   "json": {
     "trailingCommas": "never"
   },
-  "markdown": {
-    "tags": {
-      "nix": "nix",
-      "sh": "sh",
-      "bash": "bash",
-      "zsh": "zsh",
-      "envrc": "bash",
-      "shell": "sh",
-      "shell-script": "sh"
-    }
-  },
   "toml": {
   },
   "dockerfile": {
@@ -37,7 +26,7 @@
     "quotes": "preferSingle",
     "trimTrailingWhitespaces": false // https://github.com/g-plane/pretty_yaml/issues/1
   },
-  "sh": {
+  "shuck": {
     "useTabs": true
   },
   "kdl": {
@@ -53,16 +42,16 @@
   "plugins": [
     "npm:@dprint/typescript@0.96.1",
     "npm:@dprint/json@0.25.2",
-    "npm:@dprint/markdown@0.26.0",
+    "npm:@dprint/markdown@0.28.0",
     "npm:@dprint/toml@0.9.0",
     "npm:@dprint/dockerfile@0.7.0",
-    "npm:@dprint/ruff@0.10.0",
-    "npm:dprint-plugin-markup@0.27.5",
+    "npm:@dprint/ruff@0.11.2",
+    "npm:dprint-plugin-markup@0.27.6",
     "npm:dprint-plugin-yaml@0.6.0",
-    "npm:@kachick/dprint-plugin-nix@0.1.1",
-    "npm:@kachick/dprint-plugin-sh@0.1.2",
-    "npm:@kachick/dprint-plugin-typstyle@0.5.2",
-    "npm:@kachick/dprint-plugin-kdl@0.4.2",
-    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.19"
+    "npm:@dprint/nix@0.1.2",
+    "npm:@dprint/shuck@0.2.2",
+    "npm:@dprint/typstyle@0.5.3",
+    "npm:@dprint/kdl@0.4.3",
+    "npm:@jakebailey/dprint-plugin-gofumpt@0.0.20"
   ]
 }
