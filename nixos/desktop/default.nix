@@ -410,6 +410,43 @@
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
+  # Workaround for Tailscale MagicDNS with systemd-resolved when DNSStubListener is disabled.
+  #
+  # WHY this is needed:
+  # When `services.resolved.settings.Resolve.DNSStubListener = false;`, Tailscale assumes
+  # systemd-resolved is not acting as the local DNS server because 127.0.0.53 is missing.
+  # As a result, Tailscale skips D-Bus registration to systemd-resolved and falls back to
+  # overwriting /etc/resolv.conf directly. However, NixOS nsswitch resolves names via
+  # systemd-resolved (nss-resolve), so Tailscale's /etc/resolv.conf edits are ignored.
+  #
+  # WHEN to remove:
+  # If `DNSStubListener` is ever restored to `true` (systemd's default), Tailscale will
+  # automatically register MagicDNS via D-Bus on its own, making this unit unnecessary.
+  systemd.services.tailscale-resolved = {
+    description = "Register Tailscale MagicDNS to systemd-resolved";
+    after = [ "tailscaled.service" ];
+    wants = [ "tailscaled.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+    script = ''
+      for _ in $(seq 1 15); do
+        suffix=$(${config.services.tailscale.package}/bin/tailscale status --json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.MagicDNSSuffix // empty')
+        if [ -n "$suffix" ] && ${pkgs.iproute2}/bin/ip link show tailscale0 >/dev/null 2>&1; then
+          ${pkgs.systemd}/bin/resolvectl dns tailscale0 100.100.100.100
+          ${pkgs.systemd}/bin/resolvectl domain tailscale0 "$suffix"
+          exit 0
+        fi
+        sleep 2
+      done
+      exit 1
+    '';
+  };
+
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338
   #
