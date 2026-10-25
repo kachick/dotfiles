@@ -111,10 +111,8 @@
         X-KDE-autostart-phase=1
       '';
 
-      # mozc_tool (config dialog) can be launched from the terminal via:
-      #   gtk-launch ibus-setup-mozc-jp
-      # or directly using the desktop entry Exec command:
-      #   $(sed -n 's/^Exec=//p' /run/current-system/sw/share/applications/ibus-setup-mozc-jp.desktop)
+      # mozc_tool can be run with `/run/current-system/sw/lib/mozc/mozc_tool --mode=config_dialog` on NixOS
+      # Alternatively, it can also be launched via desktop entry: `gtk-launch ibus-setup-mozc-jp`
       #
       # You should run `ibus write-cache; ibus restart` after changed the ibus config
       # See https://github.com/google/mozc/blob/master/docs/configurations.md for details
