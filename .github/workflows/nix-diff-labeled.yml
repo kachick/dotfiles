@@ -1,0 +1,21 @@
+name: ❄️ Diff (Labeled)
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  diff:
+    if: contains(github.event.pull_request.labels.*.name, 'ci-nix-diff')
+    permissions:
+      contents: read
+      pull-requests: write # Required for commenting closure diffs on PRs
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main
+    with:
+      runs-on: ubuntu-26.04
+      targets: |
+        devShells.x86_64-linux.default
+        nixosConfigurations.algae.config.system.build.toplevel
+        homeConfigurations."github-actions@ubuntu-26.04".activationPackage
