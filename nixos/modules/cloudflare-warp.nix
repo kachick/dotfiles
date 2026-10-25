@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  config,
+  ...
+}:
 {
   # This module enables Cloudflare WARP.
   # While it is suitable for both servers and desktops, we separate it into a module
@@ -19,6 +24,17 @@
     enable = true;
     package = pkgs.local.cloudflare-warp;
   };
+
+  # Avoid DNS conflicts with systemd-resolved and Tailscale MagicDNS.
+  # Using tunnel_only mode keeps the IP tunnel without breaking local DNS routing.
+  systemd.services.cloudflare-warp.postStart = ''
+    for _ in $(seq 1 10); do
+      if ${config.services.cloudflare-warp.package}/bin/warp-cli mode tunnel_only 2>/dev/null; then
+        break
+      fi
+      sleep 1
+    done
+  '';
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
 
