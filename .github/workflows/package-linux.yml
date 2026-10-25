@@ -96,9 +96,6 @@ jobs:
           - name: lima-full
             run: go run ./cmd/ci-build package lima-full
 
-          - name: mozc
-            run: go run ./cmd/ci-build package mozc
-
           - name: nix-update
             run: go run ./cmd/ci-build package nix-update
 
