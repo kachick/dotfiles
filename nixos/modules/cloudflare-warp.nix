@@ -1,6 +1,7 @@
 {
   pkgs,
   inputs,
+  config,
   ...
 }:
 {
@@ -24,17 +25,21 @@
     package = pkgs.local.cloudflare-warp;
   };
 
-  # Configure WARP via official MDM parameters.
-  # "tunnelonly" mode routes traffic through the tunnel without overriding local DNS settings.
-  # https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/deployment/mdm-deployment/parameters/
-  systemd.tmpfiles.rules = [
-    "L+ /var/lib/cloudflare-warp/mdm.xml - - - - ${pkgs.writeText "mdm.xml" ''
-      <dict>
-        <key>service_mode</key>
-        <string>tunnelonly</string>
-      </dict>
-    ''}"
-  ];
+  # Avoid DNS conflicts with local DNS resolvers and Tailscale MagicDNS.
+  # Using tunnel_only mode keeps the IP tunnel without breaking local DNS routing.
+  #
+  # WHY NOT MDM (mdm.xml service_mode: tunnelonly)?
+  # - Cloudflare MDM's "tunnelonly" parameter is strictly for Cloudflare Zero Trust (Teams).
+  #   On Consumer (Free) registrations, MDM tunnelonly fails to connect.
+  # - CLI's "warp-cli mode tunnel_only" works on Consumer accounts, so set it via postStart.
+  systemd.services.cloudflare-warp.postStart = ''
+    for _ in $(seq 1 10); do
+      if ${config.services.cloudflare-warp.package}/bin/warp-cli mode tunnel_only 2>/dev/null; then
+        break
+      fi
+      sleep 1
+    done
+  '';
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
 
