@@ -1,7 +1,6 @@
 {
   pkgs,
   inputs,
-  config,
   ...
 }:
 {
@@ -25,16 +24,17 @@
     package = pkgs.local.cloudflare-warp;
   };
 
-  # Avoid DNS conflicts with systemd-resolved and Tailscale MagicDNS.
-  # Using tunnel_only mode keeps the IP tunnel without breaking local DNS routing.
-  systemd.services.cloudflare-warp.postStart = ''
-    for _ in $(seq 1 10); do
-      if ${config.services.cloudflare-warp.package}/bin/warp-cli mode tunnel_only 2>/dev/null; then
-        break
-      fi
-      sleep 1
-    done
-  '';
+  # Configure WARP via official MDM parameters.
+  # "tunnelonly" mode routes traffic through the tunnel without overriding local DNS settings.
+  # https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/deployment/mdm-deployment/parameters/
+  systemd.tmpfiles.rules = [
+    "L+ /var/lib/cloudflare-warp/mdm.xml - - - - ${pkgs.writeText "mdm.xml" ''
+      <dict>
+        <key>service_mode</key>
+        <string>tunnelonly</string>
+      </dict>
+    ''}"
+  ];
 
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
 
