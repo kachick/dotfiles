@@ -197,6 +197,13 @@ tasks:
     cmds:
       - './containers/build.bash'
 
+  load-container-layered:
+    desc: Build and stream-load the layered container image into podman
+    cmds:
+      - |
+        stream_path="$(nix build .#container-layered.passthru.stream --no-link --print-out-paths)"
+        "$stream_path" | podman load
+
   ci-dev:
     desc: Provided for CI
     deps:

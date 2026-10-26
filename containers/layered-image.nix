@@ -27,6 +27,7 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = "home-layered";
   tag = "latest";
+  compressor = "zstd";
 
   # Automatically split packages and dependencies into up to 100 layers
   maxLayers = 100;
