@@ -87,6 +87,10 @@
         gnugrep
         netcat # `nc`
         dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
+        # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+        openssh
+        iputils # `ping` etc
+        tailscale # Frequently backported to stable channel
 
         git # git is required even if not the dev.nix
         # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378

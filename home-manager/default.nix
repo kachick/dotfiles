@@ -26,6 +26,9 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
+        outputs.homeManagerModules.containers
       ];
     }
   );
@@ -39,6 +42,9 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.lima-guest
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
+        outputs.homeManagerModules.containers
       ];
     }
   );
@@ -52,6 +58,8 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.systemd
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
       ];
     }
   );

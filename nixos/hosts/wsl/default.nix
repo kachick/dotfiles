@@ -51,6 +51,9 @@
           home.username = "nixos";
         }
         outputs.homeManagerModules.wsl
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
+        outputs.homeManagerModules.containers
       ];
     };
     extraSpecialArgs = {

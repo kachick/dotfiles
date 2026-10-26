@@ -19,6 +19,9 @@
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
       # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
       BETTERLEAKS_CONFIG = "${../config/betterleaks/.betterleaks.toml}";
+
+      # Workaround for rust-analyzer error: "ERROR can't load standard library, try installing `rust-src`"
+      RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
     };
 
     packages =
@@ -41,7 +44,6 @@
         # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562
         chawan # `cha`
 
-        unstable.gurk-rs
         pastel
 
         # How to get the installed font names
@@ -59,6 +61,12 @@
         hyperfine
         riffdiff # `riff`
         gnumake
+        shellcheck
+
+        # Keep shfmt or shuck for now even use dprint for the project formatting, dprint has no simple solution yet
+        # Revisit once https://github.com/dprint/dprint-vscode/issues/13 is resolved
+        shfmt
+
         unstable.betterleaks
         nushell
 

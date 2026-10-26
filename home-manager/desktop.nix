@@ -150,11 +150,47 @@ in
   # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
   xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
 
+  # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
+  # Check your `~/.config/user-dirs.dirs` if you faced any trouble
+  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/xdg-user-dirs.nix
+  xdg.userDirs = {
+    enable = true;
+    createDirectories = true;
+  };
+
+  # https://github.com/NixOS/nixpkgs/issues/222925#issuecomment-1514112861
+  xdg.configFile."autostart/userdirs.desktop".text = ''
+    [Desktop Entry]
+    Exec=xdg-user-dirs-update
+    TryExec=xdg-user-dirs-update
+    NoDisplay=true
+    StartupNotify=false
+    Type=Application
+    X-KDE-AutostartScript=true
+    X-KDE-autostart-phase=1
+  '';
+
+  # mozc_tool can be run with `/run/current-system/sw/lib/mozc/mozc_tool --mode=config_dialog` on NixOS
+  # Alternatively, it can also be launched via desktop entry: `gtk-launch ibus-setup-mozc-jp`
+  #
+  # You should run `ibus write-cache; ibus restart` after changed the ibus config
+  # See https://github.com/google/mozc/blob/master/docs/configurations.md for details
+  xdg.configFile."mozc/ibus_config.textproto".source = ../config/mozc/ibus_config.textproto;
+  # You should manually load the custom keymap if changed. Because mozc_tool does not support CLI and rc files
+  xdg.configFile."mozc/keymap-msime-customized.txt".source =
+    ../config/mozc/keymap-msime-customized.txt;
+
   home = {
+    # Putting files into xdg.userDirs.templates enables new file menu on Nautilus
+    # https://askubuntu.com/a/209669
+    file."Templates/blank.md".text = "";
+
     packages = with pkgs; [
       kanata # Don't require kanata-with-cmd for now
       pinned.kanata-tray
       local.ibus-engine-selector
+      # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/pkgs/by-name/iw/iw/package.nix
+      iw # replacement of wireless-tools(iwconfig)
     ];
 
     sessionVariables = {
