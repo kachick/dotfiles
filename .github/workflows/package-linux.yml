@@ -60,9 +60,6 @@ jobs:
           - name: antigravity-cli
             run: go run ./cmd/ci-build package antigravity-cli
 
-          - name: archive-home-files
-            run: go run ./cmd/ci-build package archive-home-files
-
           - name: conoha-cli
             run: go run ./cmd/ci-build package conoha-cli
 

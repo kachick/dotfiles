@@ -108,17 +108,6 @@ jobs:
         run: |
           zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
-      - name: Backup generated config
-        run: |
-          nix run .#archive-home-files "home-manager-generation-home-files-${RUNNER}"
-        env:
-          RUNNER: ${{ matrix.runner }}
-      - name: Upload artifact
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          path: home-manager-generation-home-files-${{ matrix.runner }}.tar.gz.age
-          if-no-files-found: 'error'
-          archive: false
       - name: Connect Tailscale
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         uses: tailscale/github-action@d1b6cd204f8dceda5b3eaad7f1f767be390056cd # v4.2.0

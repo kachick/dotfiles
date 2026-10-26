@@ -5,7 +5,6 @@
 
 [packages]
 antigravity-cli = { build = true, test = true, update = true }
-archive-home-files = { build = true, test = true, update = false }
 cloudflare-warp = { build = false, test = false, update = true }
 conoha-cli = { build = true, test = true, update = true }
 filen-cli-rs = { build = true, test = true, update = true }

@@ -52,7 +52,7 @@ func TestIsPackageFree(t *testing.T) {
 		pkg  string
 		want bool
 	}{
-		{pkg: "archive-home-files", want: true},
+		{pkg: "reponame", want: true},
 		{pkg: "antigravity-cli", want: false},
 		{pkg: "ludii-bin", want: false},
 	}
