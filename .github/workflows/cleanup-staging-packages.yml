@@ -64,14 +64,19 @@ jobs:
               xargs --no-run-if-empty --replace='{joined_ids}' echo -n 'package-version-ids={joined_ids}' | tee -a "$GITHUB_OUTPUT"
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
+      - name: Delete staging package versions
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
-        with:
-          owner: ${{ github.repository_owner }}
-          package-name: 'home'
-          package-type: 'container'
-          token: ${{ github.token }}
-          package-version-ids: ${{ steps.inspect-package.outputs.package-version-ids }}
+        env:
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          VERSION_IDS: ${{ steps.inspect-package.outputs.package-version-ids }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: | #shell
+          # Call REST API directly to avoid depending on inactive actions/delete-package-versions
+          echo "$VERSION_IDS" | tr ',' '\n' | xargs --no-run-if-empty --replace='{id}' \
+            gh api --method DELETE \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/users/${REPOSITORY_OWNER}/packages/container/home/versions/{id}"
       - name: Prepare git to run gh commands
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
         uses: actions/checkout@v7.0.1
