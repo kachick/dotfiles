@@ -6,8 +6,6 @@
   desktop = ./desktop.nix;
   # All Linux (NixOS + non-NixOS)
   linux = ../linux.nix;
-  # Only for non-NixOS Linux (Home Manager convention)
-  genericLinux = ../genericLinux.nix;
 
   # Personal profile
   kachick = ./kachick.nix;
