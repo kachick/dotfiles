@@ -57,8 +57,14 @@ tasks:
       - test-go
       - test-sample-nixos
       - check-nixos
+      - test-home-session-vars
     cmds:
       - ./scripts/dry.bash
+
+  test-home-session-vars:
+    desc: Verify non-NixOS Home Manager session variables in sandbox
+    cmds:
+      - nix-build scripts/test-home-session-vars.nix --no-out-link
 
   check-nixos:
     desc: Dry-run all NixOS configurations in this repository
@@ -199,3 +205,4 @@ tasks:
       # 'test-sample-nixos' # Run as a dedicated job in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
+      - 'test-home-session-vars'
