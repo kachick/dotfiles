@@ -6,8 +6,6 @@ nixpkgs-unstable: final: _prev: {
     inherit (final.stdenvNoCC.hostPlatform) system;
   };
 
-  inherit (final.unstable) installFonts;
-
   /*
     unstable =
       let

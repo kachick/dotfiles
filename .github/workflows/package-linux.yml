@@ -75,15 +75,6 @@ jobs:
           - name: hcpu_shogi
             run: go run ./cmd/ci-build package hcpu_shogi
 
-          - name: ibm-plex-mono
-            run: go run ./cmd/ci-build package ibm-plex-mono
-
-          - name: ibm-plex-sans-jp
-            run: go run ./cmd/ci-build package ibm-plex-sans-jp
-
-          - name: ibm-plex-serif-variable
-            run: go run ./cmd/ci-build package ibm-plex-serif-variable
-
           - name: ibus-engine-selector
             run: go run ./cmd/ci-build package ibus-engine-selector
 
