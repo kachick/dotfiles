@@ -1,6 +1,7 @@
 {
   pkgs,
   homeConfigurations,
+  corePackages,
 }:
 
 let
@@ -37,10 +38,9 @@ pkgs.dockerTools.buildLayeredImage {
     hmConfig.activationPackage
     pkgs.cacert
     pkgs.nix-ld
-    pkgs.coreutils
-    pkgs.bashInteractive
     nixLdLibraries
-  ];
+  ]
+  ++ corePackages;
 
   fakeRootCommands = ''
     mkdir -p ./tmp ./etc ./etc/ssl/certs ./bin ./usr/bin ./lib64 ./home/user

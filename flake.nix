@@ -111,6 +111,7 @@
           container-layered = import ./containers/layered-image.nix {
             inherit pkgs;
             homeConfigurations = outputs.homeConfigurations;
+            corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
         }
       );
