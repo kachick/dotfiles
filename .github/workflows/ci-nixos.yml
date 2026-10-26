@@ -77,18 +77,7 @@ jobs:
       - name: Logging disk space
         run: df -h
       # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
-      - name: Clean disk space as per https://github.com/actions/virtual-environments/issues/709
-        # NOTE: This workflow removed 14 Gib in 50sec
-        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
-        run: |
-          docker image prune --all --force
-          sudo rm -rf '/opt/ghc' \
-            '/usr/share/dotnet' \
-            "$AGENT_TOOLSDIRECTORY" \
-             '/usr/local/lib/android' \
-             '/usr/local/share/boost'
-      - name: Logging disk space after clean
-        run: df -h
+      - uses: $/.github/actions/clean-disk
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
@@ -97,6 +86,8 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
+      - name: Logging disk space before build
+        run: df -h
       - parallel:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free

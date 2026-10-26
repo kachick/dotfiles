@@ -1,0 +1,31 @@
+name: 'Clean Disk'
+description: 'Moves heavy unused directories and deletes them in the background to free disk space'
+runs:
+  using: 'composite'
+  steps:
+    # Move directories to a temporary location on the same filesystem first, then delete them in the background.
+    # Why move first:
+    # Moving paths on the same filesystem takes only milliseconds (inode update),
+    # avoiding step blockage and path collisions with later tools.
+    # Why /.to_delete instead of /tmp:
+    # /tmp is mounted on tmpfs (RAM), so moving from /dev/root to /tmp causes
+    # a slow cross-device copy that runs out of memory.
+    # Why background deletion:
+    # `rm -rf` takes 2+ minutes to remove hundreds of thousands of small files.
+    # Since Nix builds run inside isolated sandboxes (/build and /nix/store),
+    # background deletion does not affect Nix. By the time Nix needs disk space,
+    # the background job will have reclaimed 20+ GB.
+    # Why not prune docker:
+    # It freed only ~700 MB while taking ~18 seconds.
+    # Why not AGENT_TOOLSDIRECTORY:
+    # Preserving it allows setup-go and other actions to reuse tool caches.
+    - name: Clean disk space in background
+      shell: bash
+      run: |
+        sudo mkdir -p /.to_delete
+        for dir in '/opt/ghc' '/usr/share/dotnet' '/usr/local/lib/android' '/usr/local/share/boost'; do
+          if [ -d "$dir" ]; then
+            sudo mv "$dir" "/.to_delete/$(basename "$dir")"
+          fi
+        done
+        nohup sudo rm -rf /.to_delete >/dev/null 2>&1 &
