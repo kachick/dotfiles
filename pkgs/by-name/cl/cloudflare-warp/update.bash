@@ -21,15 +21,10 @@ fi
 
 echo "Updating cloudflare-warp: $current_version -> $target_version"
 
-x86_64_linux_url="https://downloads.cloudflareclient.com/v1/download/noble-intel/version/$target_version"
-aarch64_linux_url="https://downloads.cloudflareclient.com/v1/download/noble-arm/version/$target_version"
-
-x86_64_linux_hash="$(nix store prefetch-file --json --hash-type sha256 "$x86_64_linux_url" | jq -r .hash)"
-aarch64_linux_hash="$(nix store prefetch-file --json --hash-type sha256 "$aarch64_linux_url" | jq -r .hash)"
+url="https://downloads.cloudflareclient.com/v1/download/noble-intel/version/$target_version"
+hash="$(nix store prefetch-file --json --hash-type sha256 "$url" | jq -r .hash)"
 
 sed -i "s/version = \"$current_version\";/version = \"$target_version\";/" "$package_file"
-
-sed -i "/x86_64-linux = fetchurl/,/};/ s|hash = \"[^\"]*\";|hash = \"$x86_64_linux_hash\";|" "$package_file"
-sed -i "/aarch64-linux = fetchurl/,/};/ s|hash = \"[^\"]*\";|hash = \"$aarch64_linux_hash\";|" "$package_file"
+sed -i "s|hash = \"[^\"]*\";|hash = \"$hash\";|" "$package_file"
 
 echo "cloudflare-warp updated to $target_version"

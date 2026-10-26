@@ -25,35 +25,27 @@
 # - Cloudflare does not clearly promise the same version releases across Linux and macOS.
 # Therefore, macOS sources are intentionally dropped and only Linux hashes are kept here.
 #
+# Why only support x86_64-linux?
+# - This repository currently only needs Cloudflare WARP on x86_64-linux.
+# - Supporting only this platform avoids multi-platform hash sync and keeps the updater script minimal.
+#
 # Why stay on Noble (Ubuntu 24.04)?
 # - Cloudflare provides deb packages for multiple distros, but upstream nixpkgs uses Noble.
 # - The autoPatchelfHook and buildInputs in nixpkgs are tested for Noble binaries.
 #   Changing distro names brings risk of ABI and shared library mismatches during patching.
 let
   version = "2026.8.2115.0";
-  sources = {
-    x86_64-linux = fetchurl {
-      name = "cloudflare-warp_${version}_amd64.deb";
-      url = "https://downloads.cloudflareclient.com/v1/download/noble-intel/version/${version}";
-      hash = "sha256-AgkQeGDDxoUamrj9A2kBIaPeoxmbCE+Bl2IAcsZxzWg=";
-    };
-    aarch64-linux = fetchurl {
-      name = "cloudflare-warp_${version}_arm64.deb";
-      url = "https://downloads.cloudflareclient.com/v1/download/noble-arm/version/${version}";
-      hash = "sha256-5UiONZYdZpieag9ZGnTUgTbCP0UNyn020tVCa2Op7uI=";
-    };
-  };
 in
 pkgs.unstable.cloudflare-warp.overrideAttrs (previousAttrs: {
   inherit version;
 
-  src =
-    sources.${pkgs.stdenv.hostPlatform.system}
-      or (throw "Unsupported system: ${pkgs.stdenv.hostPlatform.system}");
+  src = fetchurl {
+    name = "cloudflare-warp_${version}_amd64.deb";
+    url = "https://downloads.cloudflareclient.com/v1/download/noble-intel/version/${version}";
+    hash = "sha256-AgkQeGDDxoUamrj9A2kBIaPeoxmbCE+Bl2IAcsZxzWg=";
+  };
 
   passthru = (previousAttrs.passthru or { }) // {
-    inherit sources;
-
     updateScript = lib.getExe (writeShellApplication {
       name = "update-cloudflare-warp";
 
@@ -72,7 +64,6 @@ pkgs.unstable.cloudflare-warp.overrideAttrs (previousAttrs: {
   meta = previousAttrs.meta // {
     platforms = [
       "x86_64-linux"
-      "aarch64-linux"
     ];
   };
 })
