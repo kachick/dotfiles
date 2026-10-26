@@ -30,10 +30,33 @@ jobs:
     runs-on: ubuntu-26.04
     timeout-minutes: 15
     steps:
-      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
-        with:
-          owner: ${{ github.repository_owner }}
-          package-name: 'home'
-          package-type: 'container'
-          token: ${{ github.token }}
-          min-versions-to-keep: ${{ inputs.keep-latest-items }}
+      - name: Delete old package versions
+        env:
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+          KEEP_LATEST_ITEMS: ${{ inputs.keep-latest-items }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: | #shell
+          # Call REST API directly to avoid depending on inactive actions/delete-package-versions
+          # Fetch all versions, sort by created_at, keep the newest N items, and delete oldest versions (up to 100 per run)
+          gh api --paginate \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "/users/${REPOSITORY_OWNER}/packages/container/home/versions" \
+            --jq '.[] | "\(.id)\t\(.created_at)"' | \
+            ruby -e '
+              require "time"
+              keep = Integer(ENV.fetch("KEEP_LATEST_ITEMS"))
+              versions = STDIN.each_line.map { |line|
+                id, created_at = line.chomp.split("\t")
+                { id: id, created_at: Time.parse(created_at) }
+              }
+              versions.sort_by! { |v| [v[:created_at], v[:id].to_i] }
+              to_delete_count = [versions.length - keep, 0].max
+              to_delete = versions.first([to_delete_count, 100].min)
+              to_delete.each { |v| puts v[:id] }
+            ' | \
+            xargs --no-run-if-empty --replace='{id}' \
+              gh api --method DELETE \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                "/users/${REPOSITORY_OWNER}/packages/container/home/versions/{id}"
