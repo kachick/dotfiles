@@ -6,7 +6,8 @@
   curl,
   jq,
   ripgrep,
-  common-updater-scripts,
+  gnused,
+  nix,
 }:
 
 # Why overrideAttrs on top of pkgs.unstable.cloudflare-warp instead of a full fork?
@@ -60,23 +61,11 @@ pkgs.unstable.cloudflare-warp.overrideAttrs (previousAttrs: {
         curl
         jq
         ripgrep
-        common-updater-scripts
+        gnused
+        nix
       ];
 
-      text = ''
-        new_version="$(
-          curl --fail --silent -L ''${GITHUB_TOKEN:+-u ":$GITHUB_TOKEN"} \
-            -H 'Accept: application/vnd.github+json' \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            'https://api.github.com/repos/cloudflare/cloudflare-docs/git/trees/production?recursive=true' |
-            jq -r '[.tree[].path | select(startswith("src/content/warp-releases/linux/ga/"))] | max_by(split("/")[-1] | split(".") | map(tonumber?))' |
-            rg '([^/]+)\.yaml\b' --only-matching --replace '$1'
-        )"
-
-        for platform in x86_64-linux aarch64-linux; do
-          update-source-version cloudflare-warp "$new_version" --ignore-same-version --source-key="sources.$platform"
-        done
-      '';
+      text = builtins.readFile ./update.bash;
     });
   };
 
