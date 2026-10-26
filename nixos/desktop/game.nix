@@ -1,11 +1,6 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    # Board Game
-
-    # Use latest to avoid update notifier (Might be better disabling it in nixpkgs)
-    unstable.vassal
-
     # Shogi
 
     ## Install yaneuraou for each host with the optimized label if required
