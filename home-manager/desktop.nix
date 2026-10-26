@@ -150,6 +150,9 @@ in
   # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
   xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
 
+  # xdg.userDirs creates GUI folders like ~/Desktop and ~/Music.
+  # Keep this in desktop.nix because CUI environments (VPS, containers) do not need them.
+  #
   # xdg-user-dirs NixOS module does not work or is not enough for me to keep English dirs even in Japanese locale.
   # Check your `~/.config/user-dirs.dirs` if you faced any trouble
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/misc/xdg-user-dirs.nix
