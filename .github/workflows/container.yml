@@ -183,7 +183,7 @@ jobs:
             podman tag "${image_name}:${{ needs.get-meta.outputs.ref_tag }}" "${full_image_name}"
             # Using --creds to avoid podman login
             # --digestfile is used to capture the digest for the next step
-            podman push --creds="${{ github.repository_owner }}:${{ github.token }}" --digestfile=digest.txt "${full_image_name}"
+            podman push --compression-format=zstd --creds="${{ github.repository_owner }}:${{ github.token }}" --digestfile=digest.txt "${full_image_name}"
           done
 
           # Capture the digest of the last pushed tag (they should all have the same digest since they are the same image)
