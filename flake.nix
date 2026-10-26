@@ -106,7 +106,13 @@
       packages = forAllSystems (
         { pkgs, ... }:
         # Don't include unfree packages, it will fail in `nix flake check`
-        pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
+        (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
+        // {
+          container-layered = import ./containers/layered-image.nix {
+            inherit pkgs;
+            homeConfigurations = outputs.homeConfigurations;
+          };
+        }
       );
 
       apps = forAllSystems (
