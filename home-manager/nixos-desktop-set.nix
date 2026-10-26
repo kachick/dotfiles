@@ -10,5 +10,6 @@
     ./messenger.nix
     ./containers.nix
     ./firefox.nix
+    { targets.genericLinux.enable = false; }
   ];
 }

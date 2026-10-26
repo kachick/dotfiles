@@ -24,6 +24,7 @@ in
           home.username = "user"; # Enforce the ephemeral "user" username
         }
         outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
         outputs.homeManagerModules.storage
         outputs.homeManagerModules.messenger
@@ -39,6 +40,7 @@ in
       modules = [
         outputs.homeManagerModules.ephemeral
         outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.lima-guest
         outputs.homeManagerModules.storage
         outputs.homeManagerModules.messenger
@@ -54,6 +56,7 @@ in
       modules = [
         outputs.homeManagerModules.ephemeral
         outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.systemd
         outputs.homeManagerModules.storage
         outputs.homeManagerModules.messenger
@@ -68,6 +71,7 @@ in
       modules = [
         outputs.homeManagerModules.kachick
         outputs.homeManagerModules.linux
+        outputs.homeManagerModules.genericLinux
         { home.username = "runner"; }
         outputs.homeManagerModules.systemd
       ];
