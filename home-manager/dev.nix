@@ -94,6 +94,7 @@
         fzf-bind-posix-shell-history-to-git-commit-message
         git-delete-merged-branches
         todo
+        task-completions
         ghqf
         walk
         envs

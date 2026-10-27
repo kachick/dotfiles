@@ -5,7 +5,6 @@ pkgs.writeShellApplication {
   runtimeInputs = [
     pkgs.pinned.selfup
     pkgs.local.bump_gomod
-    pkgs.local.update-completions
     pkgs.gitMinimal
     pkgs.findutils
     pkgs.go-task
@@ -17,7 +16,6 @@ pkgs.writeShellApplication {
   text = ''
     git ls-files -z .github | xargs --null selfup run "$@" --
     bump_gomod .
-    update-completions
   '';
 
   meta = {

@@ -24,9 +24,6 @@
     "langVersion": "go1.27",
     "modulePath": "github.com/kachick/dotfiles"
   },
-  "excludes": [
-    "dependencies"
-  ],
   "plugins": [
     "npm:@dprint/json@0.25.2",
     "npm:@dprint/markdown@0.28.0",
