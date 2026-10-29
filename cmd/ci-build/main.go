@@ -479,7 +479,7 @@ func fetchGHAOIDCToken(ctx context.Context, reqURL, reqToken, audience string) (
 	}
 	req.Header.Set("Authorization", "Bearer "+reqToken)
 
-	client := &http.Client{}
+	client := newHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("requesting OIDC token: %w", err)
@@ -605,7 +605,7 @@ func createPin(ctx context.Context, serverURL, token, pinName, rawStorePath stri
 	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{}
+	client := newHTTPClient()
 	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("requesting create pin: %w", err)
@@ -653,4 +653,13 @@ func resolveStorePath(path string) (string, error) {
 		return "", fmt.Errorf("store path must start with /nix/store/, got: %s", cleanPath)
 	}
 	return cleanPath[idx:], nil
+}
+
+func newHTTPClient() *http.Client {
+	return &http.Client{
+		Transport:     nil,
+		CheckRedirect: nil,
+		Jar:           nil,
+		Timeout:       0,
+	}
 }

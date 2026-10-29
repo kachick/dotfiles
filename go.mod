@@ -11,12 +11,13 @@ require (
 )
 
 require (
-	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
+	dev.gaijin.team/go/exhaustruct/v5 v5.2.0 // indirect
+	dev.gaijin.team/go/golib v0.8.1 // indirect
 	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	golang.org/x/mod v0.23.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/tools v0.30.0 // indirect
+	golang.org/x/mod v0.40.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 )
 
-tool github.com/GaijinEntertainment/go-exhaustruct/v3/cmd/exhaustruct
+tool dev.gaijin.team/go/exhaustruct/v5/cmd/exhaustruct

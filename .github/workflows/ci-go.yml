@@ -62,6 +62,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
+      - run: go vet ./...
       - name: 'Ensure installing go tool is done. Without this step, `go: downloading ...` logs appears in the extracting command path'
         run: go tool -n exhaustruct
       - run: go vet -vettool "$(go tool -n exhaustruct)" ./...

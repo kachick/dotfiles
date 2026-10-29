@@ -65,7 +65,10 @@ func parseConfig(r io.Reader) ([]engine, error) {
 		}
 		if line == "}" && current.name != "" {
 			engines = append(engines, current)
-			current = engine{}
+			current = engine{
+				name:     "",
+				longname: "",
+			}
 		}
 	}
 	return engines, scanner.Err()

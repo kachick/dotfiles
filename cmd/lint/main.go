@@ -52,6 +52,7 @@ func main() {
 	linters := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
 		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
+		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixf-diagnose", Args: append([]string{"--"}, nixPaths...)},
 		// Add selfup as `git ls-files | xargs nix run github:kachick/selfup/v1.2.2 -- list -check`. Consider https://github.com/kachick/dotfiles/issues/905 for use of pipe
 	}
