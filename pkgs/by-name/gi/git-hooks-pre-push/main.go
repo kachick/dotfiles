@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -11,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/kachick/dotfiles/internal/githooks"
-	pipeline "github.com/mattn/go-pipeline"
 )
 
 var TyposConfigPath string
@@ -118,7 +118,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 
 			// TODO: betterleaks v1 does not scan commit messages with the "git" subcommand.
 			// Consider replacing this separate stdin scan with --include=commit-messages when upgrading to betterleaks v2.
-			msgOut, msgErr := pipeline.CombinedOutput(
+			msgOut, msgErr := runPipedCommands(
 				[]string{"git", "log", "--author=" + email, "--format=%B", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
 				[]string{"betterleaks", "--verbose", "stdin"},
 			)
@@ -126,7 +126,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			return msgErr
 		}},
 		"prevent typos in log and diff": {Tag: "typos-commits", Script: func() error {
-			out, err := pipeline.CombinedOutput(
+			out, err := runPipedCommands(
 				// --patch displays diff
 				// --unified=0(-U0) trims excess lines from the diff
 				// ref: https://github.com/gitleaks/gitleaks/blob/4b541044e817274bad3407128bb226740295857c/sources/git.go#L33
@@ -146,6 +146,23 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			return err
 		}},
 	}, nil
+}
+
+// Why not external pipeline libraries:
+// Running the first command and passing its stdout buffer to the second command's stdin
+// handles two-stage git log checks with standard os/exec alone.
+func runPipedCommands(firstArgs []string, secondArgs []string) ([]byte, error) {
+	first := exec.Command(firstArgs[0], firstArgs[1:]...)
+	var stdout, stderr bytes.Buffer
+	first.Stdout = &stdout
+	first.Stderr = &stderr
+	if err := first.Run(); err != nil {
+		return stderr.Bytes(), err
+	}
+
+	second := exec.Command(secondArgs[0], secondArgs[1:]...)
+	second.Stdin = &stdout
+	return second.CombinedOutput()
 }
 
 func getRemoteDefaultBranch() (string, error) {

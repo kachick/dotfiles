@@ -42,10 +42,10 @@ func DisableBeeps() {
 }
 
 func RegainVerboseContextMenu() {
-	caption := mustGetCaption()
+	productName := mustGetProductName()
 
-	if strings.Contains(caption, "Server 2025") {
-		log.Printf("You are running `RegainVerboseContextMenu` on unsupported windows version `%s`. So skipped the execution.\n", caption)
+	if strings.Contains(productName, "Server 2025") {
+		log.Printf("You are running `RegainVerboseContextMenu` on unsupported windows version `%s`. So skipped the execution.\n", productName)
 		return
 	}
 
