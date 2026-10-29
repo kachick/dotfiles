@@ -11,7 +11,7 @@ require (
 )
 
 require (
-	github.com/GaijinEntertainment/go-exhaustruct/v3 v3.3.1 // indirect
+	github.com/GaijinEntertainment/go-exhaustruct/v5 v5.2.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.2.0 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	golang.org/x/mod v0.23.0 // indirect
