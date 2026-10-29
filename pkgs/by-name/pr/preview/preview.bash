@@ -19,7 +19,7 @@ text/*)
 	esac
 	;;
 inode/directory)
-	la "$path"
+	la --color=always "$path"
 	;;
 application/x-executable)
 	hexyl --color=always "$path" | less --RAW-CONTROL-CHARS

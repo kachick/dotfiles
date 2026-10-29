@@ -2,7 +2,10 @@
 pkgs.writeShellApplication rec {
   name = "lat";
   text = builtins.readFile ./${name}.bash;
-  runtimeInputs = [ pkgs.local.la ];
+  runtimeInputs = with pkgs; [
+    gitMinimal
+    local.la
+  ];
   meta = {
     description = "ls all and tree";
   };
