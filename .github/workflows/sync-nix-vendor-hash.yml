@@ -38,20 +38,19 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Sync vendorHash for open Dependabot PRs
+      - name: Sync vendorHash for open bot PRs
         env:
           GH_TOKEN: ${{ steps.publish-token.outputs.token }}
         run: |
           set -euo pipefail
 
           branches=$(gh pr list \
-            --author "app/dependabot" \
             --state open \
-            --json headRefName \
-            --jq '.[] | select(.headRefName | startswith("dependabot/go_modules/")) | .headRefName')
+            --json headRefName,author,files \
+            --jq '.[] | select((.author.login == "app/dependabot" or .author.login == "app/renovate") and (.files | any(.path == "go.mod" or .path == "go.sum"))) | .headRefName')
 
           if [ -z "${branches}" ]; then
-            echo "No open Dependabot Go PRs found"
+            echo "No open bot Go PRs found"
             exit 0
           fi
 
