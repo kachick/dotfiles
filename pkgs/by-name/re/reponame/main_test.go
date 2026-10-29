@@ -2,8 +2,6 @@ package main
 
 import (
 	"testing"
-
-	"github.com/google/go-cmp/cmp"
 )
 
 func TestExtractRepo(t *testing.T) {
@@ -41,8 +39,8 @@ func TestExtractRepo(t *testing.T) {
 
 	for description, tc := range testCases {
 		t.Run(description, func(t *testing.T) {
-			if diff := cmp.Diff(tc.repo, extractRepo(tc.input)); diff != "" {
-				t.Errorf("wrong result: %s", diff)
+			if got := extractRepo(tc.input); got != tc.repo {
+				t.Errorf("extractRepo(%q) = %q, want %q", tc.input, got, tc.repo)
 			}
 		})
 	}

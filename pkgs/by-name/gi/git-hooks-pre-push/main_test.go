@@ -74,3 +74,28 @@ func Test_initializeLinters(t *testing.T) {
 		}
 	})
 }
+
+func Test_runPipedCommands(t *testing.T) {
+	t.Run("passes stdout of first command to stdin of second command", func(t *testing.T) {
+		out, err := runPipedCommands(
+			[]string{"echo", "hello world"},
+			[]string{"tr", "a-z", "A-Z"},
+		)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got := string(out); got != "HELLO WORLD\n" {
+			t.Errorf("got %q, want %q", got, "HELLO WORLD\n")
+		}
+	})
+
+	t.Run("returns error when first command fails", func(t *testing.T) {
+		_, err := runPipedCommands(
+			[]string{"false"},
+			[]string{"cat"},
+		)
+		if err == nil {
+			t.Fatal("expected error when first command fails, got nil")
+		}
+	})
+}
