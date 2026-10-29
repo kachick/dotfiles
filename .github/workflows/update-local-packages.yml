@@ -118,6 +118,7 @@ jobs:
           fi
           rm "${msg_file}"
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           PACKAGE: ${{ matrix.package }}
           NIXPKGS_ALLOW_UNFREE: '1'
 

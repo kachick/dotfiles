@@ -3,7 +3,7 @@ package_file="pkgs/by-name/cl/cloudflare-warp/package.nix"
 target_version="${1:-}"
 if [[ -z "$target_version" ]]; then
 	target_version="$(
-		curl --fail --silent -L ${GITHUB_TOKEN:+-u ":$GITHUB_TOKEN"} \
+		curl --fail --silent --show-error -L ${GITHUB_TOKEN:+-u ":$GITHUB_TOKEN"} \
 			-H 'Accept: application/vnd.github+json' \
 			-H 'X-GitHub-Api-Version: 2022-11-28' \
 			'https://api.github.com/repos/cloudflare/cloudflare-docs/git/trees/production?recursive=true' |
