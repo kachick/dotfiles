@@ -13,7 +13,7 @@ runs:
           extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ=
           keep-build-log = false
     - name: Cache Nix Evaluation and Tarballs
-      uses: actions/cache@v6.1.0
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: ~/.cache/nix
         key: nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
