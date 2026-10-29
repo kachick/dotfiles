@@ -106,13 +106,13 @@ jobs:
           #   Exit 42
           # }
           & "C:\Program Files\Windows Defender\MpCmdRun.exe" -ListAllDynamicSignatures
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # KEEP fetch-depth for gh command
           fetch-depth: 0
           persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v7.0.0 # zizmor: ignore[cache-poisoning]
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0 # zizmor: ignore[cache-poisoning]
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: 'go.sum'
@@ -129,7 +129,7 @@ jobs:
           Get-ChildItem -Recurse .\dist
       - name: Upload artifact
         id: upload-artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: winit
           path: dist

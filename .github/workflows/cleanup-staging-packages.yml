@@ -79,7 +79,7 @@ jobs:
               "/users/${REPOSITORY_OWNER}/packages/container/home/versions/{id}"
       - name: Prepare git to run gh commands
         if: ${{ steps.inspect-package.outputs.package-version-ids }}
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Post comments to the PR
