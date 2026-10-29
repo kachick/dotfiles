@@ -14,6 +14,9 @@ in
       NIX_PATH = "nixpkgs=${pkgs.path}";
 
       TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+
+      # Keep Go builds pure Go without requiring a C compiler in mkShellNoCC
+      CGO_ENABLED = "0";
     };
 
     buildInputs =
