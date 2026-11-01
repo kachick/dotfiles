@@ -12,22 +12,14 @@ set -e
 chmod a-r /etc/ssh/ssh_config
 
 # Workaround for `-bash: warning: setlocale: LC_TIME: cannot change locale (en_DK.UTF-8): No such file or directory`
-# WHY NOT use Nix glibc localedef:
-# Calling Nix's localedef with root privileges writes into $out/lib/locale/locale-archive
-# in the Nix store instead of the host system, which corrupts the store path and breaks
-# NAR hash verification in binary caches.
-localedef_bin=""
-for p in /usr/bin/localedef /bin/localedef; do
-	if [ -x "$p" ]; then
-		localedef_bin="$p"
-		break
-	fi
-done
-
-if [ -n "$localedef_bin" ]; then
-	"$localedef_bin" -f UTF-8 -i en_DK en_DK.UTF-8
-else
-	echo 'WARNING: localedef not found on host. Install "locales" or "libc-bin" package to suppress LC_TIME warnings.' >&2
-fi
+# WHY NOT use default localedef without --no-archive:
+# Calling localedef without an archive target with root privileges writes into
+# $out/lib/locale/locale-archive in the Nix store instead of the host system,
+# which corrupts the Nix store path and breaks NAR hash verification.
+# Passing --no-archive writes the compiled locale to the target directory
+# (/usr/lib/locale/en_DK.UTF-8) without touching the Nix store, and host glibc
+# (Ubuntu/Debian) reads unarchived locale directories under /usr/lib/locale.
+mkdir -p /usr/lib/locale
+localedef --no-archive -f UTF-8 -i en_DK /usr/lib/locale/en_DK.UTF-8
 
 # Might be put code below which requires to inject Nix Store PATH
