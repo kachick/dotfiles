@@ -65,10 +65,6 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
-        with:
-          upstream-cache-filter: true
-          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
       - parallel:
           # BEGIN MANAGED PACKAGES
           - name: antigravity-cli
@@ -147,11 +143,6 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
-        with:
-          upstream-cache-filter: true
-          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
-          read-only: 'false' # home-manager cache maybe reused in nixos step even if unristriced running order
 
       - name: Print some dotfiles overviews
         run: |
@@ -225,11 +216,8 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
         with:
-          upstream-cache-filter: true
-          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
-          read-only: 'true' # nixos step is the last one, also the cache maybe too large
+          hestia-read-only: 'true'
       - parallel:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free

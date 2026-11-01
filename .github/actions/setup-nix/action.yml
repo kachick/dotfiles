@@ -1,5 +1,10 @@
 name: 'Setup Nix'
-description: 'Installs Nix and configures evaluation cache'
+description: 'Installs Nix, configures binary caches, and sets up Hestia'
+inputs:
+  hestia-read-only:
+    description: 'Run Hestia in read-only mode (substitute only, do not write cache)'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -12,3 +17,8 @@ runs:
           extra-substituters = https://cache.kachick.dev https://kachick.cachix.org
           extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ=
           keep-build-log = false
+    - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
+      with:
+        upstream-cache-filter: true
+        upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
+        read-only: ${{ inputs.hestia-read-only }}
