@@ -142,6 +142,7 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache: true
+      # Keep default read-write mode: other jobs or later runs may reuse the home-manager cache
       - uses: $/.github/actions/setup-nix
 
       - name: Print some dotfiles overviews
@@ -217,6 +218,7 @@ jobs:
           cache: true
       - uses: $/.github/actions/setup-nix
         with:
+          # NixOS is the last job in this workflow, and its cache is too large for the quota
           hestia-read-only: 'true'
       - parallel:
           - name: Build NixOS - desktop-free
