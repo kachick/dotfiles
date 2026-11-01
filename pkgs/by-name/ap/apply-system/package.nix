@@ -16,7 +16,6 @@ pkgs.writeShellApplication rec {
   '';
   runtimeInputs = with pkgs; [
     coreutils # `uname`, `ln`, `mkdir`
-    glibc # `localedef`
   ];
   meta = {
     description = ''
