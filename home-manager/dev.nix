@@ -102,6 +102,7 @@
         bench_shells
         preview
         renmark
+        conoha-cli
       ]);
 
     shellAliases = {

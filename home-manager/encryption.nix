@@ -64,7 +64,11 @@ in
     sequoia-sq # Alt `gpg(gnupg)`
     sequoia-chameleon-gnupg # Don't add gnupg package together since https://github.com/NixOS/nixpkgs/pull/507547
     age # Candidates: rage
+
+    # Alt `pass` for password-store. Candidates: gopass, prs. Do not use ripasso-cursive for now. It only provides TUI, not a replacement of CLI. And currently unstable on my NixOS.
     gopass
+
+    # Age fork of `pass`, also supports rage with $PASSAGE_AGE.
     passage
   ];
 

@@ -64,8 +64,9 @@
 
     packages =
       (with pkgs; [
-        # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+        # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730#issuecomment-162323824
         bashInteractive
+        # readline # needless and using it does not fix bash problems
         zsh
         unstable.brush # Use unstable version because I maintain
         starship
