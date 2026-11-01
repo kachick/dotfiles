@@ -75,7 +75,6 @@ buildGo127Module (finalAttrs: {
   buildPhase = ''
     runHook preBuild
 
-    # TODO: Remove this comment before merge: FORCE_REBUILD_TO_TEST
     make native
 
     runHook postBuild
