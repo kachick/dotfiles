@@ -116,7 +116,6 @@
         dust # `dust`, alt du
         fd # alt find
         bottom # `btm`, alt top
-        xh # alt HTTPie
         unstable.herdr
         zellij
         pik # alt pkill
