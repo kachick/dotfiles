@@ -253,7 +253,7 @@
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
-      #   See package-linux workflow for the dedicated building.
+      #   See nix workflow for the dedicated building.
       unstable.zed-editor
 
       gdm-settings

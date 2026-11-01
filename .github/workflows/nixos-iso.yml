@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  actions: read # Detect evicted cache entries upfront in hestia
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -35,6 +36,9 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup-nix
+        with:
+          # ISO image closure is huge and artifact is uploaded separately
+          hestia-read-only: 'true'
       - name: Logging disk space before build
         run: df -h
       - name: Build NixOS ISO

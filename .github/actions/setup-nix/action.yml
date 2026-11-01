@@ -1,5 +1,10 @@
 name: 'Setup Nix'
-description: 'Installs Nix and configures evaluation cache'
+description: 'Installs Nix, configures binary caches, and sets up Hestia'
+inputs:
+  hestia-read-only:
+    description: 'Run Hestia in read-only mode (substitute only, do not write cache)'
+    required: false
+    default: 'false'
 runs:
   using: 'composite'
   steps:
@@ -12,11 +17,8 @@ runs:
           extra-substituters = https://cache.kachick.dev https://kachick.cachix.org
           extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ=
           keep-build-log = false
-    - name: Cache Nix Evaluation and Tarballs
-      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+    - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
       with:
-        path: ~/.cache/nix
-        key: nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
-        restore-keys: |
-          nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock') }}-
-          nix-eval-and-tarball-${{ runner.os }}-
+        upstream-cache-filter: true
+        upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
+        read-only: ${{ inputs.hestia-read-only }}
