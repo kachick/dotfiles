@@ -12,6 +12,12 @@
     ./game.nix
   ];
 
+  xdg = {
+    autostart.enable = true;
+    icons.enable = true;
+    sounds.enable = true;
+  };
+
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 

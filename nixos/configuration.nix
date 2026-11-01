@@ -49,6 +49,16 @@
     SYSTEMD_EDITOR = pkgs.helix.meta.mainProgram;
   };
 
+  # Disable graphical and desktop assets by default on common base.
+  # Desktop configurations re-enable fontconfig in ./desktop/font.nix
+  # and XDG assets in ./desktop/default.nix.
+  fonts.fontconfig.enable = lib.mkDefault false;
+  xdg = {
+    autostart.enable = lib.mkDefault false;
+    icons.enable = lib.mkDefault false;
+    sounds.enable = lib.mkDefault false;
+  };
+
   # Support modern terminal definitions (e.g. xterm-ghostty, kitty, foot) globally for SSH clients
   environment.enableAllTerminfo = true;
 
