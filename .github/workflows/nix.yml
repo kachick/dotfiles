@@ -1,4 +1,4 @@
-name: ❄️📦🏠 🐧
+name: ❄️ # https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
 on:
   push:
     branches: [main]
@@ -120,7 +120,7 @@ jobs:
         run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
 
   home-manager:
-    name: 🏠 Home Manager
+    name: 🏠 home-manager
     needs: [packages]
     permissions:
       contents: read
@@ -193,7 +193,7 @@ jobs:
         run: go run ./cmd/ci-build push --pin dotfiles-main-home-manager ~/.local/state/nix/profiles/home-manager
 
   nixos:
-    name: ❄️ NixOS
+    name: ⚙️ NixOS
     needs: [packages]
     permissions:
       contents: read
