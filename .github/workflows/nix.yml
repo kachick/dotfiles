@@ -41,10 +41,11 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  build:
-    name: 🔨 Build & Test
+  packages:
+    name: 📦 Packages
     permissions:
       contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
       id-token: write # Required for Tailscale and niks3 OIDC authentication
     runs-on: ubuntu-26.04
     timeout-minutes: 180
@@ -64,8 +65,10 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-      - name: Logging disk space before package build
-        run: df -h
+      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
+        with:
+          upstream-cache-filter: true
+          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
       - parallel:
           # BEGIN MANAGED PACKAGES
           - name: antigravity-cli
@@ -107,8 +110,47 @@ jobs:
           - name: zed-editor
             run: go run ./cmd/ci-build package zed-editor --skip-tests
           # END MANAGED PACKAGES
-      - name: Logging disk space before home-manager
+      - name: Connect Tailscale
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        uses: tailscale/github-action@99a8333667fff04fdd6cffb46dfd409f8329a7bf # v4.3.0
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tags: ${{ secrets.TAILSCALE_TAGS }}
+      - name: Push build closures to niks3
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        env:
+          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
+        run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
+
+  home-manager:
+    name: 🏠 Home Manager
+    needs: [packages]
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
+    runs-on: ubuntu-26.04
+    timeout-minutes: 60
+    env:
+      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+    steps:
+      - name: Logging disk space
         run: df -h
+      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0 # zizmor: ignore[cache-poisoning]
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
+        with:
+          upstream-cache-filter: true
+          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
 
       - name: Print some dotfiles overviews
         run: |
@@ -144,8 +186,48 @@ jobs:
         run: |
           zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
-      - name: Logging disk space before NixOS build
+      - name: Connect Tailscale
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        uses: tailscale/github-action@99a8333667fff04fdd6cffb46dfd409f8329a7bf # v4.3.0
+        with:
+          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tags: ${{ secrets.TAILSCALE_TAGS }}
+      - name: Push home-manager generation to niks3
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
+        env:
+          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
+        run: go run ./cmd/ci-build push --pin dotfiles-main-home-manager ~/.local/state/nix/profiles/home-manager
+
+  nixos:
+    name: ❄️ NixOS
+    needs: [packages]
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    env:
+      CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
+      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+    steps:
+      - name: Logging disk space
         run: df -h
+      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0 # zizmor: ignore[cache-poisoning]
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+      - uses: Mic92/hestia@69707ea4f233a235c599e3ffedd98955b9d1d6ff # v3.1.0
+        with:
+          upstream-cache-filter: true
+          upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
       - parallel:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free
@@ -155,8 +237,6 @@ jobs:
 
           - name: Verify sample configuration template
             run: ./nixos/hosts/sample/verify.bash
-      - name: Logging disk space after all builds
-        run: df -h
       - name: Connect Tailscale
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         uses: tailscale/github-action@99a8333667fff04fdd6cffb46dfd409f8329a7bf # v4.3.0
@@ -169,11 +249,6 @@ jobs:
         env:
           NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
         run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
-      - name: Push home-manager generation to niks3
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        env:
-          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: go run ./cmd/ci-build push --pin dotfiles-main-home-manager ~/.local/state/nix/profiles/home-manager
       - name: Pin NixOS desktop-free on main
         if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
         env:
