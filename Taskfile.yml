@@ -138,7 +138,7 @@ tasks:
     desc: Synchronize workflow files with pkgs/list.toml
     cmds:
       - go run ./cmd/ci-build sync-workflows
-      - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
+      - dprint fmt .github/workflows/nix.yml .github/workflows/update-local-packages.yml
 
   check-sync-workflows:
     internal: true
@@ -209,7 +209,7 @@ tasks:
     deps:
       - 'default'
       - 'setup'
-      # 'test-sample-nixos' # Run as a dedicated job in GHA
+      # 'test-sample-nixos' # Run in nix workflow in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
       - 'lint-all'
       - 'test-home-session-vars'
