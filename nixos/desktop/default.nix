@@ -412,9 +412,12 @@
   };
 
   # Alternative candidates: headscale
+  # WHY NOT extraUpFlags = [ "--ssh" ]?
+  # - Standard OpenSSH with explicit ed25519 keys covers current requirements.
+  # - Avoids expanding the attack surface for control-plane SSH bypass vulnerabilities
+  #   such as TS-2026-014 (https://tailscale.com/security-bulletins#ts-2026-014).
   services.tailscale = {
     enable = true;
-    extraUpFlags = [ "--ssh" ];
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
