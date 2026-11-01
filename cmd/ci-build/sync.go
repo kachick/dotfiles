@@ -45,7 +45,7 @@ func runSyncWorkflows(args []string) error {
 		return fmt.Errorf("loading pkgs/list.toml: %w", err)
 	}
 
-	// 1. Generate package-linux.yml parallel steps
+	// 1. Generate nix.yml parallel steps
 	sortedNames := make([]string, 0, len(packagesFile.Packages))
 	for name := range packagesFile.Packages {
 		sortedNames = append(sortedNames, name)
@@ -82,7 +82,7 @@ func runSyncWorkflows(args []string) error {
 		relPath string
 		content string
 	}{
-		{relPath: ".github/workflows/package-linux.yml", content: packageLinuxBlock},
+		{relPath: ".github/workflows/nix.yml", content: packageLinuxBlock},
 		{relPath: ".github/workflows/update-local-packages.yml", content: updateBlock},
 	}
 
