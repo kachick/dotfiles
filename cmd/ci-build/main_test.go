@@ -39,6 +39,13 @@ func TestRunNixos_MissingArg(t *testing.T) {
 	}
 }
 
+func TestRunWarmup_UnknownTarget(t *testing.T) {
+	err := runWarmup([]string{"invalid-target"})
+	if err == nil {
+		t.Error("expected error for unknown warmup target, got nil")
+	}
+}
+
 func TestIsPackageFree(t *testing.T) {
 	if _, err := exec.LookPath("nix"); err != nil {
 		t.Skip("skipping test: nix is not installed in PATH")

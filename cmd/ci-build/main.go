@@ -20,7 +20,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|pin|sync-workflows> [options] [args]")
+		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|pin|sync-workflows|warmup> [options] [args]")
 		os.Exit(1)
 	}
 
@@ -51,8 +51,13 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
+	case "warmup":
+		if err := runWarmup(os.Args[2:]); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows> [options] [args]\n", subcommand)
+		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows|warmup> [options] [args]\n", subcommand)
 		os.Exit(1)
 	}
 }
@@ -680,4 +685,83 @@ func newHTTPClient() *http.Client {
 		Jar:           nil,
 		Timeout:       0,
 	}
+}
+
+func runWarmup(args []string) error {
+	fs := flag.NewFlagSet("warmup", flag.ExitOnError)
+	archFlag := fs.String("arch", "", "Target system architecture (defaults to nix builtins.currentSystem)")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	target := "packages"
+	if fs.NArg() > 0 {
+		target = fs.Arg(0)
+	}
+
+	arch := *archFlag
+	if arch == "" {
+		detectedArch, err := getCurrentNixSystem()
+		if err != nil {
+			return err
+		}
+		arch = detectedArch
+	}
+
+	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		return fmt.Errorf("failed to detect repository root: %w", err)
+	}
+	repoRoot := strings.TrimSpace(string(repoRootBytes))
+
+	switch target {
+	case "packages":
+		fmt.Println("Warming up Nix packages evaluation...")
+		evalExpr := fmt.Sprintf(`
+let
+  flake = builtins.getFlake "%s";
+in
+builtins.attrNames flake.packages.%s
+`, repoRoot, arch)
+		evalCmd := exec.Command("nix", "eval", "--impure", "--expr", evalExpr)
+		evalCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+		evalCmd.Stdout = os.Stdout
+		evalCmd.Stderr = os.Stderr
+		if err := evalCmd.Run(); err != nil {
+			return fmt.Errorf("evaluating flake packages: %w", err)
+		}
+
+		fmt.Println("Warming up common store paths with baseline package (reponame)...")
+		buildCmd := exec.Command("nix", "build", ".#reponame", "--no-link", "--no-keep-build-log")
+		buildCmd.Stdout = os.Stdout
+		buildCmd.Stderr = os.Stderr
+		if err := buildCmd.Run(); err != nil {
+			return fmt.Errorf("building baseline package: %w", err)
+		}
+
+	case "nixos":
+		fmt.Println("Warming up NixOS configurations evaluation...")
+		evalExpr := fmt.Sprintf(`
+let
+  flake = builtins.getFlake "%s";
+  configs = flake.nixosConfigurations;
+in
+[
+  configs.desktop-free.config.system.build.toplevel.drvPath
+  configs.wsl.config.system.build.toplevel.drvPath
+]
+`, repoRoot)
+		evalCmd := exec.Command("nix", "eval", "--impure", "--expr", evalExpr)
+		evalCmd.Stdout = os.Stdout
+		evalCmd.Stderr = os.Stderr
+		if err := evalCmd.Run(); err != nil {
+			return fmt.Errorf("evaluating nixos configurations: %w", err)
+		}
+
+	default:
+		return fmt.Errorf("unknown warmup target: %s (supported: packages, nixos)", target)
+	}
+
+	fmt.Printf("Warmup for %s completed successfully.\n", target)
+	return nil
 }

@@ -65,6 +65,8 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
+      - name: Warm up
+        run: go run ./cmd/ci-build warmup packages
       - parallel:
           # BEGIN MANAGED PACKAGES
           - name: antigravity-cli
@@ -220,6 +222,8 @@ jobs:
         with:
           # NixOS is the last job in this workflow, and its cache is too large for the quota
           hestia-read-only: 'true'
+      - name: Warm up
+        run: go run ./cmd/ci-build warmup nixos
       - parallel:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free
