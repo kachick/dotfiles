@@ -458,10 +458,28 @@ func getNiks3OIDCToken() (string, error) {
 	if audience == "" {
 		audience = "https://cache.kachick.dev"
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
 
-	return fetchGHAOIDCToken(ctx, reqURL, reqToken, audience)
+	// GitHub Actions OIDC endpoints can occasionally take over 10-15s to respond
+	// under load or return temporary network errors. Retry up to 3 times with 30s timeout.
+	return getOIDCTokenWithRetry(reqURL, reqToken, audience, 3, 2*time.Second, 30*time.Second)
+}
+
+func getOIDCTokenWithRetry(reqURL, reqToken, audience string, maxAttempts int, retryInterval, attemptTimeout time.Duration) (string, error) {
+	var lastErr error
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		ctx, cancel := context.WithTimeout(context.Background(), attemptTimeout)
+		token, err := fetchGHAOIDCToken(ctx, reqURL, reqToken, audience)
+		cancel()
+		if err == nil {
+			return token, nil
+		}
+		lastErr = err
+		if attempt < maxAttempts && retryInterval > 0 {
+			time.Sleep(retryInterval)
+		}
+	}
+
+	return "", fmt.Errorf("requesting OIDC token failed after %d attempts: %w", maxAttempts, lastErr)
 }
 
 func fetchGHAOIDCToken(ctx context.Context, reqURL, reqToken, audience string) (string, error) {

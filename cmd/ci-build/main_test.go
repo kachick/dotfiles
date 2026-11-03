@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestGetCurrentNixSystem(t *testing.T) {
@@ -237,6 +238,49 @@ func TestGetNiks3OIDCToken_MissingEnv(t *testing.T) {
 	_, err := getNiks3OIDCToken()
 	if err == nil {
 		t.Fatal("expected error when OIDC env vars are missing, got nil")
+	}
+}
+
+func TestGetOIDCTokenWithRetry_SuccessOnRetry(t *testing.T) {
+	attempts := 0
+	expectedToken := "retry-success-token"
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		if attempts < 2 {
+			http.Error(w, "temporary error", http.StatusServiceUnavailable)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"value": "` + expectedToken + `"}`))
+	}))
+	defer server.Close()
+
+	token, err := getOIDCTokenWithRetry(server.URL, "token", "https://cache.kachick.dev", 3, 1*time.Millisecond, 5*time.Second)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if token != expectedToken {
+		t.Errorf("token = %q, want %q", token, expectedToken)
+	}
+	if attempts != 2 {
+		t.Errorf("attempts = %d, want 2", attempts)
+	}
+}
+
+func TestGetOIDCTokenWithRetry_FailureExhausted(t *testing.T) {
+	attempts := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		http.Error(w, "server error", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	_, err := getOIDCTokenWithRetry(server.URL, "token", "https://cache.kachick.dev", 3, 1*time.Millisecond, 5*time.Second)
+	if err == nil {
+		t.Fatal("expected error when all retry attempts fail, got nil")
+	}
+	if attempts != 3 {
+		t.Errorf("attempts = %d, want 3", attempts)
 	}
 }
 
