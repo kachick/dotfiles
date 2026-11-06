@@ -16,7 +16,7 @@ buildGo127Module (finalAttrs: {
 
   env = {
     # This is mainly not needed because the upstream repository forces the value:
-    #   - https://github.com/lima-vm/lima/blob/v2.1.0/Makefile#L421-L428
+    #   - https://github.com/lima-vm/lima/blob/v2.3.0/Makefile#L460-L467
     # However, clarifying the value prevents confusion and specifically guards against regressions, such as the one that previously occurred:
     #   - https://github.com/NixOS/nixpkgs/pull/458867
     CGO_ENABLED = "0";
