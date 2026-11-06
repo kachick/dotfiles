@@ -8,15 +8,16 @@
   environment.systemPackages = with pkgs; [
     ## Unfree packages
 
-    # Don't use unstable channel as possible. It frequently backported to stable channel
-    # ref: https://github.com/NixOS/nixpkgs/commits/nixos-26.05/pkgs/applications/editors/vscode/vscode.nix
+    # Use unstable for vscode.
+    # It is a repackaged binary without cache on cache.nixos.org (unfree).
+    # Unstable keeps up with upstream changes and avoids broken backports on stable.
     #
     # AFAIK, vscode still requires `commandLineArgs` to specify custom flags. It didn't respect ~/.config/electron-flags.conf likely other electron apps
     # This restriction might be related to
     #   - https://github.com/archlinux/svntogit-community/commit/f9ec89f9e2845e90f9524b28b74daf33ceb699bb
     #   - https://github.com/archlinux/svntogit-community/commit/c8bf3ae2e3deab793cb8e8544250ef943d14c85e
     (
-      (vscode.override {
+      (unstable.vscode.override {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
         commandLineArgs = [
