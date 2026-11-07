@@ -2,7 +2,7 @@ name: 🆙❄️
 on:
   pull_request:
     paths:
-      - '.github/workflows/update-flake-lock-and-ci.yml'
+      - '.github/workflows/update-flake-lock.yml'
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
     # Every Monday 9:17 JST
