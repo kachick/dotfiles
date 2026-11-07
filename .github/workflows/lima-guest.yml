@@ -57,6 +57,11 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
+      - name: Prepare local repos directory
+        run: |
+          mkdir -p ~/repos/github.com/kachick
+          ln -s "${GITHUB_WORKSPACE}" ~/repos/github.com/kachick/dotfiles
+
       - name: Setup Lima templates
         run: |
           mkdir -p ~/.lima/_templates/_default
@@ -64,12 +69,9 @@ jobs:
           cp config/lima/_templates/docker-nix.yaml ~/.lima/_templates/
 
       - name: Create Lima Instance from custom template
-        env:
-          REV: ${{ github.head_ref || github.ref_name }}
-          GITHUB_TOKEN: ${{ github.token }}
         run: |
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix --param dotfilesRev="${REV}" --param githubToken="${GITHUB_TOKEN}" template:docker-nix
+          limactl create --yes --name=docker-nix --mount ~/repos:w template:docker-nix
 
   test-provisioning:
     name: 🧪 Test Provisioning
@@ -95,6 +97,11 @@ jobs:
           restore-keys: |
             lima-${{ steps.lima-setup.outputs.version }}-
 
+      - name: Prepare local repos directory
+        run: |
+          mkdir -p ~/repos/github.com/kachick
+          ln -s "${GITHUB_WORKSPACE}" ~/repos/github.com/kachick/dotfiles
+
       - name: Setup Lima templates
         run: |
           mkdir -p ~/.lima/_templates/_default
@@ -108,12 +115,8 @@ jobs:
         run: limactl shell docker-nix nix --version
 
       - name: Show Binary Cache effectiveness in Guest
-        env:
-          REV: ${{ github.head_ref || github.ref_name }}
-          NIX_CONFIG: access-tokens = github.com=${{ github.token }}
         run: |
-          FLAKE_URI="github:kachick/dotfiles/${REV}"
-          limactl shell docker-nix env NIX_CONFIG="${NIX_CONFIG}" nix run "${FLAKE_URI}#la" -- --version
+          limactl shell docker-nix nix run "path:/home/user.linux/repos/github.com/kachick/dotfiles#la" -- --version
 
       - name: Show Docker works in Guest
         run: limactl shell docker-nix docker run --rm hello-world

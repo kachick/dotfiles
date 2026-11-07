@@ -11,7 +11,6 @@ base:
 
 param:
   dotfilesRev: 'main'
-  githubToken: ''
 
 provision:
   - mode: system
@@ -37,10 +36,6 @@ provision:
 
       # shellcheck source=/dev/null
       . /etc/profile.d/nix.sh
-
-      if [ -n "{{.Param.githubToken}}" ]; then
-        export NIX_CONFIG="access-tokens = github.com={{.Param.githubToken}}"
-      fi
 
       # Restore access from guest home to host repos mount without hardcoding host username
       if [ ! -e "$HOME/repos" ]; then
