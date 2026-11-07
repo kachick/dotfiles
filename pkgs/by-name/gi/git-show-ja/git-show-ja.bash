@@ -59,29 +59,38 @@ if [ -z "$trans" ]; then
 	exit 1
 fi
 
-# Indent translation and color with cyan
-formatted_trans="$(printf '%s' "$trans" | awk '{ print "    \033[36m[訳] " $0 "\033[0m" }')"
-
 run_git_show() {
 	if [ ${#git_args[@]} -gt 0 ]; then
-		git show "${git_args[@]}"
+		git show --color=always "${git_args[@]}"
 	else
-		git show
+		git show --color=always
 	fi
 }
 
 # Stream git show output and inject translation right before diff starts
-run_git_show | awk -v trans="$formatted_trans" '
-BEGIN { in_header = 1; inserted = 0; }
-in_header && /^$/ { in_header = 0; print; next; }
-!in_header && !inserted && /^(\033\[[0-9;]*m)?diff --git/ {
-  print trans "\n";
-  inserted = 1;
+inject_translation() {
+	run_git_show | awk -v trans="$trans" '
+	BEGIN { in_header = 1; inserted = 0; }
+	in_header && /^$/ { in_header = 0; print; next; }
+	!in_header && !inserted && /^(\033\[[0-9;]*m)?diff --git/ {
+	  print "\033[36m<ja>\033[0m";
+	  print "\033[36m" trans "\033[0m";
+	  print "\033[36m</ja>\033[0m\n";
+	  inserted = 1;
+	}
+	{ print }
+	END {
+	  if (!inserted) {
+	    print "\n\033[36m<ja>\033[0m";
+	    print "\033[36m" trans "\033[0m";
+	    print "\033[36m</ja>\033[0m";
+	  }
+	}
+	'
 }
-{ print }
-END {
-  if (!inserted) {
-    print "\n" trans;
-  }
-}
-'
+
+if [ -t 1 ] && command -v riff >/dev/null 2>&1; then
+	inject_translation | riff
+else
+	inject_translation
+fi

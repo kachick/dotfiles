@@ -7,6 +7,7 @@ pkgs.writeShellApplication rec {
     coreutils
     gawk
     curl
+    riffdiff
     local.plamo-trans
   ];
   meta = {
