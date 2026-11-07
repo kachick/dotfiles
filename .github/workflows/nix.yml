@@ -56,10 +56,22 @@ jobs:
     # Only on Linux is enough to check the flake
     runs-on: ubuntu-26.04
     timeout-minutes: 30
+    outputs:
+      flake_lock_changed: ${{ steps.check-flake-lock.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 2
           persist-credentials: false
+      - name: Check if flake.lock changed
+        id: check-flake-lock
+        if: github.event_name == 'pull_request'
+        run: |
+          if git diff --quiet HEAD^1 HEAD -- flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
       - uses: $/.github/actions/setup-nix
       - name: Print some dotfiles overviews
         shell: bash -eu -o pipefail {0}
@@ -322,3 +334,24 @@ jobs:
         with:
           path: result/iso/*.iso
           archive: false
+
+  diff:
+    name: ❄️ Diff
+    needs: [inspect]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      github.event_name == 'pull_request' &&
+      (contains(github.event.pull_request.labels.*.name, 'ci-nix-diff') ||
+       (github.event.action != 'labeled' && needs.inspect.outputs.flake_lock_changed == 'true'))
+    permissions:
+      contents: read
+      pull-requests: write # Required for commenting closure diffs on PRs
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main # zizmor: ignore[unpinned-uses]
+    with:
+      runs-on: ubuntu-26.04
+      targets: |
+        devShells.x86_64-linux.default
+        nixosConfigurations.algae.config.system.build.toplevel
+        homeConfigurations."github-actions@ubuntu-26.04".activationPackage
