@@ -1,9 +1,9 @@
 # 🟢 Builtin default: [] (Mount nothing)
 mounts:
-  # TODO: Disable default mounting host home to keep secure even if it is not writable
-  # - location: '~' # Just comment out still respects template default. And setting mountPoint as false handles the false as string...
   - location: '~/repos' # See git.nix in this repo
-    mountPoint: '{{.Home}}/repos' # Keep same behavior for ghq and the wrapped scripts
+    # Avoid hardcoding '{{.Home}}/repos' to ensure 'limactl shell' can
+    # synchronize the working directory by matching the host's absolute path.
+    # Guest home directory links here via setupHostReposSymlink in home-manager/lima-guest.nix.
     writable: true # For developing purpose, writable should be reasonable. And my system does not directly include these files
 
 # https://github.com/lima-vm/lima/issues/1015#issuecomment-4092839880

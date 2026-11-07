@@ -26,6 +26,13 @@ in
     # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for details
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
 
+    # Lima resolves template:_default/mounts via ~/.lima/_templates/_default/mounts.yaml,
+    # and custom templates like template:docker-nix via ~/.lima/_templates/docker-nix.yaml.
+    file.".lima/_templates" = {
+      source = ../config/lima/_templates;
+      recursive = true;
+    };
+
     sessionVariables = {
       LIMA_INSTANCE = "docker-nix";
     };

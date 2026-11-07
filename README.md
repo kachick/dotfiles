@@ -172,25 +172,36 @@ Check [traps](./windows/Multi-booting.md)
 
 ## Lima
 
-1. Start a standard Docker guest with Lima:
+1. Start a Docker guest with Nix and Home Manager:
 
    ```bash
-   limactl start --name=docker-nix template:docker
+   limactl start template:docker-nix
    ```
 
-1. Install and configure Nix in the guest:
+   To use a specific branch or commit from GitHub:
 
    ```bash
-   REV=main
-   curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/$REV/scripts/install-nix.bash" | limactl shell docker-nix bash -s -- "$REV"
+   limactl start --param dotfilesRev=my-branch template:docker-nix
    ```
-
-1. Apply home-manager:
 
 1. Run containers:
 
    ```bash
    limactl shell docker-nix docker run --rm hello-world
+   ```
+
+1. Quick reset with snapshots:
+
+   Save a clean snapshot after the first setup:
+
+   ```bash
+   limactl snapshot create docker-nix --tag clean
+   ```
+
+   Restore anytime:
+
+   ```bash
+   limactl snapshot apply docker-nix --tag clean
    ```
 
 ### Windows on Lima
