@@ -1,4 +1,4 @@
-port="${PLAMO_PORT:-8080}"
+port="${PLAMO_PORT:-18080}"
 target_lang="ja"
 form="plain"
 
@@ -12,7 +12,7 @@ Reads from arguments if provided, otherwise reads from standard input.
 Options:
   -t, --to LANG       Target language code (default: ja)
   -f, --form FORM     Sentence form: plain or polite (default: plain)
-  -p, --port PORT     Port of llama-server (default: 8080, env: PLAMO_PORT)
+  -p, --port PORT     Port of llama-server (default: 18080, env: PLAMO_PORT)
   -h, --help          Show this help message
 
 Server controls:

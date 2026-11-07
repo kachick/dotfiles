@@ -33,7 +33,8 @@
       # Downloads and caches the GGUF model automatically into ~/.cache/huggingface/hub/ on first start.
       # -np 1: Dedicate resources to single interactive requests instead of splitting across multiple slots.
       # -t 8 -tb 8: Fully utilize 8-core CPU for generation and prompt processing (~300ms per request).
-      ExecStart = "${lib.getExe' pkgs.unstable.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 8080 -c 2048 -np 1 -t 8 -tb 8";
+      # WHY NOT port 8080: Port 8080 is commonly used by local web development servers; 18080 avoids conflicts.
+      ExecStart = "${lib.getExe' pkgs.unstable.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 18080 -c 2048 -np 1 -t 8 -tb 8";
       Restart = "no";
     };
   };
