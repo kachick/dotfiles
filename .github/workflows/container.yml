@@ -244,11 +244,10 @@ jobs:
             echo 'json<<JSON'
 
             gh api --paginate \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "/users/${REPO_OWNER}/packages/container/home/versions" \
-            --jq --arg digest "${DIGEST}" '.[] | select(.name == $digest)' | \
-              jq
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/users/${REPO_OWNER}/packages/container/home/versions" | \
+              jq --arg digest "${DIGEST}" '.[] | select(.name == $digest)'
 
             echo 'JSON'
           } | tee --append "$GITHUB_OUTPUT"
