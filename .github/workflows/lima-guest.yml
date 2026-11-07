@@ -66,9 +66,10 @@ jobs:
       - name: Create Lima Instance from custom template
         env:
           REV: ${{ github.head_ref || github.ref_name }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix --param dotfilesRev="${REV}" --param githubToken="${{ github.token }}" template:docker-nix
+          limactl create --yes --name=docker-nix --param dotfilesRev="${REV}" --param githubToken="${GITHUB_TOKEN}" template:docker-nix
 
   test-provisioning:
     name: 🧪 Test Provisioning
