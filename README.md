@@ -179,6 +179,7 @@ Check [traps](./windows/Multi-booting.md)
    ```bash
    limactl start --name=docker-nix-clean template:docker-nix
    limactl stop docker-nix-clean
+   rm -rf ~/.lima/docker-nix-clean/sock # Avoid a Lima bug where empty sock dir causes permission warnings in clones
    ```
 
    - Host `~/repos/github.com/kachick` is mounted without mounting `$HOME` (keeping SSH, GPG, and secrets isolated).
@@ -197,21 +198,27 @@ Check [traps](./windows/Multi-booting.md)
      limactl shell docker-nix docker run --rm hello-world
      ```
 
-### 2. Disposable Sandbox (Isolated Project Environment)
+### 2. Disposable Sandbox (Suitable for AI Agents and Experiments)
 
-You can clone a fresh sandbox instance from `docker-nix-clean` for safe experiments without sharing the host home directory or other repositories:
+Clone a quick sandbox instance from `docker-nix-clean` for safe experiments:
 
-1. Clone and start a temporary sandbox instance:
+1. Clone and start a sandbox instance:
 
-   ```bash
-   INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
-   limactl clone docker-nix-clean "$INSTANCE" --mount-only .:w --start
-   ```
+   - **Standard Sandbox** (Mounts `~/repos/github.com/kachick` like base):
 
-   - **Instant Boot**: Uses copy-on-write from the base image in seconds.
-   - **Strict Isolation**: `--mount-only .:w` restricts VM access solely to the current project directory (`.`). Host home and other repositories remain invisible.
-   - **Multiple Mounts**: Pass extra `--mount /path:w` flags if you need to attach additional directories alongside `.`.
-   - **Unique Naming**: Appends a random 4-character hex suffix to prevent name collisions.
+     ```bash
+     INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
+     limactl clone docker-nix-clean "$INSTANCE" --start
+     ```
+
+   - **Strict Project Isolation** (Mounts only current directory without other repos):
+
+     ```bash
+     INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
+     limactl clone docker-nix-clean "$INSTANCE" --mount-only .:w --start
+     ```
+
+     Pass extra `--mount /path:w` flags if you want to attach other directories.
 
 1. Work inside the sandbox:
 
