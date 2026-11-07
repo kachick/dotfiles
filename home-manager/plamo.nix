@@ -6,7 +6,8 @@
 
 {
   home.packages = [
-    pkgs.llama-cpp
+    # PLaMo-3 tokenizer ('plamo3') requires llama.cpp v0.8.0+ in nixpkgs unstable
+    pkgs.unstable.llama-cpp
     pkgs.local.plamo-trans
   ];
 
@@ -30,7 +31,7 @@
     Service = {
       Type = "simple";
       # Downloads and caches the GGUF model automatically into ~/.cache/huggingface/hub/ on first start.
-      ExecStart = "${lib.getExe' pkgs.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 8080 -c 2048";
+      ExecStart = "${lib.getExe' pkgs.unstable.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 8080 -c 2048";
       Restart = "no";
     };
   };

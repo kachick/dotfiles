@@ -80,7 +80,18 @@ fi
 server_url="http://127.0.0.1:${port}"
 if ! curl --silent --fail --max-time 2 "${server_url}/health" >/dev/null 2>&1; then
 	echo "Error: llama-server is not reachable at ${server_url}." >&2
-	echo "Start the service with: systemctl --user start llama-plamo (or 'plamo-start')" >&2
+	if command -v systemctl >/dev/null 2>&1; then
+		if systemctl --user is-failed llama-plamo >/dev/null 2>&1; then
+			echo "Service 'llama-plamo' failed. Check logs with: journalctl --user -u llama-plamo -e" >&2
+		elif [ "$(systemctl --user is-active llama-plamo 2>/dev/null)" = "activating" ]; then
+			echo "Service 'llama-plamo' is still starting up. Please wait a moment." >&2
+			echo "Monitor progress with: journalctl --user -u llama-plamo -f" >&2
+		else
+			echo "Start the service with: systemctl --user start llama-plamo (or 'plamo-start')" >&2
+		fi
+	else
+		echo "Start the service with: systemctl --user start llama-plamo (or 'plamo-start')" >&2
+	fi
 	exit 1
 fi
 
