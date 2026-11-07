@@ -1,4 +1,5 @@
-# https://taskfile.dev
+# https://taskfile.dev/styleguide/
+# Avoid chaining commands with ; or && in a single line. Use multiple cmd items for independent steps, or write a script under scripts/ instead.
 
 version: '3'
 
