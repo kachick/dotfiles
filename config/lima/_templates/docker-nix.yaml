@@ -22,6 +22,12 @@ provision:
       #!/bin/bash
       set -eux -o pipefail
 
+      # Skip provisioning if Home Manager is already installed (e.g. cloned sandbox instances)
+      if [ -e "/nix/var/nix/profiles/per-user/$USER/home-manager" ]; then
+        echo "Home Manager is already provisioned. Skipping."
+        exit 0
+      fi
+
       # Restore access from guest home to host repos mount without hardcoding host username
       if [ ! -e "$HOME/repos" ]; then
         for d in /home/*; do
@@ -38,7 +44,7 @@ provision:
         bash "$LOCAL_DOTFILES/scripts/install-nix.bash" "${FLAKE_URI}"
       else
         FLAKE_URI="github:kachick/dotfiles/{{.Param.dotfilesRev}}"
-        curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/{{.Param.dotfilesRev}}/scripts/install-nix.bash" | bash -s -- "${FLAKE_URI}"
+        curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/{{.Param.dotfilesRev}}/scripts/install-nix.bash" | bash -s -- "{{.Param.dotfilesRev}}"
       fi
 
       # shellcheck source=/dev/null
