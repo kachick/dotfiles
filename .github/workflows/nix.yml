@@ -45,6 +45,17 @@ on:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '42 1 * * *'
   workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target job to run'
+        type: choice
+        default: 'all'
+        options:
+          - all
+          - nixos-iso
+          - nixos
+          - home-manager
+          - packages
 
 permissions:
   contents: read
@@ -56,7 +67,7 @@ concurrency:
 jobs:
   changes:
     name: 🧭 Changes
-    if: github.event.action != 'labeled'
+    if: github.event.action != 'labeled' && inputs.target != 'nixos-iso'
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
@@ -77,11 +88,12 @@ jobs:
         id: detect
         env:
           EVENT_NAME: ${{ github.event_name }}
+          TARGET: ${{ inputs.target }}
         run: go run ./cmd/ci-build changes | tee -a "$GITHUB_OUTPUT"
 
   inspect:
     name: 🔍 Inspect
-    if: github.event.action != 'labeled'
+    if: github.event.action != 'labeled' && (inputs.target == '' || inputs.target == 'all')
     # Only on Linux is enough to check the flake
     runs-on: ubuntu-26.04
     timeout-minutes: 30
@@ -107,7 +119,7 @@ jobs:
 
   devShell:
     name: 🐚
-    if: github.event.action != 'labeled'
+    if: github.event.action != 'labeled' && (inputs.target == '' || inputs.target == 'all')
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
@@ -330,11 +342,11 @@ jobs:
   nixos-iso:
     name: 💿 NixOS ISO
     # Trigger on:
-    # 1. Schedule or manual dispatch
+    # 1. Schedule or manual dispatch (when target is 'all' or 'nixos-iso')
     # 2. Pull request ONLY IF the 'nixos-iso' label is present
     if: >-
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso')) ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'nixos-iso'))
     permissions:
       contents: read

@@ -10,6 +10,7 @@ func TestClassifyChanges(t *testing.T) {
 	tests := []struct {
 		name         string
 		event        string
+		target       string
 		changedFiles []string
 		want         changeResult
 	}{
@@ -25,13 +26,62 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
-			name:         "workflow_dispatch runs all build jobs",
+			name:         "workflow_dispatch default all runs all build jobs",
 			event:        "workflow_dispatch",
+			target:       "all",
 			changedFiles: nil,
 			want: changeResult{
 				Packages:    true,
 				HomeManager: true,
 				Nixos:       true,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "workflow_dispatch target nixos runs only nixos",
+			event:        "workflow_dispatch",
+			target:       "nixos",
+			changedFiles: nil,
+			want: changeResult{
+				Packages:    false,
+				HomeManager: false,
+				Nixos:       true,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "workflow_dispatch target home-manager runs only home-manager",
+			event:        "workflow_dispatch",
+			target:       "home-manager",
+			changedFiles: nil,
+			want: changeResult{
+				Packages:    false,
+				HomeManager: true,
+				Nixos:       false,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "workflow_dispatch target packages runs only packages",
+			event:        "workflow_dispatch",
+			target:       "packages",
+			changedFiles: nil,
+			want: changeResult{
+				Packages:    true,
+				HomeManager: false,
+				Nixos:       false,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "workflow_dispatch target nixos-iso skips regular build jobs",
+			event:        "workflow_dispatch",
+			target:       "nixos-iso",
+			changedFiles: nil,
+			want: changeResult{
+				Packages:    false,
+				HomeManager: false,
+				Nixos:       false,
 				FlakeLock:   false,
 			},
 		},
@@ -149,9 +199,9 @@ func TestClassifyChanges(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := classifyChanges(tt.event, tt.changedFiles)
+			got := classifyChanges(tt.event, tt.target, tt.changedFiles)
 			if got != tt.want {
-				t.Errorf("classifyChanges(%q, %v) = %+v, want %+v", tt.event, tt.changedFiles, got, tt.want)
+				t.Errorf("classifyChanges(%q, %q, %v) = %+v, want %+v", tt.event, tt.target, tt.changedFiles, got, tt.want)
 			}
 		})
 	}

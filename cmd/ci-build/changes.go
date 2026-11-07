@@ -27,7 +27,26 @@ func (r changeResult) formatGitHubOutputs() string {
 	)
 }
 
-func classifyChanges(eventName string, changedFiles []string) changeResult {
+func classifyChanges(eventName, target string, changedFiles []string) changeResult {
+	if eventName == "workflow_dispatch" {
+		switch target {
+		case "packages":
+			return changeResult{Packages: true}
+		case "home-manager":
+			return changeResult{HomeManager: true}
+		case "nixos":
+			return changeResult{Nixos: true}
+		case "nixos-iso":
+			return changeResult{}
+		default:
+			return changeResult{
+				Packages:    true,
+				HomeManager: true,
+				Nixos:       true,
+			}
+		}
+	}
+
 	if (eventName != "push" && eventName != "pull_request") || len(changedFiles) == 0 {
 		return changeResult{
 			Packages:    true,
@@ -97,6 +116,7 @@ func isPackageInputPath(p string) bool {
 func runChanges(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("changes", flag.ExitOnError)
 	eventFlag := fs.String("event", "", "GitHub event name (defaults to EVENT_NAME or GITHUB_EVENT_NAME)")
+	targetFlag := fs.String("target", "", "Target job for workflow_dispatch (defaults to TARGET)")
 	baseFlag := fs.String("base", "HEAD^1", "Base git revision for diff")
 	headFlag := fs.String("head", "HEAD", "Head git revision for diff")
 	if err := fs.Parse(args); err != nil {
@@ -109,6 +129,11 @@ func runChanges(args []string, stdout io.Writer) error {
 	}
 	if eventName == "" {
 		eventName = os.Getenv("GITHUB_EVENT_NAME")
+	}
+
+	target := *targetFlag
+	if target == "" {
+		target = os.Getenv("TARGET")
 	}
 
 	var changedFiles []string
@@ -126,7 +151,7 @@ func runChanges(args []string, stdout io.Writer) error {
 		}
 	}
 
-	res := classifyChanges(eventName, changedFiles)
+	res := classifyChanges(eventName, target, changedFiles)
 	_, err := io.WriteString(stdout, res.formatGitHubOutputs())
 	return err
 }
