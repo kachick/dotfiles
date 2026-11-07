@@ -7,16 +7,22 @@ import (
 )
 
 func TestBuildSystemPrompt(t *testing.T) {
-	got := buildSystemPrompt("ja", "plain")
+	got := buildSystemPrompt("ja", "plain", "")
 	want := "[plamo-translate]\ntarget_lang=ja\nform=plain"
 	if got != want {
-		t.Errorf("buildSystemPrompt(ja, plain) = %q, want %q", got, want)
+		t.Errorf("buildSystemPrompt(ja, plain, \"\") = %q, want %q", got, want)
 	}
 
-	gotPolite := buildSystemPrompt("en", "polite")
+	gotPolite := buildSystemPrompt("en", "polite", "")
 	wantPolite := "[plamo-translate]\ntarget_lang=en\nform=polite"
 	if gotPolite != wantPolite {
-		t.Errorf("buildSystemPrompt(en, polite) = %q, want %q", gotPolite, wantPolite)
+		t.Errorf("buildSystemPrompt(en, polite, \"\") = %q, want %q", gotPolite, wantPolite)
+	}
+
+	gotWithContext := buildSystemPrompt("ja", "plain", "Git commit message")
+	wantWithContext := "[plamo-translate]\ntarget_lang=ja\nform=plain\n---\nGit commit message"
+	if gotWithContext != wantWithContext {
+		t.Errorf("buildSystemPrompt(ja, plain, ctx) = %q, want %q", gotWithContext, wantWithContext)
 	}
 }
 

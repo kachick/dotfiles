@@ -40,8 +40,12 @@ type chatResponse struct {
 	} `json:"error,omitempty"`
 }
 
-func buildSystemPrompt(targetLang, form string) string {
-	return fmt.Sprintf("[plamo-translate]\ntarget_lang=%s\nform=%s", targetLang, form)
+func buildSystemPrompt(targetLang, form, surroundingContext string) string {
+	prompt := fmt.Sprintf("[plamo-translate]\ntarget_lang=%s\nform=%s", targetLang, form)
+	if surroundingContext != "" {
+		prompt += "\n---\n" + surroundingContext
+	}
+	return prompt
 }
 
 func isTerminal(r io.Reader) bool {
@@ -136,11 +140,13 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 		defaultP = defaultPort
 	}
 
-	var targetLang, form, port string
+	var targetLang, form, surroundingContext, port string
 	fs.StringVar(&targetLang, "t", "ja", "Target language code")
 	fs.StringVar(&targetLang, "to", "ja", "Target language code")
 	fs.StringVar(&form, "f", "plain", "Sentence form: plain or polite")
 	fs.StringVar(&form, "form", "plain", "Sentence form: plain or polite")
+	fs.StringVar(&surroundingContext, "c", "", "Surrounding context or background information")
+	fs.StringVar(&surroundingContext, "context", "", "Surrounding context or background information")
 	fs.StringVar(&port, "p", defaultP, "Port of llama-server")
 	fs.StringVar(&port, "port", defaultP, "Port of llama-server")
 
@@ -151,6 +157,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 		fmt.Fprintf(stderr, "Options:\n")
 		fmt.Fprintf(stderr, "  -t, --to LANG       Target language code (default: ja)\n")
 		fmt.Fprintf(stderr, "  -f, --form FORM     Sentence form: plain or polite (default: plain)\n")
+		fmt.Fprintf(stderr, "  -c, --context TEXT  Surrounding context or background information\n")
 		fmt.Fprintf(stderr, "  -p, --port PORT     Port of llama-server (default: %s, env: PLAMO_PORT)\n", defaultP)
 		fmt.Fprintf(stderr, "  -h, --help          Show this help message\n\n")
 		fmt.Fprintf(stderr, "Server controls:\n")
@@ -205,7 +212,7 @@ func run(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 	}
 	resp.Body.Close()
 
-	systemPrompt := buildSystemPrompt(targetLang, form)
+	systemPrompt := buildSystemPrompt(targetLang, form, surroundingContext)
 	result, err := translateText(ctx, serverURL, systemPrompt, text)
 	if err != nil {
 		return err

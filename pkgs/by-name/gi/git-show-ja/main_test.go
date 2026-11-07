@@ -5,6 +5,34 @@ import (
 	"testing"
 )
 
+func TestBuildSystemPrompt(t *testing.T) {
+	got := buildSystemPrompt("")
+	want := "[plamo-translate]\ntarget_lang=ja\nform=plain"
+	if got != want {
+		t.Errorf("buildSystemPrompt(\"\") = %q, want %q", got, want)
+	}
+
+	gotWithContext := buildSystemPrompt("Git commit message")
+	wantWithContext := "[plamo-translate]\ntarget_lang=ja\nform=plain\n---\nGit commit message"
+	if gotWithContext != wantWithContext {
+		t.Errorf("buildSystemPrompt(ctx) = %q, want %q", gotWithContext, wantWithContext)
+	}
+}
+
+func TestBuildCommitContext(t *testing.T) {
+	// For invalid ref, it should fall back to "Git commit message"
+	got := buildCommitContext("invalid-non-existent-ref-000", "")
+	if got != "Git commit message" {
+		t.Errorf("expected fallback context for invalid ref, got: %q", got)
+	}
+
+	// For HEAD, it should retrieve commit message and changed files
+	gotHead := buildCommitContext("HEAD", "")
+	if !strings.HasPrefix(gotHead, "Git commit message") {
+		t.Errorf("expected context to start with 'Git commit message', got: %q", gotHead)
+	}
+}
+
 func TestExtractRef(t *testing.T) {
 	tests := []struct {
 		name string

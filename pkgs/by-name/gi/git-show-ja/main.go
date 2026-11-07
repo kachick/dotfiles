@@ -127,12 +127,43 @@ func checkServerHealth(ctx context.Context, serverURL string) error {
 	return nil
 }
 
-func translateMessage(ctx context.Context, serverURL, message string) (string, error) {
+func buildSystemPrompt(surroundingContext string) string {
+	prompt := "[plamo-translate]\ntarget_lang=ja\nform=plain"
+	if surroundingContext != "" {
+		prompt += "\n---\n" + surroundingContext
+	}
+	return prompt
+}
+
+func buildCommitContext(rev, workDir string) string {
+	cmd := exec.Command("git", "diff-tree", "--no-commit-id", "--name-only", "-r", rev)
+	if workDir != "" {
+		cmd.Dir = workDir
+	}
+	out, err := cmd.Output()
+	if err != nil {
+		return "Git commit message"
+	}
+	files := strings.TrimSpace(string(out))
+	if files == "" {
+		return "Git commit message"
+	}
+
+	lines := strings.Split(files, "\n")
+	const maxFiles = 10
+	if len(lines) > maxFiles {
+		files = strings.Join(lines[:maxFiles], "\n") + "\n..."
+	}
+
+	return fmt.Sprintf("Git commit message\nChanged files:\n%s", files)
+}
+
+func translateMessage(ctx context.Context, serverURL, message, surroundingContext string) (string, error) {
 	reqBody := chatRequest{
 		Messages: []chatMessage{
 			{
 				Role:    "system",
-				Content: "[plamo-translate]\ntarget_lang=ja\nform=plain",
+				Content: buildSystemPrompt(surroundingContext),
 			},
 			{
 				Role:    "user",
@@ -215,7 +246,8 @@ func run(args []string, workDir string, stdout, stderr io.Writer) error {
 		fmt.Fprint(stderr, yellow+"Translating commit message with PLaMo-3..."+reset+"\r")
 	}
 
-	translated, err := translateMessage(ctx, serverURL, msg)
+	commitContext := buildCommitContext(rev, workDir)
+	translated, err := translateMessage(ctx, serverURL, msg, commitContext)
 	if isTerminal(stderr) {
 		fmt.Fprint(stderr, clearLine)
 	}
