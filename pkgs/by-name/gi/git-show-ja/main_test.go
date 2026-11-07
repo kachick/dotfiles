@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os/exec"
 	"strings"
 	"testing"
 )
@@ -30,6 +31,72 @@ func TestBuildCommitContext(t *testing.T) {
 	gotHead := buildCommitContext("HEAD", "")
 	if !strings.HasPrefix(gotHead, "Git commit message") {
 		t.Errorf("expected context to start with 'Git commit message', got: %q", gotHead)
+	}
+}
+
+func TestParseArgs(t *testing.T) {
+	tests := []struct {
+		name            string
+		args            []string
+		wantRef         string
+		wantPlaceholder string
+		wantGitArgs     []string
+	}{
+		{
+			name:            "empty args",
+			args:            []string{},
+			wantRef:         "HEAD",
+			wantPlaceholder: "",
+			wantGitArgs:     nil,
+		},
+		{
+			name:            "placeholder flag with space",
+			args:            []string{"--placeholder", "翻訳中...", "HEAD~1"},
+			wantRef:         "HEAD~1",
+			wantPlaceholder: "翻訳中...",
+			wantGitArgs:     []string{"HEAD~1"},
+		},
+		{
+			name:            "placeholder flag with equal",
+			args:            []string{"--placeholder=翻訳中...", "--stat"},
+			wantRef:         "HEAD",
+			wantPlaceholder: "翻訳中...",
+			wantGitArgs:     []string{"--stat"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := parseArgs(tt.args)
+			if got.ref != tt.wantRef {
+				t.Errorf("parseArgs().ref = %q, want %q", got.ref, tt.wantRef)
+			}
+			if got.placeholder != tt.wantPlaceholder {
+				t.Errorf("parseArgs().placeholder = %q, want %q", got.placeholder, tt.wantPlaceholder)
+			}
+			if len(got.gitArgs) != len(tt.wantGitArgs) {
+				t.Errorf("parseArgs().gitArgs = %v, want %v", got.gitArgs, tt.wantGitArgs)
+			}
+		})
+	}
+}
+
+func TestRun_Placeholder(t *testing.T) {
+	if _, err := exec.LookPath("git"); err != nil {
+		t.Skip("git not found in PATH")
+	}
+	if err := exec.Command("git", "rev-parse", "--git-dir").Run(); err != nil {
+		t.Skip("not running inside a git repository")
+	}
+
+	var stdout, stderr strings.Builder
+	err := run([]string{"--placeholder", "翻訳待機中...", "HEAD"}, "", &stdout, &stderr)
+	if err != nil {
+		t.Fatalf("run with --placeholder failed: %v", err)
+	}
+	out := stdout.String()
+	if !strings.Contains(out, "<ja>") || !strings.Contains(out, "翻訳待機中...") || !strings.Contains(out, "</ja>") {
+		t.Errorf("expected placeholder in output, got: %s", out)
 	}
 }
 

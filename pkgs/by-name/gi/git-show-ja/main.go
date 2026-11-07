@@ -46,13 +46,40 @@ type chatResponse struct {
 	} `json:"error,omitempty"`
 }
 
-func extractRef(args []string) string {
-	for _, arg := range args {
-		if !strings.HasPrefix(arg, "-") {
-			return arg
+type parsedArgs struct {
+	ref         string
+	placeholder string
+	gitArgs     []string
+}
+
+func parseArgs(args []string) parsedArgs {
+	var parsed parsedArgs
+	parsed.ref = "HEAD"
+	var refFound bool
+
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if arg == "--placeholder" && i+1 < len(args) {
+			parsed.placeholder = args[i+1]
+			i++
+			continue
 		}
+		if strings.HasPrefix(arg, "--placeholder=") {
+			parsed.placeholder = strings.TrimPrefix(arg, "--placeholder=")
+			continue
+		}
+		if !strings.HasPrefix(arg, "-") && !refFound {
+			parsed.ref = arg
+			refFound = true
+		}
+		parsed.gitArgs = append(parsed.gitArgs, arg)
 	}
-	return "HEAD"
+
+	return parsed
+}
+
+func extractRef(args []string) string {
+	return parseArgs(args).ref
 }
 
 func formatTranslationBlock(text string) string {
@@ -213,52 +240,59 @@ func translateMessage(ctx context.Context, serverURL, message, surroundingContex
 }
 
 func run(args []string, workDir string, stdout, stderr io.Writer) error {
-	rev := extractRef(args)
+	parsed := parseArgs(args)
 
-	port := os.Getenv("PLAMO_PORT")
-	if port == "" {
-		port = defaultPort
-	}
-	serverURL := fmt.Sprintf("http://127.0.0.1:%s", port)
+	var formattedBlock string
+	if parsed.placeholder != "" {
+		formattedBlock = formatTranslationBlock(parsed.placeholder)
+	} else {
+		rev := parsed.ref
 
-	// Fail-closed: check health first
-	ctx := context.Background()
-	if err := checkServerHealth(ctx, serverURL); err != nil {
-		return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: systemctl --user start llama-plamo (or 'plamo-start')", serverURL, err)
-	}
+		port := os.Getenv("PLAMO_PORT")
+		if port == "" {
+			port = defaultPort
+		}
+		serverURL := fmt.Sprintf("http://127.0.0.1:%s", port)
 
-	// Fetch commit message
-	gitLogCmd := exec.Command("git", "log", "-1", "--format=%B", rev)
-	if workDir != "" {
-		gitLogCmd.Dir = workDir
-	}
-	msgBytes, err := gitLogCmd.Output()
-	if err != nil {
-		return fmt.Errorf("failed to retrieve commit message for '%s': %w", rev, err)
-	}
-	msg := strings.TrimSpace(string(msgBytes))
-	if msg == "" {
-		return fmt.Errorf("commit message for '%s' is empty", rev)
-	}
+		// Fail-closed: check health first
+		ctx := context.Background()
+		if err := checkServerHealth(ctx, serverURL); err != nil {
+			return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: systemctl --user start llama-plamo (or 'plamo-start')", serverURL, err)
+		}
 
-	// Progress indicator
-	if isTerminal(stderr) {
-		fmt.Fprint(stderr, yellow+"Translating commit message with PLaMo-3..."+reset+"\r")
-	}
+		// Fetch commit message
+		gitLogCmd := exec.Command("git", "log", "-1", "--format=%B", rev)
+		if workDir != "" {
+			gitLogCmd.Dir = workDir
+		}
+		msgBytes, err := gitLogCmd.Output()
+		if err != nil {
+			return fmt.Errorf("failed to retrieve commit message for '%s': %w", rev, err)
+		}
+		msg := strings.TrimSpace(string(msgBytes))
+		if msg == "" {
+			return fmt.Errorf("commit message for '%s' is empty", rev)
+		}
 
-	commitContext := buildCommitContext(rev, workDir)
-	translated, err := translateMessage(ctx, serverURL, msg, commitContext)
-	if isTerminal(stderr) {
-		fmt.Fprint(stderr, clearLine)
-	}
-	if err != nil {
-		return fmt.Errorf("translation failed: %w", err)
-	}
+		// Progress indicator
+		if isTerminal(stderr) {
+			fmt.Fprint(stderr, yellow+"Translating commit message with PLaMo-3..."+reset+"\r")
+		}
 
-	formattedBlock := formatTranslationBlock(translated)
+		commitContext := buildCommitContext(rev, workDir)
+		translated, err := translateMessage(ctx, serverURL, msg, commitContext)
+		if isTerminal(stderr) {
+			fmt.Fprint(stderr, clearLine)
+		}
+		if err != nil {
+			return fmt.Errorf("translation failed: %w", err)
+		}
+
+		formattedBlock = formatTranslationBlock(translated)
+	}
 
 	// Fetch git show with ANSI colors
-	gitShowArgs := append([]string{"show", "--color=always"}, args...)
+	gitShowArgs := append([]string{"show", "--color=always"}, parsed.gitArgs...)
 	gitShowCmd := exec.Command("git", gitShowArgs...)
 	if workDir != "" {
 		gitShowCmd.Dir = workDir
