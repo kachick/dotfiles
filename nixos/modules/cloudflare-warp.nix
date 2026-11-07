@@ -52,4 +52,9 @@
   # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
   # https://github.com/NixOS/nixpkgs/issues/504119#issuecomment-4143108440
   networking.firewall.checkReversePath = "loose";
+
+  # Ensure tailscaled starts after cloudflare-warp finishes its postStart
+  # split tunnel configuration. If cloudflare-warp is stopped or disabled,
+  # systemd's `After` has no effect and tailscaled starts immediately.
+  systemd.services.tailscaled.after = [ "cloudflare-warp.service" ];
 }
