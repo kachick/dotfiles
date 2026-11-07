@@ -26,6 +26,10 @@ in
     # See https://github.com/lima-vm/lima/blob/v1.0.1/templates/default.yaml#L536-L574 for details
     file.".lima/_config/default.yaml".source = ../config/lima/_config/default.yaml;
 
+    sessionVariables = {
+      LIMA_INSTANCE = "docker-nix";
+    };
+
     shellAliases = {
       "lc" = "limactl";
     };
@@ -39,8 +43,9 @@ in
             pkgs.writeShellApplication {
               name = "register-lima-service";
               text = ''
-                if limactl list --quiet | grep -Fqx 'docker-nix'; then
-                  limactl autostart enable docker-nix
+                target_instance="''${LIMA_INSTANCE:-${config.home.sessionVariables.LIMA_INSTANCE}}"
+                if [ -n "$target_instance" ] && limactl list --quiet | grep -Fqx "$target_instance"; then
+                  limactl autostart enable "$target_instance"
                 fi
               '';
               meta.description = "Ensure mandatory $PATH when run lima helper command";
