@@ -172,36 +172,48 @@ Check [traps](./windows/Multi-booting.md)
 
 ## Lima
 
-1. Start a Docker guest with Nix and Home Manager:
+### 1. Base Environment Setup
+
+Start the base Docker guest with Nix and Home Manager:
+
+```bash
+limactl start template:docker-nix
+```
+
+- Host `~/repos` is mounted into the guest without mounting `$HOME` (keeping SSH, GPG, and secrets isolated).
+- When `~/repos/github.com/kachick/dotfiles` exists on the host, the VM automatically provisions using your local working copy (reflecting current branch and edits).
+
+Run containers:
+
+```bash
+limactl shell docker-nix docker run --rm hello-world
+```
+
+### 2. Disposable Sandbox for AI Agents (GH-1670)
+
+Run coding agents (e.g., Claude Code, Gemini CLI) in an isolated environment without sharing other repositories or credentials:
+
+1. Clone a fresh sandbox instance with only the current directory mounted:
 
    ```bash
-   limactl start template:docker-nix
+   INSTANCE="sandbox-${ZELLIJ_SESSION_NAME:-$(openssl rand -hex 2)}"
+   limactl clone docker-nix "$INSTANCE" --mount-only .:w --start
    ```
 
-   To use a specific branch or commit from GitHub:
+   - **Instant Boot**: Uses copy-on-write from the base image (no downloading or Nix re-installation).
+   - **Strict Isolation**: Only the current working directory (`.`) is accessible inside the VM. Host home and other repositories remain invisible.
+   - **Unique Naming**: Uses `$ZELLIJ_SESSION_NAME` inside Zellij, or a 4-character hex suffix.
+
+1. Work inside the sandbox:
 
    ```bash
-   limactl start --param dotfilesRev=my-branch template:docker-nix
+   lima --instance "$INSTANCE"
    ```
 
-1. Run containers:
+1. Destroy when done:
 
    ```bash
-   limactl shell docker-nix docker run --rm hello-world
-   ```
-
-1. Quick reset with snapshots:
-
-   Save a clean snapshot after the first setup:
-
-   ```bash
-   limactl snapshot create docker-nix --tag clean
-   ```
-
-   Restore anytime:
-
-   ```bash
-   limactl snapshot apply docker-nix --tag clean
+   limactl delete -f "$INSTANCE"
    ```
 
 ### Windows on Lima
