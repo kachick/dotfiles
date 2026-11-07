@@ -11,12 +11,22 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
 const (
-	defaultPort = "18080"
+	defaultPort      = "18080"
+	maxParallelSlots = 4
+	maxPrefetchSlots = 2
+	commitIndexLimit = 2000
 )
+
+type commitIndex struct {
+	commits []string
+	idxMap  map[string]int
+}
 
 var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 
@@ -177,6 +187,49 @@ func runDetail(cacheDir, revRaw string) error {
 	return renderCommit(rev, "", os.Stdout)
 }
 
+func neighborRevs(commits []string, idxMap map[string]int, rev string) []string {
+	idx, ok := idxMap[rev]
+	if !ok {
+		return nil
+	}
+	var neighbors []string
+	if idx+1 < len(commits) {
+		neighbors = append(neighbors, commits[idx+1])
+	}
+	if idx-1 >= 0 {
+		neighbors = append(neighbors, commits[idx-1])
+	}
+	if idx+2 < len(commits) {
+		neighbors = append(neighbors, commits[idx+2])
+	}
+	return neighbors
+}
+
+func loadCommitIndex(limit int) ([]string, map[string]int) {
+	out, err := exec.Command("git", "log", "--format=%h", fmt.Sprintf("-n%d", limit)).Output()
+	if err != nil {
+		return nil, nil
+	}
+	commits := strings.Fields(string(out))
+	idxMap := make(map[string]int, len(commits))
+	for i, c := range commits {
+		idxMap[c] = i
+	}
+	return commits, idxMap
+}
+
+func fetchFollowingRevs(rev string) []string {
+	out, err := exec.Command("git", "log", "--format=%h", "-n", "3", rev).Output()
+	if err != nil {
+		return nil
+	}
+	lines := strings.Fields(string(out))
+	if len(lines) <= 1 {
+		return nil
+	}
+	return lines[1:]
+}
+
 func runWorker(ctx context.Context, cacheDir, fzfSock string) {
 	port := os.Getenv("PLAMO_PORT")
 	if port == "" {
@@ -187,8 +240,83 @@ func runWorker(ctx context.Context, cacheDir, fzfSock string) {
 	focusFile := filepath.Join(cacheDir, "current_focus")
 	serviceDownFile := filepath.Join(cacheDir, "service_down")
 
-	var prevFocus string
-	var focusStart time.Time
+	var indexPtr atomic.Pointer[commitIndex]
+	go func() {
+		commits, idxMap := loadCommitIndex(commitIndexLimit)
+		if len(commits) > 0 {
+			indexPtr.Store(&commitIndex{commits: commits, idxMap: idxMap})
+		}
+	}()
+
+	var (
+		mu          sync.Mutex
+		inFlight    = make(map[string]bool)
+		failed      = make(map[string]bool)
+		activeCount int
+	)
+
+	isCached := func(rev string) bool {
+		_, err := os.Stat(filepath.Join(cacheDir, rev+".out"))
+		return err == nil
+	}
+
+	startTranslation := func(targetRev string, maxAllowed int) bool {
+		if targetRev == "" || isCached(targetRev) {
+			return false
+		}
+
+		mu.Lock()
+		if inFlight[targetRev] || failed[targetRev] || activeCount >= maxAllowed {
+			mu.Unlock()
+			return false
+		}
+		inFlight[targetRev] = true
+		activeCount++
+		mu.Unlock()
+
+		translatingPath := filepath.Join(cacheDir, targetRev+".translating")
+		_ = os.WriteFile(translatingPath, []byte("1"), 0o600)
+		_ = sendRefreshPreview(fzfSock)
+
+		go func() {
+			outPath := filepath.Join(cacheDir, targetRev+".out")
+			tmpOutPath := filepath.Join(cacheDir, targetRev+".out.tmp")
+			var renderErr error
+			f, err := os.Create(tmpOutPath)
+			if err != nil {
+				renderErr = err
+			} else {
+				renderErr = renderCommit(targetRev, "", f)
+				_ = f.Close()
+				if renderErr == nil {
+					_ = os.Rename(tmpOutPath, outPath)
+				} else {
+					_ = os.Remove(tmpOutPath)
+				}
+			}
+
+			_ = os.Remove(translatingPath)
+
+			mu.Lock()
+			delete(inFlight, targetRev)
+			if renderErr != nil {
+				failed[targetRev] = true
+			}
+			activeCount--
+			mu.Unlock()
+
+			_ = sendRefreshPreview(fzfSock)
+		}()
+
+		return true
+	}
+
+	var (
+		prevFocus             string
+		focusStart            time.Time
+		lastFallbackRev       string
+		lastFallbackNeighbors []string
+	)
 
 	ticker := time.NewTicker(30 * time.Millisecond)
 	defer ticker.Stop()
@@ -218,37 +346,30 @@ func runWorker(ctx context.Context, cacheDir, fzfSock string) {
 				continue
 			}
 
-			if current == "" {
+			if current == "" || now.Sub(focusStart) < 100*time.Millisecond {
 				continue
 			}
 
-			outPath := filepath.Join(cacheDir, current+".out")
-			translatingPath := filepath.Join(cacheDir, current+".translating")
-
-			if _, err := os.Stat(outPath); err == nil {
-				continue
-			}
-			if _, err := os.Stat(translatingPath); err == nil {
+			// Prioritize currently focused commit before dispatching any prefetch jobs.
+			if !isCached(current) {
+				startTranslation(current, maxParallelSlots)
 				continue
 			}
 
-			if now.Sub(focusStart) >= 100*time.Millisecond {
-				_ = os.WriteFile(translatingPath, []byte("1"), 0o600)
-				_ = sendRefreshPreview(fzfSock)
-
-				tmpOutPath := filepath.Join(cacheDir, current+".out.tmp")
-				f, err := os.Create(tmpOutPath)
-				if err == nil {
-					renderErr := renderCommit(current, "", f)
-					f.Close()
-					if renderErr == nil {
-						_ = os.Rename(tmpOutPath, outPath)
-					} else {
-						_ = os.Remove(tmpOutPath)
-					}
+			// Once current commit is cached, prefetch adjacent commits in background.
+			var neighbors []string
+			if idx := indexPtr.Load(); idx != nil {
+				neighbors = neighborRevs(idx.commits, idx.idxMap, current)
+			}
+			if len(neighbors) == 0 {
+				if current != lastFallbackRev {
+					lastFallbackRev = current
+					lastFallbackNeighbors = fetchFollowingRevs(current)
 				}
-				_ = os.Remove(translatingPath)
-				_ = sendRefreshPreview(fzfSock)
+				neighbors = lastFallbackNeighbors
+			}
+			for _, neighbor := range neighbors {
+				startTranslation(neighbor, maxPrefetchSlots)
 			}
 		}
 	}

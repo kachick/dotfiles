@@ -1,6 +1,7 @@
 package main
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -42,6 +43,53 @@ func TestCleanRev(t *testing.T) {
 			got := cleanRev(tt.raw)
 			if got != tt.want {
 				t.Errorf("cleanRev(%q) = %q, want %q", tt.raw, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNeighborRevs(t *testing.T) {
+	commits := []string{"c0", "c1", "c2", "c3", "c4"}
+	idxMap := map[string]int{
+		"c0": 0,
+		"c1": 1,
+		"c2": 2,
+		"c3": 3,
+		"c4": 4,
+	}
+
+	tests := []struct {
+		name string
+		rev  string
+		want []string
+	}{
+		{
+			name: "first commit in log",
+			rev:  "c0",
+			want: []string{"c1", "c2"},
+		},
+		{
+			name: "middle commit in log",
+			rev:  "c2",
+			want: []string{"c3", "c1", "c4"},
+		},
+		{
+			name: "last commit in log",
+			rev:  "c4",
+			want: []string{"c3"},
+		},
+		{
+			name: "unknown commit",
+			rev:  "unknown",
+			want: nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := neighborRevs(commits, idxMap, tt.rev)
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("neighborRevs(%q) = %v, want %v", tt.rev, got, tt.want)
 			}
 		})
 	}
