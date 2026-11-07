@@ -5,25 +5,36 @@ on:
     paths:
       - '.github/workflows/nix.yml'
       - '.github/actions/**'
-      - 'cmd/ci-build/**'
+      - 'Taskfile.yml'
+      - 'cmd/**'
+      - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
       - 'nixos/**'
       - 'flake.*'
       - 'overlays/**'
+      - '**.go'
+      - '**.nix'
       - 'go.*'
+      - 'testdata/**'
       - '!**.md'
   pull_request:
+    types: [labeled, opened, synchronize, reopened]
     paths:
       - '.github/workflows/nix.yml'
       - '.github/actions/**'
-      - 'cmd/ci-build/**'
+      - 'Taskfile.yml'
+      - 'cmd/**'
+      - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
       - 'nixos/**'
       - 'flake.*'
       - 'overlays/**'
+      - '**.go'
+      - '**.nix'
       - 'go.*'
+      - 'testdata/**'
       - '!**.md'
   schedule:
     # Every 10:42 JST
@@ -35,12 +46,66 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.action == 'labeled' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.event.action != 'labeled' }}
 
 jobs:
+  inspect:
+    name: 🔍 Inspect
+    if: github.event.action != 'labeled'
+    # Only on Linux is enough to check the flake
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+      - name: Print some dotfiles overviews
+        shell: bash -eu -o pipefail {0}
+        run: |
+          </etc/nix/nix.conf
+          ls -alh ~
+      - name: Inspect flake outputs
+        run: |
+          nix flake show
+          nix flake show . --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
+      - run: nix flake check --impure
+        env:
+          # Required to clarify allowing unfree even in check ... :<
+          # This does not make problem only here, because this step does not upload any artifacts.
+          NIXPKGS_ALLOW_UNFREE: '1'
+
+  tasks:
+    name: 🏃 Tasks
+    if: github.event.action != 'labeled'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # Nix shell provides the Go binary. This step is only for enabling standard GitHub Actions caching
+          # for Go modules and builds which are not covered by the Nix binary cache in the 'tasks' job.
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+      - name: Install direnv
+        # Installing git via nix to make sure it supports config based hooks
+        # Because of ubuntu-slim and ubuntu-26.04 remains on 2.53 or before at 2026-06-18
+        run: |
+          nix profile add --inputs-from . nixpkgs#direnv nixpkgs#git
+      - name: Load environment variables
+        run: |
+          direnv allow .
+          direnv export gha > "$GITHUB_ENV"
+      - run: task ci-dev
+
   packages:
     name: 📦 Packages
+    if: github.event.action != 'labeled'
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -221,3 +286,39 @@ jobs:
           from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
           pin-name: dotfiles-main-nixos-desktop-free
           pin-flake-attr: .#nixosConfigurations.desktop-free.config.system.build.toplevel
+
+  nixos-iso:
+    name: 💿 NixOS ISO
+    # Trigger on:
+    # 1. Schedule or manual dispatch
+    # 2. Pull request ONLY IF the 'nixos-iso' label is present
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'nixos-iso'))
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+        with:
+          # ISO image closure is huge and artifact is uploaded separately
+          hestia-read-only: 'true'
+      - name: Logging disk space before build
+        run: df -h
+      - name: Build NixOS ISO
+        run: |
+          nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
+      - name: Logging disk space after build
+        run: df -h
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          path: result/iso/*.iso
+          archive: false
