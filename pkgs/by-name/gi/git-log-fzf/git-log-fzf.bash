@@ -10,13 +10,13 @@ _fzf_git_fzf() {
 	local -r query="$1"
 
 	fzf --query "$query" \
-		--height 50% --tmux 90%,70% \
+		--height 75% --tmux 90%,70% \
 		--layout reverse --multi --min-height 20+ --border \
 		--no-separator --header-border horizontal \
 		--border-label-pos 2 \
 		--color 'label:blue' \
-		--preview-window 'right,50%' --preview-border line \
-		--bind 'ctrl-/:change-preview-window(down,50%|hidden|)' "$@"
+		--preview-window 'right,70%' --preview-border line \
+		--bind 'ctrl-/:change-preview-window(down,70%|hidden|)' "$@"
 }
 
 # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94
