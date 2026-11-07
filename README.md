@@ -189,20 +189,20 @@ Run containers:
 limactl shell docker-nix docker run --rm hello-world
 ```
 
-### 2. Disposable Sandbox for AI Agents (GH-1670)
+### 2. Disposable Sandbox (Isolated Project Environment)
 
-Run coding agents (e.g., Claude Code, Gemini CLI) in an isolated environment without sharing other repositories or credentials:
+You can clone a fresh sandbox instance for safe experiments (such as running untrusted commands or AI coding tools) without sharing the host home directory or other repositories:
 
-1. Clone a fresh sandbox instance with only the current directory mounted:
+1. Clone and start a temporary sandbox instance with only the current directory mounted:
 
    ```bash
-   INSTANCE="sandbox-${ZELLIJ_SESSION_NAME:-$(openssl rand -hex 2)}"
+   INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
    limactl clone docker-nix "$INSTANCE" --mount-only .:w --start
    ```
 
    - **Instant Boot**: Uses copy-on-write from the base image (no downloading or Nix re-installation).
    - **Strict Isolation**: Only the current working directory (`.`) is accessible inside the VM. Host home and other repositories remain invisible.
-   - **Unique Naming**: Uses `$ZELLIJ_SESSION_NAME` inside Zellij, or a 4-character hex suffix.
+   - **Unique Naming**: Appends a random 4-character hex suffix to prevent name collisions.
 
 1. Work inside the sandbox:
 
