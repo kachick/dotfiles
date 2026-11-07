@@ -1,10 +1,14 @@
 name: 🆙 local packages
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-local-packages.yml'
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    # Every day 9:17 JST
+    - cron: '17 0 * * *'
   workflow_dispatch:
-  workflow_call:
-    secrets:
-      PRIVATE_KEY:
-        required: true
 
 permissions:
   contents: read
@@ -45,7 +49,7 @@ jobs:
         with:
           # Required to set workflow permission for the APP
           # Why replaced from secrets?: https://github.com/github/docs/commit/eaac671cdd9189afd410366e9eb5edd4ee815194#diff-19d2b329775bf781d0cf19fabafa7f231bd85f133cbf9e23594036ea68f7021dL53-R54
-          client-id: ${{ vars.SAMU_APP_ID }} # FIXME: Move in input as same as the private-key
+          client-id: ${{ vars.SAMU_APP_ID }}
           private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
