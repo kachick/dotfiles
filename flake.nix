@@ -54,11 +54,6 @@
       url = "github:kachick/ghadiag";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
-
-    selfup = {
-      url = "github:kachick/selfup/v1.3.1";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -69,7 +64,6 @@
       home-manager-linux,
       kanata-tray,
       ghadiag,
-      selfup,
       ...
     }@inputs:
     let
@@ -81,7 +75,6 @@
           kanata-tray
           ghadiag
           home-manager-linux
-          selfup
           ;
       };
 

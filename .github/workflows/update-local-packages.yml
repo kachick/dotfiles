@@ -62,7 +62,7 @@ jobs:
           # Needed to specify token for checkout phase, only in pushing phase is too late
           # https://github.com/orgs/community/discussions/27072#discussioncomment-3254515
           token: ${{ steps.publish-token.outputs.token }}
-          # This value is explicitly set to true to prevent regression that occurred in selfup v1.2.1, even though it is the default for actions/checkout.
+          # This value is explicitly set to true, even though it is the default for actions/checkout.
           # Many linters recommend setting this to false, and most users have requested it as the new default (see https://github.com/actions/checkout/issues/485).
           # However, this workflow depends on the stored credentials for the subsequent git push command.
           # For this reason, true is required for now.

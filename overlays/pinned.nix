@@ -2,7 +2,6 @@
   kanata-tray,
   ghadiag,
   home-manager-linux,
-  selfup,
 }:
 final: _prev:
 let
@@ -18,9 +17,6 @@ in
     kanata-tray = kanata-tray.packages.${system}.default;
 
     ghadiag = ghadiag.packages.${system}.default;
-
-    # Pinning selfup from the flake input
-    selfup = selfup.packages.${system}.default;
 
     inherit (_prev.unstable)
       # See GH-1085, GH-1134, and GH-1402

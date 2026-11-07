@@ -3,7 +3,6 @@
   kanata-tray,
   ghadiag,
   home-manager-linux,
-  selfup,
 }:
 [
   (import ./local.nix)
@@ -13,7 +12,6 @@
       kanata-tray
       ghadiag
       home-manager-linux
-      selfup
       ;
   })
   (import ./overrides { })
