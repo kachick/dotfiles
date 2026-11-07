@@ -1,0 +1,53 @@
+# A custom Lima template for Docker guest with Nix and Home Manager
+#
+# Usage:
+#   limactl start template:docker-nix
+#   limactl start --param dotfilesRev=my-branch template:docker-nix
+
+minimumLimaVersion: 2.0.0
+
+base:
+  - template:docker
+
+param:
+  dotfilesRev: 'main'
+
+mounts:
+  - location: '~/repos/github.com/kachick'
+    writable: true
+
+provision:
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # Skip provisioning if Home Manager is already installed (e.g. cloned sandbox instances)
+      if [ -e "/nix/var/nix/profiles/per-user/$USER/home-manager" ]; then
+        echo "Home Manager is already provisioned. Skipping."
+        exit 0
+      fi
+
+      # Restore access from guest home to host repos mount without hardcoding host username
+      if [ ! -e "$HOME/repos" ]; then
+        for d in /home/*; do
+          if [ "$d" != "$HOME" ] && [ -d "$d/repos" ]; then
+            ln -sfn "$d/repos" "$HOME/repos"
+            break
+          fi
+        done
+      fi
+
+      LOCAL_DOTFILES="$HOME/repos/github.com/kachick/dotfiles"
+      if [ -f "$LOCAL_DOTFILES/scripts/install-nix.bash" ]; then
+        FLAKE_URI="path:${LOCAL_DOTFILES}"
+        bash "$LOCAL_DOTFILES/scripts/install-nix.bash" "${FLAKE_URI}"
+      else
+        FLAKE_URI="github:kachick/dotfiles/{{.Param.dotfilesRev}}"
+        curl -fsSL "https://raw.githubusercontent.com/kachick/dotfiles/{{.Param.dotfilesRev}}/scripts/install-nix.bash" | bash -s -- "{{.Param.dotfilesRev}}"
+      fi
+
+      # shellcheck source=/dev/null
+      . /etc/profile.d/nix.sh
+
+      nix run --accept-flake-config "${FLAKE_URI}#home-manager" -- switch -b backup --flake "${FLAKE_URI}#user@lima"
