@@ -1,0 +1,64 @@
+# A custom Lima template for Docker guest with Nix and Home Manager
+#
+# Usage:
+#   limactl start template:docker-nix
+#   limactl start --param dotfilesRev=my-branch template:docker-nix
+
+minimumLimaVersion: 2.0.0
+
+base:
+  - template:docker
+
+param:
+  dotfilesRev: 'main'
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      if ! command -v nix >/dev/null 2>&1; then
+        echo "Installing Nix..."
+        TRUSTED_USERS="root user @sudo"
+        curl --proto '=https' --tlsv1.2 -sSf -L https://artifacts.nixos.org/nix-installer | sh -s -- install linux --enable-flakes \
+          --extra-conf "sandbox = false" \
+          --extra-conf "trusted-users = ${TRUSTED_USERS}" \
+          --extra-conf "extra-substituters = https://cache.kachick.dev https://kachick.cachix.org" \
+          --extra-conf "extra-trusted-substituters = https://nix-community.cachix.org https://cache.numtide.com" \
+          --extra-conf "extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" \
+          --extra-conf "accept-flake-config = true" \
+          --no-confirm
+      fi
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+
+      # shellcheck source=/dev/null
+      . /etc/profile.d/nix.sh
+
+      # Restore access from guest home to host repos mount without hardcoding host username
+      if [ ! -e "$HOME/repos" ]; then
+        for d in /home/*; do
+          if [ "$d" != "$HOME" ] && [ -d "$d/repos" ]; then
+            ln -sfn "$d/repos" "$HOME/repos"
+            break
+          fi
+        done
+      fi
+
+      LOCAL_DOTFILES="$HOME/repos/github.com/kachick/dotfiles"
+      if [ -d "$LOCAL_DOTFILES" ]; then
+        FLAKE_URI="path:${LOCAL_DOTFILES}"
+      else
+        FLAKE_URI="github:kachick/dotfiles/{{.Param.dotfilesRev}}"
+      fi
+
+      if [ ! -f /etc/nix/nix.custom.conf ]; then
+        nix run --accept-flake-config "${FLAKE_URI}#gen-nix-cache-conf" | sudo tee /etc/nix/nix.custom.conf
+        if command -v systemctl >/dev/null 2>&1; then
+          sudo systemctl restart nix-daemon
+        fi
+      fi
+
+      nix run --accept-flake-config "${FLAKE_URI}#home-manager" -- switch -b backup --flake "${FLAKE_URI}#user@lima"
