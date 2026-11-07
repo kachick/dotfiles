@@ -10,11 +10,9 @@ rules:
   excessive-permissions:
     ignore:
       - merge-bot-pr.yml
-      - cleanup-staging-packages.yml
       - container.yml
   template-injection:
     ignore:
       - container.yml
-      - cleanup-staging-packages.yml
   secrets-outside-env:
     disable: true

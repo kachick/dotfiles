@@ -77,9 +77,13 @@ jobs:
   minimize-old-comments:
     needs: [get-meta]
     if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
-    uses: $/.github/workflows/minimize-staging-deploy-comments.yml
+    permissions:
+      contents: read # Required for actions/checkout in reusable workflow
+      pull-requests: write # Required for minimizing outdated PR comments
+    uses: kachick/workflows/.github/workflows/reusable-minimize-pr-comments.yml@main
     with:
       pr-number: ${{ github.event_name == 'pull_request' && github.event.number || 0 }}
+      body-includes: 'sandbox-with-ghcr.bash'
   build_and_push:
     name: 🔨📤 Build & Push
     # Do not set `cancel-in-progress: true` in main branch, it displays failure badges
@@ -243,6 +247,9 @@ jobs:
     needs: [build_and_push]
     # Always skips if no conditions
     if: always() && (needs.build_and_push.result == 'success')
-    uses: $/.github/workflows/cleanup-github-packages.yml
+    permissions:
+      packages: write # Required for deleting old GHCR package versions
+    uses: kachick/workflows/.github/workflows/reusable-cleanup-ghcr.yml@main
     with:
+      package-name: home
       keep-latest-items: 50 # 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior
