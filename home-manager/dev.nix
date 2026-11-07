@@ -9,6 +9,7 @@
     ./encryption.nix
     ./git.nix
     ./telemetry.nix
+    ./plamo.nix
   ];
 
   home = {

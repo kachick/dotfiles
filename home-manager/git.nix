@@ -158,6 +158,7 @@ in
         refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
         all = "!git refresh && git-delete-merged-branches";
         lf = "!${lib.getExe pkgs.local.git-log-fzf}";
+        show-ja = "!${lib.getExe pkgs.local.git-show-ja}";
         reset-branch = "!${lib.getExe pkgs.local.git-reset-branch}";
         resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
       };
