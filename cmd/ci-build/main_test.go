@@ -367,4 +367,38 @@ func TestResolveStorePath(t *testing.T) {
 			t.Errorf("expected %s, got %s", targetStorePath, got)
 		}
 	})
+
+	t.Run("TildeSymlinkToStorePath", func(t *testing.T) {
+		tmpHome := t.TempDir()
+		t.Setenv("HOME", tmpHome)
+
+		profileDir := filepath.Join(tmpHome, ".local", "state", "nix", "profiles")
+		if err := os.MkdirAll(profileDir, 0o755); err != nil {
+			t.Fatalf("failed to create profile dir: %v", err)
+		}
+		symlinkPath := filepath.Join(profileDir, "home-manager")
+		targetStorePath := "/nix/store/hm-generation-pkg"
+		if err := os.Symlink(targetStorePath, symlinkPath); err != nil {
+			t.Skipf("skipping symlink test: %v", err)
+		}
+
+		got, err := resolveStorePath("~/.local/state/nix/profiles/home-manager")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != targetStorePath {
+			t.Errorf("expected %s, got %s", targetStorePath, got)
+		}
+	})
+}
+
+func TestRunPush_RejectsUnresolvableTildePathBeforePush(t *testing.T) {
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("NIKS3_SERVER_URL", "")
+
+	err := runPush([]string{"~/.local/state/nix/profiles/nonexistent"})
+	if err == nil {
+		t.Fatal("expected error when tilde path does not resolve to /nix/store, got nil")
+	}
 }

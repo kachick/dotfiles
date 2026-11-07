@@ -553,9 +553,18 @@ func runPush(args []string) error {
 		return fmt.Errorf("at least one path or --from-dir is required")
 	}
 
-	paths := fs.Args()
-	if *pinName != "" && len(paths) > 1 {
+	rawPaths := fs.Args()
+	if *pinName != "" && len(rawPaths) > 1 {
 		return errors.New("--pin requires exactly one store path")
+	}
+
+	paths := make([]string, 0, len(rawPaths))
+	for _, rawPath := range rawPaths {
+		resolved, err := resolveStorePath(rawPath)
+		if err != nil {
+			return err
+		}
+		paths = append(paths, resolved)
 	}
 
 	if err := maybePushToNiks3("manual-push", true, paths); err != nil {
