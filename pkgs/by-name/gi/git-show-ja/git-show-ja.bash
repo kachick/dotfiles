@@ -59,6 +59,15 @@ if [ -z "$trans" ]; then
 	exit 1
 fi
 
+# Colorize each line of the translation in cyan so every line stays colored through pagers
+colorized_trans="$(printf '%s\n' "$trans" | awk '{
+	if (length($0) > 0) {
+		print "\033[36m" $0 "\033[0m"
+	} else {
+		print ""
+	}
+}')"
+
 run_git_show() {
 	if [ ${#git_args[@]} -gt 0 ]; then
 		git show --color=always "${git_args[@]}"
@@ -69,12 +78,12 @@ run_git_show() {
 
 # Stream git show output and inject translation right before diff starts
 inject_translation() {
-	run_git_show | awk -v trans="$trans" '
+	run_git_show | awk -v trans="$colorized_trans" '
 	BEGIN { in_header = 1; inserted = 0; }
 	in_header && /^$/ { in_header = 0; print; next; }
 	!in_header && !inserted && /^(\033\[[0-9;]*m)?diff --git/ {
 	  print "\033[36m<ja>\033[0m";
-	  print "\033[36m" trans "\033[0m";
+	  print trans;
 	  print "\033[36m</ja>\033[0m\n";
 	  inserted = 1;
 	}
@@ -82,7 +91,7 @@ inject_translation() {
 	END {
 	  if (!inserted) {
 	    print "\n\033[36m<ja>\033[0m";
-	    print "\033[36m" trans "\033[0m";
+	    print trans;
 	    print "\033[36m</ja>\033[0m";
 	  }
 	}
