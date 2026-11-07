@@ -12,6 +12,10 @@ base:
 param:
   dotfilesRev: 'main'
 
+mounts:
+  - location: '~/repos/github.com/kachick'
+    writable: true
+
 provision:
   - mode: user
     script: |

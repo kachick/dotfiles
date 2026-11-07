@@ -71,7 +71,7 @@ jobs:
       - name: Create Lima Instance from custom template
         run: |
           limactl delete -f docker-nix || true
-          limactl create --yes --name=docker-nix --mount ~/repos:w template:docker-nix
+          limactl create --yes --name=docker-nix template:docker-nix
 
   test-provisioning:
     name: 🧪 Test Provisioning

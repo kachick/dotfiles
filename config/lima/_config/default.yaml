@@ -1,11 +1,3 @@
-# 🟢 Builtin default: [] (Mount nothing)
-mounts:
-  - location: '~/repos' # See git.nix in this repo
-    # Avoid hardcoding '{{.Home}}/repos' to ensure 'limactl shell' can
-    # synchronize the working directory by matching the host's absolute path.
-    # Guest home directory links here via setupHostReposSymlink in home-manager/lima-guest.nix.
-    writable: true # For developing purpose, writable should be reasonable. And my system does not directly include these files
-
 # https://github.com/lima-vm/lima/issues/1015#issuecomment-4092839880
 user:
   name: user # Adjust with home-manager. See also home-manager/ephemeral.nix

@@ -174,34 +174,43 @@ Check [traps](./windows/Multi-booting.md)
 
 ### 1. Base Environment Setup
 
-Start the base Docker guest with Nix and Home Manager:
+1. Create the clean base instance with Nix and Home Manager, then stop it:
 
-```bash
-limactl start template:docker-nix
-```
+   ```bash
+   limactl start --name=docker-nix-clean template:docker-nix
+   limactl stop docker-nix-clean
+   ```
 
-- Host `~/repos` is mounted into the guest without mounting `$HOME` (keeping SSH, GPG, and secrets isolated).
-- When `~/repos/github.com/kachick/dotfiles` exists on the host, the VM automatically provisions using your local working copy (reflecting current branch and edits).
+   - Host `~/repos/github.com/kachick` is mounted without mounting `$HOME` (keeping SSH, GPG, and secrets isolated).
+   - When `~/repos/github.com/kachick/dotfiles` exists on the host, the VM automatically provisions using your local working copy (reflecting current branch and edits).
 
-Run containers:
+1. Clone and start the standard `docker-nix` instance for daily use:
 
-```bash
-limactl shell docker-nix docker run --rm hello-world
-```
+   ```bash
+   limactl clone docker-nix-clean docker-nix --start
+   ```
+
+   - `docker-nix` is configured to autostart with user sessions.
+   - Run containers:
+
+     ```bash
+     limactl shell docker-nix docker run --rm hello-world
+     ```
 
 ### 2. Disposable Sandbox (Isolated Project Environment)
 
-You can clone a fresh sandbox instance for safe experiments (such as running untrusted commands or AI coding tools) without sharing the host home directory or other repositories:
+You can clone a fresh sandbox instance from `docker-nix-clean` for safe experiments without sharing the host home directory or other repositories:
 
-1. Clone and start a temporary sandbox instance with only the current directory mounted:
+1. Clone and start a temporary sandbox instance:
 
    ```bash
    INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
-   limactl clone docker-nix "$INSTANCE" --mount-only .:w --start
+   limactl clone docker-nix-clean "$INSTANCE" --mount-only .:w --start
    ```
 
-   - **Instant Boot**: Uses copy-on-write from the base image (no downloading or Nix re-installation).
-   - **Strict Isolation**: Only the current working directory (`.`) is accessible inside the VM. Host home and other repositories remain invisible.
+   - **Instant Boot**: Uses copy-on-write from the base image in seconds.
+   - **Strict Isolation**: `--mount-only .:w` restricts VM access solely to the current project directory (`.`). Host home and other repositories remain invisible.
+   - **Multiple Mounts**: Pass extra `--mount /path:w` flags if you need to attach additional directories alongside `.`.
    - **Unique Naming**: Appends a random 4-character hex suffix to prevent name collisions.
 
 1. Work inside the sandbox:
