@@ -11,6 +11,7 @@ pkgs.writeShellApplication rec {
     bat
     riffdiff
     local.git-log-simple
+    local.git-show-ja
   ];
   meta = {
     description = "Faster git log searcher for large repositories(e.g NixOS/nixpkgs)";

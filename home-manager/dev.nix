@@ -110,6 +110,7 @@
       "g" = "git";
 
       "gH" = "git show HEAD";
+      "gsj" = "git sj";
 
       # GH-897
       "ddis" = "direnv disallow";
