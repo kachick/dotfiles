@@ -376,7 +376,7 @@ jobs:
           archive: false
 
   diff:
-    name: ❄️ Diff
+    name: ↔️ Diff
     needs: [changes]
     if: >-
       always() &&
