@@ -8,9 +8,11 @@ on:
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
+      - '**.go'
       - '**.nix'
       - 'Taskfile.yml'
       - 'go.*'
+      - 'testdata/**'
   pull_request:
     paths:
       - '.github/workflows/devshell-linux.yml'
@@ -18,9 +20,11 @@ on:
       - 'flake.*'
       - 'cmd/**'
       - 'internal/**'
+      - '**.go'
       - '**.nix'
       - 'Taskfile.yml'
       - 'go.*'
+      - 'testdata/**'
   schedule:
     # Every 10:42 JST
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

@@ -118,6 +118,10 @@ jobs:
           cache-dependency-path: 'go.sum'
       - name: List files - before build
         run: Get-ChildItem
+      - name: Test and vet Go packages
+        run: |
+          go test ./...
+          go vet ./...
       - name: Build winit-*
         # unnecessary to build wsl-* here, it should be done in linux runners
         run: |

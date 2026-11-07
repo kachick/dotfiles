@@ -3,7 +3,6 @@
 [![Nix on Linux](https://github.com/kachick/dotfiles/actions/workflows/nix.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/nix.yml?query=branch%3Amain+)
 [![Windows](https://github.com/kachick/dotfiles/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/windows.yml?query=branch%3Amain+)
 [![Devshell on Linux](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/devshell-linux.yml?query=branch%3Amain+)
-[![Go](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/ci-go.yml?query=branch%3Amain+)
 [![Container](https://github.com/kachick/dotfiles/actions/workflows/container.yml/badge.svg?branch=main)](https://github.com/kachick/dotfiles/actions/workflows/container.yml?query=branch%3Amain+)
 
 Personal dotfiles that can be placed in the public repository\

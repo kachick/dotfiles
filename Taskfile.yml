@@ -212,5 +212,6 @@ tasks:
       - 'setup'
       # 'test-sample-nixos' # Run in nix workflow in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
+      - 'test-go'
       - 'lint-all'
       - 'test-home-session-vars'
