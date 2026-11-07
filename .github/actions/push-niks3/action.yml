@@ -1,0 +1,67 @@
+name: 'Push to niks3'
+description: 'Logs disk space, connects to Tailscale, and pushes build closures to niks3 on main'
+inputs:
+  tailscale-oauth-client-id:
+    description: 'Tailscale OAuth client ID'
+    required: true
+  tailscale-audience:
+    description: 'Tailscale OIDC audience'
+    required: true
+  tailscale-tags:
+    description: 'Tailscale ACL tags'
+    required: true
+  niks3-server-url:
+    description: 'niks3 server URL'
+    required: true
+  from-dir:
+    description: 'Directory containing recorded output path files'
+    required: false
+    default: ''
+  store-path:
+    description: 'Single store path or profile symlink to push'
+    required: false
+    default: ''
+  pin-name:
+    description: 'Pin name to create in niks3'
+    required: false
+    default: ''
+  pin-flake-attr:
+    description: 'Flake attribute to evaluate and pin after pushing closures'
+    required: false
+    default: ''
+runs:
+  using: 'composite'
+  steps:
+    - name: Logging disk space
+      shell: bash
+      run: df -h
+    - name: Connect Tailscale
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && inputs.tailscale-oauth-client-id != '' }}
+      uses: tailscale/github-action@064b10558093f38325e838ddea35486bdc6b1d5c # v4.4.0
+      with:
+        oauth-client-id: ${{ inputs.tailscale-oauth-client-id }}
+        audience: ${{ inputs.tailscale-audience }}
+        tags: ${{ inputs.tailscale-tags }}
+    - name: Push build closures to niks3
+      if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && inputs.tailscale-oauth-client-id != '' }}
+      shell: bash
+      env:
+        NIKS3_SERVER_URL: ${{ inputs.niks3-server-url }}
+        FROM_DIR: ${{ inputs.from-dir }}
+        STORE_PATH: ${{ inputs.store-path }}
+        PIN_NAME: ${{ inputs.pin-name }}
+        PIN_FLAKE_ATTR: ${{ inputs.pin-flake-attr }}
+      run: |
+        if [ -n "$FROM_DIR" ]; then
+          go run ./cmd/ci-build push --from-dir "$FROM_DIR"
+        elif [ -n "$STORE_PATH" ]; then
+          if [ -n "$PIN_NAME" ]; then
+            go run ./cmd/ci-build push --pin "$PIN_NAME" "$STORE_PATH"
+          else
+            go run ./cmd/ci-build push "$STORE_PATH"
+          fi
+        fi
+        if [ -n "$PIN_FLAKE_ATTR" ] && [ -n "$PIN_NAME" ]; then
+          target_path=$(nix eval --raw "$PIN_FLAKE_ATTR")
+          go run ./cmd/ci-build pin "$PIN_NAME" "$target_path"
+        fi

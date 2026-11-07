@@ -4,8 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/nix.yml'
-      - '.github/actions/setup-nix/**'
-      - '.github/actions/clean-disk/**'
+      - '.github/actions/**'
       - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -17,8 +16,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/nix.yml'
-      - '.github/actions/setup-nix/**'
-      - '.github/actions/clean-disk/**'
+      - '.github/actions/**'
       - 'cmd/ci-build/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -51,11 +49,7 @@ jobs:
     timeout-minutes: 180
     env:
       CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
-      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
-      - name: Logging disk space
-        run: df -h
-      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
       - uses: $/.github/actions/clean-disk
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -111,18 +105,13 @@ jobs:
           - name: zed-editor
             run: go run ./cmd/ci-build package zed-editor --skip-tests
           # END MANAGED PACKAGES
-      - name: Connect Tailscale
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        uses: tailscale/github-action@064b10558093f38325e838ddea35486bdc6b1d5c # v4.4.0
+      - uses: $/.github/actions/push-niks3
         with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
-          tags: ${{ secrets.TAILSCALE_TAGS }}
-      - name: Push build closures to niks3
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        env:
-          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
 
   home-manager:
     name: 🏠 home-manager
@@ -133,12 +122,7 @@ jobs:
       id-token: write # Required for Tailscale and niks3 OIDC authentication
     runs-on: ubuntu-26.04
     timeout-minutes: 60
-    env:
-      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
-      - name: Logging disk space
-        run: df -h
-      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
       - uses: $/.github/actions/clean-disk
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -184,18 +168,14 @@ jobs:
         run: |
           zsh -c 'la ~; lat ~/.config'
           zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
-      - name: Connect Tailscale
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        uses: tailscale/github-action@064b10558093f38325e838ddea35486bdc6b1d5c # v4.4.0
+      - uses: $/.github/actions/push-niks3
         with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
-          tags: ${{ secrets.TAILSCALE_TAGS }}
-      - name: Push home-manager generation to niks3
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        env:
-          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: go run ./cmd/ci-build push --pin dotfiles-main-home-manager ~/.local/state/nix/profiles/home-manager
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          store-path: ~/.local/state/nix/profiles/home-manager
+          pin-name: dotfiles-main-home-manager
 
   nixos:
     name: ⚙️ NixOS
@@ -208,11 +188,7 @@ jobs:
     timeout-minutes: 180
     env:
       CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
-      TAILSCALE_OAUTH_CLIENT_ID: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
     steps:
-      - name: Logging disk space
-        run: df -h
-      # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
       - uses: $/.github/actions/clean-disk
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -236,22 +212,12 @@ jobs:
 
           - name: Verify sample configuration template
             run: ./nixos/hosts/sample/verify.bash
-      - name: Connect Tailscale
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        uses: tailscale/github-action@064b10558093f38325e838ddea35486bdc6b1d5c # v4.4.0
+      - uses: $/.github/actions/push-niks3
         with:
-          oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
-          audience: ${{ secrets.TAILSCALE_AUDIENCE }}
-          tags: ${{ secrets.TAILSCALE_TAGS }}
-      - name: Push build closures to niks3
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        env:
-          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: go run ./cmd/ci-build push --from-dir "$CI_BUILD_OUT_PATHS_DIR"
-      - name: Pin NixOS desktop-free on main
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && env.TAILSCALE_OAUTH_CLIENT_ID != '' }}
-        env:
-          NIKS3_SERVER_URL: ${{ secrets.NIKS3_SERVER_URL }}
-        run: |
-          TOPLEVEL=$(nix eval --raw .#nixosConfigurations.desktop-free.config.system.build.toplevel)
-          go run ./cmd/ci-build pin dotfiles-main-nixos-desktop-free "$TOPLEVEL"
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
+          pin-name: dotfiles-main-nixos-desktop-free
+          pin-flake-attr: .#nixosConfigurations.desktop-free.config.system.build.toplevel

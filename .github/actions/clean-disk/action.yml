@@ -3,6 +3,10 @@ description: 'Moves heavy unused directories and deletes them in the background 
 runs:
   using: 'composite'
   steps:
+    - name: Logging disk space
+      shell: bash
+      run: df -h
+    # Prevent problems such as https://github.com/kachick/dotfiles/pull/1402#issuecomment-3736925185
     # Move directories to a temporary location on the same filesystem first, then delete them in the background.
     # Why move first:
     # Moving paths on the same filesystem takes only milliseconds (inode update),
