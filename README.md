@@ -207,18 +207,18 @@ Clone a quick sandbox instance from `docker-nix-clean` for safe experiments:
    - **Standard Sandbox** (Mounts `~/repos/github.com/kachick` like base):
 
      ```bash
-     INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
+     INSTANCE="sandbox-$(head -c 16 /dev/urandom | sha256sum | cut -c1-4)"
      limactl clone docker-nix-clean "$INSTANCE" --start
      ```
 
    - **Strict Project Isolation** (Mounts only current directory without other repos):
 
      ```bash
-     INSTANCE="sandbox-$(printf '%04x' $RANDOM)"
+     INSTANCE="sandbox-$(head -c 16 /dev/urandom | sha256sum | cut -c1-4)"
      limactl clone docker-nix-clean "$INSTANCE" --mount-only .:w --start
      ```
 
-     Pass extra `--mount /path:w` flags if you want to attach other directories.
+     Pass additional `--mount-only /path:w` flags if you want to attach other directories (do not use `--mount`, as it conflicts with `--mount-only`).
 
 1. Work inside the sandbox:
 
