@@ -1,6 +1,7 @@
 {
   nixpkgs-unstable,
   kanata-tray,
+  ghadiag,
   home-manager-linux,
   selfup,
 }:
@@ -10,6 +11,7 @@
   (import ./pinned.nix {
     inherit
       kanata-tray
+      ghadiag
       home-manager-linux
       selfup
       ;

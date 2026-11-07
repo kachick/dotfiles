@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write # Required for commenting closure diffs on PRs
-    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main # zizmor: ignore[unpinned-uses]
     with:
       runs-on: ubuntu-26.04
       targets: |

@@ -28,7 +28,7 @@ jobs:
       contents: read # Required for actions/checkout in reusable workflow
       pull-requests: write # Required for minimizing outdated comments and posting result
       packages: write # Required for deleting staging package versions
-    uses: kachick/workflows/.github/workflows/reusable-cleanup-ghcr-staging.yml@main
+    uses: kachick/workflows/.github/workflows/reusable-cleanup-ghcr-staging.yml@main # zizmor: ignore[unpinned-uses]
     with:
       package-name: home
       pr-number: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || inputs.pr-number }}

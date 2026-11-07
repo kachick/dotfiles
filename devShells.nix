@@ -48,6 +48,9 @@ in
           rumdl
           go_1_27
         ])
+        ++ (with pkgs.pinned; [
+          ghadiag
+        ])
         ++ (with pkgs.local; [
           nix-hash-url
         ])

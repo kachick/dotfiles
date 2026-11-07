@@ -1,5 +1,6 @@
 {
   kanata-tray,
+  ghadiag,
   home-manager-linux,
   selfup,
 }:
@@ -15,6 +16,8 @@ in
     # Pinning kanata-tray from the flake input
     # It seems kanata-tray flake provides 'kanata-tray' and 'default' (which is kanata-tray)
     kanata-tray = kanata-tray.packages.${system}.default;
+
+    ghadiag = ghadiag.packages.${system}.default;
 
     # Pinning selfup from the flake input
     selfup = selfup.packages.${system}.default;

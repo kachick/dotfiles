@@ -42,6 +42,7 @@ func main() {
 		{Path: "rumdl", Args: []string{"check", "."}},
 		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "zizmor", Args: []string{"--pedantic", "."}},
+		{Path: "ghadiag", Args: []string{}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
 		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
 	}

@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   bump:
-    uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main
+    uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
       post-commit-lock-file: nix run .#update-deps

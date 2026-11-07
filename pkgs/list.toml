@@ -9,6 +9,7 @@ cloudflare-warp = { build = false, test = false, update = true }
 conoha-cli = { build = true, test = true, update = true }
 filen-cli-rs = { build = true, test = true, update = true }
 gh-actions-lock = { build = true, test = true, update = true }
+ghadiag = { build = true, test = true, update = false }
 git-hooks-pre-push = { build = true, test = true, update = false }
 hcpu_shogi = { build = true, test = true, update = false }
 ibus-engine-selector = { build = true, test = true, update = false }

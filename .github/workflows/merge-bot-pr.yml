@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   automerge:
-    uses: kachick/workflows/.github/workflows/reusable-automerge.yml@main
+    uses: kachick/workflows/.github/workflows/reusable-automerge.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
       llm-veto: true

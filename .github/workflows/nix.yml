@@ -81,6 +81,9 @@ jobs:
           - name: gh-actions-lock
             run: go run ./cmd/ci-build package gh-actions-lock
 
+          - name: ghadiag
+            run: go run ./cmd/ci-build package ghadiag
+
           - name: git-hooks-pre-push
             run: go run ./cmd/ci-build package git-hooks-pre-push
 
