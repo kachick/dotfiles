@@ -7,6 +7,7 @@ on:
       - '.github/actions/**'
       - 'Taskfile.yml'
       - 'cmd/**'
+      - 'config/**'
       - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -17,6 +18,7 @@ on:
       - '**.nix'
       - 'go.*'
       - 'testdata/**'
+      - 'typos.toml'
       - '!**.md'
   pull_request:
     types: [labeled, opened, synchronize, reopened]
@@ -25,6 +27,7 @@ on:
       - '.github/actions/**'
       - 'Taskfile.yml'
       - 'cmd/**'
+      - 'config/**'
       - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -35,6 +38,7 @@ on:
       - '**.nix'
       - 'go.*'
       - 'testdata/**'
+      - 'typos.toml'
       - '!**.md'
   schedule:
     # Every 10:42 JST
@@ -50,28 +54,41 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.event.action != 'labeled' }}
 
 jobs:
+  changes:
+    name: 🧭 Changes
+    if: github.event.action != 'labeled'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    outputs:
+      packages: ${{ steps.detect.outputs.packages }}
+      home-manager: ${{ steps.detect.outputs.home-manager }}
+      nixos: ${{ steps.detect.outputs.nixos }}
+      flake-lock: ${{ steps.detect.outputs.flake-lock }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: 'go.mod'
+          cache: false
+      - name: Detect changed targets
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        run: go run ./cmd/ci-build changes | tee -a "$GITHUB_OUTPUT"
+
   inspect:
     name: 🔍 Inspect
     if: github.event.action != 'labeled'
     # Only on Linux is enough to check the flake
     runs-on: ubuntu-26.04
     timeout-minutes: 30
-    outputs:
-      flake_lock_changed: ${{ steps.check-flake-lock.outputs.changed }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 2
           persist-credentials: false
-      - name: Check if flake.lock changed
-        id: check-flake-lock
-        if: github.event_name == 'pull_request'
-        run: |
-          if git diff --quiet HEAD^1 HEAD -- flake.lock; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
       - uses: $/.github/actions/setup-nix
       - name: Print some dotfiles overviews
         shell: bash -eu -o pipefail {0}
@@ -117,7 +134,8 @@ jobs:
 
   packages:
     name: 📦 Packages
-    if: github.event.action != 'labeled'
+    needs: [changes]
+    if: needs.changes.outputs.packages == 'true'
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -192,7 +210,12 @@ jobs:
 
   home-manager:
     name: 🏠 home-manager
-    needs: [packages]
+    needs: [changes, packages]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      needs.changes.outputs.home-manager == 'true'
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -256,7 +279,12 @@ jobs:
 
   nixos:
     name: ⚙️ NixOS
-    needs: [packages]
+    needs: [changes, packages]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      needs.changes.outputs.nixos == 'true'
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -337,14 +365,14 @@ jobs:
 
   diff:
     name: ❄️ Diff
-    needs: [inspect]
+    needs: [changes]
     if: >-
       always() &&
       !failure() &&
       !cancelled() &&
       github.event_name == 'pull_request' &&
       (contains(github.event.pull_request.labels.*.name, 'ci-nix-diff') ||
-       (github.event.action != 'labeled' && needs.inspect.outputs.flake_lock_changed == 'true'))
+       (github.event.action != 'labeled' && needs.changes.outputs.flake-lock == 'true'))
     permissions:
       contents: read
       pull-requests: write # Required for commenting closure diffs on PRs

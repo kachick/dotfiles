@@ -20,7 +20,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|pin|sync-workflows|warmup> [options] [args]")
+		fmt.Fprintln(os.Stderr, "Usage: ci-build <package|nixos|push|pin|sync-workflows|warmup|changes> [options] [args]")
 		os.Exit(1)
 	}
 
@@ -56,8 +56,13 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			os.Exit(1)
 		}
+	case "changes":
+		if err := runChanges(os.Args[2:], os.Stdout); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+			os.Exit(1)
+		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows|warmup> [options] [args]\n", subcommand)
+		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows|warmup|changes> [options] [args]\n", subcommand)
 		os.Exit(1)
 	}
 }
