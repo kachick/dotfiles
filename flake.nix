@@ -40,6 +40,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Why prefer tracking the default branch rather than a release tag?
+    # Upstream (astro/microvm-nix) has not issued any new git tags since v0.5.0 in April 2024.
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-compat = {
       url = "github:NixOS/flake-compat";
       flake = false;
@@ -147,6 +154,10 @@
                 '';
               in
               pkgs.lib.getExe script;
+          };
+          microvm-sandbox = {
+            type = "app";
+            program = "${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run";
           };
         }
       );
