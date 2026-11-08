@@ -11,34 +11,23 @@
 
   imports = [
     inputs.microvm.nixosModules.microvm
-    outputs.nixosModules.desktop
+    outputs.nixosModules.dev-headless
   ];
 
   system.stateVersion = "26.05";
 
-  # Allow unfree packages such as antigravity-cli
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.overlays = [ outputs.overlays.default ];
-
-  disabledModules = [
-    ../../desktop/vm.nix
+  # Quiet kernel and initrd boot logs for fast startup
+  boot.consoleLogLevel = 3;
+  boot.initrd.verbose = false;
+  boot.kernelParams = [
+    "quiet"
+    "systemd.show_status=auto"
   ];
 
-  # Headless MicroVM: disable GUI display manager, sound, and unnecessary background services
-  boot.loader.systemd-boot.enable = lib.mkForce false;
-  services.xserver.enable = lib.mkForce false;
-  services.displayManager.gdm.enable = lib.mkForce false;
-  services.desktopManager.gnome.enable = lib.mkForce false;
-  services.gnome.gnome-keyring.enable = lib.mkForce false;
-  services.pulseaudio.enable = lib.mkForce false;
-  services.pipewire.enable = lib.mkForce false;
-  hardware.bluetooth.enable = lib.mkForce false;
-  services.tailscale.enable = lib.mkForce false;
-  systemd.services.tailscale-resolved.enable = lib.mkForce false;
-  services.cockpit.enable = lib.mkForce false;
-  services.fail2ban.enable = lib.mkForce false;
-  services.avahi.enable = lib.mkForce false;
-  services.printing.enable = lib.mkForce false;
+  # Disable background daemons not needed in ephemeral sandbox
+  services.fail2ban.enable = false;
+  services.openssh.enable = false;
+  services.logrotate.enable = false;
 
   # Auto-optimise store does not work with writableStoreOverlay
   nix.optimise.automatic = lib.mkForce false;
@@ -146,28 +135,20 @@
     export ZDOTDIR="''${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
   '';
 
-  # Include antigravity-cli (agy) in system packages
-  environment.systemPackages = [
-    pkgs.local.antigravity-cli
-  ];
-
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "backup";
     users.user = {
       imports = [
-        ../../../home-manager/ephemeral.nix
-        ../../../home-manager/nixos-desktop-set.nix
-        ({ config, ... }: {
+        outputs.homeManagerModules.ephemeral
+        outputs.homeManagerModules.dev
+        outputs.homeManagerModules.containers
+        outputs.homeManagerModules.storage
+        ({ ... }: {
           # The host repos mount creates /home/user/repos before HM activation.
           # Disable repos/.keep to avoid permission errors when managing repos directory.
           home.file."repos/.keep".enable = false;
-
-          # Skip Lima registration inside guest sandbox
-          home.activation.registerStartingLima = lib.mkForce (
-            config.lib.dag.entryAfter [ "writeBoundary" ] ":"
-          );
 
           # Disable 9p-slow compinit in sandbox for instant shell startup
           programs.zsh.enableCompletion = lib.mkForce false;
@@ -175,7 +156,7 @@
       ];
     };
     extraSpecialArgs = {
-      inherit pkgs;
+      inherit pkgs outputs;
     };
   };
 }

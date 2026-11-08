@@ -2,6 +2,7 @@
 {
   common = ../configuration.nix;
   hardware = ../hardware.nix;
+  dev-headless = ./dev-headless.nix;
   desktop = ./desktop.nix;
   desktop-unfree = ./desktop-unfree.nix;
   ephemeral = ../desktop/ephemeral.nix;
