@@ -13,6 +13,21 @@
       podman-tui
       docker-compose
 
+      # cntr (https://github.com/Mic92/cntr):
+      # A debugging tool that brings host tools into running container namespaces.
+      #
+      # Why use cntr:
+      # - Ideal for debugging minimal or shell-less images (e.g., distroless, scratch)
+      #   where 'podman exec' fails with "executable file not found in $PATH".
+      # - Note on filesystem layout: '/' remains the host filesystem so host binaries
+      #   run without library mismatch. The container root is mounted at the initial
+      #   working directory (CNTR_BASE_DIR). Use relative paths (e.g., 'cat etc/os-release')
+      #   to inspect container files.
+      #
+      # Example usage with distroless:
+      #   podman run -d --name test -v $(nix build --no-link --print-out-paths nixpkgs#pkgsStatic.busybox)/bin/busybox:/sleep:ro gcr.io/distroless/base-debian13 /sleep 3600
+      #   podman-cntr attach test
+      #
       # Why not need a NixOS module (security.wrappers setcap) for cntr:
       # Upstream docs suggest root or setcap ('cap_sys_admin,cap_sys_chroot=ep') for Docker/rootful setups.
       # However, rootless Podman runs in a separate user namespace. Root or setcap binaries cannot see or enter
