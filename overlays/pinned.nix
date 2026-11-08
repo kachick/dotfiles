@@ -23,7 +23,14 @@ in
     # Upstream nixpkgs PR https://github.com/NixOS/nixpkgs/pull/548453 is stuck due to test failures.
     # Integration tests require writing to /proc/self/setgroups and unsharing user namespaces,
     # which fails in sandboxed builds (e.g. GitHub Actions runners), so disable checks.
-    cntr = (cntr.packages.${system}.default).overrideAttrs (_old: {
+    #
+    # Patches:
+    # - cntr-fork-into-pidns.patch: setns(CLONE_NEWPID) does not change the caller's PID namespace,
+    #   causing setpgid EPERM in interactive bash. Fork before execve to enter the container PID namespace.
+    cntr = (cntr.packages.${system}.default).overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        ./patches/cntr-fork-into-pidns.patch
+      ];
       doCheck = false;
     });
 

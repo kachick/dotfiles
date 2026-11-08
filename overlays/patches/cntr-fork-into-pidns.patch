@@ -1,0 +1,60 @@
+From: Kenichi Kamiya <kachick1@gmail.com>
+Subject: [PATCH] attach: fork into container PID namespace before exec
+
+Calling setns(CLONE_NEWPID) does not change the caller's PID namespace;
+only children created by subsequent fork() calls enter the new namespace.
+Without fork(), the attached interactive shell runs in the host PID namespace
+while its child processes run in the container PID namespace.
+When an interactive shell (e.g. bash) invokes setpgid() for job control,
+the Linux kernel returns EPERM because the target and caller reside in
+different PID namespaces.
+
+Fork before calling exec_in_overlay(), let the child exec, and wait for it
+in the parent to propagate its exit status.
+---
+ src/attach/child.rs | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/src/attach/child.rs b/src/attach/child.rs
+index 854cdf7..28662b2 100644
+--- a/src/attach/child.rs
++++ b/src/attach/child.rs
+@@ -21,6 +21,7 @@ use crate::paths;
+ use crate::procfs::ProcStatus;
+ use crate::pty;
+ use crate::syscalls::mount_api::make_mount_idmapped;
++use crate::syscalls::process::{fork, Fork};
+ 
+ const RECURSIVE_CLONE: OpenTreeFlags =
+     OpenTreeFlags::OPEN_TREE_CLONE.union(OpenTreeFlags::AT_RECURSIVE);
+@@ -458,10 +459,23 @@ pub(crate) fn run(options: &mut ChildOptions) -> Result<std::convert::Infallible
+         profile.inherit_profile()?;
+     }
+ 
+-    // Step 12: Execute the command
+-    // This will replace the current process (attach child) with the shell
+-    // When the shell exits, the parent will see it and exit accordingly
+-    // Use exec_in_overlay() since we're in the overlay environment with access
+-    // to both host binaries and container filesystem
+-    Ok(cmd.exec_in_overlay()?)
++    // Step 12: Fork into container PID namespace before executing command
++    match fork().map_err(AttachError::Fork)? {
++        Fork::Child => {
++            cmd.exec_in_overlay()?;
++            unreachable!()
++        }
++        Fork::ParentOf(child_pid) => {
++            let mut status = 0;
++            unsafe {
++                libc::waitpid(child_pid.as_raw_nonzero().get(), &mut status, 0);
++            }
++            if libc::WIFEXITED(status) {
++                std::process::exit(libc::WEXITSTATUS(status));
++            } else if libc::WIFSIGNALED(status) {
++                std::process::exit(128 + libc::WTERMSIG(status));
++            }
++            std::process::exit(1);
++        }
++    }
+ }
+-- 
