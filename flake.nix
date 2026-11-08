@@ -40,6 +40,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Why prefer tracking the default branch rather than a release tag?
+    # Upstream (astro/microvm-nix) has not issued any new git tags since v0.5.0 in April 2024.
+    microvm = {
+      url = "github:microvm-nix/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-compat = {
       url = "github:NixOS/flake-compat";
       flake = false;
@@ -111,7 +118,7 @@
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        { pkgs, ... }:
+        { pkgs, system }:
         # Don't include unfree packages, it will fail in `nix flake check`
         (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
         // {
@@ -121,6 +128,17 @@
             corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
         }
+        // (pkgs.lib.optionalAttrs (system == "x86_64-linux") {
+          microvm-sandbox =
+            pkgs.runCommand "microvm-sandbox"
+              {
+                meta.mainProgram = "microvm-sandbox";
+              }
+              ''
+                mkdir -p $out/bin
+                ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
+              '';
+        })
       );
 
       apps = forAllSystems (
@@ -147,6 +165,10 @@
                 '';
               in
               pkgs.lib.getExe script;
+          };
+          microvm-sandbox = {
+            type = "app";
+            program = pkgs.lib.getExe outputs.packages.${system}.microvm-sandbox;
           };
         }
       );

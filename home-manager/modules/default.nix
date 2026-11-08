@@ -23,6 +23,7 @@
   wsl = ../wsl.nix;
   lima-guest = ../lima-guest.nix;
   lima-host = ../lima-host.nix;
+  microvm-host = ../microvm-host.nix;
 
   overlays = {
     nixpkgs.overlays = [ overlays.default ];

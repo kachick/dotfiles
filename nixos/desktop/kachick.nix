@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  outputs,
   ...
 }:
 
@@ -32,6 +33,7 @@ in
     extraSpecialArgs = {
       inherit
         pkgs
+        outputs
         ;
     };
   };

@@ -111,7 +111,7 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/ssh/sshd.nix
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/doc/manual/configuration/ssh.section.md
   services.openssh = {
-    enable = true;
+    enable = lib.mkDefault true;
     settings = {
       PasswordAuthentication = false;
       PermitRootLogin = "no";
