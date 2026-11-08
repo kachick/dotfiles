@@ -13,6 +13,28 @@
       podman-tui
       docker-compose
 
+      # Why not need a NixOS module (security.wrappers setcap) for cntr:
+      # Upstream docs suggest root or setcap ('cap_sys_admin,cap_sys_chroot=ep') for Docker/rootful setups.
+      # However, rootless Podman runs in a separate user namespace. Root or setcap binaries cannot see or enter
+      # user-owned namespaces cleanly (see https://github.com/Mic92/cntr/issues/172).
+      # Running cntr via 'podman unshare' enters the container's user namespace with full capabilities,
+      # and setting CNTR_BASE_DIR to a user-writable path avoids needing host root or setcap permissions entirely.
+      pinned.cntr
+      (writeShellApplication {
+        name = "podman-cntr";
+        runtimeInputs = [
+          podman
+          pinned.cntr
+        ];
+        text = ''
+          CNTR_BASE_DIR="''${CNTR_BASE_DIR:-''${XDG_RUNTIME_DIR:-/tmp}/cntr}"
+          export CNTR_BASE_DIR
+          mkdir -p "$CNTR_BASE_DIR"
+          exec podman unshare env CNTR_BASE_DIR="$CNTR_BASE_DIR" cntr "$@"
+        '';
+        meta.description = "Attach to rootless podman containers using cntr";
+      })
+
       kubectl
       stern
       k9s

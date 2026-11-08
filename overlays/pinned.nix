@@ -1,6 +1,7 @@
 {
   kanata-tray,
   ghadiag,
+  cntr,
   home-manager-linux,
 }:
 final: _prev:
@@ -17,6 +18,11 @@ in
     kanata-tray = kanata-tray.packages.${system}.default;
 
     ghadiag = ghadiag.packages.${system}.default;
+
+    # Pinning cntr from the flake input
+    # Upstream nixpkgs PR https://github.com/NixOS/nixpkgs/pull/548453 is stuck due to test failures,
+    # so we build directly from the upstream release tag.
+    cntr = cntr.packages.${system}.default;
 
     inherit (_prev.unstable)
       # See GH-1085, GH-1134, and GH-1402

@@ -3,5 +3,23 @@
   "extends": [
     "github>kachick/renovate-config//presets/default.jsonc",
     "github>kachick/renovate-config//presets/gomod.jsonc"
+  ],
+  "nix": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Keep channel-tracking flake inputs fixed to current release series",
+      "matchManagers": [
+        "nix"
+      ],
+      "matchPackageNames": [
+        "nixpkgs",
+        "nixpkgs-unstable",
+        "home-manager-linux",
+        "nixos-wsl"
+      ],
+      "enabled": false
+    }
   ]
 }
