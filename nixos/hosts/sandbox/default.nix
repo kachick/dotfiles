@@ -11,7 +11,8 @@
 
   imports = [
     inputs.microvm.nixosModules.microvm
-    outputs.nixosModules.dev-headless
+    outputs.nixosModules.common
+    outputs.nixosModules.home-manager
   ];
 
   system.stateVersion = "26.05";

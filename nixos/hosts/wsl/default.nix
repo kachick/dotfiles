@@ -9,8 +9,9 @@
   networking.hostName = "wsl";
 
   imports = [
-    outputs.nixosModules.dev-headless
+    outputs.nixosModules.common
     inputs.nixos-wsl.nixosModules.default
+    outputs.nixosModules.home-manager
   ];
 
   wsl.enable = true;
