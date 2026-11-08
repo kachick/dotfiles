@@ -54,6 +54,11 @@
       url = "github:kachick/ghadiag";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    cntr = {
+      url = "github:Mic92/cntr/2.1.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -64,6 +69,7 @@
       home-manager-linux,
       kanata-tray,
       ghadiag,
+      cntr,
       ...
     }@inputs:
     let
@@ -74,6 +80,7 @@
           nixpkgs-unstable
           kanata-tray
           ghadiag
+          cntr
           home-manager-linux
           ;
       };

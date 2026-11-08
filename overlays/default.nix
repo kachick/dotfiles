@@ -2,6 +2,7 @@
   nixpkgs-unstable,
   kanata-tray,
   ghadiag,
+  cntr,
   home-manager-linux,
 }:
 [
@@ -11,6 +12,7 @@
     inherit
       kanata-tray
       ghadiag
+      cntr
       home-manager-linux
       ;
   })

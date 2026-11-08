@@ -1,6 +1,7 @@
 {
   kanata-tray,
   ghadiag,
+  cntr,
   home-manager-linux,
 }:
 final: _prev:
@@ -17,6 +18,21 @@ in
     kanata-tray = kanata-tray.packages.${system}.default;
 
     ghadiag = ghadiag.packages.${system}.default;
+
+    # Pinning cntr from the flake input
+    # Upstream nixpkgs PR https://github.com/NixOS/nixpkgs/pull/548453 is stuck due to test failures.
+    # Integration tests require writing to /proc/self/setgroups and unsharing user namespaces,
+    # which fails in sandboxed builds (e.g. GitHub Actions runners), so disable checks.
+    #
+    # Patches:
+    # - cntr-fork-into-pidns.patch: setns(CLONE_NEWPID) does not change the caller's PID namespace,
+    #   causing setpgid EPERM in interactive bash. Fork before execve to enter the container PID namespace.
+    cntr = (cntr.packages.${system}.default).overrideAttrs (old: {
+      patches = (old.patches or [ ]) ++ [
+        ./patches/cntr-fork-into-pidns.patch
+      ];
+      doCheck = false;
+    });
 
     inherit (_prev.unstable)
       # See GH-1085, GH-1134, and GH-1402

@@ -1,0 +1,79 @@
+name: 🔄 Sync Flake Lock
+on:
+  schedule:
+    # Run every 2 hours at minute 48 to avoid traffic peaks and prepare bot PRs before automerge runs at minute 17
+    - cron: '48 */2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sync-lock:
+    name: 🔄 Sync Lock
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - name: Generate GitHub Apps token
+        id: publish-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.SAMU_APP_ID }}
+          private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
+          permission-contents: write
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          token: ${{ steps.publish-token.outputs.token }}
+          persist-credentials: true
+
+      - uses: $/.github/actions/setup-nix
+
+      - name: Prepare Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync flake.lock for open bot PRs
+        env:
+          GH_TOKEN: ${{ steps.publish-token.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          branches=$(gh pr list \
+            --state open \
+            --json headRefName,author,files \
+            --jq '.[] | select((.author.login == "app/dependabot" or .author.login == "app/renovate") and (.files | any(.path == "flake.nix"))) | .headRefName')
+
+          if [ -z "${branches}" ]; then
+            echo "No open bot flake.nix PRs found"
+            exit 0
+          fi
+
+          for branch in ${branches}; do
+            echo "Checking ${branch}..."
+            git fetch origin "${branch}"
+            git checkout -B "${branch}" "origin/${branch}"
+            git reset --hard HEAD
+            git clean -fd
+
+            if [ "$(git log -1 --format=%s)" = "Sync flake.lock" ]; then
+              echo "Branch ${branch} is already synced"
+              continue
+            fi
+
+            nix flake lock
+
+            if ! git diff --exit-code flake.lock > /dev/null; then
+              echo "Pushing updated flake.lock for ${branch}..."
+              git add flake.lock
+              git commit -m "Sync flake.lock"
+              git push origin "${branch}"
+            else
+              echo "No flake.lock changes needed for ${branch}"
+            fi
+          done
