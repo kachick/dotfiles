@@ -69,9 +69,8 @@
     # Volatile writable overlay for /nix/store
     writableStoreOverlay = "/nix/.rw-store";
 
-    preStart = ''
-      rm -f sandbox.sock
-    '';
+    # Avoid dropping socket files into current working directory
+    socket = null;
 
     # Safe rootless user networking (SLiRP)
     interfaces = [
@@ -129,7 +128,11 @@
     shell = pkgs.zsh;
   };
 
-  security.sudo.wheelNeedsPassword = false;
+  security.sudo.enable = lib.mkForce false;
+  security.sudo-rs = {
+    enable = lib.mkForce true;
+    wheelNeedsPassword = false;
+  };
   security.pam.services.login.allowNullPassword = true;
 
   # Suppress zsh-newuser-install wizard and export ZDOTDIR for instant shell readiness
