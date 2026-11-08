@@ -10,8 +10,10 @@
     outputs.nixosModules.home-manager
   ];
 
-  # Allow unfree packages such as antigravity-cli
-  nixpkgs.config.allowUnfree = true;
+  # Allow specific unfree packages via predicate
+  nixpkgs.allowedUnfreePackageNames = [
+    "antigravity-cli"
+  ];
   nixpkgs.overlays = [ outputs.overlays.default ];
 
   _module.args.overlays = [ outputs.overlays.default ];
