@@ -25,7 +25,6 @@
   ];
 
   # Disable background daemons not needed in ephemeral sandbox
-  services.fail2ban.enable = false;
   services.openssh.enable = false;
   services.logrotate.enable = false;
 
@@ -34,6 +33,12 @@
   nix.settings.auto-optimise-store = lib.mkForce false;
 
   microvm = {
+    # Using QEMU instead of Cloud-Hypervisor:
+    # - Cloud-Hypervisor does not support user-mode SLiRP networking (type = "user"),
+    #   requiring host root/TAP privileges.
+    # - Cloud-Hypervisor only supports virtiofs shares (no built-in 9p), requiring
+    #   a separate host-side virtiofsd daemon.
+    # Consider switching if microvm.nix or Cloud-Hypervisor gains unprivileged user networking.
     hypervisor = "qemu";
     mem = 4096;
     vcpu = 4;
@@ -178,7 +183,6 @@
         outputs.homeManagerModules.ephemeral
         outputs.homeManagerModules.dev
         outputs.homeManagerModules.containers
-        outputs.homeManagerModules.storage
         ({ ... }: {
           # The host repos mount creates /home/user/repos before HM activation.
           # Disable repos/.keep to avoid permission errors when managing repos directory.
