@@ -106,12 +106,12 @@
     StandardError = "journal+console";
   };
 
-  # Ensure user account with UID 1000 matching host kachick
+  # Ensure user account with UID 1001 matching host kachick
   users.users.user = {
     isNormalUser = true;
     createHome = true;
     home = "/home/user";
-    uid = 1000;
+    uid = 1001;
     extraGroups = [ "wheel" ];
     password = "";
     shell = pkgs.zsh;
