@@ -324,11 +324,11 @@ jobs:
           - name: Build NixOS - desktop-free
             run: go run ./cmd/ci-build nixos desktop-free
 
-          - name: Build NixOS - wsl
-            run: go run ./cmd/ci-build nixos wsl
+          - name: Build NixOS - dev-headless
+            run: go run ./cmd/ci-build nixos dev-headless
 
-          - name: Build NixOS - sandbox
-            run: go run ./cmd/ci-build nixos sandbox
+          - name: Verify microvm sandbox package
+            run: nix build .#packages.x86_64-linux.microvm-sandbox --dry-run
 
           - name: Verify sample configuration template
             run: ./nixos/hosts/sample/verify.bash

@@ -16,6 +16,16 @@
 
   system.stateVersion = "26.05";
 
+  # Allow unfree packages for agent tools in sandbox
+  nixpkgs.allowedUnfreePackageNames = [
+    "antigravity-cli"
+  ];
+
+  # System packages for agent development
+  environment.systemPackages = [
+    pkgs.local.antigravity-cli
+  ];
+
   # Quiet kernel and initrd boot logs for fast startup
   boot.consoleLogLevel = 3;
   boot.initrd.verbose = false;
