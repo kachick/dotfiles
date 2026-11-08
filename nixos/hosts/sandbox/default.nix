@@ -96,22 +96,56 @@
 
   # Ensure user state directories exist and owned by user before home-manager activation script runs
   # The '+' prefix runs commands with full root privileges even when Service.User is 'user'.
-  systemd.services."home-manager-user".serviceConfig = {
-    ExecStartPre = [
-      "+${pkgs.coreutils}/bin/mkdir -p /home/user/.local/state/nix/profiles /home/user/.local/state/home-manager/gcroots /home/user/repos"
-      "+${pkgs.coreutils}/bin/chown user:users /home/user /home/user/repos"
-      "+${pkgs.coreutils}/bin/chown -R user:users /home/user/.local"
-    ];
-    StandardOutput = "journal+console";
-    StandardError = "journal+console";
+  systemd.services."home-manager-user" = {
+    after = [ "sync-user-uid.service" ];
+    wants = [ "sync-user-uid.service" ];
+    serviceConfig = {
+      ExecStartPre = [
+        "+${pkgs.coreutils}/bin/mkdir -p /home/user/.local/state/nix/profiles /home/user/.local/state/home-manager/gcroots /home/user/repos"
+        "+${pkgs.coreutils}/bin/chown user:users /home/user /home/user/repos"
+        "+${pkgs.coreutils}/bin/chown -R user:users /home/user/.local"
+      ];
+      StandardOutput = "journal+console";
+      StandardError = "journal+console";
+    };
   };
 
-  # Ensure user account with UID 1001 matching host kachick
+  # Dynamically synchronize sandbox user UID to match mounted host repos ownership
+  # This avoids hardcoding host-specific numeric UIDs while ensuring seamless write access.
+  systemd.services."sync-user-uid" = {
+    description = "Synchronize guest user UID with mounted host repos directory";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "home-manager-user.service" ];
+    after = [ "local-fs.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "sync-user-uid" ''
+        set -eu
+        TARGET_DIR="/home/user/repos/github.com/kachick"
+        if [ -d "$TARGET_DIR" ]; then
+          TARGET_UID=$(${pkgs.coreutils}/bin/stat -c '%u' "$TARGET_DIR")
+          CURRENT_UID=$(${pkgs.coreutils}/bin/id -u user)
+          if [ -n "$TARGET_UID" ] && [ "$TARGET_UID" -ne 0 ] && [ "$TARGET_UID" -ne "$CURRENT_UID" ]; then
+            echo "Synchronizing sandbox user UID from $CURRENT_UID to $TARGET_UID to match host repos ownership"
+            ${pkgs.gnused}/bin/sed -i "s/^user:x:[0-9]*:/user:x:$TARGET_UID:/" /etc/passwd
+            ${pkgs.coreutils}/bin/chown -h "$TARGET_UID" /home/user /home/user/repos || true
+            if [ -d /home/user/.local ]; then
+              ${pkgs.coreutils}/bin/chown -R "$TARGET_UID" /home/user/.local
+            fi
+          fi
+        fi
+      '';
+      StandardOutput = "journal+console";
+      StandardError = "journal+console";
+    };
+  };
+
+  # Normal user account in sandbox without hardcoded UID
   users.users.user = {
     isNormalUser = true;
     createHome = true;
     home = "/home/user";
-    uid = 1001;
     extraGroups = [ "wheel" ];
     password = "";
     shell = pkgs.zsh;
