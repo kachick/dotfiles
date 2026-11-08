@@ -54,7 +54,7 @@ in
         { home.username = "nixos"; }
       ];
     };
-    extraSpecialArgs = { inherit pkgs; };
+    extraSpecialArgs = { inherit pkgs outputs; };
   };
 
   system.stateVersion = "26.05";

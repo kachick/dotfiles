@@ -763,6 +763,7 @@ in
 [
   configs.desktop-free.config.system.build.toplevel.drvPath
   configs.wsl.config.system.build.toplevel.drvPath
+  configs.sandbox.config.system.build.toplevel.drvPath
 ]
 `, repoRoot)
 		evalCmd := exec.Command("nix", "eval", "--impure", "--expr", evalExpr)

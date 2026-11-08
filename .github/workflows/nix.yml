@@ -327,6 +327,9 @@ jobs:
           - name: Build NixOS - wsl
             run: go run ./cmd/ci-build nixos wsl
 
+          - name: Build NixOS - sandbox
+            run: go run ./cmd/ci-build nixos sandbox
+
           - name: Verify sample configuration template
             run: ./nixos/hosts/sample/verify.bash
       - uses: $/.github/actions/push-niks3

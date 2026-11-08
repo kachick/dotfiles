@@ -118,7 +118,7 @@
     };
   };
 
-  services.fail2ban.enable = lib.mkDefault true;
+  services.fail2ban.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

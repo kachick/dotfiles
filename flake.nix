@@ -118,7 +118,7 @@
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        { pkgs, ... }:
+        { pkgs, system }:
         # Don't include unfree packages, it will fail in `nix flake check`
         (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
         // {
@@ -128,6 +128,17 @@
             corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
         }
+        // (pkgs.lib.optionalAttrs (system == "x86_64-linux") {
+          microvm-sandbox =
+            pkgs.runCommand "microvm-sandbox"
+              {
+                meta.mainProgram = "microvm-sandbox";
+              }
+              ''
+                mkdir -p $out/bin
+                ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
+              '';
+        })
       );
 
       apps = forAllSystems (
@@ -157,7 +168,7 @@
           };
           microvm-sandbox = {
             type = "app";
-            program = "${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run";
+            program = pkgs.lib.getExe outputs.packages.${system}.microvm-sandbox;
           };
         }
       );
