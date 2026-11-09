@@ -97,7 +97,6 @@
         ir
         bench_shells
         preview
-        renmark
         conoha-cli
       ]);
 
