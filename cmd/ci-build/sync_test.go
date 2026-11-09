@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os/exec"
+	"strings"
 	"testing"
 )
 
@@ -62,5 +64,21 @@ func TestReplaceMarkedBlockErrors(t *testing.T) {
 				t.Errorf("expected error for %s, but got nil", tt.name)
 			}
 		})
+	}
+}
+
+func TestVerifyUpdateScripts(t *testing.T) {
+	if _, err := exec.LookPath("nix"); err != nil {
+		t.Skip("skipping test: nix is not installed in PATH")
+	}
+
+	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	if err != nil {
+		t.Fatalf("failed to detect repository root: %v", err)
+	}
+	repoRoot := strings.TrimSpace(string(repoRootBytes))
+
+	if err := verifyUpdateScripts(repoRoot); err != nil {
+		t.Errorf("verifyUpdateScripts failed: %v", err)
 	}
 }
