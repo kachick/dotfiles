@@ -74,7 +74,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
   nativeInstallCheckInputs = [ versionCheckHook ];
   versionCheckProgramArg = "--version";
 
-  passthru.updateScript = nix-update-script { };
+  passthru.updateScript = nix-update-script {
+    extraArgs = [
+      # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+      "--flake"
+    ];
+  };
 
   meta = {
     description = "Terminal Markdown previewer with a GUI-like experience";
