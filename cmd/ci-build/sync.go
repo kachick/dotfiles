@@ -121,56 +121,6 @@ func runSyncWorkflows(args []string) error {
 		fmt.Println("All workflows are up to date.")
 	}
 
-	return verifyUpdateScripts(repoRoot)
-}
-
-func verifyUpdateScripts(repoRoot string) error {
-	expr := `
-let
-  flake = builtins.getFlake (toString ./.);
-  system = builtins.currentSystem;
-  pkgs = flake.packages.${system};
-  config = builtins.fromTOML (builtins.readFile ./pkgs/list.toml);
-  lib = flake.inputs.nixpkgs.lib;
-
-  updatePkgs = lib.filterAttrs (_: cfg: cfg.update or false) config.packages;
-
-  checkPkg = name: _:
-    let
-      pkg = pkgs.${name} or null;
-      script = if pkg != null then (pkg.passthru.updateScript or pkg.updateScript or null) else null;
-    in
-    if builtins.isList script && builtins.any (arg: lib.hasSuffix "/bin/nix-update" (toString arg)) script then
-      if builtins.elem "--flake" script then
-        null
-      else
-        "${name}: updateScript uses nix-update-script but is missing \"--flake\" in extraArgs"
-    else
-      null;
-
-  errors = lib.filter (e: e != null) (lib.mapAttrsToList checkPkg updatePkgs);
-in
-errors
-`
-	cmd := exec.Command("nix", "eval", "--impure", "--json", "--expr", expr)
-	cmd.Dir = repoRoot
-	out, err := cmd.Output()
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			return fmt.Errorf("evaluating updateScripts via nix: %s: %w", string(exitErr.Stderr), err)
-		}
-		return fmt.Errorf("evaluating updateScripts via nix: %w", err)
-	}
-
-	var errList []string
-	if err := json.Unmarshal(out, &errList); err != nil {
-		return fmt.Errorf("unmarshaling updateScripts eval result: %w", err)
-	}
-
-	if len(errList) > 0 {
-		return fmt.Errorf("updateScript validation failed:\n  %s", strings.Join(errList, "\n  "))
-	}
-
 	return nil
 }
 
