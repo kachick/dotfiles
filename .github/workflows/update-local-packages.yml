@@ -35,6 +35,7 @@ jobs:
           - conoha-cli
           - filen-cli-rs
           - gh-actions-lock
+          - leaf-markdown-viewer
           - lima
           # END MANAGED PACKAGES
     runs-on: ubuntu-26.04
