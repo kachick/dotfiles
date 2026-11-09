@@ -11,7 +11,7 @@ text/html)
 text/*)
 	case "$extension" in
 	md | markdown)
-		mdcat "$path"
+		leaf --inline ansi "$path"
 		;;
 	*)
 		bat --color=always "$path"
