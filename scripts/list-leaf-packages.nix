@@ -1,15 +1,19 @@
-# Dynamically extracts upstream packages declared in this repository.
+# Extracts upstream packages declared in this repository for hydra-check.
 #
-# WHY NOT hardcode package names or exclusion lists?
-# Hardcoded package lists create duplicate maintenance whenever packages are added
-# or removed in home-manager, nixos, or devShell configurations.
+# WHY NOT nixpkgs' `maintainers/scripts/rebuild-amount.sh`?
+# - `rebuild-amount.sh` measures rebuild impact between two git commits
+#   by evaluating `pkgs/top-level/release.nix` with `nix-env -qaP`.
+# - It requires a git-controlled nixpkgs checkout (fails on /nix/store paths).
+# - It takes several minutes and gigabytes of RAM.
+# - It cannot take arbitrary package names to query if they are leaves.
 #
-# Instead, this script runs 100% dynamically:
-# 1. Inspects `definitionsWithLocations` across all homeConfigurations,
-#    nixosConfigurations, and devShells.
-# 2. Filters declarations coming from files inside this dotfiles repository.
-# 3. Automatically excludes in-repo packages using `flake.outputs.packages.${system}`.
-# 4. Maps common package names (pnames) to nixpkgs attribute names for `hydra-check`.
+# WHY NOT 100% dynamic without `pnameToAttr` mappings?
+# - Module options (`home.packages`, `systemPackages`) only store derivation objects.
+#   Derivations hold `pname` (e.g. "du-dust", "fresh", "7zz"), but `hydra-check`
+#   queries nixpkgs by attribute name (e.g. "dust", "fresh-editor", "_7zz").
+# - Finding the attribute name for a given derivation requires searching all
+#   top-level attributes in nixpkgs (tens of thousands of items), which is very slow.
+# - A small explicit map for known name differences keeps evaluation instant.
 #
 # Usage examples:
 #   # Print package list separated by space
