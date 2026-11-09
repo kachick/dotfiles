@@ -1,7 +1,9 @@
 {
   lib,
   fetchFromGitHub,
+  pkg-config,
   installShellFiles,
+  oniguruma,
   nix-update-script,
   rustPlatform,
   versionCheckHook,
@@ -25,7 +27,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   cargoHash = "sha256-eAPW1VhBEyrQBKeFniKD1RxCdy6p6teAVwnNRBWJ+BA=";
 
-  nativeBuildInputs = [ installShellFiles ];
+  nativeBuildInputs = [
+    pkg-config
+    installShellFiles
+  ];
+
+  buildInputs = [
+    # https://github.com/NixOS/nixpkgs/pull/585010
+    oniguruma
+  ];
 
   # The config tests mutate the process-global LEAF_TAB_TITLE_LENGTH env var,
   # so they race against each other when cargo runs tests in parallel threads.
