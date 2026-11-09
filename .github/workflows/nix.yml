@@ -197,6 +197,9 @@ jobs:
           - name: kanata-tray
             run: go run ./cmd/ci-build package kanata-tray
 
+          - name: leaf-markdown-viewer
+            run: go run ./cmd/ci-build package leaf-markdown-viewer
+
           - name: lima-full
             run: go run ./cmd/ci-build package lima-full
 
@@ -370,7 +373,7 @@ jobs:
       - name: Logging disk space after build
         run: df -h
       - name: Upload ISO as artifact
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           path: result/iso/*.iso
           archive: false
