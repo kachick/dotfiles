@@ -175,10 +175,10 @@
     # - https://github.com/OpenPrinting/libcups/issues/81
     enable = true; # If enabled, you should care the conflict with systemd-resolved
 
-    publish = {
-      enable = true;
-      addresses = true;
-      workstation = true;
+    settings.publish = {
+      "disable-publishing" = false;
+      publish-addresses = true;
+      publish-workstation = true;
     };
 
     # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
