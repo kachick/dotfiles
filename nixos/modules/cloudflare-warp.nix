@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   config,
   ...
 }:
@@ -14,11 +13,7 @@
   # TODO: Remove this workaround and restore the default module after nixos-26.11.
   #
   # https://github.com/NixOS/nixpkgs/blob/nixos-unstable/nixos/modules/services/networking/cloudflare-warp.nix
-  disabledModules = [ "services/networking/cloudflare-warp.nix" ];
-
-  imports = [
-    "${inputs.nixpkgs-unstable}/nixos/modules/services/networking/cloudflare-warp.nix"
-  ];
+  # Built-in cloudflare-warp module is directly available in nixos-unstable
 
   services.cloudflare-warp = {
     enable = true;
