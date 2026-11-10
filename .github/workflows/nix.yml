@@ -64,6 +64,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.action == 'labeled' }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.event.action != 'labeled' }}
 
+env:
+  NIX_ABORT_ON_WARN: '1'
+
 jobs:
   changes:
     name: 🧭 Changes

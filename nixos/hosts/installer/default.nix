@@ -20,6 +20,9 @@ in
 
   programs.command-not-found.enable = false; # TODO: Reconsider once https://github.com/NixOS/nixpkgs/pull/512785 has available
 
+  # Match NixOS 26.11 default recommendation and prevent evaluation warning
+  boot.zfs.forceImportRoot = false;
+
   # Wiki "Building faster" section
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 

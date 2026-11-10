@@ -27,12 +27,17 @@ in
     # Patches:
     # - cntr-fork-into-pidns.patch: setns(CLONE_NEWPID) does not change the caller's PID namespace,
     #   causing setpgid EPERM in interactive bash. Fork before execve to enter the container PID namespace.
-    cntr = (cntr.packages.${system}.default).overrideAttrs (old: {
-      patches = (old.patches or [ ]) ++ [
-        ./patches/cntr-fork-into-pidns.patch
-      ];
-      doCheck = false;
-    });
+    # Call package directly from source to avoid deprecated stdenv.isDarwin evaluation warning in upstream flake.nix
+    cntr =
+      (final.callPackage "${cntr}/default.nix" {
+        self = cntr;
+      }).overrideAttrs
+        (old: {
+          patches = (old.patches or [ ]) ++ [
+            ./patches/cntr-fork-into-pidns.patch
+          ];
+          doCheck = false;
+        });
 
     inherit (_prev)
       # See GH-1085, GH-1134, and GH-1402

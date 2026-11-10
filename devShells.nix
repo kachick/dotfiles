@@ -18,7 +18,7 @@
         bashInteractive
         go-task
       ])
-      ++ (pkgs.lib.optionals pkgs.stdenv.isLinux (
+      ++ (pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (
         (with pkgs; [
           nixd
           nixf-diagnose
