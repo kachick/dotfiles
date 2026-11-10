@@ -176,7 +176,7 @@
     enable = true; # If enabled, you should care the conflict with systemd-resolved
 
     settings.publish = {
-      "disable-publishing" = false;
+      disable-publishing = false;
       publish-addresses = true;
       publish-workstation = true;
     };
