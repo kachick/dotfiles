@@ -22,7 +22,6 @@
         (with pkgs; [
           nixd
           nixf-diagnose
-          nurl
           nix-update
 
           shellcheck
@@ -43,9 +42,7 @@
         ])
         ++ (with pkgs.pinned; [
           ghadiag
-        ])
-        ++ (with pkgs.local; [
-          nix-hash-url
+          iets
         ])
         ++ (with pkgs; [
           typos-lsp # For zed-editor typos extension

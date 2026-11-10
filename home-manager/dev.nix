@@ -86,6 +86,9 @@
         # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
         # so a global rust-analyzer is rarely useful outside repositories.
       ])
+      ++ (with pkgs.pinned; [
+        iets
+      ])
       ++ (with pkgs.local; [
         fzf-bind-posix-shell-history-to-git-commit-message
         git-delete-merged-branches

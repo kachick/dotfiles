@@ -67,6 +67,11 @@
       url = "github:Mic92/cntr/2.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    iets = {
+      url = "github:numtide/iets/v0.2.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -77,6 +82,7 @@
       kanata-tray,
       ghadiag,
       cntr,
+      iets,
       ...
     }@inputs:
     let
@@ -87,6 +93,7 @@
           kanata-tray
           ghadiag
           cntr
+          iets
           home-manager-linux
           ;
       };

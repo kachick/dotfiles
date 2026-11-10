@@ -63,10 +63,23 @@ Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
 
 ## How to get sha256 without `lib.fakeHash`?
 
+Use `iets prefetch`:
+
 ```bash
-nurl https://github.com/github/gh-actions-lock v0.4.1
-nix-hash-url https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_2024.6.497-1_amd64.deb
+# Fetch unpacked NAR hash (for fetchFromGitHub, fetchzip, or fetchTarball)
+iets prefetch --unpack https://github.com/github/gh-actions-lock/archive/refs/tags/v0.4.1.tar.gz
+
+# Fetch raw file hash (for fetchurl)
+iets prefetch https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_2024.6.497-1_amd64.deb
 ```
+
+Nix also provides a built-in command:
+
+```bash
+nix store prefetch-file --json <URL> | jq -r .hash
+```
+
+`iets prefetch` is preferred here because it prints only the SRI hash to standard output without adding the file to the local Nix store.
 
 ## How to convert JSON to Nix?
 

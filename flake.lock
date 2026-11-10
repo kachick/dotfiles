@@ -23,6 +23,21 @@
         "type": "github"
       }
     },
+    "crane": {
+      "locked": {
+        "lastModified": 1791754810,
+        "narHash": "sha256-cN0Mgk+sQtCJcGWs9H4M0CnLRAuC4I8aCwiBTcBJs6E=",
+        "owner": "ipetkov",
+        "repo": "crane",
+        "rev": "bd63bf1d0a0f6dcacd7549c714a671ee63b0db6a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ipetkov",
+        "repo": "crane",
+        "type": "github"
+      }
+    },
     "disko": {
       "inputs": {
         "nixpkgs": [
@@ -137,6 +152,28 @@
         "type": "github"
       }
     },
+    "iets": {
+      "inputs": {
+        "crane": "crane",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792694250,
+        "narHash": "sha256-pS3qxBzpP7v0Q0Pbip8HHDCPUzaibbHPw8L+RIvH0Fs=",
+        "owner": "numtide",
+        "repo": "iets",
+        "rev": "a2cc10ccbee132020aa4b1d89925112874f6322c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "ref": "v0.2.0",
+        "repo": "iets",
+        "type": "github"
+      }
+    },
     "kanata-tray": {
       "inputs": {
         "nixpkgs": [
@@ -220,6 +257,7 @@
         "flake-compat": "flake-compat",
         "ghadiag": "ghadiag",
         "home-manager-linux": "home-manager-linux",
+        "iets": "iets",
         "kanata-tray": "kanata-tray",
         "microvm": "microvm",
         "nixos-wsl": "nixos-wsl",

@@ -2,6 +2,7 @@
   kanata-tray,
   ghadiag,
   cntr,
+  iets,
   home-manager-linux,
 }:
 final: _prev:
@@ -18,6 +19,8 @@ in
     kanata-tray = kanata-tray.packages.${system}.default;
 
     ghadiag = ghadiag.packages.${system}.default;
+
+    iets = iets.packages.${system}.default;
 
     # Pinning cntr from the flake input
     # Upstream nixpkgs PR https://github.com/NixOS/nixpkgs/pull/548453 is stuck due to test failures.
