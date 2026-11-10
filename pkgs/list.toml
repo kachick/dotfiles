@@ -13,6 +13,7 @@ ghadiag = { build = true, test = true, update = false }
 git-hooks-pre-push = { build = true, test = true, update = false }
 hcpu_shogi = { build = true, test = true, update = false }
 ibus-engine-selector = { build = true, test = true, update = false }
+iets = { build = true, test = true, update = false }
 kanata-tray = { build = true, test = true, update = false }
 leaf-markdown-viewer = { build = true, test = true, update = true }
 lima = { build = false, test = false, update = true }

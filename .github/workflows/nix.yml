@@ -197,6 +197,9 @@ jobs:
           - name: ibus-engine-selector
             run: go run ./cmd/ci-build package ibus-engine-selector
 
+          - name: iets
+            run: go run ./cmd/ci-build package iets
+
           - name: kanata-tray
             run: go run ./cmd/ci-build package kanata-tray
 
