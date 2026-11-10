@@ -20,7 +20,7 @@
   xdg.writableConfigFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
 
   home = {
-    packages = with pkgs.unstable; [
+    packages = with pkgs; [
       # Keep editor tools here strictly minimal to keep disk usage small on non-development hosts like VPS.
       # General language servers belong in dev.nix.
       dprint

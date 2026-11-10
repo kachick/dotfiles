@@ -9,7 +9,7 @@
 
 let
   configPath = ../../../../config/mozc/ibus_config.textproto;
-  inherit (pkgs.unstable) buildGo127Module;
+  inherit (pkgs) buildGo127Module;
 in
 buildGo127Module (finalAttrs: {
   pname = "ibus-engine-selector";

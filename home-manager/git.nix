@@ -177,12 +177,12 @@ in
         commit-msg-no-leaks = {
           event = "commit-msg";
           # betterleaks dir accepts file paths despite its name
-          command = "${lib.getExe pkgs.unstable.betterleaks} --verbose dir";
+          command = "${lib.getExe pkgs.betterleaks} --verbose dir";
         };
 
         commit-msg-no-typos = {
           event = "commit-msg";
-          command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
+          command = "${lib.getExe pkgs.typos} --config '${../typos.toml}' ";
         };
 
         # Split hooks so each check can be skipped individually with `hook.<name>.enabled=false`

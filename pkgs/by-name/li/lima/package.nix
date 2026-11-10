@@ -20,7 +20,7 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo127Module;
+  inherit (pkgs) buildGo127Module;
   inherit (pkgs.local) lima;
 in
 buildGo127Module (finalAttrs: {

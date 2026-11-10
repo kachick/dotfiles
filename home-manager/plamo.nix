@@ -6,8 +6,8 @@
 
 {
   home.packages = [
-    # PLaMo-3 tokenizer ('plamo3') requires llama.cpp v0.8.0+ in nixpkgs unstable
-    pkgs.unstable.llama-cpp
+    # PLaMo-3 tokenizer ('plamo3') requires llama.cpp v0.8.0+
+    pkgs.llama-cpp
     pkgs.local.plamo-trans
   ];
 
@@ -35,7 +35,7 @@
       # -fa on: Enable Flash Attention to speed up prompt and batch evaluation.
       # WHY NOT -t / -tb: llama-server detects physical CPU cores automatically at runtime, which works across hosts with different core counts (e.g. 8 cores on algae, 6 cores on moss).
       # WHY NOT port 8080: Port 8080 is commonly used by local web development servers; 18080 avoids conflicts.
-      ExecStart = "${lib.getExe' pkgs.unstable.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 18080 -c 8192 -np 4 -kvu -fa on";
+      ExecStart = "${lib.getExe' pkgs.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 18080 -c 8192 -np 4 -kvu -fa on";
       Restart = "no";
     };
   };

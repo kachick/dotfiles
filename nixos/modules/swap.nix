@@ -23,10 +23,6 @@
   # - https://chrisdown.name/ja/2018/01/02/in-defence-of-swap.html
   boot.kernel.sysctl."vm.swappiness" = 100;
 
-  # Required for automatic hibernation resume without manual offset/device configuration.
-  # See also: https://discourse.nixos.org/t/is-it-possible-to-hibernate-with-swap-file/2852/5
-  # In nixos-unstable, systemd-initrd is the default and only implementation.
-
   # Keep systemd-oomd enabled to protect the system under heavy memory pressure.
   systemd.oomd.enable = true;
 }

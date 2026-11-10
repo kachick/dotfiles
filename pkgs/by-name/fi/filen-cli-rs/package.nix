@@ -14,7 +14,7 @@
 
 let
   # Use latest rustPlatform to make the upstream PR up-to-date easier
-  inherit (pkgs.unstable) rustPlatform;
+  inherit (pkgs) rustPlatform;
 in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "filen-cli-rs";

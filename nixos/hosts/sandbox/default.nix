@@ -27,7 +27,7 @@
     pkgs.local.antigravity-cli
   ];
 
-  # Quiet kernel boot logs for fast startup
+  # Quiet kernel and initrd boot logs for fast startup
   boot.consoleLogLevel = 3;
   boot.kernelParams = [
     "quiet"

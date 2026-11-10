@@ -17,7 +17,7 @@
     #   - https://github.com/archlinux/svntogit-community/commit/f9ec89f9e2845e90f9524b28b74daf33ceb699bb
     #   - https://github.com/archlinux/svntogit-community/commit/c8bf3ae2e3deab793cb8e8544250ef943d14c85e
     (
-      (unstable.vscode.override {
+      (vscode.override {
         # https://wiki.archlinux.org/title/Wayland#Electron
         # https://github.com/NixOS/nixpkgs/blob/3f8b7310913d9e4805b7e20b2beabb27e333b31f/pkgs/applications/editors/vscode/generic.nix#L207-L214
         commandLineArgs = [

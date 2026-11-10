@@ -13,7 +13,7 @@
 
     packages =
       (with pkgs; [
-        unstable.rclone
+        rclone
       ])
       ++ (with pkgs.local; [
         rclone-list-mounted

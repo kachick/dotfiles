@@ -6,7 +6,7 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo127Module;
+  inherit (pkgs) buildGo127Module;
 in
 buildGo127Module (finalAttrs: {
   pname = "git-hooks-pre-push";
@@ -22,8 +22,8 @@ buildGo127Module (finalAttrs: {
     with pkgs;
     [
       gitMinimal
-      unstable.typos
-      unstable.betterleaks
+      typos
+      betterleaks
     ]
   );
 

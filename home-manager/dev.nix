@@ -49,11 +49,11 @@
         fastfetch # active replacement of neofetch
 
         # For healthy Nix life
-        unstable.hydra-check
-        unstable.nix-tree
+        hydra-check
+        nix-tree
 
-        unstable.somo
-        unstable.typos
+        somo
+        typos
         hyperfine
         riffdiff # `riff`
         gnumake
@@ -63,26 +63,26 @@
         # Revisit once https://github.com/dprint/dprint-vscode/issues/13 is resolved
         shfmt
 
-        unstable.betterleaks
+        betterleaks
         nushell
 
         # For editors
-        unstable.typos-lsp
+        typos-lsp
         # Looks like required to enable gopls
-        unstable.go_1_27
+        go_1_27
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
-        unstable.gopls
+        gopls
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
         golangci-lint-langserver
-        unstable.typescript_7
+        typescript_7
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
         marksman
         mpls
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
         vscode-langservers-extracted
-        unstable.nixd
-        unstable.rumdl
-        unstable.systemd-lsp
+        nixd
+        rumdl
+        systemd-lsp
         # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
         # so a global rust-analyzer is rarely useful outside repositories.
       ])

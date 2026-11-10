@@ -4,7 +4,7 @@ pkgs.writeShellApplication rec {
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     fzf
-    unstable.rclone
+    rclone
     local.rclone-mount
     local.rclone-list-mounted
   ];

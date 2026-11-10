@@ -1,7 +1,7 @@
 {
   stdenvNoCC,
   fetchurl,
-  unstable,
+  antigravity-cli,
   writeShellApplication,
   curl,
   jq,
@@ -31,7 +31,7 @@ let
     };
   };
 in
-unstable.antigravity-cli.overrideAttrs (old: {
+antigravity-cli.overrideAttrs (old: {
   inherit version;
 
   src = sourceData.${stdenvNoCC.hostPlatform.system} or throwSystem;

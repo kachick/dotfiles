@@ -10,7 +10,7 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo127Module;
+  inherit (pkgs) buildGo127Module;
 in
 buildGo127Module (finalAttrs: {
   pname = "conoha-cli";

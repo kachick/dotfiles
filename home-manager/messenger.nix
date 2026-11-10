@@ -12,7 +12,7 @@
     };
 
     packages = with pkgs; [
-      unstable.gurk-rs
+      gurk-rs
     ];
   };
 }

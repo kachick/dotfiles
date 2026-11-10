@@ -254,7 +254,7 @@
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
       #   See nix workflow for the dedicated building.
-      unstable.zed-editor
+      zed-editor
 
       gdm-settings
       desktop-file-utils # `desktop-file-validate`
@@ -289,7 +289,7 @@
       dconf-editor
 
       # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
-      unstable.podman-desktop
+      podman-desktop
 
       # Install one of PDF reader to enable PDF thumbnails on nautilus.
       # It should have `share/thumbnailers/`
@@ -316,10 +316,10 @@
       wl-clipboard # `wl-copy` and `wl-paste`
 
       # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
-      unstable.signal-desktop
+      signal-desktop
 
       # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
-      unstable.mdns-scanner
+      mdns-scanner
 
       local.chrome-with-profile-by-name
     ])
