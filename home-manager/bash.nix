@@ -8,7 +8,6 @@
   programs.starship.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
-  programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
   # Used only in bash - https://unix.stackexchange.com/a/689403

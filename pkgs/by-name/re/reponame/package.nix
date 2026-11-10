@@ -1,12 +1,9 @@
 {
   lib,
-  pkgs,
+  buildGo127Module,
   ...
 }:
 
-let
-  inherit (pkgs.unstable) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "reponame";
   version = "0.0.1";

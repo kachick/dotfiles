@@ -1,10 +1,10 @@
 {
   pkgs,
+  buildGo127Module,
   findutils,
 }:
 
 let
-  inherit (pkgs.unstable) buildGo127Module; # Keep same toolset as lima package
   inherit (pkgs.local) lima;
 in
 buildGo127Module (finalAttrs: {

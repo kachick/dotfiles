@@ -24,14 +24,15 @@
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
     #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
-    nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.zst";
-    nixpkgs-unstable.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
+    #
+    # Why track only rolling release?: https://github.com/kachick/dotfiles/issues/1787
+    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
     home-manager-linux = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL/release-26.05";
+      url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -54,12 +55,12 @@
 
     kanata-tray = {
       url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     ghadiag = {
       url = "github:kachick/ghadiag";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     cntr = {
@@ -72,7 +73,6 @@
     {
       self,
       nixpkgs,
-      nixpkgs-unstable,
       home-manager-linux,
       kanata-tray,
       ghadiag,
@@ -84,7 +84,6 @@
 
       overlays = import ./overlays {
         inherit
-          nixpkgs-unstable
           kanata-tray
           ghadiag
           cntr
@@ -111,7 +110,7 @@
       formatter = forAllSystems (
         { pkgs, ... }:
         pkgs.writeShellScriptBin "dprint-fmt" ''
-          exec "${pkgs.lib.getExe pkgs.unstable.dprint}" fmt "$@"
+          exec "${pkgs.lib.getExe pkgs.dprint}" fmt "$@"
         ''
       );
 
@@ -154,14 +153,14 @@
           };
           niks3 = {
             type = "app";
-            program = pkgs.lib.getExe' pkgs.unstable.niks3 "niks3";
+            program = pkgs.lib.getExe' pkgs.niks3 "niks3";
           };
           list-shared-gomod-pkgs = {
             type = "app";
             program =
               let
                 script = pkgs.writeShellScriptBin "list-shared-gomod-pkgs" ''
-                  ${pkgs.lib.getExe pkgs.unstable.nix} eval --raw ".#packages.${system}" --apply 'ps: builtins.concatStringsSep "\n" (builtins.filter (n: ps.''${n}.passthru.shared-gomod or false) (builtins.attrNames ps))'
+                  ${pkgs.lib.getExe pkgs.nix} eval --raw ".#packages.${system}" --apply 'ps: builtins.concatStringsSep "\n" (builtins.filter (n: ps.''${n}.passthru.shared-gomod or false) (builtins.attrNames ps))'
                 '';
               in
               pkgs.lib.getExe script;

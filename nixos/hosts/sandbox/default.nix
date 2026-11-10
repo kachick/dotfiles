@@ -29,7 +29,6 @@
 
   # Quiet kernel and initrd boot logs for fast startup
   boot.consoleLogLevel = 3;
-  boot.initrd.verbose = false;
   boot.kernelParams = [
     "quiet"
     "systemd.show_status=auto"

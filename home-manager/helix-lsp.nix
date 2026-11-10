@@ -6,7 +6,7 @@
 let
   # Global dprint: https://github.com/dprint/dprint/issues/355
   dprint = {
-    command = pkgs.unstable.dprint.meta.mainProgram;
+    command = pkgs.dprint.meta.mainProgram;
     args = [
       "fmt"
       "--stdin"
@@ -33,14 +33,14 @@ in
         # - https://github.com/helix-editor/helix/issues/12721
         # So required to manually merge language-servers for each language
         typos = {
-          command = pkgs.unstable.typos-lsp.meta.mainProgram;
+          command = pkgs.typos-lsp.meta.mainProgram;
           config.config = "${../typos.toml}";
         };
 
         # TODO: Drop to use upstream definition once Helix released 26+:
         # https://github.com/helix-editor/helix/commit/14a8d46d41a31b05c5cef6bb90489a9dccce8950
         rumdl = {
-          command = pkgs.unstable.rumdl.meta.mainProgram; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
+          command = pkgs.rumdl.meta.mainProgram; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
           args = [
             "server"
           ];
@@ -60,7 +60,7 @@ in
         };
 
         tsc = {
-          command = pkgs.unstable.typescript_7.meta.mainProgram;
+          command = pkgs.typescript_7.meta.mainProgram;
           args = [
             "--lsp"
             "--stdio"

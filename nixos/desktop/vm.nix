@@ -43,6 +43,6 @@
 
     # Use latest to apply latest osinfo-db such as https://github.com/nixos/nixpkgs/pull/414620
     # It is the actual OS information for the VM, upstream is https://gitlab.com/libosinfo/osinfo-db
-    unstable.gnome-boxes
+    gnome-boxes
   ];
 }

@@ -17,7 +17,6 @@ in
   programs.starship.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
-  programs.television.enableZshIntegration = false; # Conflict with fzf by default
   programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
@@ -317,7 +316,7 @@ in
 
           # NOTE: Removed command existence check. Because of syntax highlighting prevents that troubles and I would keep minimum hooks
           zshaddhistory() {
-            "${lib.getExe pkgs.unstable.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
+            "${lib.getExe pkgs.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
           }
 
           # Same as .zshenv.local

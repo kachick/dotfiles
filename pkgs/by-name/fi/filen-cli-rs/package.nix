@@ -1,7 +1,7 @@
 {
   lib,
   fetchFromGitHub,
-  pkgs,
+  rustPlatform,
   pkg-config,
   sqlite,
   openssl,
@@ -12,10 +12,6 @@
 
 # This package is a personal fork of https://github.com/NixOS/nixpkgs/pull/563557
 
-let
-  # Use latest rustPlatform to make the upstream PR up-to-date easier
-  inherit (pkgs.unstable) rustPlatform;
-in
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "filen-cli-rs";
   version = "0.2.9";

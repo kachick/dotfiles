@@ -68,7 +68,7 @@
         bashInteractive
         # readline # needless and using it does not fix bash problems
         zsh
-        unstable.brush # Use unstable version because I maintain
+        brush # Use unstable version because I maintain
         starship
         file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
 
@@ -102,7 +102,7 @@
         # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
         msedit # `edit`
-        unstable.fresh-editor # `fresh`
+        fresh-editor # `fresh`
 
         micro
 
@@ -117,7 +117,7 @@
         dust # `dust`, alt du
         fd # alt find
         bottom # `btm`, alt top
-        unstable.herdr
+        herdr
         zellij
         pik # alt pkill
       ])

@@ -1,6 +1,6 @@
 {
   lib,
-  pkgs,
+  buildGo127Module,
   makeWrapper,
   fzf,
   ibus,
@@ -9,7 +9,6 @@
 
 let
   configPath = ../../../../config/mozc/ibus_config.textproto;
-  inherit (pkgs.unstable) buildGo127Module;
 in
 buildGo127Module (finalAttrs: {
   pname = "ibus-engine-selector";

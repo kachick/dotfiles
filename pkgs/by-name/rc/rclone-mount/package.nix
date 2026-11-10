@@ -5,7 +5,7 @@ pkgs.writeShellApplication rec {
   runtimeInputs = with pkgs; [
     coreutils # `mktemp`
     util-linux # `mountpoint`
-    unstable.rclone
+    rclone
   ];
   meta = {
     description = "Mount rclone to my usual directory";

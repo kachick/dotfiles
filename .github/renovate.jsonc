@@ -15,7 +15,6 @@
       ],
       "matchPackageNames": [
         "nixpkgs",
-        "nixpkgs-unstable",
         "home-manager-linux",
         "nixos-wsl"
       ],

@@ -1,6 +1,6 @@
 {
   lib,
-  pkgs,
+  buildGo127Module,
   fetchFromGitHub,
   versionCheckHook,
   nix-update-script,
@@ -8,10 +8,6 @@
 
 # This is a personal fork of https://github.com/NixOS/nixpkgs/pull/568617
 
-let
-  # Different Go version between nixpkgs, it uses 1.26, however I standardize to 1.27 in this repo
-  inherit (pkgs.unstable) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "gh-actions-lock";
   version = "0.4.1";

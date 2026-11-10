@@ -10,14 +10,14 @@
   nix,
 }:
 
-# Why overrideAttrs on top of pkgs.unstable.cloudflare-warp instead of a full fork?
+# Why overrideAttrs on top of pkgs.cloudflare-warp instead of a full fork?
 # 1. WARP depends heavily on upstream cloud services. Outdated clients may be blocked
 #    quickly when upstream changes or incidents happen (for example, CA trust issues).
 #    This repository needs to update it fast without waiting for nixpkgs channels.
-# 2. While nixos/modules/cloudflare-warp.nix also imports the module from nixpkgs-unstable,
+# 2. While nixos/modules/cloudflare-warp.nix enables the module,
 #    independent package updates can still cause small differences.
 # 3. Reusing packaging logic (patchelf, desktop items, runtime dependencies) from
-#    pkgs.unstable.cloudflare-warp minimizes drift from what the unstable NixOS module expects.
+#    pkgs.cloudflare-warp minimizes drift from what the NixOS module expects.
 #
 # Why decouple macOS (Darwin)?
 # - Upstream nixpkgs updates often slow down because of macOS packaging and hash sync.
@@ -36,7 +36,7 @@
 let
   version = "2026.8.2115.0";
 in
-pkgs.unstable.cloudflare-warp.overrideAttrs (previousAttrs: {
+pkgs.cloudflare-warp.overrideAttrs (previousAttrs: {
   inherit version;
 
   src = fetchurl {

@@ -30,7 +30,7 @@
             dash-to-dock
             # Don't use third party themes. See https://github.com/do-not-theme/do-not-theme.github.io for details
             # user-themes # the package name is not the `user-theme`, required `s` suffix
-            lock-keys
+            lock-keys-2
           ]
         );
 

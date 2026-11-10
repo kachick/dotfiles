@@ -1,5 +1,4 @@
 {
-  nixpkgs-unstable,
   kanata-tray,
   ghadiag,
   cntr,
@@ -7,7 +6,6 @@
 }:
 [
   (import ./local.nix)
-  (import ./unstable.nix nixpkgs-unstable)
   (import ./pinned.nix {
     inherit
       kanata-tray
