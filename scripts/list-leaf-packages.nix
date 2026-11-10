@@ -112,7 +112,7 @@ let
     "ShellCheck" = "shellcheck";
     "gnome-shell-extension-clipboard-history" = "gnomeExtensions.clipboard-history";
     "gnome-shell-extension-dash-to-dock" = "gnomeExtensions.dash-to-dock";
-    "gnome-shell-extension-lock-keys" = "gnomeExtensions.lock-keys";
+    "gnome-shell-extension-lock-keys" = "gnomeExtensions.lock-keys-2";
     "gnome-shell-extension-appindicator-support" = "gnomeExtensions.appindicator";
     "ibm-plex-mono" = "ibm-plex.mono";
     "ibm-plex-sans-japanese" = "ibm-plex.sans-jp";

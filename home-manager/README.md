@@ -5,6 +5,8 @@ These settings are exported as `homeManagerModules`.
 
 ## Notes on configuration files
 
+Do not use per-package `programs.<name>` modules. Install raw packages via `home.packages` and link config files using `xdg.configFile` or `home.file` to avoid breakages from nixpkgs updates.
+
 ### Where to put settings?
 
 For tools used only in Nix, you can write settings directly in Nix files here.

@@ -327,7 +327,7 @@
       appindicator
       clipboard-history
       dash-to-dock
-      lock-keys
+      lock-keys-2
     ]);
 
   # https://askubuntu.com/a/88947
