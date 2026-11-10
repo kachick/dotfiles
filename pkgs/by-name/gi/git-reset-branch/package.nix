@@ -1,13 +1,11 @@
 {
-  pkgs,
+  buildGo127Module,
+  gitMinimal,
   lib,
   makeWrapper,
   ...
 }:
 
-let
-  inherit (pkgs) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "git-reset-branch";
   version = "0.0.1";
@@ -19,15 +17,12 @@ buildGo127Module (finalAttrs: {
   ];
 
   nativeCheckInputs = [
-    pkgs.gitMinimal
+    gitMinimal
   ];
 
-  wrapperPath = lib.makeBinPath (
-    with pkgs;
-    [
-      gitMinimal
-    ]
-  );
+  wrapperPath = lib.makeBinPath [
+    gitMinimal
+  ];
 
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \

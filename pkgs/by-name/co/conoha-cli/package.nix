@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  pkgs,
+  buildGo127Module,
   fetchFromGitHub,
   installShellFiles,
   gitMinimal,
@@ -9,9 +9,6 @@
   nix-update-script,
 }:
 
-let
-  inherit (pkgs) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "conoha-cli";
   version = "0.8.0";

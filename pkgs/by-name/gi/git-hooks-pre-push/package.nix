@@ -1,13 +1,13 @@
 {
-  pkgs,
+  buildGo127Module,
+  gitMinimal,
   lib,
   makeWrapper,
+  typos,
+  betterleaks,
   ...
 }:
 
-let
-  inherit (pkgs) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "git-hooks-pre-push";
   version = "0.0.1";
@@ -18,14 +18,11 @@ buildGo127Module (finalAttrs: {
     makeWrapper
   ];
 
-  wrapperPath = lib.makeBinPath (
-    with pkgs;
-    [
-      gitMinimal
-      typos
-      betterleaks
-    ]
-  );
+  wrapperPath = lib.makeBinPath [
+    gitMinimal
+    typos
+    betterleaks
+  ];
 
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \

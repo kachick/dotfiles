@@ -1,12 +1,10 @@
 {
   lib,
   pkgs,
+  buildGo127Module,
   ...
 }:
 
-let
-  inherit (pkgs) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "git-log-fzf-ja";
   version = "0.0.1";

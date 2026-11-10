@@ -1,16 +1,12 @@
 { pkgs, ... }:
 
-let
-  # Use typos-lsp from nixpkgs
-  typos-lsp = pkgs.typos-lsp;
-in
 {
   default = pkgs.mkShellNoCC {
     env = {
       # Correct pkgs versions in the nixd inlay hints
       NIX_PATH = "nixpkgs=${pkgs.path}";
 
-      TYPOS_LSP_PATH = pkgs.lib.getExe typos-lsp; # For vscode typos extension
+      TYPOS_LSP_PATH = pkgs.lib.getExe pkgs.typos-lsp; # For vscode typos extension
 
       # Keep Go builds pure Go without requiring a C compiler in mkShellNoCC
       CGO_ENABLED = "0";
@@ -51,9 +47,9 @@ in
         ++ (with pkgs.local; [
           nix-hash-url
         ])
-        ++ [
+        ++ (with pkgs; [
           typos-lsp # For zed-editor typos extension
-        ]
+        ])
       ));
   };
 }
