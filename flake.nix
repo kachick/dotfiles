@@ -54,7 +54,7 @@
     };
 
     kanata-tray = {
-      url = "github:kachick/kanata-tray/96e686c7f04db4f0f7ca178a0c5e374c4bb2baff";
+      url = "github:kachick/kanata-tray/cgo-disabled";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -181,17 +181,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1789622732,
-        "narHash": "sha256-qqC0pg7Vab7L3XMKD45U/G5Vgu1LsxXwBlHDFmFvyW4=",
+        "lastModified": 1794324202,
+        "narHash": "sha256-dzRUe59VsPvUGxMli6hCSv8G+Ch8lJExyqtesIXhgvk=",
         "owner": "kachick",
         "repo": "kanata-tray",
-        "rev": "96e686c7f04db4f0f7ca178a0c5e374c4bb2baff",
+        "rev": "8302842cf1665c53d35e876ac8740f0ad228340f",
         "type": "github"
       },
       "original": {
         "owner": "kachick",
+        "ref": "cgo-disabled",
         "repo": "kanata-tray",
-        "rev": "96e686c7f04db4f0f7ca178a0c5e374c4bb2baff",
         "type": "github"
       }
     },
