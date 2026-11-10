@@ -31,21 +31,19 @@
 
           desktop-file-utils # `desktop-file-validate` as a linter
           kanata # Enable on devshell for using the --check as a linter
-        ])
-        ++ (with pkgs; [
+
           betterleaks
           typos
           dprint
           zizmor
           rumdl
           go_1_27
+
+          typos-lsp # For zed-editor typos extension
         ])
         ++ (with pkgs.pinned; [
           ghadiag
           iets
-        ])
-        ++ (with pkgs; [
-          typos-lsp # For zed-editor typos extension
         ])
       ));
   };
