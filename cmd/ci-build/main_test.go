@@ -371,6 +371,7 @@ func TestResolveStorePath(t *testing.T) {
 	t.Run("TildeSymlinkToStorePath", func(t *testing.T) {
 		tmpHome := t.TempDir()
 		t.Setenv("HOME", tmpHome)
+		t.Setenv("USERPROFILE", tmpHome)
 
 		profileDir := filepath.Join(tmpHome, ".local", "state", "nix", "profiles")
 		if err := os.MkdirAll(profileDir, 0o755); err != nil {
@@ -395,6 +396,7 @@ func TestResolveStorePath(t *testing.T) {
 func TestRunPush_RejectsUnresolvableTildePathBeforePush(t *testing.T) {
 	tmpHome := t.TempDir()
 	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
 	t.Setenv("NIKS3_SERVER_URL", "")
 
 	err := runPush([]string{"~/.local/state/nix/profiles/nonexistent"})
