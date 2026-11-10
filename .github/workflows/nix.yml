@@ -146,6 +146,8 @@ jobs:
           direnv allow .
           direnv export gha > "$GITHUB_ENV"
       - run: task ci-dev
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
   packages:
     name: 📦 Packages
