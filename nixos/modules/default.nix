@@ -5,7 +5,7 @@
   desktop = ./desktop.nix;
   desktop-unfree = ./desktop-unfree.nix;
   ephemeral = ../desktop/ephemeral.nix;
-  home-manager = inputs.home-manager-linux.nixosModules.home-manager;
+  home-manager = inputs.home-manager.nixosModules.home-manager;
   cloudflare-warp = ./cloudflare-warp.nix;
   swap = ./swap.nix;
 }

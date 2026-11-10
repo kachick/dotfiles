@@ -23,7 +23,7 @@ This makes it easy to use the same settings in environments that do not have Nix
   inputs = {
     dotfiles.url = "github:kachick/dotfiles";
     nixpkgs.follows = "dotfiles/nixpkgs";
-    home-manager.follows = "dotfiles/home-manager-linux";
+    home-manager.follows = "dotfiles/home-manager";
   };
 
   outputs =

@@ -132,7 +132,7 @@
         "type": "github"
       }
     },
-    "home-manager-linux": {
+    "home-manager": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -256,7 +256,7 @@
         "disko": "disko",
         "flake-compat": "flake-compat",
         "ghadiag": "ghadiag",
-        "home-manager-linux": "home-manager-linux",
+        "home-manager": "home-manager",
         "iets": "iets",
         "kanata-tray": "kanata-tray",
         "microvm": "microvm",

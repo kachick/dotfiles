@@ -17,34 +17,31 @@
         # https://github.com/NixOS/nix/issues/730#issuecomment-162323824
         bashInteractive
         go-task
+
+        nixd
+        nixf-diagnose
+        nix-update
+
+        shellcheck
+
+        trivy
+        skopeo
+
+        desktop-file-utils # `desktop-file-validate` as a linter
+        kanata # Enable on devshell for using the --check as a linter
+
+        betterleaks
+        typos
+        dprint
+        zizmor
+        rumdl
+        go_1_27
+
+        typos-lsp # For zed-editor typos extension
       ])
-      ++ (pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (
-        (with pkgs; [
-          nixd
-          nixf-diagnose
-          nix-update
-
-          shellcheck
-
-          trivy
-          skopeo
-
-          desktop-file-utils # `desktop-file-validate` as a linter
-          kanata # Enable on devshell for using the --check as a linter
-
-          betterleaks
-          typos
-          dprint
-          zizmor
-          rumdl
-          go_1_27
-
-          typos-lsp # For zed-editor typos extension
-        ])
-        ++ (with pkgs.pinned; [
-          ghadiag
-          iets
-        ])
-      ));
+      ++ (with pkgs.pinned; [
+        ghadiag
+        iets
+      ]);
   };
 }

@@ -27,7 +27,7 @@
     #
     # Why track only rolling release?: https://github.com/kachick/dotfiles/issues/1787
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
-    home-manager-linux = {
+    home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -78,7 +78,7 @@
     {
       self,
       nixpkgs,
-      home-manager-linux,
+      home-manager,
       kanata-tray,
       ghadiag,
       cntr,
@@ -94,7 +94,7 @@
           ghadiag
           cntr
           iets
-          home-manager-linux
+          home-manager
           ;
       };
 
@@ -152,7 +152,7 @@
         {
           home-manager = {
             type = "app";
-            program = pkgs.lib.getExe home-manager-linux.packages.${system}.home-manager;
+            program = pkgs.lib.getExe home-manager.packages.${system}.home-manager;
           };
           gen-nix-cache-conf = {
             type = "app";
@@ -190,7 +190,7 @@
 
       homeConfigurations = import ./home-manager {
         inherit
-          home-manager-linux
+          home-manager
           mkPkgs
           outputs
           ;

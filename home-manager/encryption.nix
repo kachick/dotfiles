@@ -18,7 +18,7 @@ in
 
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/services/gpg-agent.nix
   services.gpg-agent = {
-    enable = pkgs.stdenv.hostPlatform.isLinux;
+    enable = true;
 
     enableBashIntegration = true;
     enableZshIntegration = true;

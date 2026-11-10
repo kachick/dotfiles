@@ -15,7 +15,7 @@
       ],
       "matchPackageNames": [
         "nixpkgs",
-        "home-manager-linux",
+        "home-manager",
         "nixos-wsl"
       ],
       "enabled": false

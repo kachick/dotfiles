@@ -17,7 +17,7 @@ in
 # - id_*.pub: I CAN register them for different services.
 {
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/services/ssh-agent.nix
-  services.ssh-agent.enable = pkgs.stdenv.hostPlatform.isLinux;
+  services.ssh-agent.enable = true;
 
   home.sessionVariables = {
     # 'force' ignores $DISPLAY. 'prefer' is not enough

@@ -3,7 +3,7 @@
   ghadiag,
   cntr,
   iets,
-  home-manager-linux,
+  home-manager,
 }:
 final: _prev:
 let
@@ -53,6 +53,6 @@ in
     inherit (final) nix-update;
 
     # Pinning home-manager from the flake input
-    home-manager = home-manager-linux.packages.${system}.home-manager;
+    home-manager = home-manager.packages.${system}.home-manager;
   };
 }

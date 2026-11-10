@@ -3,7 +3,7 @@
   ghadiag,
   cntr,
   iets,
-  home-manager-linux,
+  home-manager,
 }:
 [
   (import ./local.nix)
@@ -13,7 +13,7 @@
       ghadiag
       cntr
       iets
-      home-manager-linux
+      home-manager
       ;
   })
   (import ./overrides { })
