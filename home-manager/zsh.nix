@@ -340,9 +340,9 @@ in
               done
 
               if [[ -n "$editor_job" ]]; then
-                # Leading space avoids adding fg command to history
-                BUFFER=" fg %$editor_job"
-                zle accept-line -w
+                # Direct fg avoids polluting session history without passing through BUFFER and accept-line
+                builtin fg %$editor_job
+                zle reset-prompt
               else
                 zle -M "no suspended editor found"
               fi
