@@ -319,7 +319,8 @@ in
             if [[ $#BUFFER -eq 0 ]]; then
               local target_editors=("hx" "helix" "vim" "nvim" "micro" "edit" "fresh" "nano" "emacs")
               if [[ -n "$EDITOR" ]]; then
-                target_editors+=("''${''${(Q)''${''${(z)EDITOR}[1]}}:t}")
+                local -a editor_words=(''${(z)EDITOR})
+                target_editors+=("''${''${(Q)editor_words[1]}:t}")
               fi
 
               local editor_job=""
@@ -329,8 +330,10 @@ in
               for jobnum in ''${(Onk)jobstates}; do
                 # Resume only suspended jobs to avoid pulling active background processes
                 if [[ "''${jobstates[$jobnum]}" == suspended* ]]; then
-                  local cmd="''${jobtexts[$jobnum]}"
-                  local bin="''${''${(Q)''${''${(z)cmd}[1]}}:t}"
+                  # Must assign to an array variable to treat single-word commands as a 1-element array.
+                  # Otherwise, nested ''${(z)cmd}[1] evaluates single-word strings by character index (e.g. "vim" -> "v").
+                  local -a words=(''${(z)jobtexts[$jobnum]})
+                  local bin="''${''${(Q)words[1]}:t}"
 
                   if (( ''${target_editors[(Ie)$bin]} )); then
                     editor_job="$jobnum"
