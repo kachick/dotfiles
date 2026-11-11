@@ -8,6 +8,8 @@ pkgs.writeShellApplication rec {
     "pipefail"
   ];
   text = (builtins.readFile ./${name}.bash) + ''
+    mkdir --parents /usr/lib/locale
+    ln --symbolic --force '${pkgs.glibcLocales}/lib/locale/locale-archive' '/usr/lib/locale/locale-archive'
     mkdir --parents /etc/containers
     ln --symbolic --force '${../../../../config/containers/policy.json}' '/etc/containers/policy.json'
     ln --symbolic --force '${../../../../config/tailscaled/defaults.conf}' '/etc/default/tailscaled'

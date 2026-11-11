@@ -21,5 +21,6 @@ chmod a-r /etc/ssh/ssh_config
 # (Ubuntu/Debian) reads unarchived locale directories under /usr/lib/locale.
 mkdir -p /usr/lib/locale
 localedef --no-archive -f UTF-8 -i en_DK /usr/lib/locale/en_DK.UTF-8
+localedef --no-archive -f UTF-8 -i ja_JP /usr/lib/locale/ja_JP.UTF-8
 
 # Might be put code below which requires to inject Nix Store PATH
