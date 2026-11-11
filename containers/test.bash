@@ -2,8 +2,59 @@
 
 set -euo pipefail
 
+print_help() {
+	cat <<'EOF'
+Usage: test.bash [OPTIONS] [IMAGE]
+
+Options:
+  --local [IMAGE]     Test a local image (default: localhost/provisioned-systemd-home)
+  --ghcr <TAG>        Test ghcr.io/kachick/home:<TAG>
+  --image <IMAGE>     Test a specific image directly
+  -h, --help          Show this help message
+EOF
+}
+
 test_container() {
-	local -r image="${1:-localhost/provisioned-systemd-home}"
+	local image="localhost/provisioned-systemd-home"
+
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		--ghcr)
+			if [[ -z "${2:-}" ]]; then
+				echo "Error: --ghcr requires a tag argument" >&2
+				exit 1
+			fi
+			image="ghcr.io/kachick/home:$2"
+			shift 2
+			;;
+		--image)
+			if [[ -z "${2:-}" ]]; then
+				echo "Error: --image requires an image argument" >&2
+				exit 1
+			fi
+			image="$2"
+			shift 2
+			;;
+		--local)
+			if [[ -n "${2:-}" && "${2:-}" != --* ]]; then
+				image="$2"
+				shift 2
+			else
+				image="localhost/provisioned-systemd-home"
+				shift 1
+			fi
+			;;
+		-h | --help)
+			print_help
+			exit 0
+			;;
+		*)
+			image="$1"
+			shift 1
+			;;
+		esac
+	done
+
 	echo "==> Testing container image: ${image}"
 
 	local -r container_id="$(podman run --detach --rm "${image}")"
@@ -39,4 +90,4 @@ test_container() {
 	echo "==> All container smoke tests passed!"
 }
 
-test_container "${1:-}"
+test_container "$@"

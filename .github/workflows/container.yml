@@ -264,7 +264,7 @@ jobs:
           You can test the interactive shell 🐚 as follows.
 
           ```bash
-          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox.bash') '${{ github.event.pull_request.head.sha }}'
+          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox.bash') --ghcr '${{ github.event.pull_request.head.sha }}'
           ```
 
           The package detail
