@@ -35,7 +35,7 @@ block-beta
 If you are using [Podman](https://podman.io/), you can test the pre-built [ubuntu container-image](containers) as follows.
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox-with-ghcr.bash) latest
+bash <(curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/containers/sandbox.bash) latest
 ```
 
 Or, you can directly use some commands with `nix run` without any installation steps.

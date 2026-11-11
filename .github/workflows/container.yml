@@ -89,7 +89,7 @@ jobs:
     uses: kachick/workflows/.github/workflows/reusable-minimize-pr-comments.yml@main # zizmor: ignore[unpinned-uses]
     with:
       pr-number: ${{ github.event_name == 'pull_request' && github.event.number || 0 }}
-      body-includes: 'sandbox-with-ghcr.bash'
+      body-includes: 'containers/sandbox.bash'
   build_and_push:
     name: 🔨📤 Build & Push
     # Do not set `cancel-in-progress: true` in main branch, it displays failure badges
@@ -264,7 +264,7 @@ jobs:
           You can test the interactive shell 🐚 as follows.
 
           ```bash
-          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox-with-ghcr.bash') '${{ github.event.pull_request.head.sha }}'
+          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox.bash') '${{ github.event.pull_request.head.sha }}'
           ```
 
           The package detail

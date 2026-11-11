@@ -193,7 +193,7 @@ tasks:
     vars:
       TAG: '{{index .MATCH 0}}'
     cmds:
-      - './containers/sandbox-with-ghcr.bash {{.TAG}}'
+      - './containers/sandbox.bash {{.TAG}}'
 
   build-container:
     cmds:
