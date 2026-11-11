@@ -32,4 +32,4 @@ jobs:
     with:
       package-name: home
       pr-number: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || inputs.pr-number }}
-      body-includes: 'sandbox-with-ghcr.bash'
+      body-includes: 'containers/sandbox.bash'
