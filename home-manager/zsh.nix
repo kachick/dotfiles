@@ -314,6 +314,49 @@ in
           bindkey -M vicmd '^F' rg-fzf-widget
           bindkey -M viins '^F' rg-fzf-widget
 
+          # Fancy Ctrl-Z: toggle between shell and suspended editor
+          fancy-ctrl-z() {
+            if [[ $#BUFFER -eq 0 ]]; then
+              local target_editors=("hx" "helix" "vim" "nvim" "micro" "edit" "fresh" "nano" "emacs")
+              if [[ -n "$EDITOR" ]]; then
+                target_editors+=("''${''${(Q)''${''${(z)EDITOR}[1]}}:t}")
+              fi
+
+              local editor_job=""
+              local jobnum
+
+              # Check jobs in reverse order (newest first: On)
+              for jobnum in ''${(Onk)jobstates}; do
+                # Resume only suspended jobs to avoid pulling active background processes
+                if [[ "''${jobstates[$jobnum]}" == suspended* ]]; then
+                  local cmd="''${jobtexts[$jobnum]}"
+                  local bin="''${''${(Q)''${''${(z)cmd}[1]}}:t}"
+
+                  if (( ''${target_editors[(Ie)$bin]} )); then
+                    editor_job="$jobnum"
+                    break
+                  fi
+                fi
+              done
+
+              if [[ -n "$editor_job" ]]; then
+                # Leading space avoids adding fg command to history
+                BUFFER=" fg %$editor_job"
+                zle accept-line -w
+              else
+                zle -M "no suspended editor found"
+              fi
+            else
+              zle push-input -w
+              zle clear-screen -w
+            fi
+          }
+
+          zle     -N            fancy-ctrl-z
+          bindkey -M emacs '^Z' fancy-ctrl-z
+          bindkey -M vicmd '^Z' fancy-ctrl-z
+          bindkey -M viins '^Z' fancy-ctrl-z
+
           # NOTE: Removed command existence check. Because of syntax highlighting prevents that troubles and I would keep minimum hooks
           zshaddhistory() {
             "${lib.getExe pkgs.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
