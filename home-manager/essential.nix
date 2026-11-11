@@ -168,6 +168,10 @@
 
   xdg.dataFile."tmpbin/.keep".text = "";
 
+  xdg.dataFile."chezmoi".text = ''
+    # Guard file to prevent chezmoi from creating a default source directory here.
+  '';
+
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 
   # Disabled by default from performance.
