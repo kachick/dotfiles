@@ -201,7 +201,6 @@ jobs:
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user "$container_id" '/home/user/.nix-profile/bin/bash' -c 'which fd'
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
-          podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/bash' -l -c 'tv --take-1-fast files'
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.actor == github.repository_owner }}

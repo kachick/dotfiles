@@ -12,7 +12,6 @@ USER user
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
 ENV PATH="/home/user/.nix-profile/bin:${PATH}"
-ENV XDG_RUNTIME_DIR="/run/user/30033"
 
 RUN mkdir -p ~/.local/state/nix/profiles
 
@@ -20,11 +19,11 @@ RUN mkdir -p ~/.local/state/nix/profiles
 COPY ./ /provisioner/dotfiles/
 COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
 
-# Ensure runtime directory for user 30033 is created by systemd-tmpfiles on boot
+# Ensure runtime directory for the user is created on boot and XDG_RUNTIME_DIR is set in login shells
 USER root
-RUN echo 'PATH="/home/user/.nix-profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"' > /etc/environment \
-	&& echo 'XDG_RUNTIME_DIR="/run/user/30033"' >> /etc/environment \
+RUN user_uid="$(id -u user)" \
 	&& mkdir -p /etc/tmpfiles.d \
-	&& echo 'd /run/user/30033 0700 user user -' > /etc/tmpfiles.d/user-runtime-dir.conf
+	&& echo "d /run/user/${user_uid} 0700 user user -" > /etc/tmpfiles.d/user-runtime-dir.conf \
+	&& echo 'if [ -z "${XDG_RUNTIME_DIR-}" ]; then export XDG_RUNTIME_DIR="/run/user/$(id -u)"; fi' > /etc/profile.d/xdg-runtime-dir.sh
 
 CMD ["/usr/lib/systemd/systemd", "--system"]

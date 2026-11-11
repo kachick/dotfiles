@@ -91,6 +91,9 @@
     # Source session variables before interactive check so non-interactive and
     # early shells have PATH configured. Do NOT put shell switching here (see GH-680).
     bashrcExtra = ''
+      if [ -z "''${XDG_RUNTIME_DIR-}" ]; then
+        export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+      fi
       if [ -z "''${__HM_SESS_VARS_SOURCED-}" ]; then
         if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
           . "$HOME/.nix-profile/etc/profile.d/nix.sh"
