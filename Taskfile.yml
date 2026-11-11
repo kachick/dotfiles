@@ -199,6 +199,13 @@ tasks:
     cmds:
       - './containers/build.bash'
 
+  test-container:
+    desc: Run container smoke tests against local or GHCR image
+    vars:
+      IMAGE: '{{.IMAGE | default "localhost/provisioned-systemd-home"}}'
+    cmds:
+      - './containers/test.bash {{.IMAGE}}'
+
   load-container-layered:
     desc: Build and stream-load the layered container image into podman
     cmds:
