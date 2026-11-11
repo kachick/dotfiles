@@ -88,6 +88,21 @@
       "exit"
     ];
 
+    # Source session variables before interactive check so non-interactive and
+    # early shells have PATH configured. Do NOT put shell switching here (see GH-680).
+    bashrcExtra = ''
+      if [ -z "''${__HM_SESS_VARS_SOURCED-}" ]; then
+        if [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+        elif [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then
+          . "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
+        fi
+        if [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+          . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+        fi
+      fi
+    '';
+
     # For interactive shells. In .bashrc and after early return
     # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/bash.nix#L271
     # And https://techracho.bpsinc.jp/hachi8833/2021_07_08/66396 may help to understand why .bashrc

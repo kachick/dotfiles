@@ -11,6 +11,8 @@ USER user
 # Docker/Podman doesn't set $USER in the USER instruction, which results in home-manager activation failure
 # https://stackoverflow.com/questions/54411218/docker-why-isnt-user-environment-variable-set
 ENV USER=user
+ENV PATH="/home/user/.nix-profile/bin:${PATH}"
+ENV XDG_RUNTIME_DIR="/run/user/30033"
 
 RUN mkdir -p ~/.local/state/nix/profiles
 
@@ -18,6 +20,11 @@ RUN mkdir -p ~/.local/state/nix/profiles
 COPY ./ /provisioner/dotfiles/
 COPY ./containers/needs_systemd.bash /provisioner/needs_systemd.bash
 
-# Should back to original of kachick/ubuntu-nix-systemd, we need to run systemd first
+# Ensure runtime directory for user 30033 is created by systemd-tmpfiles on boot
 USER root
+RUN echo 'PATH="/home/user/.nix-profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin"' > /etc/environment \
+	&& echo 'XDG_RUNTIME_DIR="/run/user/30033"' >> /etc/environment \
+	&& mkdir -p /etc/tmpfiles.d \
+	&& echo 'd /run/user/30033 0700 user user -' > /etc/tmpfiles.d/user-runtime-dir.conf
+
 CMD ["/usr/lib/systemd/systemd", "--system"]

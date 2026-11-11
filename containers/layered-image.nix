@@ -61,8 +61,10 @@ pkgs.dockerTools.buildLayeredImage {
   ++ corePackages;
 
   fakeRootCommands = ''
-    mkdir -p ./tmp ./etc ./etc/ssl/certs ./etc/nix ./bin ./usr/bin ./lib64 ./home/user
+    mkdir -p ./tmp ./etc ./etc/ssl/certs ./etc/nix ./bin ./usr/bin ./lib64 ./home/user ./run/user/1000
     chmod 1777 ./tmp
+    chmod 700 ./run/user/1000
+    chown 1000:1000 ./run/user/1000
 
     # User & Group setup
     # Include user in wheel group to satisfy trusted-users = [ "root" "@wheel" ] in nixos/nix.nix
@@ -112,6 +114,7 @@ pkgs.dockerTools.buildLayeredImage {
       "USER=user"
       "HOME=/home/user"
       "PATH=/home/user/.nix-profile/bin:/bin:/usr/bin"
+      "XDG_RUNTIME_DIR=/run/user/1000"
       "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
       "NIX_LD=${pkgs.stdenv.cc.bintools.dynamicLinker}"
       "NIX_LD_LIBRARY_PATH=${nixLdLibraries}/lib"
