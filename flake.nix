@@ -23,7 +23,7 @@
     #   - https://github.com/kachick/anylang-template/issues/17
     #   - https://discourse.nixos.org/t/differences-between-nix-channels/13998
     # How to update the revision
-    #   - `nix flake update --commit-lock-file` # https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-flake-update.html
+    #   - Run `task update` instead of direct `nix flake update` to keep transitive follows deduplicated via flake-edit
     #
     # Why track only rolling release?: https://github.com/kachick/dotfiles/issues/1787
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.zst";
