@@ -21,6 +21,7 @@
         nixd
         nixf-diagnose
         nix-update
+        flake-edit
 
         shellcheck
 
