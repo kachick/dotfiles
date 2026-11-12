@@ -69,7 +69,7 @@ jobs:
             # Lock first so new transitive inputs appear in the lockfile,
             # then let flake-edit follow deduplicate them and relock.
             nix flake lock
-            nix run .#flake-edit -- follow --non-interactive
+            nix run .#flake-edit -- --non-interactive follow --transitive
             nix fmt flake.nix
             nix flake lock
 

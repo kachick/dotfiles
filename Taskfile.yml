@@ -158,7 +158,7 @@ tasks:
     desc: Bump dependencies
     cmds:
       - nix flake update
-      - flake-edit follow --non-interactive
+      - flake-edit --non-interactive follow --transitive
       - task fmt
       - nix flake lock
       - |
