@@ -1,22 +1,56 @@
-# Home Manager Configuration
+# Home Manager
 
-This directory contains Home Manager configurations.
-These settings are exported as `homeManagerModules`.
+## Bootstrap on Ubuntu and Debian
 
-## Notes on configuration files
+```bash
+# List defined configurations
+nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.attrNames' | jq '.[]'
+```
 
-Do not use per-package `programs.<name>` modules. Install raw packages via `home.packages` and link config files using `xdg.configFile` or `home.file` to avoid breakages from nixpkgs updates.
+### Debian prerequisites
 
-### Where to put settings?
+```bash
+sudo apt update && sudo apt upgrade
+sudo apt install --assume-yes curl dbus-user-session # dbus-user-session is for podman
 
-For tools used only in Nix, you can write settings directly in Nix files here.
+# On WSL (reboot after setting):
+echo '
+[boot]
+systemd=true' | sudo tee /etc/wsl.conf
+```
 
-However, for tools shared with other OSs like Windows (e.g., `starship.toml`), I keep raw configuration files in the root `config/` directory.
-In these cases, Home Manager creates a symlink to the raw file.
+### Install Nix and apply Home Manager
 
-This makes it easy to use the same settings in environments that do not have Nix.
+```bash
+curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
 
-## How to use from other flakes (Inheritance)
+# Workaround: https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/
+mkdir -p ~/.local/state/nix/profiles
+bash
+
+NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
+
+# System-level config (https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
+sudoc nix run 'github:kachick/dotfiles#apply-system'
+sudoc tailscale up --ssh
+```
+
+### Podman on Ubuntu
+
+```bash
+# "shadow" in nixpkgs is not enough for rootless podman: https://github.com/NixOS/nixpkgs/issues/138423
+sudo apt-get install --assume-yes uidmap
+
+# Ensure cgroup v1 is disabled on WSL (see ../windows/WSL/README.md), then verify:
+podman run public.ecr.aws/debian/debian:stable-slim cat /etc/os-release
+```
+
+## Configuration Guidelines
+
+- Avoid `programs.<name>` modules when possible. Install packages via `home.packages` and link files in `config/` using `xdg.configFile` or `home.file` to avoid breakages from nixpkgs updates and share configs with Windows.
+- Use `xdg.writableConfigFile` ([home-manager/writable-config.nix](./writable-config.nix)) for apps that modify their own config files at runtime (e.g., Zed, Ghostty, SSH).
+
+## Inheritance
 
 ```nix
 {
@@ -28,7 +62,6 @@ This makes it easy to use the same settings in environments that do not have Nix
 
   outputs =
     {
-      self,
       nixpkgs,
       home-manager,
       dotfiles,
@@ -38,15 +71,10 @@ This makes it easy to use the same settings in environments that do not have Nix
       homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [
-          # Standard Desktop Linux set (Includes essential & dev CLI settings)
           dotfiles.homeManagerModules.desktop
-          # Add Linux specific tools
           dotfiles.homeManagerModules.linux
-
-          # Machine specific overrides
           { home.username = "user"; }
         ];
-        # Required for internal module cross-references
         extraSpecialArgs = {
           outputs = dotfiles;
         };
@@ -55,65 +83,41 @@ This makes it easy to use the same settings in environments that do not have Nix
 }
 ```
 
----
-
 ## FAQ
 
-Also read <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>
+See also <https://github.com/kachick/dotfiles/wiki/Nix-and-home-manager>.
 
-## How to get sha256 without `lib.fakeHash`?
-
-Use `iets prefetch`:
+### Prefetch hashes without `lib.fakeHash`
 
 ```bash
-# Fetch unpacked NAR hash (for fetchFromGitHub, fetchzip, or fetchTarball)
+# Unpacked NAR hash (fetchFromGitHub, fetchzip, fetchTarball)
 iets prefetch --unpack https://github.com/github/gh-actions-lock/archive/refs/tags/v0.4.1.tar.gz
 
-# Fetch raw file hash (for fetchurl)
+# Raw file hash (fetchurl)
 iets prefetch https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_2024.6.497-1_amd64.deb
-```
 
-Nix also provides a built-in command:
-
-```bash
+# Built-in alternative (adds file to local Nix store)
 nix store prefetch-file --json <URL> | jq -r .hash
 ```
 
-`iets prefetch` is preferred here because it prints only the SRI hash to standard output without adding the file to the local Nix store.
+### Convert JSON to Nix
 
-## How to convert JSON to Nix?
-
-See [this comment](https://gist.github.com/spencerpogo/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4999658#gistcomment-4999658)
+[Reference](https://gist.github.com/spencerpogo/0538252ed4b82d65e59115075369d34d?permalink_comment_id=4999658#gistcomment-4999658)
 
 ```bash
 nix-instantiate --eval -E 'builtins.fromJSON (builtins.readFile ./dprint.jsonc)' | nixfmt
 ```
 
-## How to make executable? `.text =` makes a sym, that links to non executable file
+### Make `home.file` executable
+
+[Reference](https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d65b202659e4988066b/modules/xsession.nix#L195C1-L197)
 
 ```nix
 home.file."path".executable = true;
 ```
 
-Read <https://github.com/nix-community/home-manager/blob/15043a65915bcc16ad207d65b202659e4988066b/modules/xsession.nix#L195C1-L197> as an example
+### Inspect store paths and resolve collisions
 
-## How to know and get the paths inside a pkg?
-
-`nix path-info` is a way, installing iTerm2 shell integration used it. Access /nix/store~ path, and `ls` helps you.
-
-## How to mix _-unstable and release-_ for different packages?
-
-See <https://github.com/nix-community/home-manager/issues/1538#issuecomment-1265293260>
-
-## How to resolve collisions?
-
-It maybe occurred with home-manager module and manually specified `pkgs.*`, try to remove the added package.
-
-- <https://github.com/kachick/dotfiles/issues/280>
-- <https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2>
-
-## Writable config management (HomeManagerInit pattern)
-
-To keep configurations writable for applications that have their own settings UI or require frequent manual adjustments (e.g., Zed, Ghostty, SSH), a pattern is used involving `onChange`.
-
-A module in `home-manager/writable-config.nix` automates this pattern. See the comments in that file for more details.
+- Store path inspection: `nix path-info <pkg>`
+- Mixing channels: <https://github.com/nix-community/home-manager/issues/1538#issuecomment-1265293260>
+- Package collisions ([GH-280](https://github.com/kachick/dotfiles/issues/280), [Discourse](https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2)): remove the duplicate entry from `home.packages` when a Home Manager module already provides it.

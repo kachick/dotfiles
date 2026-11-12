@@ -10,15 +10,10 @@ A helper command for Git 2.54+ config based hooks (`git hook`). It checks git co
 
 ## Why Not Skip Single Commits in the Hook
 
-This hook does not support skipping a single commit by revision flag or environment variable.
+This hook does not support skipping a single commit by revision flag or environment variable:
 
-- **Silent Leaks Are the Worst Risk**:
-  A false positive blocks a push, but a false negative leaks secrets.
-  Parsing revisions and excluding commits inside the hook adds complexity. Bugs in revision filtering or tool options (such as `--no-walk`) could let secrets pass quietly.
-- **Merge Commit Diff Quirks**:
-  Tools like `git log --no-walk` do not show diffs for merge commits by default. Handling merge commits correctly in custom hook code is easy to get wrong.
-- **Keep Hooks Simple**:
-  Hooks should stay simple, fast, and hard to break.
+- Parsing revisions and excluding commits inside the hook adds complexity. Bugs in revision filtering or tool options (such as `--no-walk`) could let secrets pass quietly.
+- Tools like `git log --no-walk` do not show diffs for merge commits by default. Handling merge commits in custom hook code is easy to get wrong.
 
 ## How to Skip a Hook for a Single Push
 
