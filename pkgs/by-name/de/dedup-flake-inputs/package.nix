@@ -1,14 +1,13 @@
 { pkgs, ... }:
 pkgs.writeShellApplication rec {
-  name = "post-bump-flake-lock";
+  name = "dedup-flake-inputs";
   text = builtins.readFile ./${name}.bash;
   runtimeInputs = with pkgs; [
     flake-edit
     dprint
     nix
-    local.bump_gomod
   ];
   meta = {
-    description = "Deduplicate transitive flake inputs, format, relock, and update Go packages after updating flake.lock";
+    description = "Deduplicate transitive flake inputs with flake-edit, format flake.nix, and relock";
   };
 }

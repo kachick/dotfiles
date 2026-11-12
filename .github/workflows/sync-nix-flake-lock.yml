@@ -67,11 +67,9 @@ jobs:
             fi
 
             # Lock first so new transitive inputs appear in the lockfile,
-            # then let flake-edit follow deduplicate them and relock.
+            # then let dedup-flake-inputs follow, format, and relock.
             nix flake lock
-            nix run .#flake-edit -- --non-interactive follow --transitive
-            nix fmt flake.nix
-            nix flake lock
+            nix run .#dedup-flake-inputs
 
             if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
               echo "Pushing updated flake.nix and flake.lock for ${branch}..."
