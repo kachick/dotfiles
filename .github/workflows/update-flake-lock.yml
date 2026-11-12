@@ -21,6 +21,12 @@ jobs:
     uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
-      post-commit-lock-file: ./scripts/post-bump-flake-lock.bash
+      # Fallback to bump_gomod when tested on PRs before post-bump-flake-lock.bash lands on the default branch
+      post-commit-lock-file: |
+        if [ -f ./scripts/post-bump-flake-lock.bash ]; then
+          ./scripts/post-bump-flake-lock.bash
+        else
+          nix run .#bump_gomod -- .
+        fi
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
