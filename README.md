@@ -29,6 +29,5 @@ task ghcr
 ## Bootstrapping
 
 ```bash
-# TODO: Realize Left-Right layout likely `walk`
-fzf --query README --bind 'start:beginning-of-line'
+walk ' README'
 ```

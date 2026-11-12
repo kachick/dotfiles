@@ -6,6 +6,7 @@ pkgs.writeShellApplication rec {
     fzf
     fd
     local.preview
+    local.leaf-markdown-viewer
   ];
   meta = {
     description = "Fuzzy finder for file path";
