@@ -1,8 +1,5 @@
 name: 🆙❄️
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/update-flake-lock.yml'
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
     # Every Monday 9:17 JST
@@ -21,12 +18,6 @@ jobs:
     uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
-      # Fallback to bump_gomod when tested on PRs before post-bump-flake-lock.bash lands on the default branch
-      post-commit-lock-file: |
-        if [ -f ./scripts/post-bump-flake-lock.bash ]; then
-          ./scripts/post-bump-flake-lock.bash
-        else
-          nix run .#bump_gomod -- .
-        fi
+      post-commit-lock-file: nix run .#post-bump-flake-lock
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
