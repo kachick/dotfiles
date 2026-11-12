@@ -66,11 +66,14 @@ jobs:
               continue
             fi
 
+            # Lock first so new transitive inputs appear in the lockfile,
+            # then let dedup-flake-inputs follow, format, and relock.
             nix flake lock
+            nix run .#dedup-flake-inputs
 
-            if ! git diff --exit-code flake.lock > /dev/null; then
-              echo "Pushing updated flake.lock for ${branch}..."
-              git add flake.lock
+            if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
+              echo "Pushing updated flake.nix and flake.lock for ${branch}..."
+              git add flake.nix flake.lock
               git commit -m "Sync flake.lock"
               git push origin "${branch}"
             else

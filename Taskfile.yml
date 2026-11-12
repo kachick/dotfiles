@@ -157,7 +157,13 @@ tasks:
   update:
     desc: Bump dependencies
     cmds:
-      - nix flake update --commit-lock-file
+      - nix flake update
+      - nix run .#dedup-flake-inputs
+      - |
+        if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
+          git commit --no-gpg-sign -m "flake.lock: Update" flake.nix flake.lock
+        fi
+      - nix run .#bump_gomod -- .
 
   help:
     desc: If forgot anything
