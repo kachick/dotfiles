@@ -1,33 +1,8 @@
-# Windows Subsystem for Linux
+# WSL2
 
-## How to install WSL2?
+## NixOS on WSL2
 
-winget does not support it, run as follows
-
-## How to open current directory in WSL2 with Windows Explorer?
-
-In WSL shell
-
-```bash
-explorer.exe .
-```
-
-## How to move on Windows folder from WSL2?
-
-```bash
-z "$(wslpath 'G:\GoogleDrive')"
-```
-
-## Login shell has been broken in WSL2
-
-```pwsh
-wsl --user root
-```
-
-## Setup NixOS on WSL2
-
-Use [NixOS](https://github.com/nix-community/NixOS-WSL).\
-You should remember that does not have `/etc/nixos/hardware-configuration.nix` and the [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md).
+Uses [NixOS-WSL](https://github.com/nix-community/NixOS-WSL) (no `/etc/nixos/hardware-configuration.nix`; [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md)):
 
 ```pwsh
 wsl.exe --install --no-distribution
@@ -40,18 +15,33 @@ wsl.exe --distribution "NixOS"
 sudo nix-channel --update
 ```
 
-## Setup Ubuntu on WSL2
+## Ubuntu on WSL2
 
 ```pwsh
 wsl.exe --install "Ubuntu-26.04"
 wsl.exe --distribution "Ubuntu-26.04"
 ```
 
-Setup nix and activate home-manager as written in [home-manager/README.md](../../home-manager/README.md) with `user@wsl-ubuntu`
+Set up Nix and Home Manager (`user@wsl-ubuntu`) following [home-manager/README.md](../../home-manager/README.md).
 
-Disable cgroup v1 as putting [.wslconfig](.wslconfig) and restart for setting up podman
+Disable cgroup v1 with [.wslconfig](.wslconfig) for rootless Podman:
 
 ```pwsh
-winit-conf.exe generate -path=windows/WSL/.wslconfig  > %UserProfile%\.wslconfig
+winit-conf.exe generate -path=windows/WSL/.wslconfig > %UserProfile%\.wslconfig
 wsl.exe --shutdown
+```
+
+## Tips
+
+```bash
+# Open current WSL directory in Windows Explorer
+explorer.exe .
+
+# Jump to a Windows path from WSL
+z "$(wslpath 'G:\GoogleDrive')"
+```
+
+```pwsh
+# Recover when login shell is broken in WSL
+wsl --user root
 ```
