@@ -179,6 +179,10 @@
             type = "app";
             program = pkgs.lib.getExe outputs.packages.${system}.microvm-sandbox;
           };
+          flake-edit = {
+            type = "app";
+            program = pkgs.lib.getExe pkgs.flake-edit;
+          };
         }
       );
 

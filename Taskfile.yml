@@ -157,6 +157,8 @@ tasks:
   update:
     desc: Bump dependencies
     cmds:
+      - flake-edit follow --non-interactive
+      - task fmt
       - nix flake update --commit-lock-file
 
   help:

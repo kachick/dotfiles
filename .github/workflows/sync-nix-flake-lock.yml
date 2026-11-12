@@ -66,11 +66,13 @@ jobs:
               continue
             fi
 
+            nix run .#flake-edit -- follow --non-interactive
+            nix fmt flake.nix
             nix flake lock
 
-            if ! git diff --exit-code flake.lock > /dev/null; then
-              echo "Pushing updated flake.lock for ${branch}..."
-              git add flake.lock
+            if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
+              echo "Pushing updated flake.nix and flake.lock for ${branch}..."
+              git add flake.nix flake.lock
               git commit -m "Sync flake.lock"
               git push origin "${branch}"
             else
