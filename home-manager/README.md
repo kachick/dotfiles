@@ -3,6 +3,89 @@
 This directory contains Home Manager configurations.
 These settings are exported as `homeManagerModules`.
 
+## Bootstrap on Ubuntu and Debian
+
+List defined configurations:
+
+```bash
+nix eval --json 'github:kachick/dotfiles#homeConfigurations' --apply 'builtins.attrNames' | jq '.[]'
+```
+
+### Ubuntu
+
+1. Install and configure Nix:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/install-nix.bash | bash
+   ```
+
+1. If you forgot to add something during the installation phase, manually add it.\
+   Some configurations require a reboot to be applied, such as `trusted-users`.
+
+1. Make sure there is a nix directory that is used in the home-manager.\
+   This is a workaround, See [the thread](https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3) for details
+
+   ```bash
+   mkdir -p ~/.local/state/nix/profiles
+   ```
+
+1. Restart current shell to load Nix as a PATH
+
+   ```bash
+   bash
+   ```
+
+1. Apply dotfiles
+
+   ```bash
+   NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
+   ```
+
+1. Apply system level dotfiles with [sudo for nix command](https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
+
+   ```bash
+   sudoc nix run 'github:kachick/dotfiles#apply-system'
+   ```
+
+1. Enable tailscale ssh if required
+
+   ```bash
+   sudoc tailscale up --ssh
+   ```
+
+#### Podman on Ubuntu
+
+1. Install uidmap without Nix for use of podman even if the podman will be installed from nixpkgs
+
+   - "shadow" in nixpkg is not enough for podman - <https://github.com/NixOS/nixpkgs/issues/138423>
+
+   ```bash
+   sudo apt-get install --assume-yes uidmap
+   ```
+
+1. Make sure the cgroup v1 is disabled if you are on WSL, See [the docs](../windows/WSL/README.md)
+
+1. Make sure you can run containers as `podman run public.ecr.aws/debian/debian:stable-slim cat /etc/os-release`
+
+### Debian
+
+After installing missing tools, you can complete the same steps as on Ubuntu
+
+```bash
+sudo apt update
+sudo apt upgrade
+sudo apt install --assume-yes curl
+sudo apt install --assume-yes dbus-user-session # For podman
+```
+
+Remember to set special config and reboot if you are on WSL
+
+```bash
+echo '
+[boot]
+systemd=true' | sudo tee /etc/wsl.conf
+```
+
 ## Notes on configuration files
 
 Do not use per-package `programs.<name>` modules. Install raw packages via `home.packages` and link config files using `xdg.configFile` or `home.file` to avoid breakages from nixpkgs updates.

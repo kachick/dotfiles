@@ -47,7 +47,7 @@ wsl.exe --install "Ubuntu-26.04"
 wsl.exe --distribution "Ubuntu-26.04"
 ```
 
-Setup nix and activate home-manager as written in [README](../README.md) with `user@wsl-ubuntu`
+Setup nix and activate home-manager as written in [home-manager/README.md](../../home-manager/README.md) with `user@wsl-ubuntu`
 
 Disable cgroup v1 as putting [.wslconfig](.wslconfig) and restart for setting up podman
 

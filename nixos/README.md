@@ -3,6 +3,31 @@
 This directory contains NixOS system configurations.
 These settings are exported as `nixosModules`, so you can inherit and reuse them from other flakes.
 
+## Hosts and Bootstrap
+
+List defined hostnames:
+
+```bash
+nix eval --json 'github:kachick/dotfiles#nixosConfigurations' --apply 'builtins.attrNames' | jq '.[]'
+```
+
+Using flake style is disabled in NixOS by default and [you should inject git command to use flakes](https://www.reddit.com/r/NixOS/comments/18jyd0r/cleanest_way_to_run_git_commands_on_fresh_nixos/).
+
+**NOTICE: This command might drop all existing users except those defined in the configurations.**
+
+```bash
+nix --extra-experimental-features 'nix-command flakes' shell 'github:NixOS/nixpkgs/nixos-26.05#gitMinimal' \
+	--command sudo nixos-rebuild switch \
+	--flake "github:kachick/dotfiles#$(hostname)" \
+	--show-trace
+```
+
+Finally, reboot the device:
+
+```bash
+sudo reboot now
+```
+
 ## How to use from other flakes (Inheritance)
 
 Here is a minimal example of `flake.nix` for your repository.
