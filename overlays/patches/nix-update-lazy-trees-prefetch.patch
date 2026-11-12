@@ -1,0 +1,35 @@
+From: Kenichi Kamiya <kachick1@gmail.com>
+Subject: [PATCH] options: prefetch flake store path if unmaterialized (Nix 2.35 lazy-trees)
+
+In Nix 2.35, lazy-trees became the default behavior, so `nix flake metadata`
+no longer materializes the git tree in /nix/store/. Downstream evaluation
+via `eval.nix` fails with "No such file or directory" when reading the
+store path.
+
+If the store path reported by `nix flake metadata` does not exist on disk,
+run `nix flake prefetch` to realize it.
+
+Upstream issue: https://github.com/Mic92/nix-update/issues/687
+---
+ nix_update/options.py | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/nix_update/options.py b/nix_update/options.py
+--- a/nix_update/options.py
++++ b/nix_update/options.py
+@@ -122,6 +122,14 @@ def get_flake_store_path(import_path: str) -> str | None:
+         if not isinstance(path, str):
+             return None
+ 
++        if not Path(path).exists():
++            subprocess.run(
++                ["nix", "flake", "prefetch"],
++                cwd=import_path,
++                capture_output=True,
++                check=True,
++            )
++
+         flake_dir = _metadata_flake_dir(metadata)
+         if flake_dir:
+             return str(Path(path) / flake_dir)
+-- 
