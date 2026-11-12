@@ -67,6 +67,8 @@
     cntr = {
       url = "github:Mic92/cntr/2.1.0";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.treefmt-nix.follows = "";
+      inputs.fenix.follows = "";
     };
 
     iets = {
