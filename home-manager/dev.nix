@@ -32,6 +32,7 @@
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
         ghq
+        jujutsu # `jj`
         direnv
         hexyl # hex viewer
         sad

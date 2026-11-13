@@ -111,6 +111,19 @@ in
         ff = "only";
       };
 
+      # Not enabling `rerere.autoUpdate`. Reusing an old resolution should be reviewed before staging it.
+      rerere = {
+        enabled = true;
+      };
+
+      merge = {
+        conflictStyle = "zdiff3";
+      };
+
+      rebase = {
+        updateRefs = true;
+      };
+
       branch = {
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
