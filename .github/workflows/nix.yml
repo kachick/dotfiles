@@ -21,7 +21,7 @@ on:
       - 'typos.toml'
       - '!**.md'
   pull_request:
-    types: [labeled, opened, synchronize, reopened]
+    types: [opened, synchronize, reopened]
     paths:
       - '.github/workflows/nix.yml'
       - '.github/actions/**'
@@ -61,8 +61,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event.action == 'labeled' }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.event.action != 'labeled' }}
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
   NIX_ABORT_ON_WARN: '1'
@@ -70,7 +70,7 @@ env:
 jobs:
   changes:
     name: 🧭 Changes
-    if: github.event.action != 'labeled' && inputs.target != 'nixos-iso'
+    if: inputs.target != 'nixos-iso'
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
@@ -96,7 +96,7 @@ jobs:
 
   inspect:
     name: 🔍 Inspect
-    if: github.event.action != 'labeled' && (inputs.target == '' || inputs.target == 'all')
+    if: inputs.target == '' || inputs.target == 'all'
     # Only on Linux is enough to check the flake
     runs-on: ubuntu-26.04
     timeout-minutes: 30
@@ -122,7 +122,7 @@ jobs:
 
   devShell:
     name: 🐚
-    if: github.event.action != 'labeled' && (inputs.target == '' || inputs.target == 'all')
+    if: inputs.target == '' || inputs.target == 'all'
     runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
@@ -352,13 +352,11 @@ jobs:
 
   nixos-iso:
     name: 💿 NixOS ISO
-    # Trigger on:
-    # 1. Schedule or manual dispatch (when target is 'all' or 'nixos-iso')
-    # 2. Pull request ONLY IF the 'nixos-iso' label is present
+    # Trigger on schedule or manual dispatch (when target is 'all' or 'nixos-iso')
+    # Label-triggered PR runs live in nix-labeler.yml so labeled events do not overwrite nix.yml check status
     if: >-
       github.event_name == 'schedule' ||
-      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso')) ||
-      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'nixos-iso'))
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso'))
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -394,8 +392,7 @@ jobs:
       !failure() &&
       !cancelled() &&
       github.event_name == 'pull_request' &&
-      (contains(github.event.pull_request.labels.*.name, 'ci-nix-diff') ||
-       (github.event.action != 'labeled' && needs.changes.outputs.flake-lock == 'true'))
+      needs.changes.outputs.flake-lock == 'true'
     permissions:
       contents: read
       pull-requests: write # Required for commenting closure diffs on PRs

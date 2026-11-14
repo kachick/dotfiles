@@ -1,0 +1,60 @@
+name: ❄️ Labeler
+on:
+  pull_request:
+    types:
+      - labeled
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NIX_ABORT_ON_WARN: '1'
+
+jobs:
+  nixos-iso:
+    name: 💿 NixOS ISO
+    if: github.event.label.name == 'nixos-iso'
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+        with:
+          # ISO image closure is huge and artifact is uploaded separately
+          hestia-read-only: 'true'
+      - name: Logging disk space before build
+        run: df -h
+      - name: Build NixOS ISO
+        run: |
+          nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
+      - name: Logging disk space after build
+        run: df -h
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          path: result/iso/*.iso
+          archive: false
+
+  diff:
+    name: ↔️ Diff
+    if: github.event.label.name == 'ci-nix-diff'
+    permissions:
+      contents: read
+      pull-requests: write # Required for commenting closure diffs on PRs
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main # zizmor: ignore[unpinned-uses]
+    with:
+      runs-on: ubuntu-26.04
+      targets: |
+        devShells.x86_64-linux.default
+        nixosConfigurations.algae.config.system.build.toplevel
+        homeConfigurations."github-actions@ubuntu-26.04".activationPackage
