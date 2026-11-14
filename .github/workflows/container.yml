@@ -6,9 +6,8 @@ on:
     # Don't add branch triggers; this workflow is resource-intensive and requires considering concurrency.
     # branches:
     #   - main
-  pull_request:
-    types:
-      - labeled
+  # Label-triggered PR runs live in labeler.yml so unrelated labels do not start or cancel this workflow
+  workflow_call:
   schedule:
     # Every 23:42 JST # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

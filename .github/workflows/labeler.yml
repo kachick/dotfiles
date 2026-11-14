@@ -1,4 +1,4 @@
-name: ❄️ Labeler
+name: 🏷️ Labeler
 on:
   pull_request:
     types:
@@ -58,3 +58,12 @@ jobs:
         devShells.x86_64-linux.default
         nixosConfigurations.algae.config.system.build.toplevel
         homeConfigurations."github-actions@ubuntu-26.04".activationPackage
+
+  deploy-staging:
+    name: ⬢🦭 Staging
+    if: github.event.label.name == 'deploy-staging'
+    permissions:
+      contents: read
+      packages: write # Required for pushing container images to GHCR
+      pull-requests: write # Required for posting and minimizing PR comments
+    uses: $/.github/workflows/container.yml

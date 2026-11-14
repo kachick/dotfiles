@@ -353,7 +353,7 @@ jobs:
   nixos-iso:
     name: 💿 NixOS ISO
     # Trigger on schedule or manual dispatch (when target is 'all' or 'nixos-iso')
-    # Label-triggered PR runs live in nix-labeler.yml so labeled events do not overwrite nix.yml check status
+    # Label-triggered PR runs live in labeler.yml so labeled events do not overwrite nix.yml check status
     if: >-
       github.event_name == 'schedule' ||
       (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso'))
