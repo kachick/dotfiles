@@ -10,7 +10,7 @@ buildGo127Module (finalAttrs: {
 
   __structuredAttrs = true;
 
-  vendorHash = "sha256-2VmZeKyTS3R0cLPtjPYqz3AhJEOIqYh2wAGZotkaTOo=";
+  vendorHash = "sha256-k/qRQykTmtKBdYeT1vtKXNVTjPkhzjYeJgiXR3zQ/js=";
   src =
     with lib.fileset;
     toSource {
