@@ -153,6 +153,50 @@
     };
   };
 
+  # Route guest DNS through the default gateway when the host runs a DNS proxy on port 53.
+  #
+  # WHY not hardcode gateway IPs or rely on SLiRP DHCP DNS directly:
+  # SLiRP forwards DHCP DNS to only the first nameserver in host /etc/resolv.conf, which
+  # fails when an inactive VPN entry sits at the top. Probing the runtime default gateway
+  # avoids hardcoded subnets and keeps DHCP DNS untouched on hosts without a local proxy.
+  systemd.services."sandbox-host-dns" = {
+    description = "Prefer host DNS proxy at default gateway when available";
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "systemd-networkd.service"
+      "systemd-resolved.service"
+    ];
+    wants = [
+      "systemd-networkd.service"
+      "systemd-resolved.service"
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+    };
+    script =
+      let
+        probePort = pkgs.writeShellScript "probe-dns-port" ''
+          exec 3<>"/dev/tcp/$1/53"
+          exec 3>&-
+        '';
+      in
+      ''
+        set -eu
+        for _ in $(${pkgs.coreutils}/bin/seq 1 50); do
+          route=$(${pkgs.iproute2}/bin/ip -4 route show default | ${pkgs.gawk}/bin/awk '$1 == "default" { gw = ""; dev = ""; for (i = 1; i <= NF; i++) { if ($i == "via") gw = $(i + 1); else if ($i == "dev") dev = $(i + 1); } if (gw != "" && dev != "") { print gw, dev; exit; } }')
+          if [ -n "$route" ]; then
+            read -r gw dev <<< "$route"
+            if ${pkgs.coreutils}/bin/timeout 1 ${probePort} "$gw" 2>/dev/null; then
+              ${pkgs.systemd}/bin/resolvectl dns "$dev" "$gw"
+            fi
+            exit 0
+          fi
+          ${pkgs.coreutils}/bin/sleep 0.1
+        done
+      '';
+  };
+
   # Normal user account in sandbox without hardcoded UID
   users.users.user = {
     isNormalUser = true;
