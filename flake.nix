@@ -127,8 +127,19 @@
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        { pkgs, system }:
-        # Don't include unfree packages, it will fail in `nix flake check`
+        { system, ... }:
+        let
+          pkgs = import nixpkgs {
+            inherit system overlays;
+            config.allowUnfreePredicate =
+              pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "antigravity-cli"
+                "cloudflare-warp"
+                "ludii-bin"
+              ];
+          };
+        in
         (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
         // {
           container-layered = import ./containers/layered-image.nix {
@@ -136,8 +147,6 @@
             homeConfigurations = outputs.homeConfigurations;
             corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
-        }
-        // (pkgs.lib.optionalAttrs (system == "x86_64-linux") {
           microvm-sandbox =
             pkgs.runCommand "microvm-sandbox"
               {
@@ -147,7 +156,7 @@
                 mkdir -p $out/bin
                 ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
               '';
-        })
+        }
       );
 
       apps = forAllSystems (

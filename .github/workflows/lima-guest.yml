@@ -5,7 +5,8 @@ on:
     branches: [main]
     paths:
       - 'config/lima/**'
-      - 'home-manager/lima-*.nix'
+      - 'home-manager/lima-guest.nix'
+      - 'home-manager/vm-host.nix'
       - 'nixos/nix.nix'
       - 'pkgs/by-name/ge/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'
@@ -13,7 +14,8 @@ on:
   pull_request:
     paths:
       - 'config/lima/**'
-      - 'home-manager/lima-*.nix'
+      - 'home-manager/lima-guest.nix'
+      - 'home-manager/vm-host.nix'
       - 'nixos/nix.nix'
       - 'pkgs/by-name/ge/gen-nix-cache-conf/**'
       - 'scripts/install-nix.bash'

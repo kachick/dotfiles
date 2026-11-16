@@ -1,6 +1,6 @@
 # Lima
 
-Linked to `~/.lima/` via [home-manager/lima-host.nix](../../home-manager/lima-host.nix).
+Linked to `~/.lima/` via [home-manager/vm-host.nix](../../home-manager/vm-host.nix).
 
 ## Base Environment
 

@@ -72,6 +72,7 @@ tasks:
     cmds:
       - nix build .#nixosConfigurations.moss.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.desktop-free.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.sandbox.config.system.build.toplevel --dry-run
 

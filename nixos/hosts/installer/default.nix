@@ -1,6 +1,5 @@
 {
   modulesPath,
-  pkgs,
   lib,
   outputs,
   ...
@@ -46,18 +45,12 @@ in
   };
 
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.nixos = {
-      imports = [
-        ../../../home-manager/ephemeral.nix
-        ../../../home-manager/nixos-desktop-set.nix
-        { home.username = "nixos"; }
-      ];
-    };
-    extraSpecialArgs = { inherit pkgs outputs; };
+  home-manager.users.nixos = {
+    imports = [
+      ../../../home-manager/ephemeral.nix
+      ../../../home-manager/nixos-desktop-set.nix
+      { home.username = "nixos"; }
+    ];
   };
 
   system.stateVersion = "26.05";

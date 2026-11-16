@@ -9,7 +9,6 @@
   imports = [
     ./font.nix
     ./vm.nix
-    ./game.nix
   ];
 
   xdg = {
