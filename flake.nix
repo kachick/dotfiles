@@ -127,17 +127,32 @@
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        { pkgs, system }:
+        { pkgs, ... }:
+        let
+          isFreePackage =
+            pkg:
+            let
+              licenses = pkg.meta.license or pkgs.lib.licenses.free;
+            in
+            if pkgs.lib.isAttrs licenses && licenses ? "licenseType" then
+              pkgs.lib.licenses.isFree licenses
+            else if pkgs.lib.isAttrs licenses then
+              licenses.free or true
+            else if pkgs.lib.isString licenses then
+              true
+            else
+              pkgs.lib.all (l: l.free or true) (pkgs.lib.toList licenses);
+
+          allLocalAndPinned = pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local;
+        in
         # Don't include unfree packages, it will fail in `nix flake check`
-        (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
+        (pkgs.lib.filterAttrs (_: isFreePackage) allLocalAndPinned)
         // {
           container-layered = import ./containers/layered-image.nix {
             inherit pkgs;
             homeConfigurations = outputs.homeConfigurations;
             corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
-        }
-        // (pkgs.lib.optionalAttrs (system == "x86_64-linux") {
           microvm-sandbox =
             pkgs.runCommand "microvm-sandbox"
               {
@@ -147,7 +162,14 @@
                 mkdir -p $out/bin
                 ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
               '';
-        })
+        }
+      );
+
+      legacyPackages = forAllSystems (
+        { pkgs, ... }:
+        {
+          inherit (pkgs) local pinned;
+        }
       );
 
       apps = forAllSystems (

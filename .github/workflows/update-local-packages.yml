@@ -93,7 +93,7 @@ jobs:
       # This addresses the "path ...-patched-nixpkgs-unstable.drv is not valid" error in GHA.
       - name: Pre-evaluate package
         run: |
-          nix eval --raw --impure ".#${PACKAGE}.pname"
+          nix eval --raw --impure ".#local.${PACKAGE}.pname"
         env:
           PACKAGE: ${{ matrix.package }}
           NIXPKGS_ALLOW_UNFREE: '1'
@@ -104,14 +104,14 @@ jobs:
         run: |
           msg_file="$(mktemp)"
           if [[ "${PACKAGE}" == "antigravity-cli" ]]; then
-            old_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
-            nix run --impure ".#${PACKAGE}.passthru.updateScript"
-            new_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
+            old_version="$(nix eval --raw --impure ".#local.${PACKAGE}.version")"
+            nix run --impure ".#local.${PACKAGE}.passthru.updateScript"
+            new_version="$(nix eval --raw --impure ".#local.${PACKAGE}.version")"
             if [[ "${old_version}" != "${new_version}" ]]; then
               echo "${PACKAGE}: ${old_version} -> ${new_version}" > "${msg_file}"
             fi
           else
-            nix-update --flake "${PACKAGE}" --use-update-script --write-commit-message "${msg_file}"
+            nix-update --flake "legacyPackages.x86_64-linux.local.${PACKAGE}" --use-update-script --write-commit-message "${msg_file}"
           fi
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .

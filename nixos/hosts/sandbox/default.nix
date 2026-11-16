@@ -17,16 +17,6 @@
 
   system.stateVersion = "26.05";
 
-  # Allow unfree packages for agent tools in sandbox
-  nixpkgs.allowedUnfreePackageNames = [
-    "antigravity-cli"
-  ];
-
-  # System packages for agent development
-  environment.systemPackages = [
-    pkgs.local.antigravity-cli
-  ];
-
   # Quiet kernel and initrd boot logs for fast startup
   boot.consoleLogLevel = 3;
   boot.kernelParams = [
@@ -53,12 +43,19 @@
     mem = 4096;
     vcpu = 4;
 
-    # Share host nix-store and repos directory
+    # Share host nix-store, system profile, and repos directory
     shares = [
       {
         tag = "ro-store";
         source = "/nix/store";
         mountPoint = "/nix/.ro-store";
+        proto = "9p";
+        readOnly = true;
+      }
+      {
+        tag = "host-sw";
+        source = "/run/current-system/sw";
+        mountPoint = "/run/host-system-sw";
         proto = "9p";
         readOnly = true;
       }
@@ -184,27 +181,25 @@
     export ZDOTDIR="''${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
   '';
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.user = {
-      imports = [
-        outputs.homeManagerModules.ephemeral
-        outputs.homeManagerModules.dev
-        outputs.homeManagerModules.containers
-        ({ ... }: {
-          # The host repos mount creates /home/user/repos before HM activation.
-          # Disable repos/.keep to avoid permission errors when managing repos directory.
-          home.file."repos/.keep".enable = false;
+  home-manager.users.user = {
+    imports = [
+      outputs.homeManagerModules.ephemeral
+      outputs.homeManagerModules.dev
+      outputs.homeManagerModules.containers
+      ({ ... }: {
+        # The host repos mount creates /home/user/repos before HM activation.
+        # Disable repos/.keep to avoid permission errors when managing repos directory.
+        home.file."repos/.keep".enable = false;
 
-          # Disable 9p-slow compinit in sandbox for instant shell startup
-          programs.zsh.enableCompletion = lib.mkForce false;
-        })
-      ];
-    };
-    extraSpecialArgs = {
-      inherit pkgs outputs;
-    };
+        # Disable 9p-slow compinit in sandbox for instant shell startup
+        programs.zsh.enableCompletion = lib.mkForce false;
+
+        # Expose host-installed tools (such as antigravity-cli on unfree desktop hosts)
+        # without baking unfree packages into the sandbox closure.
+        home.sessionPath = [
+          "/run/host-system-sw/bin"
+        ];
+      })
+    ];
   };
 }
