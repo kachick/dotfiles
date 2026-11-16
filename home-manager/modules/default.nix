@@ -22,8 +22,7 @@
   systemd = ../systemd.nix;
   wsl = ../wsl.nix;
   lima-guest = ../lima-guest.nix;
-  lima-host = ../lima-host.nix;
-  microvm-host = ../microvm-host.nix;
+  vm-host = ../vm-host.nix;
 
   overlays = {
     nixpkgs.overlays = [ overlays.default ];

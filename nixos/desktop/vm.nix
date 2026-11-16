@@ -1,4 +1,4 @@
-# This file defines GUI VM management on NixOS desktop. See also lima related files in home-manager
+# This file defines GUI VM management on NixOS desktop. See also home-manager/vm-host.nix
 
 { pkgs, ... }:
 {

@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  outputs,
   ...
 }:
 let
@@ -20,6 +21,7 @@ in
       # lima package includes qemu in the PATH.
       # But it is required to specify qemu in your Linux. See GH-1049 and NixOS config for details.
       lima
+      outputs.packages.${pkgs.stdenv.hostPlatform.system}.microvm-sandbox
     ];
 
     # Lima and the yaml config does not have importing feature. However it prefers some files to realize overriding.
