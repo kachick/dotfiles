@@ -153,36 +153,42 @@
     };
   };
 
-  # Route guest DNS through the default gateway when the host runs a DNS proxy on port 53.
+  # Route guest DNS through the default gateway when the host exposes a DNS proxy on port 5354.
   #
-  # WHY not hardcode gateway IPs or rely on SLiRP DHCP DNS directly:
-  # SLiRP forwards DHCP DNS to only the first nameserver in host /etc/resolv.conf, which
-  # fails when an inactive VPN entry sits at the top. Probing the runtime default gateway
-  # avoids hardcoded subnets and keeps DHCP DNS untouched on hosts without a local proxy.
-  systemd.services."sandbox-host-dns" = {
-    description = "Prefer host DNS proxy at default gateway when available";
-    wantedBy = [ "multi-user.target" ];
-    after = [
-      "systemd-networkd.service"
-      "systemd-resolved.service"
-    ];
-    wants = [
-      "systemd-networkd.service"
-      "systemd-resolved.service"
-    ];
-    path = [ pkgs.iproute2 ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script =
-      let
-        probePort = pkgs.writeShellScript "probe-dns-port" ''
-          exec 3<>"/dev/tcp/$1/53"
-          exec 3>&-
-        '';
-      in
-      ''
+  # WHY DNAT port 53 to 5354 instead of querying port 53 or hardcoding IPs:
+  # libslirp intercepts packets sent to the gateway on port 53 and forwards them to the
+  # first nameserver in host /etc/resolv.conf, which breaks when an inactive VPN entry sits
+  # at the top. Redirecting gateway port 53 to 5354 in guest OUTPUT bypasses that hijack
+  # while probing the runtime default gateway avoids hardcoded subnets and keeps DHCP DNS
+  # untouched on hosts without the proxy.
+  systemd.services."sandbox-host-dns" =
+    let
+      proxyPort = 5354;
+      probePort = pkgs.writeShellScript "probe-dns-proxy" ''
+        exec 3<>"/dev/tcp/$1/${toString proxyPort}"
+        exec 3>&-
+      '';
+    in
+    {
+      description = "Prefer host DNS proxy at default gateway when available";
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "systemd-networkd.service"
+        "systemd-resolved.service"
+      ];
+      wants = [
+        "systemd-networkd.service"
+        "systemd-resolved.service"
+      ];
+      path = [
+        pkgs.iproute2
+        pkgs.iptables
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
         set -eu
         for _ in $(seq 1 50); do
           gw=""
@@ -204,6 +210,11 @@
 
           if [ -n "$gw" ] && [ -n "$dev" ]; then
             if timeout 1 ${probePort} "$gw" 2>/dev/null; then
+              for proto in udp tcp; do
+                if ! iptables -t nat -C OUTPUT -d "$gw" -p "$proto" --dport 53 -j DNAT --to-destination "$gw:${toString proxyPort}" 2>/dev/null; then
+                  iptables -t nat -A OUTPUT -d "$gw" -p "$proto" --dport 53 -j DNAT --to-destination "$gw:${toString proxyPort}"
+                fi
+              done
               resolvectl dns "$dev" "$gw"
             fi
             exit 0
@@ -211,7 +222,7 @@
           sleep 0.1
         done
       '';
-  };
+    };
 
   # Normal user account in sandbox without hardcoded UID
   users.users.user = {
