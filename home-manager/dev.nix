@@ -152,8 +152,14 @@
 
   xdg.configFile."rumdl/rumdl.toml".source = ../config/rumdl/rumdl.toml;
 
+  # Native Ruby extensions link via RPATH to /nix/store paths for libruby and C libraries.
+  # User gem directories are outside Nix GC roots, so Ruby updates or dependency rebuilds plus GC break them with LoadError.
+  # - Why only `extensions`: keeps pure-Ruby global installs (like `irb`) working without Nix gem packaging
+  #   or `ruby.withPackages` (which drops Ruby 4.0 bundled gems from GEM_PATH).
+  # - Why no global `BUNDLE_PATH`: default `bundle gem` `.gitignore` rules lack `vendor/bundle`;
+  #   separate project gems per repo in `.envrc` via `direnv_layout_dir` instead.
   xdg.dataFile."gem/ruby/${baseNameOf pkgs.ruby_4_0.gemPath}/extensions".text = ''
-    # Block global Ruby C-extension gems; they link to /nix/store libruby patch paths and break with LoadError after Ruby updates.
-    # Install only pure-Ruby gems globally, and keep project gems inside each repository with BUNDLE_PATH.
+    # Block global Ruby C-extension gems; they link via RPATH to /nix/store paths that Nix GC removes on updates or rebuilds.
+    # Install only pure-Ruby gems globally, and separate project gems per repository with BUNDLE_PATH.
   '';
 }
