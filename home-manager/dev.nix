@@ -151,4 +151,8 @@
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   xdg.configFile."rumdl/rumdl.toml".source = ../config/rumdl/rumdl.toml;
+
+  xdg.dataFile."gem/ruby".text = ''
+    # Guard file to prevent accidental global gem or bundler installs outside repositories.
+  '';
 }
