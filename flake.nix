@@ -101,18 +101,7 @@
           ;
       };
 
-      mkPkgs =
-        system:
-        import nixpkgs {
-          inherit system overlays;
-          config.allowUnfreePredicate =
-            pkg:
-            builtins.elem (nixpkgs.lib.getName pkg) [
-              "antigravity-cli"
-              "cloudflare-warp"
-              "ludii-bin"
-            ];
-        };
+      mkPkgs = system: import nixpkgs { inherit system overlays; };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
@@ -138,7 +127,19 @@
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
       packages = forAllSystems (
-        { pkgs, ... }:
+        { system, ... }:
+        let
+          pkgs = import nixpkgs {
+            inherit system overlays;
+            config.allowUnfreePredicate =
+              pkg:
+              builtins.elem (nixpkgs.lib.getName pkg) [
+                "antigravity-cli"
+                "cloudflare-warp"
+                "ludii-bin"
+              ];
+          };
+        in
         (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
         // {
           container-layered = import ./containers/layered-image.nix {

@@ -189,7 +189,7 @@ else if lib.isAttrs licenses then
 else if lib.isString licenses then
   true
 else
-  lib.all (l: l.free or true) (lib.toList licenses)
+  lib.all (l: l.free or true) licenses
 `, repoRoot, arch, arch, pname)
 
 	cmd := exec.Command("nix", "eval", "--impure", "--expr", expr)
@@ -240,114 +240,14 @@ func runNixos(args []string) error {
 }
 
 func handleBuiltPaths(targetName string, isFree bool, outPaths []string) error {
-	if !isFree {
-		fmt.Printf("Skipping output path recording and niks3 push for unfree target: %s\n", targetName)
-		return nil
-	}
-	if err := verifyClosureFree(targetName, outPaths); err != nil {
-		return err
-	}
 	if outPathsDir := os.Getenv("CI_BUILD_OUT_PATHS_DIR"); outPathsDir != "" {
+		if !isFree {
+			fmt.Printf("Skipping output path recording for unfree package: %s\n", targetName)
+			return nil
+		}
 		return recordOutPaths(outPathsDir, targetName, outPaths)
 	}
 	return maybePushToNiks3(targetName, isFree, outPaths)
-}
-
-func getKnownUnfreePackageNames() ([]string, error) {
-	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
-	if err != nil {
-		return nil, fmt.Errorf("failed to detect repository root: %w", err)
-	}
-	repoRoot := strings.TrimSpace(string(repoRootBytes))
-
-	expr := fmt.Sprintf(`
-let
-  flake = builtins.getFlake "%s";
-  system = builtins.currentSystem;
-  lib = flake.inputs.nixpkgs.lib;
-  localPkgs = flake.packages.${system} or { };
-  isFree = pkg:
-    let
-      licenses = pkg.meta.license or lib.licenses.free;
-    in
-    if lib.isAttrs licenses && licenses ? "licenseType" then
-      lib.licenses.isFree licenses
-    else if lib.isAttrs licenses then
-      licenses.free or true
-    else if lib.isString licenses then
-      true
-    else
-      lib.all (l: l.free or true) (lib.toList licenses);
-  unfreeLocalNames = builtins.attrNames (lib.filterAttrs (_: pkg: !(isFree pkg)) localPkgs);
-  nixosAllowed = builtins.concatLists (
-    map (cfg: cfg.config.nixpkgs.allowedUnfreePackageNames or [ ]) (builtins.attrValues flake.nixosConfigurations)
-  );
-in
-lib.unique (unfreeLocalNames ++ nixosAllowed)
-`, repoRoot)
-
-	cmd := exec.Command("nix", "eval", "--impure", "--json", "--expr", expr)
-	cmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
-	out, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("evaluating known unfree package names: %w", err)
-	}
-	var names []string
-	if err := json.Unmarshal(out, &names); err != nil {
-		return nil, fmt.Errorf("parsing unfree package names JSON: %w", err)
-	}
-	return names, nil
-}
-
-func findUnfreePathsInClosure(closurePaths []string, unfreeNames []string) []string {
-	var matched []string
-	for _, p := range closurePaths {
-		base := filepath.Base(p)
-		// Strip 32-char Nix store hash and hyphen: "<hash>-<name>"
-		if len(base) <= 33 || base[32] != '-' {
-			continue
-		}
-		storeName := base[33:]
-		for _, unfree := range unfreeNames {
-			if storeName == unfree || hasVersionPrefix(storeName, unfree) {
-				matched = append(matched, p)
-				break
-			}
-		}
-	}
-	sort.Strings(matched)
-	return matched
-}
-
-func hasVersionPrefix(storeName, pkgName string) bool {
-	if !strings.HasPrefix(storeName, pkgName+"-") {
-		return false
-	}
-	rest := storeName[len(pkgName)+1:]
-	return len(rest) > 0 && rest[0] >= '0' && rest[0] <= '9'
-}
-
-func verifyClosureFree(targetName string, outPaths []string) error {
-	if len(outPaths) == 0 {
-		return nil
-	}
-	args := append([]string{"path-info", "--recursive", "--"}, outPaths...)
-	out, err := exec.Command("nix", args...).Output()
-	if err != nil {
-		return fmt.Errorf("querying closure for %s: %w", targetName, err)
-	}
-	closurePaths := strings.Fields(string(out))
-
-	unfreeNames, err := getKnownUnfreePackageNames()
-	if err != nil {
-		return fmt.Errorf("checking unfree packages for %s: %w", targetName, err)
-	}
-
-	offending := findUnfreePathsInClosure(closurePaths, unfreeNames)
-	if len(offending) > 0 {
-		return fmt.Errorf("refusing to cache %s: closure contains unfree store path(s): %s", targetName, strings.Join(offending, ", "))
-	}
-	return nil
 }
 
 func recordOutPaths(dir string, targetName string, outPaths []string) error {
@@ -651,9 +551,6 @@ func runPush(args []string) error {
 			fmt.Printf("No recorded output paths found in %s, skipping niks3 push\n", *fromDir)
 			return nil
 		}
-		if err := verifyClosureFree("recorded-paths", paths); err != nil {
-			return err
-		}
 		return maybePushToNiks3("recorded-paths", true, paths)
 	}
 
@@ -673,10 +570,6 @@ func runPush(args []string) error {
 			return err
 		}
 		paths = append(paths, resolved)
-	}
-
-	if err := verifyClosureFree("manual-push", paths); err != nil {
-		return err
 	}
 
 	if err := maybePushToNiks3("manual-push", true, paths); err != nil {
