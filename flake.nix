@@ -101,7 +101,18 @@
           ;
       };
 
-      mkPkgs = system: import nixpkgs { inherit system overlays; };
+      mkPkgs =
+        system:
+        import nixpkgs {
+          inherit system overlays;
+          config.allowUnfreePredicate =
+            pkg:
+            builtins.elem (nixpkgs.lib.getName pkg) [
+              "antigravity-cli"
+              "cloudflare-warp"
+              "ludii-bin"
+            ];
+        };
 
       # Candidates: https://github.com/NixOS/nixpkgs/blob/nixos-26.05/lib/systems/flake-systems.nix
       forAllSystems =
@@ -128,25 +139,7 @@
 
       packages = forAllSystems (
         { pkgs, ... }:
-        let
-          isFreePackage =
-            pkg:
-            let
-              licenses = pkg.meta.license or pkgs.lib.licenses.free;
-            in
-            if pkgs.lib.isAttrs licenses && licenses ? "licenseType" then
-              pkgs.lib.licenses.isFree licenses
-            else if pkgs.lib.isAttrs licenses then
-              licenses.free or true
-            else if pkgs.lib.isString licenses then
-              true
-            else
-              pkgs.lib.all (l: l.free or true) (pkgs.lib.toList licenses);
-
-          allLocalAndPinned = pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local;
-        in
-        # Don't include unfree packages, it will fail in `nix flake check`
-        (pkgs.lib.filterAttrs (_: isFreePackage) allLocalAndPinned)
+        (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
         // {
           container-layered = import ./containers/layered-image.nix {
             inherit pkgs;
@@ -163,11 +156,6 @@
                 ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
               '';
         }
-      );
-
-      legacyPackages = forAllSystems (
-        { pkgs, ... }:
-        pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
       );
 
       apps = forAllSystems (

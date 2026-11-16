@@ -146,7 +146,7 @@ func runPackage(args []string) error {
 		if err := evalCmd.Run(); err != nil {
 			fmt.Printf("No passthru.tests found for %s, skipping.\n", pname)
 		} else {
-			testAttr := fmt.Sprintf("legacyPackages.%s.%s.passthru.tests", arch, pname)
+			testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
 			testCmd := exec.Command("nix-build", "--no-keep-build-log", "--attr", testAttr)
 			if !isFree {
 				testCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
@@ -179,7 +179,7 @@ let
   flake = builtins.getFlake "%s";
   pkgs = flake.inputs.nixpkgs.legacyPackages.%s;
   lib = pkgs.lib;
-  pkg = flake.legacyPackages.%s.%s;
+  pkg = flake.packages.%s.%s;
   licenses = pkg.meta.license or lib.licenses.free;
 in
 if lib.isAttrs licenses && licenses ? "licenseType" then
@@ -265,7 +265,7 @@ let
   flake = builtins.getFlake "%s";
   system = builtins.currentSystem;
   lib = flake.inputs.nixpkgs.lib;
-  localPkgs = flake.legacyPackages.${system} or { };
+  localPkgs = flake.packages.${system} or { };
   isFree = pkg:
     let
       licenses = pkg.meta.license or lib.licenses.free;

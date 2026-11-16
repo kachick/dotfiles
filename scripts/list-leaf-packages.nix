@@ -102,9 +102,7 @@ let
     map (p: p.pname or (p.name or "unknown")) allInputs;
 
   # Dynamically collect all in-repo local packages from flake outputs to exclude
-  localPackages =
-    (builtins.attrNames flake.outputs.packages.${system})
-    ++ (builtins.attrNames flake.outputs.legacyPackages.${system});
+  localPackages = builtins.attrNames flake.outputs.packages.${system};
 
   # Common mappings where pname differs from the nixpkgs top-level attribute name
   pnameToAttr = {
