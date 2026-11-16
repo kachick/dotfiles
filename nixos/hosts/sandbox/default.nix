@@ -153,6 +153,77 @@
     };
   };
 
+  # Route guest DNS through the default gateway when the host exposes a DNS proxy on port 5354.
+  #
+  # WHY DNAT port 53 to 5354 instead of querying port 53 or hardcoding IPs:
+  # libslirp intercepts packets sent to the gateway on port 53 and forwards them to the
+  # first nameserver in host /etc/resolv.conf, which breaks when an inactive VPN entry sits
+  # at the top. Redirecting gateway port 53 to 5354 in guest OUTPUT bypasses that hijack
+  # while probing the runtime default gateway avoids hardcoded subnets and keeps DHCP DNS
+  # untouched on hosts without the proxy.
+  systemd.services."sandbox-host-dns" =
+    let
+      proxyPort = 5354;
+      probePort = pkgs.writeShellScript "probe-dns-proxy" ''
+        exec 3<>"/dev/tcp/$1/${toString proxyPort}"
+        exec 3>&-
+      '';
+    in
+    {
+      description = "Prefer host DNS proxy at default gateway when available";
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "systemd-networkd.service"
+        "systemd-resolved.service"
+      ];
+      wants = [
+        "systemd-networkd.service"
+        "systemd-resolved.service"
+      ];
+      path = [
+        pkgs.iproute2
+        pkgs.iptables
+      ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
+      script = ''
+        set -eu
+        for _ in $(seq 1 50); do
+          gw=""
+          dev=""
+          while read -r -a tokens; do
+            [ "''${tokens[0]:-}" = "default" ] || continue
+            gw=""
+            dev=""
+            for ((i = 1; i < ''${#tokens[@]}; i++)); do
+              case "''${tokens[i]}" in
+                via) gw="''${tokens[i + 1]:-}" ;;
+                dev) dev="''${tokens[i + 1]:-}" ;;
+              esac
+            done
+            if [ -n "$gw" ] && [ -n "$dev" ]; then
+              break
+            fi
+          done < <(ip -4 route show default)
+
+          if [ -n "$gw" ] && [ -n "$dev" ]; then
+            if timeout 1 ${probePort} "$gw" 2>/dev/null; then
+              for proto in udp tcp; do
+                if ! iptables -t nat -C OUTPUT -d "$gw" -p "$proto" --dport 53 -j DNAT --to-destination "$gw:${toString proxyPort}" 2>/dev/null; then
+                  iptables -t nat -A OUTPUT -d "$gw" -p "$proto" --dport 53 -j DNAT --to-destination "$gw:${toString proxyPort}"
+                fi
+              done
+              resolvectl dns "$dev" "$gw"
+            fi
+            exit 0
+          fi
+          sleep 0.1
+        done
+      '';
+    };
+
   # Normal user account in sandbox without hardcoded UID
   users.users.user = {
     isNormalUser = true;
