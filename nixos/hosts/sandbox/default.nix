@@ -170,6 +170,7 @@
       "systemd-networkd.service"
       "systemd-resolved.service"
     ];
+    path = [ pkgs.iproute2 ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
@@ -183,16 +184,31 @@
       in
       ''
         set -eu
-        for _ in $(${pkgs.coreutils}/bin/seq 1 50); do
-          route=$(${pkgs.iproute2}/bin/ip -4 route show default | ${pkgs.gawk}/bin/awk '$1 == "default" { gw = ""; dev = ""; for (i = 1; i <= NF; i++) { if ($i == "via") gw = $(i + 1); else if ($i == "dev") dev = $(i + 1); } if (gw != "" && dev != "") { print gw, dev; exit; } }')
-          if [ -n "$route" ]; then
-            read -r gw dev <<< "$route"
-            if ${pkgs.coreutils}/bin/timeout 1 ${probePort} "$gw" 2>/dev/null; then
-              ${pkgs.systemd}/bin/resolvectl dns "$dev" "$gw"
+        for _ in $(seq 1 50); do
+          gw=""
+          dev=""
+          while read -r -a tokens; do
+            [ "''${tokens[0]:-}" = "default" ] || continue
+            gw=""
+            dev=""
+            for ((i = 1; i < ''${#tokens[@]}; i++)); do
+              case "''${tokens[i]}" in
+                via) gw="''${tokens[i + 1]:-}" ;;
+                dev) dev="''${tokens[i + 1]:-}" ;;
+              esac
+            done
+            if [ -n "$gw" ] && [ -n "$dev" ]; then
+              break
+            fi
+          done < <(ip -4 route show default)
+
+          if [ -n "$gw" ] && [ -n "$dev" ]; then
+            if timeout 1 ${probePort} "$gw" 2>/dev/null; then
+              resolvectl dns "$dev" "$gw"
             fi
             exit 0
           fi
-          ${pkgs.coreutils}/bin/sleep 0.1
+          sleep 0.1
         done
       '';
   };
