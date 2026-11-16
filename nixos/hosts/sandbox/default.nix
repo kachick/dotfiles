@@ -252,6 +252,14 @@
     export ZDOTDIR="''${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
   '';
 
+  # Expose host-installed tools (such as antigravity-cli on unfree desktop hosts)
+  # without baking unfree packages into the sandbox closure.
+  # Append via extraInit rather than prepending via home.sessionPath so guest
+  # /run/wrappers/bin (setuid sudo) and guest profiles keep precedence.
+  environment.extraInit = lib.mkAfter ''
+    export PATH="$PATH:/run/host-system-sw/bin"
+  '';
+
   home-manager.users.user = {
     imports = [
       outputs.homeManagerModules.ephemeral
@@ -264,12 +272,6 @@
 
         # Disable 9p-slow compinit in sandbox for instant shell startup
         programs.zsh.enableCompletion = lib.mkForce false;
-
-        # Expose host-installed tools (such as antigravity-cli on unfree desktop hosts)
-        # without baking unfree packages into the sandbox closure.
-        home.sessionPath = [
-          "/run/host-system-sw/bin"
-        ];
       })
     ];
   };
