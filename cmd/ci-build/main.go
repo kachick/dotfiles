@@ -111,9 +111,6 @@ func runPackage(args []string) error {
 	}
 
 	buildTarget := fmt.Sprintf(".#%s", pname)
-	if !isFree {
-		buildTarget = fmt.Sprintf(".#legacyPackages.%s.local.%s", arch, pname)
-	}
 	var outBuf bytes.Buffer
 	buildArgs := []string{"build", buildTarget, "--no-link", "--print-out-paths", "--no-keep-build-log", "--show-trace"}
 	var buildEnv []string
@@ -137,7 +134,7 @@ func runPackage(args []string) error {
 	if *skipTests {
 		fmt.Printf("Skipping tests for %s as requested.\n", pname)
 	} else {
-		evalTarget := fmt.Sprintf("%s.passthru.tests", buildTarget)
+		evalTarget := fmt.Sprintf(".#%s.passthru.tests", pname)
 		evalArgs := []string{"eval", evalTarget}
 		if !isFree {
 			evalArgs = append(evalArgs, "--impure")
@@ -149,10 +146,7 @@ func runPackage(args []string) error {
 		if err := evalCmd.Run(); err != nil {
 			fmt.Printf("No passthru.tests found for %s, skipping.\n", pname)
 		} else {
-			testAttr := fmt.Sprintf("packages.%s.%s.passthru.tests", arch, pname)
-			if !isFree {
-				testAttr = fmt.Sprintf("legacyPackages.%s.local.%s.passthru.tests", arch, pname)
-			}
+			testAttr := fmt.Sprintf("legacyPackages.%s.%s.passthru.tests", arch, pname)
 			testCmd := exec.Command("nix-build", "--no-keep-build-log", "--attr", testAttr)
 			if !isFree {
 				testCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
@@ -185,8 +179,7 @@ let
   flake = builtins.getFlake "%s";
   pkgs = flake.inputs.nixpkgs.legacyPackages.%s;
   lib = pkgs.lib;
-  allPkgs = flake.packages.%s // flake.legacyPackages.%s.local;
-  pkg = allPkgs.%s;
+  pkg = flake.legacyPackages.%s.%s;
   licenses = pkg.meta.license or lib.licenses.free;
 in
 if lib.isAttrs licenses && licenses ? "licenseType" then
@@ -197,7 +190,7 @@ else if lib.isString licenses then
   true
 else
   lib.all (l: l.free or true) (lib.toList licenses)
-`, repoRoot, arch, arch, arch, pname)
+`, repoRoot, arch, arch, pname)
 
 	cmd := exec.Command("nix", "eval", "--impure", "--expr", expr)
 	cmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
@@ -272,7 +265,7 @@ let
   flake = builtins.getFlake "%s";
   system = builtins.currentSystem;
   lib = flake.inputs.nixpkgs.lib;
-  localPkgs = flake.legacyPackages.${system}.local or { };
+  localPkgs = flake.legacyPackages.${system} or { };
   isFree = pkg:
     let
       licenses = pkg.meta.license or lib.licenses.free;

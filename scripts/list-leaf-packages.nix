@@ -104,7 +104,7 @@ let
   # Dynamically collect all in-repo local packages from flake outputs to exclude
   localPackages =
     (builtins.attrNames flake.outputs.packages.${system})
-    ++ (builtins.attrNames flake.outputs.legacyPackages.${system}.local);
+    ++ (builtins.attrNames flake.outputs.legacyPackages.${system});
 
   # Common mappings where pname differs from the nixpkgs top-level attribute name
   pnameToAttr = {

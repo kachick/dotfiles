@@ -167,9 +167,7 @@
 
       legacyPackages = forAllSystems (
         { pkgs, ... }:
-        {
-          inherit (pkgs) local pinned;
-        }
+        pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local
       );
 
       apps = forAllSystems (

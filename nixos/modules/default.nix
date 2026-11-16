@@ -4,6 +4,8 @@
   hardware = ../hardware.nix;
   desktop = ./desktop.nix;
   desktop-unfree = ../desktop/unfree.nix;
+  game = ../desktop/game.nix;
+  game-unfree = ../desktop/game-unfree.nix;
   ephemeral = ../desktop/ephemeral.nix;
   home-manager =
     { pkgs, outputs, ... }:

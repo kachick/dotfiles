@@ -26,7 +26,7 @@ func TestUpdateScripts_FlakeArg(t *testing.T) {
 let
   flake = builtins.getFlake (toString ./.);
   system = builtins.currentSystem;
-  pkgs = flake.packages.${system} // flake.legacyPackages.${system}.local;
+  pkgs = flake.legacyPackages.${system};
   config = builtins.fromTOML (builtins.readFile ./pkgs/list.toml);
   lib = flake.inputs.nixpkgs.lib;
 

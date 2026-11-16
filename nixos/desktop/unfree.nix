@@ -48,17 +48,11 @@
     google-chrome
 
     local.antigravity-cli
-    local.ludii-bin
   ];
-
-  programs.steam.enable = true;
 
   nixpkgs.allowedUnfreePackageNames = [
     "google-chrome"
     "vscode"
     "antigravity-cli"
-    "ludii-bin"
-    "steam"
-    "steam-unwrapped"
   ];
 }
