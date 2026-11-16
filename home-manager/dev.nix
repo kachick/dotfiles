@@ -152,7 +152,8 @@
 
   xdg.configFile."rumdl/rumdl.toml".source = ../config/rumdl/rumdl.toml;
 
-  xdg.dataFile."gem/ruby".text = ''
-    # Guard file to prevent accidental global gem or bundler installs outside repositories.
+  xdg.dataFile."gem/ruby/${baseNameOf pkgs.ruby_4_0.gemPath}/extensions".text = ''
+    # Block global Ruby C-extension gems; they link to /nix/store libruby patch paths and break with LoadError after Ruby updates.
+    # Install only pure-Ruby gems globally, and keep project gems inside each repository with BUNDLE_PATH.
   '';
 }
