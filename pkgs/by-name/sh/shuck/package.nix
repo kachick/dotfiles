@@ -11,7 +11,7 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "shuck";
-  version = "0.2.3";
+  version = "0.2.11";
 
   __structuredAttrs = true;
 
@@ -19,10 +19,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "ewhauser";
     repo = "shuck";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-TOO3GfKv9D0einHOHsy5p9034TpJpcQFaJPWYwZmIVU=";
+    hash = "sha256-6nHcnmosQgT3d+9Vuk4cjuz2EhaUaanmCrY471/UyEA=";
   };
 
-  cargoHash = "sha256-XoXnOE9jyhm6kJ0693CJ8PE4/1Sn+fyv0nLs2GG+J6M=";
+  cargoHash = "sha256-y+Mbjz+s1eXBDjPvTUFmAAG9BD/Roliu9FZvs9uYTlc=";
 
   cargoBuildFlags = [
     "--package"
