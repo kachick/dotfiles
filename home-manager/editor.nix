@@ -19,6 +19,8 @@
 
   xdg.writableConfigFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
 
+  xdg.writableConfigFile."fresh/config.json".source = ../config/fresh/config.jsonc;
+
   home = {
     packages = with pkgs; [
       # Keep editor tools here strictly minimal to keep disk usage small on non-development hosts like VPS.
