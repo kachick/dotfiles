@@ -50,7 +50,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
       extraArgs = [
         # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
         "--flake"
-        "--use-github-releases"
+
+        # Don't use GH releases until resolving https://github.com/ewhauser/shuck/issues/1363 and https://github.com/ewhauser/shuck/issues/1367
+        # See also https://github.com/NixOS/nixpkgs/pull/585629#issuecomment-6748876361
+        # "--use-github-releases"
       ];
     };
   };
