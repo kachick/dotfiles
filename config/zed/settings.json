@@ -89,12 +89,7 @@
         "arguments": ["--stdio"]
       }
     },
-    // "bash-language-server": {
-    //   "binary": {
-    //     "path": "/run/current-system/sw/bin/bash-language-server",
-    //     "arguments": ["start"]
-    //   }
-    // },
+    // shuck does not have the extension yet
     "rubocop": {
       "binary": {
         "path": "bundle",

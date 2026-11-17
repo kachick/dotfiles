@@ -37,6 +37,13 @@ in
           config.config = "${../typos.toml}";
         };
 
+        shuck = {
+          command = pkgs.local.shuck.meta.mainProgram; # Don't use absolute Nix store path for rumdl. Different versions are usually enabled on devShells.
+          args = [
+            "server"
+          ];
+        };
+
         # TODO: Drop to use upstream definition once Helix released 26+:
         # https://github.com/helix-editor/helix/commit/14a8d46d41a31b05c5cef6bb90489a9dccce8950
         rumdl = {
@@ -84,7 +91,7 @@ in
           # Passing %{buffer_name} lets dprint detect bash or zsh from the file path.
           formatter = dprint;
           language-servers = [
-            # "bash-language-server"
+            "shuck"
             "typos"
           ];
         }

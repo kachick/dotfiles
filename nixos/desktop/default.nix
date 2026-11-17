@@ -266,7 +266,6 @@
 
       # Add LSP global for zed-editor. Prefer external package for helix
       vscode-langservers-extracted
-      # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
 
       # gnome-music does not support flac.
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.

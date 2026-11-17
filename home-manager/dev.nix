@@ -97,6 +97,7 @@
         ir
         bench_shells
         preview
+        shuck
         conoha-cli
       ]);
 
