@@ -60,10 +60,6 @@
         gnumake
         shellcheck
 
-        # Keep shfmt or shuck for now even use dprint for the project formatting, dprint has no simple solution yet
-        # Revisit once https://github.com/dprint/dprint-vscode/issues/13 is resolved
-        shfmt
-
         betterleaks
         nushell
 
