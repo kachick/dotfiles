@@ -79,6 +79,14 @@ getrepo() {
 	cd "$target_dir" || return 1
 }
 
+gwt() {
+	local target
+	target="$('@git_wt@' select "$@")" || return 1
+	if [ -n "$target" ]; then
+		cd "$target" || return 1
+	fi
+}
+
 cdtemp() {
 	local word
 	if [ $# -lt 1 ]; then

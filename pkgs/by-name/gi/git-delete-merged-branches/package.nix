@@ -1,13 +1,61 @@
-{ pkgs, ... }:
-pkgs.writeShellApplication rec {
-  name = "git-delete-merged-branches";
-  text = builtins.readFile ./${name}.bash;
-  runtimeInputs = with pkgs; [
-    gitMinimal
-    coreutils
-    findutils
+{
+  buildGo127Module,
+  gitMinimal,
+  lib,
+  makeWrapper,
+  ...
+}:
+
+buildGo127Module (finalAttrs: {
+  pname = "git-delete-merged-branches";
+  version = "0.0.1";
+
+  __structuredAttrs = true;
+
+  nativeBuildInputs = [
+    makeWrapper
   ];
+
+  nativeCheckInputs = [
+    gitMinimal
+  ];
+
+  wrapperPath = lib.makeBinPath [
+    gitMinimal
+  ];
+
+  postFixup = ''
+    wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \
+      --prefix PATH : "${finalAttrs.wrapperPath}"
+  '';
+
+  vendorHash = "sha256-8v4EL++G1Di/nBkd/N/nNAEqpDmtjbL6DFHaXPt2JcQ=";
+  src =
+    with lib.fileset;
+    toSource {
+      root = ../../../../.;
+      fileset = unions [
+        ../../../../go.mod
+        ../../../../go.sum
+        ./.
+      ];
+    };
+
+  subPackages = [
+    "pkgs/by-name/gi/${finalAttrs.pname}"
+  ];
+
+  env.CGO_ENABLED = 0;
+
+  passthru.shared-gomod = true;
+
+  ldflags = [
+    "-s"
+    "-w"
+  ];
+
   meta = {
-    description = "Remove merged branches from local";
+    description = "Remove merged branches and their clean worktrees from local";
+    mainProgram = finalAttrs.pname;
   };
-}
+})

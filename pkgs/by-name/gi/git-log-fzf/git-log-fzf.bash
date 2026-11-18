@@ -15,8 +15,8 @@ _fzf_git_fzf() {
 		--no-separator --header-border horizontal \
 		--border-label-pos 2 \
 		--color 'label:blue' \
-		--preview-window 'right,70%' --preview-border line \
-		--bind 'ctrl-/:change-preview-window(down,70%|hidden|)' "$@"
+		--preview-window 'right,60%' --preview-border line \
+		--bind 'ctrl-/:change-preview-window(down,60%|hidden|)' "$@"
 }
 
 # TODO: Replace enter:become with enter:execute. But didn't work for some ref as 2050a94

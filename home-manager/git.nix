@@ -124,6 +124,10 @@ in
         updateRefs = true;
       };
 
+      worktree = {
+        guessRemote = true;
+      };
+
       branch = {
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
@@ -166,10 +170,24 @@ in
       alias = {
         fixup = "commit --all --amend";
         current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
+        switch-default = "!git switch \"$(${lib.getExe pkgs.local.git-wt} default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
-        all = "!git refresh && git-delete-merged-branches";
+        refresh = ''
+          !set -e; \
+            remote="$(git upstream)"; \
+            git remote update "$remote" --prune; \
+            common_dir="$(git rev-parse --path-format=absolute --git-common-dir)"; \
+            default_branch="$(${lib.getExe pkgs.local.git-wt} default-branch)"; \
+            default_wt="$(git for-each-ref --format='%(worktreepath)' "refs/heads/$default_branch")"; \
+            if [ -n "$default_wt" ]; then \
+              git -C "$default_wt" pull --ff-only --prune "$remote" "$default_branch"; \
+            elif [ "$(git -C "$common_dir" rev-parse --is-bare-repository)" = "true" ]; then \
+              git fetch --prune "$remote" "$default_branch:$default_branch"; \
+            else \
+              git switch "$default_branch" && git pull --ff-only --prune "$remote" "$default_branch"; \
+            fi
+        '';
+        all = "!git refresh && ${lib.getExe pkgs.local.git-delete-merged-branches}";
         lf = "!${lib.getExe pkgs.local.git-log-fzf}";
         lfj = "!${lib.getExe pkgs.local.git-log-fzf-ja}";
         show-ja = "!${lib.getExe pkgs.local.git-show-ja}";
