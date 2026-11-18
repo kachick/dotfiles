@@ -186,8 +186,14 @@ jobs:
           - name: ghadiag
             run: go run ./cmd/ci-build package ghadiag
 
+          - name: ghqf
+            run: go run ./cmd/ci-build package ghqf
+
           - name: git-hooks-pre-push
             run: go run ./cmd/ci-build package git-hooks-pre-push
+
+          - name: git-init-clean-bare
+            run: go run ./cmd/ci-build package git-init-clean-bare
 
           - name: hcpu_shogi
             run: go run ./cmd/ci-build package hcpu_shogi

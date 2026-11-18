@@ -247,12 +247,13 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !cd "$(${lib.getExe pkgs.ghq} root)/github.com/$(git config --global ghq.user)" && \
-            gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
-              cd "$1" && \
-                gh setup && \
-                  ${lib.getExe pkgs.direnv} allow && \
-                    ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
+          !set -e; owner="$(git config --global ghq.user)"; \
+            gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
+            repo_dir="$(${lib.getExe pkgs.ghq} get --clean-bare "$owner/$1")"; \
+            wt_dir="$(${lib.getExe pkgs.local.git-init-clean-bare} --trust "$repo_dir")"; \
+            cd "$wt_dir"; \
+            gh setup; \
+            ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
         '';
       };
     };

@@ -13,7 +13,9 @@ conoha-cli = { build = true, test = true, update = true }
 filen-cli-rs = { build = true, test = true, update = true }
 gh-actions-lock = { build = true, test = true, update = true }
 ghadiag = { build = true, test = true, update = false } # Flake input, updated by Renovate
+ghqf = { build = true, test = true, update = false }
 git-hooks-pre-push = { build = true, test = true, update = false }
+git-init-clean-bare = { build = true, test = true, update = false }
 hcpu_shogi = { build = true, test = true, update = false }
 ibus-engine-selector = { build = true, test = true, update = false }
 iets = { build = true, test = true, update = false } # Flake input, updated by Renovate
