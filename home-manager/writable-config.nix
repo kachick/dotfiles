@@ -31,7 +31,7 @@ let
   #
   # ## Usage
   #
-  # - `xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.json;`
+  # - `xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.jsonc;`
   # - `home.writableFile.".ssh/authorized_keys" = { source = authorizedKeys; perm = "600"; };`
 
   # Inserts "HomeManagerInit_" before the filename in a path
