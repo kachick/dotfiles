@@ -1,7 +1,6 @@
 {
   kanata-tray,
   ghadiag,
-  cntr,
   iets,
   home-manager,
 }:
@@ -11,7 +10,6 @@
     inherit
       kanata-tray
       ghadiag
-      cntr
       iets
       home-manager
       ;

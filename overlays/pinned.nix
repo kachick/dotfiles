@@ -1,7 +1,6 @@
 {
   kanata-tray,
   ghadiag,
-  cntr,
   iets,
   home-manager,
 }:
@@ -21,26 +20,6 @@ in
     ghadiag = ghadiag.packages.${system}.default;
 
     iets = iets.packages.${system}.default;
-
-    # Pinning cntr from the flake input
-    # Upstream nixpkgs PR https://github.com/NixOS/nixpkgs/pull/548453 is stuck due to test failures.
-    # Integration tests require writing to /proc/self/setgroups and unsharing user namespaces,
-    # which fails in sandboxed builds (e.g. GitHub Actions runners), so disable checks.
-    #
-    # Patches:
-    # - cntr-fork-into-pidns.patch: setns(CLONE_NEWPID) does not change the caller's PID namespace,
-    #   causing setpgid EPERM in interactive bash. Fork before execve to enter the container PID namespace.
-    # Call package directly from source to avoid deprecated stdenv.isDarwin evaluation warning in upstream flake.nix
-    cntr =
-      (final.callPackage "${cntr}/default.nix" {
-        self = cntr;
-      }).overrideAttrs
-        (old: {
-          patches = (old.patches or [ ]) ++ [
-            ./patches/cntr-fork-into-pidns.patch
-          ];
-          doCheck = false;
-        });
 
     inherit (_prev)
       # See GH-1085, GH-1134, and GH-1402

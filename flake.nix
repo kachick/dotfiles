@@ -64,13 +64,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    cntr = {
-      url = "github:Mic92/cntr/2.1.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.treefmt-nix.follows = "";
-      inputs.fenix.follows = "";
-    };
-
     iets = {
       url = "github:numtide/iets/v0.2.0";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -84,7 +77,6 @@
       home-manager,
       kanata-tray,
       ghadiag,
-      cntr,
       iets,
       ...
     }@inputs:
@@ -95,7 +87,6 @@
         inherit
           kanata-tray
           ghadiag
-          cntr
           iets
           home-manager
           ;

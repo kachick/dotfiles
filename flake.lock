@@ -1,28 +1,5 @@
 {
   "nodes": {
-    "cntr": {
-      "inputs": {
-        "fenix": [],
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "treefmt-nix": []
-      },
-      "locked": {
-        "lastModified": 1785657682,
-        "narHash": "sha256-SnOIJ6tDyILaQGpnAKbQCkz/MRFCZPhQKNWpoajI8S0=",
-        "owner": "Mic92",
-        "repo": "cntr",
-        "rev": "a64abcc658507f1bb40a99a093a0a095278ab574",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "ref": "2.1.0",
-        "repo": "cntr",
-        "type": "github"
-      }
-    },
     "crane": {
       "locked": {
         "lastModified": 1791754810,
@@ -216,7 +193,6 @@
     },
     "root": {
       "inputs": {
-        "cntr": "cntr",
         "disko": "disko",
         "flake-compat": "flake-compat",
         "ghadiag": "ghadiag",
