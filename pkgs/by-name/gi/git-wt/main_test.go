@@ -3,11 +3,15 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
 
 func isolateEnv(t *testing.T) {
@@ -117,7 +121,7 @@ func TestRun_AddListPath(t *testing.T) {
 
 		// 1. New branch with slash in name
 		var stdout, stderr bytes.Buffer
-		if err := run([]string{"add", "feat/new-one"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "feat/new-one"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add new branch failed: %v, stderr: %s", err, stderr.String())
 		}
 		gotNew := strings.TrimSpace(stdout.String())
@@ -136,7 +140,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// Re-running add for the same branch returns existing path idempotently.
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "feat/new-one"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "feat/new-one"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("idempotent add failed: %v, stderr: %s", err, stderr.String())
 		}
 		if got := strings.TrimSpace(stdout.String()); got != wantNew {
@@ -146,7 +150,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// 2. Existing local branch
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "local-only"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "local-only"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add local branch failed: %v, stderr: %s", err, stderr.String())
 		}
 		wantLocal := filepath.Join(repoDir, "local-only")
@@ -157,7 +161,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// 3. Existing remote branch with slash
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "feat/remote-one"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "feat/remote-one"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add remote branch failed: %v, stderr: %s", err, stderr.String())
 		}
 		wantRemote := filepath.Join(repoDir, "feat-remote-one")
@@ -225,7 +229,7 @@ func TestRun_AddListPath(t *testing.T) {
 
 		// Advance origin/trunk ahead of local trunk to verify new branches prefer origin/<default>.
 		var stdout, stderr bytes.Buffer
-		if err := run([]string{"add", "topic-from-trunk"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "topic-from-trunk"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add on trunk repo failed: %v, stderr: %s", err, stderr.String())
 		}
 		topicWT := strings.TrimSpace(stdout.String())
@@ -248,7 +252,7 @@ func TestRun_AddListPath(t *testing.T) {
 
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "from-origin-trunk"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "from-origin-trunk"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add from origin/trunk failed: %v, stderr: %s", err, stderr.String())
 		}
 		originTopicWT := strings.TrimSpace(stdout.String())
@@ -267,7 +271,7 @@ func TestRun_AddListPath(t *testing.T) {
 
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "--base", "topic-from-trunk", "child-topic"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--base", "topic-from-trunk", "--branch", "child-topic"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add with --base failed: %v, stderr: %s", err, stderr.String())
 		}
 		childWT := strings.TrimSpace(stdout.String())
@@ -296,7 +300,7 @@ func TestRun_AddListPath(t *testing.T) {
 
 		// Without any trusted worktree, new worktree must NOT be allowed.
 		var stdout, stderr bytes.Buffer
-		if err := run([]string{"add", "untrusted-repo-wt"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "untrusted-repo-wt"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add untrusted failed: %v, stderr: %s", err, stderr.String())
 		}
 		untrustedWT := strings.TrimSpace(stdout.String())
@@ -313,7 +317,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// New worktree with identical .envrc must be auto-allowed.
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "trusted-wt"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "trusted-wt"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add trusted failed: %v, stderr: %s", err, stderr.String())
 		}
 		trustedWT := strings.TrimSpace(stdout.String())
@@ -324,7 +328,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// Branch with modified .envrc must NOT be auto-allowed without --trust.
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "feat/tampered"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "feat/tampered"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add tampered failed: %v, stderr: %s", err, stderr.String())
 		}
 		tamperedWT := strings.TrimSpace(stdout.String())
@@ -335,7 +339,7 @@ func TestRun_AddListPath(t *testing.T) {
 		// Explicit --trust allows even a modified .envrc.
 		stdout.Reset()
 		stderr.Reset()
-		if err := run([]string{"add", "--trust", "feat/tampered"}, defaultWT, &stdout, &stderr); err != nil {
+		if err := run([]string{"add", "--trust", "--branch", "feat/tampered"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add --trust failed: %v, stderr: %s", err, stderr.String())
 		}
 		if state := direnvAllowedState(t, tamperedWT); state != 0 {
@@ -356,7 +360,7 @@ func TestRun_AddListPath(t *testing.T) {
 		runGit(t, legacyDir, "commit", "-m", "init")
 
 		var stdout, stderr bytes.Buffer
-		err := run([]string{"add", "feat-x"}, legacyDir, &stdout, &stderr)
+		err := run([]string{"add", "--branch", "feat-x"}, legacyDir, &stdout, &stderr)
 		if err == nil {
 			t.Fatal("expected add on non-bare repo to fail, got nil")
 		}
@@ -378,7 +382,7 @@ func TestRun_AddListPath(t *testing.T) {
 		repoDir, defaultWT := setupCleanBareRepo(t, "main", []string{"feat/preview"}, "")
 
 		var listOut, stderr bytes.Buffer
-		if err := run([]string{"add", "feat/preview"}, defaultWT, &listOut, &stderr); err != nil {
+		if err := run([]string{"add", "--branch", "feat/preview"}, defaultWT, &listOut, &stderr); err != nil {
 			t.Fatalf("add feat/preview failed: %v, stderr: %s", err, stderr.String())
 		}
 		previewWT := strings.TrimSpace(listOut.String())
@@ -444,6 +448,259 @@ func TestRun_AddListPath(t *testing.T) {
 		}
 		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
 			t.Errorf("default-branch = %q, want trunk", got)
+		}
+	})
+}
+
+func TestRun_AddInteractive(t *testing.T) {
+	t.Run("rejects positional arguments and conflicting flags", func(t *testing.T) {
+		isolateEnv(t)
+		_, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		cases := [][]string{
+			{"add", "feat-pos"},
+			{"add", "--branch", "feat-a", "--interactive"},
+			{"add", "--interactive", "--base", "main"},
+			{"add", "--base", "main"},
+			{"add", "--branch", ""},
+		}
+		for _, args := range cases {
+			var stdout, stderr bytes.Buffer
+			if err := run(args, defaultWT, &stdout, &stderr); err == nil {
+				t.Errorf("expected error for args %v, got nil", args)
+			}
+		}
+	})
+
+	t.Run("defaults bare add to interactive mode, excludes checked-out branches, propagates direnv trust, and prints single cd target", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "export SHARED=1\n")
+
+		// Create local branches with matching and differing .envrc files without leaving worktrees attached.
+		tmpWT := filepath.Join(t.TempDir(), "tmp-same")
+		runGit(t, defaultWT, "worktree", "add", "-b", "feat/same-envrc", tmpWT, "main")
+		runGit(t, tmpWT, "config", "user.name", "Tester")
+		runGit(t, tmpWT, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(tmpWT, "same.txt"), []byte("same\n"), 0o644); err != nil {
+			t.Fatalf("write same.txt: %v", err)
+		}
+		runGit(t, tmpWT, "add", "same.txt")
+		runGit(t, tmpWT, "commit", "-m", "Same envrc")
+		runGit(t, defaultWT, "worktree", "remove", tmpWT)
+
+		tamperWT := filepath.Join(t.TempDir(), "tmp-tamper")
+		runGit(t, defaultWT, "worktree", "add", "-b", "feat/tampered-envrc", tamperWT, "main")
+		runGit(t, tamperWT, "config", "user.name", "Tester")
+		runGit(t, tamperWT, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(tamperWT, ".envrc"), []byte("export EVIL=1\n"), 0o644); err != nil {
+			t.Fatalf("write .envrc: %v", err)
+		}
+		runGit(t, tamperWT, "add", ".envrc")
+		runGit(t, tamperWT, "commit", "-m", "Tampered envrc")
+		runGit(t, defaultWT, "worktree", "remove", tamperWT)
+
+		runGit(t, defaultWT, "branch", "topic-unpicked")
+
+		// Trust defaultWT so identical .envrc should propagate automatically.
+		allowCmd := exec.Command("direnv", "allow", defaultWT)
+		if out, err := allowCmd.CombinedOutput(); err != nil {
+			t.Fatalf("direnv allow failed: %v: %s", err, string(out))
+		}
+
+		var gotCandidateNames []string
+		selector := func(_, _ string, candidates []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
+			for _, c := range candidates {
+				gotCandidateNames = append(gotCandidateNames, c.Name)
+			}
+			return []string{"feat/same-envrc", "feat/tampered-envrc"}, nil
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runWithOptions([]string{"add"}, defaultWT, selector, &stdout, &stderr); err != nil {
+			t.Fatalf("add (default interactive) failed: %v, stderr: %s", err, stderr.String())
+		}
+
+		// Already checked-out main must be excluded from candidates.
+		for _, name := range gotCandidateNames {
+			if name == "main" {
+				t.Errorf("checked-out branch %q should not appear in candidates: %v", name, gotCandidateNames)
+			}
+		}
+		if len(gotCandidateNames) != 3 {
+			t.Errorf("got %d candidates (%v), want 3", len(gotCandidateNames), gotCandidateNames)
+		}
+
+		sameWT := filepath.Join(repoDir, "feat-same-envrc")
+		tamperedWT := filepath.Join(repoDir, "feat-tampered-envrc")
+		if got := strings.TrimSpace(stdout.String()); got != sameWT {
+			t.Errorf("stdout = %q, want single path %q", got, sameWT)
+		}
+		if got := runGit(t, sameWT, "symbolic-ref", "--short", "HEAD"); got != "feat/same-envrc" {
+			t.Errorf("sameWT branch = %q, want feat/same-envrc", got)
+		}
+		if got := runGit(t, tamperedWT, "symbolic-ref", "--short", "HEAD"); got != "feat/tampered-envrc" {
+			t.Errorf("tamperedWT branch = %q, want feat/tampered-envrc", got)
+		}
+		if state := direnvAllowedState(t, sameWT); state != 0 {
+			t.Errorf("expected sameWT .envrc auto-allowed, got %d", state)
+		}
+		if state := direnvAllowedState(t, tamperedWT); state == 0 {
+			t.Errorf("expected tamperedWT .envrc NOT to be auto-allowed, got %d", state)
+		}
+	})
+
+	t.Run("prioritizes current then default then first selected worktree in stdout", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		runGit(t, defaultWT, "branch", "topic-a")
+		runGit(t, defaultWT, "branch", "topic-b")
+
+		// Add topic-a worktree and remove defaultWT so main becomes an unattached local branch.
+		var stdout, stderr bytes.Buffer
+		if err := run([]string{"add", "--branch", "topic-a"}, defaultWT, &stdout, &stderr); err != nil {
+			t.Fatalf("add topic-a failed: %v", err)
+		}
+		topicAWT := strings.TrimSpace(stdout.String())
+		runGit(t, repoDir, "worktree", "remove", defaultWT)
+
+		// Even if topic-b is selected before main, stdout must output main (default branch).
+		selector := func(_, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"topic-b", "main"}, nil
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithOptions([]string{"add", "--interactive"}, topicAWT, selector, &stdout, &stderr); err != nil {
+			t.Fatalf("interactive add failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := strings.TrimSpace(stdout.String()); got != defaultWT {
+			t.Errorf("stdout = %q, want default branch worktree %q", got, defaultWT)
+		}
+
+		// Verify direct priority order: current > default > first selected.
+		dirs := map[string]string{
+			"topic-b": filepath.Join(repoDir, "topic-b"),
+			"main":    defaultWT,
+			"topic-a": topicAWT,
+		}
+		if got := selectOutputWorktreePath([]string{"topic-b", "main", "topic-a"}, dirs, "topic-a", "main"); got != topicAWT {
+			t.Errorf("current priority = %q, want %q", got, topicAWT)
+		}
+		if got := selectOutputWorktreePath([]string{"topic-b", "main"}, dirs, "other", "main"); got != defaultWT {
+			t.Errorf("default priority = %q, want %q", got, defaultWT)
+		}
+		if got := selectOutputWorktreePath([]string{"topic-b", "topic-a"}, map[string]string{
+			"topic-b": dirs["topic-b"],
+			"topic-a": dirs["topic-a"],
+		}, "other", "main"); got != dirs["topic-b"] {
+			t.Errorf("fallback priority = %q, want %q", got, dirs["topic-b"])
+		}
+	})
+
+	t.Run("renders branch preview and filters candidates with fzf", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		tmpWT := filepath.Join(t.TempDir(), "tmp-preview")
+		runGit(t, defaultWT, "worktree", "add", "-b", "feat/branch-preview", tmpWT, "main")
+		runGit(t, tmpWT, "config", "user.name", "Tester")
+		runGit(t, tmpWT, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(tmpWT, "note.txt"), []byte("note\n"), 0o644); err != nil {
+			t.Fatalf("write note.txt: %v", err)
+		}
+		runGit(t, tmpWT, "add", "note.txt")
+		runGit(t, tmpWT, "commit", "-m", "Previewable branch commit")
+		runGit(t, defaultWT, "worktree", "remove", tmpWT)
+
+		var previewOut, stderr bytes.Buffer
+		if err := run([]string{"_preview-branch", repoDir, "main", "feat/branch-preview"}, repoDir, &previewOut, &stderr); err != nil {
+			t.Fatalf("_preview-branch failed: %v, stderr: %s", err, stderr.String())
+		}
+		previewText := previewOut.String()
+		for _, want := range []string{
+			"Branch:   feat/branch-preview",
+			filepath.Join(repoDir, "feat-branch-preview"),
+			"Diff vs main:",
+			"Previewable branch commit",
+		} {
+			if !strings.Contains(previewText, want) {
+				t.Errorf("_preview-branch missing %q:\n%s", want, previewText)
+			}
+		}
+
+		r := gitcmd.NewIsolated(repoDir, &stderr, &stderr)
+		candidates, err := gitcmd.CollectLocalBranchCandidates(r, gitcmd.CandidateOptions{DefaultBranch: "main"})
+		if err != nil {
+			t.Fatalf("CollectLocalBranchCandidates failed: %v", err)
+		}
+		var input strings.Builder
+		for _, c := range candidates {
+			input.WriteString(gitcmd.FormatCandidateLine(c))
+			input.WriteByte('\n')
+		}
+		filterArgs := append([]string{"--filter=feat/branch-preview"}, fzfAddArgs("git-wt", repoDir, "main")...)
+		fzfCmd := exec.Command("fzf", filterArgs...)
+		fzfCmd.Stdin = strings.NewReader(input.String())
+		fzfOut, err := fzfCmd.Output()
+		if err != nil {
+			t.Fatalf("fzf --filter failed: %v", err)
+		}
+		if got := strings.TrimSpace(string(fzfOut)); got != "feat/branch-preview" {
+			t.Errorf("fzf output = %q, want feat/branch-preview", got)
+		}
+	})
+
+	t.Run("fails closed on empty candidates, cancel, and path collisions", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		// 1. No unattached local branches available.
+		var stdout, stderr bytes.Buffer
+		if err := runWithOptions([]string{"add"}, defaultWT, nil, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when no unattached local branches exist, got nil")
+		}
+
+		runGit(t, defaultWT, "branch", "feat/a")
+		runGit(t, defaultWT, "branch", "feat-a")
+		runGit(t, defaultWT, "branch", "existing-dir")
+
+		// 2. Selector cancel leaves worktree list untouched.
+		cancelSelector := func(_, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
+			return nil, errors.New("worktree addition canceled")
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithOptions([]string{"add", "--interactive"}, defaultWT, cancelSelector, &stdout, &stderr); err == nil {
+			t.Fatal("expected error on cancel, got nil")
+		}
+
+		// 3. Flattened directory collision between feat/a and feat-a fails before creating any worktree.
+		collideSelector := func(_, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"feat/a", "feat-a"}, nil
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithOptions([]string{"add", "--interactive"}, defaultWT, collideSelector, &stdout, &stderr); err == nil {
+			t.Fatal("expected collision error, got nil")
+		}
+		if _, err := os.Stat(filepath.Join(repoDir, "feat-a")); !os.IsNotExist(err) {
+			t.Errorf("expected no worktree created after collision error")
+		}
+
+		// 4. Existing target directory conflict aborts before creating any selected branch.
+		if err := os.MkdirAll(filepath.Join(repoDir, "existing-dir"), 0o755); err != nil {
+			t.Fatalf("mkdir existing-dir: %v", err)
+		}
+		existingDirSelector := func(_, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"feat/a", "existing-dir"}, nil
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithOptions([]string{"add", "--interactive"}, defaultWT, existingDirSelector, &stdout, &stderr); err == nil {
+			t.Fatal("expected existing directory error, got nil")
+		}
+		if _, err := os.Stat(filepath.Join(repoDir, "feat-a")); !os.IsNotExist(err) {
+			t.Errorf("expected feat-a not to be created when another selected branch conflicts")
 		}
 	})
 }

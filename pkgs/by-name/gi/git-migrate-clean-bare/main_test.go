@@ -400,16 +400,21 @@ func TestRun_InteractiveMigration(t *testing.T) {
 
 		var stderr bytes.Buffer
 		r := gitcmd.NewIsolated(repoDir, &stderr, &stderr)
-		candidates, err := collectBranchCandidates(r, repoDir, "feat/current", "main")
+		candidates, err := gitcmd.CollectLocalBranchCandidates(r, gitcmd.CandidateOptions{
+			CurrentBranch:        "feat/current",
+			DefaultBranch:        "main",
+			AllowCheckedOutDir:   repoDir,
+			IncludeUnbornCurrent: true,
+		})
 		if err != nil {
-			t.Fatalf("collectBranchCandidates failed: %v", err)
+			t.Fatalf("CollectLocalBranchCandidates failed: %v", err)
 		}
 
 		var gotOrder []string
 		var fzfInput strings.Builder
 		for _, c := range candidates {
-			gotOrder = append(gotOrder, c.name)
-			fzfInput.WriteString(formatCandidateLine(c))
+			gotOrder = append(gotOrder, c.Name)
+			fzfInput.WriteString(gitcmd.FormatCandidateLine(c))
 			fzfInput.WriteByte('\n')
 		}
 
@@ -417,8 +422,8 @@ func TestRun_InteractiveMigration(t *testing.T) {
 		if strings.Join(gotOrder, ",") != strings.Join(wantOrder, ",") {
 			t.Fatalf("candidate order = %v, want %v", gotOrder, wantOrder)
 		}
-		if got := countInitialSelections(candidates); got != 2 {
-			t.Errorf("countInitialSelections = %d, want 2", got)
+		if got := gitcmd.CountInitialSelections(candidates); got != 2 {
+			t.Errorf("CountInitialSelections = %d, want 2", got)
 		}
 
 		// Verify fzfInteractiveArgs works with real fzf --filter and returns only the branch name.
@@ -451,9 +456,9 @@ func TestRun_InteractiveMigration(t *testing.T) {
 		_, repoDir := setupStandardClone(t, "main")
 
 		called := false
-		selector := func(_, _, _ string, candidates []branchCandidate, _ io.Writer) ([]string, error) {
+		selector := func(_, _, _ string, candidates []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
 			called = true
-			if len(candidates) != 1 || candidates[0].name != "main" {
+			if len(candidates) != 1 || candidates[0].Name != "main" {
 				t.Fatalf("unexpected candidates: %+v", candidates)
 			}
 			return []string{"main"}, nil
@@ -496,7 +501,7 @@ func TestRun_InteractiveMigration(t *testing.T) {
 		runGit(t, repoDir, "checkout", "main")
 		runDirenvAllow(t, repoDir)
 
-		selector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+		selector := func(_, _, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
 			return []string{"main", "feat/same-envrc", "feat/tampered-envrc"}, nil
 		}
 
@@ -545,7 +550,7 @@ func TestRun_InteractiveMigration(t *testing.T) {
 
 		stdout.Reset()
 		stderr.Reset()
-		trustSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+		trustSelector := func(_, _, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
 			return []string{"main", "topic"}, nil
 		}
 		if err := runWithOptions([]string{"--interactive", "--trust", trustedRepo}, "", trustSelector, &stdout, &stderr); err != nil {
@@ -563,7 +568,7 @@ func TestRun_InteractiveMigration(t *testing.T) {
 		runGit(t, repoDir, "branch", "feat-a")
 
 		// 1. Selector cancel leaves repo untouched.
-		cancelSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+		cancelSelector := func(_, _, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
 			return nil, errors.New("migration canceled")
 		}
 		var stdout, stderr bytes.Buffer
@@ -575,7 +580,7 @@ func TestRun_InteractiveMigration(t *testing.T) {
 		}
 
 		// 2. Directory collision between feat/a and feat-a aborts before mutating repo.
-		collideSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+		collideSelector := func(_, _, _ string, _ []gitcmd.BranchCandidate, _ io.Writer) ([]string, error) {
 			return []string{"main", "feat/a", "feat-a"}, nil
 		}
 		stdout.Reset()
