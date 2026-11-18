@@ -119,9 +119,10 @@ jobs:
       - name: List files - before build
         run: Get-ChildItem
       - name: Test and vet Go packages
+        # Limit test and vet to Windows targets since pkgs/* tests expect Nix devshell tools
         run: |
-          go test ./...
-          go vet ./...
+          go test . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
+          go vet . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
       - name: Build winit-*
         # unnecessary to build wsl-* here, it should be done in linux runners
         run: |
@@ -133,7 +134,7 @@ jobs:
           Get-ChildItem -Recurse .\dist
       - name: Upload artifact
         id: upload-artifact
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: winit
           path: dist
