@@ -6,8 +6,8 @@ on:
       - '.github/workflows/update-local-packages.yml'
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every day 9:17 JST
-    - cron: '17 0 * * *'
+    # Every day 9:02 JST
+    - cron: '2 0 * * *'
   workflow_dispatch:
 
 permissions:

@@ -2,12 +2,8 @@ name: 🆙❄️
 on:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every Monday 9:17 JST
-    - cron: '17 0 * * 1'
-    # # Every Wednesday 9:17 JST
-    # - cron: '17 0 * * 3'
-    # # Every Friday 9:17 JST
-    # - cron: '17 0 * * 5'
+    # Every day 9:17 JST
+    - cron: '17 0 * * *'
   workflow_dispatch:
 
 permissions:
