@@ -650,14 +650,19 @@ func TestRun_AddInteractive(t *testing.T) {
 		}
 	})
 
-	t.Run("fails closed on empty candidates, cancel, and path collisions", func(t *testing.T) {
+	t.Run("fails closed on cancel and path collisions", func(t *testing.T) {
 		isolateEnv(t)
 		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
 
-		// 1. No unattached local branches available.
+		// 1. No unattached local branches enters new-branch input and aborts cleanly on cancel.
 		var stdout, stderr bytes.Buffer
-		if err := runWithOptions([]string{"add"}, defaultWT, nil, &stdout, &stderr); err == nil {
-			t.Fatal("expected error when no unattached local branches exist, got nil")
+		cancelNewBranchUI := interactiveUI{
+			inputNewBranch: func(_ io.Writer) (string, error) {
+				return "", gitcmd.ErrSelectionCanceled
+			},
+		}
+		if err := runWithUI([]string{"add"}, defaultWT, cancelNewBranchUI, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when new-branch input is canceled, got nil")
 		}
 
 		runGit(t, defaultWT, "branch", "feat/a")
@@ -701,6 +706,262 @@ func TestRun_AddInteractive(t *testing.T) {
 		}
 		if _, err := os.Stat(filepath.Join(repoDir, "feat-a")); !os.IsNotExist(err) {
 			t.Errorf("expected feat-a not to be created when another selected branch conflicts")
+		}
+	})
+}
+
+func installFakeGum(t *testing.T, script string) string {
+	t.Helper()
+	binDir := t.TempDir()
+	logPath := filepath.Join(binDir, "gum-args.log")
+	gumPath := filepath.Join(binDir, "gum")
+	content := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> " + shellQuote(logPath) + "\n" + script + "\n"
+	if err := os.WriteFile(gumPath, []byte(content), 0o755); err != nil {
+		t.Fatalf("write fake gum: %v", err)
+	}
+	t.Setenv("PATH", binDir+":"+os.Getenv("PATH"))
+	return logPath
+}
+
+func TestGumHelpersAndParsing(t *testing.T) {
+	t.Run("parses fzf --expect output including empty match cases", func(t *testing.T) {
+		cases := []struct {
+			raw  string
+			want selectChoice
+		}{
+			{raw: "\n/repo/main\n", want: selectChoice{Key: "", Path: "/repo/main"}},
+			{raw: "ctrl-x\n/repo/feat\n", want: selectChoice{Key: "ctrl-x", Path: "/repo/feat"}},
+			{raw: "ctrl-a\n\n", want: selectChoice{Key: "ctrl-a", Path: ""}},
+			{raw: "ctrl-a\n", want: selectChoice{Key: "ctrl-a", Path: ""}},
+			{raw: "", want: selectChoice{}},
+		}
+		for _, tc := range cases {
+			if got := parseFzfSelectOutput(tc.raw); got != tc.want {
+				t.Errorf("parseFzfSelectOutput(%q) = %+v, want %+v", tc.raw, got, tc.want)
+			}
+		}
+	})
+
+	t.Run("invokes gum choose, input, and confirm with expected args and exit handling", func(t *testing.T) {
+		logPath := installFakeGum(t, `
+case "$1" in
+  choose)
+    case "$*" in
+      *"--header=Action for"*) echo "Remove worktree" ;;
+      *"--header=Add worktree"*) echo "New branch" ;;
+      *) exit 1 ;;
+    esac
+    ;;
+  input)
+    echo "  feat/from-gum  "
+    ;;
+  confirm)
+    if [ "${GUM_CONFIRM_EXIT:-0}" -ne 0 ]; then
+      exit "$GUM_CONFIRM_EXIT"
+    fi
+    ;;
+esac
+`)
+		var stderr bytes.Buffer
+
+		mode, err := chooseAddModeWithGum(&stderr)
+		if err != nil || mode != addModeNew {
+			t.Fatalf("chooseAddModeWithGum = (%v, %v), want (addModeNew, nil)", mode, err)
+		}
+
+		branch, err := inputNewBranchWithGum(&stderr)
+		if err != nil || branch != "feat/from-gum" {
+			t.Fatalf("inputNewBranchWithGum = (%q, %v), want (feat/from-gum, nil)", branch, err)
+		}
+
+		action, err := chooseWorktreeActionWithGum("main", "main", &stderr)
+		if err != nil || action != actionRemove {
+			t.Fatalf("chooseWorktreeActionWithGum = (%v, %v), want (actionRemove, nil)", action, err)
+		}
+
+		t.Setenv("GUM_CONFIRM_EXIT", "0")
+		if ok, err := confirmDirenvAllowWithGum("feat-one", &stderr); err != nil || !ok {
+			t.Fatalf("confirmDirenvAllowWithGum (yes) = (%v, %v), want (true, nil)", ok, err)
+		}
+
+		t.Setenv("GUM_CONFIRM_EXIT", "1")
+		if ok, err := confirmDirenvAllowWithGum("feat-one", &stderr); err != nil || ok {
+			t.Fatalf("confirmDirenvAllowWithGum (no) = (%v, %v), want (false, nil)", ok, err)
+		}
+
+		t.Setenv("GUM_CONFIRM_EXIT", "130")
+		if ok, err := confirmRemoveWorktreeWithGum("feat-one", "feat/one", &stderr); !errors.Is(err, gitcmd.ErrSelectionCanceled) || ok {
+			t.Fatalf("confirmRemoveWorktreeWithGum (cancel) = (%v, %v), want (false, ErrSelectionCanceled)", ok, err)
+		}
+
+		logged, err := os.ReadFile(logPath)
+		if err != nil {
+			t.Fatalf("read gum args log: %v", err)
+		}
+		if !strings.Contains(string(logged), "confirm --default=false Allow direnv in feat-one?") {
+			t.Errorf("expected fail-closed --default=false in confirm args, got:\n%s", string(logged))
+		}
+	})
+}
+
+func TestRun_InteractiveNewBranchAndDirenvConfirm(t *testing.T) {
+	t.Run("creates new branch worktree via interactive flow when no unattached branches exist", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		var gotBaseOptions []string
+		ui := interactiveUI{
+			inputNewBranch: func(_ io.Writer) (string, error) {
+				return "feat/interactive-new", nil
+			},
+			chooseBaseRef: func(branch string, baseOptions []string, _ string, _ io.Writer) (string, error) {
+				if branch != "feat/interactive-new" {
+					t.Errorf("branch passed to chooseBaseRef = %q", branch)
+				}
+				gotBaseOptions = append([]string(nil), baseOptions...)
+				return baseOptions[0], nil
+			},
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runWithUI([]string{"add"}, defaultWT, ui, &stdout, &stderr); err != nil {
+			t.Fatalf("interactive new-branch add failed: %v, stderr: %s", err, stderr.String())
+		}
+
+		wantWT := filepath.Join(repoDir, "feat-interactive-new")
+		if got := strings.TrimSpace(stdout.String()); got != wantWT {
+			t.Errorf("stdout = %q, want %q", got, wantWT)
+		}
+		if len(gotBaseOptions) < 2 || gotBaseOptions[0] != "origin/main" || gotBaseOptions[1] != "main" {
+			t.Errorf("baseOptions = %v, want origin/main and main first", gotBaseOptions)
+		}
+		if br := runGit(t, wantWT, "symbolic-ref", "--short", "HEAD"); br != "feat/interactive-new" {
+			t.Errorf("checked out branch = %q, want feat/interactive-new", br)
+		}
+		if cmd := exec.Command("git", "-C", wantWT, "rev-parse", "--abbrev-ref", "@{u}"); cmd.Run() == nil {
+			t.Errorf("expected interactive new branch not to set upstream tracking")
+		}
+	})
+
+	t.Run("prompts direnv allow in interactive mode and keeps fail-closed when declined", func(t *testing.T) {
+		isolateEnv(t)
+		_, defaultWT := setupCleanBareRepo(t, "main", nil, "export FROM_ENVRC=1\n")
+
+		// 1. Declining confirmation keeps .envrc disallowed.
+		confirmDeclineUI := interactiveUI{
+			inputNewBranch: func(_ io.Writer) (string, error) { return "feat/deny-envrc", nil },
+			chooseBaseRef: func(_ string, opts []string, _ string, _ io.Writer) (string, error) {
+				return opts[0], nil
+			},
+			confirmDirenvAllow: func(_ string, _ io.Writer) (bool, error) { return false, nil },
+		}
+		var stdout, stderr bytes.Buffer
+		if err := runWithUI([]string{"add"}, defaultWT, confirmDeclineUI, &stdout, &stderr); err != nil {
+			t.Fatalf("add (decline envrc) failed: %v, stderr: %s", err, stderr.String())
+		}
+		deniedWT := strings.TrimSpace(stdout.String())
+		if state := direnvAllowedState(t, deniedWT); state == 0 {
+			t.Fatalf("expected .envrc NOT to be allowed when declined, got state=%d", state)
+		}
+
+		// 2. Accepting confirmation allows .envrc.
+		confirmAcceptUI := interactiveUI{
+			inputNewBranch: func(_ io.Writer) (string, error) { return "feat/allow-envrc", nil },
+			chooseBaseRef: func(_ string, opts []string, _ string, _ io.Writer) (string, error) {
+				return opts[0], nil
+			},
+			confirmDirenvAllow: func(_ string, _ io.Writer) (bool, error) { return true, nil },
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithUI([]string{"add"}, defaultWT, confirmAcceptUI, &stdout, &stderr); err != nil {
+			t.Fatalf("add (accept envrc) failed: %v, stderr: %s", err, stderr.String())
+		}
+		allowedWT := strings.TrimSpace(stdout.String())
+		if state := direnvAllowedState(t, allowedWT); state != 0 {
+			t.Fatalf("expected .envrc to be allowed when confirmed, got state=%d", state)
+		}
+	})
+
+	t.Run("select supports action menu, ctrl-a add, and safe ctrl-d removal", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		// 1. ctrl-a opens add flow even with empty selection path and prints newly created worktree path.
+		var stdout, stderr bytes.Buffer
+		addFromSelectUI := interactiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-a", Path: ""}, nil
+			},
+			inputNewBranch: func(_ io.Writer) (string, error) { return "feat/from-select", nil },
+			chooseBaseRef: func(_ string, opts []string, _ string, _ io.Writer) (string, error) {
+				return opts[0], nil
+			},
+		}
+		if err := runWithUI([]string{"select"}, defaultWT, addFromSelectUI, &stdout, &stderr); err != nil {
+			t.Fatalf("select ctrl-a failed: %v, stderr: %s", err, stderr.String())
+		}
+		createdWT := filepath.Join(repoDir, "feat-from-select")
+		if got := strings.TrimSpace(stdout.String()); got != createdWT {
+			t.Errorf("select ctrl-a stdout = %q, want %q", got, createdWT)
+		}
+
+		// 2. ctrl-x -> actionSwitch prints selected worktree path.
+		stdout.Reset()
+		stderr.Reset()
+		switchUI := interactiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-x", Path: createdWT}, nil
+			},
+			chooseWorktreeAction: func(_, _ string, _ io.Writer) (worktreeAction, error) {
+				return actionSwitch, nil
+			},
+		}
+		if err := runWithUI([]string{"select"}, defaultWT, switchUI, &stdout, &stderr); err != nil {
+			t.Fatalf("select ctrl-x switch failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := strings.TrimSpace(stdout.String()); got != createdWT {
+			t.Errorf("select ctrl-x switch stdout = %q, want %q", got, createdWT)
+		}
+
+		// 3. ctrl-d refuses removing the current worktree.
+		stdout.Reset()
+		stderr.Reset()
+		removeCurrentUI := interactiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-d", Path: defaultWT}, nil
+			},
+			confirmRemoveWorktree: func(_, _ string, _ io.Writer) (bool, error) {
+				t.Fatal("confirmRemoveWorktree should not be called for current worktree")
+				return false, nil
+			},
+		}
+		if err := runWithUI([]string{"select"}, defaultWT, removeCurrentUI, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when removing current worktree")
+		}
+
+		// 4. ctrl-x -> actionRemove removes non-current worktree after confirmation and prints nothing to stdout.
+		stdout.Reset()
+		stderr.Reset()
+		removeOtherUI := interactiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-x", Path: createdWT}, nil
+			},
+			chooseWorktreeAction: func(_, _ string, _ io.Writer) (worktreeAction, error) {
+				return actionRemove, nil
+			},
+			confirmRemoveWorktree: func(_, _ string, _ io.Writer) (bool, error) {
+				return true, nil
+			},
+		}
+		if err := runWithUI([]string{"select"}, defaultWT, removeOtherUI, &stdout, &stderr); err != nil {
+			t.Fatalf("select ctrl-x remove failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := strings.TrimSpace(stdout.String()); got != "" {
+			t.Errorf("expected empty stdout after worktree removal, got %q", got)
+		}
+		if _, err := os.Stat(createdWT); !os.IsNotExist(err) {
+			t.Errorf("expected %s to be removed", createdWT)
 		}
 	})
 }

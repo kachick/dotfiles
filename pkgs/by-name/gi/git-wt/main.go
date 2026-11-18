@@ -75,7 +75,13 @@ func allowDirenv(dir string, stderr io.Writer) error {
 	return nil
 }
 
-func maybeAllowDirenv(targetDir string, existing []gitcmd.Worktree, trust bool, stderr io.Writer) error {
+func maybeAllowDirenv(
+	targetDir string,
+	existing []gitcmd.Worktree,
+	trust bool,
+	confirmFn func(dirName string, stderr io.Writer) (bool, error),
+	stderr io.Writer,
+) error {
 	envrcPath := filepath.Join(targetDir, ".envrc")
 	info, err := os.Stat(envrcPath)
 	if err != nil {
@@ -112,7 +118,36 @@ func maybeAllowDirenv(targetDir string, existing []gitcmd.Worktree, trust bool, 
 		}
 	}
 
+	if confirmFn == nil || isDirenvAllowed(targetDir) {
+		return nil
+	}
+
+	allowed, err := confirmFn(filepath.Base(targetDir), stderr)
+	if err != nil {
+		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			return nil
+		}
+		return err
+	}
+	if allowed {
+		return allowDirenv(targetDir, stderr)
+	}
 	return nil
+}
+
+func writeWorktreeList(wts []gitcmd.Worktree, containerDir string, stdout io.Writer) {
+	for _, wt := range wts {
+		label := worktreeLabel(containerDir, wt.Path)
+		branch := wt.Branch
+		if branch == "" {
+			if wt.Detached {
+				branch = "(detached)"
+			} else {
+				branch = "(unknown)"
+			}
+		}
+		fmt.Fprintf(stdout, "%s\t%s\t%s\n", label, branch, wt.Path)
+	}
 }
 
 func runList(args []string, workDir string, stdout, stderr io.Writer) error {
@@ -141,19 +176,7 @@ func runList(args []string, workDir string, stdout, stderr io.Writer) error {
 
 	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
 	sortWorktrees(wts, ctx.ContainerDir, defaultBranch)
-
-	for _, wt := range wts {
-		label := worktreeLabel(ctx.ContainerDir, wt.Path)
-		branch := wt.Branch
-		if branch == "" {
-			if wt.Detached {
-				branch = "(detached)"
-			} else {
-				branch = "(unknown)"
-			}
-		}
-		fmt.Fprintf(stdout, "%s\t%s\t%s\n", label, branch, wt.Path)
-	}
+	writeWorktreeList(wts, ctx.ContainerDir, stdout)
 	return nil
 }
 
@@ -317,7 +340,7 @@ func addSingleBranch(branch, baseRef string, trust bool, workDir string, stdout,
 	}
 	for _, wt := range existing {
 		if wt.Branch == branch {
-			if err := maybeAllowDirenv(wt.Path, existing, trust, stderr); err != nil {
+			if err := maybeAllowDirenv(wt.Path, existing, trust, nil, stderr); err != nil {
 				return err
 			}
 			fmt.Fprintln(stdout, wt.Path)
@@ -374,7 +397,7 @@ func addSingleBranch(branch, baseRef string, trust bool, workDir string, stdout,
 		}
 	}
 
-	if err := maybeAllowDirenv(targetDir, existing, trust, stderr); err != nil {
+	if err := maybeAllowDirenv(targetDir, existing, trust, nil, stderr); err != nil {
 		return err
 	}
 
@@ -382,33 +405,46 @@ func addSingleBranch(branch, baseRef string, trust bool, workDir string, stdout,
 	return nil
 }
 
-func addInteractiveBranches(trust bool, workDir string, selector branchSelector, stdout, stderr io.Writer) error {
-	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
+func validateNewBranchTarget(
+	r *gitcmd.Runner,
+	containerDir, branch string,
+	existing []gitcmd.Worktree,
+) (string, error) {
+	if branch == "" || strings.HasPrefix(branch, "-") || !r.Ok("check-ref-format", "--branch", branch) {
+		return "", fmt.Errorf("invalid branch name: %q", branch)
+	}
+	for _, wt := range existing {
+		if wt.Branch == branch {
+			return "", fmt.Errorf("branch %q is already checked out at %s", branch, wt.Path)
+		}
+	}
+	if r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch) {
+		return "", fmt.Errorf("branch %q already exists locally", branch)
+	}
+
+	dirName, err := gitcmd.WorktreeDirName(branch)
 	if err != nil {
-		return err
+		return "", err
 	}
-	if !ctx.IsBare || filepath.Base(ctx.CommonDir) != ".git" {
-		return errors.New("repository does not use clean-bare layout (<repo>/.git); cannot place flat worktrees inside a non-bare working tree")
+	targetDir := filepath.Join(containerDir, dirName)
+	if _, err := os.Stat(targetDir); err == nil {
+		return "", fmt.Errorf("target worktree path already exists: %s", targetDir)
+	} else if !os.IsNotExist(err) {
+		return "", err
 	}
+	return targetDir, nil
+}
 
-	r := gitcmd.NewIsolated(ctx.ContainerDir, stderr, stderr)
-	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
-	currentBranch := detectCurrentWorktreeBranch(workDir, stderr)
-
-	candidates, err := gitcmd.CollectLocalBranchCandidates(r, gitcmd.CandidateOptions{
-		DefaultBranch: defaultBranch,
-	})
-	if err != nil {
-		return err
-	}
-	if len(candidates) == 0 {
-		return errors.New("no unattached local branches to add")
-	}
-
-	if selector == nil {
-		selector = selectAddBranchesWithFzf
-	}
-	picked, err := selector(ctx.ContainerDir, defaultBranch, candidates, stderr)
+func addExistingBranchesInteractive(
+	ctx gitcmd.RepoContext,
+	r *gitcmd.Runner,
+	defaultBranch, currentBranch string,
+	candidates []gitcmd.BranchCandidate,
+	trust bool,
+	ui interactiveUI,
+	stdout, stderr io.Writer,
+) error {
+	picked, err := ui.selectExistingBranches(ctx.ContainerDir, defaultBranch, candidates, stderr)
 	if err != nil {
 		return err
 	}
@@ -457,7 +493,7 @@ func addInteractiveBranches(trust bool, workDir string, selector branchSelector,
 		if err := r.Stream("worktree", "add", targetDir, branch); err != nil {
 			return err
 		}
-		if err := maybeAllowDirenv(targetDir, existing, trust, stderr); err != nil {
+		if err := maybeAllowDirenv(targetDir, existing, trust, ui.confirmDirenvAllow, stderr); err != nil {
 			return err
 		}
 		fmt.Fprintf(stderr, "Added worktree: %s (branch %s)\n", targetDir, branch)
@@ -467,13 +503,100 @@ func addInteractiveBranches(trust bool, workDir string, selector branchSelector,
 	return nil
 }
 
-func runAddWithOptions(args []string, workDir string, selector branchSelector, stdout, stderr io.Writer) error {
+func addNewBranchInteractive(
+	ctx gitcmd.RepoContext,
+	r *gitcmd.Runner,
+	defaultBranch, currentBranch string,
+	trust bool,
+	ui interactiveUI,
+	stdout, stderr io.Writer,
+) error {
+	if !r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
+		return errors.New("repository has no commits to base a new branch on")
+	}
+
+	branch, err := ui.inputNewBranch(stderr)
+	if err != nil {
+		return err
+	}
+	branch = strings.TrimSpace(branch)
+
+	existing, err := gitcmd.ListWorktrees(r)
+	if err != nil {
+		return err
+	}
+	targetDir, err := validateNewBranchTarget(r, ctx.ContainerDir, branch, existing)
+	if err != nil {
+		return err
+	}
+
+	baseOptions := collectBaseRefOptions(r, defaultBranch, currentBranch)
+	baseRef, err := ui.chooseBaseRef(branch, baseOptions, ctx.ContainerDir, stderr)
+	if err != nil {
+		return err
+	}
+	baseRef = strings.TrimSpace(baseRef)
+	if baseRef == "" {
+		return gitcmd.ErrSelectionCanceled
+	}
+	if !r.Ok("rev-parse", "--verify", "--quiet", baseRef+"^{commit}") {
+		return fmt.Errorf("base ref %q does not resolve to a commit", baseRef)
+	}
+
+	if err := r.Stream("worktree", "add", "--no-track", "-b", branch, targetDir, baseRef); err != nil {
+		return err
+	}
+	if err := maybeAllowDirenv(targetDir, existing, trust, ui.confirmDirenvAllow, stderr); err != nil {
+		return err
+	}
+	fmt.Fprintf(stderr, "Added worktree: %s (branch %s from %s)\n", targetDir, branch, baseRef)
+	fmt.Fprintln(stdout, targetDir)
+	return nil
+}
+
+func addInteractive(trust bool, workDir string, ui interactiveUI, stdout, stderr io.Writer) error {
+	ui = ui.withDefaults()
+
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
+	if err != nil {
+		return err
+	}
+	if !ctx.IsBare || filepath.Base(ctx.CommonDir) != ".git" {
+		return errors.New("repository does not use clean-bare layout (<repo>/.git); cannot place flat worktrees inside a non-bare working tree")
+	}
+
+	r := gitcmd.NewIsolated(ctx.ContainerDir, stderr, stderr)
+	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
+	currentBranch := detectCurrentWorktreeBranch(workDir, stderr)
+
+	candidates, err := gitcmd.CollectLocalBranchCandidates(r, gitcmd.CandidateOptions{
+		DefaultBranch: defaultBranch,
+	})
+	if err != nil {
+		return err
+	}
+
+	mode := addModeNew
+	if len(candidates) > 0 {
+		mode, err = ui.chooseAddMode(stderr)
+		if err != nil {
+			return err
+		}
+	}
+
+	if mode == addModeExisting {
+		return addExistingBranchesInteractive(ctx, r, defaultBranch, currentBranch, candidates, trust, ui, stdout, stderr)
+	}
+	return addNewBranchInteractive(ctx, r, defaultBranch, currentBranch, trust, ui, stdout, stderr)
+}
+
+func runAddWithUI(args []string, workDir string, ui interactiveUI, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("git-wt add", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	branchFlag := fs.String("branch", "", "branch name to check out or create")
 	baseRef := fs.String("base", "", "base ref for creating a new branch")
 	trust := fs.Bool("trust", false, "run direnv allow if .envrc exists in the target worktree")
-	interactive := fs.Bool("interactive", false, "select local branches to add as worktrees via fzf")
+	interactive := fs.Bool("interactive", false, "add worktree(s) interactively via gum and fzf")
 
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: git-wt add [--branch <branch> [--base <ref>] | --interactive] [--trust]\n\n")
@@ -506,7 +629,13 @@ func runAddWithOptions(args []string, workDir string, selector branchSelector, s
 	if *baseRef != "" {
 		return errors.New("--base cannot be used with --interactive")
 	}
-	return addInteractiveBranches(*trust, workDir, selector, stdout, stderr)
+	if err := addInteractive(*trust, workDir, ui, stdout, stderr); err != nil {
+		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			return errors.New("worktree addition canceled")
+		}
+		return err
+	}
+	return nil
 }
 
 func runDefaultBranch(args []string, workDir string, stdout, stderr io.Writer) error {
@@ -573,10 +702,11 @@ func fzfSelectArgs(selfExe, query string) []string {
 		"--delimiter=\t",
 		"--with-nth=1,2",
 		"--accept-nth=3",
+		"--expect=ctrl-x,ctrl-a,ctrl-d",
 		"--preview=" + previewCmd,
 		"--preview-window=right,60%",
 		"--preview-border=line",
-		"--header=CTRL-L (git lf) / CTRL-/ (toggle preview)",
+		"--header=ENTER: switch | CTRL-X: actions | CTRL-A: add | CTRL-D: remove | CTRL-L: log | CTRL-/: preview",
 		"--bind=ctrl-l:execute(cd {3} && git-log-fzf)",
 		"--bind=ctrl-/:change-preview-window(down,60%|hidden|)",
 	}
@@ -586,43 +716,138 @@ func fzfSelectArgs(selfExe, query string) []string {
 	return args
 }
 
-func runSelect(args []string, workDir string, stdout, stderr io.Writer) error {
+func findWorktreeByPath(wts []gitcmd.Worktree, path string) (gitcmd.Worktree, bool) {
+	if path == "" {
+		return gitcmd.Worktree{}, false
+	}
+	cleanTarget := filepath.Clean(path)
+	for _, wt := range wts {
+		if filepath.Clean(wt.Path) == cleanTarget {
+			return wt, true
+		}
+	}
+	return gitcmd.Worktree{}, false
+}
+
+func runAddFromSelect(workDir string, ui interactiveUI, stdout, stderr io.Writer) error {
+	if err := addInteractive(false, workDir, ui, stdout, stderr); err != nil {
+		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func runSelectAction(
+	action worktreeAction,
+	ctx gitcmd.RepoContext,
+	wt gitcmd.Worktree,
+	hasWT bool,
+	workDir string,
+	ui interactiveUI,
+	stdout, stderr io.Writer,
+) error {
+	switch action {
+	case actionSwitch:
+		if !hasWT {
+			return errors.New("no worktree selected")
+		}
+		fmt.Fprintln(stdout, wt.Path)
+		return nil
+	case actionAdd:
+		return runAddFromSelect(workDir, ui, stdout, stderr)
+	case actionRemove:
+		if !hasWT {
+			return errors.New("no worktree selected")
+		}
+		label := worktreeLabel(ctx.ContainerDir, wt.Path)
+		if err := removeWorktreeSafely(ctx, wt, label, workDir, ui.confirmRemoveWorktree, stderr); err != nil {
+			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+				return nil
+			}
+			return err
+		}
+		return nil
+	case actionLog:
+		if !hasWT {
+			return errors.New("no worktree selected")
+		}
+		return ui.runGitLogFzf(wt.Path, stderr)
+	default:
+		return fmt.Errorf("unknown worktree action: %d", action)
+	}
+}
+
+func runSelectWithUI(args []string, workDir string, ui interactiveUI, stdout, stderr io.Writer) error {
+	ui = ui.withDefaults()
+
 	fs := flag.NewFlagSet("git-wt select", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	fs.Usage = func() {
-		fmt.Fprintf(stderr, "Usage: git-wt select [<query>]\n\nSelect a worktree via fzf and print its path.\n")
+		fmt.Fprintf(stderr, "Usage: git-wt select [<query>]\n\nSelect a worktree via fzf or run actions via gum, and print the target path.\n")
 	}
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
 	query := strings.Join(fs.Args(), " ")
 
-	var listBuf bytes.Buffer
-	if err := runList(nil, workDir, &listBuf, stderr); err != nil {
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
+	if err != nil {
 		return err
 	}
-	if listBuf.Len() == 0 {
+	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
+	wts, err := gitcmd.ListWorktrees(r)
+	if err != nil {
+		return err
+	}
+	if len(wts) == 0 {
 		return nil
 	}
+
+	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
+	sortWorktrees(wts, ctx.ContainerDir, defaultBranch)
+
+	var listBuf bytes.Buffer
+	writeWorktreeList(wts, ctx.ContainerDir, &listBuf)
 
 	selfExe, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("resolve executable path: %w", err)
 	}
 
-	cmd := exec.Command("fzf", fzfSelectArgs(selfExe, query)...)
-	cmd.Stdin = &listBuf
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
-	if err := cmd.Run(); err != nil {
-		var exitErr *exec.ExitError
-		// Exit codes 1 (no match) and 130 (user abort) are normal non-selections in fzf.
-		if errors.As(err, &exitErr) && (exitErr.ExitCode() == 1 || exitErr.ExitCode() == 130) {
+	choice, err := ui.selectWorktree(selfExe, query, &listBuf, stderr)
+	if err != nil {
+		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
 			return nil
 		}
-		return fmt.Errorf("fzf failed: %w", err)
+		return err
 	}
-	return nil
+
+	wt, hasWT := findWorktreeByPath(wts, choice.Path)
+	switch choice.Key {
+	case "":
+		return runSelectAction(actionSwitch, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+	case "ctrl-a":
+		return runSelectAction(actionAdd, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+	case "ctrl-d":
+		return runSelectAction(actionRemove, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+	case "ctrl-x":
+		if !hasWT {
+			return runSelectAction(actionAdd, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+		}
+		label := worktreeLabel(ctx.ContainerDir, wt.Path)
+		action, err := ui.chooseWorktreeAction(label, wt.Branch, stderr)
+		if err != nil {
+			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+				return nil
+			}
+			return err
+		}
+		return runSelectAction(action, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+	default:
+		return fmt.Errorf("unexpected fzf key: %q", choice.Key)
+	}
 }
 
 func printUsage(w io.Writer) {
@@ -630,13 +855,13 @@ func printUsage(w io.Writer) {
 	fmt.Fprintf(w, "Manage flat git worktrees in clean-bare repositories.\n\n")
 	fmt.Fprintf(w, "Subcommands:\n")
 	fmt.Fprintf(w, "  list                                                   List worktrees (default when omitted)\n")
-	fmt.Fprintf(w, "  select [<query>]                                       Select a worktree interactively via fzf\n")
+	fmt.Fprintf(w, "  select [<query>]                                       Select a worktree or run actions via fzf and gum\n")
 	fmt.Fprintf(w, "  add [--branch <branch> [--base <ref>] | --interactive] Add flat worktree(s) (defaults to --interactive)\n")
 	fmt.Fprintf(w, "  path [<name>]                                          Print worktree path for <name> or default branch\n")
 	fmt.Fprintf(w, "  default-branch                                         Print the detected default branch name\n")
 }
 
-func runWithOptions(args []string, workDir string, selector branchSelector, stdout, stderr io.Writer) error {
+func runWithUI(args []string, workDir string, ui interactiveUI, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
 		return runList(nil, workDir, stdout, stderr)
 	}
@@ -651,7 +876,7 @@ func runWithOptions(args []string, workDir string, selector branchSelector, stdo
 	case "list":
 		return runList(args[1:], workDir, stdout, stderr)
 	case "select":
-		return runSelect(args[1:], workDir, stdout, stderr)
+		return runSelectWithUI(args[1:], workDir, ui, stdout, stderr)
 	case "_preview":
 		if len(args) < 2 {
 			return nil
@@ -663,7 +888,7 @@ func runWithOptions(args []string, workDir string, selector branchSelector, stdo
 		}
 		return gitcmd.RenderBranchPreview(args[1], args[2], args[3], stdout, stderr)
 	case "add":
-		return runAddWithOptions(args[1:], workDir, selector, stdout, stderr)
+		return runAddWithUI(args[1:], workDir, ui, stdout, stderr)
 	case "path":
 		return runPath(args[1:], workDir, stdout, stderr)
 	case "default-branch":
@@ -674,8 +899,24 @@ func runWithOptions(args []string, workDir string, selector branchSelector, stdo
 	}
 }
 
+func runWithOptions(args []string, workDir string, selector branchSelector, stdout, stderr io.Writer) error {
+	var ui interactiveUI
+	if selector != nil {
+		ui = interactiveUI{
+			selectExistingBranches: selector,
+			chooseAddMode: func(io.Writer) (addMode, error) {
+				return addModeExisting, nil
+			},
+			confirmDirenvAllow: func(string, io.Writer) (bool, error) {
+				return false, nil
+			},
+		}
+	}
+	return runWithUI(args, workDir, ui, stdout, stderr)
+}
+
 func run(args []string, workDir string, stdout, stderr io.Writer) error {
-	return runWithOptions(args, workDir, nil, stdout, stderr)
+	return runWithUI(args, workDir, interactiveUI{}, stdout, stderr)
 }
 
 func main() {

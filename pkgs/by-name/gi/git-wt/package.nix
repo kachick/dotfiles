@@ -3,6 +3,7 @@
   direnv,
   fzf,
   gitMinimal,
+  gum,
   lib,
   local,
   makeWrapper,
@@ -29,6 +30,7 @@ buildGo127Module (finalAttrs: {
     direnv
     fzf
     gitMinimal
+    gum
     local.git-log-fzf
   ];
 
