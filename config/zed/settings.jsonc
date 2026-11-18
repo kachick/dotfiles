@@ -149,6 +149,7 @@
     "cursor_shape": "bar",
     "blinking": "off"
   },
+  "suggest_extensions": false,
   "auto_install_extensions": {
     "material-icon-theme": true,
     "nix": true,
