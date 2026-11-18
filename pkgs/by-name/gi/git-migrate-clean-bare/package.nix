@@ -1,6 +1,7 @@
 {
   buildGo127Module,
   direnv,
+  fzf,
   gitMinimal,
   lib,
   makeWrapper,
@@ -19,11 +20,13 @@ buildGo127Module (finalAttrs: {
 
   nativeCheckInputs = [
     direnv
+    fzf
     gitMinimal
   ];
 
   wrapperPath = lib.makeBinPath [
     direnv
+    fzf
     gitMinimal
   ];
 
@@ -40,6 +43,7 @@ buildGo127Module (finalAttrs: {
       fileset = unions [
         ../../../../go.mod
         ../../../../go.sum
+        ../../../../internal
         ./.
       ];
     };

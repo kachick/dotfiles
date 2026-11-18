@@ -3,11 +3,15 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
 
 func isolateEnv(t *testing.T) {
@@ -355,6 +359,232 @@ func TestRun_MigrateCleanBare(t *testing.T) {
 		}
 		if got := readFile(t, filepath.Join(wantWT, ".env")); got != "LOCAL=1\n" {
 			t.Errorf(".env = %q, want LOCAL=1\\n", got)
+		}
+	})
+}
+
+func TestRun_InteractiveMigration(t *testing.T) {
+	t.Run("collects, sorts, formats candidates for fzf and renders preview", func(t *testing.T) {
+		isolateEnv(t)
+		_, repoDir := setupStandardClone(t, "main")
+
+		// Merged branch (by current user)
+		runGit(t, repoDir, "checkout", "-b", "merged-mine")
+		writeFile(t, filepath.Join(repoDir, "merged.txt"), "m\n")
+		runGit(t, repoDir, "add", "merged.txt")
+		runGit(t, repoDir, "commit", "-m", "Merged topic")
+		runGit(t, repoDir, "checkout", "main")
+		runGit(t, repoDir, "merge", "--no-ff", "merged-mine", "-m", "Merge merged-mine")
+
+		// Unmerged branch by someone else
+		runGit(t, repoDir, "checkout", "-b", "other-unmerged", "main")
+		writeFile(t, filepath.Join(repoDir, "other.txt"), "o\n")
+		runGit(t, repoDir, "add", "other.txt")
+		runGit(t, repoDir, "-c", "user.name=Other", "-c", "user.email=other@example.com", "commit", "-m", "Other work")
+
+		// Unmerged branch by current user
+		runGit(t, repoDir, "checkout", "-b", "mine-unmerged", "main")
+		writeFile(t, filepath.Join(repoDir, "mine.txt"), "mi\n")
+		runGit(t, repoDir, "add", "mine.txt")
+		runGit(t, repoDir, "commit", "-m", "My topic work")
+
+		// External linked worktree branch (must be excluded from migration candidates)
+		extWT := filepath.Join(t.TempDir(), "ext-wt")
+		runGit(t, repoDir, "worktree", "add", "-b", "linked-wt", extWT, "main")
+
+		// Switch to current feature branch
+		runGit(t, repoDir, "checkout", "-b", "feat/current", "main")
+		writeFile(t, filepath.Join(repoDir, "cur.txt"), "c\n")
+		runGit(t, repoDir, "add", "cur.txt")
+		runGit(t, repoDir, "commit", "-m", "Current wip")
+
+		var stderr bytes.Buffer
+		r := gitcmd.NewIsolated(repoDir, &stderr, &stderr)
+		candidates, err := collectBranchCandidates(r, repoDir, "feat/current", "main")
+		if err != nil {
+			t.Fatalf("collectBranchCandidates failed: %v", err)
+		}
+
+		var gotOrder []string
+		var fzfInput strings.Builder
+		for _, c := range candidates {
+			gotOrder = append(gotOrder, c.name)
+			fzfInput.WriteString(formatCandidateLine(c))
+			fzfInput.WriteByte('\n')
+		}
+
+		wantOrder := []string{"feat/current", "main", "mine-unmerged", "other-unmerged", "merged-mine"}
+		if strings.Join(gotOrder, ",") != strings.Join(wantOrder, ",") {
+			t.Fatalf("candidate order = %v, want %v", gotOrder, wantOrder)
+		}
+		if got := countInitialSelections(candidates); got != 2 {
+			t.Errorf("countInitialSelections = %d, want 2", got)
+		}
+
+		// Verify fzfInteractiveArgs works with real fzf --filter and returns only the branch name.
+		filterArgs := append([]string{"--filter=mine-unmerged"}, fzfInteractiveArgs("git-migrate-clean-bare", repoDir, "main", "feat/current", 2)...)
+		fzfCmd := exec.Command("fzf", filterArgs...)
+		fzfCmd.Stdin = strings.NewReader(fzfInput.String())
+		fzfOut, err := fzfCmd.Output()
+		if err != nil {
+			t.Fatalf("fzf --filter failed: %v", err)
+		}
+		if got := strings.TrimSpace(string(fzfOut)); got != "mine-unmerged" {
+			t.Errorf("fzf output = %q, want mine-unmerged", got)
+		}
+
+		// Verify _preview renders branch path, diff stat, and commit summary.
+		var previewOut, previewErr bytes.Buffer
+		if err := run([]string{"_preview", repoDir, "main", "mine-unmerged"}, "", &previewOut, &previewErr); err != nil {
+			t.Fatalf("_preview failed: %v, stderr: %s", err, previewErr.String())
+		}
+		previewText := previewOut.String()
+		for _, want := range []string{"Branch:   mine-unmerged", filepath.Join(repoDir, "mine-unmerged"), "Diff vs main:", "My topic work"} {
+			if !strings.Contains(previewText, want) {
+				t.Errorf("_preview missing %q:\n%s", want, previewText)
+			}
+		}
+	})
+
+	t.Run("always invokes interactive selector even with single branch and supports --dry-run", func(t *testing.T) {
+		isolateEnv(t)
+		_, repoDir := setupStandardClone(t, "main")
+
+		called := false
+		selector := func(_, _, _ string, candidates []branchCandidate, _ io.Writer) ([]string, error) {
+			called = true
+			if len(candidates) != 1 || candidates[0].name != "main" {
+				t.Fatalf("unexpected candidates: %+v", candidates)
+			}
+			return []string{"main"}, nil
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runWithOptions([]string{"--interactive", "--dry-run", repoDir}, "", selector, &stdout, &stderr); err != nil {
+			t.Fatalf("interactive dry-run failed: %v, stderr: %s", err, stderr.String())
+		}
+		if !called {
+			t.Fatal("expected selector to be invoked even when only current/default branch exists")
+		}
+		if !strings.Contains(stdout.String(), "[dry-run] convert "+repoDir) {
+			t.Errorf("unexpected dry-run output:\n%s", stdout.String())
+		}
+		if got := runGit(t, repoDir, "rev-parse", "--is-bare-repository"); got != "false" {
+			t.Errorf("dry-run modified bare state: %s", got)
+		}
+	})
+
+	t.Run("migrates multiple selected branches and inherits direnv trust only for matching .envrc", func(t *testing.T) {
+		isolateEnv(t)
+		_, repoDir := setupStandardClone(t, "main")
+
+		sharedEnvrc := "export TEST_ENV=shared\n"
+		writeFile(t, filepath.Join(repoDir, ".envrc"), sharedEnvrc)
+		runGit(t, repoDir, "add", ".envrc")
+		runGit(t, repoDir, "commit", "-m", "Add shared .envrc")
+
+		runGit(t, repoDir, "checkout", "-b", "feat/same-envrc")
+		writeFile(t, filepath.Join(repoDir, "same.txt"), "same\n")
+		runGit(t, repoDir, "add", "same.txt")
+		runGit(t, repoDir, "commit", "-m", "Same envrc branch")
+
+		runGit(t, repoDir, "checkout", "-b", "feat/tampered-envrc", "main")
+		writeFile(t, filepath.Join(repoDir, ".envrc"), "export TEST_ENV=evil\n")
+		runGit(t, repoDir, "add", ".envrc")
+		runGit(t, repoDir, "commit", "-m", "Different envrc branch")
+
+		runGit(t, repoDir, "checkout", "main")
+		runDirenvAllow(t, repoDir)
+
+		selector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"main", "feat/same-envrc", "feat/tampered-envrc"}, nil
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runWithOptions([]string{"--interactive", repoDir}, "", selector, &stdout, &stderr); err != nil {
+			t.Fatalf("interactive migrate failed: %v, stderr: %s", err, stderr.String())
+		}
+
+		mainWT := filepath.Join(repoDir, "main")
+		sameWT := filepath.Join(repoDir, "feat-same-envrc")
+		tamperedWT := filepath.Join(repoDir, "feat-tampered-envrc")
+
+		if got := strings.TrimSpace(stdout.String()); got != mainWT {
+			t.Fatalf("stdout = %q, want %q", got, mainWT)
+		}
+		if got := runGit(t, sameWT, "symbolic-ref", "--short", "HEAD"); got != "feat/same-envrc" {
+			t.Errorf("sameWT branch = %q, want feat/same-envrc", got)
+		}
+		if got := readFile(t, filepath.Join(sameWT, "same.txt")); got != "same\n" {
+			t.Errorf("same.txt = %q, want same\\n", got)
+		}
+		if got := runGit(t, tamperedWT, "symbolic-ref", "--short", "HEAD"); got != "feat/tampered-envrc" {
+			t.Errorf("tamperedWT branch = %q, want feat/tampered-envrc", got)
+		}
+
+		if state := direnvAllowedState(t, mainWT); state != 0 {
+			t.Errorf("expected mainWT .envrc allowed, got %d", state)
+		}
+		if state := direnvAllowedState(t, sameWT); state != 0 {
+			t.Errorf("expected sameWT matching .envrc allowed, got %d", state)
+		}
+		if state := direnvAllowedState(t, tamperedWT); state == 0 {
+			t.Errorf("expected tamperedWT differing .envrc NOT to be allowed, got %d", state)
+		}
+
+		// With --trust, differing .envrc is allowed explicitly.
+		_, trustedRepo := setupStandardClone(t, "main")
+		writeFile(t, filepath.Join(trustedRepo, ".envrc"), "export A=1\n")
+		runGit(t, trustedRepo, "add", ".envrc")
+		runGit(t, trustedRepo, "commit", "-m", "envrc")
+		runGit(t, trustedRepo, "checkout", "-b", "topic")
+		writeFile(t, filepath.Join(trustedRepo, ".envrc"), "export A=2\n")
+		runGit(t, trustedRepo, "add", ".envrc")
+		runGit(t, trustedRepo, "commit", "-m", "topic envrc")
+		runGit(t, trustedRepo, "checkout", "main")
+
+		stdout.Reset()
+		stderr.Reset()
+		trustSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"main", "topic"}, nil
+		}
+		if err := runWithOptions([]string{"--interactive", "--trust", trustedRepo}, "", trustSelector, &stdout, &stderr); err != nil {
+			t.Fatalf("interactive --trust migrate failed: %v, stderr: %s", err, stderr.String())
+		}
+		if state := direnvAllowedState(t, filepath.Join(trustedRepo, "topic")); state != 0 {
+			t.Errorf("expected topic .envrc allowed with --trust, got %d", state)
+		}
+	})
+
+	t.Run("fails closed on selector cancel and flattened directory collisions", func(t *testing.T) {
+		isolateEnv(t)
+		_, repoDir := setupStandardClone(t, "main")
+		runGit(t, repoDir, "branch", "feat/a")
+		runGit(t, repoDir, "branch", "feat-a")
+
+		// 1. Selector cancel leaves repo untouched.
+		cancelSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+			return nil, errors.New("migration canceled")
+		}
+		var stdout, stderr bytes.Buffer
+		if err := runWithOptions([]string{"--interactive", repoDir}, "", cancelSelector, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when selector cancels, got nil")
+		}
+		if got := runGit(t, repoDir, "rev-parse", "--is-bare-repository"); got != "false" {
+			t.Errorf("repo became bare after cancel")
+		}
+
+		// 2. Directory collision between feat/a and feat-a aborts before mutating repo.
+		collideSelector := func(_, _, _ string, _ []branchCandidate, _ io.Writer) ([]string, error) {
+			return []string{"main", "feat/a", "feat-a"}, nil
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWithOptions([]string{"--interactive", repoDir}, "", collideSelector, &stdout, &stderr); err == nil {
+			t.Fatal("expected collision error, got nil")
+		}
+		if got := runGit(t, repoDir, "rev-parse", "--is-bare-repository"); got != "false" {
+			t.Errorf("repo became bare after collision error")
 		}
 	})
 }
