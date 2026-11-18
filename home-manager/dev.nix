@@ -90,6 +90,7 @@
         fzf-bind-posix-shell-history-to-git-commit-message
         git-delete-merged-branches
         git-init-clean-bare
+        git-migrate-clean-bare
         git-wt
         todo
         task-completions
