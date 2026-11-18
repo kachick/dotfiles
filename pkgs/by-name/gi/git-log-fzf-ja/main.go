@@ -410,7 +410,7 @@ func runMain(query string) error {
 		"--border-label", "🪵 Logs (ja)",
 		"--listen=" + fzfSock,
 		"--preview", previewCmd,
-		"--preview-window", "right,70%",
+		"--preview-window", "right,60%",
 		"--preview-border", "line",
 		"--height", "75%",
 		"--tmux", "90%,70%",
@@ -426,7 +426,7 @@ func runMain(query string) error {
 		"--bind", "ctrl-o:execute-silent(gh browse {2})",
 		"--bind", "ctrl-r:become(git revert {2})",
 		"--bind", fmt.Sprintf("enter:become(%s)", detailCmd),
-		"--bind", "ctrl-/:change-preview-window(down,70%|hidden|)",
+		"--bind", "ctrl-/:change-preview-window(down,60%|hidden|)",
 	}
 
 	if query != "" {

@@ -38,6 +38,11 @@
         rumdl
         go_1_27
 
+        # Required by Go package tests (`ghqf`, `git-init-clean-bare`)
+        ghq
+        fzf
+        direnv
+
         typos-lsp # For zed-editor typos extension
       ])
       ++ (with pkgs.pinned; [

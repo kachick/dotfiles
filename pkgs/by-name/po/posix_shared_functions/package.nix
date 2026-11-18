@@ -24,6 +24,8 @@ replaceVars ./posix_shared_functions.bash {
   reponame = lib.getExe pkgs.local.reponame;
   ghqf = lib.getExe pkgs.local.ghqf;
   ghq = lib.getExe pkgs.ghq;
+  git_init_clean_bare = lib.getExe pkgs.local.git-init-clean-bare;
+  git_wt = lib.getExe pkgs.local.git-wt;
   gopass = lib.getExe pkgs.gopass;
   coreutils = lib.getBin pkgs.coreutils;
   fzf_bind_shell_hist = lib.getExe pkgs.local.fzf-bind-posix-shell-history-to-git-commit-message;

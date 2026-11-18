@@ -124,6 +124,10 @@ in
         updateRefs = true;
       };
 
+      worktree = {
+        guessRemote = true;
+      };
+
       branch = {
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
@@ -166,15 +170,11 @@ in
       alias = {
         fixup = "commit --all --amend";
         current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
+        switch-default = "!git switch \"$(${lib.getExe pkgs.local.git-wt} default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
-        all = "!git refresh && git-delete-merged-branches";
+        all = "!${lib.getExe pkgs.local.git-refresh} && ${lib.getExe pkgs.local.git-delete-merged-branches}";
         lf = "!${lib.getExe pkgs.local.git-log-fzf}";
         lfj = "!${lib.getExe pkgs.local.git-log-fzf-ja}";
-        show-ja = "!${lib.getExe pkgs.local.git-show-ja}";
-        reset-branch = "!${lib.getExe pkgs.local.git-reset-branch}";
-        resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
@@ -247,12 +247,13 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !cd "$(${lib.getExe pkgs.ghq} root)/github.com/$(git config --global ghq.user)" && \
-            gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
-              cd "$1" && \
-                gh setup && \
-                  ${lib.getExe pkgs.direnv} allow && \
-                    ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
+          !set -e; owner="$(git config --global ghq.user)"; \
+            gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
+            repo_dir="$(${lib.getExe pkgs.ghq} get --clean-bare "$owner/$1")"; \
+            wt_dir="$(${lib.getExe pkgs.local.git-init-clean-bare} --trust "$repo_dir")"; \
+            cd "$wt_dir"; \
+            gh setup; \
+            ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
         '';
       };
     };
