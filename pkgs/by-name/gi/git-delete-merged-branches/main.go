@@ -7,112 +7,19 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"slices"
 	"strings"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
 
-type gitRunner struct {
-	dir    string
-	stdout io.Writer
-	stderr io.Writer
-}
-
-func (r *gitRunner) output(args ...string) (string, error) {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	out, err := cmd.CombinedOutput()
-	trimmed := strings.TrimSpace(string(out))
-	if err != nil {
-		return trimmed, fmt.Errorf("git %s: %w: %s", strings.Join(args, " "), err, trimmed)
-	}
-	return trimmed, nil
-}
-
-func (r *gitRunner) outputRaw(args ...string) ([]byte, error) {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	var stderrBuf bytes.Buffer
-	cmd.Stderr = &stderrBuf
-	out, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("git %s: %w: %s", strings.Join(args, " "), err, strings.TrimSpace(stderrBuf.String()))
-	}
-	return out, nil
-}
-
-func (r *gitRunner) ok(args ...string) bool {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	return cmd.Run() == nil
-}
-
-func (r *gitRunner) stream(args ...string) error {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	cmd.Stdout = r.stdout
-	cmd.Stderr = r.stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("git %s: %w", strings.Join(args, " "), err)
-	}
-	return nil
-}
-
-var protectedBranches = []string{"main", "master", "trunk", "develop", "development"}
-
-func hasBranchOrRemote(r *gitRunner, branch string) bool {
-	return r.ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch) ||
-		r.ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch) ||
-		r.ok("show-ref", "--verify", "--quiet", "refs/remotes/upstream/"+branch)
-}
-
-func detectDefaultBranch(r *gitRunner, commonDir string) string {
-	for _, remote := range []string{"origin", "upstream"} {
-		if ref, err := r.output("symbolic-ref", "--short", "refs/remotes/"+remote+"/HEAD"); err == nil && ref != "" {
-			candidate := strings.TrimPrefix(ref, remote+"/")
-			if hasBranchOrRemote(r, candidate) {
-				return candidate
-			}
-		}
-	}
-
-	commonRunner := &gitRunner{dir: commonDir, stdout: r.stdout, stderr: r.stderr}
-	isBareStr, errBare := commonRunner.output("rev-parse", "--is-bare-repository")
-	commonHead, errHead := commonRunner.output("symbolic-ref", "--short", "HEAD")
-	// In clean-bare repos, .git/HEAD stays on the cloned default branch; in non-bare repos,
-	// .git/HEAD tracks whichever feature branch is checked out, so check standard names first.
-	if errBare == nil && isBareStr == "true" && errHead == nil && commonHead != "" && hasBranchOrRemote(r, commonHead) {
-		return commonHead
-	}
-
-	for _, candidate := range protectedBranches {
-		if hasBranchOrRemote(r, candidate) {
-			return candidate
-		}
-	}
-
-	if errHead == nil && commonHead != "" && hasBranchOrRemote(r, commonHead) {
-		return commonHead
-	}
-	return ""
-}
-
-func resolveTargetRef(r *gitRunner, defaultBranch string) string {
+func resolveTargetRef(r *gitcmd.Runner, defaultBranch string) string {
 	for _, ref := range []string{
 		"refs/heads/" + defaultBranch,
 		"refs/remotes/origin/" + defaultBranch,
 		"refs/remotes/upstream/" + defaultBranch,
 	} {
-		if r.ok("show-ref", "--verify", "--quiet", ref) {
+		if r.Ok("show-ref", "--verify", "--quiet", ref) {
 			return ref
 		}
 	}
@@ -124,9 +31,9 @@ type mergedBranch struct {
 	wtPath string
 }
 
-func listMergedBranches(r *gitRunner, targetRef string) ([]mergedBranch, error) {
+func listMergedBranches(r *gitcmd.Runner, targetRef string) ([]mergedBranch, error) {
 	// Specify --sort=refname so global branch.sort config does not change ordering.
-	raw, err := r.outputRaw("for-each-ref", "--sort=refname", "--merged="+targetRef, "--format=%(refname:short)%00%(worktreepath)", "refs/heads/")
+	raw, err := r.OutputRaw("for-each-ref", "--sort=refname", "--merged="+targetRef, "--format=%(refname:short)%00%(worktreepath)", "refs/heads/")
 	if err != nil {
 		return nil, err
 	}
@@ -175,13 +82,13 @@ func isDir(path string) bool {
 	return err == nil && info.IsDir()
 }
 
-func resolveDeleteRunner(r *gitRunner, commonDir, defaultBranch, defaultWT string) *gitRunner {
+func resolveDeleteRunner(r *gitcmd.Runner, ctx gitcmd.RepoContext, defaultBranch, defaultWT string) *gitcmd.Runner {
 	if defaultWT != "" && isDir(defaultWT) {
-		return &gitRunner{dir: defaultWT, stdout: r.stdout, stderr: r.stderr}
+		return r.InDir(defaultWT)
 	}
-	commonRunner := &gitRunner{dir: commonDir, stdout: r.stdout, stderr: r.stderr}
-	if isBare, err := commonRunner.output("rev-parse", "--is-bare-repository"); err == nil && isBare == "true" {
-		if head, err := commonRunner.output("symbolic-ref", "--short", "HEAD"); err == nil && head == defaultBranch {
+	if ctx.IsBare {
+		commonRunner := r.InDir(ctx.CommonDir)
+		if head, err := commonRunner.Output("symbolic-ref", "--short", "HEAD"); err == nil && head == defaultBranch {
 			return commonRunner
 		}
 	}
@@ -217,15 +124,14 @@ func run(args []string, workDir string, stdout, stderr io.Writer) error {
 	}
 	cwdReal := resolveRealPath(cwd)
 
-	r := &gitRunner{dir: cwd, stdout: stdout, stderr: stderr}
-	commonDir, err := r.output("rev-parse", "--path-format=absolute", "--git-common-dir")
+	ctx, err := gitcmd.DetectRepoContext(cwd, stdout, stderr)
 	if err != nil {
-		return errors.New("not inside a git repository")
+		return err
 	}
-	commonDir = filepath.Clean(commonDir)
 
-	defaultBranch := detectDefaultBranch(r, commonDir)
-	if defaultBranch == "" {
+	r := gitcmd.NewIsolated(ctx.ContainerDir, stdout, stderr)
+	defaultBranch, err := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
+	if err != nil || defaultBranch == "" {
 		return nil
 	}
 	targetRef := resolveTargetRef(r, defaultBranch)
@@ -234,21 +140,21 @@ func run(args []string, workDir string, stdout, stderr io.Writer) error {
 	}
 
 	if !*dryRun {
-		if err := r.stream("worktree", "prune"); err != nil {
+		if err := r.Stream("worktree", "prune"); err != nil {
 			return err
 		}
 	}
 
-	defaultWT, _ := r.output("for-each-ref", "--format=%(worktreepath)", "refs/heads/"+defaultBranch)
+	defaultWT, _ := gitcmd.FindBranchWorktree(r, defaultBranch)
 	merged, err := listMergedBranches(r, targetRef)
 	if err != nil {
 		return err
 	}
 
-	deleteRunner := resolveDeleteRunner(r, commonDir, defaultBranch, defaultWT)
+	deleteRunner := resolveDeleteRunner(r, ctx, defaultBranch, defaultWT)
 
 	for _, entry := range merged {
-		if entry.name == defaultBranch || slices.Contains(protectedBranches, entry.name) {
+		if entry.name == defaultBranch || gitcmd.IsProtectedBranch(entry.name) {
 			continue
 		}
 
@@ -261,7 +167,7 @@ func run(args []string, workDir string, stdout, stderr io.Writer) error {
 
 			if *dryRun {
 				fmt.Fprintf(stdout, "[dry-run] git worktree remove %s\n", entry.wtPath)
-			} else if err := r.stream("worktree", "remove", entry.wtPath); err != nil {
+			} else if err := r.Stream("worktree", "remove", entry.wtPath); err != nil {
 				// Never pass --force so dirty worktrees or main worktrees stay safe.
 				fmt.Fprintf(stderr, "Keeping worktree %s for branch %s\n", entry.wtPath, entry.name)
 				continue
@@ -272,13 +178,13 @@ func run(args []string, workDir string, stdout, stderr io.Writer) error {
 			fmt.Fprintf(stdout, "[dry-run] git branch --delete %s\n", entry.name)
 			continue
 		}
-		if err := deleteRunner.stream("branch", "--delete", entry.name); err != nil {
+		if err := deleteRunner.Stream("branch", "--delete", entry.name); err != nil {
 			return err
 		}
 	}
 
 	if !*dryRun {
-		if err := r.stream("worktree", "prune"); err != nil {
+		if err := r.Stream("worktree", "prune"); err != nil {
 			return err
 		}
 	}

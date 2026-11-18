@@ -12,153 +12,9 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
-
-type gitRunner struct {
-	dir    string
-	stderr io.Writer
-}
-
-func (r *gitRunner) output(args ...string) (string, error) {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	out, err := cmd.CombinedOutput()
-	trimmed := strings.TrimSpace(string(out))
-	if err != nil {
-		return trimmed, fmt.Errorf("git %s: %w: %s", strings.Join(args, " "), err, trimmed)
-	}
-	return trimmed, nil
-}
-
-func (r *gitRunner) outputRaw(args ...string) ([]byte, error) {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	var stderrBuf bytes.Buffer
-	cmd.Stderr = &stderrBuf
-	out, err := cmd.Output()
-	if err != nil {
-		return nil, fmt.Errorf("git %s: %w: %s", strings.Join(args, " "), err, strings.TrimSpace(stderrBuf.String()))
-	}
-	return out, nil
-}
-
-func (r *gitRunner) ok(args ...string) bool {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	return cmd.Run() == nil
-}
-
-func (r *gitRunner) stream(args ...string) error {
-	cmd := exec.Command("git", args...)
-	if r.dir != "" {
-		cmd.Dir = r.dir
-	}
-	// Send git progress to stderr so stdout only prints the resolved worktree path.
-	cmd.Stdout = r.stderr
-	cmd.Stderr = r.stderr
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("git %s: %w", strings.Join(args, " "), err)
-	}
-	return nil
-}
-
-type repoContext struct {
-	commonDir    string
-	containerDir string
-	isBare       bool
-}
-
-type worktree struct {
-	path     string
-	head     string
-	branch   string
-	detached bool
-	bare     bool
-	prunable bool
-}
-
-func detectRepoContext(workDir string, stderr io.Writer) (repoContext, error) {
-	r := &gitRunner{dir: workDir, stderr: stderr}
-	commonDir, err := r.output("rev-parse", "--path-format=absolute", "--git-common-dir")
-	if err != nil {
-		return repoContext{}, errors.New("not inside a git repository")
-	}
-	commonDir = filepath.Clean(commonDir)
-
-	commonRunner := &gitRunner{dir: commonDir, stderr: stderr}
-	isBareStr, err := commonRunner.output("rev-parse", "--is-bare-repository")
-	if err != nil {
-		return repoContext{}, err
-	}
-
-	containerDir := commonDir
-	if filepath.Base(commonDir) == ".git" {
-		containerDir = filepath.Dir(commonDir)
-	}
-
-	return repoContext{
-		commonDir:    commonDir,
-		containerDir: containerDir,
-		isBare:       isBareStr == "true",
-	}, nil
-}
-
-func listWorktrees(r *gitRunner) ([]worktree, error) {
-	raw, err := r.outputRaw("worktree", "list", "--porcelain", "-z")
-	if err != nil {
-		return nil, err
-	}
-
-	var result []worktree
-	var cur *worktree
-
-	flush := func() {
-		if cur == nil {
-			return
-		}
-		if !cur.bare && !cur.prunable && cur.path != "" {
-			if info, err := os.Stat(cur.path); err == nil && info.IsDir() {
-				result = append(result, *cur)
-			}
-		}
-		cur = nil
-	}
-
-	for tokenBytes := range bytes.SplitSeq(raw, []byte{0}) {
-		token := string(tokenBytes)
-		if token == "" {
-			flush()
-			continue
-		}
-		if cur == nil {
-			cur = &worktree{}
-		}
-		switch {
-		case strings.HasPrefix(token, "worktree "):
-			cur.path = filepath.Clean(strings.TrimPrefix(token, "worktree "))
-		case strings.HasPrefix(token, "HEAD "):
-			cur.head = strings.TrimPrefix(token, "HEAD ")
-		case strings.HasPrefix(token, "branch "):
-			ref := strings.TrimPrefix(token, "branch ")
-			cur.branch = strings.TrimPrefix(ref, "refs/heads/")
-		case token == "detached":
-			cur.detached = true
-		case token == "bare":
-			cur.bare = true
-		case token == "prunable" || strings.HasPrefix(token, "prunable "):
-			cur.prunable = true
-		}
-	}
-	flush()
-
-	return result, nil
-}
 
 func worktreeLabel(containerDir, wtPath string) string {
 	cleanContainer := filepath.Clean(containerDir)
@@ -173,51 +29,15 @@ func worktreeLabel(containerDir, wtPath string) string {
 	return filepath.Base(cleanWT)
 }
 
-func hasBranchOrRemote(r *gitRunner, branch string) bool {
-	return r.ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch) ||
-		r.ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch) ||
-		r.ok("show-ref", "--verify", "--quiet", "refs/remotes/upstream/"+branch)
-}
-
-func detectDefaultBranch(r *gitRunner, commonDir string, isBare bool) (string, error) {
-	for _, remote := range []string{"origin", "upstream"} {
-		if ref, err := r.output("symbolic-ref", "--short", "refs/remotes/"+remote+"/HEAD"); err == nil && ref != "" {
-			candidate := strings.TrimPrefix(ref, remote+"/")
-			if hasBranchOrRemote(r, candidate) {
-				return candidate, nil
-			}
-		}
-	}
-
-	commonRunner := &gitRunner{dir: commonDir, stderr: r.stderr}
-	commonHead, err := commonRunner.output("symbolic-ref", "--short", "HEAD")
-	// In clean-bare repos, .git/HEAD stays on the cloned default branch; in non-bare repos,
-	// .git/HEAD tracks whichever feature branch is checked out, so check standard names first.
-	if isBare && err == nil && commonHead != "" && hasBranchOrRemote(r, commonHead) {
-		return commonHead, nil
-	}
-
-	for _, candidate := range []string{"main", "master", "trunk", "develop", "development"} {
-		if hasBranchOrRemote(r, candidate) {
-			return candidate, nil
-		}
-	}
-
-	if err == nil && commonHead != "" {
-		return commonHead, nil
-	}
-	return "", errors.New("cannot detect default branch")
-}
-
-func sortWorktrees(wts []worktree, containerDir, defaultBranch string) {
+func sortWorktrees(wts []gitcmd.Worktree, containerDir, defaultBranch string) {
 	sort.SliceStable(wts, func(i, j int) bool {
-		iDefault := defaultBranch != "" && wts[i].branch == defaultBranch
-		jDefault := defaultBranch != "" && wts[j].branch == defaultBranch
+		iDefault := defaultBranch != "" && wts[i].Branch == defaultBranch
+		jDefault := defaultBranch != "" && wts[j].Branch == defaultBranch
 		if iDefault != jDefault {
 			return iDefault
 		}
-		iLabel := worktreeLabel(containerDir, wts[i].path)
-		jLabel := worktreeLabel(containerDir, wts[j].path)
+		iLabel := worktreeLabel(containerDir, wts[i].Path)
+		jLabel := worktreeLabel(containerDir, wts[j].Path)
 		if (iLabel == ".") != (jLabel == ".") {
 			return iLabel == "."
 		}
@@ -255,7 +75,7 @@ func allowDirenv(dir string, stderr io.Writer) error {
 	return nil
 }
 
-func maybeAllowDirenv(targetDir string, existing []worktree, trust bool, stderr io.Writer) error {
+func maybeAllowDirenv(targetDir string, existing []gitcmd.Worktree, trust bool, stderr io.Writer) error {
 	envrcPath := filepath.Join(targetDir, ".envrc")
 	info, err := os.Stat(envrcPath)
 	if err != nil {
@@ -280,14 +100,14 @@ func maybeAllowDirenv(targetDir string, existing []worktree, trust bool, stderr 
 	// Only auto-allow when a sibling worktree already has an allowed .envrc with identical content.
 	cleanTarget := filepath.Clean(targetDir)
 	for _, wt := range existing {
-		if filepath.Clean(wt.path) == cleanTarget {
+		if filepath.Clean(wt.Path) == cleanTarget {
 			continue
 		}
-		siblingBytes, err := os.ReadFile(filepath.Join(wt.path, ".envrc"))
+		siblingBytes, err := os.ReadFile(filepath.Join(wt.Path, ".envrc"))
 		if err != nil || !bytes.Equal(targetBytes, siblingBytes) {
 			continue
 		}
-		if isDirenvAllowed(wt.path) {
+		if isDirenvAllowed(wt.Path) {
 			return allowDirenv(targetDir, stderr)
 		}
 	}
@@ -309,30 +129,30 @@ func runList(args []string, workDir string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("expected no arguments, got %d", len(fs.Args()))
 	}
 
-	ctx, err := detectRepoContext(workDir, stderr)
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
 	if err != nil {
 		return err
 	}
-	r := &gitRunner{dir: ctx.commonDir, stderr: stderr}
-	wts, err := listWorktrees(r)
+	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
+	wts, err := gitcmd.ListWorktrees(r)
 	if err != nil {
 		return err
 	}
 
-	defaultBranch, _ := detectDefaultBranch(r, ctx.commonDir, ctx.isBare)
-	sortWorktrees(wts, ctx.containerDir, defaultBranch)
+	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
+	sortWorktrees(wts, ctx.ContainerDir, defaultBranch)
 
 	for _, wt := range wts {
-		label := worktreeLabel(ctx.containerDir, wt.path)
-		branch := wt.branch
+		label := worktreeLabel(ctx.ContainerDir, wt.Path)
+		branch := wt.Branch
 		if branch == "" {
-			if wt.detached {
+			if wt.Detached {
 				branch = "(detached)"
 			} else {
 				branch = "(unknown)"
 			}
 		}
-		fmt.Fprintf(stdout, "%s\t%s\t%s\n", label, branch, wt.path)
+		fmt.Fprintf(stdout, "%s\t%s\t%s\n", label, branch, wt.Path)
 	}
 	return nil
 }
@@ -352,24 +172,24 @@ func runPath(args []string, workDir string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("expected at most 1 argument, got %d", len(remaining))
 	}
 
-	ctx, err := detectRepoContext(workDir, stderr)
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
 	if err != nil {
 		return err
 	}
-	r := &gitRunner{dir: ctx.commonDir, stderr: stderr}
-	wts, err := listWorktrees(r)
+	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
+	wts, err := gitcmd.ListWorktrees(r)
 	if err != nil {
 		return err
 	}
 
 	if len(remaining) == 0 {
-		defaultBranch, err := detectDefaultBranch(r, ctx.commonDir, ctx.isBare)
+		defaultBranch, err := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
 		if err != nil {
 			return err
 		}
 		for _, wt := range wts {
-			if wt.branch == defaultBranch {
-				fmt.Fprintln(stdout, wt.path)
+			if wt.Branch == defaultBranch {
+				fmt.Fprintln(stdout, wt.Path)
 				return nil
 			}
 		}
@@ -379,15 +199,15 @@ func runPath(args []string, workDir string, stdout, stderr io.Writer) error {
 	query := remaining[0]
 	sanitized := strings.ReplaceAll(query, "/", "-")
 	for _, wt := range wts {
-		if wt.branch == query {
-			fmt.Fprintln(stdout, wt.path)
+		if wt.Branch == query {
+			fmt.Fprintln(stdout, wt.Path)
 			return nil
 		}
 	}
 	for _, wt := range wts {
-		label := worktreeLabel(ctx.containerDir, wt.path)
+		label := worktreeLabel(ctx.ContainerDir, wt.Path)
 		if label == query || label == sanitized {
-			fmt.Fprintln(stdout, wt.path)
+			fmt.Fprintln(stdout, wt.Path)
 			return nil
 		}
 	}
@@ -420,16 +240,16 @@ func runAdd(args []string, workDir string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("invalid branch name: %q", branch)
 	}
 
-	ctx, err := detectRepoContext(workDir, stderr)
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
 	if err != nil {
 		return err
 	}
-	if !ctx.isBare || filepath.Base(ctx.commonDir) != ".git" {
+	if !ctx.IsBare || filepath.Base(ctx.CommonDir) != ".git" {
 		return errors.New("repository does not use clean-bare layout (<repo>/.git); cannot place flat worktrees inside a non-bare working tree")
 	}
 
-	r := &gitRunner{dir: ctx.containerDir, stderr: stderr}
-	if !r.ok("check-ref-format", "--branch", branch) {
+	r := gitcmd.NewIsolated(ctx.ContainerDir, stderr, stderr)
+	if !r.Ok("check-ref-format", "--branch", branch) {
 		return fmt.Errorf("invalid branch name: %q", branch)
 	}
 
@@ -438,18 +258,18 @@ func runAdd(args []string, workDir string, stdout, stderr io.Writer) error {
 	if dirName == "" || dirName == "." || dirName == ".." || dirName == ".git" {
 		return fmt.Errorf("invalid worktree directory name %q for branch %q", dirName, branch)
 	}
-	targetDir := filepath.Join(ctx.containerDir, dirName)
+	targetDir := filepath.Join(ctx.ContainerDir, dirName)
 
-	existing, err := listWorktrees(r)
+	existing, err := gitcmd.ListWorktrees(r)
 	if err != nil {
 		return err
 	}
 	for _, wt := range existing {
-		if wt.branch == branch {
-			if err := maybeAllowDirenv(wt.path, existing, *trust, stderr); err != nil {
+		if wt.Branch == branch {
+			if err := maybeAllowDirenv(wt.Path, existing, *trust, stderr); err != nil {
 				return err
 			}
-			fmt.Fprintln(stdout, wt.path)
+			fmt.Fprintln(stdout, wt.Path)
 			return nil
 		}
 	}
@@ -460,45 +280,45 @@ func runAdd(args []string, workDir string, stdout, stderr io.Writer) error {
 		return err
 	}
 
-	hasLocal := r.ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch)
-	hasOrigin := r.ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch)
+	hasLocal := r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch)
+	hasOrigin := r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch)
 
 	switch {
 	case *baseRef != "":
 		if hasLocal {
 			return fmt.Errorf("branch %q already exists locally; omit --base to check it out", branch)
 		}
-		if !r.ok("rev-parse", "--verify", "--quiet", *baseRef+"^{commit}") {
+		if !r.Ok("rev-parse", "--verify", "--quiet", *baseRef+"^{commit}") {
 			return fmt.Errorf("base ref %q does not resolve to a commit", *baseRef)
 		}
-		if err := r.stream("worktree", "add", "--no-track", "-b", branch, targetDir, *baseRef); err != nil {
+		if err := r.Stream("worktree", "add", "--no-track", "-b", branch, targetDir, *baseRef); err != nil {
 			return err
 		}
 	case hasLocal:
-		if err := r.stream("worktree", "add", targetDir, branch); err != nil {
+		if err := r.Stream("worktree", "add", targetDir, branch); err != nil {
 			return err
 		}
 	case hasOrigin:
-		if err := r.stream("worktree", "add", "--track", "-b", branch, targetDir, "origin/"+branch); err != nil {
+		if err := r.Stream("worktree", "add", "--track", "-b", branch, targetDir, "origin/"+branch); err != nil {
 			return err
 		}
 	default:
-		defaultBranch, err := detectDefaultBranch(r, ctx.commonDir, ctx.isBare)
+		defaultBranch, err := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
 		if err != nil {
 			return err
 		}
 		var resolvedBase string
 		switch {
-		case r.ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+defaultBranch):
+		case r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+defaultBranch):
 			resolvedBase = "origin/" + defaultBranch
-		case r.ok("show-ref", "--verify", "--quiet", "refs/heads/"+defaultBranch):
+		case r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+defaultBranch):
 			resolvedBase = defaultBranch
-		case r.ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}"):
+		case r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}"):
 			resolvedBase = "HEAD"
 		default:
 			return errors.New("repository has no commits to base a new branch on")
 		}
-		if err := r.stream("worktree", "add", "--no-track", "-b", branch, targetDir, resolvedBase); err != nil {
+		if err := r.Stream("worktree", "add", "--no-track", "-b", branch, targetDir, resolvedBase); err != nil {
 			return err
 		}
 	}
@@ -525,12 +345,12 @@ func runDefaultBranch(args []string, workDir string, stdout, stderr io.Writer) e
 		return fmt.Errorf("expected no arguments, got %d", len(fs.Args()))
 	}
 
-	ctx, err := detectRepoContext(workDir, stderr)
+	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
 	if err != nil {
 		return err
 	}
-	r := &gitRunner{dir: ctx.commonDir, stderr: stderr}
-	defaultBranch, err := detectDefaultBranch(r, ctx.commonDir, ctx.isBare)
+	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
+	defaultBranch, err := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
 	if err != nil {
 		return err
 	}
@@ -543,26 +363,20 @@ func runPreview(wtPath string, stdout, stderr io.Writer) error {
 		return nil
 	}
 
-	statusCmd := exec.Command("git", "-C", wtPath, "-c", "color.status=always", "status", "--short", "--branch")
-	statusCmd.Stdout = stdout
-	statusCmd.Stderr = stderr
-	if err := statusCmd.Run(); err != nil {
+	r := gitcmd.NewIsolated(wtPath, stdout, stderr)
+	if err := r.Stream("-c", "color.status=always", "status", "--short", "--branch"); err != nil {
 		return err
 	}
 
-	r := &gitRunner{dir: wtPath, stderr: stderr}
-	if !r.ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
+	if !r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
 		fmt.Fprintln(stdout, "\n(no commits yet)")
 		return nil
 	}
 
 	fmt.Fprintln(stdout)
-	logCmd := exec.Command("git", "-C", wtPath, "log",
+	return r.Stream("log",
 		"--format=format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d",
 		"--date=short", "--color=always", "-n", "40")
-	logCmd.Stdout = stdout
-	logCmd.Stderr = stderr
-	return logCmd.Run()
 }
 
 func fzfSelectArgs(selfExe, query string) []string {

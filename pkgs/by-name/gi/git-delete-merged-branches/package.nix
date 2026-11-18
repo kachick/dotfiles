@@ -29,7 +29,7 @@ buildGo127Module (finalAttrs: {
       --prefix PATH : "${finalAttrs.wrapperPath}"
   '';
 
-  vendorHash = "sha256-8v4EL++G1Di/nBkd/N/nNAEqpDmtjbL6DFHaXPt2JcQ=";
+  vendorHash = "sha256-k/qRQykTmtKBdYeT1vtKXNVTjPkhzjYeJgiXR3zQ/js=";
   src =
     with lib.fileset;
     toSource {
@@ -37,6 +37,7 @@ buildGo127Module (finalAttrs: {
       fileset = unions [
         ../../../../go.mod
         ../../../../go.sum
+        ../../../../internal
         ./.
       ];
     };

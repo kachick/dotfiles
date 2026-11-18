@@ -201,6 +201,9 @@ jobs:
           - name: git-migrate-clean-bare
             run: go run ./cmd/ci-build package git-migrate-clean-bare
 
+          - name: git-refresh
+            run: go run ./cmd/ci-build package git-refresh
+
           - name: git-wt
             run: go run ./cmd/ci-build package git-wt
 

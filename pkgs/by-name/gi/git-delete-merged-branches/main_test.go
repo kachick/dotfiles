@@ -332,4 +332,47 @@ func TestRun_DeleteMergedBranches(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("deletes merged branch from clean-bare root with inherited GIT_DIR=.git", func(t *testing.T) {
+		isolateEnv(t)
+		temp := t.TempDir()
+		seed := filepath.Join(temp, "seed")
+		runGit(t, temp, "init", "-b", "main", seed)
+		runGit(t, seed, "config", "user.name", "Tester")
+		runGit(t, seed, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(seed, "README.md"), []byte("hello\n"), 0o644); err != nil {
+			t.Fatalf("write README: %v", err)
+		}
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Initial commit")
+		runGit(t, seed, "checkout", "-b", "merged-bare")
+		if err := os.WriteFile(filepath.Join(seed, "b.txt"), []byte("b\n"), 0o644); err != nil {
+			t.Fatalf("write b.txt: %v", err)
+		}
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Commit b")
+		runGit(t, seed, "checkout", "main")
+		runGit(t, seed, "merge", "--no-ff", "merged-bare", "-m", "Merge b")
+
+		repoDir := filepath.Join(temp, "repo")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		runGit(t, repoDir, "clone", "--bare", seed, filepath.Join(repoDir, ".git"))
+
+		// Simulate invocation from `git all` (`!git refresh && git-delete-merged-branches`) at bare root.
+		t.Setenv("GIT_DIR", ".git")
+		var stdout, stderr bytes.Buffer
+		if err := run(nil, repoDir, &stdout, &stderr); err != nil {
+			t.Fatalf("run failed from bare root with GIT_DIR=.git: %v, stderr: %s", err, stderr.String())
+		}
+
+		branches := listBranches(t, repoDir)
+		if slices.Contains(branches, "merged-bare") {
+			t.Errorf("expected merged-bare to be deleted; remaining: %v", branches)
+		}
+		if !slices.Contains(branches, "main") {
+			t.Errorf("expected main to be kept; remaining: %v", branches)
+		}
+	})
 }

@@ -18,6 +18,7 @@ git-delete-merged-branches = { build = true, test = true, update = false }
 git-hooks-pre-push = { build = true, test = true, update = false }
 git-init-clean-bare = { build = true, test = true, update = false }
 git-migrate-clean-bare = { build = true, test = true, update = false }
+git-refresh = { build = true, test = true, update = false }
 git-wt = { build = true, test = true, update = false }
 hcpu_shogi = { build = true, test = true, update = false }
 ibus-engine-selector = { build = true, test = true, update = false }

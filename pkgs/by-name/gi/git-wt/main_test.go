@@ -411,4 +411,39 @@ func TestRun_AddListPath(t *testing.T) {
 			t.Errorf("fzf output = %q, want %q", got, previewWT)
 		}
 	})
+
+	t.Run("works from clean-bare root and worktrees when invoked with inherited GIT_DIR from git alias", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "trunk", []string{"feat/one"}, "")
+
+		// Simulate `git <alias>` at clean-bare container root where Git sets GIT_DIR=.git.
+		t.Setenv("GIT_DIR", ".git")
+		var stdout, stderr bytes.Buffer
+		if err := run([]string{"default-branch"}, repoDir, &stdout, &stderr); err != nil {
+			t.Fatalf("default-branch from bare root with GIT_DIR=.git failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
+			t.Errorf("default-branch = %q, want trunk", got)
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		if err := run([]string{"list"}, repoDir, &stdout, &stderr); err != nil {
+			t.Fatalf("list from bare root with GIT_DIR=.git failed: %v, stderr: %s", err, stderr.String())
+		}
+		if !strings.Contains(stdout.String(), defaultWT) {
+			t.Errorf("expected list output to include %q, got:\n%s", defaultWT, stdout.String())
+		}
+
+		// Simulate `git <alias>` inside a linked worktree where Git sets GIT_DIR=<common>/worktrees/<name>.
+		t.Setenv("GIT_DIR", filepath.Join(repoDir, ".git", "worktrees", "trunk"))
+		stdout.Reset()
+		stderr.Reset()
+		if err := run([]string{"default-branch"}, defaultWT, &stdout, &stderr); err != nil {
+			t.Fatalf("default-branch from worktree with worktree GIT_DIR failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
+			t.Errorf("default-branch = %q, want trunk", got)
+		}
+	})
 }

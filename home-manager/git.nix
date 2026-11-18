@@ -172,27 +172,9 @@ in
         current = "symbolic-ref --short HEAD";
         switch-default = "!git switch \"$(${lib.getExe pkgs.local.git-wt} default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        refresh = ''
-          !set -e; \
-            remote="$(git upstream)"; \
-            git remote update "$remote" --prune; \
-            common_dir="$(git rev-parse --path-format=absolute --git-common-dir)"; \
-            default_branch="$(${lib.getExe pkgs.local.git-wt} default-branch)"; \
-            default_wt="$(git for-each-ref --format='%(worktreepath)' "refs/heads/$default_branch")"; \
-            if [ -n "$default_wt" ]; then \
-              git -C "$default_wt" pull --ff-only --prune "$remote" "$default_branch"; \
-            elif [ "$(git -C "$common_dir" rev-parse --is-bare-repository)" = "true" ]; then \
-              git fetch --prune "$remote" "$default_branch:$default_branch"; \
-            else \
-              git switch "$default_branch" && git pull --ff-only --prune "$remote" "$default_branch"; \
-            fi
-        '';
-        all = "!git refresh && ${lib.getExe pkgs.local.git-delete-merged-branches}";
+        all = "!${lib.getExe pkgs.local.git-refresh} && ${lib.getExe pkgs.local.git-delete-merged-branches}";
         lf = "!${lib.getExe pkgs.local.git-log-fzf}";
         lfj = "!${lib.getExe pkgs.local.git-log-fzf-ja}";
-        show-ja = "!${lib.getExe pkgs.local.git-show-ja}";
-        reset-branch = "!${lib.getExe pkgs.local.git-reset-branch}";
-        resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet

@@ -91,6 +91,10 @@
         git-delete-merged-branches
         git-init-clean-bare
         git-migrate-clean-bare
+        git-refresh
+        git-reset-branch
+        git-resolve-conflict
+        git-show-ja
         git-wt
         todo
         task-completions
