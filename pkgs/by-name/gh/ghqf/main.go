@@ -210,6 +210,8 @@ func collectAllWorktrees() ([]worktreeEntry, error) {
 func fzfFilterArgs(query string) []string {
 	return []string{
 		"--query", query,
+		// Expects 3-level `<host>/<owner>/<repo>` paths; deeper paths (e.g. GitLab subgroups) are rare here.
+		// Splitting `<repo>` with `\t` would add tab gaps in the path and make the boundary with worktree labels unclear.
 		"--delimiter=[/\t]",
 		"--nth=3,4",
 		"--with-nth=1..4",
