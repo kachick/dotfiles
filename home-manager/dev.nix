@@ -1,7 +1,7 @@
 # Development Home Manager module for CLI tools and dev toolchains
 # Inherits essential CLI/Server configurations and adds full dev toolchains.
 
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports = [
@@ -88,17 +88,9 @@
       ])
       ++ (with pkgs.local; [
         fzf-bind-posix-shell-history-to-git-commit-message
-        git-delete-merged-branches
-        git-init-clean-bare
-        git-migrate-clean-bare
-        git-refresh
-        git-reset-branch
-        git-resolve-conflict
-        git-show-ja
-        git-wt
+        gitx
         todo
         task-completions
-        ghqf
         walk
         envs
         ir
@@ -118,26 +110,36 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
-  programs.direnv = {
-    enable = true;
+  programs = {
+    bash.initExtra = ''
+      source "${pkgs.local.posix_dev_functions}"
+    '';
 
-    enableBashIntegration = true;
-    enableZshIntegration = true;
+    zsh.initContent = lib.mkOrder 1001 ''
+      source_sh "${pkgs.local.posix_dev_functions}"
+    '';
 
-    config.global = {
-      # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
-      hide_env_diff = true;
-    };
-
-    # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
-    #
-    # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
-    # See following reference
-    #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
-    #   - https://github.com/kachick/ruby-ulid/pull/410
-    nix-direnv = {
+    # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
+    direnv = {
       enable = true;
+
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+
+      config.global = {
+        # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
+        hide_env_diff = true;
+      };
+
+      # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
+      #
+      # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
+      # See following reference
+      #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
+      #   - https://github.com/kachick/ruby-ulid/pull/410
+      nix-direnv = {
+        enable = true;
+      };
     };
   };
 

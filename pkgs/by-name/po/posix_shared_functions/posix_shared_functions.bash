@@ -23,79 +23,18 @@ cdwin() {
 	cd "$(wslpath "$1")" || return 1
 }
 
-cdrepo() {
-	local query_repoonly=""
-	if [ $# -ge 1 ] && [ -n "$1" ]; then
-		query_repoonly="$(printf '%s\n' "$1" | '@reponame@')"
-	fi
-	local -r target="$('@ghqf@' "$query_repoonly")"
-	if [ -n "$target" ]; then
-		cd "$target" || return 1
-	fi
-}
-
-getrepo() {
-	local trust=0
-	local repo_spec=""
-	while [ $# -gt 0 ]; do
-		case "$1" in
-		--trust)
-			trust=1
-			;;
-		-*)
-			echo "Unknown option: $1" >&2
-			return 2
-			;;
-		*)
-			if [ -n "$repo_spec" ]; then
-				echo "Usage: getrepo [--trust] <repo_spec>" >&2
-				return 2
-			fi
-			repo_spec="$1"
-			;;
-		esac
-		shift
-	done
-
-	if [ -z "$repo_spec" ]; then
-		echo "Usage: getrepo [--trust] <repo_spec>" >&2
-		return 2
-	fi
-
-	local repo_dir
-	repo_dir="$('@ghq@' get --clean-bare "$repo_spec")" || return 1
-	if [ -z "$repo_dir" ]; then
-		echo "Failed to resolve cloned repository path for: $repo_spec" >&2
-		return 1
-	fi
-
-	local target_dir
-	if [ "$trust" -eq 1 ]; then
-		target_dir="$('@git_init_clean_bare@' --trust "$repo_dir")" || return 1
-	else
-		target_dir="$('@git_init_clean_bare@' "$repo_dir")" || return 1
-	fi
-
-	cd "$target_dir" || return 1
-}
-
-gwt() {
-	local target
-	target="$('@git_wt@' select "$@")" || return 1
-	if [ -n "$target" ]; then
-		cd "$target" || return 1
-	fi
-}
-
+# Why plain mktemp instead of gopass pwgen:
+# Previously used gopass xkcd words for readable directory names without adding wordlist packages.
+# Keep essential/server shell helpers free of encryption tool dependencies; standard mktemp provides 6 random characters.
 cdtemp() {
-	local word
+	local template
 	if [ $# -lt 1 ]; then
-		word="$('@gopass@' pwgen --xkcd --sep '-' --one-per-line 2 | '@coreutils@/bin/head' -1)"
+		template="cdtemp.XXXXXX"
 	else
-		word="$1"
+		template="cdtemp.$1.XXX"
 	fi
 
-	cd "$('@coreutils@/bin/mktemp' --tmpdir --directory "cdtemp.$word.XXX")" || return 1
+	cd "$('@coreutils@/bin/mktemp' --tmpdir --directory "$template")" || return 1
 }
 
 cdnix() {
@@ -106,10 +45,6 @@ cdnix() {
 	# TODO: Check exit code and Nix or not
 	local -r command="$(command -v "$1")"
 	cd "$('@coreutils@/bin/dirname' "$('@coreutils@/bin/dirname' "$('@coreutils@/bin/readlink' --canonicalize "$command")")")" || return 1
-}
-
-gch() {
-	fc -nrl 1 | '@fzf_bind_shell_hist@'
 }
 
 avoid_tofu() {

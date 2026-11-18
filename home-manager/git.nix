@@ -11,6 +11,7 @@
 let
   # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
+  gitx = lib.getExe pkgs.local.gitx;
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -170,11 +171,19 @@ in
       alias = {
         fixup = "commit --all --amend";
         current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch \"$(${lib.getExe pkgs.local.git-wt} default-branch)\"";
+        switch-default = "!git switch \"$(${gitx} wt default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        all = "!${lib.getExe pkgs.local.git-refresh} && ${lib.getExe pkgs.local.git-delete-merged-branches}";
-        lf = "!${lib.getExe pkgs.local.git-log-fzf}";
-        lfj = "!${lib.getExe pkgs.local.git-log-fzf-ja}";
+        all = "!${gitx} refresh && ${gitx} delete-merged-branches";
+        lf = "!${gitx} log-fzf";
+        lfj = "!${gitx} log-fzf --ja";
+        wt = "!${gitx} wt";
+        refresh = "!${gitx} refresh";
+        delete-merged-branches = "!${gitx} delete-merged-branches";
+        init-clean-bare = "!${gitx} init-clean-bare";
+        migrate-clean-bare = "!${gitx} migrate-clean-bare";
+        reset-branch = "!${gitx} reset-branch";
+        resolve-conflict = "!${gitx} resolve-conflict";
+        show-ja = "!${gitx} show --ja";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
@@ -207,20 +216,20 @@ in
         #   - Disable in a repository:
         #     git config set hook.pre-push-no-typos-in-commits.enabled false
         #   - Skip a single commit safely:
-        #     See pkgs/by-name/gi/git-hooks-pre-push/README.md
+        #     See pkgs/by-name/gi/gitx/README.md
         pre-push-no-leaks = {
           event = "pre-push";
-          command = "${lib.getExe pkgs.local.git-hooks-pre-push} betterleaks";
+          command = "${gitx} hooks pre-push betterleaks";
         };
 
         pre-push-no-typos-in-commits = {
           event = "pre-push";
-          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-commits";
+          command = "${gitx} hooks pre-push typos-commits";
         };
 
         pre-push-no-typos-in-branch = {
           event = "pre-push";
-          command = "${lib.getExe pkgs.local.git-hooks-pre-push} typos-branch";
+          command = "${gitx} hooks pre-push typos-branch";
         };
       };
     };
@@ -250,7 +259,7 @@ in
           !set -e; owner="$(git config --global ghq.user)"; \
             gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
             repo_dir="$(${lib.getExe pkgs.ghq} get --clean-bare "$owner/$1")"; \
-            wt_dir="$(${lib.getExe pkgs.local.git-init-clean-bare} --trust "$repo_dir")"; \
+            wt_dir="$(${gitx} init-clean-bare --trust "$repo_dir")"; \
             cd "$wt_dir"; \
             gh setup; \
             ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"

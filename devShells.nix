@@ -38,7 +38,7 @@
         rumdl
         go_1_27
 
-        # Required by Go package tests (`ghqf`, `git-init-clean-bare`)
+        # Required by Go package tests (`gitx`)
         ghq
         fzf
         direnv

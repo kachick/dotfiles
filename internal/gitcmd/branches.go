@@ -41,7 +41,7 @@ type FzfBranchSelectOptions struct {
 	SelfExe            string
 	RepoDir            string
 	DefaultBranch      string
-	PreviewSubcommand  string
+	PreviewArgs        []string
 	BorderLabel        string
 	Header             string
 	InitialSelectCount int
@@ -282,12 +282,13 @@ func shellQuote(s string) string {
 
 // FzfBranchSelectArgs builds fzf arguments for multi-selecting local branches with live preview.
 func FzfBranchSelectArgs(opts FzfBranchSelectOptions) []string {
-	previewCmd := fmt.Sprintf("%s %s %s %s {1}",
-		shellQuote(opts.SelfExe),
-		shellQuote(opts.PreviewSubcommand),
-		shellQuote(opts.RepoDir),
-		shellQuote(opts.DefaultBranch),
-	)
+	previewParts := make([]string, 0, 1+len(opts.PreviewArgs)+2)
+	previewParts = append(previewParts, shellQuote(opts.SelfExe))
+	for _, arg := range opts.PreviewArgs {
+		previewParts = append(previewParts, shellQuote(arg))
+	}
+	previewParts = append(previewParts, shellQuote(opts.RepoDir), shellQuote(opts.DefaultBranch), "{1}")
+	previewCmd := strings.Join(previewParts, " ")
 	args := []string{
 		"--height=75%",
 		"--tmux=90%,70%",

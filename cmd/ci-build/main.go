@@ -745,8 +745,8 @@ builtins.attrNames flake.packages.%s
 			return fmt.Errorf("evaluating flake packages: %w", err)
 		}
 
-		fmt.Println("Warming up common store paths with baseline package (reponame)...")
-		buildCmd := exec.Command("nix", "build", ".#reponame", "--no-link", "--no-keep-build-log")
+		fmt.Println("Warming up common store paths with baseline package (gitx)...")
+		buildCmd := exec.Command("nix", "build", ".#gitx", "--no-link", "--no-keep-build-log")
 		buildCmd.Stdout = os.Stdout
 		buildCmd.Stderr = os.Stderr
 		if err := buildCmd.Run(); err != nil {
