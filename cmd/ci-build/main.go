@@ -745,8 +745,11 @@ builtins.attrNames flake.packages.%s
 			return fmt.Errorf("evaluating flake packages: %w", err)
 		}
 
-		fmt.Println("Warming up common store paths with baseline package (gitx)...")
-		buildCmd := exec.Command("nix", "build", ".#gitx", "--no-link", "--no-keep-build-log")
+		// Use an upstream nixpkgs package instead of a local package (e.g. gitx)
+		// so warmup pulls cached store paths without building local code twice.
+		fmt.Println("Warming up common store paths with upstream baseline package (nixpkgs#go)...")
+		buildTarget := fmt.Sprintf("nixpkgs#legacyPackages.%s.go", arch)
+		buildCmd := exec.Command("nix", "build", "--inputs-from", repoRoot, buildTarget, "--no-link", "--no-keep-build-log")
 		buildCmd.Stdout = os.Stdout
 		buildCmd.Stderr = os.Stderr
 		if err := buildCmd.Run(); err != nil {
