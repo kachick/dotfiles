@@ -17,17 +17,16 @@
     packageConfigurable = lib.mkDefault pkgs.vim;
     # nix-env -f '<nixpkgs>' -qaP -A vimPlugins
     plugins = with pkgs.vimPlugins; [
-      iceberg-vim
       fzf-vim
-      kdl-vim
     ];
 
     settings = {
       background = "dark";
     };
+    # Force 16 colors so built-in sorbet uses terminal background and palette colors instead of fixed hex values
     extraConfig = ''
-      colorscheme iceberg
-      set termguicolors
+      set t_Co=16
+      colorscheme sorbet
       set viminfofile=${config.xdg.stateHome}/vim/viminfo
     '';
   };
