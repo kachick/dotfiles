@@ -29,7 +29,6 @@
     packages =
       (with pkgs; [
         local.leaf-markdown-viewer # leaf
-        ruby_4_0
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
         ghq

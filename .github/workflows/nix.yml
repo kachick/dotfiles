@@ -268,8 +268,6 @@ jobs:
         run: |
           which zsh
           which bash
-          which ruby
-          which irb
           which ssh
       - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
         run: |
@@ -281,8 +279,6 @@ jobs:
         run: |
           zsh -c zsh -c 'which la; which p'
           zsh -c 'starship --version'
-          zsh -c 'ruby --version'
-          zsh -c 'irb --version'
           zsh -c 'ssh -V'
           zsh -c 'hx --health'
       - name: Run homemade commands

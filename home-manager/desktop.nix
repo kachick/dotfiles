@@ -217,6 +217,9 @@ in
     ];
   };
 
-  # Use full Vim (with GTK3/X11 clipboard support) for desktop environments
-  programs.vim.packageConfigurable = pkgs.vim-full;
+  # Use full Vim (with GTK3/X11 clipboard support) for desktop environments.
+  # Drop Ruby support so vim-full does not pull ruby into the desktop closure.
+  programs.vim.packageConfigurable = pkgs.vim-full.override {
+    rubySupport = false;
+  };
 }
