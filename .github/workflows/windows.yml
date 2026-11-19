@@ -10,10 +10,14 @@ on:
       - '.github/workflows/windows.yml'
       - '**windows**'
       - 'cmd/winit-*/**'
+      - 'internal/configsync/**'
       - 'config/powershell/**'
       - 'config/nushell/**'
       - 'config/starship/**'
       - 'config/alacritty/**'
+      - 'config/keyboards/kanata.kbd'
+      - 'config/zed/settings.jsonc'
+      - 'config/fresh/config.jsonc'
       - 'go.*'
       - '!**.md'
   pull_request:
@@ -21,10 +25,14 @@ on:
       - '.github/workflows/windows.yml'
       - '**windows**'
       - 'cmd/winit-*/**'
+      - 'internal/configsync/**'
       - 'config/powershell/**'
       - 'config/nushell/**'
       - 'config/starship/**'
       - 'config/alacritty/**'
+      - 'config/keyboards/kanata.kbd'
+      - 'config/zed/settings.jsonc'
+      - 'config/fresh/config.jsonc'
       - 'go.*'
       - '!**.md'
   workflow_dispatch:
@@ -121,8 +129,8 @@ jobs:
       - name: Test and vet Go packages
         # Limit test and vet to Windows targets since pkgs/* tests expect Nix devshell tools
         run: |
-          go test . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
-          go vet . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
+          go test . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows ./internal/configsync
+          go vet . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows ./internal/configsync
       - name: Build winit-*
         run: |
           go build -o 'dist/' ./cmd/winit-reg

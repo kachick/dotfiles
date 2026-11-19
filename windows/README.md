@@ -8,10 +8,10 @@ sudo pwsh --command '[Environment]::SetEnvironmentVariable("XDG_CONFIG_HOME", "$
 
 # Restart pwsh session before running:
 ./winit-conf.exe run
+# Show diffs without writing:
+# ./winit-conf.exe run --dry-run
 
 Install-Module -Name PSFzfHistory
-# $PROFILE is an automatic variable, not an ENV: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables?view=powershell-7.4
-./winit-conf.exe generate -path="config/powershell/Profile.ps1" > "$PROFILE"
 
 ./winit-reg.exe list
 ./winit-reg.exe run --all
@@ -23,6 +23,6 @@ winget import --import-file "$env:TMP\winitRANDOM1\winget-pkgs-basic.json"
 
 Post-install steps:
 
-1. Copy `kanata.kbd` into `$env:LOCALAPPDATA\Microsoft\WinGet\Packages\jtroo.kanata_gui_Microsoft.Winget.Source_8wekyb3d8bbwe` and add a shortcut to `shell:common startup`.
+1. Add a shortcut for `kanata` in `$env:LOCALAPPDATA\Microsoft\WinGet\Packages\jtroo.kanata_gui_Microsoft.Winget.Source_8wekyb3d8bbwe` to `shell:common startup`.
 1. Remove unwanted pre-installed apps using [bulk-uninstall.ps1](./winget/bulk-uninstall.ps1).
 1. Enable BitLocker and back up the recovery key (<https://account.microsoft.com/devices/recoverykey>).
