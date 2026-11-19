@@ -167,12 +167,19 @@ func runPackage(args []string) error {
 	return nil
 }
 
-func isPackageFree(pname string, arch string) (bool, error) {
-	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+func gitRepoRoot() (string, error) {
+	out, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
 	if err != nil {
-		return false, fmt.Errorf("failed to detect repository root: %w", err)
+		return "", fmt.Errorf("failed to detect repository root: %w", err)
 	}
-	repoRoot := strings.TrimSpace(string(repoRootBytes))
+	return strings.TrimSpace(string(out)), nil
+}
+
+func isPackageFree(pname string, arch string) (bool, error) {
+	repoRoot, err := gitRepoRoot()
+	if err != nil {
+		return false, err
+	}
 
 	expr := fmt.Sprintf(`
 let
@@ -444,7 +451,11 @@ func maybePushToNiks3(targetName string, isFree bool, outPaths []string) error {
 		args = append(args, rootPaths...)
 		pushCmd = exec.Command(niks3Bin, args...)
 	} else {
-		args := []string{"run", ".#niks3", "--", "push", "--server-url", serverURL}
+		repoRoot, err := gitRepoRoot()
+		if err != nil {
+			return err
+		}
+		args := []string{"run", "--inputs-from", repoRoot, "nixpkgs#niks3", "--", "push", "--server-url", serverURL}
 		args = append(args, tokenArgs...)
 		args = append(args, "--")
 		args = append(args, rootPaths...)
@@ -722,11 +733,10 @@ func runWarmup(args []string) error {
 		arch = detectedArch
 	}
 
-	repoRootBytes, err := exec.Command("git", "rev-parse", "--show-toplevel").Output()
+	repoRoot, err := gitRepoRoot()
 	if err != nil {
-		return fmt.Errorf("failed to detect repository root: %w", err)
+		return err
 	}
-	repoRoot := strings.TrimSpace(string(repoRootBytes))
 
 	switch target {
 	case "packages":
