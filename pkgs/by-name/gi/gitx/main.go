@@ -8,22 +8,117 @@ import (
 	"os"
 )
 
+type gitxSubcommand struct {
+	name        string
+	description string
+	run         func(args []string, stdin io.Reader, stdout, stderr io.Writer) error
+}
+
+func allGitxSubcommands() []gitxSubcommand {
+	return []gitxSubcommand{
+		{
+			name:        "wt",
+			description: "Manage flat git worktrees in clean-bare repositories",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runWT(args, "", stdout, stderr)
+			},
+		},
+		{
+			name:        "refresh",
+			description: "Update remotes and fast-forward the default branch",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runRefresh(args, "", stdout, stderr)
+			},
+		},
+		{
+			name:        "delete-merged-branches",
+			description: "Remove merged local branches and clean worktrees",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runDeleteMergedBranches(args, "", stdout, stderr)
+			},
+		},
+		{
+			name:        "init-clean-bare",
+			description: "Initialize default branch worktree for ghq --clean-bare",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runInitCleanBare(args, stdout, stderr)
+			},
+		},
+		{
+			name:        "migrate-clean-bare",
+			description: "Convert a repository into the clean-bare layout",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runMigrateCleanBare(args, "", stdout, stderr)
+			},
+		},
+		{
+			name:        "reset-branch",
+			description: "Safely reset a local branch to match its remote",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runResetBranch(args, "", stdout, stderr)
+			},
+		},
+		{
+			name:        "show",
+			description: "Show commit details (--ja translates commit messages)",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runShow(args, "", stdin, stdout, stderr)
+			},
+		},
+		{
+			name:        "log-fzf",
+			description: "Interactive git log searcher (--ja enables translation)",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runLogFzf(args, stdin, stdout, stderr)
+			},
+		},
+		{
+			name:        "resolve-conflict",
+			description: "Open unresolved conflict locations in helix",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runResolveConflict(args, "", stdin, stdout, stderr)
+			},
+		},
+		{
+			name:        "hooks",
+			description: "Run configured Git hooks (pre-push)",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runHooks(args, stdin, stdout, stderr)
+			},
+		},
+		{
+			name:        "ghq-fzf",
+			description: "Select a ghq repository worktree via fzf",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runGhqFzf(args, stdout, stderr)
+			},
+		},
+		{
+			name:        "gh-reponame",
+			description: "Extract repository name from OWNER/REPO or GitHub URL",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runGhReponame(args, stdin, stdout, stderr)
+			},
+		},
+	}
+}
+
+func isGitxSubcommandName(name string) bool {
+	for _, cmd := range allGitxSubcommands() {
+		if cmd.name == name {
+			return true
+		}
+	}
+	return false
+}
+
 func printGitxUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: gitx <subcommand> [options] [args]\n\n")
 	fmt.Fprintf(w, "Unified Git, ghq, and GitHub workflow helper CLI.\n\n")
 	fmt.Fprintf(w, "Subcommands:\n")
-	fmt.Fprintf(w, "  wt                      Manage flat git worktrees in clean-bare repositories\n")
-	fmt.Fprintf(w, "  refresh                 Update remotes and fast-forward the default branch\n")
-	fmt.Fprintf(w, "  delete-merged-branches  Remove merged local branches and clean worktrees\n")
-	fmt.Fprintf(w, "  init-clean-bare         Initialize default branch worktree for ghq --clean-bare\n")
-	fmt.Fprintf(w, "  migrate-clean-bare      Convert a repository into the clean-bare layout\n")
-	fmt.Fprintf(w, "  reset-branch            Safely reset a local branch to match its remote\n")
-	fmt.Fprintf(w, "  show                    Show commit details (--ja translates commit messages)\n")
-	fmt.Fprintf(w, "  log-fzf                 Interactive git log searcher (--ja enables translation)\n")
-	fmt.Fprintf(w, "  resolve-conflict        Open unresolved conflict locations in helix\n")
-	fmt.Fprintf(w, "  hooks                   Run configured Git hooks (pre-push)\n")
-	fmt.Fprintf(w, "  ghq-fzf                 Select a ghq repository worktree via fzf\n")
-	fmt.Fprintf(w, "  gh-reponame             Extract repository name from OWNER/REPO or GitHub URL\n")
+	for _, cmd := range allGitxSubcommands() {
+		fmt.Fprintf(w, "  %-24s%s\n", cmd.name, cmd.description)
+	}
 }
 
 func runGitx(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
@@ -42,34 +137,16 @@ func runGitx(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 	case "help":
 		printGitxUsage(stdout)
 		return nil
-	case "wt":
-		return runWT(rest, "", stdout, stderr)
-	case "refresh":
-		return runRefresh(rest, "", stdout, stderr)
-	case "delete-merged-branches":
-		return runDeleteMergedBranches(rest, "", stdout, stderr)
-	case "init-clean-bare":
-		return runInitCleanBare(rest, stdout, stderr)
-	case "migrate-clean-bare":
-		return runMigrateCleanBare(rest, "", stdout, stderr)
-	case "reset-branch":
-		return runResetBranch(rest, "", stdout, stderr)
-	case "show":
-		return runShow(rest, "", stdin, stdout, stderr)
-	case "log-fzf":
-		return runLogFzf(rest, stdin, stdout, stderr)
-	case "resolve-conflict":
-		return runResolveConflict(rest, "", stdin, stdout, stderr)
-	case "hooks":
-		return runHooks(rest, stdin, stdout, stderr)
-	case "ghq-fzf":
-		return runGhqFzf(rest, stdout, stderr)
-	case "gh-reponame":
-		return runGhReponame(rest, stdin, stdout, stderr)
-	default:
-		printGitxUsage(stderr)
-		return fmt.Errorf("unknown subcommand: %s", subcmd)
 	}
+
+	for _, cmd := range allGitxSubcommands() {
+		if cmd.name == subcmd {
+			return cmd.run(rest, stdin, stdout, stderr)
+		}
+	}
+
+	printGitxUsage(stderr)
+	return fmt.Errorf("unknown subcommand: %s", subcmd)
 }
 
 func main() {

@@ -57,9 +57,9 @@ getrepo() {
 	cd "$target_dir" || return 1
 }
 
-gwt() {
+wt() {
 	local target
-	target="$('@gitx@' wt select "$@")" || return 1
+	target="$('@gitx@' wt _cd-helper "$@")" || return 1
 	if [ -n "$target" ]; then
 		cd "$target" || return 1
 	fi

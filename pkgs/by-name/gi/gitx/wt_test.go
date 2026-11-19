@@ -327,8 +327,9 @@ func TestRunWT_AddListPath(t *testing.T) {
 		if err != nil {
 			t.Fatalf("fzf --filter with wtFzfSelectArgs failed: %v", err)
 		}
-		if got := strings.TrimSpace(string(fzfOut)); got != previewWT {
-			t.Errorf("fzf output = %q, want %q", got, previewWT)
+		lines := strings.Split(strings.TrimSpace(string(fzfOut)), "\n")
+		if len(lines) != 2 || lines[0] != "feat-preview" || lines[1] != previewWT {
+			t.Errorf("fzf output lines = %q, want [feat-preview %q]", lines, previewWT)
 		}
 	})
 
@@ -604,35 +605,71 @@ func TestRunWT_AddInteractive(t *testing.T) {
 	})
 }
 
-func installFakeGum(t *testing.T, script string) string {
+func installFakeTool(t *testing.T, name, script string) string {
 	t.Helper()
 	binDir := t.TempDir()
-	logPath := filepath.Join(binDir, "gum-args.log")
-	gumPath := filepath.Join(binDir, "gum")
+	logPath := filepath.Join(binDir, name+"-args.log")
+	toolPath := filepath.Join(binDir, name)
 	content := "#!/bin/sh\nprintf '%s\\n' \"$*\" >> " + shellQuote(logPath) + "\n" + script + "\n"
-	if err := os.WriteFile(gumPath, []byte(content), 0o755); err != nil {
-		t.Fatalf("write fake gum: %v", err)
+	if err := os.WriteFile(toolPath, []byte(content), 0o755); err != nil {
+		t.Fatalf("write fake %s: %v", name, err)
 	}
 	t.Setenv("PATH", binDir+":"+os.Getenv("PATH"))
 	return logPath
 }
 
+func installFakeGum(t *testing.T, script string) string {
+	return installFakeTool(t, "gum", script)
+}
+
 func TestGumHelpersAndParsing(t *testing.T) {
-	t.Run("parses fzf --expect output including empty match cases", func(t *testing.T) {
+	t.Run("parses fzf --print-query --expect output including unmatched query cases", func(t *testing.T) {
 		cases := []struct {
 			raw  string
 			want selectChoice
 		}{
-			{raw: "\n/repo/main\n", want: selectChoice{Key: "", Path: "/repo/main"}},
-			{raw: "ctrl-x\n/repo/feat\n", want: selectChoice{Key: "ctrl-x", Path: "/repo/feat"}},
-			{raw: "ctrl-a\n\n", want: selectChoice{Key: "ctrl-a", Path: ""}},
-			{raw: "ctrl-a\n", want: selectChoice{Key: "ctrl-a", Path: ""}},
+			{raw: "\n\n/repo/main\n", want: selectChoice{Query: "", Key: "", Path: "/repo/main"}},
+			{raw: "feat\nctrl-x\n/repo/feat\n", want: selectChoice{Query: "feat", Key: "ctrl-x", Path: "/repo/feat"}},
+			{raw: "new-br\n\n\n", want: selectChoice{Query: "new-br", Key: "", Path: ""}},
+			{raw: "new-br\n", want: selectChoice{Query: "new-br", Key: "", Path: ""}},
+			{raw: "\nctrl-a\n\n", want: selectChoice{Query: "", Key: "ctrl-a", Path: ""}},
+			{raw: "\nctrl-a\n", want: selectChoice{Query: "", Key: "ctrl-a", Path: ""}},
 			{raw: "", want: selectChoice{}},
 		}
 		for _, tc := range cases {
 			if got := parseFzfSelectOutput(tc.raw); got != tc.want {
 				t.Errorf("parseFzfSelectOutput(%q) = %+v, want %+v", tc.raw, got, tc.want)
 			}
+		}
+	})
+
+	t.Run("distinguishes unmatched fzf exit 1 with query from cancel exit 130", func(t *testing.T) {
+		installFakeTool(t, "fzf", `
+printf '%s' "${FAKE_FZF_OUT:-}"
+exit "${FAKE_FZF_EXIT:-0}"
+`)
+		var stderr bytes.Buffer
+
+		t.Setenv("FAKE_FZF_OUT", "feat/new-one\n\n")
+		t.Setenv("FAKE_FZF_EXIT", "1")
+		got, err := selectWorktreeWithFzf("gitx", "", strings.NewReader("main\tmain\t/repo/main\n"), &stderr)
+		if err != nil {
+			t.Fatalf("expected unmatched query on exit 1 to succeed, got %v", err)
+		}
+		if got.Query != "feat/new-one" || got.Path != "" {
+			t.Errorf("got = %+v, want Query=feat/new-one Path=\"\"", got)
+		}
+
+		t.Setenv("FAKE_FZF_OUT", "\n\n")
+		t.Setenv("FAKE_FZF_EXIT", "1")
+		if _, err := selectWorktreeWithFzf("gitx", "", strings.NewReader("main\tmain\t/repo/main\n"), &stderr); !errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			t.Fatalf("expected empty exit 1 to cancel, got %v", err)
+		}
+
+		t.Setenv("FAKE_FZF_OUT", "feat/aborted\n\n")
+		t.Setenv("FAKE_FZF_EXIT", "130")
+		if _, err := selectWorktreeWithFzf("gitx", "", strings.NewReader("main\tmain\t/repo/main\n"), &stderr); !errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			t.Fatalf("expected exit 130 to cancel even with query, got %v", err)
 		}
 	})
 
@@ -850,6 +887,143 @@ func TestRunWT_InteractiveNewBranchAndDirenvConfirm(t *testing.T) {
 		}
 		if _, err := os.Stat(createdWT); !os.IsNotExist(err) {
 			t.Errorf("expected %s to be removed", createdWT)
+		}
+	})
+}
+
+func TestRunWT_UnmatchedQueryAndCdHelper(t *testing.T) {
+	t.Run("confirms before creating worktree from unmatched select query for new and existing branches", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", []string{"feat/remote-hit"}, "export SAFE=1\n")
+
+		var stdout, stderr bytes.Buffer
+		declinedUI := wtInteractiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Query: "typo-br"}, nil
+			},
+			confirmCreateWorktree: func(branch string, _ io.Writer) (bool, error) {
+				if branch != "typo-br" {
+					t.Errorf("confirmCreateWorktree branch = %q, want typo-br", branch)
+				}
+				return false, nil
+			},
+		}
+		if err := runWTWithUI([]string{"select"}, defaultWT, declinedUI, &stdout, &stderr); err != nil {
+			t.Fatalf("declined unmatched query failed: %v", err)
+		}
+		if got := strings.TrimSpace(stdout.String()); got != "" {
+			t.Errorf("expected empty stdout when declined, got %q", got)
+		}
+		if _, err := os.Stat(filepath.Join(repoDir, "typo-br")); !os.IsNotExist(err) {
+			t.Errorf("expected declined branch worktree not to be created")
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		remoteUI := wtInteractiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Query: "feat/remote-hit"}, nil
+			},
+			confirmCreateWorktree: func(_ string, _ io.Writer) (bool, error) { return true, nil },
+			chooseBaseRef: func(_ string, _ []string, _ string, _ io.Writer) (string, error) {
+				t.Fatal("chooseBaseRef should not be called when origin branch already exists")
+				return "", nil
+			},
+			confirmDirenvAllow: func(_ string, _ io.Writer) (bool, error) { return true, nil },
+		}
+		if err := runWTWithUI([]string{"select"}, defaultWT, remoteUI, &stdout, &stderr); err != nil {
+			t.Fatalf("remote unmatched query failed: %v, stderr: %s", err, stderr.String())
+		}
+		wantRemoteWT := filepath.Join(repoDir, "feat-remote-hit")
+		if got := strings.TrimSpace(stdout.String()); got != wantRemoteWT {
+			t.Errorf("stdout = %q, want %q", got, wantRemoteWT)
+		}
+		if state := direnvAllowedState(t, wantRemoteWT); state != 0 {
+			t.Errorf("expected .envrc to be allowed after confirmation, got state=%d", state)
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		newBranchUI := wtInteractiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Query: "feat/query-new"}, nil
+			},
+			confirmCreateWorktree: func(_ string, _ io.Writer) (bool, error) { return true, nil },
+			chooseBaseRef: func(branch string, opts []string, _ string, _ io.Writer) (string, error) {
+				if branch != "feat/query-new" {
+					t.Errorf("chooseBaseRef branch = %q, want feat/query-new", branch)
+				}
+				return opts[0], nil
+			},
+			confirmDirenvAllow: func(_ string, _ io.Writer) (bool, error) { return false, nil },
+		}
+		if err := runWTWithUI([]string{"select"}, defaultWT, newBranchUI, &stdout, &stderr); err != nil {
+			t.Fatalf("new branch unmatched query failed: %v, stderr: %s", err, stderr.String())
+		}
+		wantNewWT := filepath.Join(repoDir, "feat-query-new")
+		if got := strings.TrimSpace(stdout.String()); got != wantNewWT {
+			t.Errorf("stdout = %q, want %q", got, wantNewWT)
+		}
+		if br := runGit(t, wantNewWT, "symbolic-ref", "--short", "HEAD"); br != "feat/query-new" {
+			t.Errorf("branch = %q, want feat/query-new", br)
+		}
+	})
+
+	t.Run("_cd-helper dispatches cd commands, passes queries, and rejects non-cd wt or gitx subcommands", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		var stdout, stderr bytes.Buffer
+		if err := runWTWithUI([]string{"_cd-helper", "add", "--branch", "feat/via-helper"}, defaultWT, wtInteractiveUI{}, &stdout, &stderr); err != nil {
+			t.Fatalf("_cd-helper add failed: %v, stderr: %s", err, stderr.String())
+		}
+		wantAdded := filepath.Join(repoDir, "feat-via-helper")
+		if got := strings.TrimSpace(stdout.String()); got != wantAdded {
+			t.Errorf("_cd-helper add stdout = %q, want %q", got, wantAdded)
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWTWithUI([]string{"_cd-helper", "path", "feat/via-helper"}, defaultWT, wtInteractiveUI{}, &stdout, &stderr); err != nil {
+			t.Fatalf("_cd-helper path failed: %v", err)
+		}
+		if got := strings.TrimSpace(stdout.String()); got != wantAdded {
+			t.Errorf("_cd-helper path stdout = %q, want %q", got, wantAdded)
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		var gotQuery string
+		queryUI := wtInteractiveUI{
+			selectWorktree: func(_, query string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				gotQuery = query
+				return selectChoice{Path: defaultWT}, nil
+			},
+		}
+		if err := runWTWithUI([]string{"_cd-helper", "feat/via-helper"}, defaultWT, queryUI, &stdout, &stderr); err != nil {
+			t.Fatalf("_cd-helper query failed: %v", err)
+		}
+		if gotQuery != "feat/via-helper" || strings.TrimSpace(stdout.String()) != defaultWT {
+			t.Errorf("gotQuery=%q stdout=%q", gotQuery, stdout.String())
+		}
+
+		for _, cmd := range allWTSubcommands() {
+			if cmd.outputsTarget {
+				continue
+			}
+			stdout.Reset()
+			stderr.Reset()
+			if err := runWTWithUI([]string{"_cd-helper", cmd.name}, defaultWT, wtInteractiveUI{}, &stdout, &stderr); err == nil {
+				t.Errorf("expected _cd-helper %q to fail, got nil", cmd.name)
+			}
+		}
+
+		for _, cmd := range allGitxSubcommands() {
+			stdout.Reset()
+			stderr.Reset()
+			if err := runWTWithUI([]string{"_cd-helper", cmd.name}, defaultWT, wtInteractiveUI{}, &stdout, &stderr); err == nil {
+				t.Errorf("expected _cd-helper with gitx subcommand %q to fail, got nil", cmd.name)
+			}
 		}
 	})
 }

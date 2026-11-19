@@ -40,8 +40,9 @@ const (
 )
 
 type selectChoice struct {
-	Key  string
-	Path string
+	Query string
+	Key   string
+	Path  string
 }
 
 type wtInteractiveUI struct {
@@ -50,6 +51,7 @@ type wtInteractiveUI struct {
 	inputNewBranch         func(stderr io.Writer) (string, error)
 	chooseBaseRef          func(branch string, baseOptions []string, containerDir string, stderr io.Writer) (string, error)
 	confirmDirenvAllow     func(dirName string, stderr io.Writer) (bool, error)
+	confirmCreateWorktree  func(branch string, stderr io.Writer) (bool, error)
 	selectWorktree         func(selfExe, query string, listInput io.Reader, stderr io.Writer) (selectChoice, error)
 	chooseWorktreeAction   func(label, branch string, stderr io.Writer) (worktreeAction, error)
 	confirmRemoveWorktree  func(label, branch string, stderr io.Writer) (bool, error)
@@ -71,6 +73,9 @@ func (ui wtInteractiveUI) withDefaults() wtInteractiveUI {
 	}
 	if ui.confirmDirenvAllow == nil {
 		ui.confirmDirenvAllow = confirmDirenvAllowWithGum
+	}
+	if ui.confirmCreateWorktree == nil {
+		ui.confirmCreateWorktree = confirmCreateWorktreeWithGum
 	}
 	if ui.selectWorktree == nil {
 		ui.selectWorktree = selectWorktreeWithFzf
@@ -242,6 +247,10 @@ func confirmDirenvAllowWithGum(dirName string, stderr io.Writer) (bool, error) {
 	return runGumConfirm(fmt.Sprintf("Allow direnv in %s?", dirName), stderr)
 }
 
+func confirmCreateWorktreeWithGum(branch string, stderr io.Writer) (bool, error) {
+	return runGumConfirm(fmt.Sprintf("Create worktree for %q?", branch), stderr)
+}
+
 func confirmRemoveWorktreeWithGum(label, branch string, stderr io.Writer) (bool, error) {
 	target := label
 	if branch != "" && branch != label {
@@ -284,15 +293,17 @@ func parseFzfSelectOutput(raw string) selectChoice {
 	if raw == "" {
 		return selectChoice{}
 	}
-	key, rest, hasNewline := strings.Cut(raw, "\n")
-	if !hasNewline {
-		return selectChoice{Path: strings.TrimSpace(key)}
+	lines := strings.Split(raw, "\n")
+	choice := selectChoice{
+		Query: strings.TrimSpace(lines[0]),
 	}
-	path, _, _ := strings.Cut(rest, "\n")
-	return selectChoice{
-		Key:  strings.TrimSpace(key),
-		Path: strings.TrimSpace(path),
+	if len(lines) >= 2 {
+		choice.Key = strings.TrimSpace(lines[1])
 	}
+	if len(lines) >= 3 {
+		choice.Path = strings.TrimSpace(lines[2])
+	}
+	return choice
 }
 
 func selectWorktreeWithFzf(selfExe, query string, listInput io.Reader, stderr io.Writer) (selectChoice, error) {
@@ -302,8 +313,19 @@ func selectWorktreeWithFzf(selfExe, query string, listInput io.Reader, stderr io
 	cmd.Stdout = &out
 	cmd.Stderr = stderr
 	if err := cmd.Run(); err != nil {
-		if isCancelExitError(err) {
-			return selectChoice{}, gitcmd.ErrSelectionCanceled
+		var exitErr *exec.ExitError
+		if errors.As(err, &exitErr) {
+			switch exitErr.ExitCode() {
+			case 130:
+				return selectChoice{}, gitcmd.ErrSelectionCanceled
+			case 1:
+				// Exit code 1 means "no match"; keep a non-empty query so select can offer creating a new worktree.
+				choice := parseFzfSelectOutput(out.String())
+				if choice.Query == "" && choice.Key == "" && choice.Path == "" {
+					return selectChoice{}, gitcmd.ErrSelectionCanceled
+				}
+				return choice, nil
+			}
 		}
 		return selectChoice{}, fmt.Errorf("fzf failed: %w", err)
 	}
