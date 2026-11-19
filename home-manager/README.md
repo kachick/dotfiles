@@ -28,7 +28,7 @@ curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/insta
 mkdir -p ~/.local/state/nix/profiles
 bash
 
-NIX_CONFIG='accept-flake-config = true' nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
 
 # System-level config (https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
 sudoc nix run 'github:kachick/dotfiles#apply-system'

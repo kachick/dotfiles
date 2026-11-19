@@ -50,4 +50,4 @@ provision:
       # shellcheck source=/dev/null
       . /etc/profile.d/nix.sh
 
-      nix run --accept-flake-config "${FLAKE_URI}#home-manager" -- switch -b backup --flake "${FLAKE_URI}#user@lima"
+      nix run "${FLAKE_URI}#home-manager" -- switch -b backup --flake "${FLAKE_URI}#user@lima"
