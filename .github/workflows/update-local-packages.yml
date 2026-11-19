@@ -4,10 +4,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/update-local-packages.yml'
-  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every day 9:02 JST
-    - cron: '2 0 * * *'
+    - cron: '2 9 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
 
 permissions:

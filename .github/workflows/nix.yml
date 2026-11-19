@@ -41,9 +41,8 @@ on:
       - 'typos.toml'
       - '!**.md'
   schedule:
-    # Every 10:42 JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 1 * * *'
+    - cron: '42 10 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
     inputs:
       target:

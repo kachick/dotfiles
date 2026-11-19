@@ -22,9 +22,8 @@ on:
       - '.github/workflows/lima-guest.yml'
   workflow_dispatch:
   schedule:
-    # Every 10:42 on Tuesday JST
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 1 * * 2'
+    - cron: '42 10 * * 2'
+      timezone: 'Asia/Tokyo'
 
 permissions:
   contents: read

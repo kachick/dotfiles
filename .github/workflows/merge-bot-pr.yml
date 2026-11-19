@@ -3,6 +3,7 @@ on:
   schedule:
     # 46 is not strict; it comes from: `gh api repos/:owner/:repo --jq '.id % 60'`
     - cron: '46 */6 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
   pull_request:
     paths:

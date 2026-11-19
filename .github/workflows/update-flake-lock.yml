@@ -1,9 +1,8 @@
 name: 🆙❄️
 on:
-  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
   schedule:
-    # Every day 9:17 JST
-    - cron: '17 0 * * *'
+    - cron: '17 9 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
 
 permissions:
