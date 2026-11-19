@@ -276,11 +276,9 @@ in
       ];
     };
 
-    extensions =
-      (with pkgs; [ gh-poi ])
-      ++ (with pkgs.local; [
-        gh-actions-lock
-        gh-prs
-      ]);
+    extensions = with pkgs.local; [
+      gh-actions-lock
+      gh-prs
+    ];
   };
 }

@@ -318,4 +318,280 @@ func TestRun_DeleteMergedBranches(t *testing.T) {
 			t.Errorf("expected main to be kept; remaining: %v", branches)
 		}
 	})
+
+	t.Run("deletes squash-merged PR branches and clean worktrees in clean-bare layout when --pr is enabled", func(t *testing.T) {
+		isolateEnv(t)
+		temp := t.TempDir()
+		seed := filepath.Join(temp, "seed")
+		runGit(t, temp, "init", "-b", "main", seed)
+		runGit(t, seed, "config", "user.name", "Tester")
+		runGit(t, seed, "config", "user.email", "tester@example.com")
+		writeTestFile(t, filepath.Join(seed, "README.md"), "hello\n")
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Initial commit")
+
+		makeBranch := func(name string) {
+			runGit(t, seed, "checkout", "-b", name, "main")
+			writeTestFile(t, filepath.Join(seed, strings.ReplaceAll(name, "/", "-")+".txt"), name+"\n")
+			runGit(t, seed, "add", ".")
+			runGit(t, seed, "commit", "-m", "Commit "+name)
+		}
+
+		for _, br := range []string{
+			"feat/squash-clean",
+			"feat/squash-dirty",
+			"feat/squash-current",
+			"feat/squash-reused",
+			"feat/squash-open",
+			"feat/closed-only",
+			"backup-main-8eab2526-e8b0-4a8f-95ce-63175cb16d04",
+			"develop",
+		} {
+			makeBranch(br)
+		}
+		runGit(t, seed, "checkout", "main")
+
+		repoDir := filepath.Join(temp, "repo")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		runGit(t, repoDir, "clone", "--bare", seed, filepath.Join(repoDir, ".git"))
+		runGit(t, repoDir, "config", "set", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
+		runGit(t, repoDir, "fetch", "--quiet", "origin")
+		runGit(t, repoDir, "remote", "set-head", "origin", "--auto")
+		runGit(t, repoDir, "remote", "set-url", "origin", "https://github.com/example/clean-bare.git")
+
+		mainWT := filepath.Join(repoDir, "main")
+		cleanWT := filepath.Join(repoDir, "feat-squash-clean")
+		dirtyWT := filepath.Join(repoDir, "feat-squash-dirty")
+		currentWT := filepath.Join(repoDir, "feat-squash-current")
+		runGit(t, repoDir, "worktree", "add", mainWT, "main")
+		runGit(t, repoDir, "worktree", "add", cleanWT, "feat/squash-clean")
+		runGit(t, repoDir, "worktree", "add", dirtyWT, "feat/squash-dirty")
+		runGit(t, repoDir, "worktree", "add", currentWT, "feat/squash-current")
+		writeTestFile(t, filepath.Join(dirtyWT, "dirty.txt"), "unsaved\n")
+
+		oidOf := func(br string) string {
+			return runGit(t, repoDir, "rev-parse", br)
+		}
+
+		var lookedUp []string
+		fakeLookup := func(workDir, repo string, branches []string) (map[string][]pullRequestInfo, error) {
+			if repo != "example/clean-bare" {
+				t.Fatalf("unexpected repo: got %q, want %q", repo, "example/clean-bare")
+			}
+			if workDir != mainWT {
+				t.Fatalf("unexpected gh workDir: got %q, want %q", workDir, mainWT)
+			}
+			lookedUp = append(lookedUp, branches...)
+			res := make(map[string][]pullRequestInfo, len(branches))
+			for _, branch := range branches {
+				switch branch {
+				case "feat/squash-clean", "feat/squash-dirty":
+					res[branch] = []pullRequestInfo{{State: "MERGED", HeadRefName: branch, HeadRefOid: oidOf(branch)}}
+				case "feat/squash-reused":
+					res[branch] = []pullRequestInfo{{State: "MERGED", HeadRefName: branch, HeadRefOid: "0000000000000000000000000000000000000000"}}
+				case "feat/squash-open":
+					res[branch] = []pullRequestInfo{
+						{State: "MERGED", HeadRefName: branch, HeadRefOid: oidOf(branch)},
+						{State: "OPEN", HeadRefName: branch, HeadRefOid: oidOf(branch)},
+					}
+				case "feat/closed-only":
+					res[branch] = []pullRequestInfo{{State: "CLOSED", HeadRefName: branch, HeadRefOid: oidOf(branch)}}
+				}
+			}
+			return res, nil
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runDeleteMergedBranchesWithLookup([]string{"--dry-run", "--pr"}, currentWT, fakeLookup, &stdout, &stderr); err != nil {
+			t.Fatalf("dry-run --pr failed: %v, stderr: %s", err, stderr.String())
+		}
+		if _, err := os.Stat(cleanWT); err != nil {
+			t.Errorf("dry-run should preserve %s: %v", cleanWT, err)
+		}
+		if !strings.Contains(stdout.String(), "[dry-run] git branch -D feat/squash-clean") {
+			t.Errorf("expected dry-run -D output, got: %s", stdout.String())
+		}
+
+		lookedUp = nil
+		stdout.Reset()
+		stderr.Reset()
+		if err := runDeleteMergedBranchesWithLookup([]string{"--pr"}, currentWT, fakeLookup, &stdout, &stderr); err != nil {
+			t.Fatalf("--pr run failed: %v, stderr: %s", err, stderr.String())
+		}
+
+		if slices.Contains(lookedUp, "develop") {
+			t.Errorf("protected branch develop should not trigger PR lookup: %v", lookedUp)
+		}
+		if slices.Contains(lookedUp, "backup-main-8eab2526-e8b0-4a8f-95ce-63175cb16d04") {
+			t.Errorf("reset-branch backup branch should not trigger PR lookup: %v", lookedUp)
+		}
+		if slices.Contains(lookedUp, "feat/squash-current") {
+			t.Errorf("current worktree branch should not trigger PR lookup: %v", lookedUp)
+		}
+		if !strings.Contains(stderr.String(), "Skipping branch feat/squash-current (currently inside worktree") {
+			t.Errorf("expected accurate skip message for current unmerged worktree, got: %s", stderr.String())
+		}
+		if _, err := os.Stat(cleanWT); !os.IsNotExist(err) {
+			t.Errorf("expected clean squash-merged worktree %s to be removed", cleanWT)
+		}
+		if _, err := os.Stat(dirtyWT); err != nil {
+			t.Errorf("expected dirty squash-merged worktree %s to be preserved: %v", dirtyWT, err)
+		}
+		if _, err := os.Stat(currentWT); err != nil {
+			t.Errorf("expected current squash-merged worktree %s to be preserved: %v", currentWT, err)
+		}
+
+		branches := listBranches(t, repoDir)
+		if slices.Contains(branches, "feat/squash-clean") {
+			t.Errorf("expected feat/squash-clean to be deleted; remaining: %v", branches)
+		}
+		for _, kept := range []string{
+			"main",
+			"develop",
+			"feat/squash-dirty",
+			"feat/squash-current",
+			"feat/squash-reused",
+			"feat/squash-open",
+			"feat/closed-only",
+			"backup-main-8eab2526-e8b0-4a8f-95ce-63175cb16d04",
+		} {
+			if !slices.Contains(branches, kept) {
+				t.Errorf("expected %q to be kept; remaining: %v", kept, branches)
+			}
+		}
+	})
+
+	t.Run("deletes squash-merged PR branches in classic non-bare layout preferring upstream remote", func(t *testing.T) {
+		isolateEnv(t)
+		temp := t.TempDir()
+		repoDir := filepath.Join(temp, "classic")
+		runGit(t, temp, "init", "-b", "main", repoDir)
+		runGit(t, repoDir, "config", "user.name", "Tester")
+		runGit(t, repoDir, "config", "user.email", "tester@example.com")
+		writeTestFile(t, filepath.Join(repoDir, "README.md"), "hello\n")
+		runGit(t, repoDir, "add", ".")
+		runGit(t, repoDir, "commit", "-m", "Initial commit")
+		runGit(t, repoDir, "remote", "add", "origin", "git@github.com:forkuser/repo.git")
+		runGit(t, repoDir, "remote", "add", "upstream", "https://github.com/parentorg/repo.git")
+
+		for _, br := range []string{"squash-linked", "squash-plain", "unmerged-wip"} {
+			runGit(t, repoDir, "checkout", "-b", br, "main")
+			writeTestFile(t, filepath.Join(repoDir, br+".txt"), br+"\n")
+			runGit(t, repoDir, "add", ".")
+			runGit(t, repoDir, "commit", "-m", "Commit "+br)
+		}
+		runGit(t, repoDir, "checkout", "main")
+
+		linkedWT := filepath.Join(temp, "classic-linked")
+		runGit(t, repoDir, "worktree", "add", linkedWT, "squash-linked")
+
+		oidOf := func(br string) string {
+			return runGit(t, repoDir, "rev-parse", br)
+		}
+
+		fakeLookup := func(_, repo string, branches []string) (map[string][]pullRequestInfo, error) {
+			if repo != "parentorg/repo" {
+				t.Fatalf("expected upstream repo parentorg/repo, got %q", repo)
+			}
+			res := make(map[string][]pullRequestInfo, len(branches))
+			for _, branch := range branches {
+				switch branch {
+				case "squash-linked", "squash-plain":
+					res[branch] = []pullRequestInfo{{State: "MERGED", HeadRefName: branch, HeadRefOid: oidOf(branch)}}
+				}
+			}
+			return res, nil
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runDeleteMergedBranchesWithLookup([]string{"--pr"}, repoDir, fakeLookup, &stdout, &stderr); err != nil {
+			t.Fatalf("--pr failed in classic repo: %v, stderr: %s", err, stderr.String())
+		}
+		if _, err := os.Stat(linkedWT); !os.IsNotExist(err) {
+			t.Errorf("expected linked worktree %s to be removed", linkedWT)
+		}
+		branches := listBranches(t, repoDir)
+		for _, deleted := range []string{"squash-linked", "squash-plain"} {
+			if slices.Contains(branches, deleted) {
+				t.Errorf("expected %q to be deleted; remaining: %v", deleted, branches)
+			}
+		}
+		for _, kept := range []string{"main", "unmerged-wip"} {
+			if !slices.Contains(branches, kept) {
+				t.Errorf("expected %q to be kept; remaining: %v", kept, branches)
+			}
+		}
+	})
+}
+
+func TestParseGitHubRepoURL(t *testing.T) {
+	cases := []struct {
+		raw  string
+		want string
+		ok   bool
+	}{
+		{raw: "https://github.com/kachick/dotfiles.git", want: "kachick/dotfiles", ok: true},
+		{raw: "https://github.com/kachick/dotfiles/", want: "kachick/dotfiles", ok: true},
+		{raw: "git@github.com:kachick/dotfiles.git", want: "kachick/dotfiles", ok: true},
+		{raw: "ssh://git@github.com/kachick/dotfiles.git", want: "kachick/dotfiles", ok: true},
+		{raw: "https://gitlab.com/kachick/dotfiles.git", want: "", ok: false},
+		{raw: "/tmp/local-seed", want: "", ok: false},
+		{raw: "", want: "", ok: false},
+	}
+
+	for _, tc := range cases {
+		got, ok := parseGitHubRepoURL(tc.raw)
+		if got != tc.want || ok != tc.ok {
+			t.Errorf("parseGitHubRepoURL(%q) = (%q, %v), want (%q, %v)", tc.raw, got, ok, tc.want, tc.ok)
+		}
+	}
+}
+
+func TestLookupMergedBranchPRsWithFakeGH(t *testing.T) {
+	isolateEnv(t)
+	logPath := installFakeTool(t, "gh", `
+if [ "$FAKE_GH_EXIT" = "1" ]; then
+  echo "auth required" >&2
+  exit 1
+fi
+if [ "$FAKE_GH_GQL_ERR" = "1" ]; then
+  printf '{"data":{"repository":null},"errors":[{"message":"Could not resolve to a Repository"}]}\n'
+  exit 0
+fi
+printf '{"data":{"repository":{"open0":{"totalCount":0},"merged0":{"nodes":[{"headRefOid":"abc123"}]},"open1":{"totalCount":1},"merged1":{"nodes":[{"headRefOid":"def456"}]}}}}\n'
+`)
+
+	prsByBranch, err := lookupMergedBranchPRs(t.TempDir(), "kachick/dotfiles", []string{"feat/demo", "feat/open"})
+	if err != nil {
+		t.Fatalf("lookupMergedBranchPRs failed: %v", err)
+	}
+	if len(prsByBranch["feat/demo"]) != 1 || prsByBranch["feat/demo"][0].HeadRefOid != "abc123" || prsByBranch["feat/demo"][0].State != "MERGED" {
+		t.Fatalf("unexpected PRs for feat/demo: %+v", prsByBranch["feat/demo"])
+	}
+	if !shouldDeleteFromPRs("feat/demo", "abc123", prsByBranch["feat/demo"]) {
+		t.Error("expected feat/demo to be deletable")
+	}
+	if shouldDeleteFromPRs("feat/open", "def456", prsByBranch["feat/open"]) {
+		t.Error("expected feat/open with openCount=1 not to be deletable")
+	}
+
+	logged := readTestFile(t, logPath)
+	for _, wantSubstr := range []string{"api graphql", "owner=kachick", "name=dotfiles", "b0=feat/demo", "b1=feat/open"} {
+		if !strings.Contains(logged, wantSubstr) {
+			t.Errorf("gh args %q missing %q", logged, wantSubstr)
+		}
+	}
+
+	t.Setenv("FAKE_GH_GQL_ERR", "1")
+	if _, err := lookupMergedBranchPRs(t.TempDir(), "kachick/dotfiles", []string{"feat/demo"}); err == nil {
+		t.Fatal("expected error when GraphQL returns errors, got nil")
+	}
+
+	t.Setenv("FAKE_GH_GQL_ERR", "")
+	t.Setenv("FAKE_GH_EXIT", "1")
+	if _, err := lookupMergedBranchPRs(t.TempDir(), "kachick/dotfiles", []string{"feat/demo"}); err == nil {
+		t.Fatal("expected error when gh fails, got nil")
+	}
 }
