@@ -176,6 +176,9 @@ jobs:
           - name: conoha-cli
             run: go run ./cmd/ci-build package conoha-cli
 
+          - name: dot-writable-sync
+            run: go run ./cmd/ci-build package dot-writable-sync
+
           - name: filen-cli-rs
             run: go run ./cmd/ci-build package filen-cli-rs
 
