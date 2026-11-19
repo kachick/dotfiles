@@ -7,6 +7,7 @@
   imports = [
     ./essential.nix
     ./encryption.nix
+    ./ssh-askpass.nix
     ./git.nix
     ./telemetry.nix
     ./plamo.nix
