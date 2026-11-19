@@ -234,12 +234,6 @@ in
           bindkey ";5C" forward-word
           bindkey ";5D" backward-word
 
-          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-          function set_win_title() {
-            echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
-          }
-          precmd_functions+=(set_win_title)
-
           source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
           source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
@@ -284,6 +278,9 @@ in
           }
 
           source_sh "${pkgs.local.posix_shared_functions}"
+
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          precmd_functions+=(set_win_title)
 
           # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
           # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)

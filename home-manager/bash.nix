@@ -112,13 +112,6 @@
         exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
       fi
 
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-      	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
-      }
-      # shellcheck disable=SC2034
-      starship_precmd_user_func="set_win_title"
-
       # Workaround for issues likely https://github.com/reubeno/brush/issues/380
       # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
       if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
@@ -131,6 +124,10 @@
       ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
       source "${pkgs.local.posix_shared_functions}"
+
+      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+      # shellcheck disable=SC2034
+      starship_precmd_user_func="set_win_title"
 
       # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
       # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)

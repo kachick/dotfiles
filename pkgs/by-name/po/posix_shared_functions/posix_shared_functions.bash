@@ -52,3 +52,28 @@ avoid_tofu() {
 	export STARSHIP_CONFIG='@starship@/share/starship/presets/plain-text-symbols.toml'
 	export ZELLIJ_CONFIG_FILE="$XDG_CONFIG_HOME/zellij/simplified-ui.kdl"
 }
+
+# Avoid spawning external commands in precmd; include parent dir to tell worktrees apart across repos.
+set_win_title() {
+	local dir="$PWD"
+	local title
+
+	while [ "$dir" != "/" ] && [ "${dir%/}" != "$dir" ]; do
+		dir="${dir%/}"
+	done
+
+	if [ "$dir" = "/" ]; then
+		title="/"
+	else
+		local base="${dir##*/}"
+		local parent_dir="${dir%/*}"
+		if [ -z "$parent_dir" ] || [ "$parent_dir" = "$dir" ]; then
+			title="$dir"
+		else
+			local parent="${parent_dir##*/}"
+			title="$parent/$base"
+		fi
+	fi
+
+	printf '\033]0; %s \007' "$title"
+}
