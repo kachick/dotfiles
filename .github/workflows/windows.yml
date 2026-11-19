@@ -124,7 +124,6 @@ jobs:
           go test . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
           go vet . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows
       - name: Build winit-*
-        # unnecessary to build wsl-* here, it should be done in linux runners
         run: |
           go build -o 'dist/' ./cmd/winit-reg
           go build -o 'dist/' ./cmd/winit-conf
