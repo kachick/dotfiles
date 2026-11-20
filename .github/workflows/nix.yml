@@ -194,6 +194,9 @@ jobs:
           - name: hcpu_shogi
             run: go run ./cmd/ci-build package hcpu_shogi
 
+          - name: ibus
+            run: go run ./cmd/ci-build package ibus --skip-tests
+
           - name: ibus-engine-selector
             run: go run ./cmd/ci-build package ibus-engine-selector
 

@@ -28,8 +28,11 @@ in
       zed-editor
       ;
 
-    # Expose the patched nix-update for CI building and workflows
-    inherit (final) nix-update;
+    # Expose overridden packages for dedicated CI builds and binary caching
+    inherit (final)
+      ibus
+      nix-update
+      ;
 
     # Pinning home-manager from the flake input
     home-manager = home-manager.packages.${system}.home-manager;
