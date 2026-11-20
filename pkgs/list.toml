@@ -25,5 +25,6 @@ lima-full = { build = true, test = true, update = false }
 nix-update = { build = true, test = true, update = false } # Follows nixpkgs flake input
 rclone-fzf = { build = true, test = true, update = false }
 shuck = { build = true, test = true, update = true }
+tree-diff = { build = true, test = true, update = false }
 yaneuraou-avx2 = { build = true, test = true, update = false }
 zed-editor = { build = true, test = false, update = false } # Follows nixpkgs flake input

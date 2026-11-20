@@ -218,6 +218,9 @@ jobs:
           - name: shuck
             run: go run ./cmd/ci-build package shuck
 
+          - name: tree-diff
+            run: go run ./cmd/ci-build package tree-diff
+
           - name: yaneuraou-avx2
             run: go run ./cmd/ci-build package yaneuraou-avx2
 
