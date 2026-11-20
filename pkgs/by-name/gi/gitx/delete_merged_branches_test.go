@@ -524,6 +524,93 @@ func TestRun_DeleteMergedBranches(t *testing.T) {
 			}
 		}
 	})
+
+	t.Run("skips clean-bare default worktree with warning even when it checks out a merged or squash-merged branch", func(t *testing.T) {
+		isolateEnv(t)
+		temp := t.TempDir()
+		seed := filepath.Join(temp, "seed")
+		runGit(t, temp, "init", "-b", "main", seed)
+		runGit(t, seed, "config", "user.name", "Tester")
+		runGit(t, seed, "config", "user.email", "tester@example.com")
+		writeTestFile(t, filepath.Join(seed, "README.md"), "hello\n")
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Initial commit")
+
+		runGit(t, seed, "checkout", "-b", "feat/misplaced-merged")
+		writeTestFile(t, filepath.Join(seed, "m.txt"), "m\n")
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Merged feature")
+		runGit(t, seed, "checkout", "main")
+		runGit(t, seed, "merge", "--no-ff", "feat/misplaced-merged", "-m", "Merge feat/misplaced-merged")
+
+		runGit(t, seed, "checkout", "-b", "feat/misplaced-squash", "main")
+		writeTestFile(t, filepath.Join(seed, "s.txt"), "s\n")
+		runGit(t, seed, "add", ".")
+		runGit(t, seed, "commit", "-m", "Squash feature")
+		runGit(t, seed, "checkout", "main")
+
+		repoDir := filepath.Join(temp, "repo")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		runGit(t, repoDir, "clone", "--bare", seed, filepath.Join(repoDir, ".git"))
+		runGit(t, repoDir, "config", "set", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
+		runGit(t, repoDir, "fetch", "--quiet", "origin")
+		runGit(t, repoDir, "remote", "set-head", "origin", "--auto")
+		runGit(t, repoDir, "remote", "set-url", "origin", "https://github.com/example/clean-bare.git")
+
+		mainWT := filepath.Join(repoDir, "main")
+		otherWT := filepath.Join(repoDir, "other")
+		runGit(t, repoDir, "worktree", "add", mainWT, "feat/misplaced-merged")
+		runGit(t, repoDir, "worktree", "add", "-b", "other", otherWT, "main")
+
+		var stdout, stderr bytes.Buffer
+		if err := runDeleteMergedBranches(nil, otherWT, &stdout, &stderr); err != nil {
+			t.Fatalf("runDeleteMergedBranches failed: %v, stderr: %s", err, stderr.String())
+		}
+		if _, err := os.Stat(mainWT); err != nil {
+			t.Errorf("expected default worktree %s to be preserved: %v", mainWT, err)
+		}
+		if !strings.Contains(stderr.String(), "default worktree") {
+			t.Errorf("expected warning about default worktree in stderr, got: %s", stderr.String())
+		}
+		if !slices.Contains(listBranches(t, repoDir), "feat/misplaced-merged") {
+			t.Errorf("expected branch checked out in default worktree to be preserved")
+		}
+
+		// Also protect when default worktree checks out a squash-merged PR branch under --pr.
+		runGit(t, mainWT, "switch", "feat/misplaced-squash")
+		squashOid := runGit(t, repoDir, "rev-parse", "feat/misplaced-squash")
+		prLookupCalled := false
+		fakeLookup := func(_, _ string, branches []string) (map[string][]pullRequestInfo, error) {
+			prLookupCalled = true
+			res := make(map[string][]pullRequestInfo, len(branches))
+			for _, b := range branches {
+				if b == "feat/misplaced-squash" {
+					res[b] = []pullRequestInfo{{State: "MERGED", HeadRefName: b, HeadRefOid: squashOid}}
+				}
+			}
+			return res, nil
+		}
+
+		stdout.Reset()
+		stderr.Reset()
+		if err := runDeleteMergedBranchesWithLookup([]string{"--pr"}, otherWT, fakeLookup, &stdout, &stderr); err != nil {
+			t.Fatalf("runDeleteMergedBranches --pr failed: %v, stderr: %s", err, stderr.String())
+		}
+		if _, err := os.Stat(mainWT); err != nil {
+			t.Errorf("expected default worktree %s to be preserved under --pr: %v", mainWT, err)
+		}
+		if prLookupCalled {
+			t.Errorf("expected default worktree branch not to trigger PR lookup")
+		}
+		if !strings.Contains(stderr.String(), "default worktree") {
+			t.Errorf("expected warning about default worktree under --pr in stderr, got: %s", stderr.String())
+		}
+		if !slices.Contains(listBranches(t, repoDir), "feat/misplaced-squash") {
+			t.Errorf("expected squash-merged branch in default worktree to be preserved")
+		}
+	})
 }
 
 func TestParseGitHubRepoURL(t *testing.T) {

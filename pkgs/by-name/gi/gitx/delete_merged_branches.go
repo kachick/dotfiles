@@ -248,6 +248,18 @@ func resolveDeleteRunner(r *gitcmd.Runner, ctx gitcmd.RepoContext, defaultBranch
 	return r
 }
 
+func shouldSkipProtectedEntry(ctx gitcmd.RepoContext, defaultBranch string, entry localBranch, stderr io.Writer) bool {
+	if entry.name == defaultBranch || gitcmd.IsProtectedBranch(entry.name) {
+		return true
+	}
+	if gitcmd.IsCleanBareDefaultWorktree(ctx, defaultBranch, entry.wtPath) {
+		// Never remove the default worktree directory even if a feature branch was checked out inside it.
+		fmt.Fprintf(stderr, "Skipping branch %s (checked out in default worktree %s)\n", entry.name, entry.wtPath)
+		return true
+	}
+	return false
+}
+
 func deleteBranchEntry(r, deleteRunner *gitcmd.Runner, entry localBranch, cwdReal string, forceDelete, dryRun bool, stdout, stderr io.Writer) error {
 	if entry.wtPath != "" && isDir(entry.wtPath) {
 		wtReal := resolveRealPath(entry.wtPath)
@@ -341,7 +353,7 @@ func runDeleteMergedBranchesWithLookup(args []string, workDir string, lookupPRs 
 	deleteRunner := resolveDeleteRunner(r, ctx, defaultBranch, defaultWT)
 
 	for _, entry := range merged {
-		if entry.name == defaultBranch || gitcmd.IsProtectedBranch(entry.name) {
+		if shouldSkipProtectedEntry(ctx, defaultBranch, entry, stderr) {
 			continue
 		}
 		if err := deleteBranchEntry(r, deleteRunner, entry, cwdReal, false, *dryRun, stdout, stderr); err != nil {
@@ -357,7 +369,7 @@ func runDeleteMergedBranchesWithLookup(args []string, workDir string, lookupPRs 
 
 		var candidates []localBranch
 		for _, entry := range unmerged {
-			if entry.name == defaultBranch || gitcmd.IsProtectedBranch(entry.name) || resetBranchBackupPattern.MatchString(entry.name) {
+			if resetBranchBackupPattern.MatchString(entry.name) || shouldSkipProtectedEntry(ctx, defaultBranch, entry, stderr) {
 				continue
 			}
 			if entry.wtPath != "" && isDir(entry.wtPath) && isSameOrInside(resolveRealPath(entry.wtPath), cwdReal) {

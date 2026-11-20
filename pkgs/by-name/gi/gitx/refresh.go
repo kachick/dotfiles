@@ -72,6 +72,9 @@ func runRefresh(args []string, workDir string, stdout, stderr io.Writer) error {
 	}
 
 	if ctx.IsBare {
+		if defaultWTPath, ok := gitcmd.CleanBareDefaultWorktreePath(ctx, defaultBranch); ok && isDir(defaultWTPath) {
+			fmt.Fprintf(stderr, "Warning: default worktree %s is not on %q; fetching %s directly without modifying it\n", defaultWTPath, defaultBranch, defaultBranch)
+		}
 		return commonRunner.Stream("fetch", "--prune", remote, defaultBranch+":"+defaultBranch)
 	}
 

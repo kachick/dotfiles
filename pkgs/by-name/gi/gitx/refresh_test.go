@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -127,6 +128,37 @@ func TestRunRefresh(t *testing.T) {
 		}
 		if got := runGit(t, legacyDir, "rev-parse", "HEAD"); got != upstreamCommit {
 			t.Errorf("legacy HEAD = %s, want upstream commit %s", got, upstreamCommit)
+		}
+	})
+
+	t.Run("warns when clean-bare default worktree directory is checked out on another branch", func(t *testing.T) {
+		isolateEnv(t)
+		temp := t.TempDir()
+		seed := filepath.Join(temp, "seed")
+		initSeedRepo(t, seed, "main")
+
+		repoDir := filepath.Join(temp, "repo")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		runGit(t, repoDir, "clone", "--bare", seed, filepath.Join(repoDir, ".git"))
+		runGit(t, repoDir, "config", "set", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
+		runGit(t, repoDir, "fetch", "--quiet", "origin")
+		runGit(t, repoDir, "remote", "set-head", "origin", "--auto")
+
+		mainWT := filepath.Join(repoDir, "main")
+		runGit(t, repoDir, "worktree", "add", "-b", "topic", mainWT, "main")
+
+		commit1 := advanceSeedRepo(t, seed, "warning-test.txt")
+		var stdout, stderr bytes.Buffer
+		if err := runRefresh(nil, repoDir, &stdout, &stderr); err != nil {
+			t.Fatalf("runRefresh failed: %v, stderr: %s", err, stderr.String())
+		}
+		if got := runGit(t, repoDir, "rev-parse", "refs/heads/main"); got != commit1 {
+			t.Errorf("refs/heads/main = %s, want %s", got, commit1)
+		}
+		if !strings.Contains(stderr.String(), "default worktree") {
+			t.Errorf("expected warning about default worktree in stderr, got: %s", stderr.String())
 		}
 	})
 }

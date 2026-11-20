@@ -122,4 +122,48 @@ func TestDetectRepoContext_SurvivesInheritedGitDir(t *testing.T) {
 			t.Errorf("expected IsBare=true even when GIT_DIR points to linked worktree, got false")
 		}
 	})
+
+	t.Run("prefers upstream remote HEAD over origin remote HEAD", func(t *testing.T) {
+		isolateTestEnv(t)
+		temp := t.TempDir()
+		originSeed := filepath.Join(temp, "origin-seed")
+		runGit(t, temp, "init", "-b", "legacy-default", originSeed)
+		runGit(t, originSeed, "config", "user.name", "Tester")
+		runGit(t, originSeed, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(originSeed, "README.md"), []byte("hello\n"), 0o644); err != nil {
+			t.Fatalf("write README: %v", err)
+		}
+		runGit(t, originSeed, "add", ".")
+		runGit(t, originSeed, "commit", "-m", "Initial commit")
+
+		upstreamSeed := filepath.Join(temp, "upstream-seed")
+		runGit(t, temp, "init", "-b", "main", upstreamSeed)
+		runGit(t, upstreamSeed, "config", "user.name", "Tester")
+		runGit(t, upstreamSeed, "config", "user.email", "tester@example.com")
+		if err := os.WriteFile(filepath.Join(upstreamSeed, "README.md"), []byte("upstream\n"), 0o644); err != nil {
+			t.Fatalf("write README: %v", err)
+		}
+		runGit(t, upstreamSeed, "add", ".")
+		runGit(t, upstreamSeed, "commit", "-m", "Upstream initial")
+
+		repoDir := filepath.Join(temp, "repo")
+		runGit(t, temp, "clone", originSeed, repoDir)
+		runGit(t, repoDir, "remote", "add", "upstream", upstreamSeed)
+		runGit(t, repoDir, "fetch", "upstream")
+		runGit(t, repoDir, "remote", "set-head", "upstream", "--auto")
+
+		var stdout, stderr bytes.Buffer
+		ctx, err := DetectRepoContext(repoDir, &stdout, &stderr)
+		if err != nil {
+			t.Fatalf("DetectRepoContext failed: %v", err)
+		}
+		r := NewIsolated(ctx.CommonDir, &stdout, &stderr)
+		gotBranch, err := DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
+		if err != nil {
+			t.Fatalf("DetectDefaultBranch failed: %v", err)
+		}
+		if gotBranch != "main" {
+			t.Errorf("DetectDefaultBranch = %q, want main", gotBranch)
+		}
+	})
 }

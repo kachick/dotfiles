@@ -376,12 +376,16 @@ func removeWorktreeSafely(
 	ctx gitcmd.RepoContext,
 	wt gitcmd.Worktree,
 	label string,
-	workDir string,
+	defaultBranch, workDir string,
 	confirmFn func(label, branch string, stderr io.Writer) (bool, error),
 	stderr io.Writer,
 ) error {
 	if wt.Path == "" {
 		return errors.New("no worktree selected")
+	}
+
+	if (defaultBranch != "" && wt.Branch == defaultBranch) || gitcmd.IsCleanBareDefaultWorktree(ctx, defaultBranch, wt.Path) {
+		return fmt.Errorf("cannot remove default worktree %s", wt.Path)
 	}
 
 	cwd := workDir

@@ -205,17 +205,17 @@ func DetectRepoContext(workDir string, stdout, stderr io.Writer) (RepoContext, e
 	}, nil
 }
 
-// HasBranchOrRemote reports whether branch exists locally or under origin/upstream remotes.
+// HasBranchOrRemote reports whether branch exists locally or under upstream/origin remotes.
 func HasBranchOrRemote(r *Runner, branch string) bool {
 	return r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch) ||
-		r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch) ||
-		r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/upstream/"+branch)
+		r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/upstream/"+branch) ||
+		r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch)
 }
 
 // DetectDefaultBranch determines the repository's default branch name.
 func DetectDefaultBranch(r *Runner, commonDir string, isBare bool) (string, error) {
 	commonRunner := r.InDir(commonDir)
-	for _, remote := range []string{"origin", "upstream"} {
+	for _, remote := range []string{"upstream", "origin"} {
 		if ref, err := commonRunner.Output("symbolic-ref", "--short", "refs/remotes/"+remote+"/HEAD"); err == nil && ref != "" {
 			candidate := strings.TrimPrefix(ref, remote+"/")
 			if HasBranchOrRemote(commonRunner, candidate) {

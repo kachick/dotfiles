@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -161,6 +162,33 @@ func TestRunResetBranch_Sandbox(t *testing.T) {
 		}
 		if !strings.Contains(stdout.String(), "[dry-run]") {
 			t.Errorf("expected dry-run output, got: %s", stdout.String())
+		}
+	})
+
+	t.Run("refuses to switch clean-bare default worktree to a non-default branch", func(t *testing.T) {
+		isolateEnv(t)
+		remoteDir, _ := setupResetSandbox(t)
+
+		temp := t.TempDir()
+		repoDir := filepath.Join(temp, "clean-bare")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		runGit(t, repoDir, "clone", "--bare", remoteDir, filepath.Join(repoDir, ".git"))
+		runGit(t, repoDir, "config", "set", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
+		runGit(t, repoDir, "fetch", "--quiet", "origin")
+		runGit(t, repoDir, "remote", "set-head", "origin", "--auto")
+
+		mainWT := filepath.Join(repoDir, "main")
+		runGit(t, repoDir, "worktree", "add", mainWT, "main")
+
+		var stdout, stderr bytes.Buffer
+		err := runResetBranch([]string{"topic"}, mainWT, &stdout, &stderr)
+		if err == nil {
+			t.Fatal("expected error when resetting non-default branch inside clean-bare default worktree")
+		}
+		if br := runGit(t, mainWT, "symbolic-ref", "--short", "HEAD"); br != "main" {
+			t.Errorf("mainWT branch = %q, want main", br)
 		}
 	})
 }

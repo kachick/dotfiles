@@ -745,7 +745,7 @@ func runSelectAction(
 	ctx gitcmd.RepoContext,
 	wt gitcmd.Worktree,
 	hasWT bool,
-	workDir string,
+	defaultBranch, workDir string,
 	ui wtInteractiveUI,
 	stdout, stderr io.Writer,
 ) error {
@@ -763,7 +763,7 @@ func runSelectAction(
 			return errors.New("no worktree selected")
 		}
 		label := wtWorktreeLabel(ctx.ContainerDir, wt.Path)
-		if err := removeWorktreeSafely(ctx, wt, label, workDir, ui.confirmRemoveWorktree, stderr); err != nil {
+		if err := removeWorktreeSafely(ctx, wt, label, defaultBranch, workDir, ui.confirmRemoveWorktree, stderr); err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
 				return nil
 			}
@@ -906,16 +906,16 @@ func wtRunSelectWithUI(args []string, workDir string, ui wtInteractiveUI, stdout
 	switch choice.Key {
 	case "":
 		if hasWT {
-			return runSelectAction(actionSwitch, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+			return runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
 		}
 		return createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui, stdout, stderr)
 	case "ctrl-a":
-		return runSelectAction(actionAdd, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+		return runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
 	case "ctrl-d":
-		return runSelectAction(actionRemove, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+		return runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
 	case "ctrl-x":
 		if !hasWT {
-			return runSelectAction(actionAdd, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+			return runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
 		}
 		label := wtWorktreeLabel(ctx.ContainerDir, wt.Path)
 		action, err := ui.chooseWorktreeAction(label, wt.Branch, stderr)
@@ -925,7 +925,7 @@ func wtRunSelectWithUI(args []string, workDir string, ui wtInteractiveUI, stdout
 			}
 			return err
 		}
-		return runSelectAction(action, ctx, wt, hasWT, workDir, ui, stdout, stderr)
+		return runSelectAction(action, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
 	default:
 		return fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}

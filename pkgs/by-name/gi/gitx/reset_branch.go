@@ -31,6 +31,26 @@ func generateUUID() (string, error) {
 		uuid[0:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:16]), nil
 }
 
+func guardCleanBareDefaultWorktree(r *gitcmd.Runner, workDir, targetBranch string, stdout, stderr io.Writer) error {
+	ctx, err := gitcmd.DetectRepoContext(workDir, stdout, stderr)
+	if err != nil {
+		return nil
+	}
+	commonRunner := gitcmd.NewIsolated(ctx.CommonDir, stdout, stderr)
+	defaultBranch, err := gitcmd.DetectDefaultBranch(commonRunner, ctx.CommonDir, ctx.IsBare)
+	if err != nil || defaultBranch == "" {
+		return nil
+	}
+	topLevel, err := r.Output("rev-parse", "--path-format=absolute", "--show-toplevel")
+	if err != nil || topLevel == "" {
+		return nil
+	}
+	if gitcmd.IsCleanBareDefaultWorktree(ctx, defaultBranch, topLevel) && targetBranch != defaultBranch {
+		return fmt.Errorf("cannot switch default worktree %s to non-default branch %q; use gitx wt instead", topLevel, targetBranch)
+	}
+	return nil
+}
+
 func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) error {
 	fs := flag.NewFlagSet("gitx reset-branch", flag.ContinueOnError)
 	fs.SetOutput(stderr)
@@ -72,6 +92,10 @@ func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) err
 	} else {
 		fs.Usage()
 		return fmt.Errorf("expected at most 1 branch argument, got %d", len(remainingArgs))
+	}
+
+	if err := guardCleanBareDefaultWorktree(r, workDir, targetBranch, stdout, stderr); err != nil {
+		return err
 	}
 
 	// Check for dirty working tree

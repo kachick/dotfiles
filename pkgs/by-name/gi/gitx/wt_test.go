@@ -888,6 +888,40 @@ func TestRunWT_InteractiveNewBranchAndDirenvConfirm(t *testing.T) {
 		if _, err := os.Stat(createdWT); !os.IsNotExist(err) {
 			t.Errorf("expected %s to be removed", createdWT)
 		}
+
+		// Refuses to remove the default branch worktree even when triggered from another worktree
+		// or when the default worktree directory is temporarily on another branch.
+		if err := runWTWithUI([]string{"add", "--branch", "feat/other-wt"}, defaultWT, wtInteractiveUI{}, &stdout, &stderr); err != nil {
+			t.Fatalf("add feat/other-wt failed: %v", err)
+		}
+		otherWT := filepath.Join(repoDir, "feat-other-wt")
+		removeDefaultFromOtherUI := wtInteractiveUI{
+			selectWorktree: func(_, _ string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-d", Path: defaultWT}, nil
+			},
+			confirmRemoveWorktree: func(_, _ string, _ io.Writer) (bool, error) {
+				t.Fatal("confirmRemoveWorktree should not be called for default worktree")
+				return false, nil
+			},
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWTWithUI([]string{"select"}, otherWT, removeDefaultFromOtherUI, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when removing default worktree from another worktree")
+		}
+		if _, err := os.Stat(defaultWT); err != nil {
+			t.Errorf("expected default worktree %s to remain intact: %v", defaultWT, err)
+		}
+
+		runGit(t, defaultWT, "switch", "-c", "feat/misplaced-in-main")
+		stdout.Reset()
+		stderr.Reset()
+		if err := runWTWithUI([]string{"select"}, otherWT, removeDefaultFromOtherUI, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when removing clean-bare default worktree path even on another branch")
+		}
+		if _, err := os.Stat(defaultWT); err != nil {
+			t.Errorf("expected clean-bare default worktree path %s to remain intact: %v", defaultWT, err)
+		}
 	})
 }
 

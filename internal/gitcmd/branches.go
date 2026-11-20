@@ -75,6 +75,30 @@ func ValidateTargetWorktreeDirs(repoDir string, branches []string) (map[string]s
 	return dirs, nil
 }
 
+// CleanBareDefaultWorktreePath returns the flat default branch worktree path in clean-bare layouts.
+func CleanBareDefaultWorktreePath(ctx RepoContext, defaultBranch string) (string, bool) {
+	if !ctx.IsBare || filepath.Base(ctx.CommonDir) != ".git" || defaultBranch == "" {
+		return "", false
+	}
+	dirName, err := WorktreeDirName(defaultBranch)
+	if err != nil {
+		return "", false
+	}
+	return filepath.Join(ctx.ContainerDir, dirName), true
+}
+
+// IsCleanBareDefaultWorktree reports whether wtPath matches the clean-bare default worktree directory.
+func IsCleanBareDefaultWorktree(ctx RepoContext, defaultBranch, wtPath string) bool {
+	if wtPath == "" {
+		return false
+	}
+	defaultWTPath, ok := CleanBareDefaultWorktreePath(ctx, defaultBranch)
+	if !ok {
+		return false
+	}
+	return resolveRealPath(wtPath) == resolveRealPath(defaultWTPath)
+}
+
 // ResolveTargetRef returns the first existing local or remote ref for branch, or "".
 func ResolveTargetRef(r *Runner, branch string) string {
 	if branch == "" {
@@ -82,8 +106,8 @@ func ResolveTargetRef(r *Runner, branch string) string {
 	}
 	for _, ref := range []string{
 		"refs/heads/" + branch,
-		"refs/remotes/origin/" + branch,
 		"refs/remotes/upstream/" + branch,
+		"refs/remotes/origin/" + branch,
 	} {
 		if r.Ok("show-ref", "--verify", "--quiet", ref) {
 			return ref
