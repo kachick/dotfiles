@@ -32,6 +32,56 @@ func TestRunPackage_MissingArg(t *testing.T) {
 	}
 }
 
+func TestParsePackageArgs(t *testing.T) {
+	tests := []struct {
+		name          string
+		args          []string
+		wantPname     string
+		wantArch      string
+		wantSkipTests bool
+	}{
+		{
+			name:          "flags after package name (sync-workflows format)",
+			args:          []string{"ibus", "--skip-tests"},
+			wantPname:     "ibus",
+			wantArch:      "",
+			wantSkipTests: true,
+		},
+		{
+			name:          "flags before package name",
+			args:          []string{"--skip-tests", "--arch", "x86_64-linux", "zed-editor"},
+			wantPname:     "zed-editor",
+			wantArch:      "x86_64-linux",
+			wantSkipTests: true,
+		},
+		{
+			name:          "no flags",
+			args:          []string{"gitx"},
+			wantPname:     "gitx",
+			wantArch:      "",
+			wantSkipTests: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pname, arch, skipTests, err := parsePackageArgs(tt.args)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if pname != tt.wantPname {
+				t.Errorf("pname = %q, want %q", pname, tt.wantPname)
+			}
+			if arch != tt.wantArch {
+				t.Errorf("arch = %q, want %q", arch, tt.wantArch)
+			}
+			if skipTests != tt.wantSkipTests {
+				t.Errorf("skipTests = %v, want %v", skipTests, tt.wantSkipTests)
+			}
+		})
+	}
+}
+
 func TestRunNixos_MissingArg(t *testing.T) {
 	err := runNixos([]string{})
 	if err == nil {

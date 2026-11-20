@@ -82,21 +82,47 @@ func getCurrentNixSystem() (string, error) {
 	return system, nil
 }
 
-func runPackage(args []string) error {
-	fs := flag.NewFlagSet("package", flag.ExitOnError)
+func parsePackageArgs(args []string) (pname string, arch string, skipTests bool, err error) {
+	fs := flag.NewFlagSet("package", flag.ContinueOnError)
 	archFlag := fs.String("arch", "", "Target system architecture (defaults to nix builtins.currentSystem)")
-	skipTests := fs.Bool("skip-tests", false, "Skip running passthru.tests")
+	skipTestsFlag := fs.Bool("skip-tests", false, "Skip running passthru.tests")
 
-	if err := fs.Parse(args); err != nil {
+	// Normalize args so flags like --skip-tests work both before and after the package name
+	// (e.g. `ci-build package zed-editor --skip-tests`).
+	var flagArgs, posArgs []string
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		if arg == "--" {
+			posArgs = append(posArgs, args[i+1:]...)
+			break
+		}
+		if strings.HasPrefix(arg, "-") {
+			flagArgs = append(flagArgs, arg)
+			if (arg == "-arch" || arg == "--arch") && i+1 < len(args) {
+				i++
+				flagArgs = append(flagArgs, args[i])
+			}
+		} else {
+			posArgs = append(posArgs, arg)
+		}
+	}
+
+	if err := fs.Parse(append(flagArgs, posArgs...)); err != nil {
+		return "", "", false, err
+	}
+	if fs.NArg() < 1 {
+		return "", "", false, fmt.Errorf("package name is required")
+	}
+
+	return fs.Arg(0), *archFlag, *skipTestsFlag, nil
+}
+
+func runPackage(args []string) error {
+	pname, arch, skipTests, err := parsePackageArgs(args)
+	if err != nil {
 		return err
 	}
 
-	if fs.NArg() < 1 {
-		return fmt.Errorf("package name is required")
-	}
-
-	pname := fs.Arg(0)
-	arch := *archFlag
 	if arch == "" {
 		detectedArch, err := getCurrentNixSystem()
 		if err != nil {
@@ -131,7 +157,7 @@ func runPackage(args []string) error {
 		return err
 	}
 
-	if *skipTests {
+	if skipTests {
 		fmt.Printf("Skipping tests for %s as requested.\n", pname)
 	} else {
 		evalTarget := fmt.Sprintf(".#%s.passthru.tests", pname)
