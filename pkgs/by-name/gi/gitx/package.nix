@@ -2,11 +2,9 @@
   bat,
   betterleaks,
   buildGo127Module,
-  colorized-logs,
   coreutils,
   direnv,
   eza,
-  findutils,
   fzf,
   gh,
   ghq,
@@ -40,11 +38,9 @@ buildGo127Module (finalAttrs: {
   wrapperPath = lib.makeBinPath [
     bat
     betterleaks
-    colorized-logs
     coreutils
     direnv
     eza
-    findutils
     fzf
     gh
     ghq

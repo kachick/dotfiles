@@ -79,15 +79,7 @@ func checkPlamoHealth(serverURL string) bool {
 	return resp.StatusCode == http.StatusOK
 }
 
-func renderCommit(selfExe, rev, placeholder string, stdout, stderr io.Writer) error {
-	showArgs := []string{"show", "--ja"}
-	if placeholder != "" {
-		showArgs = append(showArgs, "--placeholder", placeholder)
-	}
-	showArgs = append(showArgs, "--color=always", rev)
-
-	cmd1 := exec.Command(selfExe, showArgs...)
-
+func renderCmdPipeline(cmd1 *exec.Cmd, stdout, stderr io.Writer) error {
 	riffPath, errRiff := exec.LookPath("riff")
 	batPath, errBat := exec.LookPath("bat")
 
@@ -122,11 +114,14 @@ func renderCommit(selfExe, rev, placeholder string, stdout, stderr io.Writer) er
 	if err := cmd2.Start(); err != nil {
 		_ = w1.Close()
 		_ = w2.Close()
+		_ = cmd1.Wait()
 		return err
 	}
 	if err := cmd3.Start(); err != nil {
 		_ = w1.Close()
 		_ = w2.Close()
+		_ = cmd1.Wait()
+		_ = cmd2.Wait()
 		return err
 	}
 
@@ -140,6 +135,25 @@ func renderCommit(selfExe, rev, placeholder string, stdout, stderr io.Writer) er
 	}()
 
 	return cmd3.Wait()
+}
+
+func renderCommit(selfExe, rev, placeholder string, stdout, stderr io.Writer) error {
+	showArgs := []string{"show", "--ja"}
+	if placeholder != "" {
+		showArgs = append(showArgs, "--placeholder", placeholder)
+	}
+	showArgs = append(showArgs, "--color=always", rev)
+
+	return renderCmdPipeline(exec.Command(selfExe, showArgs...), stdout, stderr)
+}
+
+func renderPlainCommit(revRaw string, stdout, stderr io.Writer) error {
+	rev := cleanRev(revRaw)
+	if rev == "" {
+		return nil
+	}
+
+	return renderCmdPipeline(exec.Command("git", "show", "--color=always", rev), stdout, stderr)
 }
 
 func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Writer) error {
@@ -404,8 +418,8 @@ func parseLogFzfArgs(args []string) (logFzfOptions, error) {
 
 func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []string {
 	borderLabel := "🪵 Logs"
-	previewCmd := `echo {} | cut --delimiter " " --fields 2 --only-delimited | ansi2txt | xargs --no-run-if-empty --max-lines=1 git show --color=always | riff --color=on | bat --language=gitlog --color=always --style=plain --wrap=character`
-	detailBind := "enter:become(git show --color=always {2} | riff --color=on | bat --language=gitlog --color=always --style=plain --wrap=character)"
+	previewCmd := fmt.Sprintf("%q log-fzf _preview-plain {2}", selfExe)
+	detailBind := fmt.Sprintf("enter:become(%q log-fzf _preview-plain {2})", selfExe)
 
 	if opts.ja {
 		borderLabel = "🪵 Logs (ja)"
@@ -448,15 +462,18 @@ func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []st
 }
 
 func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer) error {
+	selfExe, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("failed to get executable path: %w", err)
+	}
+
 	var (
 		cacheDir string
 		fzfSock  string
-		selfExe  string
 		cancel   context.CancelFunc
 	)
 
 	if opts.ja {
-		var err error
 		cacheDir, err = os.MkdirTemp("", "gitx-log-fzf-ja-*")
 		if err != nil {
 			return fmt.Errorf("failed to create temp cache dir: %w", err)
@@ -464,11 +481,6 @@ func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer
 		defer os.RemoveAll(cacheDir)
 
 		fzfSock = filepath.Join(cacheDir, "fzf.sock")
-
-		selfExe, err = os.Executable()
-		if err != nil {
-			return fmt.Errorf("failed to get executable path: %w", err)
-		}
 
 		var ctx context.Context
 		ctx, cancel = context.WithCancel(context.Background())
@@ -538,6 +550,11 @@ func runLogFzf(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return fmt.Errorf("failed to get executable path: %w", err)
 			}
 			return logFzfRunDetail(selfExe, args[1], args[2], stdout, stderr)
+		case "_preview-plain":
+			if len(args) < 2 {
+				return nil
+			}
+			return renderPlainCommit(args[1], stdout, stderr)
 		}
 	}
 

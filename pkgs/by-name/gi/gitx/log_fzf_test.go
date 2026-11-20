@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"slices"
 	"strings"
 	"testing"
@@ -115,7 +116,24 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 		t.Fatalf("parseLogFzfArgs plain failed: %v", err)
 	}
 	plainArgs := strings.Join(buildLogFzfArgs("/bin/gitx", "", "", plainOpts), "\n")
-	if !strings.Contains(plainArgs, "🪵 Logs") || strings.Contains(plainArgs, "--listen=") || !strings.Contains(plainArgs, "--query\nfeat") {
+	wantPlainSubcmd := `"/bin/gitx" log-fzf _preview-plain {2}`
+	if !strings.Contains(plainArgs, "🪵 Logs") ||
+		strings.Contains(plainArgs, "--listen=") ||
+		!strings.Contains(plainArgs, "--query\nfeat") ||
+		!strings.Contains(plainArgs, "--preview\n"+wantPlainSubcmd) ||
+		!strings.Contains(plainArgs, "enter:become("+wantPlainSubcmd+")") ||
+		strings.Contains(plainArgs, "ansi2txt") ||
+		strings.Contains(plainArgs, "xargs") {
 		t.Errorf("unexpected plain fzf args:\n%s", plainArgs)
+	}
+}
+
+func TestRunLogFzfPreviewPlainEmpty(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	if err := runLogFzf([]string{"_preview-plain", ""}, strings.NewReader(""), &stdout, &stderr); err != nil {
+		t.Fatalf("runLogFzf(_preview-plain, empty) failed: %v", err)
+	}
+	if stdout.Len() != 0 || stderr.Len() != 0 {
+		t.Errorf("expected empty output, got stdout=%q stderr=%q", stdout.String(), stderr.String())
 	}
 }
