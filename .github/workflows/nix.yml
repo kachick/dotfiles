@@ -212,6 +212,9 @@ jobs:
           - name: nix-update
             run: go run ./cmd/ci-build package nix-update
 
+          - name: rclone-fzf
+            run: go run ./cmd/ci-build package rclone-fzf
+
           - name: shuck
             run: go run ./cmd/ci-build package shuck
 
