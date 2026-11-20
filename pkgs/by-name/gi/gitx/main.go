@@ -217,6 +217,8 @@ func runGitx(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 	case "help":
 		printGitxUsage(stdout)
 		return nil
+	case "__complete":
+		return runComplete(rest, stdout, stderr)
 	}
 
 	for _, cmd := range allGitxSubcommands() {
