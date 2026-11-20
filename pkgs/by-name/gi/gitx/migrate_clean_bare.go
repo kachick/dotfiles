@@ -332,22 +332,35 @@ func migrateRepo(repoDir string, opts migrateOptions, stdout, stderr io.Writer) 
 	return nil
 }
 
-func runMigrateCleanBareWithOptions(args []string, workDir string, selector migrateBranchSelector, stdout, stderr io.Writer) error {
-	if len(args) > 0 && args[0] == "_preview" {
-		return migrateRunPreview(args[1:], stdout, stderr)
-	}
+type migrateFlagValues struct {
+	dryRun      *bool
+	trust       *bool
+	interactive *bool
+}
 
+func newMigrateCleanBareFlagSet(stderr io.Writer) (*flag.FlagSet, migrateFlagValues) {
 	fs := flag.NewFlagSet("gitx migrate-clean-bare", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	dryRun := fs.Bool("dry-run", false, "show planned migration actions without changing the repository")
-	trust := fs.Bool("trust", false, "run direnv allow if .envrc exists in the migrated worktree")
-	interactive := fs.Bool("interactive", false, "select branches to convert into worktrees via fzf")
+	vals := migrateFlagValues{
+		dryRun:      fs.Bool("dry-run", false, "show planned migration actions without changing the repository"),
+		trust:       fs.Bool("trust", false, "run direnv allow if .envrc exists in the migrated worktree"),
+		interactive: fs.Bool("interactive", false, "select branches to convert into worktrees via fzf"),
+	}
 
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: gitx migrate-clean-bare [--dry-run] [--trust] [--interactive] [<repo_dir>]\n\n")
 		fmt.Fprintf(stderr, "Convert a standard Git repository into the clean-bare worktree layout in place.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, vals
+}
+
+func runMigrateCleanBareWithOptions(args []string, workDir string, selector migrateBranchSelector, stdout, stderr io.Writer) error {
+	if len(args) > 0 && args[0] == "_preview" {
+		return migrateRunPreview(args[1:], stdout, stderr)
+	}
+
+	fs, vals := newMigrateCleanBareFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -365,9 +378,9 @@ func runMigrateCleanBareWithOptions(args []string, workDir string, selector migr
 	}
 
 	return migrateRepo(repoDir, migrateOptions{
-		dryRun:      *dryRun,
-		trust:       *trust,
-		interactive: *interactive,
+		dryRun:      *vals.dryRun,
+		trust:       *vals.trust,
+		interactive: *vals.interactive,
 		selector:    selector,
 	}, stdout, stderr)
 }

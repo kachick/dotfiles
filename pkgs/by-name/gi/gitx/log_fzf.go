@@ -522,11 +522,22 @@ func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer
 	return nil
 }
 
+func logFzfFlags() []cliFlagSpec {
+	return []cliFlagSpec{
+		{
+			name:        "ja",
+			description: "Enable asynchronous Japanese commit message translation preview",
+		},
+	}
+}
+
 func printLogFzfUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: gitx log-fzf [--ja] [query]\n\n")
 	fmt.Fprintf(w, "Search git log via fzf with preview and quick actions.\n\n")
 	fmt.Fprintf(w, "Options:\n")
-	fmt.Fprintf(w, "  --ja    Enable asynchronous Japanese commit message translation preview\n")
+	for _, f := range logFzfFlags() {
+		fmt.Fprintf(w, "  --%-6s%s\n", f.name, f.description)
+	}
 }
 
 func runLogFzf(args []string, stdin io.Reader, stdout, stderr io.Writer) error {

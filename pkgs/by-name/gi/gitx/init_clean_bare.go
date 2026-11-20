@@ -71,7 +71,7 @@ func ensureDefaultWorktree(repoDir, defaultBranch string, stderr io.Writer) (str
 	return targetDir, nil
 }
 
-func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
+func newInitCleanBareFlagSet(stderr io.Writer) (*flag.FlagSet, *bool) {
 	fs := flag.NewFlagSet("gitx init-clean-bare", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	trust := fs.Bool("trust", false, "run direnv allow if .envrc exists in the target worktree")
@@ -81,6 +81,11 @@ func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
 		fmt.Fprintf(stderr, "Initialize default branch worktree for a bare repository and print its path.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, trust
+}
+
+func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
+	fs, trust := newInitCleanBareFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err

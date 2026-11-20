@@ -358,7 +358,7 @@ func repoFzfFilterArgs(query string) []string {
 	}
 }
 
-func runRepoFzf(args []string, stdout, stderr io.Writer) error {
+func newRepoFzfFlagSet(stderr io.Writer) (*flag.FlagSet, *bool) {
 	fs := flag.NewFlagSet("gitx repo-fzf", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	listOnly := fs.Bool("list", false, "print flat worktree entries without invoking fzf")
@@ -368,6 +368,11 @@ func runRepoFzf(args []string, stdout, stderr io.Writer) error {
 		fmt.Fprintf(stderr, "Select a repository worktree via fzf and print its path.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, listOnly
+}
+
+func runRepoFzf(args []string, stdout, stderr io.Writer) error {
+	fs, listOnly := newRepoFzfFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err

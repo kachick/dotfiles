@@ -293,7 +293,7 @@ func runDeleteMergedBranches(args []string, workDir string, stdout, stderr io.Wr
 	return runDeleteMergedBranchesWithLookup(args, workDir, lookupMergedBranchPRs, stdout, stderr)
 }
 
-func runDeleteMergedBranchesWithLookup(args []string, workDir string, lookupPRs prLookupFunc, stdout, stderr io.Writer) error {
+func newDeleteMergedBranchesFlagSet(stderr io.Writer) (*flag.FlagSet, *bool, *bool) {
 	fs := flag.NewFlagSet("gitx delete-merged-branches", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	dryRun := fs.Bool("dry-run", false, "show actions without removing worktrees or deleting branches")
@@ -304,6 +304,11 @@ func runDeleteMergedBranchesWithLookup(args []string, workDir string, lookupPRs 
 		fmt.Fprintf(stderr, "Remove local branches merged into the default branch and their clean linked worktrees.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, dryRun, prFlag
+}
+
+func runDeleteMergedBranchesWithLookup(args []string, workDir string, lookupPRs prLookupFunc, stdout, stderr io.Writer) error {
+	fs, dryRun, prFlag := newDeleteMergedBranchesFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err

@@ -9,9 +9,17 @@ import (
 )
 
 type gitxSubcommand struct {
-	name        string
-	description string
-	run         func(args []string, stdin io.Reader, stdout, stderr io.Writer) error
+	name            string
+	description     string
+	newFlags        func(stderr io.Writer) *flag.FlagSet
+	flags           []cliFlagSpec
+	flagValues      map[string][]string
+	argKind         argCompletionKind
+	argLabel        string
+	argValues       []string
+	supportsHelpCmd bool
+	subcommands     func() []cliCommandSpec
+	run             func(args []string, stdin io.Reader, stdout, stderr io.Writer) error
 }
 
 func allGitxSubcommands() []gitxSubcommand {
@@ -19,13 +27,22 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "menu",
 			description: "Unified interactive fzf/gum launcher for worktrees, branches, logs, tags, and repos",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newMenuFlagSet(stderr)
+				return fs
+			},
+			flagValues: map[string][]string{
+				"mode": menuModeNames(),
+			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runMenu(args, "", stdout, stderr)
 			},
 		},
 		{
-			name:        "wt",
-			description: "Manage flat git worktrees in clean-bare repositories",
+			name:            "wt",
+			description:     "Manage flat git worktrees in clean-bare repositories",
+			supportsHelpCmd: true,
+			subcommands:     wtCommandSpecs,
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runWT(args, "", stdout, stderr)
 			},
@@ -40,6 +57,10 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "delete-merged-branches",
 			description: "Remove merged local branches and clean worktrees",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _, _ := newDeleteMergedBranchesFlagSet(stderr)
+				return fs
+			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runDeleteMergedBranches(args, "", stdout, stderr)
 			},
@@ -47,6 +68,12 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "init-clean-bare",
 			description: "Initialize default branch worktree for a bare repository",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newInitCleanBareFlagSet(stderr)
+				return fs
+			},
+			argKind:  argCompleteDirs,
+			argLabel: "directory",
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runInitCleanBare(args, stdout, stderr)
 			},
@@ -54,6 +81,10 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "get",
 			description: "Clone a repository in clean-bare layout and print its worktree path",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newGetFlagSet(stderr)
+				return fs
+			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runGet(args, stdout, stderr)
 			},
@@ -61,6 +92,12 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "migrate-clean-bare",
 			description: "Convert a repository into the clean-bare layout",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newMigrateCleanBareFlagSet(stderr)
+				return fs
+			},
+			argKind:  argCompleteDirs,
+			argLabel: "directory",
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runMigrateCleanBare(args, "", stdout, stderr)
 			},
@@ -68,6 +105,10 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "reset-branch",
 			description: "Safely reset a local branch to match its remote",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _, _ := newResetBranchFlagSet(stderr)
+				return fs
+			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runResetBranch(args, "", stdout, stderr)
 			},
@@ -75,6 +116,7 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "show",
 			description: "Show commit details (--ja translates commit messages)",
+			flags:       showFlags(),
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return runShow(args, "", stdin, stdout, stderr)
 			},
@@ -82,6 +124,7 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "log-fzf",
 			description: "Interactive git log searcher (--ja enables translation)",
+			flags:       logFzfFlags(),
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return runLogFzf(args, stdin, stdout, stderr)
 			},
@@ -94,8 +137,10 @@ func allGitxSubcommands() []gitxSubcommand {
 			},
 		},
 		{
-			name:        "hooks",
-			description: "Run configured Git hooks (pre-push)",
+			name:            "hooks",
+			description:     "Run configured Git hooks (pre-push)",
+			supportsHelpCmd: true,
+			subcommands:     allHooksEvents,
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return runHooks(args, stdin, stdout, stderr)
 			},
@@ -103,6 +148,10 @@ func allGitxSubcommands() []gitxSubcommand {
 		{
 			name:        "repo-fzf",
 			description: "Select a repository worktree via fzf",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newRepoFzfFlagSet(stderr)
+				return fs
+			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runRepoFzf(args, stdout, stderr)
 			},
@@ -119,6 +168,16 @@ func allGitxSubcommands() []gitxSubcommand {
 			description: "Commit all changes using a shell history entry selected via fzf",
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return runCommitFromHistory(args, "", stdin, stdout, stderr)
+			},
+		},
+		{
+			name:        "completion",
+			description: "Generate shell completion script (bash or zsh)",
+			argKind:     argCompleteValues,
+			argLabel:    "shell",
+			argValues:   supportedCompletionShells(),
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runCompletion(args, stdout, stderr)
 			},
 		},
 	}

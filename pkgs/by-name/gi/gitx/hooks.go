@@ -17,18 +17,38 @@ import (
 // TyposConfigPath is injected at build time via `-X main.TyposConfigPath=...`.
 var TyposConfigPath string
 
+func allHooksPrePushSubcommands() []cliCommandSpec {
+	return []cliCommandSpec{
+		{name: "betterleaks", description: "Prevent secrets in commits (log and diff)"},
+		{name: "typos-commits", description: "Prevent typos in commits (log and diff)"},
+		{name: "typos-branch", description: "Prevent typos in branch names"},
+	}
+}
+
+func allHooksEvents() []cliCommandSpec {
+	return []cliCommandSpec{
+		{
+			name:        "pre-push",
+			description: "Run pre-push checks (betterleaks, typos-commits, typos-branch)",
+			subcommands: allHooksPrePushSubcommands(),
+		},
+	}
+}
+
 func printHooksUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: gitx hooks <hook-event> <subcommand>\n\n")
 	fmt.Fprintf(w, "Hook events:\n")
-	fmt.Fprintf(w, "  pre-push  Run pre-push checks (betterleaks, typos-commits, typos-branch)\n")
+	for _, ev := range allHooksEvents() {
+		fmt.Fprintf(w, "  %-10s%s\n", ev.name, ev.description)
+	}
 }
 
 func printPrePushUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: gitx hooks pre-push <subcommand>\n\n")
 	fmt.Fprintf(w, "Subcommands:\n")
-	fmt.Fprintf(w, "  betterleaks    Prevent secrets in commits (log and diff)\n")
-	fmt.Fprintf(w, "  typos-commits  Prevent typos in commits (log and diff)\n")
-	fmt.Fprintf(w, "  typos-branch   Prevent typos in branch names\n")
+	for _, sub := range allHooksPrePushSubcommands() {
+		fmt.Fprintf(w, "  %-15s%s\n", sub.name, sub.description)
+	}
 }
 
 func runHooks(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
@@ -63,8 +83,15 @@ func runHooksPrePush(args []string, stdin io.Reader, _, stderr io.Writer) error 
 	case "-h", "--help":
 		printPrePushUsage(stderr)
 		return flag.ErrHelp
-	case "betterleaks", "typos-commits", "typos-branch":
-	default:
+	}
+	validSubcommand := false
+	for _, sub := range allHooksPrePushSubcommands() {
+		if sub.name == subcommand {
+			validSubcommand = true
+			break
+		}
+	}
+	if !validSubcommand {
 		printPrePushUsage(stderr)
 		return fmt.Errorf("unknown pre-push subcommand: %s", subcommand)
 	}

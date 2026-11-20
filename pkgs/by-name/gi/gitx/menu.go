@@ -26,6 +26,16 @@ const (
 	menuModeRepos     menuMode = "repos"
 )
 
+func menuModeNames() []string {
+	return []string{
+		string(menuModeWorktrees),
+		string(menuModeBranches),
+		string(menuModeCommits),
+		string(menuModeTags),
+		string(menuModeRepos),
+	}
+}
+
 const (
 	menuSwitchKeys = "ctrl-w,ctrl-b,ctrl-l,ctrl-t,ctrl-r"
 	menuNavHeader  = "^W: worktrees | ^B: branches | ^L: commits | ^T: tags | ^R: repos"
@@ -1047,6 +1057,16 @@ func printMenuUsage(w io.Writer) {
 	fmt.Fprintf(w, "Press Ctrl-X for context and maintenance actions (refresh, delete-merged-branches).\n")
 }
 
+func newMenuFlagSet(stderr io.Writer) (*flag.FlagSet, *string) {
+	fs := flag.NewFlagSet("gitx menu", flag.ContinueOnError)
+	fs.SetOutput(stderr)
+	modeFlag := fs.String("mode", "", "initial view: worktrees, branches, commits, tags, or repos")
+	fs.Usage = func() {
+		printMenuUsage(stderr)
+	}
+	return fs, modeFlag
+}
+
 func runMenuWithUI(args []string, workDir string, ui menuInteractiveUI, stdout, stderr io.Writer) error {
 	if len(args) > 0 {
 		switch args[0] {
@@ -1065,12 +1085,7 @@ func runMenuWithUI(args []string, workDir string, ui menuInteractiveUI, stdout, 
 
 	ui = ui.withDefaults()
 
-	fs := flag.NewFlagSet("gitx menu", flag.ContinueOnError)
-	fs.SetOutput(stderr)
-	modeFlag := fs.String("mode", "", "initial view: worktrees, branches, commits, tags, or repos")
-	fs.Usage = func() {
-		printMenuUsage(stderr)
-	}
+	fs, modeFlag := newMenuFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err

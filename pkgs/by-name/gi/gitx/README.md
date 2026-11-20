@@ -126,6 +126,7 @@ flowchart LR
 | Log & Review        | `resolve-conflict`                                                 | `git resolve-conflict`                  | Find `<<<<<< HEAD` markers in unmerged files with `rg` and open them in Helix (`hx --hsplit`) |
 | Log & Review        | `commit-from-history`                                              | `gch`                                   | Pick a shell history line via `fzf` and commit all changes with `` `<command>` ``             |
 | Hooks               | `hooks pre-push <subcommand>`                                      | Git `hook.*` config                     | Run `betterleaks`, `typos-commits`, or `typos-branch` before pushing                          |
+| Shell               | `completion <bash\|zsh>`                                           | Nix `installShellCompletion`            | Print shell completion scripts generated from command definitions                             |
 
 ## Clean-Bare Worktree Layout & Lifecycle
 

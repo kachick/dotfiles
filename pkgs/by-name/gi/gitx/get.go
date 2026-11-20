@@ -164,7 +164,7 @@ func readDefaultRepoUser() (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-func runGet(args []string, stdout, stderr io.Writer) error {
+func newGetFlagSet(stderr io.Writer) (*flag.FlagSet, *bool) {
 	fs := flag.NewFlagSet("gitx get", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	trust := fs.Bool("trust", false, "run direnv allow if .envrc exists in the target worktree")
@@ -174,6 +174,11 @@ func runGet(args []string, stdout, stderr io.Writer) error {
 		fmt.Fprintf(stderr, "Clone a repository into the clean-bare layout and print its default worktree path.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, trust
+}
+
+func runGet(args []string, stdout, stderr io.Writer) error {
+	fs, trust := newGetFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err

@@ -51,6 +51,16 @@ type parsedShowArgs struct {
 	gitArgs     []string
 }
 
+func showFlags() []cliFlagSpec {
+	// Omit internal --placeholder used only by `gitx log-fzf` preview workers.
+	return []cliFlagSpec{
+		{
+			name:        "ja",
+			description: "Translate commit message to Japanese via local llama-server",
+		},
+	}
+}
+
 func parseShowArgs(args []string) parsedShowArgs {
 	var parsed parsedShowArgs
 	parsed.ref = "HEAD"

@@ -592,13 +592,22 @@ func addInteractive(trust bool, workDir string, ui wtInteractiveUI, stdout, stde
 	return addNewBranchInteractive(ctx, r, defaultBranch, currentBranch, trust, ui, stdout, stderr)
 }
 
-func wtRunAddWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error {
+type wtAddFlagValues struct {
+	branch      *string
+	base        *string
+	trust       *bool
+	interactive *bool
+}
+
+func newWTAddFlagSet(stderr io.Writer) (*flag.FlagSet, wtAddFlagValues) {
 	fs := flag.NewFlagSet("gitx wt add", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	branchFlag := fs.String("branch", "", "branch name to check out or create")
-	baseRef := fs.String("base", "", "base ref for creating a new branch")
-	trust := fs.Bool("trust", false, "run direnv allow if .envrc exists in the target worktree")
-	interactive := fs.Bool("interactive", false, "add worktree(s) interactively via gum and fzf")
+	vals := wtAddFlagValues{
+		branch:      fs.String("branch", "", "branch name to check out or create"),
+		base:        fs.String("base", "", "base ref for creating a new branch"),
+		trust:       fs.Bool("trust", false, "run direnv allow if .envrc exists in the target worktree"),
+		interactive: fs.Bool("interactive", false, "add worktree(s) interactively via gum and fzf"),
+	}
 
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: gitx wt add [--branch <branch> [--base <ref>] | --interactive] [--trust]\n\n")
@@ -606,6 +615,11 @@ func wtRunAddWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, s
 		fmt.Fprintf(stderr, "Defaults to --interactive when --branch is omitted.\n\n")
 		fs.PrintDefaults()
 	}
+	return fs, vals
+}
+
+func wtRunAddWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error {
+	fs, vals := newWTAddFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -622,16 +636,16 @@ func wtRunAddWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, s
 		}
 	})
 
-	if branchSet && *interactive {
+	if branchSet && *vals.interactive {
 		return errors.New("--branch and --interactive cannot be used together")
 	}
 	if branchSet {
-		return addSingleBranch(*branchFlag, *baseRef, *trust, workDir, stdout, stderr)
+		return addSingleBranch(*vals.branch, *vals.base, *vals.trust, workDir, stdout, stderr)
 	}
-	if *baseRef != "" {
+	if *vals.base != "" {
 		return errors.New("--base cannot be used with --interactive")
 	}
-	if err := addInteractive(*trust, workDir, ui, stdout, stderr); err != nil {
+	if err := addInteractive(*vals.trust, workDir, ui, stdout, stderr); err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
 			return errors.New("worktree addition canceled")
 		}
@@ -937,6 +951,10 @@ type wtSubcommand struct {
 	description   string
 	hidden        bool
 	outputsTarget bool
+	newFlags      func(stderr io.Writer) *flag.FlagSet
+	flagValues    map[string][]string
+	argKind       argCompletionKind
+	argLabel      string
 	run           func(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error
 }
 
@@ -962,7 +980,11 @@ func allWTSubcommands() []wtSubcommand {
 			usage:         "add [--branch <branch> [--base <ref>] | --interactive]",
 			description:   "Add flat worktree(s) (defaults to --interactive)",
 			outputsTarget: true,
-			run:           wtRunAddWithUI,
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newWTAddFlagSet(stderr)
+				return fs
+			},
+			run: wtRunAddWithUI,
 		},
 		{
 			name:          "path",

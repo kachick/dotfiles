@@ -1,4 +1,5 @@
 {
+  bashInteractive,
   bat,
   betterleaks,
   buildGo127Module,
@@ -9,10 +10,12 @@
   gh,
   gitMinimal,
   gum,
+  installShellFiles,
   lib,
   makeWrapper,
   riffdiff,
   ripgrep,
+  stdenv,
   typos,
   ...
 }:
@@ -24,10 +27,12 @@ buildGo127Module (finalAttrs: {
   __structuredAttrs = true;
 
   nativeBuildInputs = [
+    installShellFiles
     makeWrapper
   ];
 
   nativeCheckInputs = [
+    bashInteractive
     direnv
     fzf
     gitMinimal
@@ -47,6 +52,12 @@ buildGo127Module (finalAttrs: {
     ripgrep
     typos
   ];
+
+  postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd ${finalAttrs.meta.mainProgram} \
+      --bash <("$out/bin/${finalAttrs.meta.mainProgram}" completion bash) \
+      --zsh <("$out/bin/${finalAttrs.meta.mainProgram}" completion zsh)
+  '';
 
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \

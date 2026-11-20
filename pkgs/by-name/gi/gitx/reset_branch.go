@@ -51,7 +51,7 @@ func guardCleanBareDefaultWorktree(r *gitcmd.Runner, workDir, targetBranch strin
 	return nil
 }
 
-func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) error {
+func newResetBranchFlagSet(stderr io.Writer) (*flag.FlagSet, *string, *bool) {
 	fs := flag.NewFlagSet("gitx reset-branch", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 
@@ -66,6 +66,11 @@ func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) err
 		fmt.Fprintf(stderr, "Options:\n")
 		fs.PrintDefaults()
 	}
+	return fs, remote, dryRun
+}
+
+func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) error {
+	fs, remote, dryRun := newResetBranchFlagSet(stderr)
 
 	if err := fs.Parse(args); err != nil {
 		return err
