@@ -99,17 +99,25 @@
     # However initExtra is still better option than profileExtra.
     initExtra = ''
       # Don't delegate shell execution before interactive shell checks.
-      # Auto-switch to Zsh if Bash is the login shell.
+      # Auto-switch to Zsh when Bash is the top-level shell, a login shell, or a direct pane of zellij.
       # Inspired by Arch Wiki's Fish setup:
       # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
       #
       # --- Optimization & Compatibility ---
-      # The order of these checks matters for performance. Prioritize internal checks to minimize external 'ps' calls.
+      # Check built-ins before calling 'ps' so manual 'bash' from zsh or nix develop stays fast.
+      # Apps started from an existing shell (like herdr with shell_mode = "login") pass SHLVL >= 1,
+      # so checking login_shell catches login panes even when SHLVL is 2 or higher.
+      # zellij starts non-login panes with SHLVL >= 2, so check ZELLIJ first and match PPID comm.
       # Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
-      if [[ $- == *i* && -t 0 && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && ( $PPID -eq 0 || $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ) ]]
-      then
-        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
+      if [[ $- == *i* && -t 0 && -z ''${BASH_EXECUTION_STRING} ]]; then
+        if [[ ''${SHLVL} == 1 ]] || shopt -q login_shell; then
+          if [[ $PPID -eq 0 || $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ]]; then
+            shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+            exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
+          fi
+        elif [[ -n ''${ZELLIJ:-} && $PPID -gt 0 && $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) == "zellij" ]]; then
+          exec ${lib.getExe pkgs.zsh}
+        fi
       fi
 
       # Workaround for issues likely https://github.com/reubeno/brush/issues/380

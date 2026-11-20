@@ -534,8 +534,6 @@ SwitchToMode "pane"
         }
     }
 }
-// $SHELL is now bash since #452
-default_shell "zsh"
 plugins {
     compact-bar location="zellij:compact-bar"
     configuration location="zellij:configuration"
