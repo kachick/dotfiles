@@ -9,7 +9,8 @@ show_startup_tips false
 // It cannot be getting with another method, see https://github.com/zellij-org/zellij/issues/3724#issuecomment-2456468487
 keybinds clear-defaults=true {
     locked {
-        bind "Ctrl g" {
+        // Shifted from Ctrl g so shells can bind Ctrl g to gitx menu
+        bind "Ctrl b" {
             SwitchToMode "normal"
         }
     }
@@ -410,7 +411,7 @@ SwitchToMode "locked"
         }
     }
     shared_except "locked" "renametab" "renamepane" {
-        bind "Ctrl g" {
+        bind "Ctrl b" {
             SwitchToMode "locked"
         }
         bind "Ctrl q" {

@@ -6,10 +6,11 @@ Unified CLI combining local Git and GitHub helper subcommands.
 
 ```mermaid
 flowchart LR
-    subgraph Shell ["Shell Functions (posix_dev_functions)"]
+    subgraph Shell ["Shell Functions & Keybinds (posix_dev_functions / dev.nix)"]
         cdrepo["cdrepo"]
         getrepo["getrepo"]
         wt_fn["wt"]
+        gx_fn["gx (Ctrl-G)"]
         gch["gch"]
     end
 
@@ -26,6 +27,10 @@ flowchart LR
     end
 
     subgraph Subcommands ["gitx Subcommands"]
+        subgraph Launcher ["Interactive Launcher"]
+            cmd_menu["menu"]
+        end
+
         subgraph Repo ["Repository & Clean-Bare Layout"]
             cmd_get["get"]
             cmd_init["init-clean-bare"]
@@ -67,6 +72,7 @@ flowchart LR
     getrepo --> cmd_get
     gh_burl --> cmd_get
     wt_fn -->|"wt _cd-helper"| cmd_wt
+    gx_fn --> cmd_menu
     gch --> cmd_hist
 
     git_wt --> cmd_wt
@@ -76,6 +82,11 @@ flowchart LR
     git_show_ja --> cmd_show
     pre_push --> cmd_hooks
 
+    cmd_menu -->|"^W / ^B / ^L / ^T / ^R / ^X"| ext_tui
+    cmd_menu --> cmd_wt
+    cmd_menu --> cmd_repofzf
+    cmd_menu --> cmd_refresh
+    cmd_menu --> cmd_dmb
     cmd_get -->|"git clone --bare"| cmd_init
     cmd_wt -->|"ctrl-l"| cmd_logfzf
     cmd_logfzf -->|"--ja"| cmd_show
@@ -100,6 +111,7 @@ flowchart LR
 
 | Category            | Subcommand                                                         | Caller / Alias                          | Purpose                                                                                       |
 | ------------------- | ------------------------------------------------------------------ | --------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                          | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos  |
 | Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `gh burl`                    | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree            |
 | Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git init-clean-bare`, `gitx get`       | Configure origin fetch refspec and create the default branch worktree                         |
 | Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                             |
@@ -119,7 +131,7 @@ flowchart LR
 
 `gitx` organizes repositories in a clean-bare layout where `.git` holds the bare repository and every branch lives in a flat sibling directory at depth 1 (`feat/foo` becomes `feat-foo`).
 
-Commands that return a directory path (`get`, `init-clean-bare`, `migrate-clean-bare`, `repo-fzf`, `wt add`, `wt select`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
+Commands that return a directory path (`menu`, `get`, `init-clean-bare`, `migrate-clean-bare`, `repo-fzf`, `wt add`, `wt select`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
 
 ```mermaid
 flowchart TD

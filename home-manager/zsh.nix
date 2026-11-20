@@ -235,7 +235,6 @@ in
           bindkey ";5D" backward-word
 
           source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
-          source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
 
           # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
           # So currently injecting only in zsh

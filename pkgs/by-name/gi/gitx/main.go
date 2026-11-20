@@ -17,6 +17,13 @@ type gitxSubcommand struct {
 func allGitxSubcommands() []gitxSubcommand {
 	return []gitxSubcommand{
 		{
+			name:        "menu",
+			description: "Unified interactive fzf/gum launcher for worktrees, branches, logs, tags, and repos",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runMenu(args, "", stdout, stderr)
+			},
+		},
+		{
 			name:        "wt",
 			description: "Manage flat git worktrees in clean-bare repositories",
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {

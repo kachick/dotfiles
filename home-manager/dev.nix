@@ -111,10 +111,21 @@
   programs = {
     bash.initExtra = ''
       source "${pkgs.local.posix_dev_functions}"
+      if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+        bind -x '"\C-g": gx'
+      fi
     '';
 
     zsh.initContent = lib.mkOrder 1001 ''
       source_sh "${pkgs.local.posix_dev_functions}"
+      gitx-menu-widget() {
+        gx
+        zle reset-prompt
+      }
+      zle     -N            gitx-menu-widget
+      bindkey -M emacs '^G' gitx-menu-widget
+      bindkey -M vicmd '^G' gitx-menu-widget
+      bindkey -M viins '^G' gitx-menu-widget
     '';
 
     # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix

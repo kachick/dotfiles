@@ -28,6 +28,14 @@ wt() {
 	fi
 }
 
+gx() {
+	local target
+	target="$('@gitx@' menu "$@")" || return 1
+	if [ -n "$target" ]; then
+		cd "$target" || return 1
+	fi
+}
+
 gch() {
 	fc -nrl 1 | '@gitx@' commit-from-history
 }

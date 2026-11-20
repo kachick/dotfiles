@@ -73,8 +73,6 @@
         file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
 
         fzf # History: CTRL+R, Walker: CTRL+T
-        # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
-        # Use same nixpkgs channel as same as fzf
         television # `tv`. Alt fzf
         zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
