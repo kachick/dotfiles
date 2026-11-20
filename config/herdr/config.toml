@@ -1,2 +1,16 @@
+onboarding = false
 [terminal]
-default_shell = "zsh"
+shell_mode = "login"
+
+[ui.toast]
+delivery = "terminal"
+
+[theme]
+name = "terminal"
+auto_switch = false
+
+[ui.sound]
+enabled = true
+
+[ui]
+status_indicators = "symbols"

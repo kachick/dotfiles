@@ -4,6 +4,7 @@
 // Acceptable: f75c11c109968becfe60a07998e73a451f4ccf92, catppuccin-frappe, onedark
 // Broken: icebrg-dark, nord
 theme "catppuccin-frappe"
+show_startup_tips false
 // Extracted from 0.41.2 tutorial generated non-colliding keybindings.
 // It cannot be getting with another method, see https://github.com/zellij-org/zellij/issues/3724#issuecomment-2456468487
 keybinds clear-defaults=true {
