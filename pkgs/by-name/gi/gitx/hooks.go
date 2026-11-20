@@ -156,13 +156,7 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 			return msgErr
 		}},
 		"prevent typos in log and diff": {Tag: "typos-commits", Script: func() error {
-			out, err := runPipedCommands(
-				// --patch displays diff
-				// --unified=0(-U0) trims excess lines from the diff
-				// ref: https://github.com/gitleaks/gitleaks/blob/4b541044e817274bad3407128bb226740295857c/sources/git.go#L33
-				[]string{"git", "log", "--author=" + email, "--patch", "--unified=0", fmt.Sprintf("%s..%s", remoteBranch, localRef)},
-				[]string{"typos", "--config", TyposConfigPath, "-"},
-			)
+			out, err := checkCommitsTypos(remoteBranch, localRef, email)
 			log.Println(string(out))
 			return err
 		}},
@@ -178,20 +172,95 @@ func initializeLinters(line string, remoteBranch string, email string) (map[stri
 	}, nil
 }
 
+// Why not pipe `git log --patch` directly into `typos`:
+// Git truncates hunk header context (`@@ ... @@ <funcname>`) at 80 bytes, which cuts
+// unchanged identifiers mid-word (such as cutting "error" to 4 chars) and triggers false positives.
+// Feeding commit messages and added `+` lines separately also prevents deleted lines from
+// failing commits that fix existing typos.
+func checkCommitsTypos(remoteBranch, localRef, email string) ([]byte, error) {
+	revRange := fmt.Sprintf("%s..%s", remoteBranch, localRef)
+	messages, err := runCommandStdout([]string{"git", "log", "--author=" + email, "--format=%B", revRange})
+	if err != nil {
+		return messages, err
+	}
+
+	patch, err := runCommandStdout([]string{
+		"git", "log", "--no-ext-diff", "--no-textconv",
+		"--author=" + email, "--format=", "--patch", "--unified=0", revRange,
+	})
+	if err != nil {
+		return patch, err
+	}
+
+	addedDiff, err := extractAddedDiffLines(bytes.NewReader(patch))
+	if err != nil {
+		return nil, err
+	}
+
+	var input bytes.Buffer
+	input.Write(messages)
+	if len(messages) > 0 && !bytes.HasSuffix(messages, []byte("\n")) {
+		input.WriteByte('\n')
+	}
+	input.Write(addedDiff)
+
+	cmd := exec.Command("typos", "--config", TyposConfigPath, "-")
+	cmd.Stdin = &input
+	return cmd.CombinedOutput()
+}
+
+func extractAddedDiffLines(r io.Reader) ([]byte, error) {
+	reader := bufio.NewReader(r)
+	var out bytes.Buffer
+	inHunk := false
+
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil && err != io.EOF {
+			return nil, err
+		}
+		if len(line) > 0 {
+			trimmed := strings.TrimRight(line, "\r\n")
+			switch {
+			case strings.HasPrefix(trimmed, "diff "):
+				inHunk = false
+			case strings.HasPrefix(trimmed, "@@ "), strings.HasPrefix(trimmed, "@@@ "):
+				inHunk = true
+			case inHunk && strings.HasPrefix(trimmed, "+"):
+				out.WriteString(trimmed[1:])
+				out.WriteByte('\n')
+			}
+		}
+		if err == io.EOF {
+			break
+		}
+	}
+
+	return out.Bytes(), nil
+}
+
+func runCommandStdout(args []string) ([]byte, error) {
+	cmd := exec.Command(args[0], args[1:]...)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		return stderr.Bytes(), err
+	}
+	return stdout.Bytes(), nil
+}
+
 // Why not external pipeline libraries:
 // Running the first command and passing its stdout buffer to the second command's stdin
 // handles two-stage git log checks with standard os/exec alone.
 func runPipedCommands(firstArgs []string, secondArgs []string) ([]byte, error) {
-	first := exec.Command(firstArgs[0], firstArgs[1:]...)
-	var stdout, stderr bytes.Buffer
-	first.Stdout = &stdout
-	first.Stderr = &stderr
-	if err := first.Run(); err != nil {
-		return stderr.Bytes(), err
+	stdout, err := runCommandStdout(firstArgs)
+	if err != nil {
+		return stdout, err
 	}
 
 	second := exec.Command(secondArgs[0], secondArgs[1:]...)
-	second.Stdin = &stdout
+	second.Stdin = bytes.NewReader(stdout)
 	return second.CombinedOutput()
 }
 
