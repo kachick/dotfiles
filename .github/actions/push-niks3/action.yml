@@ -63,5 +63,9 @@ runs:
         fi
         if [ -n "$PIN_FLAKE_ATTR" ] && [ -n "$PIN_NAME" ]; then
           target_path=$(nix eval --raw "$PIN_FLAKE_ATTR")
-          go run ./cmd/ci-build pin "$PIN_NAME" "$target_path"
+          if [ -e "$target_path" ]; then
+            go run ./cmd/ci-build pin "$PIN_NAME" "$target_path"
+          else
+            echo "Skipping pin '$PIN_NAME': target path '$target_path' is not built in local store"
+          fi
         fi

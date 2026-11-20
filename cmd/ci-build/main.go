@@ -157,6 +157,19 @@ func runPackage(args []string) error {
 		return err
 	}
 
+	outPaths := strings.Fields(outBuf.String())
+
+	// Record built output paths before running passthru.tests so that when the
+	// package derivation itself builds cleanly, its store path is cached even if
+	// a later VM or integration test fails.
+	if outPathsDir := os.Getenv("CI_BUILD_OUT_PATHS_DIR"); outPathsDir != "" {
+		if !isFree {
+			fmt.Printf("Skipping output path recording for unfree package: %s\n", pname)
+		} else if err := recordOutPaths(outPathsDir, pname, outPaths); err != nil {
+			return err
+		}
+	}
+
 	if skipTests {
 		fmt.Printf("Skipping tests for %s as requested.\n", pname)
 	} else {
@@ -185,9 +198,10 @@ func runPackage(args []string) error {
 		}
 	}
 
-	outPaths := strings.Fields(outBuf.String())
-	if err := handleBuiltPaths(pname, isFree, outPaths); err != nil {
-		return err
+	if os.Getenv("CI_BUILD_OUT_PATHS_DIR") == "" {
+		if err := maybePushToNiks3(pname, isFree, outPaths); err != nil {
+			return err
+		}
 	}
 
 	return nil

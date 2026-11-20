@@ -167,6 +167,7 @@ jobs:
           cache: true
       - uses: $/.github/actions/setup-nix
       - name: Warm up
+        id: warmup
         run: go run ./cmd/ci-build warmup packages
       - parallel:
           # BEGIN MANAGED PACKAGES
@@ -230,7 +231,8 @@ jobs:
           - name: zed-editor
             run: go run ./cmd/ci-build package zed-editor --skip-tests
           # END MANAGED PACKAGES
-      - uses: $/.github/actions/push-niks3
+      - if: always() && !cancelled() && steps.warmup.outcome == 'success'
+        uses: $/.github/actions/push-niks3
         with:
           tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
@@ -333,6 +335,7 @@ jobs:
           # NixOS is the last job in this workflow, and its cache is too large for the quota
           hestia-read-only: 'true'
       - name: Warm up
+        id: warmup
         run: go run ./cmd/ci-build warmup nixos
       - parallel:
           - name: Build NixOS - desktop-free
@@ -343,7 +346,8 @@ jobs:
 
           - name: Verify sample configuration template
             run: ./nixos/hosts/sample/verify.bash
-      - uses: $/.github/actions/push-niks3
+      - if: always() && !cancelled() && steps.warmup.outcome == 'success'
+        uses: $/.github/actions/push-niks3
         with:
           tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
           tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
