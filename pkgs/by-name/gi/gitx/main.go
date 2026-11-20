@@ -39,9 +39,16 @@ func allGitxSubcommands() []gitxSubcommand {
 		},
 		{
 			name:        "init-clean-bare",
-			description: "Initialize default branch worktree for ghq --clean-bare",
+			description: "Initialize default branch worktree for a bare repository",
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
 				return runInitCleanBare(args, stdout, stderr)
+			},
+		},
+		{
+			name:        "get",
+			description: "Clone a repository in clean-bare layout and print its worktree path",
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runGet(args, stdout, stderr)
 			},
 		},
 		{
@@ -87,10 +94,10 @@ func allGitxSubcommands() []gitxSubcommand {
 			},
 		},
 		{
-			name:        "ghq-fzf",
-			description: "Select a ghq repository worktree via fzf",
+			name:        "repo-fzf",
+			description: "Select a repository worktree via fzf",
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
-				return runGhqFzf(args, stdout, stderr)
+				return runRepoFzf(args, stdout, stderr)
 			},
 		},
 		{
@@ -121,7 +128,7 @@ func isGitxSubcommandName(name string) bool {
 
 func printGitxUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: gitx <subcommand> [options] [args]\n\n")
-	fmt.Fprintf(w, "Unified Git, ghq, and GitHub workflow helper CLI.\n\n")
+	fmt.Fprintf(w, "Unified Git and GitHub workflow helper CLI.\n\n")
 	fmt.Fprintf(w, "Subcommands:\n")
 	for _, cmd := range allGitxSubcommands() {
 		fmt.Fprintf(w, "  %-24s%s\n", cmd.name, cmd.description)

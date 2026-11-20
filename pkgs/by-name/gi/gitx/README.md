@@ -1,6 +1,6 @@
 # gitx
 
-Unified CLI combining local Git, ghq, and GitHub helper subcommands.
+Unified CLI combining local Git and GitHub helper subcommands.
 
 ## `gitx hooks pre-push`
 

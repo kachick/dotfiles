@@ -152,7 +152,7 @@ in
 
       url = {
         # Why?
-        # - ghq default is https, this omit -p option for the ssh push
+        # - gitx get defaults to https, so omit ssh options when pushing
         # - https://blog.n-z.jp/blog/2013-11-28-git-insteadof.html
         "git@github.com:" = {
           pushInsteadOf = [
@@ -162,8 +162,7 @@ in
         };
       };
 
-      # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
-      ghq = {
+      gitx = {
         root = "~/repos";
       };
 
@@ -256,10 +255,9 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !set -e; owner="$(git config --global ghq.user)"; \
+          !set -e; owner="$(git config --global gitx.user)"; \
             gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
-            repo_dir="$(${lib.getExe pkgs.ghq} get --clean-bare "$owner/$1")"; \
-            wt_dir="$(${gitx} init-clean-bare --trust "$repo_dir")"; \
+            wt_dir="$(${gitx} get --trust "$owner/$1")"; \
             cd "$wt_dir"; \
             gh setup; \
             ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"

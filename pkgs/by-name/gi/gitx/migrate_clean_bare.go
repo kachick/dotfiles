@@ -299,7 +299,7 @@ func migrateRepo(repoDir string, opts migrateOptions, stdout, stderr io.Writer) 
 	}
 
 	// Keep the bare repository HEAD aligned with the repository's default branch,
-	// matching fresh `ghq get --clean-bare` clones so tools like ghq-fzf detect it cleanly.
+	// matching fresh `gitx get` clones so tools like `repo-fzf` detect it cleanly.
 	if defaultBranch != "" && defaultBranch != branch && r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+defaultBranch) {
 		if err := r.Stream("symbolic-ref", "HEAD", "refs/heads/"+defaultBranch); err != nil {
 			return err

@@ -7,7 +7,6 @@
   eza,
   fzf,
   gh,
-  ghq,
   gitMinimal,
   gum,
   lib,
@@ -31,7 +30,6 @@ buildGo127Module (finalAttrs: {
   nativeCheckInputs = [
     direnv
     fzf
-    ghq
     gitMinimal
   ];
 
@@ -43,7 +41,6 @@ buildGo127Module (finalAttrs: {
     eza
     fzf
     gh
-    ghq
     gitMinimal
     gum
     riffdiff
@@ -84,7 +81,7 @@ buildGo127Module (finalAttrs: {
   ];
 
   meta = {
-    description = "Unified Git, ghq, and GitHub workflow helper CLI";
+    description = "Unified Git and GitHub workflow helper CLI";
     mainProgram = finalAttrs.pname;
   };
 })

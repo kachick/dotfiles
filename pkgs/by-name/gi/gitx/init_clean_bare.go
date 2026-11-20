@@ -78,7 +78,7 @@ func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
 
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: gitx init-clean-bare [--trust] <repo_dir>\n\n")
-		fmt.Fprintf(stderr, "Initialize default branch worktree for a ghq --clean-bare repository and print its path.\n\n")
+		fmt.Fprintf(stderr, "Initialize default branch worktree for a bare repository and print its path.\n\n")
 		fs.PrintDefaults()
 	}
 
@@ -97,6 +97,10 @@ func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("resolve repository path: %w", err)
 	}
 
+	return initCleanBare(repoDir, *trust, stdout, stderr)
+}
+
+func initCleanBare(repoDir string, trust bool, stdout, stderr io.Writer) error {
 	r := gitcmd.NewIsolated(repoDir, stderr, stderr)
 	isBare, err := r.Output("rev-parse", "--is-bare-repository")
 	if err != nil {
@@ -105,7 +109,7 @@ func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
 
 	// Legacy non-bare repositories do not need worktree initialization; return repoDir directly.
 	if isBare != "true" {
-		if err := allowDirenvIfTrusted(repoDir, *trust, stderr); err != nil {
+		if err := allowDirenvIfTrusted(repoDir, trust, stderr); err != nil {
 			return err
 		}
 		fmt.Fprintln(stdout, repoDir)
@@ -133,7 +137,7 @@ func runInitCleanBare(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 
-	if err := allowDirenvIfTrusted(targetDir, *trust, stderr); err != nil {
+	if err := allowDirenvIfTrusted(targetDir, trust, stderr); err != nil {
 		return err
 	}
 

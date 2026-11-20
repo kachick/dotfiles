@@ -172,7 +172,7 @@ func TestRun_MigrateCleanBare(t *testing.T) {
 			t.Errorf("wip.txt = %q, want wip\\n", got)
 		}
 
-		// Bare .git/HEAD should reflect default branch trunk so tools like ghq-fzf detect trunk.
+		// Bare .git/HEAD should reflect default branch trunk so tools like repo-fzf detect trunk.
 		if got := runGit(t, repoDir, "symbolic-ref", "--short", "HEAD"); got != "trunk" {
 			t.Errorf("bare HEAD = %q, want trunk", got)
 		}

@@ -28,6 +28,7 @@ func isolateEnv(t *testing.T) {
 	t.Setenv("GIT_CONFIG_GLOBAL", "/dev/null")
 	t.Setenv("GIT_CONFIG_SYSTEM", "/dev/null")
 	t.Setenv("GIT_TERMINAL_PROMPT", "0")
+	t.Setenv("GITX_ROOT", "")
 }
 
 func runGit(t *testing.T, dir string, args ...string) string {

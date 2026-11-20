@@ -43,7 +43,7 @@ style = "blue"
 truncate_to_repo = false
 truncation_length = 0
 
-# Remove host prefix from ghq paths without running external commands
+# Remove host prefix from ~/repos paths without running external commands
 [[directory.substitutions]]
 from = '^~/repos/[^/]+/'
 to = ''
