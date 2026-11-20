@@ -66,5 +66,5 @@ wt() {
 }
 
 gch() {
-	fc -nrl 1 | '@fzf_bind_shell_hist@'
+	fc -nrl 1 | '@gitx@' commit-from-history
 }

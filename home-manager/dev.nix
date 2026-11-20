@@ -87,7 +87,6 @@
         iets
       ])
       ++ (with pkgs.local; [
-        fzf-bind-posix-shell-history-to-git-commit-message
         gitx
         todo
         task-completions

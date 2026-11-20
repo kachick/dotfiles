@@ -100,6 +100,13 @@ func allGitxSubcommands() []gitxSubcommand {
 				return runGhReponame(args, stdin, stdout, stderr)
 			},
 		},
+		{
+			name:        "commit-from-history",
+			description: "Commit all changes using a shell history entry selected via fzf",
+			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+				return runCommitFromHistory(args, "", stdin, stdout, stderr)
+			},
+		},
 	}
 }
 
