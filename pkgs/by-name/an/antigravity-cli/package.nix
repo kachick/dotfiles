@@ -51,4 +51,8 @@ antigravity-cli.overrideAttrs (old: {
       text = builtins.readFile ./update.bash;
     };
   };
+
+  meta = (old.meta or { }) // {
+    changelog = "https://antigravity.google/docs/changelog?tab=cli";
+  };
 })

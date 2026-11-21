@@ -109,6 +109,10 @@ jobs:
             new_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
             if [[ "${old_version}" != "${new_version}" ]]; then
               echo "${PACKAGE}: ${old_version} -> ${new_version}" > "${msg_file}"
+              changelog="$(nix eval --raw --impure ".#${PACKAGE}.meta.changelog" 2>/dev/null || true)"
+              if [[ -n "${changelog}" ]]; then
+                printf '\nChangelog: %s\n' "${changelog}" >> "${msg_file}"
+              fi
             fi
           else
             nix-update --flake "${PACKAGE}" --use-update-script --write-commit-message "${msg_file}"
