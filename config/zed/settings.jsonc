@@ -70,6 +70,7 @@
     "allowed": false
   },
   // https://zed.dev/docs/configuring-languages#configuring-formatters
+  "format_on_save": "on",
   "formatter": {
     "external": {
       "command": "dprint",
