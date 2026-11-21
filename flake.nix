@@ -126,6 +126,7 @@
               pkg:
               builtins.elem (nixpkgs.lib.getName pkg) [
                 "antigravity-cli"
+                "antigravity-hub"
                 "cloudflare-warp"
                 "ludii-bin"
               ];

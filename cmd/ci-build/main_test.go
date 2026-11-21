@@ -112,6 +112,7 @@ func TestIsPackageFree(t *testing.T) {
 	}{
 		{pkg: "gitx", want: true},
 		{pkg: "antigravity-cli", want: false},
+		{pkg: "antigravity-hub", want: false},
 		{pkg: "ludii-bin", want: false},
 	}
 

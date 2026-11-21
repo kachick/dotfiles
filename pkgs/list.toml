@@ -8,6 +8,7 @@
 
 [packages]
 antigravity-cli = { build = true, test = true, update = true }
+antigravity-hub = { build = true, test = true, update = true }
 cloudflare-warp = { build = false, test = false, update = true }
 conoha-cli = { build = true, test = true, update = true }
 dot-writable-sync = { build = true, test = true, update = false }

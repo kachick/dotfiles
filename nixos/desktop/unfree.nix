@@ -48,11 +48,13 @@
     google-chrome
 
     local.antigravity-cli
+    local.antigravity-hub
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
     "google-chrome"
     "vscode"
     "antigravity-cli"
+    "antigravity-hub"
   ];
 }
