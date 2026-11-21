@@ -12,11 +12,17 @@
     # It is a repackaged binary without cache on cache.nixos.org (unfree).
     # Unstable keeps up with upstream changes and avoids broken backports on stable.
     #
-    # Keep plain vscode without overrides: nixpkgs generic.nix already includes
-    # libsecret and passes Wayland/IME flags via NIXOS_OZONE_WL.
-    # Do not unset NIXOS_OZONE_WL to hide CLI unknown-option warnings, because
-    # `code .` needs those flags for Wayland IME.
-    vscode
+    # Unset NIXOS_OZONE_WL for vscode to avoid CLI unknown-option warnings from
+    # nixpkgs generic.nix flags. Electron 38+ defaults to Wayland auto-detection
+    # and Chromium enables Wayland text-input-v3 by default (since 2025-04).
+    (symlinkJoin {
+      name = "vscode-${vscode.version}";
+      paths = [ vscode ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = ''
+        wrapProgram $out/bin/code --unset NIXOS_OZONE_WL
+      '';
+    })
 
     # NOTE: Google might extract chrome from themself with `Antitrust` penalties
     #       https://edition.cnn.com/2024/11/20/business/google-sell-chrome-justice-department/
