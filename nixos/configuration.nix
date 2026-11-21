@@ -130,4 +130,9 @@
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/security/sudo-rs.nix
   security.sudo-rs.enable = true;
+
+  # Replace the legacy Perl user activation script with Rust-based userborn.
+  # Keeps `users.mutableUsers = true` (default) so imperative `useradd` still works.
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/system/userborn.nix
+  services.userborn.enable = true;
 }
