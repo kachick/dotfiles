@@ -1,0 +1,3 @@
+# https://brush.sh/how-tos/configuration/#configtoml
+[ui]
+syntax-highlighting = true
