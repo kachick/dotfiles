@@ -55,6 +55,28 @@ func setupCleanBareRepo(t *testing.T, defaultBranch string, remoteBranches []str
 	return repoDir, defaultWT
 }
 
+func TestRunGitx_RecoversDeletedWorkDir(t *testing.T) {
+	isolateEnv(t)
+	repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+	removedWT := filepath.Join(repoDir, "removed")
+	runGit(t, repoDir, "worktree", "add", "-b", "removed", removedWT, "main")
+	t.Chdir(removedWT)
+	t.Setenv("PWD", removedWT)
+	runGit(t, repoDir, "worktree", "remove", removedWT)
+
+	var stdout, stderr bytes.Buffer
+	if err := runGitx([]string{"wt", "path"}, strings.NewReader(""), &stdout, &stderr); err != nil {
+		t.Fatalf("wt path from deleted directory failed: %v, stderr: %s", err, stderr.String())
+	}
+	if got := strings.TrimSpace(stdout.String()); got != defaultWT {
+		t.Errorf("stdout = %q, want %q", got, defaultWT)
+	}
+	if !strings.Contains(stderr.String(), repoDir) {
+		t.Errorf("stderr should mention fallback directory %q, got %q", repoDir, stderr.String())
+	}
+}
+
 func TestRunWT_AddListPath(t *testing.T) {
 	t.Run("creates worktrees for new, local, and remote branches with flat slash sanitization", func(t *testing.T) {
 		isolateEnv(t)

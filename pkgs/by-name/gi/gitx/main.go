@@ -35,6 +35,9 @@ func allGitxSubcommands() []gitxSubcommand {
 				"mode": menuModeNames(),
 			},
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				if err := recoverDeletedWorkDir(stderr); err != nil {
+					return err
+				}
 				return runMenu(args, "", stdout, stderr)
 			},
 		},
@@ -44,6 +47,9 @@ func allGitxSubcommands() []gitxSubcommand {
 			supportsHelpCmd: true,
 			subcommands:     wtCommandSpecs,
 			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				if err := recoverDeletedWorkDir(stderr); err != nil {
+					return err
+				}
 				return runWT(args, "", stdout, stderr)
 			},
 		},

@@ -33,6 +33,36 @@ func isDir(path string) bool {
 	return err == nil && info.IsDir()
 }
 
+// recoverDeletedWorkDir moves the process to the nearest existing directory of $PWD
+// when the current directory was removed, for example by `git worktree remove` from another shell.
+// Git refuses to start in a removed directory, and child processes such as fzf previews would inherit it,
+// so passing a fallback workDir only to gitcmd runners is not enough.
+// It keeps the original behavior when $PWD cannot be trusted.
+func recoverDeletedWorkDir(stderr io.Writer) error {
+	if _, err := os.Getwd(); err == nil {
+		return nil
+	}
+	pwd := os.Getenv("PWD")
+	if !filepath.IsAbs(pwd) {
+		return nil
+	}
+	for dir := filepath.Clean(pwd); ; dir = filepath.Dir(dir) {
+		if isDir(dir) {
+			if err := os.Chdir(dir); err != nil {
+				return fmt.Errorf("change to existing directory %s: %w", dir, err)
+			}
+			if err := os.Setenv("PWD", dir); err != nil {
+				return fmt.Errorf("update PWD: %w", err)
+			}
+			fmt.Fprintf(stderr, "Current directory no longer exists; using %s\n", dir)
+			return nil
+		}
+		if parent := filepath.Dir(dir); parent == dir {
+			return nil
+		}
+	}
+}
+
 func isRegularOrSymlinkNonDir(path string) bool {
 	info, err := os.Stat(path)
 	return err == nil && !info.IsDir()
