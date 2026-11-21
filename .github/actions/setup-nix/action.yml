@@ -1,11 +1,8 @@
-name: 'Setup Nix and Cachix'
-description: 'Installs Nix and configures Cachix for caching'
+name: 'Setup Nix'
+description: 'Installs Nix, configures binary caches, and sets up Hestia'
 inputs:
-  cachix-auth-token:
-    description: 'Authentication token for Cachix'
-    required: true
-  skip-push:
-    description: 'Set to true to only pull from the cache without pushing any build results'
+  hestia-read-only:
+    description: 'Run Hestia in read-only mode (substitute only, do not write cache)'
     required: false
     default: 'false'
 runs:
@@ -14,22 +11,14 @@ runs:
     - name: Install Nix
       uses: NixOS/nix-installer-action@62c1943b776c509394b550f3f983adc14e9212d6 # v1.0.0
       with:
+        # access-tokens: Prevent GitHub API rate limiting during `nix run github:`
         extra-conf: |
-          sandbox = true
-          accept-flake-config = true
-    - name: Cache Nix Evaluation and Tarballs
-      uses: actions/cache@v6.1.0
+          access-tokens = github.com=${{ github.token }}
+          extra-substituters = https://cache.kachick.dev https://kachick.cachix.org
+          extra-trusted-public-keys = cache.kachick.dev-1:qxT+mjqH5A1VvQ/piD14E7heonmzkIPvati+dndwYFY= kachick.cachix.org-1:7giZGKW03gPFkbde09JNpDKCbDGGwBuU/Z11W/jUtEQ=
+          keep-build-log = false
+    - uses: Mic92/hestia@dfed9ced335d28978ba74e513939a10db1f71025 # v3.1.0
       with:
-        path: ~/.cache/nix
-        key: nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock', '**/*.nix') }}
-        restore-keys: |
-          nix-eval-and-tarball-${{ runner.os }}-${{ hashFiles('flake.lock') }}-
-          nix-eval-and-tarball-${{ runner.os }}-
-    - name: Configure Cachix
-      uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
-      with:
-        name: kachick-dotfiles
-        authToken: ${{ inputs.cachix-auth-token }}
-        skipPush: ${{ inputs.skip-push }}
-        # https://github.com/kachick/dotfiles/commit/deba9834efbef3aae2a61aa6ee2794d1eba6e985#r167396022
-        pushFilter: '(-source$|nixpkgs\.tar\.gz$|-vendor|.iso$)'
+        upstream-cache-filter: true
+        upstream-cache-key-names: 'cache.nixos.org-1 cache.kachick.dev-1 kachick.cachix.org-1'
+        read-only: ${{ inputs.hestia-read-only }}

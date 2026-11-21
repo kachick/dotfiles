@@ -1,6 +1,5 @@
 {
   modulesPath,
-  pkgs,
   lib,
   outputs,
   ...
@@ -19,6 +18,9 @@ in
   ];
 
   programs.command-not-found.enable = false; # TODO: Reconsider once https://github.com/NixOS/nixpkgs/pull/512785 has available
+
+  # Match NixOS 26.11 default recommendation and prevent evaluation warning
+  boot.zfs.forceImportRoot = false;
 
   # Wiki "Building faster" section
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
@@ -43,18 +45,12 @@ in
   };
 
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.nixos = {
-      imports = [
-        ../../../home-manager/ephemeral.nix
-        ../../../home-manager/nixos-desktop-set.nix
-        { home.username = "nixos"; }
-      ];
-    };
-    extraSpecialArgs = { inherit pkgs; };
+  home-manager.users.nixos = {
+    imports = [
+      ../../../home-manager/ephemeral.nix
+      ../../../home-manager/nixos-desktop-set.nix
+      { home.username = "nixos"; }
+    ];
   };
 
   system.stateVersion = "26.05";

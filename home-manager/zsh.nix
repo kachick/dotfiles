@@ -17,7 +17,6 @@ in
   programs.starship.enableZshIntegration = true;
   programs.zoxide.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
-  programs.television.enableZshIntegration = false; # Conflict with fzf by default
   programs.zellij.enableZshIntegration = false; # Avoid nested zellij in host and remote login as container
 
   home.activation.refreshZcompdumpCache = config.lib.dag.entryAnywhere ''
@@ -157,6 +156,30 @@ in
     # https://github.com/nix-community/home-manager/blob/ae755329092c87369b9e9a1510a8cf1ce2b1c708/modules/programs/zsh.nix#L513-L527
     initContent =
       let
+        # Reload Home Manager session variables in new terminal windows without logging out.
+        # Home Manager guards hm-session-vars.sh with __HM_SESS_VARS_SOURCED, so new terminal windows
+        # in graphical sessions keep old environment variables after switch:
+        # - https://github.com/nix-community/home-manager/issues/1011
+        # - https://github.com/nix-community/home-manager/issues/3100
+        # - https://github.com/nix-community/home-manager/issues/8790
+        #
+        # Why SHLVL == 1:
+        # Avoid running in subshells or scripts. This protects temporary exports and direnv.
+        #
+        # Why typeset -U path PATH:
+        # Avoid duplicate PATH items when sourcing hm-session-vars.sh again.
+        reloadSessionVariables = lib.mkOrder 500 ''
+          if [[ "$SHLVL" -eq 1 ]]; then
+            typeset -U path PATH
+            unset __HM_SESS_VARS_SOURCED __HM_ZSH_SESS_VARS_SOURCED
+            if [ -f "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh" ]; then
+              . "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+            elif [ -f "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh" ]; then
+              . "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+            fi
+          fi
+        '';
+
         # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L325C7-L329
         # https://github.com/nix-community/home-manager/blob/8c731978f0916b9a904d67a0e53744ceff47882c/modules/programs/zsh.nix#L368-L372
         # The default is "autoload -U compinit && compinit", I can not accept the path and speed
@@ -211,19 +234,7 @@ in
           bindkey ";5C" forward-word
           bindkey ";5D" backward-word
 
-          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-          function set_win_title() {
-            echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
-          }
-          precmd_functions+=(set_win_title)
-
           source "${pkgs.fzf}/share/fzf/key-bindings.zsh" # Don't load completions. It much made shell startup slower
-          source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-
-          # source only load first path. See https://stackoverflow.com/questions/14677936/source-multiple-files-in-zshrc-with-wildcard
-          for file in ${../dependencies/zsh}/*; do
-              source "$file"
-          done
 
           # fzf completions are also possible to be used in bash, but it overrides default completions with the registering
           # So currently injecting only in zsh
@@ -267,6 +278,9 @@ in
 
           source_sh "${pkgs.local.posix_shared_functions}"
 
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          precmd_functions+=(set_win_title)
+
           # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
           # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
           export LC_TIME='en_DK.UTF-8'
@@ -296,9 +310,55 @@ in
           bindkey -M vicmd '^F' rg-fzf-widget
           bindkey -M viins '^F' rg-fzf-widget
 
+          # Fancy Ctrl-Z: toggle between shell and suspended editor
+          fancy-ctrl-z() {
+            if [[ $#BUFFER -eq 0 ]]; then
+              local target_editors=("hx" "helix" "vim" "nvim" "micro" "edit" "fresh" "nano" "emacs")
+              if [[ -n "$EDITOR" ]]; then
+                local -a editor_words=(''${(z)EDITOR})
+                target_editors+=("''${''${(Q)editor_words[1]}:t}")
+              fi
+
+              local editor_job=""
+              local jobnum
+
+              # Check jobs in reverse order (newest first: On)
+              for jobnum in ''${(Onk)jobstates}; do
+                # Resume only suspended jobs to avoid pulling active background processes
+                if [[ "''${jobstates[$jobnum]}" == suspended* ]]; then
+                  # Must assign to an array variable to treat single-word commands as a 1-element array.
+                  # Otherwise, nested ''${(z)cmd}[1] evaluates single-word strings by character index (e.g. "vim" -> "v").
+                  local -a words=(''${(z)jobtexts[$jobnum]})
+                  local bin="''${''${(Q)words[1]}:t}"
+
+                  if (( ''${target_editors[(Ie)$bin]} )); then
+                    editor_job="$jobnum"
+                    break
+                  fi
+                fi
+              done
+
+              if [[ -n "$editor_job" ]]; then
+                # Direct fg avoids polluting session history without passing through BUFFER and accept-line
+                builtin fg %$editor_job
+                zle reset-prompt
+              else
+                zle -M "no suspended editor found"
+              fi
+            else
+              zle push-input -w
+              zle clear-screen -w
+            fi
+          }
+
+          zle     -N            fancy-ctrl-z
+          bindkey -M emacs '^Z' fancy-ctrl-z
+          bindkey -M vicmd '^Z' fancy-ctrl-z
+          bindkey -M viins '^Z' fancy-ctrl-z
+
           # NOTE: Removed command existence check. Because of syntax highlighting prevents that troubles and I would keep minimum hooks
           zshaddhistory() {
-            "${lib.getExe pkgs.unstable.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
+            "${lib.getExe pkgs.betterleaks}" stdin <<<"$1" &>| /dev/null || return 1
           }
 
           # Same as .zshenv.local
@@ -308,6 +368,7 @@ in
         '';
       in
       lib.mkMerge [
+        reloadSessionVariables
         beforeCompInit
         generalAfterCompInit
       ];

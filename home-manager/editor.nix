@@ -15,12 +15,14 @@
   # Intentionally avoiding to use Home Manager module (https://github.com/nix-community/home-manager/pull/5455)
   # for keeping sharable config in Windows and other non-Nix environments.
   # Zed is now available on Windows and supports JSONC, so keeping the raw config file is beneficial for schema validation and comments.
-  xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.json;
+  xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.jsonc;
 
   xdg.writableConfigFile."dprint/dprint.jsonc".source = ../config/dprint/dprint.jsonc;
 
+  xdg.writableConfigFile."fresh/config.json".source = ../config/fresh/config.jsonc;
+
   home = {
-    packages = with pkgs.unstable; [
+    packages = with pkgs; [
       # Keep editor tools here strictly minimal to keep disk usage small on non-development hosts like VPS.
       # General language servers belong in dev.nix.
       dprint

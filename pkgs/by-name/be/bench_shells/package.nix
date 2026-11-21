@@ -6,7 +6,7 @@ pkgs.writeShellApplication rec {
     hyperfine
     zsh
     bashInteractive
-    unstable.brush
+    brush
     nushell
   ];
   meta = {

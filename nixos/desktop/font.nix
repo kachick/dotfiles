@@ -16,9 +16,9 @@
       # While the Source Han series offers even more extensive fallback definitions,
       # adding them all leads to significant disk bloat.
       # Thus, I've opted for IBM Plex as the primary set and omitted most Source Han variants.
-      local.ibm-plex-sans-jp
-      local.ibm-plex-mono
-      local.ibm-plex-serif-variable
+      ibm-plex.sans-jp
+      ibm-plex.mono
+      ibm-plex.serif-variable
       plemoljp-nf
 
       # emoji

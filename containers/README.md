@@ -27,3 +27,19 @@ podman exec --user=user --workdir='/home/user' -it "$container_id" /home/user/.n
 
 podman kill "$container_id"
 ```
+
+## Layered container image (experimental)
+
+Build and run a layered container image directly with Nix:
+
+```bash
+# Build and stream-load into podman (fastest)
+task load-container-layered
+
+# Or build the tarball and load with progress
+nix build .#container-layered
+pv result | podman load
+
+# Run the layered container
+podman run --rm -it localhost/home-layered:latest
+```

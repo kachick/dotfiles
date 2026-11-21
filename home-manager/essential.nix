@@ -1,5 +1,5 @@
 # Minimal CLI/Server essential module for Home Manager
-# Excludes desktop/GUI applications, heavy dev toolchains (ruby, fontconfig, etc.), powershell/nushell, mdcat/dust, telemetry (go toolchain), and encryption tools.
+# Excludes desktop/GUI applications, heavy dev toolchains (ruby, fontconfig, etc.), powershell/nushell, leaf/dust, telemetry (go toolchain), and encryption tools.
 
 {
   config,
@@ -64,16 +64,15 @@
 
     packages =
       (with pkgs; [
-        # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730
+        # Use `bashInteractive`, don't `bash` - https://github.com/NixOS/nixpkgs/issues/29960, https://github.com/NixOS/nix/issues/730#issuecomment-162323824
         bashInteractive
+        # readline # needless and using it does not fix bash problems
         zsh
-        unstable.brush # Use unstable version because I maintain
+        brush # Use unstable version because I maintain
         starship
         file # Especially useful to inspect the aarch and linker type for executables. # Candidates: magika
 
         fzf # History: CTRL+R, Walker: CTRL+T
-        # fzf-git-sh for CTRL-G CTRL-{} keybinds should be manually integrated in each shell
-        # Use same nixpkgs channel as same as fzf
         television # `tv`. Alt fzf
         zoxide # Used in alias `z`, alt cd/pushd. popd = `z -`, fzf-mode = `zi`
 
@@ -87,6 +86,10 @@
         gnugrep
         netcat # `nc`
         dig # Alt and raw-data oriented nslookup. # Candidates: dug - https://eng-blog.iij.ad.jp/archives/27527
+        # https://github.com/nix-community/home-manager/blob/a8f8f48320c64bd4e3a266a850bbfde2c6fe3a04/modules/services/ssh-agent.nix#L37
+        openssh
+        iputils # `ping` etc
+        tailscale # Frequently backported to stable channel
 
         git # git is required even if not the dev.nix
         # gh # Don't add gh here. Only use home-manager gh module to avoid https://github.com/cli/cli/pull/5378
@@ -97,7 +100,7 @@
         # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
         msedit # `edit`
-        unstable.fresh-editor # `fresh`
+        fresh-editor # `fresh`
 
         micro
 
@@ -112,8 +115,7 @@
         dust # `dust`, alt du
         fd # alt find
         bottom # `btm`, alt top
-        xh # alt HTTPie
-        unstable.herdr
+        herdr
         zellij
         pik # alt pkill
       ])
@@ -139,12 +141,6 @@
     shellAliases = {
       # https://www.reddit.com/r/NixOS/comments/yr3jje/comment/ivswbex/
       "sudoc" = "sudo --preserve-env=PATH env";
-
-      # NOTE: If the logs about missing `bind` implementations are noisy and cannot be suppressed individually,
-      #       adding `--disable-event unimplemented` might be required.
-      #
-      # Highlighting is still experimental. However, this is a core requirement for me: https://github.com/kachick/times_kachick/issues/184#issuecomment-1396670990
-      "br" = "brush --enable-highlighting";
     };
   };
 
@@ -163,6 +159,14 @@
   };
 
   xdg.dataFile."tmpbin/.keep".text = "";
+
+  xdg.dataFile."chezmoi".text = ''
+    # Guard file to prevent chezmoi from creating a default source directory here.
+  '';
+
+  # Highlighting is a core requirement for me: https://github.com/kachick/times_kachick/issues/184#issuecomment-1396670990
+  xdg.configFile."brush/config.toml".source = ../config/brush/config.toml;
+  home.file.".brushrc".source = ../config/brush/brushrc.bash;
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 

@@ -9,8 +9,13 @@
   imports = [
     ./font.nix
     ./vm.nix
-    ./game.nix
   ];
+
+  xdg = {
+    autostart.enable = true;
+    icons.enable = true;
+    sounds.enable = true;
+  };
 
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
@@ -154,6 +159,81 @@
   # See nixos/desktop/PRINTING.md for setup and troubleshooting
   services.printing.enable = true;
 
+  ## Avahi (Classic, supported by CUPS)
+  # - https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/avahi-daemon.nix
+  # - https://wiki.archlinux.org/title/Avahi
+  #
+  # If you faced to any troubles around this context, Also see following issues
+  # - https://github.com/NixOS/nixpkgs/issues/118628
+  # - https://github.com/NixOS/nixpkgs/issues/412777
+  # - https://github.com/NixOS/nixpkgs/issues/291108
+  # I don't know how to use both in NixOS likely https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
+  services.avahi = {
+    # Enable auto detect for wireless printers. CUPS does not support systemd-resolved
+    # - https://github.com/apple/cups/issues/5452
+    # - https://github.com/OpenPrinting/libcups/issues/81
+    enable = true; # If enabled, you should care the conflict with systemd-resolved
+
+    settings.publish = {
+      disable-publishing = false;
+      publish-addresses = true;
+      publish-workstation = true;
+    };
+
+    # I don't know how to realize enabling DNS-SD but disable mDNS: https://wiki.archlinux.org/index.php?title=CUPS&diff=prev&oldid=806890
+    # Check the log with `journalctl -u systemd-resolved -u avahi-daemon -r`
+    # I prefer systemd-resolved for mDNS use, because of enabling on Avahi makes much flaky resolutions
+    # You can test it with: `avahi-resolve-host-name hostname.local` if enabled
+    #
+    # TODO: Stalls when finding wireless printer ("Unable to locate printer ...")
+    # 1. Sleeping Wi-Fi devices drop mDNS multicast queries until unicast packets (ping/ARP) wake them.
+    # 2. Both avahi-daemon and systemd-resolved bind UDP 5353 concurrently; unicast mDNS responses (QU)
+    #    can get misrouted, causing 5s getaddrinfo timeouts in systemd-resolved.
+    # 3. Dual-stack IPv6 AAAA timeouts and link-local fe80:: (missing scope ID) trigger CUPS ipp backend retry loops.
+    # If discovery remains unstable, consider unifying mDNS onto `services.avahi.nssmdns4 = true;` with
+    # `services.resolved.settings.Resolve.MulticastDNS = "off";`, or using a static IP for printer device URI.
+
+    nssmdns4 = false;
+    nssmdns6 = false;
+  };
+
+  # Enable mDNS(hostname.local). Use resolve mode to avoid conflict with Avahi responder.
+  services.resolved.settings.Resolve.MulticastDNS = "resolve";
+
+  # Avahi module has openFirewall, but resolved module does not have it
+  networking.firewall.allowedUDPPorts = [ 5353 ];
+
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/services/networking/networkmanager.nix
+  networking.networkmanager = {
+    enable = true;
+
+    # Wi-Fi powersave drops mDNS multicast queries on idle devices.
+    # It seems to operate even when plugged into AC power.
+    # Note: If battery drains too fast on laptops, disabling this might be a factor.
+    wifi.powersave = false;
+
+    dns = "systemd-resolved";
+    # 1 means 'resolve' (resolve only, no announcement)
+    # See https://networkmanager.dev/docs/api/latest/nm-settings-nmcli.html
+    connectionConfig."connection.mdns" = 1;
+
+    # TIPS: If you are debugging, dmesg with ctime/iso will display incorrect timestamp
+    # Then `journalctl --dmesg --output=short-iso --since='1 hour ago' --follow` might be useful
+  };
+
+  # Didn't use podman NixOS module on nixos-24.05. It worked under rootful mode and conflict with rootless podman in several socket based tools (e.g. podman-tui, act).
+  # I may reconsider to use the latest NixOS module now, however current home-manager based setup seems working for me. It is also useful on WSL2 and Lima
+  # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/virtualisation/containers.nix
+  virtualisation.containers = {
+    enable = true;
+    policy = builtins.fromJSON (builtins.readFile ../../config/containers/policy.json);
+  };
+
+  # To test https://github.com/NixOS/nixpkgs/pull/459211
+  virtualisation.containerd = {
+    enable = true;
+  };
+
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
     (with pkgs; [
@@ -165,28 +245,26 @@
       cyme
       lshw
       pciutils # `lspci`
+      usbutils # `lsusb` to get IDs
+      dmidecode # `sudo dmidecode -s bios-version`
       smartmontools # `sudo smartctl -a /dev/nvme0n1`
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.
-      #   See package-linux workflow for the dedicated building.
-      unstable.zed-editor
+      #   See nix workflow for the dedicated building.
+      zed-editor
 
       gdm-settings
-      desktop-file-utils # `desktop-file-validate`
 
       ghostty
 
       alacritty
 
-      lapce # IME is not working on Windows, but stable even around IME on Wayland than vscode
-
       mission-center
 
       # Add LSP global for zed-editor. Prefer external package for helix
       vscode-langservers-extracted
-      # bash-language-server # Don't use, less benefit and old in nixpkgs https://github.com/NixOS/nixpkgs/issues/374172
 
       # gnome-music does not support flac.
       # tramhao/termusic and tsirysndr/music-player does not figure how to use.
@@ -197,6 +275,10 @@
 
       newsflash # `io.gitlab.news_flash.NewsFlash`
 
+      # Expose mozc_tool in /run/current-system/sw/lib/mozc/mozc_tool for manual GUI configuration.
+      # ibus-mozc already depends on mozc, so this adds zero extra closure size.
+      mozc
+
       # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
       readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
 
@@ -204,7 +286,7 @@
       dconf-editor
 
       # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
-      unstable.podman-desktop
+      podman-desktop
 
       # Install one of PDF reader to enable PDF thumbnails on nautilus.
       # It should have `share/thumbnailers/`
@@ -231,18 +313,16 @@
       wl-clipboard # `wl-copy` and `wl-paste`
 
       # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
-      unstable.signal-desktop
+      signal-desktop
 
       # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
-      unstable.mdns-scanner
-
-      local.chrome-with-profile-by-name
+      mdns-scanner
     ])
     ++ (with pkgs.gnomeExtensions; [
       appindicator
       clipboard-history
       dash-to-dock
-      lock-keys
+      lock-keys-2
     ]);
 
   # https://askubuntu.com/a/88947
@@ -317,14 +397,63 @@
     QT_IM_MODULE = lib.mkForce ""; # FIXME: Did not work even through applied in /etc/set-environment, and cannot be override in home-manager systemd module.
   };
 
+  services.cockpit = {
+    enable = true;
+    # NixOS/nixpkgs#453337: allow websocket connections from localhost and 127.0.0.1
+    allowed-origins = [
+      "https://localhost:9090"
+      "https://127.0.0.1:9090"
+    ];
+  };
+
   # Alternative candidates: headscale
+  # WHY NOT extraUpFlags = [ "--ssh" ]?
+  # - Standard OpenSSH with explicit ed25519 keys covers current requirements.
+  # - Avoids expanding the attack surface for control-plane SSH bypass vulnerabilities
+  #   such as TS-2026-014 (https://tailscale.com/security-bulletins#ts-2026-014).
   services.tailscale = {
     enable = true;
-    extraUpFlags = [ "--ssh" ];
   };
   # Workaround for `systemd[1]: Failed to start Network Manager Wait Online`
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
+
+  # Workaround for Tailscale MagicDNS with systemd-resolved when DNSStubListener is disabled.
+  #
+  # WHY this is needed:
+  # When `services.resolved.settings.Resolve.DNSStubListener = false;`, Tailscale assumes
+  # systemd-resolved is not acting as the local DNS server because 127.0.0.53 is missing.
+  # As a result, Tailscale skips D-Bus registration to systemd-resolved and falls back to
+  # overwriting /etc/resolv.conf directly. However, NixOS nsswitch resolves names via
+  # systemd-resolved (nss-resolve), so Tailscale's /etc/resolv.conf edits are ignored.
+  #
+  # WHEN to remove:
+  # If `DNSStubListener` is ever restored to `true` (systemd's default), Tailscale will
+  # automatically register MagicDNS via D-Bus on its own, making this unit unnecessary.
+  systemd.services.tailscale-resolved = {
+    description = "Register Tailscale MagicDNS to systemd-resolved";
+    after = [ "tailscaled.service" ];
+    wants = [ "tailscaled.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+    script = ''
+      for _ in $(seq 1 15); do
+        suffix=$(${config.services.tailscale.package}/bin/tailscale status --json 2>/dev/null | ${pkgs.jq}/bin/jq -r '.MagicDNSSuffix // empty')
+        if [ -n "$suffix" ] && ${pkgs.iproute2}/bin/ip link show tailscale0 >/dev/null 2>&1; then
+          ${pkgs.systemd}/bin/resolvectl dns tailscale0 100.100.100.100
+          ${pkgs.systemd}/bin/resolvectl domain tailscale0 "$suffix"
+          exit 0
+        fi
+        sleep 2
+      done
+      exit 1
+    '';
+  };
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/config/xdg/terminal-exec.nix
   # https://gitlab.gnome.org/GNOME/glib/-/issues/338

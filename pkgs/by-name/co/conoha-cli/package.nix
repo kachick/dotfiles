@@ -1,7 +1,7 @@
 {
   lib,
   stdenv,
-  pkgs,
+  buildGo127Module,
   fetchFromGitHub,
   installShellFiles,
   gitMinimal,
@@ -9,9 +9,6 @@
   nix-update-script,
 }:
 
-let
-  inherit (pkgs.unstable) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "conoha-cli";
   version = "0.8.0";
@@ -63,6 +60,8 @@ buildGo127Module (finalAttrs: {
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
+        # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+        "--flake"
         "--use-github-releases"
       ];
     };

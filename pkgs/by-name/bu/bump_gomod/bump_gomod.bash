@@ -9,7 +9,7 @@ done
 
 git ls-files '**go.mod' '**go.sum' | xargs git add
 git update-index -q --really-refresh
-git diff-index --quiet HEAD || git commit -m 'Update go.mod and go.sum'
+git diff-index --cached --quiet HEAD || git commit -m 'Update go.mod and go.sum'
 
 # See https://github.com/kachick/dotfiles/issues/1174
 # Find packages which depends on the root go.mod and update their vendorHash
@@ -20,4 +20,4 @@ done
 
 git ls-files --modified 'pkgs/**.nix' | xargs git add
 git update-index -q --really-refresh
-git diff-index --quiet HEAD || git commit -m 'Bump vendorHash in go packages'
+git diff-index --cached --quiet HEAD || git commit -m 'Bump vendorHash in go packages'

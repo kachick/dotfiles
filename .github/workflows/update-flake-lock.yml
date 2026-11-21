@@ -1,0 +1,18 @@
+name: 🆙❄️
+on:
+  schedule:
+    - cron: '17 9 * * *'
+      timezone: 'Asia/Tokyo'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bump:
+    uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
+    with:
+      app-id: ${{ vars.SAMU_APP_ID }}
+      post-commit-lock-file: nix run .#dedup-flake-inputs && nix run .#bump_gomod -- .
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}

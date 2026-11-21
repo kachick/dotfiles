@@ -2,6 +2,7 @@
   lib,
   stdenv,
   pkgs,
+  buildGo127Module,
   fetchFromGitHub,
   installShellFiles,
   qemu,
@@ -20,12 +21,11 @@
 }:
 
 let
-  inherit (pkgs.unstable) buildGo127Module;
   inherit (pkgs.local) lima;
 in
 buildGo127Module (finalAttrs: {
   pname = "lima";
-  version = "2.2.0";
+  version = "2.3.0";
 
   __structuredAttrs = true;
 
@@ -33,10 +33,10 @@ buildGo127Module (finalAttrs: {
     owner = "lima-vm";
     repo = "lima";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-4Wi+YzMdEN263jeBefEvizlF2k+nLVq3+AHyqagUeHw=";
+    hash = "sha256-SZweWHyzBL1A0ouvNzGFyYYp465f1/4GT6lBNmIH9MM=";
   };
 
-  vendorHash = "sha256-gD9C0kupcEWCsU0nYOg+VcBCWR0oRf6Gaw0DDn0xits=";
+  vendorHash = "sha256-eDw0ouubM0EqKXq6977fx61kTT9P4zSmRBnmkpMQAXI=";
 
   nativeBuildInputs = [
     makeWrapper

@@ -1,4 +1,5 @@
-# https://taskfile.dev
+# https://taskfile.dev/styleguide/
+# Avoid chaining commands with ; or && in a single line. Use multiple cmd items for independent steps, or write a script under scripts/ instead.
 
 version: '3'
 
@@ -57,16 +58,29 @@ tasks:
       - test-go
       - test-sample-nixos
       - check-nixos
+      - test-home-session-vars
+      - test-shell-delegation
     cmds:
       - ./scripts/dry.bash
+
+  test-home-session-vars:
+    desc: Verify non-NixOS Home Manager session variables in sandbox
+    cmds:
+      - nix-build scripts/test-home-session-vars.nix --no-out-link
+
+  test-shell-delegation:
+    desc: Verify bash to zsh delegation in sandbox E2E tests
+    cmds:
+      - nix-build scripts/test-shell-delegation.nix --no-out-link
 
   check-nixos:
     desc: Dry-run all NixOS configurations in this repository
     cmds:
       - nix build .#nixosConfigurations.moss.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.desktop-free.config.system.build.toplevel --dry-run
       - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
-      - nix build .#nixosConfigurations.vps.config.system.build.toplevel --dry-run
+      - nix build .#nixosConfigurations.sandbox.config.system.build.toplevel --dry-run
 
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
@@ -105,45 +119,35 @@ tasks:
     deps:
       - mkdir
     sources:
-      - ./cmd/**.go
+      - '**/*.go'
+      - 'go.mod'
+      - 'go.sum'
     generates:
       - dist/**
     # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
     cmds:
       - go build -v -o dist ./...
 
-  build-lint:
-    internal: true
-    deps:
-      - mkdir
-    cmds:
-      - go build -v -o dist/lint ./cmd/lint
-    sources:
-      - internal/**/*.go
-      - ./cmd/lint/*.go
-    generates:
-      - dist/lint
-
   lint:
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint
 
   lint-all:
     desc: Includes heavy linters
     deps:
-      - build-lint
+      - build-cmd
     cmds:
       - ./dist/lint -all
 
   sync-workflows:
     aliases:
       - sync-packages
-    desc: Synchronize workflow files with packages.toml
+    desc: Synchronize workflow files with pkgs/list.toml
     cmds:
       - go run ./cmd/ci-build sync-workflows
-      - dprint fmt .github/workflows/package-linux.yml .github/workflows/update-local-packages.yml
+      - dprint fmt .github/workflows/nix.yml .github/workflows/update-local-packages.yml
 
   check-sync-workflows:
     internal: true
@@ -160,7 +164,13 @@ tasks:
   update:
     desc: Bump dependencies
     cmds:
-      - nix flake update --commit-lock-file
+      - nix flake update
+      - nix run .#dedup-flake-inputs
+      - |
+        if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
+          git commit --no-gpg-sign -m "flake.lock: Update" flake.nix flake.lock
+        fi
+      - nix run .#bump_gomod -- .
 
   help:
     desc: If forgot anything
@@ -185,7 +195,7 @@ tasks:
 
   ghcr:
     # It looks like no paging and sorting API. So keep feawest than last 50 images
-    # Now it is cared in deployment workflow, it triggers https://github.com/kachick/dotfiles/actions/workflows/cleanup-github-packages.yml
+    # Now it is cared in deployment workflow (container.yml) via reusable cleanup-ghcr workflow
     desc: Run container with selecting the tag with fuzzy finder
     cmds:
       - |
@@ -196,17 +206,34 @@ tasks:
     vars:
       TAG: '{{index .MATCH 0}}'
     cmds:
-      - './containers/sandbox-with-ghcr.bash {{.TAG}}'
+      - './containers/sandbox.bash --ghcr {{.TAG}}'
 
   build-container:
     cmds:
       - './containers/build.bash'
+
+  test-container:
+    desc: Run container smoke tests against local or GHCR image
+    vars:
+      IMAGE: '{{.IMAGE | default "localhost/provisioned-systemd-home"}}'
+    cmds:
+      - './containers/test.bash {{.IMAGE}}'
+
+  load-container-layered:
+    desc: Build and stream-load the layered container image into podman
+    cmds:
+      - |
+        stream_path="$(nix build .#container-layered.passthru.stream --no-link --print-out-paths)"
+        "$stream_path" | podman load
 
   ci-dev:
     desc: Provided for CI
     deps:
       - 'default'
       - 'setup'
-      # 'test-sample-nixos' # Run as a dedicated job in GHA
+      # 'test-sample-nixos' # Run in nix workflow in GHA
       # 'test', # Needs home-manager, so needless in Nix-CI
+      - 'test-go'
       - 'lint-all'
+      - 'test-home-session-vars'
+      - 'test-shell-delegation'

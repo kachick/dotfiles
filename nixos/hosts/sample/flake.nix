@@ -18,7 +18,7 @@
 
     # 2. Inherit nixpkgs and home-manager from dotfiles to ensure consistency
     nixpkgs.follows = "dotfiles/nixpkgs";
-    home-manager.follows = "dotfiles/home-manager-linux";
+    home-manager.follows = "dotfiles/home-manager";
   };
 
   outputs =

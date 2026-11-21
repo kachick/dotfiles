@@ -1,0 +1,3 @@
+# Override Lima's builtin template:_default/mounts to avoid mounting host home directory by default
+# See https://github.com/lima-vm/lima/discussions/4372
+mounts: []

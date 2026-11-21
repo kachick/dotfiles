@@ -13,6 +13,8 @@
   imports = [
     outputs.nixosModules.desktop
     outputs.nixosModules.desktop-unfree
+    outputs.nixosModules.game
+    outputs.nixosModules.game-unfree
     outputs.nixosModules.hardware
     outputs.nixosModules.cloudflare-warp
     outputs.nixosModules.swap

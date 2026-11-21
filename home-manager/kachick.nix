@@ -21,7 +21,7 @@ in
         signingkey = "${pgpFingerprint}!";
       };
 
-      ghq.user = "kachick";
+      gitx.user = "kachick";
     };
   };
 

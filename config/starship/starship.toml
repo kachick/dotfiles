@@ -19,7 +19,6 @@ $rust\
 $golang\
 $ruby\
 $python\
-$deno\
 $nodejs\
 $direnv\
 $nix_shell\
@@ -38,6 +37,17 @@ disabled = false
 
 [directory]
 style = "blue"
+# Keep parent repo names visible inside git worktrees until upstream handles worktrees
+# https://github.com/starship/starship/issues/6604
+# https://github.com/starship/starship/issues/6981
+truncate_to_repo = false
+truncation_length = 0
+
+# Remove host prefix from ~/repos paths without running external commands
+[[directory.substitutions]]
+from = '^~/repos/[^/]+/'
+to = ''
+regex = true
 
 [direnv]
 disabled = false
@@ -75,6 +85,8 @@ format = "[$branch]($style)"
 # Changed from https://github.com/starship/starship/pull/3066/files
 # https://github.com/sindresorhus/pure/blob/47c0c881f0e7cfdb5eaccd335f52ad17b897c060/pure.zsh#L822
 style = "242"
+# Hide branch in bare repo root directories since no worktree is checked out there
+ignore_bare_repo = true
 
 [git_status]
 style = "purple"

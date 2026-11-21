@@ -6,7 +6,6 @@ pkgs.writeShellApplication rec {
     coreutils
     fzf
     gh
-    local.wait-and-squashmerge
   ];
   derivationArgs = {
     # Required in https://github.com/nix-community/home-manager/blob/346973b338365240090eded0de62f7edce4ce3d1/modules/programs/gh.nix#L160

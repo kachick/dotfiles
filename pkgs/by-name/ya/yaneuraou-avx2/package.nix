@@ -1,7 +1,7 @@
 {
-  unstable,
+  yaneuraou,
 }:
 
-unstable.yaneuraou.override {
+yaneuraou.override {
   targetLabel = "AVX2";
 }

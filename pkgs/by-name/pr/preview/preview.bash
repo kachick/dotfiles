@@ -11,7 +11,7 @@ text/html)
 text/*)
 	case "$extension" in
 	md | markdown)
-		mdcat "$path"
+		leaf --inline ansi "$path"
 		;;
 	*)
 		bat --color=always "$path"
@@ -19,7 +19,7 @@ text/*)
 	esac
 	;;
 inode/directory)
-	la "$path"
+	la --color=always "$path"
 	;;
 application/x-executable)
 	hexyl --color=always "$path" | less --RAW-CONTROL-CHARS

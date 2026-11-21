@@ -8,7 +8,6 @@
   programs.starship.enableBashIntegration = true;
   programs.zoxide.enableBashIntegration = true;
   programs.fzf.enableBashIntegration = false; # GH-1192: Don't enable fzf integrations, they make shell startup slower. Load only key-bindings if required.
-  programs.television.enableBashIntegration = false; # Conflict with fzf by default
   programs.zellij.enableBashIntegration = false; # Intentionally disabled for keeping stable bash
 
   # Used only in bash - https://unix.stackexchange.com/a/689403
@@ -98,55 +97,47 @@
     # Don't put shell delegation code into early phase than interactive check such as profileExtra and bashrcExtra , it blocks applying home.file on NixOS. See GH-680 for details
     # There is no ideal option in home-manager bash module for realizing first entry of the interactive shell. https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/bash.nix#L227-L240
     # However initExtra is still better option than profileExtra.
-    initExtra = ''
-      # Don't delegate shell execution before interactive shell checks.
-      # Auto-switch to Zsh if Bash is the login shell.
-      # Inspired by Arch Wiki's Fish setup:
-      # https://wiki.archlinux.org/title/fish#Setting_fish_as_interactive_shell_only
-      #
-      # --- Optimization & Compatibility ---
-      # The order of these checks matters for performance. Prioritize internal checks to minimize external 'ps' calls.
-      # Container Environments: $PPID can be 0 in environments like podman exec, which causes 'ps' to fail.
-      if [[ $- == *i* && -t 0 && -z ''${BASH_EXECUTION_STRING} && ''${SHLVL} == 1 && ( $PPID -eq 0 || $(${lib.getExe' pkgs.procps "ps"} --no-header --pid=$PPID --format=comm) != "zsh" ) ]]
-      then
-        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-        exec ${lib.getExe pkgs.zsh} $LOGIN_OPTION
-      fi
+    initExtra = lib.mkMerge [
+      (
+        builtins.readFile ./delegate_to_zsh.bash
+        + ''
+          delegate_to_zsh "${lib.getExe pkgs.zsh}" "${lib.getExe' pkgs.procps "ps"}"
+          unset -f delegate_to_zsh
 
-      # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-      function set_win_title() {
-      	echo -ne "\033]0; $(${lib.getExe' pkgs.coreutils "basename"} "$PWD") \007"
-      }
-      # shellcheck disable=SC2034
-      starship_precmd_user_func="set_win_title"
+          # Workaround for issues likely https://github.com/reubeno/brush/issues/380
+          # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
+          if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+          	# original fzf providing key-bindigns also makes some warnings in brush
+          	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It makes shell startup much slower
+          fi
 
-      # Workaround for issues likely https://github.com/reubeno/brush/issues/380
-      # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
-      if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
-      	# original fzf providing key-bindigns also makes some warnings in brush likely fzf-git-sh
-      	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It makes shell startup much slower
-      	source "${pkgs.fzf-git-sh}/share/fzf-git-sh/fzf-git.sh"
-      fi
+          # Disable `Ctrl + S(no output tty)`
+          ${lib.getExe' pkgs.coreutils "stty"} stop undef
 
-      # source does not load all paths. See https://stackoverflow.com/questions/1423352/source-all-files-in-a-directory-from-bash-profile
-      for file in ${../dependencies/bash}/*; do
-      	source "$file"
-      done
+          source "${pkgs.local.posix_shared_functions}"
 
-      # Disable `Ctrl + S(no output tty)`
-      ${lib.getExe' pkgs.coreutils "stty"} stop undef
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          # shellcheck disable=SC2034
+          starship_precmd_user_func="set_win_title"
 
-      source "${pkgs.local.posix_shared_functions}"
+          # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+          # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
+          export LC_TIME='en_DK.UTF-8'
 
-      # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-      # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
-      export LC_TIME='en_DK.UTF-8'
-
-      if [ 'linux' = "$TERM" ]; then
-        adjust_to_linux_vt
-      fi
-    ''
-    + builtins.readFile ./initExtra.bash;
+          if [ 'linux' = "$TERM" ]; then
+            adjust_to_linux_vt
+          fi
+        ''
+        + builtins.readFile ./initExtra.bash
+      )
+      (lib.mkAfter ''
+        # brush skips ~/.brushrc in login shells, and Home Manager's .bash_profile only sources ~/.bashrc.
+        # https://brush.sh/how-tos/configuration/#which-files-are-read
+        if [[ -n "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]] && shopt -q login_shell && [[ -r ~/.brushrc ]]; then
+          source ~/.brushrc
+        fi
+      '')
+    ];
 
     logoutExtra = ''
       # when leaving the console clear the screen to increase privacy

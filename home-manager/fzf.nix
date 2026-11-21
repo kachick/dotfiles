@@ -15,19 +15,20 @@
     ];
 
     # CTRL+T - such as `pkgs.local.walk`. However, you shouldn't use fzf's `become`. This will be used in shell functions.
-    fileWidgetCommand = defaultCommand;
-    fileWidgetOptions = [
+    fileWidget.command = defaultCommand;
+    fileWidget.options = [
       "--preview '${lib.getExe pkgs.bat} --color=always {}'"
-      "--preview-window '~3'"
+      "--preview-window 'right,60%,~3'"
       ''
         --bind 'enter:execute("$EDITOR" {})'
       ''
     ];
 
     # ALT-C
-    changeDirWidgetCommand = "${lib.getExe pkgs.fd} --type d --hidden --exclude .git";
-    changeDirWidgetOptions = [
+    changeDirWidget.command = "${lib.getExe pkgs.fd} --type d --hidden --exclude .git";
+    changeDirWidget.options = [
       "--preview '${lib.getExe pkgs.eza} --color=always --tree {} | head -200'"
+      "--preview-window 'right,60%'"
     ];
 
     colors = {

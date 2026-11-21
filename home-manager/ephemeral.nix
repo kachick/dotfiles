@@ -13,7 +13,7 @@
         name = "Foo Bar";
       };
 
-      ghq.user = "github";
+      gitx.user = "github";
     };
   };
 }

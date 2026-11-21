@@ -1,0 +1,415 @@
+name: ❄️ # https://github.com/NixOS/nixos-artwork/blob/35ebbbf01c3119005ed180726c388a01d4d1100c/logo/README.md#L5
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/nix.yml'
+      - '.github/actions/**'
+      - 'Taskfile.yml'
+      - 'cmd/**'
+      - 'config/**'
+      - 'internal/**'
+      - 'pkgs/**'
+      - 'home-manager/**'
+      - 'nixos/**'
+      - 'flake.*'
+      - 'overlays/**'
+      - '**.go'
+      - '**.nix'
+      - 'go.*'
+      - 'testdata/**'
+      - 'typos.toml'
+      - '!**.md'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '.github/workflows/nix.yml'
+      - '.github/actions/**'
+      - 'Taskfile.yml'
+      - 'cmd/**'
+      - 'config/**'
+      - 'internal/**'
+      - 'pkgs/**'
+      - 'home-manager/**'
+      - 'nixos/**'
+      - 'flake.*'
+      - 'overlays/**'
+      - '**.go'
+      - '**.nix'
+      - 'go.*'
+      - 'testdata/**'
+      - 'typos.toml'
+      - '!**.md'
+  schedule:
+    - cron: '42 10 * * *'
+      timezone: 'Asia/Tokyo'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target job to run'
+        type: choice
+        default: 'all'
+        options:
+          - all
+          - nixos-iso
+          - nixos
+          - home-manager
+          - packages
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  NIX_ABORT_ON_WARN: '1'
+
+jobs:
+  changes:
+    name: 🧭 Changes
+    if: inputs.target != 'nixos-iso'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    outputs:
+      packages: ${{ steps.detect.outputs.packages }}
+      home-manager: ${{ steps.detect.outputs.home-manager }}
+      nixos: ${{ steps.detect.outputs.nixos }}
+      flake-lock: ${{ steps.detect.outputs.flake-lock }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: 'go.mod'
+          cache: false
+      - name: Detect changed targets
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          TARGET: ${{ inputs.target }}
+        run: go run ./cmd/ci-build changes | tee -a "$GITHUB_OUTPUT"
+
+  inspect:
+    name: 🔍 Inspect
+    if: inputs.target == '' || inputs.target == 'all'
+    # Only on Linux is enough to check the flake
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+      - name: Print some dotfiles overviews
+        shell: bash -eu -o pipefail {0}
+        run: |
+          </etc/nix/nix.conf
+          ls -alh ~
+      - name: Inspect flake outputs
+        run: |
+          nix flake show
+          nix flake show . --json 2>/dev/null | jq '.packages | ."x86_64-linux" | to_entries | map("\(.key) # \(.value.description)")'
+      - run: nix flake check
+
+  devShell:
+    name: 🐚
+    if: inputs.target == '' || inputs.target == 'all'
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # Nix shell provides the Go binary. This step is only for enabling standard GitHub Actions caching
+          # for Go modules and builds which are not covered by the Nix binary cache in the 'devShell' job.
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+      - name: Install direnv
+        # Installing git via nix to make sure it supports config based hooks
+        # Because of ubuntu-slim and ubuntu-26.04 remains on 2.53 or before at 2026-06-18
+        run: |
+          nix profile add --inputs-from . nixpkgs#direnv nixpkgs#git
+      - name: Load environment variables
+        run: |
+          direnv allow .
+          direnv export gha > "$GITHUB_ENV"
+      - run: task ci-dev
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+  packages:
+    name: 📦 Packages
+    needs: [changes]
+    if: needs.changes.outputs.packages == 'true'
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    env:
+      CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+      - name: Warm up
+        id: warmup
+        run: go run ./cmd/ci-build warmup packages
+      - parallel:
+          # BEGIN MANAGED PACKAGES
+          - name: antigravity-cli
+            run: go run ./cmd/ci-build package antigravity-cli
+
+          - name: antigravity-hub
+            run: go run ./cmd/ci-build package antigravity-hub
+
+          - name: conoha-cli
+            run: go run ./cmd/ci-build package conoha-cli
+
+          - name: dot-writable-sync
+            run: go run ./cmd/ci-build package dot-writable-sync
+
+          - name: filen-cli-rs
+            run: go run ./cmd/ci-build package filen-cli-rs
+
+          - name: gh-actions-lock
+            run: go run ./cmd/ci-build package gh-actions-lock
+
+          - name: ghadiag
+            run: go run ./cmd/ci-build package ghadiag
+
+          - name: gitx
+            run: go run ./cmd/ci-build package gitx
+
+          - name: hcpu_shogi
+            run: go run ./cmd/ci-build package hcpu_shogi
+
+          - name: ibus
+            run: go run ./cmd/ci-build package ibus --skip-tests
+
+          - name: ibus-engine-selector
+            run: go run ./cmd/ci-build package ibus-engine-selector
+
+          - name: iets
+            run: go run ./cmd/ci-build package iets
+
+          - name: kanata-tray
+            run: go run ./cmd/ci-build package kanata-tray
+
+          - name: leaf-markdown-viewer
+            run: go run ./cmd/ci-build package leaf-markdown-viewer
+
+          - name: lima-full
+            run: go run ./cmd/ci-build package lima-full
+
+          - name: nix-update
+            run: go run ./cmd/ci-build package nix-update
+
+          - name: rclone-fzf
+            run: go run ./cmd/ci-build package rclone-fzf
+
+          - name: shuck
+            run: go run ./cmd/ci-build package shuck
+
+          - name: tree-diff
+            run: go run ./cmd/ci-build package tree-diff
+
+          - name: yaneuraou-avx2
+            run: go run ./cmd/ci-build package yaneuraou-avx2
+
+          - name: zed-editor
+            run: go run ./cmd/ci-build package zed-editor --skip-tests
+          # END MANAGED PACKAGES
+      - if: always() && !cancelled() && steps.warmup.outcome == 'success'
+        uses: $/.github/actions/push-niks3
+        with:
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
+
+  home-manager:
+    name: 🏠 home-manager
+    needs: [changes, packages]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      needs.changes.outputs.home-manager == 'true'
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
+    runs-on: ubuntu-26.04
+    timeout-minutes: 60
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      # Keep default read-write mode: other jobs or later runs may reuse the home-manager cache
+      - uses: $/.github/actions/setup-nix
+
+      - name: Print some dotfiles overviews
+        run: |
+          </etc/nix/nix.conf
+          ls -alh ~
+
+      # https://www.reddit.com/r/Nix/comments/1443k3o/comment/jr9ht5g/?utm_source=reddit&utm_medium=web2x&context=3
+      - run: mkdir -p ~/.local/state/nix/profiles
+      - run: nix run .#home-manager -- switch -b backup --flake ".#github-actions@ubuntu-26.04"
+      - run: zsh -c 'sudo --preserve-env=PATH env nix run ".#apply-system"'
+      - name: Print some paths and versions
+        run: |
+          which zsh
+          which bash
+          which ssh
+      - name: Make sure the $PATH for bash is not overridden as like the `path_helper`. See https://github.com/kachick/dotfiles/issues/503
+        run: |
+          [[ "$(zsh -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+          [[ "$(bash -c 'which bash')" == "$HOME/.nix-profile/bin/bash" ]]
+      # Do not use interactive mode here.
+      # Solutions as https://github.com/actions/runner/issues/241#issuecomment-924327172 will not fit with several problems
+      - name: Run customized dependencies
+        run: |
+          zsh -c zsh -c 'which la; which p'
+          zsh -c 'starship --version'
+          zsh -c 'ssh -V'
+          zsh -c 'hx --health'
+      - name: Run homemade commands
+        run: |
+          zsh -c 'la ~; lat ~/.config'
+          zsh -c "p neo-cowsay hello --command 'cowsay --rainbow \$(hello)'"
+      - uses: $/.github/actions/push-niks3
+        with:
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          store-path: ~/.local/state/nix/profiles/home-manager
+          pin-name: dotfiles-main-home-manager
+
+  nixos:
+    name: ⚙️ NixOS
+    needs: [changes, packages]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      needs.changes.outputs.nixos == 'true'
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      id-token: write # Required for Tailscale and niks3 OIDC authentication
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    env:
+      CI_BUILD_OUT_PATHS_DIR: /tmp/ci-build-out-paths
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: 'go.mod'
+          cache: true
+      - uses: $/.github/actions/setup-nix
+        with:
+          # NixOS is the last job in this workflow, and its cache is too large for the quota
+          hestia-read-only: 'true'
+      - name: Warm up
+        id: warmup
+        run: go run ./cmd/ci-build warmup nixos
+      - parallel:
+          - name: Build NixOS - desktop-free
+            run: go run ./cmd/ci-build nixos desktop-free
+
+          - name: Build NixOS - wsl
+            run: go run ./cmd/ci-build nixos wsl
+
+          - name: Verify sample configuration template
+            run: ./nixos/hosts/sample/verify.bash
+      - if: always() && !cancelled() && steps.warmup.outcome == 'success'
+        uses: $/.github/actions/push-niks3
+        with:
+          tailscale-oauth-client-id: ${{ secrets.TAILSCALE_OAUTH_CLIENT_ID }}
+          tailscale-audience: ${{ secrets.TAILSCALE_AUDIENCE }}
+          tailscale-tags: ${{ secrets.TAILSCALE_TAGS }}
+          niks3-server-url: ${{ secrets.NIKS3_SERVER_URL }}
+          from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
+          pin-name: dotfiles-main-nixos-desktop-free
+          pin-flake-attr: .#nixosConfigurations.desktop-free.config.system.build.toplevel
+
+  nixos-iso:
+    name: 💿 NixOS ISO
+    # Trigger on schedule or manual dispatch (when target is 'all' or 'nixos-iso')
+    # Label-triggered PR runs live in labeler.yml so labeled events do not overwrite nix.yml check status
+    if: >-
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso'))
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+    runs-on: ubuntu-26.04
+    timeout-minutes: 180
+    steps:
+      - uses: $/.github/actions/clean-disk
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup-nix
+        with:
+          # ISO image closure is huge and artifact is uploaded separately
+          hestia-read-only: 'true'
+      - name: Logging disk space before build
+        run: df -h
+      - name: Build NixOS ISO
+        run: |
+          nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
+      - name: Logging disk space after build
+        run: df -h
+      - name: Upload ISO as artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          path: result/iso/*.iso
+          archive: false
+
+  diff:
+    name: ↔️ Diff
+    needs: [changes]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      github.event_name == 'pull_request' &&
+      needs.changes.outputs.flake-lock == 'true'
+    permissions:
+      contents: read
+      pull-requests: write # Required for commenting closure diffs on PRs
+    uses: kachick/workflows/.github/workflows/reusable-nix-diff-closures.yml@main # zizmor: ignore[unpinned-uses]
+    with:
+      runs-on: ubuntu-26.04
+      targets: |
+        devShells.x86_64-linux.default
+        nixosConfigurations.algae.config.system.build.toplevel
+        homeConfigurations."github-actions@ubuntu-26.04".activationPackage

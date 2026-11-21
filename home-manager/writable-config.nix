@@ -1,26 +1,27 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
 let
-  # Module to make a config file writable by initializing it once from the Nix store.
+  # Module to make a config file writable by initializing and syncing it from the Nix store.
   #
   # ## Why not use `impureConfigMerger`?
   #
   # Some Home Manager modules (like `programs.zed-editor`) have started using `impureConfigMerger`,
   # which merges Nix-managed settings with local changes. However, we intentionally avoid this for the following reasons:
   #
-  # - **Predictability**: The `HomeManagerInit` pattern (copy + chmod) is simpler and its behavior is clearer.
+  # - **Predictability**: Copying the raw file with `u+w` is simpler and its behavior is clearer.
   # - **Portability**: This allows us to reuse the same config files (like `settings.json`) directly on non-Nix systems (Windows, etc.) with comments and schema validation intact.
   # - **Control**: Avoids the "impure" state where Nix might silently merge or conflict with local manual changes in a way that's hard to debug.
   #
   # ## How it works
   #
-  # 1. Define a "Init" file in the Nix store (prefixed with "HomeManagerInit_").
-  # 2. Use `onChange` to `rm`, `cp`, and `chmod +w` the file to its final destination.
-  # 3. This ensures that after a `home-manager switch`, the file is writable but initialized with our managed content.
+  # 1. Build a JSON manifest of `{ source, dest, perm }` entries in the Nix store.
+  # 2. Run `dot-writable-sync` during `home.activation` after `writeBoundary` without leaving `HomeManagerInit_*` symlinks behind.
+  # 3. Track the last synced source SHA-256 in XDG_STATE_HOME; warn with a unified diff before overwriting locally edited files.
   #
   # ## References
   #
@@ -31,18 +32,8 @@ let
   #
   # ## Usage
   #
-  # - `xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.json;`
+  # - `xdg.writableConfigFile."zed/settings.json".source = ../config/zed/settings.jsonc;`
   # - `home.writableFile.".ssh/authorized_keys" = { source = authorizedKeys; perm = "600"; };`
-
-  # Inserts "HomeManagerInit_" before the filename in a path
-  mkInitPath =
-    path:
-    let
-      parts = lib.splitString "/" path;
-      dir = lib.concatStringsSep "/" (lib.init parts);
-      file = lib.last parts;
-    in
-    if dir == "" then "HomeManagerInit_${file}" else "${dir}/HomeManagerInit_${file}";
 
   fileType = lib.types.submodule {
     options = {
@@ -54,10 +45,24 @@ let
       perm = lib.mkOption {
         type = lib.types.str;
         default = "u+w";
-        description = "Permission mode passed to chmod after copying the init file.";
+        description = "Permission mode applied after copying the source file.";
       };
     };
   };
+
+  manifestEntries =
+    (lib.mapAttrsToList (target: cfg: {
+      source = "${cfg.source}";
+      dest = "${config.xdg.configHome}/${target}";
+      inherit (cfg) perm;
+    }) config.xdg.writableConfigFile)
+    ++ (lib.mapAttrsToList (target: cfg: {
+      source = "${cfg.source}";
+      dest = if lib.hasPrefix "/" target then target else "${config.home.homeDirectory}/${target}";
+      inherit (cfg) perm;
+    }) config.home.writableFile);
+
+  manifestFile = pkgs.writeText "writable-config-manifest.json" (builtins.toJSON manifestEntries);
 in
 {
   options = {
@@ -74,41 +79,12 @@ in
     };
   };
 
-  config = {
-    xdg.configFile = lib.mapAttrs' (
-      target: cfg:
-      let
-        initRelPath = mkInitPath target;
-      in
-      lib.nameValuePair initRelPath {
-        inherit (cfg) source;
-        onChange = ''
-          dest="${config.xdg.configHome}/${target}"
-          init="${config.xdg.configHome}/${initRelPath}"
-          rm -f "$dest"
-          cp "$init" "$dest"
-          chmod ${cfg.perm} "$dest"
-        '';
-      }
-    ) config.xdg.writableConfigFile;
-
-    home.file = lib.mapAttrs' (
-      target: cfg:
-      let
-        initPath = mkInitPath target;
-        dest = if lib.hasPrefix "/" target then target else "${config.home.homeDirectory}/${target}";
-        init = if lib.hasPrefix "/" initPath then initPath else "${config.home.homeDirectory}/${initPath}";
-      in
-      lib.nameValuePair initPath {
-        inherit (cfg) source;
-        onChange = ''
-          dest="${dest}"
-          init="${init}"
-          rm -f "$dest"
-          cp "$init" "$dest"
-          chmod ${cfg.perm} "$dest"
-        '';
-      }
-    ) config.home.writableFile;
+  config = lib.mkIf (manifestEntries != [ ]) {
+    home.activation.syncWritableConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      ${lib.getExe pkgs.local.dot-writable-sync} sync \
+        ''${DRY_RUN:+--dry-run} \
+        --manifest "${manifestFile}" \
+        --state "${config.xdg.stateHome}/dot-writable-sync/state.json"
+    '';
   };
 }

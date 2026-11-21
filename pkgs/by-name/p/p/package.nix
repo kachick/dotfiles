@@ -9,7 +9,7 @@ pkgs.writeShellApplication rec {
     # * On NixOS, it's set by default — my dotfiles assume it points to the stable channel.
     # * Some of my repos define it via flake to provide hints for nixd.
     # TODO: Can I reduce the container image size? It's currently around 400–500 MiB.
-    NIX_PATH = "nixpkgs=${pkgs.unstable.path}";
+    NIX_PATH = "nixpkgs=${pkgs.path}";
   };
   meta = {
     description = "Wrapper for nix-shell";

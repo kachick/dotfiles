@@ -1,5 +1,5 @@
 {
-  home-manager-linux,
+  home-manager,
   mkPkgs,
   outputs,
 }:
@@ -14,7 +14,7 @@ let
 in
 # Users on NixOS are separated from this file.
 {
-  "user@wsl-ubuntu" = home-manager-linux.lib.homeManagerConfiguration (
+  "user@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
@@ -26,11 +26,14 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.wsl
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
+        outputs.homeManagerModules.containers
       ];
     }
   );
 
-  "user@lima" = home-manager-linux.lib.homeManagerConfiguration (
+  "user@lima" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
@@ -39,11 +42,14 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.lima-guest
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
+        outputs.homeManagerModules.containers
       ];
     }
   );
 
-  "user@container" = home-manager-linux.lib.homeManagerConfiguration (
+  "user@container" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
@@ -52,11 +58,13 @@ in
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
         outputs.homeManagerModules.systemd
+        outputs.homeManagerModules.storage
+        outputs.homeManagerModules.messenger
       ];
     }
   );
 
-  "github-actions@ubuntu-26.04" = home-manager-linux.lib.homeManagerConfiguration (
+  "github-actions@ubuntu-26.04" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;

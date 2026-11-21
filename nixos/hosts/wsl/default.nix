@@ -1,6 +1,5 @@
 {
   inputs,
-  pkgs,
   outputs,
   ...
 }:
@@ -33,26 +32,22 @@
     enable = true;
   };
 
-  home-manager = {
-    # https://discourse.nixos.org/t/home-manager-useuserpackages-useglobalpkgs-settings/34506/4
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    backupFileExtension = "backup";
-    users.nixos = {
-      imports = [
-        outputs.homeManagerModules.kachick
-        outputs.homeManagerModules.linux
-        {
-          home.username = "nixos";
-        }
-        outputs.homeManagerModules.wsl
-      ];
-    };
-    extraSpecialArgs = {
-      inherit
-        pkgs
-        outputs
-        ;
-    };
+  virtualisation.containers = {
+    enable = true;
+    policy = builtins.fromJSON (builtins.readFile ../../../config/containers/policy.json);
+  };
+
+  home-manager.users.nixos = {
+    imports = [
+      outputs.homeManagerModules.kachick
+      outputs.homeManagerModules.linux
+      {
+        home.username = "nixos";
+      }
+      outputs.homeManagerModules.wsl
+      outputs.homeManagerModules.storage
+      outputs.homeManagerModules.messenger
+      outputs.homeManagerModules.containers
+    ];
   };
 }

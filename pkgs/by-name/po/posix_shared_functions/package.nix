@@ -21,11 +21,6 @@
 #
 # Note: Using `replaceVars` directly avoids Import From Derivation (IFD) which was caused by the previous `builtins.readFile` + `writeText` wrapper.
 replaceVars ./posix_shared_functions.bash {
-  reponame = lib.getExe pkgs.local.reponame;
-  ghqf = lib.getExe pkgs.local.ghqf;
-  ghq = lib.getExe pkgs.ghq;
-  gopass = lib.getExe pkgs.gopass;
   coreutils = lib.getBin pkgs.coreutils;
-  fzf_bind_shell_hist = lib.getExe pkgs.local.fzf-bind-posix-shell-history-to-git-commit-message;
   starship = "${pkgs.starship}";
 }

@@ -1,21 +1,16 @@
 {
   lib,
-  pkgs,
+  buildGo127Module,
   fetchFromGitHub,
-  fetchpatch2,
   versionCheckHook,
   nix-update-script,
 }:
 
 # This is a personal fork of https://github.com/NixOS/nixpkgs/pull/568617
 
-let
-  # Different Go version between nixpkgs, it uses 1.26, however I standardize to 1.27 in this repo
-  inherit (pkgs.unstable) buildGo127Module;
-in
 buildGo127Module (finalAttrs: {
   pname = "gh-actions-lock";
-  version = "0.1.6";
+  version = "0.5.1";
 
   __structuredAttrs = true;
 
@@ -23,7 +18,7 @@ buildGo127Module (finalAttrs: {
     owner = "github";
     repo = "gh-actions-lock";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-OqxkuQPM0JwhTLWUgeNdaMRDj2uuAX/dGEDyanJV8iY=";
+    hash = "sha256-Uc8t/gld8TliEtm6Ns6JMWMezSrIbfmMdmncBpUpbgw=";
   };
 
   # debug.ReadBuildInfo does not provide version information in buildGoModule.
@@ -33,15 +28,7 @@ buildGo127Module (finalAttrs: {
       --replace-fail 'return info.Main.Version' 'return "v${finalAttrs.version}"'
   '';
 
-  patches = [
-    (fetchpatch2 {
-      name = "add-version-flag.patch";
-      url = "https://patch-diff.githubusercontent.com/raw/github/gh-actions-lock/pull/135.patch?full_index=1";
-      hash = "sha256-LbNkIY5NOfM37G6n59wE9kgCJh1BhfR+bMUTeK0tW5g=";
-    })
-  ];
-
-  vendorHash = "sha256-AYrg81SYC2JBpRZgG8O9R5ymCAsX8hsipwoSS1mP/Uc=";
+  vendorHash = "sha256-nclp2xIDB+icrtLUAyEU8oGVFVDU1/Wrrkp0wMsSsUM=";
 
   ldflags = [
     "-s"
@@ -61,6 +48,8 @@ buildGo127Module (finalAttrs: {
   passthru = {
     updateScript = nix-update-script {
       extraArgs = [
+        # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+        "--flake"
         "--use-github-releases"
         "--version-regex=^v([0-9.]+)$"
       ];

@@ -1,79 +1,75 @@
 name: 🆙 local packages
 on:
-  pull_request:
+  push:
+    branches: [main]
     paths:
       - '.github/workflows/update-local-packages.yml'
-      - '.github/actions/setup-nix/**'
+  schedule:
+    - cron: '2 9 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
-    inputs:
-      dry-run:
-        description: 'Skip side-effect if true'
-        default: false
-        required: true
-        type: boolean
-  workflow_call:
-    inputs:
-      dry-run:
-        default: false
-        required: false
-        type: boolean
-    secrets:
-      PRIVATE_KEY:
-        required: true
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   DEFAULT_BRANCH: main
 
 jobs:
   create-pr:
+    name: 🆙 Create PR
+    permissions:
+      contents: write # Required for pushing branches and creating PRs
     strategy:
       fail-fast: false
       matrix:
         package:
           # BEGIN MANAGED PACKAGES
           - antigravity-cli
+          - antigravity-hub
+          - cloudflare-warp
           - conoha-cli
           - filen-cli-rs
           - gh-actions-lock
+          - leaf-markdown-viewer
           - lima
+          - shuck
           # END MANAGED PACKAGES
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
       PR_BRANCH: bot-update-${{ matrix.package }}
-      IS_DRY_RUN: ${{ (inputs.dry-run || github.event_name == 'pull_request') && 'true' || 'false' }}
     steps:
       # To push workflow changes and trigger CIs
       - name: Generate GitHub Apps token
         id: publish-token
-        if: env.IS_DRY_RUN == 'false'
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         with:
           # Required to set workflow permission for the APP
           # Why replaced from secrets?: https://github.com/github/docs/commit/eaac671cdd9189afd410366e9eb5edd4ee815194#diff-19d2b329775bf781d0cf19fabafa7f231bd85f133cbf9e23594036ea68f7021dL53-R54
-          client-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
+          client-id: ${{ vars.SAMU_APP_ID }}
+          private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
           permission-contents: write
           permission-pull-requests: write
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v6.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Needed to get commit counts
           # https://stackoverflow.com/a/65056108
           fetch-depth: 0
           # Needed to specify token for checkout phase, only in pushing phase is too late
           # https://github.com/orgs/community/discussions/27072#discussioncomment-3254515
-          token: ${{ steps.publish-token.outputs.token || github.token }}
-          # This value is explicitly set to true to prevent regression that occurred in selfup v1.2.1, even though it is the default for actions/checkout.
+          token: ${{ steps.publish-token.outputs.token }}
+          # This value is explicitly set to true, even though it is the default for actions/checkout.
           # Many linters recommend setting this to false, and most users have requested it as the new default (see https://github.com/actions/checkout/issues/485).
           # However, this workflow depends on the stored credentials for the subsequent git push command.
           # For this reason, true is required for now.
           persist-credentials: true
       - name: Fetch active PRs by me
-        if: env.IS_DRY_RUN == 'false'
         id: fetch-active-prs
         env:
           GITHUB_TOKEN: ${{ steps.publish-token.outputs.token }}
@@ -85,18 +81,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Prepare Git branch
-        if: env.IS_DRY_RUN == 'false'
         run: |
-          git switch -C "${PR_BRANCH}" "origin/${{ env.DEFAULT_BRANCH }}"
+          git switch -C "${PR_BRANCH}" "origin/${DEFAULT_BRANCH}"
 
       - uses: $/.github/actions/setup-nix
-        with:
-          cachix-auth-token: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Install dependencies
         run: |
-          unstable="$(nix eval --raw --impure --expr '(builtins.fromJSON (builtins.readFile ./flake.lock)).nodes.nixpkgs-unstable.locked.url')"
-          nix profile add "${unstable}#nix-update"
+          nix profile add '.#nix-update'
 
       # Perform evaluation before nix-update to ensure IFD (like patched nixpkgs) is built and valid in store.
       # This addresses the "path ...-patched-nixpkgs-unstable.drv is not valid" error in GHA.
@@ -112,15 +104,19 @@ jobs:
       - name: Update packages
         run: |
           msg_file="$(mktemp)"
-          if [[ "${PACKAGE}" == "antigravity-cli" ]]; then
+          if [[ "${PACKAGE}" == "antigravity-cli" || "${PACKAGE}" == "antigravity-hub" ]]; then
             old_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
             nix run --impure ".#${PACKAGE}.passthru.updateScript"
             new_version="$(nix eval --raw --impure ".#${PACKAGE}.version")"
             if [[ "${old_version}" != "${new_version}" ]]; then
               echo "${PACKAGE}: ${old_version} -> ${new_version}" > "${msg_file}"
+              changelog="$(nix eval --raw --impure ".#${PACKAGE}.meta.changelog" 2>/dev/null || true)"
+              if [[ -n "${changelog}" ]]; then
+                printf '\nChangelog: %s\n' "${changelog}" >> "${msg_file}"
+              fi
             fi
           else
-            nix-update --flake "${PACKAGE}" --write-commit-message "${msg_file}"
+            nix-update --flake "${PACKAGE}" --use-update-script --write-commit-message "${msg_file}"
           fi
           if [[ -n "$(git status --porcelain)" ]]; then
             git add .
@@ -132,13 +128,14 @@ jobs:
           fi
           rm "${msg_file}"
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           PACKAGE: ${{ matrix.package }}
           NIXPKGS_ALLOW_UNFREE: '1'
 
       - name: Count added commits
         id: count-commits
         run: |
-          count="$(git rev-list --count 'origin/${{ env.DEFAULT_BRANCH }}..')"
+          count="$(git rev-list --count "origin/${DEFAULT_BRANCH}..")"
           echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
           case "${count}" in
             0)
@@ -147,18 +144,14 @@ jobs:
               echo "title=$(git log -1 --format=%s)" | tee -a "$GITHUB_OUTPUT"
               ;;
             *)
-              if [[ "${IS_DRY_RUN}" == "true" ]]; then
-                echo "::notice::Unexpected commit count in dry-run mode: ${count}"
-              else
-                echo "::error::Unexpected commit count: ${count}"
-                exit 1
-              fi
+              echo "::error::Unexpected commit count: ${count}"
+              exit 1
               ;;
           esac
       - run: git push origin "${PR_BRANCH}" --force
-        if: (env.IS_DRY_RUN == 'false') && (steps.count-commits.outputs.count > 0)
+        if: steps.count-commits.outputs.count > 0
       - name: Create PR
-        if: (env.IS_DRY_RUN == 'false') && (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
+        if: (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
         env:
           GITHUB_TOKEN: '${{ steps.publish-token.outputs.token }}'
           PR_TITLE: ${{ steps.count-commits.outputs.title }}
@@ -166,6 +159,6 @@ jobs:
             Updating ${{ matrix.package }} to the latest version.
         run: |
           gh pr create \
-            --base '${{ env.DEFAULT_BRANCH }}' \
+            --base "${DEFAULT_BRANCH}" \
             --title "${PR_TITLE}" \
             --body "${PR_BODY}"

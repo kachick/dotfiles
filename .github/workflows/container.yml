@@ -6,19 +6,20 @@ on:
     # Don't add branch triggers; this workflow is resource-intensive and requires considering concurrency.
     # branches:
     #   - main
-  pull_request:
-    types:
-      - labeled
+  # Label-triggered PR runs live in labeler.yml so unrelated labels do not start or cancel this workflow
+  workflow_call:
   schedule:
-    # Every 23:42 JST # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
-    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '42 14 * * *'
+    # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
+    - cron: '42 23 * * *'
+      timezone: 'Asia/Tokyo'
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: write
-  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   # The image name in GHCR
@@ -29,6 +30,7 @@ env:
 jobs:
   # podman can handle lowercase. So normalize the outputs
   get-meta:
+    name: 📋 Meta
     runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
@@ -51,18 +53,26 @@ jobs:
       - name: Generate tags for the image
         id: tags
         # https://github.com/orgs/community/discussions/26557#discussioncomment-3252327
+        env:
+          STARTED_AT: ${{ steps.timestamp.outputs.started_at }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REF_NAME: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          SHA: ${{ github.sha }}
         run: |
-          echo "timestamp=${{ steps.timestamp.outputs.started_at }}" | tee -a "$GITHUB_OUTPUT"
+          echo "timestamp=${STARTED_AT}" | tee -a "$GITHUB_OUTPUT"
 
           special=''
           ref=''
 
-          if [ '${{ github.event_name }}' = 'pull_request' ]; then
-            special='pr-${{ github.event.number }}-${{ github.event.pull_request.head.sha }}'
-            ref='${{ github.event.pull_request.head.sha }}'
-          elif [ '${{ github.ref_name }}' = '${{ github.event.repository.default_branch }}' ]; then
+          if [ "${EVENT_NAME}" = 'pull_request' ]; then
+            special="pr-${PR_NUMBER}-${PR_HEAD_SHA}"
+            ref="${PR_HEAD_SHA}"
+          elif [ "${REF_NAME}" = "${DEFAULT_BRANCH}" ]; then
             special='latest'
-            ref='${{ github.sha }}'
+            ref="${SHA}"
           else
             exit 1
           fi
@@ -72,10 +82,15 @@ jobs:
   minimize-old-comments:
     needs: [get-meta]
     if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
-    uses: $/.github/workflows/minimize-staging-deploy-comments.yml
+    permissions:
+      contents: read # Required for actions/checkout in reusable workflow
+      pull-requests: write # Required for minimizing outdated PR comments
+    uses: kachick/workflows/.github/workflows/reusable-minimize-pr-comments.yml@main # zizmor: ignore[unpinned-uses]
     with:
       pr-number: ${{ github.event_name == 'pull_request' && github.event.number || 0 }}
+      body-includes: 'containers/sandbox.bash'
   build_and_push:
+    name: 🔨📤 Build & Push
     # Do not set `cancel-in-progress: true` in main branch, it displays failure badges
     # https://github.com/orgs/community/discussions/8336
     concurrency:
@@ -86,29 +101,21 @@ jobs:
       (! failure()) &&
       ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
       (github.event_name != 'pull_request'))
+    permissions:
+      contents: read
+      packages: write # Required for pushing container images to GHCR
+      pull-requests: write # Required for posting deploy comments
     runs-on: ubuntu-26.04
     timeout-minutes: 60
     steps:
       - name: Logging disk space
         run: df -h
-      - name: Clean space as per https://github.com/actions/virtual-environments/issues/709
-        # NOTE: This workflow removed 14 Gib in 50sec
-        # On the otherhand, additional apt purge step removed 6 Gib in 100s, so I don't want to use the additional steps for now
-        run: |
-          docker images
-          docker image prune --all --force
-          sudo rm -rf "/opt/ghc" || true
-          sudo rm -rf "/usr/share/dotnet" || true
-          sudo rm -rf "$AGENT_TOOLSDIRECTORY" || true
-          sudo rm -rf "/usr/local/lib/android" || true
-          sudo rm -rf "/usr/local/share/boost" || true
-          df -h
       - name: Logging dependency versions
         run: |
           podman version
           crun --version
           buildah version
-      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Build base Image
@@ -120,22 +127,30 @@ jobs:
             containers/Containerfile
           oci: true
       - name: Inspect the created image
-        run: 'podman inspect systemd-prepared:${{ needs.get-meta.outputs.ref_tag }}'
+        env:
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+        run: podman inspect "systemd-prepared:${REF_TAG}"
       - name: Start systemd
         id: start-systemd
+        env:
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
         run: |
           set -euxo pipefail
-          container_id="$(podman run --detach --rm systemd-prepared:${{ needs.get-meta.outputs.ref_tag }})"
+          container_id="$(podman run --detach --rm "systemd-prepared:${REF_TAG}")"
           echo container_id="$container_id" | tee -a "$GITHUB_OUTPUT"
       - name: Wait for the systemd to be ready
         run: 'sleep 2'
       - name: Run Nix commands and cleanup provisioners
+        env:
+          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
         run: |
           set -euxo pipefail
-          podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' nix run '/provisioner/dotfiles#apply-system'
-          podman exec --user=user -it '${{ steps.start-systemd.outputs.container_id }}' /provisioner/needs_systemd.bash
-          podman exec --user=root -it '${{ steps.start-systemd.outputs.container_id }}' rm -rf /provisioner
+          podman exec --user=root -it "${CONTAINER_ID}" nix run '/provisioner/dotfiles#apply-system'
+          podman exec --user=user -it "${CONTAINER_ID}" /provisioner/needs_systemd.bash
+          podman exec --user=root -it "${CONTAINER_ID}" rm -rf /provisioner
       - name: Check no personal name in that config
+        env:
+          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
         run: |
           # https://unix.stackexchange.com/a/340729
           assign_stdin_to_global_command_variable() {
@@ -154,42 +169,59 @@ jobs:
           [[ "$ripgrep_exit_code" -eq 1 ]]
           EOF
 
-          podman exec --user=user --workdir=/home/user -it '${{ steps.start-systemd.outputs.container_id }}' bash -c "$command"
+          podman exec --user=user --workdir=/home/user -it "${CONTAINER_ID}" bash -c "$command"
       - name: Persist the container to image
+        env:
+          AUTHOR: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+          SPECIAL_TAG: ${{ needs.get-meta.outputs.special_tag }}
+          TIMESTAMP_TAG: ${{ needs.get-meta.outputs.timestamp_tag }}
         run: |
           podman commit \
-            --author 'https://github.com/${{github.repository}}/actions/runs/${{ github.run_id }}' \
-            '${{ steps.start-systemd.outputs.container_id }}' home:${{ needs.get-meta.outputs.ref_tag }}
-          podman kill '${{ steps.start-systemd.outputs.container_id }}'
-          podman tag home:${{ needs.get-meta.outputs.ref_tag }} home:${{ needs.get-meta.outputs.special_tag }}
-          podman tag home:${{ needs.get-meta.outputs.ref_tag }} home:${{ needs.get-meta.outputs.timestamp_tag }}
+            --author "${AUTHOR}" \
+            "${CONTAINER_ID}" "home:${REF_TAG}"
+          podman kill "${CONTAINER_ID}"
+          podman tag "home:${REF_TAG}" "home:${SPECIAL_TAG}"
+          podman tag "home:${REF_TAG}" "home:${TIMESTAMP_TAG}"
       - name: Inspect the created image
-        run: 'podman inspect home:${{ needs.get-meta.outputs.ref_tag }}'
+        env:
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+        run: podman inspect "home:${REF_TAG}"
       - name: Test the created image
+        env:
+          STARTED_AT: ${{ needs.get-meta.outputs.started_at }}
         run: |
           set -euxo pipefail
-          container_id="$(podman run --detach --rm home:${{ needs.get-meta.outputs.started_at }})"
+          container_id="$(podman run --detach --rm "home:${STARTED_AT}")"
           # shellcheck disable=SC2064
           trap "podman kill '$container_id'" EXIT ERR
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
+          podman exec --user=user "$container_id" '/home/user/.nix-profile/bin/bash' -c 'which fd'
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
       - name: Push To ghcr.io
         id: push-to-ghcr
         if: ${{ github.actor == github.repository_owner }}
+        env:
+          SPECIAL_TAG: ${{ needs.get-meta.outputs.special_tag }}
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+          TIMESTAMP_TAG: ${{ needs.get-meta.outputs.timestamp_tag }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euxo pipefail
 
-          tags="${{ needs.get-meta.outputs.special_tag }} ${{ needs.get-meta.outputs.ref_tag }} ${{ needs.get-meta.outputs.timestamp_tag }}"
-          registry="${{ env.GHCR_BASE }}"
-          image_name="${{ env.IMAGE_NAME }}"
+          tags="${SPECIAL_TAG} ${REF_TAG} ${TIMESTAMP_TAG}"
+          registry="${GHCR_BASE}"
+          image_name="${IMAGE_NAME}"
 
           for tag in $tags; do
             full_image_name="${registry}/${image_name}:${tag}"
-            podman tag "${image_name}:${{ needs.get-meta.outputs.ref_tag }}" "${full_image_name}"
+            podman tag "${image_name}:${REF_TAG}" "${full_image_name}"
             # Using --creds to avoid podman login
             # --digestfile is used to capture the digest for the next step
-            podman push --creds="${{ github.repository_owner }}:${{ github.token }}" --digestfile=digest.txt "${full_image_name}"
+            podman push --compression-format=zstd --creds="${REPO_OWNER}:${GITHUB_TOKEN}" --digestfile=digest.txt "${full_image_name}"
           done
 
           # Capture the digest of the last pushed tag (they should all have the same digest since they are the same image)
@@ -199,21 +231,23 @@ jobs:
         if: ${{ github.actor == github.repository_owner }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          PUSH_OUTPUTS: ${{ toJSON(steps.push-to-ghcr.outputs) }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          DIGEST: ${{ steps.push-to-ghcr.outputs.digest }}
         run: | # shell
           #
           set -euxo pipefail
 
-          echo "${{ toJSON(steps.push-to-ghcr.outputs) }}"
+          echo "${PUSH_OUTPUTS}"
 
           {
             echo 'json<<JSON'
 
             gh api --paginate \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /users/${{ github.repository_owner }}/packages/container/home/versions \
-            --jq '.[] | select(.name == "${{ steps.push-to-ghcr.outputs.digest }}")' | \
-              jq
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "/users/${REPO_OWNER}/packages/container/home/versions" | \
+              jq --arg digest "${DIGEST}" '.[] | select(.name == $digest)'
 
             echo 'JSON'
           } | tee --append "$GITHUB_OUTPUT"
@@ -229,7 +263,7 @@ jobs:
           You can test the interactive shell 🐚 as follows.
 
           ```bash
-          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox-with-ghcr.bash') '${{ github.event.pull_request.head.sha }}'
+          bash <(curl -fsSL 'https://raw.githubusercontent.com/kachick/dotfiles/${{ github.event.pull_request.head.sha }}/containers/sandbox.bash') --ghcr '${{ github.event.pull_request.head.sha }}'
           ```
 
           The package detail
@@ -249,6 +283,9 @@ jobs:
     needs: [build_and_push]
     # Always skips if no conditions
     if: always() && (needs.build_and_push.result == 'success')
-    uses: $/.github/workflows/cleanup-github-packages.yml
+    permissions:
+      packages: write # Required for deleting old GHCR package versions
+    uses: kachick/workflows/.github/workflows/reusable-cleanup-ghcr.yml@main # zizmor: ignore[unpinned-uses]
     with:
+      package-name: home
       keep-latest-items: 50 # 50 is adjusted for https://ghcr.io/v2/kachick/home/tags/list behavior

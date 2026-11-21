@@ -1,5 +1,4 @@
 {
-  pkgs,
   lib,
   config,
   ...
@@ -17,26 +16,7 @@ in
 # - id_*.pub: I CAN register them for different services.
 {
   # https://github.com/nix-community/home-manager/blob/release-26.05/modules/services/ssh-agent.nix
-  services.ssh-agent.enable = pkgs.stdenv.isLinux;
-
-  home.sessionVariables = {
-    # 'force' ignores $DISPLAY. 'prefer' is not enough
-    SSH_ASKPASS_REQUIRE = "force";
-    SSH_ASKPASS = pkgs.lib.getExe (
-      pkgs.writeShellApplication {
-        name = "ssh-ask-pass";
-        text = "gopass show ssh-pass";
-        meta.description = "GH-714. Required to be wrapped with one command because of SSH_ASKPASS does not accept arguments.";
-        runtimeInputs = with pkgs; [
-          gopass
-          sequoia-chameleon-gnupg
-        ];
-        runtimeEnv = {
-          GOPASS_GPG_BINARY = lib.getExe pkgs.sequoia-chameleon-gnupg;
-        };
-      }
-    );
-  };
+  services.ssh-agent.enable = true;
 
   home.file = {
     "${sshDir}/control/.keep".text = "Make ControlPath shorter";
@@ -115,10 +95,10 @@ in
             StrictHostKeyChecking = "accept-new";
           };
 
-          # tailscale
-          "*.ts.net" = lib.hm.dag.entryAfter (builtins.attrNames hosts) {
-            forwardAgent = true;
-          };
+          # Do not enable forwardAgent for wildcard "*.ts.net" here.
+          # Tailscale networks can include shared or lower-trust hosts where root could
+          # use a forwarded local SSH agent socket. Enable ForwardAgent per host in
+          # ~/.ssh/config.local when needed.
         };
 
         fallbacks = {

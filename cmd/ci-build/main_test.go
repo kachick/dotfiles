@@ -1,8 +1,14 @@
 package main
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestGetCurrentNixSystem(t *testing.T) {
@@ -26,10 +32,67 @@ func TestRunPackage_MissingArg(t *testing.T) {
 	}
 }
 
+func TestParsePackageArgs(t *testing.T) {
+	tests := []struct {
+		name          string
+		args          []string
+		wantPname     string
+		wantArch      string
+		wantSkipTests bool
+	}{
+		{
+			name:          "flags after package name (sync-workflows format)",
+			args:          []string{"ibus", "--skip-tests"},
+			wantPname:     "ibus",
+			wantArch:      "",
+			wantSkipTests: true,
+		},
+		{
+			name:          "flags before package name",
+			args:          []string{"--skip-tests", "--arch", "x86_64-linux", "zed-editor"},
+			wantPname:     "zed-editor",
+			wantArch:      "x86_64-linux",
+			wantSkipTests: true,
+		},
+		{
+			name:          "no flags",
+			args:          []string{"gitx"},
+			wantPname:     "gitx",
+			wantArch:      "",
+			wantSkipTests: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pname, arch, skipTests, err := parsePackageArgs(tt.args)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if pname != tt.wantPname {
+				t.Errorf("pname = %q, want %q", pname, tt.wantPname)
+			}
+			if arch != tt.wantArch {
+				t.Errorf("arch = %q, want %q", arch, tt.wantArch)
+			}
+			if skipTests != tt.wantSkipTests {
+				t.Errorf("skipTests = %v, want %v", skipTests, tt.wantSkipTests)
+			}
+		})
+	}
+}
+
 func TestRunNixos_MissingArg(t *testing.T) {
 	err := runNixos([]string{})
 	if err == nil {
 		t.Error("expected error when host name is missing, got nil")
+	}
+}
+
+func TestRunWarmup_UnknownTarget(t *testing.T) {
+	err := runWarmup([]string{"invalid-target"})
+	if err == nil {
+		t.Error("expected error for unknown warmup target, got nil")
 	}
 }
 
@@ -47,8 +110,9 @@ func TestIsPackageFree(t *testing.T) {
 		pkg  string
 		want bool
 	}{
-		{pkg: "archive-home-files", want: true},
+		{pkg: "gitx", want: true},
 		{pkg: "antigravity-cli", want: false},
+		{pkg: "antigravity-hub", want: false},
 		{pkg: "ludii-bin", want: false},
 	}
 
@@ -62,5 +126,332 @@ func TestIsPackageFree(t *testing.T) {
 				t.Errorf("isPackageFree(%q, %q) = %v, want %v", tt.pkg, sys, got, tt.want)
 			}
 		})
+	}
+}
+
+func TestIsCacheableStorePath(t *testing.T) {
+	tests := []struct {
+		path string
+		want bool
+	}{
+		{path: "/nix/store/abc-hello-1.0", want: true},
+		{path: "/nix/store/abc-git-2.40.0", want: true},
+		{path: "/nix/store/abc-libfoo.so.1", want: true},
+		{path: "/nix/store/abc-source", want: false},
+		{path: "/nix/store/abc-foo-source", want: false},
+		{path: "/nix/store/abc-vendor", want: false},
+		{path: "/nix/store/abc-go-modules-vendor", want: false},
+		{path: "/nix/store/abc-nixos.iso", want: false},
+		{path: "/nix/store/abc-image.iso", want: false},
+		{path: "/nix/store/abc-nixpkgs.tar.gz", want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			got := isCacheableStorePath(tt.path)
+			if got != tt.want {
+				t.Errorf("isCacheableStorePath(%q) = %v, want %v", tt.path, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFilterCacheablePaths(t *testing.T) {
+	input := []string{
+		"/nix/store/abc-bin",
+		"/nix/store/abc-source",
+		"/nix/store/abc-bin", // duplicate
+		"/nix/store/abc-vendor",
+		"", // empty
+		"/nix/store/abc-lib",
+		"/nix/store/abc-install.iso",
+	}
+
+	want := []string{
+		"/nix/store/abc-bin",
+		"/nix/store/abc-lib",
+	}
+
+	got := filterCacheablePaths(input)
+	if len(got) != len(want) {
+		t.Fatalf("filterCacheablePaths() length = %d, want %d (got: %v)", len(got), len(want), got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("filterCacheablePaths()[%d] = %q, want %q", i, got[i], want[i])
+		}
+	}
+}
+
+func TestRunPush_MissingArg(t *testing.T) {
+	err := runPush([]string{})
+	if err == nil {
+		t.Error("expected error when path is missing, got nil")
+	}
+}
+
+func TestFilterUpstreamPaths(t *testing.T) {
+	input := map[string]pathInfoEntry{
+		"/nix/store/glibc": {
+			Signatures: []string{"cache.nixos.org-1:sig123"},
+		},
+		"/nix/store/local-pkg": {
+			Signatures: []string{},
+		},
+		"/nix/store/kachick-pkg": {
+			Signatures: []string{"cache.kachick.dev-1:sig456"},
+		},
+		"/nix/store/multi-sig": {
+			Signatures: []string{"other-cache:abc", "cache.nixos.org-1:xyz"},
+		},
+	}
+
+	got := filterUpstreamPaths(input)
+
+	// Sort or check set presence since map iteration order is non-deterministic
+	gotSet := make(map[string]bool)
+	for _, p := range got {
+		gotSet[p] = true
+	}
+
+	if gotSet["/nix/store/glibc"] {
+		t.Error("expected /nix/store/glibc to be filtered out, but got it")
+	}
+	if gotSet["/nix/store/multi-sig"] {
+		t.Error("expected /nix/store/multi-sig to be filtered out, but got it")
+	}
+	if !gotSet["/nix/store/local-pkg"] {
+		t.Error("expected /nix/store/local-pkg to be kept, but was missing")
+	}
+	if !gotSet["/nix/store/kachick-pkg"] {
+		t.Error("expected /nix/store/kachick-pkg to be kept, but was missing")
+	}
+}
+
+func TestRecordAndReadOutPaths(t *testing.T) {
+	dir := t.TempDir()
+
+	if err := recordOutPaths(dir, "pkg-a", []string{"/nix/store/aaa-pkg-a", "/nix/store/bbb-doc"}); err != nil {
+		t.Fatalf("recordOutPaths(pkg-a) failed: %v", err)
+	}
+	if err := recordOutPaths(dir, "pkg-b", []string{"/nix/store/bbb-doc", "/nix/store/ccc-pkg-b"}); err != nil {
+		t.Fatalf("recordOutPaths(pkg-b) failed: %v", err)
+	}
+
+	got, err := readRecordedOutPaths(dir)
+	if err != nil {
+		t.Fatalf("readRecordedOutPaths() failed: %v", err)
+	}
+	if len(got) != 3 {
+		t.Fatalf("readRecordedOutPaths() length = %d, want 3 (got: %v)", len(got), got)
+	}
+}
+
+func TestFetchGHAOIDCToken_Success(t *testing.T) {
+	expectedToken := "dummy-oidc-jwt-token"
+	expectedAudience := "https://cache.kachick.dev"
+	expectedBearer := "secret-request-token"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("Authorization") != "Bearer "+expectedBearer {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		if r.URL.Query().Get("audience") != expectedAudience {
+			http.Error(w, "bad audience", http.StatusBadRequest)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"count": 1, "value": "` + expectedToken + `"}`))
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	token, err := fetchGHAOIDCToken(ctx, server.URL, expectedBearer, expectedAudience)
+	if err != nil {
+		t.Fatalf("unexpected error fetching OIDC token: %v", err)
+	}
+	if token != expectedToken {
+		t.Errorf("token = %q, want %q", token, expectedToken)
+	}
+}
+
+func TestFetchGHAOIDCToken_Error(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "server error", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	_, err := fetchGHAOIDCToken(ctx, server.URL, "token", "audience")
+	if err == nil {
+		t.Fatal("expected error on 500 response, got nil")
+	}
+}
+
+func TestGetNiks3OIDCToken_MissingEnv(t *testing.T) {
+	t.Setenv("ACTIONS_ID_TOKEN_REQUEST_URL", "")
+	t.Setenv("ACTIONS_ID_TOKEN_REQUEST_TOKEN", "")
+
+	_, err := getNiks3OIDCToken()
+	if err == nil {
+		t.Fatal("expected error when OIDC env vars are missing, got nil")
+	}
+}
+
+func TestGetOIDCTokenWithRetry_SuccessOnRetry(t *testing.T) {
+	attempts := 0
+	expectedToken := "retry-success-token"
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		if attempts < 2 {
+			http.Error(w, "temporary error", http.StatusServiceUnavailable)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"value": "` + expectedToken + `"}`))
+	}))
+	defer server.Close()
+
+	token, err := getOIDCTokenWithRetry(server.URL, "token", "https://cache.kachick.dev", 3, 1*time.Millisecond, 5*time.Second)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if token != expectedToken {
+		t.Errorf("token = %q, want %q", token, expectedToken)
+	}
+	if attempts != 2 {
+		t.Errorf("attempts = %d, want 2", attempts)
+	}
+}
+
+func TestGetOIDCTokenWithRetry_FailureExhausted(t *testing.T) {
+	attempts := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		http.Error(w, "server error", http.StatusInternalServerError)
+	}))
+	defer server.Close()
+
+	_, err := getOIDCTokenWithRetry(server.URL, "token", "https://cache.kachick.dev", 3, 1*time.Millisecond, 5*time.Second)
+	if err == nil {
+		t.Fatal("expected error when all retry attempts fail, got nil")
+	}
+	if attempts != 3 {
+		t.Errorf("attempts = %d, want 3", attempts)
+	}
+}
+
+func TestCreatePin_Success(t *testing.T) {
+	expectedPin := "dotfiles-main-test"
+	expectedPath := "/nix/store/test-store-path"
+	expectedToken := "test-oidc-token"
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "bad method", http.StatusMethodNotAllowed)
+			return
+		}
+		if r.URL.Path != "/api/pins/"+expectedPin {
+			http.Error(w, "bad path: "+r.URL.Path, http.StatusNotFound)
+			return
+		}
+		if r.Header.Get("Authorization") != "Bearer "+expectedToken {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	if err := createPin(ctx, server.URL, expectedToken, expectedPin, expectedPath); err != nil {
+		t.Fatalf("unexpected error creating pin: %v", err)
+	}
+}
+
+func TestCreatePin_Error(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "forbidden: pin reserved", http.StatusForbidden)
+	}))
+	defer server.Close()
+
+	ctx := context.Background()
+	err := createPin(ctx, server.URL, "token", "dotfiles-main-test", "/nix/store/test")
+	if err == nil {
+		t.Fatal("expected error on 403 response, got nil")
+	}
+}
+
+func TestResolveStorePath(t *testing.T) {
+	t.Run("ValidDirectStorePath", func(t *testing.T) {
+		got, err := resolveStorePath("/nix/store/test-package")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "/nix/store/test-package" {
+			t.Errorf("expected /nix/store/test-package, got %s", got)
+		}
+	})
+
+	t.Run("InvalidNonStorePath", func(t *testing.T) {
+		_, err := resolveStorePath("/tmp/some-path")
+		if err == nil {
+			t.Error("expected error for non-store path, got nil")
+		}
+	})
+
+	t.Run("SymlinkToStorePath", func(t *testing.T) {
+		tmpDir := t.TempDir()
+		symlinkPath := filepath.Join(tmpDir, "profile-link")
+		targetStorePath := "/nix/store/symlink-target-pkg"
+
+		if err := os.Symlink(targetStorePath, symlinkPath); err != nil {
+			t.Skipf("skipping symlink test: %v", err)
+		}
+
+		got, err := resolveStorePath(symlinkPath)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != targetStorePath {
+			t.Errorf("expected %s, got %s", targetStorePath, got)
+		}
+	})
+
+	t.Run("TildeSymlinkToStorePath", func(t *testing.T) {
+		tmpHome := t.TempDir()
+		t.Setenv("HOME", tmpHome)
+		t.Setenv("USERPROFILE", tmpHome)
+
+		profileDir := filepath.Join(tmpHome, ".local", "state", "nix", "profiles")
+		if err := os.MkdirAll(profileDir, 0o755); err != nil {
+			t.Fatalf("failed to create profile dir: %v", err)
+		}
+		symlinkPath := filepath.Join(profileDir, "home-manager")
+		targetStorePath := "/nix/store/hm-generation-pkg"
+		if err := os.Symlink(targetStorePath, symlinkPath); err != nil {
+			t.Skipf("skipping symlink test: %v", err)
+		}
+
+		got, err := resolveStorePath("~/.local/state/nix/profiles/home-manager")
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != targetStorePath {
+			t.Errorf("expected %s, got %s", targetStorePath, got)
+		}
+	})
+}
+
+func TestRunPush_RejectsUnresolvableTildePathBeforePush(t *testing.T) {
+	tmpHome := t.TempDir()
+	t.Setenv("HOME", tmpHome)
+	t.Setenv("USERPROFILE", tmpHome)
+	t.Setenv("NIKS3_SERVER_URL", "")
+
+	err := runPush([]string{"~/.local/state/nix/profiles/nonexistent"})
+	if err == nil {
+		t.Fatal("expected error when tilde path does not resolve to /nix/store, got nil")
 	}
 }

@@ -1,48 +1,21 @@
-# Packages in this repository
+# Packages
 
-This directory contains Nix package definitions, organized by their origin and purpose.
+## Layout
 
-## Directory Structure
-
-- `by-name/`: Packages where the source code is managed in this repository, organized in nixpkgs standard by-name structure (`by-name/<2-prefix>/<pname>`).
-  - Examples: `la`, `lat`, `tanuki-hao`, `lima-full`.
-  - Exposed as: `pkgs.local.<name>`.
-- `pinned/`: (Virtual/Implicit) External packages from `nixpkgs` or other flakes that we explicitly want to build and cache in CI, often for stability or specific versioning.
-  - Examples: `zed-editor`, `kanata-tray`.
-  - Exposed as: `pkgs.pinned.<name>` (or directly in `packages` output).
-
-## Principles
-
-1. **Namespace Separation**: Use explicit namespaces (`local`, `pinned`, `unstable`) to avoid accidental name collisions with upstream `nixpkgs`.
-2. **Transparency vs. Explicitness**:
-   - Use **Transparent Overlays** only when an existing system component (like IBus) expects a specific name (e.g., `mozc`).
-   - Use **Explicit Namespaces** for everything else to keep the origin of a package clear in the configuration files.
-3. **CI Integration**: Packages listed in `packages` output of `flake.nix` are automatically built by the dedicated package workflows.
+- `by-name/<2-prefix>/<pname>/package.nix`: Local packages exposed as `pkgs.local.<name>`. Uses the `nixpkgs` `by-name` layout so tools like `nix-update` work without extra flags.
+- `list.toml`: CI build, test, and `nix-update` metadata. Sync workflows with `task sync-workflows`.
 
 ## Guidelines
 
-- **Shebangs**: Do not apply shebangs manually in scripts; they will be applied by `pkgs.writeShellApplication`.
-- **Implementation**:
-  - Do not directly implement packaging in `default.nix` or `local.nix` to keep lists simple.
-  - Do not directly implement non-tiny scripts in `*.nix` files to ensure better editor/formatter support.
-- **Fileset Usage**:
-  - Avoid `fileset.gitTracked root` as it triggers rebuilds even for unrelated changes (like `README.md`).
-  - [nix-update does not yet support `fileset.gitTracked`](https://github.com/Mic92/nix-update/issues/335), so avoid using it if you need automated updates.
+- Write scripts in separate files rather than inline Nix strings, and let `pkgs.writeShellApplication` generate shebangs.
+- Avoid `fileset.gitTracked root` because it triggers rebuilds on unrelated changes and is [not supported by `nix-update`](https://github.com/Mic92/nix-update/issues/335).
 
-## How to update
+```bash
+# Update vendor hash after dependabot bumps go.mod or Cargo.toml
+nix-update --flake pname --version=skip
+```
 
-Packages exposed in `packages` output can be updated using the standard CLI tools:
+## Design Notes
 
-- **Hash Update**: For Go/Rust packages where dependabot only updates `go.mod` or `Cargo.toml`, use:
-
-  ```console
-  nix-update --flake pname --version=skip
-  ```
-
-- Automated version updates are not currently considered for these local packages.
-
-## Why `nixpkgs-vet` is not enforced
-
-Although `pkgs/by-name/` follows the standard `nixpkgs` layout (`by-name/<2-prefix>/<pname>`), `nixpkgs-vet` is not enforced in CI.
-
-`nixpkgs-vet` strictly forbids packages from referencing files outside their package directory (rule `NPV-123`). In this monorepo, local packages intentionally share top-level resources such as `go.mod`, `internal/`, and shared configuration files under `config/` (via relative paths like `../../../../.`). Restructuring packages to satisfy `nixpkgs-vet` would require duplicating shared files or splitting Go modules, which conflicts with our monorepo design.
+- Why `nixpkgs-vet` is not enforced: Local packages share root `go.mod`, `internal/`, and `config/` via relative paths (`../../../../.`), which `nixpkgs-vet` forbids (`NPV-123`).
+- Why not [NUR](https://github.com/nix-community/NUR): NUR only checks evaluation without building or hosting binary caches, and expects slim repositories rather than a monorepo with full NixOS and Home Manager CI.

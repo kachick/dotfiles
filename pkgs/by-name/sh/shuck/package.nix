@@ -1,0 +1,73 @@
+{
+  lib,
+  fetchFromGitHub,
+  rustPlatform,
+  stdenv,
+  versionCheckHook,
+  nix-update-script,
+}:
+
+# This package is a personal fork of https://github.com/NixOS/nixpkgs/pull/564243 because it is unmerged
+
+rustPlatform.buildRustPackage (finalAttrs: {
+  pname = "shuck";
+  version = "0.2.11";
+
+  __structuredAttrs = true;
+
+  src = fetchFromGitHub {
+    owner = "ewhauser";
+    repo = "shuck";
+    tag = "v${finalAttrs.version}";
+    hash = "sha256-6nHcnmosQgT3d+9Vuk4cjuz2EhaUaanmCrY471/UyEA=";
+  };
+
+  cargoHash = "sha256-y+Mbjz+s1eXBDjPvTUFmAAG9BD/Roliu9FZvs9uYTlc=";
+
+  cargoBuildFlags = [
+    "--package"
+    "shuck-cli"
+  ];
+
+  cargoTestFlags = [
+    "--package"
+    "shuck-cli"
+  ];
+
+  checkFlags = lib.optionals stdenv.hostPlatform.isDarwin [
+    # Watch-mode test is timing sensitive and fails in the sandbox
+    "--skip"
+    "check_watch_reruns_when_files_change"
+  ];
+
+  nativeInstallCheckInputs = [
+    versionCheckHook
+  ];
+  doInstallCheck = true;
+
+  passthru = {
+    updateScript = nix-update-script {
+      extraArgs = [
+        # nix-update does not pass --flake to child scripts: https://github.com/Mic92/nix-update/pull/330
+        "--flake"
+
+        # Don't use GH releases until resolving https://github.com/ewhauser/shuck/issues/1363 and https://github.com/ewhauser/shuck/issues/1367
+        # See also https://github.com/NixOS/nixpkgs/pull/585629#issuecomment-6748876361
+        # "--use-github-releases"
+      ];
+    };
+  };
+
+  meta = {
+    description = "Shell script linter, formatter, and language server";
+    downloadPage = "https://github.com/ewhauser/shuck";
+    homepage = "https://ewhauser.github.io/shuck/";
+    changelog = "https://github.com/ewhauser/shuck/blob/v${finalAttrs.version}/CHANGELOG.md";
+    license = lib.licenses.mit;
+    maintainers = with lib.maintainers; [
+      kachick
+    ];
+    mainProgram = "shuck";
+    platforms = with lib.platforms; unix ++ windows;
+  };
+})

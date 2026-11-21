@@ -11,6 +11,7 @@ let
     "uinput" # Added in GH-1156. Required by keyboard remappers. This will be unassigned when `hardware.uinput.enable = false`.
     "scanner"
     "lp" # Scanner
+    "libvirtd" # GUI VM management
   ];
 
   additionalGroups = attrs.additionalGroups or [ ];

@@ -1,15 +1,17 @@
 {
-  nixpkgs-unstable,
   kanata-tray,
-  home-manager-linux,
+  ghadiag,
+  iets,
+  home-manager,
 }:
 [
   (import ./local.nix)
-  (import ./unstable.nix nixpkgs-unstable)
   (import ./pinned.nix {
     inherit
       kanata-tray
-      home-manager-linux
+      ghadiag
+      iets
+      home-manager
       ;
   })
   (import ./overrides { })

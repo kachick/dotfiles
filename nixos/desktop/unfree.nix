@@ -8,8 +8,9 @@
   environment.systemPackages = with pkgs; [
     ## Unfree packages
 
-    # Don't use unstable channel as possible. It frequently backported to stable channel
-    # ref: https://github.com/NixOS/nixpkgs/commits/nixos-26.05/pkgs/applications/editors/vscode/vscode.nix
+    # Use unstable for vscode.
+    # It is a repackaged binary without cache on cache.nixos.org (unfree).
+    # Unstable keeps up with upstream changes and avoids broken backports on stable.
     #
     # See ./config/vscode/NOTE.md for Wayland flags, IME, and argv.json background
     vscode
@@ -29,11 +30,13 @@
     google-chrome
 
     local.antigravity-cli
+    local.antigravity-hub
   ];
 
   nixpkgs.allowedUnfreePackageNames = [
     "google-chrome"
     "vscode"
     "antigravity-cli"
+    "antigravity-hub"
   ];
 }

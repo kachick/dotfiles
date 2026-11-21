@@ -11,6 +11,7 @@
 let
   # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
+  gitx = lib.getExe pkgs.local.gitx;
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -111,6 +112,23 @@ in
         ff = "only";
       };
 
+      # Not enabling `rerere.autoUpdate`. Reusing an old resolution should be reviewed before staging it.
+      rerere = {
+        enabled = true;
+      };
+
+      merge = {
+        conflictStyle = "zdiff3";
+      };
+
+      rebase = {
+        updateRefs = true;
+      };
+
+      worktree = {
+        guessRemote = true;
+      };
+
       branch = {
         # Candidates: https://github.com/git/git/blob/3c2a3fdc388747b9eaf4a4a4f2035c1c9ddb26d0/ref-filter.c#L902-L959
         # Append `-` prefix if you want to reverse the order: https://gfx.hatenablog.com/entry/2016/06/10/153747
@@ -134,7 +152,7 @@ in
 
       url = {
         # Why?
-        # - ghq default is https, this omit -p option for the ssh push
+        # - gitx get defaults to https, so omit ssh options when pushing
         # - https://blog.n-z.jp/blog/2013-11-28-git-insteadof.html
         "git@github.com:" = {
           pushInsteadOf = [
@@ -144,8 +162,7 @@ in
         };
       };
 
-      # https://github.com/Songmu/ghq-handbook/blob/97d02519598835f635260988cfa45e58ec4afe35/ja/04-command-get.md
-      ghq = {
+      gitx = {
         root = "~/repos";
       };
 
@@ -153,40 +170,65 @@ in
       alias = {
         fixup = "commit --all --amend";
         current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch main 2>/dev/null || git switch master 2>/dev/null";
+        switch-default = "!git switch \"$(${gitx} wt default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        refresh = "!git remote update origin --prune && git switch-default && git pull --prune \"$(git upstream)\" \"$(git current)\"";
-        all = "!git refresh && git-delete-merged-branches";
-        lf = "!${lib.getExe pkgs.local.git-log-fzf}";
-        reset-main = ''
-          !git fetch origin && \
-            git switch main && \
-            git branch -m "backup-main-$(${lib.getExe pkgs.nushell} --commands 'random uuid')" && \
-            git checkout origin/main && \
-            git checkout -b main
-        '';
-        resolve-conflict = "!${lib.getExe pkgs.local.git-resolve-conflict}";
+        all = "!${gitx} refresh && ${gitx} delete-merged-branches";
+        lf = "!${gitx} log-fzf";
+        lfj = "!${gitx} log-fzf --ja";
+        wt = "!${gitx} wt";
+        refresh = "!${gitx} refresh";
+        delete-merged-branches = "!${gitx} delete-merged-branches";
+        init-clean-bare = "!${gitx} init-clean-bare";
+        migrate-clean-bare = "!${gitx} migrate-clean-bare";
+        reset-branch = "!${gitx} reset-branch";
+        resolve-conflict = "!${gitx} resolve-conflict";
+        show-ja = "!${gitx} show --ja";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
       # Config based hooks: https://github.blog/open-source/git/highlights-from-git-2-54/
       # Candidates: https://github.com/git/git/tree/v2.54.0/templates/hooks
+      #
+      # Why not hook managers like pre-commit or prek:
+      # - Git 2.54 natively supports multi-hook dispatch and individual toggles (`hook.<name>.enabled=false`).
+      # - Nix already manages and pins all required tool binaries.
+      # - Frameworks like pre-commit pass working-tree file paths rather than git diffs or refs.
+      #   They cannot directly inspect Git metadata, such as branch names or unified diffs with `--author` filtering.
       hook = {
         commit-msg-no-leaks = {
           event = "commit-msg";
           # betterleaks dir accepts file paths despite its name
-          command = "${lib.getExe pkgs.unstable.betterleaks} --verbose dir";
+          command = "${lib.getExe pkgs.betterleaks} --verbose dir";
         };
 
         commit-msg-no-typos = {
           event = "commit-msg";
-          command = "${lib.getExe pkgs.unstable.typos} --config '${../typos.toml}' ";
+          command = "${lib.getExe pkgs.typos} --config '${../typos.toml}' ";
         };
 
-        # TODO: Split and run for each tool. Currently optimized for each setup, but the maintenance cost is not small
-        pre-push-all = {
-          event = "pre-push"; # Git does not provide hooks for renaming branch, so using in checkout phase is not enough
-          command = lib.getExe pkgs.local.git-hooks-pre-push;
+        # Split hooks so each check can be skipped individually with `hook.<name>.enabled=false`
+        # instead of skipping everything with `--no-verify`.
+        #
+        # Usage:
+        #   - Skip for a single push:
+        #     git -c hook.pre-push-no-typos-in-commits.enabled=false push
+        #   - Disable in a repository:
+        #     git config set hook.pre-push-no-typos-in-commits.enabled false
+        #   - Skip a single commit safely:
+        #     See pkgs/by-name/gi/gitx/README.md
+        pre-push-no-leaks = {
+          event = "pre-push";
+          command = "${gitx} hooks pre-push betterleaks";
+        };
+
+        pre-push-no-typos-in-commits = {
+          event = "pre-push";
+          command = "${gitx} hooks pre-push typos-commits";
+        };
+
+        pre-push-no-typos-in-branch = {
+          event = "pre-push";
+          command = "${gitx} hooks pre-push typos-branch";
         };
       };
     };
@@ -213,12 +255,12 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !cd "$(${lib.getExe pkgs.ghq} root)/github.com/$(git config --global ghq.user)" && \
-            gh repo create "$1" --private --clone --template='kachick/anylang-template' --description='🚧' && \
-              cd "$1" && \
-                gh setup && \
-                  ${lib.getExe pkgs.direnv} allow && \
-                    ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
+          !set -e; owner="$(git config --global gitx.user)"; \
+            gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
+            wt_dir="$(${gitx} get --trust "$owner/$1")"; \
+            cd "$wt_dir"; \
+            gh setup; \
+            ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
         '';
       };
     };
@@ -232,11 +274,9 @@ in
       ];
     };
 
-    extensions =
-      (with pkgs; [ gh-poi ])
-      ++ (with pkgs.local; [
-        gh-actions-lock
-        gh-prs
-      ]);
+    extensions = with pkgs.local; [
+      gh-actions-lock
+      gh-prs
+    ];
   };
 }

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sinelaw/fresh/main/crates/fresh-editor/plugins/config-schema.json",
+  "check_for_updates": false, // Not only for updates, need to disable for telemetry. The blocker for Zero config: https://github.com/sinelaw/fresh/issues/2520
+  "self_update": false,
+  "theme": "builtin://terminal"
+  // "lsp": {
+  //   "bash": [
+  //     { "command": "<FIXME by Nix Absolute path>", "args": ["server"], "enabled": true }
+  //   ]
+  // }
+}

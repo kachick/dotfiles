@@ -1,33 +1,16 @@
-# Windows Subsystem for Linux
+# WSL
 
-## How to install WSL2?
-
-winget does not support it, run as follows
-
-## How to open current directory in WSL2 with Windows Explorer?
-
-In WSL shell
-
-```bash
-explorer.exe .
-```
-
-## How to move on Windows folder from WSL2?
-
-```bash
-z "$(wslpath 'G:\GoogleDrive')"
-```
-
-## Login shell has been broken in WSL2
+Uses WSL 3.0+ package (still runs the WSL 2 architecture; `.wslconfig` keeps `[wsl2]`).
 
 ```pwsh
-wsl --user root
+# Update to WSL 3.0+ (includes wslc.exe; prefer wsl.exe over winget Microsoft.WSL to keep Windows features in sync)
+wsl.exe --update
+wsl.exe --version
 ```
 
-## Setup NixOS on WSL2
+## NixOS on WSL
 
-Use [NixOS](https://github.com/nix-community/NixOS-WSL).\
-You should remember that does not have `/etc/nixos/hardware-configuration.nix` and the [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md).
+Uses [NixOS-WSL](https://github.com/nix-community/NixOS-WSL) (no `/etc/nixos/hardware-configuration.nix`; [default username is `nixos`](https://github.com/nix-community/NixOS-WSL/blob/269411cfed6aab694e46f719277c972de96177bb/docs/src/how-to/change-username.md)):
 
 ```pwsh
 wsl.exe --install --no-distribution
@@ -40,18 +23,33 @@ wsl.exe --distribution "NixOS"
 sudo nix-channel --update
 ```
 
-## Setup Ubuntu on WSL2
+## Ubuntu on WSL
 
 ```pwsh
 wsl.exe --install "Ubuntu-26.04"
 wsl.exe --distribution "Ubuntu-26.04"
 ```
 
-Setup nix and activate home-manager as written in [README](../README.md) with `user@wsl-ubuntu`
+Set up Nix and Home Manager (`user@wsl-ubuntu`) following [home-manager/README.md](../../home-manager/README.md).
 
-Disable cgroup v1 as putting [.wslconfig](.wslconfig) and restart for setting up podman
+Disable cgroup v1 with [.wslconfig](.wslconfig) for rootless Podman:
 
 ```pwsh
-winit-conf.exe generate -path=windows/WSL/.wslconfig  > %UserProfile%\.wslconfig
+winit-conf.exe generate -path=windows/WSL/.wslconfig > %UserProfile%\.wslconfig
 wsl.exe --shutdown
+```
+
+## Tips
+
+```bash
+# Open current WSL directory in Windows Explorer
+explorer.exe .
+
+# Jump to a Windows path from WSL
+z "$(wslpath 'G:\GoogleDrive')"
+```
+
+```pwsh
+# Recover when login shell is broken in WSL
+wsl --user root
 ```

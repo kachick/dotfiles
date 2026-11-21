@@ -1,14 +1,16 @@
 # Development Home Manager module for CLI tools and dev toolchains
 # Inherits essential CLI/Server configurations and adds full dev toolchains.
 
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 {
   imports = [
     ./essential.nix
     ./encryption.nix
+    ./ssh-askpass.nix
     ./git.nix
     ./telemetry.nix
+    ./plamo.nix
   ];
 
   home = {
@@ -19,22 +21,18 @@
       # Setting this is not an ideal state. Because of this env ignores configs on $PWD
       # Reconsider to use trufflehog if core maintainers no longer review https://github.com/gitleaks/gitleaks/pull/1808
       BETTERLEAKS_CONFIG = "${../config/betterleaks/.betterleaks.toml}";
+
+      # Workaround for rust-analyzer error: "ERROR can't load standard library, try installing `rust-src`"
+      RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}";
     };
 
     packages =
       (with pkgs; [
-        # TODO: Replace or drop this mdcat.
-        # Upstream is archived, and startup is slow. Piping to chawan is also not comfortable enough.
-        # Plan to replace with https://github.com/RivoLink/leaf (leaf-markdown-viewer).
-        # Keeping for now because $EDITOR support is unreleased (https://github.com/RivoLink/leaf/commit/a146f09be4567ce81beb530e27cbf340d1f9f13e)
-        # and it is not yet in nixpkgs (https://github.com/NixOS/nixpkgs/pull/564648).
-        mdcat
-        ruby_4_0
+        local.leaf-markdown-viewer # leaf
         _7zz # `7zz` - 7zip. Command is not 7zip.
 
-        ghq
+        jujutsu # `jj`
         direnv
-        yazi
         hexyl # hex viewer
         sad
 
@@ -42,7 +40,6 @@
         # Don't use unstable channels until resolving https://github.com/NixOS/nixpkgs/issues/483562
         chawan # `cha`
 
-        unstable.gurk-rs
         pastel
 
         # How to get the installed font names
@@ -52,48 +49,53 @@
         fastfetch # active replacement of neofetch
 
         # For healthy Nix life
-        unstable.hydra-check
-        unstable.nix-tree
+        hydra-check
+        nix-tree
 
-        unstable.somo
-        unstable.typos
+        somo
+        typos
         hyperfine
         riffdiff # `riff`
         gnumake
-        unstable.betterleaks
+        shellcheck
+
+        betterleaks
         nushell
 
         # For editors
-        unstable.typos-lsp
+        typos-lsp
         # Looks like required to enable gopls
-        unstable.go_1_27
+        go_1_27
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L578
-        unstable.gopls
+        gopls
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L132-L133
         golangci-lint-langserver
-        unstable.typescript_7
+        typescript_7
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L1478
         marksman
         mpls
         # https://github.com/helix-editor/helix/blob/24.03/languages.toml#L94
         vscode-langservers-extracted
-        unstable.nixd
-        unstable.rumdl
-        unstable.systemd-lsp
+        nixd
+        rumdl
+        systemd-lsp
         # Why not rust-analyzer? Rust toolchains depend heavily on project-local devShells,
         # so a global rust-analyzer is rarely useful outside repositories.
       ])
+      ++ (with pkgs.pinned; [
+        iets
+      ])
       ++ (with pkgs.local; [
-        fzf-bind-posix-shell-history-to-git-commit-message
-        git-delete-merged-branches
+        gitx
         todo
-        ghqf
+        task-completions
         walk
         envs
         ir
         bench_shells
         preview
-        renmark
+        shuck
+        conoha-cli
       ]);
 
     shellAliases = {
@@ -106,38 +108,46 @@
     };
   };
 
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
-  programs.direnv = {
-    enable = true;
+  programs = {
+    bash.initExtra = ''
+      source "${pkgs.local.posix_dev_functions}"
+      if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+        bind -x '"\C-g": gx'
+      fi
+    '';
 
-    enableBashIntegration = true;
-    enableZshIntegration = true;
+    zsh.initContent = lib.mkOrder 1001 ''
+      source_sh "${pkgs.local.posix_dev_functions}"
+      gitx-menu-widget() {
+        gx
+        zle reset-prompt
+      }
+      zle     -N            gitx-menu-widget
+      bindkey -M emacs '^G' gitx-menu-widget
+      bindkey -M vicmd '^G' gitx-menu-widget
+      bindkey -M viins '^G' gitx-menu-widget
+    '';
 
-    config.global = {
-      # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
-      hide_env_diff = true;
-    };
-
-    # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
-    #
-    # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
-    # See following reference
-    #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
-    #   - https://github.com/kachick/ruby-ulid/pull/410
-    nix-direnv = {
+    # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix
+    direnv = {
       enable = true;
-    };
-  };
 
-  # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/yazi.nix
-  programs.yazi = {
-    enable = true;
-    shellWrapperName = "y";
-    settings = {
-      # https://github.com/sxyazi/yazi/pull/2803
-      # https://github.com/nix-community/home-manager/pull/7160
-      mgr = {
-        sort_dir_first = true;
+      enableBashIntegration = true;
+      enableZshIntegration = true;
+
+      config.global = {
+        # https://github.com/direnv/direnv/issues/68#issuecomment-2054033048
+        hide_env_diff = true;
+      };
+
+      # Replacement of `programs.direnv.enableNixDirenvIntegration = true;`
+      #
+      # Make much faster, but I may add nix_direnv_watch_file in several repositories when it has `.ruby-version`
+      # See following reference
+      #   - https://github.com/nix-community/nix-direnv/blob/ed2cb75553b4864e3c931a48e3a2cd43b93152c5/README.md?plain=1#L368-L373
+      #   - https://github.com/kachick/ruby-ulid/pull/410
+      nix-direnv = {
+        enable = true;
       };
     };
   };
@@ -156,4 +166,15 @@
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   xdg.configFile."rumdl/rumdl.toml".source = ../config/rumdl/rumdl.toml;
+
+  # Native Ruby extensions link via RPATH to /nix/store paths for libruby and C libraries.
+  # User gem directories are outside Nix GC roots, so Ruby updates or dependency rebuilds plus GC break them with LoadError.
+  # - Why only `extensions`: keeps pure-Ruby global installs (like `irb`) working without Nix gem packaging
+  #   or `ruby.withPackages` (which drops Ruby 4.0 bundled gems from GEM_PATH).
+  # - Why no global `BUNDLE_PATH`: default `bundle gem` `.gitignore` rules lack `vendor/bundle`;
+  #   separate project gems per repo in `.envrc` via `direnv_layout_dir` instead.
+  xdg.dataFile."gem/ruby/${baseNameOf pkgs.ruby_4_0.gemPath}/extensions".text = ''
+    # Block global Ruby C-extension gems; they link via RPATH to /nix/store paths that Nix GC removes on updates or rebuilds.
+    # Install only pure-Ruby gems globally, and separate project gems per repository with BUNDLE_PATH.
+  '';
 }
