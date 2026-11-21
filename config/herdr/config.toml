@@ -14,3 +14,5 @@ enabled = true
 
 [ui]
 status_indicators = "symbols"
+# Default "{hostname}: {workspace}" stays "main" across worktrees; include shell title from set_win_title.
+window_title = "{hostname}: {workspace} ({terminal_title})"
