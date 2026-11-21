@@ -166,6 +166,7 @@
 
   # Highlighting is a core requirement for me: https://github.com/kachick/times_kachick/issues/184#issuecomment-1396670990
   xdg.configFile."brush/config.toml".source = ../config/brush/config.toml;
+  home.file.".brushrc".source = ../config/brush/brushrc.bash;
 
   home.file.".hushlogin".text = "This file disables daily login message. Not depend on this text.";
 

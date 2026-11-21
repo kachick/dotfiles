@@ -97,37 +97,47 @@
     # Don't put shell delegation code into early phase than interactive check such as profileExtra and bashrcExtra , it blocks applying home.file on NixOS. See GH-680 for details
     # There is no ideal option in home-manager bash module for realizing first entry of the interactive shell. https://github.com/nix-community/home-manager/blob/f463902a3f03e15af658e48bcc60b39188ddf734/modules/programs/bash.nix#L227-L240
     # However initExtra is still better option than profileExtra.
-    initExtra =
-      builtins.readFile ./delegate_to_zsh.bash
-      + ''
-        delegate_to_zsh "${lib.getExe pkgs.zsh}" "${lib.getExe' pkgs.procps "ps"}"
-        unset -f delegate_to_zsh
+    initExtra = lib.mkMerge [
+      (
+        builtins.readFile ./delegate_to_zsh.bash
+        + ''
+          delegate_to_zsh "${lib.getExe pkgs.zsh}" "${lib.getExe' pkgs.procps "ps"}"
+          unset -f delegate_to_zsh
 
-        # Workaround for issues likely https://github.com/reubeno/brush/issues/380
-        # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
-        if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
-        	# original fzf providing key-bindigns also makes some warnings in brush
-        	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It makes shell startup much slower
+          # Workaround for issues likely https://github.com/reubeno/brush/issues/380
+          # Don't use the "command -v", it makes it much slower. (+50ms on bash). Prefer https://github.com/reubeno/brush/pull/531 instead
+          if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
+          	# original fzf providing key-bindigns also makes some warnings in brush
+          	source "${pkgs.fzf}/share/fzf/key-bindings.bash" # Don't load completions. It makes shell startup much slower
+          fi
+
+          # Disable `Ctrl + S(no output tty)`
+          ${lib.getExe' pkgs.coreutils "stty"} stop undef
+
+          source "${pkgs.local.posix_shared_functions}"
+
+          # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
+          # shellcheck disable=SC2034
+          starship_precmd_user_func="set_win_title"
+
+          # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
+          # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
+          export LC_TIME='en_DK.UTF-8'
+
+          if [ 'linux' = "$TERM" ]; then
+            adjust_to_linux_vt
+          fi
+        ''
+        + builtins.readFile ./initExtra.bash
+      )
+      (lib.mkAfter ''
+        # brush skips ~/.brushrc in login shells, and Home Manager's .bash_profile only sources ~/.bashrc.
+        # https://brush.sh/how-tos/configuration/#which-files-are-read
+        if [[ -n "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]] && shopt -q login_shell && [[ -r ~/.brushrc ]]; then
+          source ~/.brushrc
         fi
-
-        # Disable `Ctrl + S(no output tty)`
-        ${lib.getExe' pkgs.coreutils "stty"} stop undef
-
-        source "${pkgs.local.posix_shared_functions}"
-
-        # https://github.com/starship/starship/blob/0d98c4c0b7999f5a8bd6e7db68fd27b0696b3bef/docs/uk-UA/advanced-config/README.md#change-window-title
-        # shellcheck disable=SC2034
-        starship_precmd_user_func="set_win_title"
-
-        # To prefer ISO 8601 format. See https://unix.stackexchange.com/questions/62316/why-is-there-no-euro-english-locale
-        # And don't set this in home-manager's sessionVariables. It causes confusing behavior or bugs when using GNOME (or any other DE)
-        export LC_TIME='en_DK.UTF-8'
-
-        if [ 'linux' = "$TERM" ]; then
-          adjust_to_linux_vt
-        fi
-      ''
-      + builtins.readFile ./initExtra.bash;
+      '')
+    ];
 
     logoutExtra = ''
       # when leaving the console clear the screen to increase privacy
