@@ -564,7 +564,7 @@ func menuRepoFzfArgs(query string) []string {
 		"--accept-nth=5..",
 		"--tiebreak=begin,index",
 		"--preview=eza --group-directories-first --icons=always --color=always --no-user --no-time --no-filesize --no-permissions --sort=modified {5..}",
-		"--preview-window=~3",
+		"--preview-window=right,60%,~3",
 	)
 }
 

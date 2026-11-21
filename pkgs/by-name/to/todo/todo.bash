@@ -8,5 +8,5 @@ fi
 # shellcheck disable=SC2016
 git grep --perl-regexp --line-number --column --color=always '\b(?<=TODO|FIXME|BUG)\b\S+' |
 	fzf --ansi --delimiter : --nth 4.. --query "$query" \
-		--preview 'bat {1} --color=always --highlight-line={2}' --preview-window='~3,+{2}+3/4' \
+		--preview 'bat {1} --color=always --highlight-line={2}' --preview-window='right,60%,~3,+{2}+3/4' \
 		--bind 'enter:become("$EDITOR" {1}:{2}:{3})'

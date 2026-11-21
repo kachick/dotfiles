@@ -18,5 +18,5 @@ fd --type f --hidden --follow --exclude .git . "$@" |
 	fzf --query "$query" "${fzf_args[@]}" \
 		--with-shell 'bash -c' \
 		--preview 'preview {}' \
-		--preview-window '~3' \
+		--preview-window 'right,60%,~3' \
 		--bind 'enter:become(case {} in *.md|*.markdown) exec leaf {} ;; *) exec "$EDITOR" {} ;; esac)'

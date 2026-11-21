@@ -18,7 +18,7 @@
     fileWidget.command = defaultCommand;
     fileWidget.options = [
       "--preview '${lib.getExe pkgs.bat} --color=always {}'"
-      "--preview-window '~3'"
+      "--preview-window 'right,60%,~3'"
       ''
         --bind 'enter:execute("$EDITOR" {})'
       ''
@@ -28,6 +28,7 @@
     changeDirWidget.command = "${lib.getExe pkgs.fd} --type d --hidden --exclude .git";
     changeDirWidget.options = [
       "--preview '${lib.getExe pkgs.eza} --color=always --tree {} | head -200'"
+      "--preview-window 'right,60%'"
     ];
 
     colors = {

@@ -73,7 +73,7 @@
       colorscheme = "catppuccin-mocha-transparent";
 
       fzfcmd = lib.getExe pkgs.fzf;
-      fzfarg = "--preview '${lib.getExe pkgs.bat} --color=always {}'";
+      fzfarg = "--preview '${lib.getExe pkgs.bat} --color=always {}' --preview-window 'right,60%'";
       fzfopen = "newtab";
     };
   };
