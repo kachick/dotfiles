@@ -12,7 +12,10 @@
     # It is a repackaged binary without cache on cache.nixos.org (unfree).
     # Unstable keeps up with upstream changes and avoids broken backports on stable.
     #
-    # See ./config/vscode/NOTE.md for Wayland flags, IME, and argv.json background
+    # Keep plain vscode without overrides: nixpkgs generic.nix already includes
+    # libsecret and passes Wayland/IME flags via NIXOS_OZONE_WL.
+    # Do not unset NIXOS_OZONE_WL to hide CLI unknown-option warnings, because
+    # `code .` needs those flags for Wayland IME.
     vscode
 
     # NOTE: Google might extract chrome from themself with `Antitrust` penalties

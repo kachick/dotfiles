@@ -145,11 +145,6 @@ in
   xdg.cacheFile."kanata-tray/.keep".text =
     "kanata-tray exits if the specified directory does not exist";
 
-  # I'm unsure why this file will work on NixOS. It is a customization on Arch and I coudn't find the patches on nixpkgs
-  # - https://github.com/electron/electron/issues/46473#issuecomment-2778637008
-  # - https://wiki.archlinux.org/title/Chromium#Native_Wayland_support
-  xdg.configFile."electron-flags.conf".source = ../config/electron/electron-flags.conf;
-
   # xdg.userDirs creates GUI folders like ~/Desktop and ~/Music.
   # Keep this in desktop.nix because CUI environments (VPS, containers) do not need them.
   #
