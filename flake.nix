@@ -119,41 +119,14 @@
 
       packages = forAllSystems (
         { system, ... }:
-        let
-          pkgs = import nixpkgs {
-            inherit system overlays;
-            config.allowUnfreePredicate =
-              pkg:
-              builtins.elem (nixpkgs.lib.getName pkg) [
-                "antigravity-cli"
-                "antigravity-hub"
-                "cloudflare-warp"
-                "ludii-bin"
-              ];
-          };
-        in
-        (pkgs.lib.recursiveUpdate pkgs.pinned pkgs.local)
-        // {
-          container-layered = import ./containers/layered-image.nix {
-            inherit pkgs;
-            inherit (self) lastModifiedDate;
-            homeConfigurations = outputs.homeConfigurations;
-            corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
-          };
-          microvm-sandbox = pkgs.writeShellApplication {
-            name = "microvm-sandbox";
-            runtimeInputs = [
-              pkgs.coreutils
-              pkgs.gnugrep
-              pkgs.gnused
-              pkgs.iproute2
-              pkgs.openssh
-            ];
-            text = ''
-              export MICROVM_RUN=${pkgs.lib.escapeShellArg "${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run"}
-              exec ${pkgs.lib.getExe pkgs.bash} ${./nixos/hosts/sandbox/microvm-sandbox.bash} "$@"
-            '';
-          };
+        import ./packages.nix {
+          inherit
+            nixpkgs
+            system
+            overlays
+            outputs
+            self
+            ;
         }
       );
 

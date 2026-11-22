@@ -59,7 +59,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    cli["microvm-sandbox (flake.nix -> writeShellApplication)"]
+    cli["microvm-sandbox (package.nix -> writeShellApplication)"]
 
     cli -->|"no args / console"| fg["exec declaredRunner/bin/microvm-run (foreground stdio)"]
 
