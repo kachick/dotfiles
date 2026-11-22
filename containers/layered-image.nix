@@ -2,12 +2,21 @@
   pkgs,
   homeConfigurations,
   corePackages,
+  lastModifiedDate,
 }:
 
 let
   hmConfig = homeConfigurations."user@container";
   hmFiles = "${hmConfig.activationPackage}/home-files";
   hmPath = "${hmConfig.activationPackage}/home-path";
+
+  # Convert flake lastModifiedDate (YYYYMMDDHHMMSS) to ISO-8601 UTC so the
+  # image timestamp is human-readable while staying reproducible per commit.
+  created =
+    let
+      s = builtins.substring;
+    in
+    "${s 0 4 lastModifiedDate}-${s 4 2 lastModifiedDate}-${s 6 2 lastModifiedDate}T${s 8 2 lastModifiedDate}:${s 10 2 lastModifiedDate}:${s 12 2 lastModifiedDate}Z";
 
   baseImage = pkgs.dockerTools.pullImage {
     imageName = "ghcr.io/kachick/ubuntu-26.04-nix-systemd";
@@ -39,9 +48,7 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = "home";
   tag = "latest";
-  # Avoid the default 1970-01-01 timestamp so `podman images` shows the build time.
-  # Layer file mtimes stay at epoch, keeping layer digests and GHCR caching intact.
-  created = "now";
+  inherit created;
   fromImage = baseImage;
   compressor = "zstd";
   includeNixDB = true;
