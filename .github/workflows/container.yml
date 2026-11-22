@@ -1,11 +1,21 @@
 name: ⬢🦭
 on:
   push:
-    tags:
-      - 'v*'
-    # Don't add branch triggers; this workflow is resource-intensive and requires considering concurrency.
-    # branches:
-    #   - main
+    branches: [main]
+    paths:
+      - '.github/workflows/container.yml'
+      - '.github/actions/setup-nix/**'
+      - 'config/**'
+      - 'containers/**'
+      - 'flake.*'
+      - 'home-manager/**'
+      - 'nixos/configuration.nix'
+      - 'nixos/hosts/installer/**'
+      - 'nixos/modules/**'
+      - 'nixos/nix.nix'
+      - 'overlays/**'
+      - 'pkgs/**'
+      - '!**.md'
   # Label-triggered PR runs live in labeler.yml so unrelated labels do not start or cancel this workflow
   workflow_call:
   schedule:
