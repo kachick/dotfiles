@@ -1,6 +1,6 @@
 # Containers
 
-Base image (`ghcr.io/kachick/ubuntu-26.04-nix-systemd`) is maintained in [kachick/containers](https://github.com/kachick/containers).
+Base image (`ghcr.io/kachick/ubuntu-26.04-systemd`) is maintained in [kachick/containers](https://github.com/kachick/containers).
 [layered-image.nix](./layered-image.nix) layers the Nix store closure and Home Manager configuration (`user@container`) on top of that Ubuntu + systemd base image using `dockerTools.buildLayeredImage`.
 
 ## Build and test locally

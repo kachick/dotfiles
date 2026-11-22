@@ -19,11 +19,11 @@ let
     "${s 0 4 lastModifiedDate}-${s 4 2 lastModifiedDate}-${s 6 2 lastModifiedDate}T${s 8 2 lastModifiedDate}:${s 10 2 lastModifiedDate}:${s 12 2 lastModifiedDate}Z";
 
   baseImage = pkgs.dockerTools.pullImage {
-    imageName = "ghcr.io/kachick/ubuntu-26.04-nix-systemd";
-    imageDigest = "sha256:8297d9b421eaa96d22334818e6b6a24ba0173011b55974ac1d49b9b6ca46bc6e";
-    finalImageName = "ghcr.io/kachick/ubuntu-26.04-nix-systemd";
+    imageName = "ghcr.io/kachick/ubuntu-26.04-systemd";
+    imageDigest = "sha256:775110820327c770ee182abcfb6702650573a979fd69c971213957d3bf3031b4";
+    finalImageName = "ghcr.io/kachick/ubuntu-26.04-systemd";
     finalImageTag = "latest";
-    hash = "sha256-O8GCfajqr1DKo2ArYZpA79452IMMC1c90JYL8lOVBBc=";
+    hash = "sha256-ywrePoeEPKL0qcbq715zlQnkTDFaUBmbW4C4kAwSsS8=";
   };
 
   nixSettings = (import ../nixos/nix.nix).nix.settings;
