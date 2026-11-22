@@ -1,45 +1,21 @@
 # Containers
 
-Base images are maintained in [another repository](https://github.com/kachick/containers)
+Base image (`ghcr.io/kachick/ubuntu-26.04-nix-systemd`) is maintained in [kachick/containers](https://github.com/kachick/containers).
+[layered-image.nix](./layered-image.nix) layers the Nix store closure and Home Manager configuration (`user@container`) on top of that Ubuntu + systemd base image using `dockerTools.buildLayeredImage`.
 
-## How to build and test in local
-
-```bash
-podman build --tag nix-systemd --file containers/Containerfile .
-container_id="$(podman run --detach --rm localhost/nix-systemd:latest)"
-podman exec --user=user -it "$container_id" /provisioner/needs_systemd.bash
-podman exec --user=root -it "$container_id" rm -rf /provisioner
-podman commit "$container_id" provisioned-systemd-home
-podman kill "$container_id"
-```
-
-Since now, we can reuse the image as this
+## Build and test locally
 
 ```bash
-container_id="$(podman run --detach --rm localhost/provisioned-systemd-home)"
-podman exec --user=user --workdir='/home/user' -it "$container_id" /home/user/.nix-profile/bin/zsh
+# Build and stream-load into podman
+task build-container
 
-# You can use the container here
-# ~ zsh
-# > la --tree .config
-# drwxr-xr-x - user  9 Mar 00:31 .config
-# drwxr-xr-x - user  9 Mar 00:31 ├── alacritty
-
-podman kill "$container_id"
-```
-
-## Layered container image (experimental)
-
-Build and run a layered container image directly with Nix:
-
-```bash
-# Build and stream-load into podman (fastest)
-task load-container-layered
-
-# Or build the tarball and load with progress
+# Or build the compressed tarball and load with progress
 nix build .#container-layered
 pv result | podman load
 
-# Run the layered container
-podman run --rm -it localhost/home-layered:latest
+# Run smoke tests
+task test-container
+
+# Start an interactive login shell
+task sandbox
 ```

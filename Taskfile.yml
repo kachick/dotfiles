@@ -209,22 +209,18 @@ tasks:
       - './containers/sandbox.bash --ghcr {{.TAG}}'
 
   build-container:
+    aliases:
+      - load-container-layered
+    desc: Build and stream-load the layered container image into podman
     cmds:
       - './containers/build.bash'
 
   test-container:
     desc: Run container smoke tests against local or GHCR image
     vars:
-      IMAGE: '{{.IMAGE | default "localhost/provisioned-systemd-home"}}'
+      IMAGE: '{{.IMAGE | default "localhost/home:latest"}}'
     cmds:
       - './containers/test.bash {{.IMAGE}}'
-
-  load-container-layered:
-    desc: Build and stream-load the layered container image into podman
-    cmds:
-      - |
-        stream_path="$(nix build .#container-layered.passthru.stream --no-link --print-out-paths)"
-        "$stream_path" | podman load
 
   ci-dev:
     desc: Provided for CI

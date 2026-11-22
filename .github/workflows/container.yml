@@ -18,7 +18,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: container-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
@@ -103,6 +103,7 @@ jobs:
       (github.event_name != 'pull_request'))
     permissions:
       contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
       packages: write # Required for pushing container images to GHCR
       pull-requests: write # Required for posting deploy comments
     runs-on: ubuntu-26.04
@@ -114,44 +115,33 @@ jobs:
         run: |
           podman version
           crun --version
-          buildah version
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Build base Image
-        uses: redhat-actions/buildah-build@719e3c40d8af9790c23eca13f7daa339f2867034 # v3.1.0
+      - uses: $/.github/actions/setup-nix
         with:
-          image: systemd-prepared
-          tags: ${{ needs.get-meta.outputs.ref_tag }}
-          containerfiles: |
-            containers/Containerfile
-          oci: true
-      - name: Inspect the created image
+          hestia-read-only: 'true'
+      - name: Build and load layered container image
         env:
           REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
-        run: podman inspect "systemd-prepared:${REF_TAG}"
-      - name: Start systemd
-        id: start-systemd
-        env:
-          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+          SPECIAL_TAG: ${{ needs.get-meta.outputs.special_tag }}
+          TIMESTAMP_TAG: ${{ needs.get-meta.outputs.timestamp_tag }}
         run: |
           set -euxo pipefail
-          container_id="$(podman run --detach --rm "systemd-prepared:${REF_TAG}")"
-          echo container_id="$container_id" | tee -a "$GITHUB_OUTPUT"
-      - name: Wait for the systemd to be ready
-        run: 'sleep 2'
-      - name: Run Nix commands and cleanup provisioners
-        env:
-          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
-        run: |
-          set -euxo pipefail
-          podman exec --user=root -it "${CONTAINER_ID}" nix run '/provisioner/dotfiles#apply-system'
-          podman exec --user=user -it "${CONTAINER_ID}" /provisioner/needs_systemd.bash
-          podman exec --user=root -it "${CONTAINER_ID}" rm -rf /provisioner
+          ./containers/build.bash
+          podman tag "localhost/home:latest" "home:${REF_TAG}"
+          podman tag "home:${REF_TAG}" "home:${SPECIAL_TAG}"
+          podman tag "home:${REF_TAG}" "home:${TIMESTAMP_TAG}"
       - name: Check no personal name in that config
         env:
-          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
         run: |
+          set -euxo pipefail
+          container_id="$(podman run --detach --rm "home:${REF_TAG}")"
+          # shellcheck disable=SC2064
+          trap "podman kill '$container_id'" EXIT ERR
+          sleep 2
+
           # https://unix.stackexchange.com/a/340729
           assign_stdin_to_global_command_variable() {
             command="$(cat)"
@@ -169,21 +159,7 @@ jobs:
           [[ "$ripgrep_exit_code" -eq 1 ]]
           EOF
 
-          podman exec --user=user --workdir=/home/user -it "${CONTAINER_ID}" bash -c "$command"
-      - name: Persist the container to image
-        env:
-          AUTHOR: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          CONTAINER_ID: ${{ steps.start-systemd.outputs.container_id }}
-          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
-          SPECIAL_TAG: ${{ needs.get-meta.outputs.special_tag }}
-          TIMESTAMP_TAG: ${{ needs.get-meta.outputs.timestamp_tag }}
-        run: |
-          podman commit \
-            --author "${AUTHOR}" \
-            "${CONTAINER_ID}" "home:${REF_TAG}"
-          podman kill "${CONTAINER_ID}"
-          podman tag "home:${REF_TAG}" "home:${SPECIAL_TAG}"
-          podman tag "home:${REF_TAG}" "home:${TIMESTAMP_TAG}"
+          podman exec --user=user --workdir=/home/user -it "${container_id}" bash -c "$command"
       - name: Inspect the created image
         env:
           REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
@@ -193,12 +169,12 @@ jobs:
           STARTED_AT: ${{ needs.get-meta.outputs.started_at }}
         run: |
           set -euxo pipefail
+          ./containers/test.bash --image "home:${STARTED_AT}"
           container_id="$(podman run --detach --rm "home:${STARTED_AT}")"
           # shellcheck disable=SC2064
           trap "podman kill '$container_id'" EXIT ERR
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
-          podman exec --user=user "$container_id" '/home/user/.nix-profile/bin/bash' -c 'which fd'
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
       - name: Push To ghcr.io
         id: push-to-ghcr
