@@ -39,6 +39,9 @@ in
 pkgs.dockerTools.buildLayeredImage {
   name = "home";
   tag = "latest";
+  # Avoid the default 1970-01-01 timestamp so `podman images` shows the build time.
+  # Layer file mtimes stay at epoch, keeping layer digests and GHCR caching intact.
+  created = "now";
   fromImage = baseImage;
   compressor = "zstd";
   includeNixDB = true;
