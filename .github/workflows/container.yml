@@ -49,6 +49,7 @@ jobs:
       special_tag: ${{ steps.tags.outputs.special }}
       timestamp_tag: ${{ steps.tags.outputs.timestamp }}
       require_comments: ${{ steps.comments.outputs.require }}
+      already_published: ${{ steps.published.outputs.exists }}
     steps:
       - name: Get started timestamp
         id: timestamp
@@ -89,6 +90,40 @@ jobs:
 
           echo "special=${special}" | tee -a "$GITHUB_OUTPUT"
           echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
+      - name: Check whether commit image already exists in GHCR
+        id: published
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REF_TAG: ${{ steps.tags.outputs.ref }}
+        run: |
+          set -euo pipefail
+
+          # Always allow manual workflow_dispatch and label-triggered pull_request runs to rebuild.
+          if [ "${EVENT_NAME}" = 'workflow_dispatch' ] || [ "${EVENT_NAME}" = 'pull_request' ]; then
+            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          token="$(curl --fail --silent --show-error --location "https://ghcr.io/token?scope=repository:${REPO_OWNER}/${IMAGE_NAME}:pull" | jq --raw-output '.token' || true)"
+          if [ -z "${token}" ]; then
+            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          status="$(
+            curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --head \
+              --header "Authorization: Bearer ${token}" \
+              --header 'Accept: application/vnd.oci.image.manifest.v1+json, application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.v2+json, application/vnd.docker.distribution.manifest.list.v2+json' \
+              "https://ghcr.io/v2/${REPO_OWNER}/${IMAGE_NAME}/manifests/${REF_TAG}" || true
+          )"
+
+          if [ "${status}" = '200' ]; then
+            echo 'exists=true' | tee --append "$GITHUB_OUTPUT"
+          else
+            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
+          fi
   minimize-old-comments:
     needs: [get-meta]
     if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
@@ -109,6 +144,7 @@ jobs:
     needs: [get-meta, minimize-old-comments]
     if: >-
       (! failure()) &&
+      (needs.get-meta.outputs.already_published != 'true') &&
       ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
       (github.event_name != 'pull_request'))
     permissions:
