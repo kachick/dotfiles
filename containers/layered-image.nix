@@ -141,14 +141,49 @@ pkgs.dockerTools.buildLayeredImage {
       }" \
       --state "./home/user/.local/state/dot-writable-sync/state.json"
 
-    # Extract UID and GID of 'user' dynamically from the last base layer containing /etc/passwd
-    base_uid_gid="$(
-      last_layer="$(
+    # Extract files from the latest baseImage layer that contains them
+    extract_from_base() {
+      local target="$1"
+      local layer
+      for layer in $(
         ${pkgs.gnutar}/bin/tar -xOf ${baseImage} manifest.json \
-          | ${pkgs.jq}/bin/jq -r '.[0].Layers[-1]'
-      )"
-      ${pkgs.gnutar}/bin/tar -xOf ${baseImage} "$last_layer" \
-        | ${pkgs.gnutar}/bin/tar -xOf - etc/passwd \
+          | ${pkgs.jq}/bin/jq -r '.[0].Layers | reverse | .[]'
+      ); do
+        if ${pkgs.gnutar}/bin/tar -xOf ${baseImage} "$layer" \
+          | ${pkgs.gnutar}/bin/tar -xOf - "$target" 2>/dev/null; then
+          return 0
+        fi
+        if ${pkgs.gnutar}/bin/tar -xOf ${baseImage} "$layer" \
+          | ${pkgs.gnutar}/bin/tar -xOf - "./$target" 2>/dev/null; then
+          return 0
+        fi
+      done
+      return 1
+    }
+
+    base_passwd="$(extract_from_base etc/passwd)"
+    base_group="$(extract_from_base etc/group)"
+
+    # Add nixbld group and build users (30001..30032) when the base image does not include Nix
+    if ! printf '%s\n' "$base_group" | ${pkgs.gnugrep}/bin/grep -q '^nixbld:'; then
+      mkdir -p ./var/empty
+      chmod 0555 ./var/empty
+      nixbld_members="$(${pkgs.coreutils}/bin/seq -s, -f 'nixbld%g' 1 32)"
+      {
+        printf '%s\n' "$base_group"
+        printf 'nixbld:x:30000:%s\n' "$nixbld_members"
+      } > ./etc/group
+      {
+        printf '%s\n' "$base_passwd"
+        for i in $(${pkgs.coreutils}/bin/seq 1 32); do
+          printf 'nixbld%d:x:%d:30000:Nix build user %d:/var/empty:/usr/sbin/nologin\n' "$i" "$((30000 + i))" "$i"
+        done
+      } > ./etc/passwd
+    fi
+
+    # Extract UID and GID of 'user' dynamically from baseImage /etc/passwd
+    base_uid_gid="$(
+      printf '%s\n' "$base_passwd" \
         | ${pkgs.gawk}/bin/awk -F: '$1 == "user" { print $3 ":" $4 }'
     )"
     if [ -z "$base_uid_gid" ]; then
