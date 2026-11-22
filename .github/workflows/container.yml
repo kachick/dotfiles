@@ -18,10 +18,6 @@ on:
       - '!**.md'
   # Label-triggered PR runs live in labeler.yml so unrelated labels do not start or cancel this workflow
   workflow_call:
-  schedule:
-    # GitHub does not guarantee that workflows start at the scheduled time, even if set to end-of-day(23:59).
-    - cron: '42 23 * * *'
-      timezone: 'Asia/Tokyo'
   workflow_dispatch:
 
 permissions:
@@ -49,7 +45,6 @@ jobs:
       special_tag: ${{ steps.tags.outputs.special }}
       timestamp_tag: ${{ steps.tags.outputs.timestamp }}
       require_comments: ${{ steps.comments.outputs.require }}
-      already_published: ${{ steps.published.outputs.exists }}
     steps:
       - name: Get started timestamp
         id: timestamp
@@ -90,40 +85,6 @@ jobs:
 
           echo "special=${special}" | tee -a "$GITHUB_OUTPUT"
           echo "ref=${ref}" | tee -a "$GITHUB_OUTPUT"
-      - name: Check whether commit image already exists in GHCR
-        id: published
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          REPO_OWNER: ${{ github.repository_owner }}
-          REF_TAG: ${{ steps.tags.outputs.ref }}
-        run: |
-          set -euo pipefail
-
-          # Always allow manual workflow_dispatch and label-triggered pull_request runs to rebuild.
-          if [ "${EVENT_NAME}" = 'workflow_dispatch' ] || [ "${EVENT_NAME}" = 'pull_request' ]; then
-            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          token="$(curl --fail --silent --show-error --location "https://ghcr.io/token?scope=repository:${REPO_OWNER}/${IMAGE_NAME}:pull" | jq --raw-output '.token' || true)"
-          if [ -z "${token}" ]; then
-            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          status="$(
-            curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
-              --head \
-              --header "Authorization: Bearer ${token}" \
-              --header 'Accept: application/vnd.oci.image.manifest.v1+json, application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.v2+json, application/vnd.docker.distribution.manifest.list.v2+json' \
-              "https://ghcr.io/v2/${REPO_OWNER}/${IMAGE_NAME}/manifests/${REF_TAG}" || true
-          )"
-
-          if [ "${status}" = '200' ]; then
-            echo 'exists=true' | tee --append "$GITHUB_OUTPUT"
-          else
-            echo 'exists=false' | tee --append "$GITHUB_OUTPUT"
-          fi
   minimize-old-comments:
     needs: [get-meta]
     if: ${{ needs.get-meta.outputs.require_comments == 'true' }}
@@ -144,9 +105,10 @@ jobs:
     needs: [get-meta, minimize-old-comments]
     if: >-
       (! failure()) &&
-      (needs.get-meta.outputs.already_published != 'true') &&
       ((github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'deploy-staging')) ||
       (github.event_name != 'pull_request'))
+    outputs:
+      pushed: ${{ steps.push-to-ghcr.outcome == 'success' }}
     permissions:
       contents: read
       actions: read # Detect evicted cache entries upfront in hestia
@@ -222,9 +184,58 @@ jobs:
           sleep 2 # Wait for the systemd to be ready
           podman exec --user=user "$container_id" cat /etc/nix/nix.conf
           podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
+      - name: Compare layers with GHCR latest
+        id: compare-ghcr
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
+        run: |
+          set -euo pipefail
+
+          # Always push on manual workflow_dispatch and staging PR runs.
+          if [ "${EVENT_NAME}" = 'workflow_dispatch' ] || [ "${EVENT_NAME}" = 'pull_request' ]; then
+            echo 'should_push=true' | tee --append "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          local_diff_ids="$(podman inspect "home:${REF_TAG}" | jq --compact-output '.[0].RootFS.Layers')"
+          token="$(curl --fail --silent --show-error --location "https://ghcr.io/token?scope=repository:${REPO_OWNER}/${IMAGE_NAME}:pull" | jq --raw-output '.token' || true)"
+          if [ -z "${token}" ]; then
+            echo 'should_push=true' | tee --append "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          config_digest="$(
+            curl --fail --silent --show-error --location \
+              --header "Authorization: Bearer ${token}" \
+              --header 'Accept: application/vnd.oci.image.manifest.v1+json, application/vnd.docker.distribution.manifest.v2+json' \
+              "https://ghcr.io/v2/${REPO_OWNER}/${IMAGE_NAME}/manifests/latest" \
+              | jq --raw-output '.config.digest // empty' || true
+          )"
+          if [ -z "${config_digest}" ]; then
+            echo 'should_push=true' | tee --append "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          remote_diff_ids="$(
+            curl --fail --silent --show-error --location \
+              --header "Authorization: Bearer ${token}" \
+              "https://ghcr.io/v2/${REPO_OWNER}/${IMAGE_NAME}/blobs/${config_digest}" \
+              | jq --compact-output '.rootfs.diff_ids // empty' || true
+          )"
+
+          if [ -n "${remote_diff_ids}" ] && [ "${local_diff_ids}" = "${remote_diff_ids}" ]; then
+            echo 'Image layers match ghcr.io latest; skipping push.'
+            echo 'should_push=false' | tee --append "$GITHUB_OUTPUT"
+          else
+            echo 'should_push=true' | tee --append "$GITHUB_OUTPUT"
+          fi
       - name: Push To ghcr.io
         id: push-to-ghcr
-        if: ${{ github.actor == github.repository_owner }}
+        if: >-
+          ((github.actor == github.repository_owner) || (github.event_name == 'push' && github.ref == 'refs/heads/main')) &&
+          (steps.compare-ghcr.outputs.should_push == 'true')
         env:
           SPECIAL_TAG: ${{ needs.get-meta.outputs.special_tag }}
           REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
@@ -250,7 +261,9 @@ jobs:
           echo "digest=$(cat digest.txt)" >> "$GITHUB_OUTPUT"
       - name: Inspect the package
         id: inspect-package
-        if: ${{ github.actor == github.repository_owner }}
+        if: >-
+          ((github.actor == github.repository_owner) || (github.event_name == 'push' && github.ref == 'refs/heads/main')) &&
+          (steps.compare-ghcr.outputs.should_push == 'true')
         env:
           GITHUB_TOKEN: ${{ github.token }}
           PUSH_OUTPUTS: ${{ toJSON(steps.push-to-ghcr.outputs) }}
@@ -304,7 +317,7 @@ jobs:
   remove-old-images:
     needs: [build_and_push]
     # Always skips if no conditions
-    if: always() && (needs.build_and_push.result == 'success')
+    if: always() && (needs.build_and_push.result == 'success') && (needs.build_and_push.outputs.pushed == 'true')
     permissions:
       packages: write # Required for deleting old GHCR package versions
     uses: kachick/workflows/.github/workflows/reusable-cleanup-ghcr.yml@main # zizmor: ignore[unpinned-uses]
