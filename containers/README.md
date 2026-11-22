@@ -6,6 +6,9 @@ Base image (`ghcr.io/kachick/ubuntu-26.04-systemd`) is maintained in [kachick/co
 ## Build and test locally
 
 ```bash
+# Update base image digest and hash in base-image.json
+nix run .#container-layered.passthru.updateScript
+
 # Build and stream-load into podman
 task build-container
 

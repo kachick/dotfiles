@@ -162,3 +162,87 @@ jobs:
             --base "${DEFAULT_BRANCH}" \
             --title "${PR_TITLE}" \
             --body "${PR_BODY}"
+
+  update-container-base:
+    name: 🆙 Update container base image
+    permissions:
+      contents: write # Required for pushing branches and creating PRs
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    env:
+      PR_BRANCH: bot-update-container-base
+    steps:
+      - name: Generate GitHub Apps token
+        id: publish-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: ${{ vars.SAMU_APP_ID }}
+          private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          token: ${{ steps.publish-token.outputs.token }}
+          persist-credentials: true
+
+      - name: Fetch active PRs by me
+        id: fetch-active-prs
+        env:
+          GITHUB_TOKEN: ${{ steps.publish-token.outputs.token }}
+        run: |
+          count="$(gh pr list --author "@me" --state open --head "${PR_BRANCH}" --json number --jq 'length')"
+          echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
+
+      - name: Prepare Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare Git branch
+        run: |
+          git switch -C "${PR_BRANCH}" "origin/${DEFAULT_BRANCH}"
+
+      - uses: $/.github/actions/setup-nix
+
+      - name: Update base image digest and hash
+        run: |
+          nix run '.#container-layered.passthru.updateScript'
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add containers/base-image.json
+            git commit -m "Update container base image digest"
+          fi
+
+      - name: Count added commits
+        id: count-commits
+        run: |
+          count="$(git rev-list --count "origin/${DEFAULT_BRANCH}..")"
+          echo "count=${count}" | tee -a "$GITHUB_OUTPUT"
+          case "${count}" in
+            0)
+              ;;
+            1)
+              echo "title=$(git log -1 --format=%s)" | tee -a "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::Unexpected commit count: ${count}"
+              exit 1
+              ;;
+          esac
+
+      - run: git push origin "${PR_BRANCH}" --force
+        if: steps.count-commits.outputs.count > 0
+
+      - name: Create PR
+        if: (steps.count-commits.outputs.count > 0) && (steps.fetch-active-prs.outputs.count == 0)
+        env:
+          GITHUB_TOKEN: '${{ steps.publish-token.outputs.token }}'
+          PR_TITLE: ${{ steps.count-commits.outputs.title }}
+          PR_BODY: |
+            Updating container base image digest and hash in `containers/base-image.json`.
+        run: |
+          gh pr create \
+            --base "${DEFAULT_BRANCH}" \
+            --title "${PR_TITLE}" \
+            --body "${PR_BODY}"

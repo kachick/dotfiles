@@ -18,12 +18,41 @@ let
     in
     "${s 0 4 lastModifiedDate}-${s 4 2 lastModifiedDate}-${s 6 2 lastModifiedDate}T${s 8 2 lastModifiedDate}:${s 10 2 lastModifiedDate}:${s 12 2 lastModifiedDate}Z";
 
-  baseImage = pkgs.dockerTools.pullImage {
-    imageName = "ghcr.io/kachick/ubuntu-26.04-systemd";
-    imageDigest = "sha256:775110820327c770ee182abcfb6702650573a979fd69c971213957d3bf3031b4";
-    finalImageName = "ghcr.io/kachick/ubuntu-26.04-systemd";
-    finalImageTag = "latest";
-    hash = "sha256-ywrePoeEPKL0qcbq715zlQnkTDFaUBmbW4C4kAwSsS8=";
+  baseImage = pkgs.dockerTools.pullImage (builtins.fromJSON (builtins.readFile ./base-image.json));
+
+  updateScript = pkgs.writeShellApplication {
+    name = "update-container-base";
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.nix-prefetch-docker
+      pkgs.skopeo
+    ];
+    text = ''
+      base_json="containers/base-image.json"
+      image_name="$(jq -r '.imageName' "$base_json")"
+      current_digest="$(jq -r '.imageDigest' "$base_json")"
+      final_image_name="$(jq -r '.finalImageName' "$base_json")"
+      final_image_tag="$(jq -r '.finalImageTag' "$base_json")"
+
+      latest_digest="$(skopeo --override-os linux --override-arch amd64 --insecure-policy inspect "docker://''${image_name}:''${final_image_tag}" | jq -r '.Digest')"
+      if [[ "$latest_digest" == "$current_digest" ]]; then
+        echo "Base image is already up to date: ''${current_digest}"
+        exit 0
+      fi
+
+      tmp_json="$(mktemp)"
+      trap 'rm -f "$tmp_json"' EXIT
+      nix-prefetch-docker \
+        --quiet \
+        --json \
+        --image-name "$image_name" \
+        --image-digest "$latest_digest" \
+        --final-image-name "$final_image_name" \
+        --final-image-tag "$final_image_tag" \
+        > "$tmp_json"
+      mv "$tmp_json" "$base_json"
+      echo "Updated ''${base_json}: ''${current_digest} -> ''${latest_digest}"
+    '';
   };
 
   nixSettings = (import ../nixos/nix.nix).nix.settings;
@@ -45,7 +74,7 @@ let
     )
   );
 in
-pkgs.dockerTools.buildLayeredImage {
+(pkgs.dockerTools.buildLayeredImage {
   name = "home";
   tag = "latest";
   inherit created;
@@ -206,4 +235,9 @@ pkgs.dockerTools.buildLayeredImage {
       "PATH=/home/user/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     ];
   };
-}
+}).overrideAttrs
+  (old: {
+    passthru = (old.passthru or { }) // {
+      inherit updateScript;
+    };
+  })
