@@ -17,6 +17,7 @@ Options:
   --local [IMAGE]     Run a local image (default: localhost/home:latest)
   --ghcr <TAG>        Pull and run ghcr.io/kachick/home:<TAG>
   --image <IMAGE>     Run a specific image directly
+  --live              Mount the current dotfiles repo read-only at /workspace/dotfiles
   -h, --help          Show this help message
 EOF
 }
@@ -24,6 +25,7 @@ EOF
 sandbox() {
 	local image=""
 	local mode="local"
+	local live=false
 
 	while [[ $# -gt 0 ]]; do
 		case "$1" in
@@ -53,6 +55,10 @@ sandbox() {
 			else
 				shift 1
 			fi
+			;;
+		--live)
+			live=true
+			shift 1
 			;;
 		-h | --help)
 			print_help
@@ -84,7 +90,23 @@ EOF
 		target_image="localhost/home:latest"
 	fi
 
-	local -r container_id="$(podman run --detach --rm "${target_image}")"
+	local -a run_args=(--detach --rm)
+	if [[ "$live" == true ]]; then
+		local repo_root
+		repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+		run_args+=(--volume "${repo_root}:/workspace/dotfiles:ro")
+		# Mask local .env so host tokens or settings are not exposed to the container
+		if [[ -f "${repo_root}/.env" ]]; then
+			run_args+=(--volume "/dev/null:/workspace/dotfiles/.env:ro")
+		fi
+		cat <<EOF
+Live mount enabled: ${repo_root} -> /workspace/dotfiles (read-only)
+Apply changes inside the container with:
+  nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#user@container
+EOF
+	fi
+
+	local -r container_id="$(podman run "${run_args[@]}" "${target_image}")"
 	# shellcheck disable=SC2064
 	trap "podman kill '${container_id}'" EXIT ERR
 	sleep 1 # Wait for the systemd to be ready

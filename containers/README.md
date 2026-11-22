@@ -18,4 +18,13 @@ task test-container
 
 # Start an interactive login shell
 task sandbox
+
+# Start with the current repo mounted read-only at /workspace/dotfiles
+./containers/sandbox.bash --live
+```
+
+Inside a `--live` shell, apply working tree changes without rebuilding the image:
+
+```bash
+nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#user@container
 ```
