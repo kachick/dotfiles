@@ -67,8 +67,9 @@ pkgs.dockerTools.buildLayeredImage {
       ./etc/default \
       ./etc/nix \
       ./etc/ssh \
-      ./etc/systemd/system \
+      ./etc/systemd/system/sockets.target.wants \
       ./usr/lib/locale \
+      ./nix/var/nix/daemon-socket \
       ./nix/var/nix/profiles/per-user/user \
       ./nix/var/nix/gcroots/per-user/user \
       ./home/user/.local/state/nix/profiles \
@@ -90,6 +91,7 @@ pkgs.dockerTools.buildLayeredImage {
     ln -sfn ${pkgs.nix} ./nix/var/nix/profiles/default
     ln -sf ${pkgs.nix}/lib/systemd/system/nix-daemon.service ./etc/systemd/system/nix-daemon.service
     ln -sf ${pkgs.nix}/lib/systemd/system/nix-daemon.socket ./etc/systemd/system/nix-daemon.socket
+    ln -sf ${pkgs.nix}/lib/systemd/system/nix-daemon.socket ./etc/systemd/system/sockets.target.wants/nix-daemon.socket
 
     # Home Manager profile and GC root registration
     ln -sfn ${hmPath} ./home/user/.nix-profile
