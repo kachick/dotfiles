@@ -24,8 +24,12 @@
     "systemd.show_status=auto"
   ];
 
+  # Enable OpenSSH for background exec/ssh over localhost port forwarding.
+  # Inherits PasswordAuthentication = false and PermitRootLogin = "no" from nixos/configuration.nix.
+  services.openssh.enable = true;
+
   # Disable background daemons not needed in ephemeral sandbox
-  services.openssh.enable = false;
+  services.fail2ban.enable = lib.mkForce false;
   services.logrotate.enable = false;
 
   # Auto-optimise store does not work with writableStoreOverlay
@@ -104,6 +108,18 @@
         "${pkgs.util-linux}/sbin/agetty --autologin user --noclear --keep-baud 115200,38400,9600 - linux"
       ];
     };
+  };
+
+  # Order sshd after UID sync and home-manager activation so SSH logins see final UID and shell setup
+  systemd.services.sshd = {
+    after = [
+      "sync-user-uid.service"
+      "home-manager-user.service"
+    ];
+    wants = [
+      "sync-user-uid.service"
+      "home-manager-user.service"
+    ];
   };
 
   # Ensure user state directories exist and owned by user before home-manager activation script runs
@@ -232,6 +248,7 @@
     extraGroups = [ "wheel" ];
     password = "";
     shell = pkgs.zsh;
+    openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
 
   security.sudo.enable = lib.mkForce false;

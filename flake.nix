@@ -140,15 +140,20 @@
             homeConfigurations = outputs.homeConfigurations;
             corePackages = outputs.nixosConfigurations.installer.config.environment.corePackages;
           };
-          microvm-sandbox =
-            pkgs.runCommand "microvm-sandbox"
-              {
-                meta.mainProgram = "microvm-sandbox";
-              }
-              ''
-                mkdir -p $out/bin
-                ln -s ${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run $out/bin/microvm-sandbox
-              '';
+          microvm-sandbox = pkgs.writeShellApplication {
+            name = "microvm-sandbox";
+            runtimeInputs = [
+              pkgs.coreutils
+              pkgs.gnugrep
+              pkgs.gnused
+              pkgs.iproute2
+              pkgs.openssh
+            ];
+            text = ''
+              export MICROVM_RUN=${pkgs.lib.escapeShellArg "${outputs.nixosConfigurations.sandbox.config.microvm.declaredRunner}/bin/microvm-run"}
+              exec ${pkgs.lib.getExe pkgs.bash} ${./nixos/hosts/sandbox/microvm-sandbox.bash} "$@"
+            '';
+          };
         }
       );
 
