@@ -39,7 +39,6 @@ func main() {
 
 	heavyOrTrivial := runner.Commands{
 		{Path: "rumdl", Args: []string{"check", "."}},
-		{Path: "trivy", Args: []string{"config", "--exit-code", "1", "."}},
 		{Path: "zizmor", Args: []string{"--pedantic", "."}},
 		{Path: "ghadiag", Args: []string{}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},

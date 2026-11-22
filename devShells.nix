@@ -25,9 +25,6 @@
 
         shellcheck
 
-        trivy
-        skopeo
-
         desktop-file-utils # `desktop-file-validate` as a linter
         kanata # Enable on devshell for using the --check as a linter
 
