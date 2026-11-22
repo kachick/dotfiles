@@ -130,38 +130,6 @@
         }
       );
 
-      apps = forAllSystems (
-        { pkgs, system }:
-        {
-          home-manager = {
-            type = "app";
-            program = pkgs.lib.getExe home-manager.packages.${system}.home-manager;
-          };
-          gen-nix-cache-conf = {
-            type = "app";
-            program = pkgs.lib.getExe pkgs.local.gen-nix-cache-conf;
-          };
-          list-shared-gomod-pkgs = {
-            type = "app";
-            program =
-              let
-                script = pkgs.writeShellScriptBin "list-shared-gomod-pkgs" ''
-                  ${pkgs.lib.getExe pkgs.nix} eval --raw ".#packages.${system}" --apply 'ps: builtins.concatStringsSep "\n" (builtins.filter (n: ps.''${n}.passthru.shared-gomod or false) (builtins.attrNames ps))'
-                '';
-              in
-              pkgs.lib.getExe script;
-          };
-          microvm-sandbox = {
-            type = "app";
-            program = pkgs.lib.getExe outputs.packages.${system}.microvm-sandbox;
-          };
-          flake-edit = {
-            type = "app";
-            program = pkgs.lib.getExe pkgs.flake-edit;
-          };
-        }
-      );
-
       nixosConfigurations = import ./nixos {
         inherit
           nixpkgs
