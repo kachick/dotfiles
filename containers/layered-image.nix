@@ -129,8 +129,21 @@ pkgs.dockerTools.buildLayeredImage {
       }" \
       --state "./home/user/.local/state/dot-writable-sync/state.json"
 
-    # Match UID/GID 30033 of 'user' in ghcr.io/kachick/ubuntu-26.04-nix-systemd
-    ${pkgs.coreutils}/bin/chown -R 30033:30033 \
+    # Extract UID and GID of 'user' dynamically from the last base layer containing /etc/passwd
+    base_uid_gid="$(
+      last_layer="$(
+        ${pkgs.gnutar}/bin/tar -xOf ${baseImage} manifest.json \
+          | ${pkgs.jq}/bin/jq -r '.[0].Layers[-1]'
+      )"
+      ${pkgs.gnutar}/bin/tar -xOf ${baseImage} "$last_layer" \
+        | ${pkgs.gnutar}/bin/tar -xOf - etc/passwd \
+        | ${pkgs.gawk}/bin/awk -F: '$1 == "user" { print $3 ":" $4 }'
+    )"
+    if [ -z "$base_uid_gid" ]; then
+      echo "Error: Could not find 'user' entry in baseImage /etc/passwd" >&2
+      exit 1
+    fi
+    ${pkgs.coreutils}/bin/chown -R "$base_uid_gid" \
       ./home/user \
       ./nix/var/nix/profiles/per-user/user \
       ./nix/var/nix/gcroots/per-user/user
