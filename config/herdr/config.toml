@@ -16,3 +16,7 @@ enabled = true
 status_indicators = "symbols"
 # Default "{hostname}: {workspace}" stays "main" across worktrees; include shell title from set_win_title.
 window_title = "{hostname}: {workspace} ({terminal_title})"
+
+[ui.sidebar.spaces]
+# Default ["state_icon", "workspace"] shows only "main" across worktrees; include repo name reported by shell precmd.
+rows = [["state_icon", "$repo", "workspace"], ["branch", "git_status"]]

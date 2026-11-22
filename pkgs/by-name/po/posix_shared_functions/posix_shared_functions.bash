@@ -76,4 +76,51 @@ set_win_title() {
 	fi
 
 	printf '\033]0; %s \007' "$title"
+	sync_herdr_space_repo
+}
+
+# Report repository name for worktrees to herdr's sidebar without blocking precmd.
+sync_herdr_space_repo() {
+	if [ "${HERDR_ENV:-}" != "1" ] || [ -z "${HERDR_WORKSPACE_ID:-}" ]; then
+		return 0
+	fi
+	if [ "$PWD" = "${_herdr_last_pwd:-}" ]; then
+		return 0
+	fi
+	_herdr_last_pwd="$PWD"
+
+	local workspace_id="$HERDR_WORKSPACE_ID"
+	local herdr_bin="${HERDR_BIN_PATH:-herdr}"
+	local pwd_now="$PWD"
+
+	# Double-subshell avoids shell job-control notices in both bash and zsh.
+	(
+		(
+			common_dir="$(git -C "$pwd_now" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" || common_dir=""
+			toplevel="$(git -C "$pwd_now" rev-parse --show-toplevel 2>/dev/null)" || toplevel=""
+
+			if [ -n "$common_dir" ] && [ -n "$toplevel" ]; then
+				while [ "$common_dir" != "/" ] && [ "${common_dir%/}" != "$common_dir" ]; do
+					common_dir="${common_dir%/}"
+				done
+				common_base="${common_dir##*/}"
+				if [ "$common_base" = ".git" ] || [ "$common_base" = ".bare" ]; then
+					parent="${common_dir%/*}"
+					repo="${parent##*/}"
+				else
+					repo="${common_base%.git}"
+				fi
+				toplevel_base="${toplevel##*/}"
+			else
+				repo=""
+				toplevel_base=""
+			fi
+
+			if [ -n "$repo" ] && [ "$repo" != "$toplevel_base" ]; then
+				"$herdr_bin" workspace report-metadata "$workspace_id" --source shell --token "repo=$repo"
+			else
+				"$herdr_bin" workspace report-metadata "$workspace_id" --source shell --clear-token repo
+			fi
+		) >/dev/null 2>&1 &
+	)
 }
