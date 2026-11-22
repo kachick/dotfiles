@@ -64,6 +64,7 @@ jobs:
     if: github.event.label.name == 'deploy-staging'
     permissions:
       contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
       packages: write # Required for pushing container images to GHCR
       pull-requests: write # Required for posting and minimizing PR comments
     uses: $/.github/workflows/container.yml

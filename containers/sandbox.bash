@@ -14,7 +14,7 @@ print_help() {
 Usage: sandbox.bash [OPTIONS]
 
 Options:
-  --local [IMAGE]     Run a local image (default: localhost/provisioned-systemd-home)
+  --local [IMAGE]     Run a local image (default: localhost/home:latest)
   --ghcr <TAG>        Pull and run ghcr.io/kachick/home:<TAG>
   --image <IMAGE>     Run a specific image directly
   -h, --help          Show this help message
@@ -81,7 +81,7 @@ EOF
 	elif [[ -n "$image" ]]; then
 		target_image="$image"
 	else
-		target_image="localhost/provisioned-systemd-home"
+		target_image="localhost/home:latest"
 	fi
 
 	local -r container_id="$(podman run --detach --rm "${target_image}")"
