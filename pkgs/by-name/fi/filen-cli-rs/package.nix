@@ -14,7 +14,7 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "filen-cli-rs";
-  version = "0.2.9";
+  version = "0.3.0";
 
   __structuredAttrs = true;
 
@@ -22,10 +22,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
     owner = "FilenCloudDienste";
     repo = "filen-rs";
     tag = "filen-cli@v${finalAttrs.version}";
-    hash = "sha256-OIqutQawSjowKp08A2pbsSLxHOmPESEWHi3Y/E2v0/Q=";
+    hash = "sha256-y2Xlbx5/TdEpJTpXjD7hjvHKwJUe7c1x0q9Iosnz55M=";
   };
 
-  cargoHash = "sha256-PNRj89hYOcBw1CsqWVn/HXtTQuz/afQq7ZwCzG7a16o=";
+  cargoHash = "sha256-vqtHZ7TQt3vCp4suQg915mmG2vbhPstdyLRDPm9vTnY=";
 
   buildAndTestSubdir = "filen-cli";
 
@@ -52,11 +52,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     OPENSSL_NO_VENDOR = true;
     ZSTD_SYS_USE_PKG_CONFIG = true;
   };
-
-  cargoTestFlags = [
-    # Avoid tests under filen-cli/tests/ that require a real account
-    "--lib"
-  ];
 
   nativeInstallCheckInputs = [
     versionCheckHook
