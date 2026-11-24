@@ -57,9 +57,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ''
   + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd filen \
-      --bash <("$out/bin/filen" completion bash) \
-      --fish <("$out/bin/filen" completion fish) \
-      --zsh <("$out/bin/filen" completion zsh)
+      --bash <("$out/bin/filen" completions bash) \
+      --fish <("$out/bin/filen" completions fish) \
+      --zsh <("$out/bin/filen" completions zsh)
   '';
 
   nativeInstallCheckInputs = [
