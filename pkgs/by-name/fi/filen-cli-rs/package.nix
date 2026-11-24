@@ -53,11 +53,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     ZSTD_SYS_USE_PKG_CONFIG = true;
   };
 
-  cargoTestFlags = [
-    # Avoid tests under filen-cli/tests/ that require a real account
-    "--lib"
-  ];
-
   nativeInstallCheckInputs = [
     versionCheckHook
   ];
