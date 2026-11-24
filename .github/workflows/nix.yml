@@ -171,6 +171,9 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
+        with:
+          # Share newly built PR packages with downstream home-manager and nixos jobs
+          hestia-read-only: 'false'
       - name: Warm up
         id: warmup
         run: go run ./cmd/ci-build warmup packages
@@ -271,8 +274,10 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache: true
-      # Keep default read-write mode: other jobs or later runs may reuse the home-manager cache
       - uses: $/.github/actions/setup-nix
+        with:
+          # Share newly built PR home-manager outputs with downstream nixos and staging container jobs
+          hestia-read-only: 'false'
 
       - name: Print some dotfiles overviews
         run: |
@@ -339,9 +344,6 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
       - uses: $/.github/actions/setup-nix
-        with:
-          # NixOS is the last job in this workflow, and its cache is too large for the quota
-          hestia-read-only: 'true'
       - name: Warm up
         id: warmup
         run: go run ./cmd/ci-build warmup nixos
@@ -391,7 +393,6 @@ jobs:
       (github.event_name == 'workflow_dispatch' && (inputs.target == 'all' || inputs.target == 'nixos-iso'))
     permissions:
       contents: read
-      actions: read # Detect evicted cache entries upfront in hestia
     runs-on: ubuntu-26.04
     timeout-minutes: 180
     steps:
@@ -400,9 +401,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: $/.github/actions/setup-nix
-        with:
-          # ISO image closure is huge and artifact is uploaded separately
-          hestia-read-only: 'true'
       - name: Logging disk space before build
         run: df -h
       - name: Build NixOS ISO
