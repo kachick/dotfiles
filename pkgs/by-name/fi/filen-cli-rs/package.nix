@@ -3,6 +3,7 @@
   fetchFromGitHub,
   rustPlatform,
   pkg-config,
+  writableTmpDirAsHomeHook,
   installShellFiles,
   sqlite,
   openssl,
@@ -33,6 +34,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeBuildInputs = [
     pkg-config
+    writableTmpDirAsHomeHook # Required to build shell completions
     installShellFiles
   ];
 
