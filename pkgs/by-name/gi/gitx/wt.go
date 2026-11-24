@@ -987,6 +987,32 @@ func allWTSubcommands() []wtSubcommand {
 			run: wtRunAddWithUI,
 		},
 		{
+			name:          "pr",
+			usage:         "pr [--repo <OWNER/REPO>] [--trust] <number|url|branch>",
+			description:   "Check out a GitHub PR into a flat worktree",
+			outputsTarget: true,
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _, _ := newWTPRFlagSet(stderr)
+				return fs
+			},
+			run: func(args []string, workDir string, _ wtInteractiveUI, stdout, stderr io.Writer) error {
+				return wtRunPRWithDeps(args, workDir, wtPRDeps{}, stdout, stderr)
+			},
+		},
+		{
+			name:          "promote",
+			usage:         "promote [--trust]",
+			description:   "Move the current branch into its own flat worktree",
+			outputsTarget: true,
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				fs, _ := newWTPromoteFlagSet(stderr)
+				return fs
+			},
+			run: func(args []string, workDir string, _ wtInteractiveUI, stdout, stderr io.Writer) error {
+				return wtRunPromote(args, workDir, stdout, stderr)
+			},
+		},
+		{
 			name:          "path",
 			usage:         "path [<name>]",
 			description:   "Print worktree path for <name> or default branch",
@@ -1032,7 +1058,7 @@ func allWTSubcommands() []wtSubcommand {
 }
 
 func printCdHelperUsage(w io.Writer) {
-	fmt.Fprintf(w, "Usage: wt [<query> | add ... | path ... | select ...]\n\n")
+	fmt.Fprintf(w, "Usage: wt [<query> | add ... | pr ... | promote | path ... | select ...]\n\n")
 	fmt.Fprintf(w, "Switch to or create a flat git worktree and print the target directory for shell cd.\n")
 	fmt.Fprintf(w, "Non-cd commands like `list` or `default-branch` should be run via `git wt`.\n")
 }
