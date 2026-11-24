@@ -49,5 +49,18 @@
     "dependencies/*sh/": true
   },
   "rumdl.configPath": ".rumdl.toml",
-  "rumdl.server.path": "rumdl"
+  "rumdl.server.path": "rumdl",
+  // Tint outer chrome to distinguish fullscreen windows from similar repos
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#1d3b38",
+    "titleBar.activeForeground": "#e0e8e7",
+    "titleBar.inactiveBackground": "#152a28",
+    "titleBar.inactiveForeground": "#9bb0ae",
+    "activityBar.background": "#1d3b38",
+    "activityBar.foreground": "#e0e8e7",
+    "activityBar.inactiveForeground": "#9bb0ae",
+    "activityBar.activeBorder": "#7ec8be",
+    "statusBar.background": "#1d3b38",
+    "statusBar.foreground": "#e0e8e7"
+  }
 }
