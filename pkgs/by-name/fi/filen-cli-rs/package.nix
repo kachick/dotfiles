@@ -3,9 +3,11 @@
   fetchFromGitHub,
   rustPlatform,
   pkg-config,
+  installShellFiles,
   sqlite,
   openssl,
   zstd,
+  stdenv,
   versionCheckHook,
   nix-update-script,
 }:
@@ -31,6 +33,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeBuildInputs = [
     pkg-config
+    installShellFiles
   ];
 
   buildInputs = [
@@ -48,6 +51,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
     # https://github.com/FilenCloudDienste/filen-rs/commit/29eb4bcd797229958dc0ef6ab12d9a8f8424b200
     RUSTFLAGS = "-Zhigher-ranked-assumptions";
   };
+
+  postInstall = ''
+    mv "$out/bin/filen-cli" "$out/bin/filen"
+  ''
+  + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+    installShellCompletion --cmd filen \
+      --bash <("$out/bin/filen" completion bash) \
+      --fish <("$out/bin/filen" completion fish) \
+      --zsh <("$out/bin/filen" completion zsh)
+  '';
 
   nativeInstallCheckInputs = [
     versionCheckHook
@@ -78,7 +91,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     maintainers = with lib.maintainers; [
       kachick
     ];
-    mainProgram = "filen-cli";
+    mainProgram = "filen";
     platforms = with lib.platforms; unix ++ windows;
   };
 })
