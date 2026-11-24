@@ -14,15 +14,17 @@ type changeResult struct {
 	Packages    bool
 	HomeManager bool
 	Nixos       bool
+	Container   bool
 	FlakeLock   bool
 }
 
 func (r changeResult) formatGitHubOutputs() string {
 	return fmt.Sprintf(
-		"packages=%t\nhome-manager=%t\nnixos=%t\nflake-lock=%t\n",
+		"packages=%t\nhome-manager=%t\nnixos=%t\ncontainer=%t\nflake-lock=%t\n",
 		r.Packages,
 		r.HomeManager,
 		r.Nixos,
+		r.Container,
 		r.FlakeLock,
 	)
 }
@@ -52,6 +54,7 @@ func classifyChanges(eventName, target string, changedFiles []string) changeResu
 			Packages:    true,
 			HomeManager: true,
 			Nixos:       true,
+			Container:   eventName == "push",
 			FlakeLock:   false,
 		}
 	}
@@ -65,6 +68,10 @@ func classifyChanges(eventName, target string, changedFiles []string) changeResu
 
 		if eventName == "pull_request" && p == "flake.lock" {
 			res.FlakeLock = true
+		}
+
+		if eventName == "push" && isContainerInputPath(p) {
+			res.Container = true
 		}
 
 		if isCoreNixCIPath(p) {
@@ -89,6 +96,31 @@ func classifyChanges(eventName, target string, changedFiles []string) changeResu
 	}
 
 	return res
+}
+
+func isContainerInputPath(p string) bool {
+	if strings.HasSuffix(p, ".md") {
+		return false
+	}
+	switch p {
+	case ".github/workflows/container.yml", "flake.nix", "flake.lock", "nixos/configuration.nix", "nixos/nix.nix":
+		return true
+	}
+	for _, prefix := range []string{
+		".github/actions/setup-nix/",
+		"config/",
+		"containers/",
+		"home-manager/",
+		"nixos/hosts/installer/",
+		"nixos/modules/",
+		"overlays/",
+		"pkgs/",
+	} {
+		if strings.HasPrefix(p, prefix) {
+			return true
+		}
+	}
+	return false
 }
 
 func isCoreNixCIPath(p string) bool {

@@ -93,6 +93,7 @@ func TestClassifyChanges(t *testing.T) {
 				Packages:    true,
 				HomeManager: true,
 				Nixos:       true,
+				Container:   true,
 				FlakeLock:   false,
 			},
 		},
@@ -119,24 +120,26 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
-			name:         "config or typos.toml change runs packages and home-manager but skips nixos",
+			name:         "config or typos.toml change runs packages, home-manager, and container on push",
 			event:        "push",
 			changedFiles: []string{"config/mozc/ibus_config.textproto", "typos.toml"},
 			want: changeResult{
 				Packages:    true,
 				HomeManager: true,
 				Nixos:       false,
+				Container:   true,
 				FlakeLock:   false,
 			},
 		},
 		{
-			name:         "ci-build change runs packages and home-manager but skips nixos",
+			name:         "ci-build change runs packages and home-manager but skips nixos and container",
 			event:        "push",
 			changedFiles: []string{"cmd/ci-build/main.go", "cmd/ci-build/main_test.go"},
 			want: changeResult{
 				Packages:    true,
 				HomeManager: true,
 				Nixos:       false,
+				Container:   false,
 				FlakeLock:   false,
 			},
 		},
@@ -163,6 +166,42 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
+			name:         "containers only change on push runs only container",
+			event:        "push",
+			changedFiles: []string{"containers/build.bash"},
+			want: changeResult{
+				Packages:    false,
+				HomeManager: false,
+				Nixos:       false,
+				Container:   true,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "containers markdown change on push skips container",
+			event:        "push",
+			changedFiles: []string{"containers/README.md"},
+			want: changeResult{
+				Packages:    false,
+				HomeManager: false,
+				Nixos:       false,
+				Container:   false,
+				FlakeLock:   false,
+			},
+		},
+		{
+			name:         "nixos host unrelated to container on push skips container",
+			event:        "push",
+			changedFiles: []string{"nixos/hosts/wsl/default.nix"},
+			want: changeResult{
+				Packages:    false,
+				HomeManager: false,
+				Nixos:       true,
+				Container:   false,
+				FlakeLock:   false,
+			},
+		},
+		{
 			name:         "flake.lock on pull_request runs all jobs including diff",
 			event:        "pull_request",
 			changedFiles: []string{"flake.lock"},
@@ -174,13 +213,14 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
-			name:         "flake.lock on push runs all build jobs without PR diff",
+			name:         "flake.lock on push runs all build jobs including container without PR diff",
 			event:        "push",
 			changedFiles: []string{"flake.lock"},
 			want: changeResult{
 				Packages:    true,
 				HomeManager: true,
 				Nixos:       true,
+				Container:   true,
 				FlakeLock:   false,
 			},
 		},
@@ -217,6 +257,7 @@ func TestRunChanges_FormatOutput(t *testing.T) {
 		"packages=true",
 		"home-manager=true",
 		"nixos=true",
+		"container=false",
 		"flake-lock=false",
 	} {
 		if !strings.Contains(got, expectedLine+"\n") {

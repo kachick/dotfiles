@@ -4,10 +4,12 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/nix.yml'
+      - '.github/workflows/container.yml'
       - '.github/actions/**'
       - 'Taskfile.yml'
       - 'cmd/**'
       - 'config/**'
+      - 'containers/**'
       - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -24,10 +26,12 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - '.github/workflows/nix.yml'
+      - '.github/workflows/container.yml'
       - '.github/actions/**'
       - 'Taskfile.yml'
       - 'cmd/**'
       - 'config/**'
+      - 'containers/**'
       - 'internal/**'
       - 'pkgs/**'
       - 'home-manager/**'
@@ -76,6 +80,7 @@ jobs:
       packages: ${{ steps.detect.outputs.packages }}
       home-manager: ${{ steps.detect.outputs.home-manager }}
       nixos: ${{ steps.detect.outputs.nixos }}
+      container: ${{ steps.detect.outputs.container }}
       flake-lock: ${{ steps.detect.outputs.flake-lock }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -310,7 +315,7 @@ jobs:
 
   nixos:
     name: ⚙️ NixOS
-    needs: [changes, packages]
+    needs: [changes, packages, home-manager]
     if: >-
       always() &&
       !failure() &&
@@ -359,6 +364,23 @@ jobs:
           from-dir: ${{ env.CI_BUILD_OUT_PATHS_DIR }}
           pin-name: dotfiles-main-nixos-desktop-free
           pin-flake-attr: .#nixosConfigurations.desktop-free.config.system.build.toplevel
+
+  container:
+    name: ⬢🦭 Container
+    needs: [changes, packages, home-manager]
+    if: >-
+      always() &&
+      !failure() &&
+      !cancelled() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.changes.outputs.container == 'true'
+    permissions:
+      contents: read
+      actions: read # Detect evicted cache entries upfront in hestia
+      packages: write # Required for pushing container images to GHCR
+      pull-requests: write # Required by reusable workflow jobs for PR comments
+    uses: $/.github/workflows/container.yml
 
   nixos-iso:
     name: 💿 NixOS ISO
