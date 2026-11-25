@@ -135,6 +135,8 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 		!strings.Contains(plainArgs, wantToggleBind) ||
 		!strings.Contains(plainArgs, wantZoomBind) ||
 		strings.Contains(plainArgs, "enter:") ||
+		strings.Contains(plainArgs, "--height") ||
+		strings.Contains(plainArgs, "--tmux") ||
 		strings.Contains(plainArgs, "ansi2txt") ||
 		strings.Contains(plainArgs, "xargs") {
 		t.Errorf("unexpected plain fzf args:\n%s", plainArgs)
