@@ -37,13 +37,14 @@ tasks:
   test:
     desc: Make sure NixOS and/or home-manager will work for current user and device
     deps:
+      - build-cmd
       - test-go
       - test-sample-nixos
       - check-nixos
       - test-home-session-vars
       - test-shell-delegation
     cmds:
-      - ./scripts/dry.bash {{.CLI_ARGS}}
+      - ./dist/dot-task apply --dry-run
 
   test-home-session-vars:
     desc: Verify non-NixOS Home Manager session variables in sandbox

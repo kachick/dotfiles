@@ -93,6 +93,42 @@ func TestRunApply(t *testing.T) {
 		}
 	})
 
+	t.Run("dry-run on NixOS uses nixos-rebuild build without sudo", func(t *testing.T) {
+		var calls []recordedCall
+		e := testEnv(&calls)
+		e.fileExists = func(path string) bool { return path == nixosMarkerPath }
+
+		if err := run([]string{"apply", "--dry-run"}, e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		want := []recordedCall{{
+			name: "nixos-rebuild",
+			args: []string{"build", "--flake", ".#moss", "--show-trace"},
+		}}
+		if !reflect.DeepEqual(calls, want) {
+			t.Fatalf("calls = %+v, want %+v", calls, want)
+		}
+	})
+
+	t.Run("dry-run on home-manager passes -n flag", func(t *testing.T) {
+		var calls []recordedCall
+		e := testEnv(&calls)
+		e.hostname = func() (string, error) { return "lima", nil }
+
+		if err := run([]string{"apply", "--dry-run"}, e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		want := []recordedCall{{
+			name: "nix",
+			args: []string{"run", ".#home-manager", "--", "switch", "-n", "-b", "backup", "--show-trace", "--flake", ".#user@lima"},
+		}}
+		if !reflect.DeepEqual(calls, want) {
+			t.Fatalf("calls = %+v, want %+v", calls, want)
+		}
+	})
+
 	t.Run("rejects extra arguments", func(t *testing.T) {
 		var calls []recordedCall
 		if err := run([]string{"apply", "moss"}, testEnv(&calls)); err == nil {

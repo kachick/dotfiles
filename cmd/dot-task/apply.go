@@ -3,28 +3,48 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
+	"io"
 	"slices"
 	"strings"
 )
 
 const nixosMarkerPath = "/etc/NIXOS"
 
+func parseApplyFlags(name string, args []string) (dryRun bool, err error) {
+	fs := flag.NewFlagSet(name, flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+	dryRunFlag := fs.Bool("dry-run", false, "Run without activating changes")
+	if err := fs.Parse(args); err != nil {
+		return false, fmt.Errorf("usage: dot-task %s [--dry-run]", name)
+	}
+	if fs.NArg() > 0 {
+		return false, fmt.Errorf("usage: dot-task %s [--dry-run]", name)
+	}
+	return *dryRunFlag, nil
+}
+
 func runApply(args []string, e env) error {
-	if len(args) > 0 {
-		return errors.New("usage: task apply")
+	dryRun, err := parseApplyFlags("apply", args)
+	if err != nil {
+		return err
 	}
 	if e.fileExists(nixosMarkerPath) {
-		return runNixos(nil, e)
+		return executeNixos(dryRun, e)
 	}
-	return runHomeManager(nil, e)
+	return executeHomeManager(dryRun, e)
 }
 
 func runNixos(args []string, e env) error {
-	if len(args) > 0 {
-		return errors.New("usage: task nixos")
+	dryRun, err := parseApplyFlags("nixos", args)
+	if err != nil {
+		return err
 	}
+	return executeNixos(dryRun, e)
+}
 
+func executeNixos(dryRun bool, e env) error {
 	available, err := listFlakeAttrs("nixosConfigurations", e)
 	if err != nil {
 		return err
@@ -39,14 +59,22 @@ func runNixos(args []string, e env) error {
 		return err
 	}
 
+	if dryRun {
+		// Prefer "build" rather than "test" and "dry-reactivate" for speed and not requiring root permissions.
+		return e.runCmd("nixos-rebuild", "build", "--flake", ".#"+target, "--show-trace")
+	}
 	return e.runCmd("sudo", "nixos-rebuild", "switch", "--flake", ".#"+target, "--show-trace")
 }
 
 func runHomeManager(args []string, e env) error {
-	if len(args) > 0 {
-		return errors.New("usage: task home-manager")
+	dryRun, err := parseApplyFlags("home-manager", args)
+	if err != nil {
+		return err
 	}
+	return executeHomeManager(dryRun, e)
+}
 
+func executeHomeManager(dryRun bool, e env) error {
 	available, err := listFlakeAttrs("homeConfigurations", e)
 	if err != nil {
 		return err
@@ -67,6 +95,10 @@ func runHomeManager(args []string, e env) error {
 		return err
 	}
 
+	if dryRun {
+		// -n = dry-run
+		return e.runCmd("nix", "run", ".#home-manager", "--", "switch", "-n", "-b", "backup", "--show-trace", "--flake", ".#"+target)
+	}
 	return e.runCmd("nix", "run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#"+target)
 }
 
