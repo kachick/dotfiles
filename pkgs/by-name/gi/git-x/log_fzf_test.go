@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"os/exec"
 	"slices"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestCleanRev(t *testing.T) {
@@ -135,5 +138,90 @@ func TestRunLogFzfPreviewPlainEmpty(t *testing.T) {
 	}
 	if stdout.Len() != 0 || stderr.Len() != 0 {
 		t.Errorf("expected empty output, got stdout=%q stderr=%q", stdout.String(), stderr.String())
+	}
+}
+
+func TestLogFzfPipelineHelperProcess(t *testing.T) {
+	mode := os.Getenv("GIT_X_TEST_PIPE_MODE")
+	if mode == "" {
+		return
+	}
+	switch mode {
+	case "producer-large":
+		// Write far more than the typical 64KB OS pipe buffer so an unclosed read end blocks.
+		chunk := bytes.Repeat([]byte("a"), 16*1024)
+		for range 64 {
+			if _, err := os.Stdout.Write(chunk); err != nil {
+				os.Exit(0)
+			}
+		}
+		os.Exit(0)
+	case "consumer-cancel":
+		os.Exit(130)
+	case "consumer-fail":
+		os.Exit(2)
+	default:
+		os.Exit(99)
+	}
+}
+
+func helperPipeCommand(t *testing.T, mode string) *exec.Cmd {
+	t.Helper()
+	exe, err := os.Executable()
+	if err != nil {
+		t.Fatalf("os.Executable: %v", err)
+	}
+	cmd := exec.Command(exe, "-test.run=^TestLogFzfPipelineHelperProcess$")
+	cmd.Env = append(os.Environ(), "GIT_X_TEST_PIPE_MODE="+mode)
+	return cmd
+}
+
+func TestRunLogFzfPipelineEarlyCancel(t *testing.T) {
+	producer := helperPipeCommand(t, "producer-large")
+	consumer := helperPipeCommand(t, "consumer-cancel")
+
+	done := make(chan error, 1)
+	go func() {
+		done <- runLogFzfPipeline(producer, consumer)
+	}()
+
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatalf("runLogFzfPipeline() returned unexpected error: %v", err)
+		}
+	case <-time.After(2 * time.Second):
+		if producer.Process != nil {
+			_ = producer.Process.Kill()
+		}
+		if consumer.Process != nil {
+			_ = consumer.Process.Kill()
+		}
+		t.Fatal("runLogFzfPipeline() deadlocked after consumer exited early")
+	}
+}
+
+func TestRunLogFzfPipelineConsumerError(t *testing.T) {
+	producer := helperPipeCommand(t, "producer-large")
+	consumer := helperPipeCommand(t, "consumer-fail")
+
+	done := make(chan error, 1)
+	go func() {
+		done <- runLogFzfPipeline(producer, consumer)
+	}()
+
+	select {
+	case err := <-done:
+		if err == nil {
+			t.Fatal("runLogFzfPipeline() returned nil, want non-zero consumer error")
+		}
+	case <-time.After(2 * time.Second):
+		if producer.Process != nil {
+			_ = producer.Process.Kill()
+		}
+		if consumer.Process != nil {
+			_ = consumer.Process.Kill()
+		}
+		t.Fatal("runLogFzfPipeline() deadlocked after consumer failed")
 	}
 }

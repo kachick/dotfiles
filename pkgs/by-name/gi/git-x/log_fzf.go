@@ -487,6 +487,43 @@ func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []st
 	return fzfArgs
 }
 
+func runLogFzfPipeline(logCmd, fzfCmd *exec.Cmd) error {
+	// Use os.Pipe instead of logCmd.StdoutPipe so the parent can close the read end
+	// right after fzf starts; otherwise git log blocks on a full pipe after fzf exits early.
+	r, w, err := os.Pipe()
+	if err != nil {
+		return fmt.Errorf("failed to create git log pipe: %w", err)
+	}
+	logCmd.Stdout = w
+	fzfCmd.Stdin = r
+
+	if err := logCmd.Start(); err != nil {
+		_ = r.Close()
+		_ = w.Close()
+		return fmt.Errorf("failed to start git log: %w", err)
+	}
+	_ = w.Close()
+
+	if err := fzfCmd.Start(); err != nil {
+		_ = r.Close()
+		_ = logCmd.Process.Kill()
+		_ = logCmd.Wait()
+		return fmt.Errorf("failed to start fzf: %w", err)
+	}
+	_ = r.Close()
+
+	fzfErr := fzfCmd.Wait()
+	_ = logCmd.Process.Kill()
+	_ = logCmd.Wait()
+	if fzfErr != nil {
+		if isCancelExitError(fzfErr) {
+			return nil
+		}
+		return fzfErr
+	}
+	return nil
+}
+
 func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer) error {
 	selfExe, err := os.Executable()
 	if err != nil {
@@ -518,34 +555,14 @@ func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer
 	// Do not add `--graph`, it makes it too slow in large repositories such as NixOS/nixpkgs.
 	logCmd := exec.Command("git", "log", "--format="+defaultLogFormat, "--date=short", "--color=always")
 	logCmd.Stderr = stderr
-	logStdout, err := logCmd.StdoutPipe()
-	if err != nil {
-		return fmt.Errorf("failed to get git log pipe: %w", err)
-	}
 
 	fzfArgs := buildLogFzfArgs(selfExe, cacheDir, fzfSock, opts)
 	fzfCmd := exec.Command("fzf", fzfArgs...)
-	fzfCmd.Stdin = logStdout
 	fzfCmd.Stdout = stdout
 	fzfCmd.Stderr = stderr
 	_ = stdin
 
-	if err := logCmd.Start(); err != nil {
-		return fmt.Errorf("failed to start git log: %w", err)
-	}
-	if err := fzfCmd.Start(); err != nil {
-		_ = logCmd.Wait()
-		return fmt.Errorf("failed to start fzf: %w", err)
-	}
-
-	_ = logCmd.Wait()
-	if err := fzfCmd.Wait(); err != nil {
-		if isCancelExitError(err) {
-			return nil
-		}
-		return err
-	}
-	return nil
+	return runLogFzfPipeline(logCmd, fzfCmd)
 }
 
 func logFzfFlags() []cliFlagSpec {
