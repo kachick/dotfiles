@@ -26,7 +26,12 @@
 
   # Enable OpenSSH for background exec/ssh over localhost port forwarding.
   # Inherits PasswordAuthentication = false and PermitRootLogin = "no" from nixos/configuration.nix.
-  services.openssh.enable = true;
+  # Disable PerSourcePenalties because SLiRP forwards every host connection from 10.0.2.2,
+  # so a few preauth probes or auth failures would otherwise lock out all host access.
+  services.openssh = {
+    enable = true;
+    settings.PerSourcePenalties = "no";
+  };
 
   # Disable background daemons not needed in ephemeral sandbox
   services.fail2ban.enable = lib.mkForce false;
@@ -98,14 +103,16 @@
     neededForBoot = true;
   };
 
-  # Autologin directly to user on serial console after home-manager finishes setup
+  # Autologin directly to user on serial console after home-manager finishes setup.
+  # Use xterm-256color instead of linux because QEMU stdio renders in the host terminal emulator;
+  # TERM=linux skips Home Manager's starship init and triggers adjust_to_linux_vt.
   systemd.services."serial-getty@" = {
     after = [ "home-manager-user.service" ];
     wants = [ "home-manager-user.service" ];
     serviceConfig = {
       ExecStart = [
         ""
-        "${pkgs.util-linux}/sbin/agetty --autologin user --noclear --keep-baud 115200,38400,9600 - linux"
+        "${pkgs.util-linux}/sbin/agetty --autologin user --noclear --keep-baud 115200,38400,9600 - xterm-256color"
       ];
     };
   };

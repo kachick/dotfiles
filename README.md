@@ -20,7 +20,7 @@ task apply
 Start a sandbox:
 
 ```bash
-nix run .#microvm-sandbox
+nix run .#microvm-sandbox -- console
 
 # Pre-built container
 task ghcr

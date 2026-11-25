@@ -4,7 +4,7 @@ Lightweight, volatile NixOS microvm built with [microvm.nix](https://github.com/
 
 ```bash
 # Foreground serial console (autologin as user)
-nix run .#microvm-sandbox
+nix run .#microvm-sandbox -- console
 
 # Background instances over SSH (pubkey auth via config/ssh/keys.nix)
 nix run .#microvm-sandbox -- up test-1
@@ -63,11 +63,11 @@ flowchart TD
 flowchart TD
     cli["microvm-sandbox (package.nix -> buildGo127Module)"]
 
-    cli -->|"no args / console"| fg["exec declaredRunner/bin/microvm-run (foreground stdio)"]
+    cli -->|"console"| fg["exec declaredRunner/bin/microvm-run (foreground stdio)"]
 
     cli -->|"up [--plain] [--mount DIR] [NAME]"| up["Patch microvm-run & pick free port (2221-2320)"]
     up --> state["$XDG_RUNTIME_DIR/microvm-sandbox/<NAME>/{microvm-run,qemu.pid,ssh.port,console.log}"]
-    state -->|"QEMU -daemonize + hostfwd"| wait["Poll SSH (BatchMode=yes, timeout 30s)"]
+    state -->|"QEMU -daemonize + hostfwd"| wait["Poll SSH banner (timeout 30s)"]
 
     cli -->|"exec [NAME] -- <CMD>"| exec_cmd["ssh -o BatchMode=yes -o ControlMaster=no user@127.0.0.1 -- <CMD>"]
     cli -->|"ssh [NAME]"| ssh_cmd["Interactive ssh -o ControlMaster=no user@127.0.0.1"]

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"net"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 const sampleMicrovmRun = `#!/bin/bash
@@ -219,4 +222,117 @@ func TestValidateMountPath(t *testing.T) {
 	if _, err := validateMountPath(file); err == nil {
 		t.Errorf("expected error for non-directory path")
 	}
+}
+
+func TestRunSubcommands(t *testing.T) {
+	t.Parallel()
+
+	t.Run("no args prints usage to stderr and returns error", func(t *testing.T) {
+		t.Parallel()
+		var stdout, stderr bytes.Buffer
+		err := run(nil, &stdout, &stderr)
+		if err == nil {
+			t.Fatal("expected error for missing subcommand")
+		}
+		if stdout.Len() != 0 {
+			t.Errorf("expected empty stdout, got %q", stdout.String())
+		}
+		if !strings.Contains(stderr.String(), "microvm-sandbox console") {
+			t.Errorf("expected usage text in stderr, got %q", stderr.String())
+		}
+	})
+
+	t.Run("help prints usage to stdout", func(t *testing.T) {
+		t.Parallel()
+		var stdout, stderr bytes.Buffer
+		if err := run([]string{"--help"}, &stdout, &stderr); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if stdout.String() != usageText {
+			t.Errorf("got stdout %q, want %q", stdout.String(), usageText)
+		}
+		if stderr.Len() != 0 {
+			t.Errorf("expected empty stderr, got %q", stderr.String())
+		}
+	})
+
+	t.Run("unknown subcommand prints usage to stderr and returns error", func(t *testing.T) {
+		t.Parallel()
+		var stdout, stderr bytes.Buffer
+		if err := run([]string{"bogus"}, &stdout, &stderr); err == nil {
+			t.Fatal("expected error for unknown subcommand")
+		}
+		if stderr.String() != usageText {
+			t.Errorf("got stderr %q, want %q", stderr.String(), usageText)
+		}
+	})
+}
+
+func TestProbeSSHBanner(t *testing.T) {
+	t.Parallel()
+
+	t.Run("accepts SSH banner", func(t *testing.T) {
+		t.Parallel()
+		ln, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer func() { _ = ln.Close() }()
+
+		go func() {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			_, _ = conn.Write([]byte("SSH-2.0-OpenSSH_10.6\r\n"))
+			_ = conn.Close()
+		}()
+
+		if !probeSSHBanner(ln.Addr().String(), time.Second) {
+			t.Fatal("expected probeSSHBanner to succeed")
+		}
+	})
+
+	t.Run("rejects immediate EOF like unready SLiRP port", func(t *testing.T) {
+		t.Parallel()
+		ln, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer func() { _ = ln.Close() }()
+
+		go func() {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			_ = conn.Close()
+		}()
+
+		if probeSSHBanner(ln.Addr().String(), time.Second) {
+			t.Fatal("expected probeSSHBanner to fail on immediate EOF")
+		}
+	})
+
+	t.Run("rejects non-SSH banner", func(t *testing.T) {
+		t.Parallel()
+		ln, err := net.Listen("tcp", "127.0.0.1:0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer func() { _ = ln.Close() }()
+
+		go func() {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			_, _ = conn.Write([]byte("HTTP/1.1 200 OK\r\n"))
+			_ = conn.Close()
+		}()
+
+		if probeSSHBanner(ln.Addr().String(), time.Second) {
+			t.Fatal("expected probeSSHBanner to fail on non-SSH response")
+		}
+	})
 }

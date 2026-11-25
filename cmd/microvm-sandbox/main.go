@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"flag"
 	"fmt"
@@ -27,7 +28,7 @@ const (
 var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 
 const usageText = `Usage:
-  microvm-sandbox [console]
+  microvm-sandbox console
   microvm-sandbox up [--plain] [--mount <DIR>] [NAME]
   microvm-sandbox exec [NAME] -- <COMMAND...>
   microvm-sandbox ssh [NAME]
@@ -61,12 +62,13 @@ func main() {
 }
 
 func run(args []string, stdout, stderr io.Writer) error {
-	subcommand := "console"
-	var rest []string
-	if len(args) > 0 {
-		subcommand = args[0]
-		rest = args[1:]
+	if len(args) == 0 {
+		_, _ = io.WriteString(stderr, usageText)
+		return errors.New("missing subcommand")
 	}
+
+	subcommand := args[0]
+	rest := args[1:]
 
 	switch subcommand {
 	case "-h", "--help", "help":
@@ -426,15 +428,17 @@ func cmdUp(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 
-	sshArgs := append(sshBaseArgs(port), "-o", "BatchMode=yes", "user@127.0.0.1", "true")
+	// Probe the SSH banner instead of running ssh BatchMode auth so `up` succeeds
+	// before a passphrase-protected key is loaded into ssh-agent and never triggers
+	// sshd failed-auth rate limits.
+	addr := fmt.Sprintf("127.0.0.1:%d", port)
 	for range bootTimeoutSeconds {
 		if !isRunning(pidFile) {
 			printConsoleTail(filepath.Join(stateDir, "console.log"), stderr)
 			_ = os.RemoveAll(stateDir)
 			return fmt.Errorf("instance '%s' exited during boot", opts.name)
 		}
-		probe := exec.Command("ssh", sshArgs...)
-		if err := probe.Run(); err == nil {
+		if probeSSHBanner(addr, 2*time.Second) {
 			pid, _ := readPID(pidFile)
 			_, err := fmt.Fprintf(stdout, "started %s (pid=%d, port=%d)\n", opts.name, pid, port)
 			return err
@@ -443,6 +447,22 @@ func cmdUp(args []string, stdout, stderr io.Writer) error {
 	}
 
 	return fmt.Errorf("timed out waiting for SSH on %s (127.0.0.1:%d); check %s/console.log", opts.name, port, stateDir)
+}
+
+func probeSSHBanner(addr string, timeout time.Duration) bool {
+	conn, err := net.DialTimeout("tcp", addr, timeout)
+	if err != nil {
+		return false
+	}
+	defer func() {
+		_ = conn.Close()
+	}()
+	_ = conn.SetReadDeadline(time.Now().Add(timeout))
+	line, err := bufio.NewReader(conn).ReadString('\n')
+	if err != nil {
+		return false
+	}
+	return strings.HasPrefix(line, "SSH-")
 }
 
 func printConsoleTail(path string, w io.Writer) {
