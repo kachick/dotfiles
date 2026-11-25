@@ -94,8 +94,8 @@ func runGumOutput(args []string, stderr io.Writer) (string, error) {
 	return strings.TrimSpace(out.String()), nil
 }
 
-func runGumConfirm(prompt string, stderr io.Writer) (bool, error) {
-	cmd := exec.Command("gum", "confirm", "--default=false", prompt)
+func runGumConfirm(prompt string, defaultYes bool, stderr io.Writer) (bool, error) {
+	cmd := exec.Command("gum", "confirm", fmt.Sprintf("--default=%t", defaultYes), prompt)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = stderr
 	cmd.Stderr = stderr
@@ -223,11 +223,11 @@ func chooseBaseRefWithUI(branch string, baseOptions []string, containerDir strin
 }
 
 func confirmDirenvAllowWithGum(dirName string, stderr io.Writer) (bool, error) {
-	return runGumConfirm(fmt.Sprintf("Allow direnv in %s?", dirName), stderr)
+	return runGumConfirm(fmt.Sprintf("Allow direnv in %s?", dirName), false, stderr)
 }
 
 func confirmCreateWorktreeWithGum(branch string, stderr io.Writer) (bool, error) {
-	return runGumConfirm(fmt.Sprintf("Create worktree for %q?", branch), stderr)
+	return runGumConfirm(fmt.Sprintf("Create worktree for %q?", branch), true, stderr)
 }
 
 func confirmRemoveWorktreeWithGum(label, branch string, stderr io.Writer) (bool, error) {
@@ -235,7 +235,7 @@ func confirmRemoveWorktreeWithGum(label, branch string, stderr io.Writer) (bool,
 	if branch != "" && branch != label {
 		target = fmt.Sprintf("%s (%s)", label, branch)
 	}
-	return runGumConfirm(fmt.Sprintf("Remove worktree %s?", target), stderr)
+	return runGumConfirm(fmt.Sprintf("Remove worktree %s?", target), false, stderr)
 }
 
 func parseFzfSelectOutput(raw string) selectChoice {

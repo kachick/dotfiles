@@ -717,6 +717,9 @@ esac
 		if ok, err := confirmDirenvAllowWithGum("feat-one", &stderr); err != nil || !ok {
 			t.Fatalf("confirmDirenvAllowWithGum (yes) = (%v, %v), want (true, nil)", ok, err)
 		}
+		if ok, err := confirmCreateWorktreeWithGum("feat/new", &stderr); err != nil || !ok {
+			t.Fatalf("confirmCreateWorktreeWithGum (yes) = (%v, %v), want (true, nil)", ok, err)
+		}
 
 		t.Setenv("GUM_CONFIRM_EXIT", "1")
 		if ok, err := confirmDirenvAllowWithGum("feat-one", &stderr); err != nil || ok {
@@ -733,7 +736,13 @@ esac
 			t.Fatalf("read gum args log: %v", err)
 		}
 		if !strings.Contains(string(logged), "confirm --default=false Allow direnv in feat-one?") {
-			t.Errorf("expected fail-closed --default=false in confirm args, got:\n%s", string(logged))
+			t.Errorf("expected fail-closed --default=false in direnv confirm args, got:\n%s", string(logged))
+		}
+		if !strings.Contains(string(logged), `confirm --default=true Create worktree for "feat/new"?`) {
+			t.Errorf("expected --default=true in create worktree confirm args, got:\n%s", string(logged))
+		}
+		if !strings.Contains(string(logged), "confirm --default=false Remove worktree feat-one (feat/one)?") {
+			t.Errorf("expected fail-closed --default=false in remove worktree confirm args, got:\n%s", string(logged))
 		}
 	})
 }
