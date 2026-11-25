@@ -65,7 +65,10 @@ func buildSystemPrompt(sourceLang, targetLang, form, surroundingContext string) 
 	if sourceLang != "" {
 		fmt.Fprintf(&sb, "source_lang=%s\n", sourceLang)
 	}
-	fmt.Fprintf(&sb, "target_lang=%s\nform=%s", targetLang, form)
+	fmt.Fprintf(&sb, "target_lang=%s", targetLang)
+	if form != "" {
+		fmt.Fprintf(&sb, "\nform=%s", form)
+	}
 	if surroundingContext != "" {
 		sb.WriteString("\n---\n")
 		sb.WriteString(surroundingContext)
@@ -235,7 +238,7 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 
 	var targetFlag, form, surroundingContext, port string
 	fs.StringVar(&targetFlag, "to", "", "Target language code")
-	fs.StringVar(&form, "form", "plain", "Sentence form: plain or polite")
+	fs.StringVar(&form, "form", "", "Sentence form for target_lang=ja: plain or polite (default: plain)")
 	fs.StringVar(&surroundingContext, "context", "", "Surrounding context or background information")
 	fs.StringVar(&port, "port", defaultP, "Port of llama-server")
 
@@ -250,7 +253,7 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 		fmt.Fprintf(stderr, "  --               Stop option and language-spec parsing\n\n")
 		fmt.Fprintf(stderr, "Options:\n")
 		fmt.Fprintf(stderr, "  --to LANG        Target language code (alternative to :LANG)\n")
-		fmt.Fprintf(stderr, "  --form FORM      Sentence form: plain or polite (default: plain)\n")
+		fmt.Fprintf(stderr, "  --form FORM      Sentence form for target_lang=ja: plain or polite (default: plain)\n")
 		fmt.Fprintf(stderr, "  --context TEXT   Surrounding context or background information\n")
 		fmt.Fprintf(stderr, "  --port PORT      Port of llama-server (default: %s, env: PLAMO_PORT)\n", defaultP)
 		fmt.Fprintf(stderr, "  --help           Show this help message\n")
@@ -263,7 +266,7 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 		return err
 	}
 
-	if form != "plain" && form != "polite" {
+	if form != "" && form != "plain" && form != "polite" {
 		return fmt.Errorf("invalid --form value %q: must be plain or polite", form)
 	}
 
@@ -306,6 +309,14 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 	}
 	if targetLang == "" {
 		targetLang = detectDefaultTargetLang(text)
+	}
+
+	// PLaMo-3-Translate's chat template rejects `form` unless target_lang is "ja".
+	if form != "" && targetLang != "ja" {
+		return fmt.Errorf("--form is only supported when target language is \"ja\" (got %q)", targetLang)
+	}
+	if form == "" && targetLang == "ja" {
+		form = "plain"
 	}
 
 	serverURL := fmt.Sprintf("http://127.0.0.1:%s", port)

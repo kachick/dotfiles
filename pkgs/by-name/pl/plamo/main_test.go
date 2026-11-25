@@ -17,10 +17,10 @@ func TestBuildSystemPrompt(t *testing.T) {
 		t.Errorf("buildSystemPrompt(\"\", ja, plain, \"\") = %q, want %q", got, want)
 	}
 
-	gotWithSource := buildSystemPrompt("ja", "en", "polite", "")
-	wantWithSource := "[plamo-translate]\nsource_lang=ja\ntarget_lang=en\nform=polite"
+	gotWithSource := buildSystemPrompt("ja", "en", "", "")
+	wantWithSource := "[plamo-translate]\nsource_lang=ja\ntarget_lang=en"
 	if gotWithSource != wantWithSource {
-		t.Errorf("buildSystemPrompt(ja, en, polite, \"\") = %q, want %q", gotWithSource, wantWithSource)
+		t.Errorf("buildSystemPrompt(ja, en, \"\", \"\") = %q, want %q", gotWithSource, wantWithSource)
 	}
 
 	gotWithContext := buildSystemPrompt("", "ja", "plain", "Git commit message")
@@ -133,7 +133,7 @@ func TestRunTransBehavior(t *testing.T) {
 			name:       "auto detect Japanese to English",
 			argv0:      "trans",
 			args:       []string{"こんにちは"},
-			wantPrompt: "[plamo-translate]\ntarget_lang=en\nform=plain",
+			wantPrompt: "[plamo-translate]\ntarget_lang=en",
 			wantText:   "こんにちは",
 		},
 		{
@@ -146,9 +146,9 @@ func TestRunTransBehavior(t *testing.T) {
 		{
 			name:       "flags before lang spec via plamo trans",
 			argv0:      "plamo",
-			args:       []string{"trans", "--form", "polite", "ja:en", "おはよう"},
-			wantPrompt: "[plamo-translate]\nsource_lang=ja\ntarget_lang=en\nform=polite",
-			wantText:   "おはよう",
+			args:       []string{"trans", "--form", "polite", "en:ja", "Good morning"},
+			wantPrompt: "[plamo-translate]\nsource_lang=en\ntarget_lang=ja\nform=polite",
+			wantText:   "Good morning",
 		},
 		{
 			name:       "double dash stops lang spec parsing",
@@ -169,7 +169,7 @@ func TestRunTransBehavior(t *testing.T) {
 			argv0:      "trans",
 			args:       []string{":en"},
 			stdin:      "日本語のテスト\n",
-			wantPrompt: "[plamo-translate]\ntarget_lang=en\nform=plain",
+			wantPrompt: "[plamo-translate]\ntarget_lang=en",
 			wantText:   "日本語のテスト",
 		},
 	}
@@ -223,6 +223,22 @@ func TestRunErrors(t *testing.T) {
 		err := run("trans", []string{"--form", "casual", "hello"}, strings.NewReader(""), &stdout, &stderr)
 		if err == nil || !strings.Contains(err.Error(), "invalid --form") {
 			t.Fatalf("expected invalid form error, got: %v", err)
+		}
+	})
+
+	t.Run("form rejected for non-ja target", func(t *testing.T) {
+		var stdout, stderr bytes.Buffer
+		err := run("trans", []string{":en", "--form", "polite", "おはよう"}, strings.NewReader(""), &stdout, &stderr)
+		if err == nil || !strings.Contains(err.Error(), "--form is only supported") {
+			t.Fatalf("expected form target error, got: %v", err)
+		}
+	})
+
+	t.Run("form rejected for auto-detected en target", func(t *testing.T) {
+		var stdout, stderr bytes.Buffer
+		err := run("trans", []string{"--form", "plain", "こんにちは"}, strings.NewReader(""), &stdout, &stderr)
+		if err == nil || !strings.Contains(err.Error(), "--form is only supported") {
+			t.Fatalf("expected form target error, got: %v", err)
 		}
 	})
 

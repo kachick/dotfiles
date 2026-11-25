@@ -32,7 +32,7 @@ trans "こんにちは"
 
 # Explicit target or source:target
 trans :en "おはようございます"
-trans ja:en --form polite "おはようございます"
+trans en:ja --form polite "Good morning"
 
 # Pipe input
 echo "Hello, world!" | trans
