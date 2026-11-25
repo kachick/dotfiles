@@ -8,14 +8,10 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 
 ## Daily Operations
 
-Apply config:
+Apply config (falls back to fzf when host cannot be detected):
 
 ```bash
-# NixOS
 task apply
-
-# Non-NixOS
-task apply -- wsl-ubuntu
 ```
 
 Start a sandbox:

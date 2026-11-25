@@ -16,22 +16,14 @@ tasks:
     deps:
       - build-cmd
     cmds:
-      - ./dist/dot-task apply {{.CLI_ARGS}}
+      - ./dist/dot-task apply
 
   nixos:
     desc: Enable NixOS config for current device
     deps:
       - build-cmd
-    sources:
-      - 'flake.nix'
-      - 'flake.lock'
-      - 'nixos/**/*'
-      - 'overlays/**/*'
-      - 'home-manager/**/*'
-      - 'pkgs/**/*'
-      - 'config/**/*'
     cmds:
-      - ./dist/dot-task nixos {{.CLI_ARGS}}
+      - ./dist/dot-task nixos
 
   home-manager:
     aliases:
@@ -39,15 +31,8 @@ tasks:
     desc: Enable home-manager config for current user and device
     deps:
       - build-cmd
-    sources:
-      - 'flake.nix'
-      - 'flake.lock'
-      - 'overlays/**/*'
-      - 'home-manager/**/*'
-      - 'pkgs/**/*'
-      - 'config/**/*'
     cmds:
-      - ./dist/dot-task home-manager {{.CLI_ARGS}}
+      - ./dist/dot-task home-manager
 
   test:
     desc: Make sure NixOS and/or home-manager will work for current user and device

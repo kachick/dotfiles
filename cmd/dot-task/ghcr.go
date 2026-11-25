@@ -39,7 +39,7 @@ func runGHCR(args []string, e env) error {
 		return errors.New("no matching UTC tags found in ghcr.io/kachick/home")
 	}
 
-	tag, err := selectWithFzf(tags, "ghcr> ", "", e.stderr)
+	tag, err := e.selectItem(tags, "ghcr> ", "")
 	if err != nil {
 		if errors.Is(err, errSelectionCanceled) {
 			return nil

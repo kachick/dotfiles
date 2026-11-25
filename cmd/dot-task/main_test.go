@@ -21,8 +21,23 @@ func testEnv(calls *[]recordedCall) env {
 			*calls = append(*calls, recordedCall{name: name, args: args})
 			return nil
 		},
+		cmdOutput: func(name string, args ...string) ([]byte, error) {
+			if name == "nix" && len(args) >= 3 && args[2] == ".#nixosConfigurations" {
+				return []byte(`["algae","moss","wsl"]`), nil
+			}
+			if name == "nix" && len(args) >= 3 && args[2] == ".#homeConfigurations" {
+				return []byte(`["user@container","user@lima","user@wsl-ubuntu"]`), nil
+			}
+			return []byte(`[]`), nil
+		},
 		cmdExitOK: func(name string, args ...string) (bool, error) {
 			return true, nil
+		},
+		selectItem: func(items []string, prompt, header string) (string, error) {
+			return items[0], nil
+		},
+		isTerminal: func() bool {
+			return true
 		},
 		fileExists: func(path string) bool {
 			return false
@@ -58,11 +73,14 @@ func TestRunApply(t *testing.T) {
 		}
 	})
 
-	t.Run("routes to home-manager when /etc/NIXOS is absent", func(t *testing.T) {
+	t.Run("routes to home-manager and falls back to fzf when hostname does not match", func(t *testing.T) {
 		var calls []recordedCall
 		e := testEnv(&calls)
+		e.selectItem = func(items []string, prompt, header string) (string, error) {
+			return "user@wsl-ubuntu", nil
+		}
 
-		if err := run([]string{"apply", "wsl-ubuntu"}, e); err != nil {
+		if err := run([]string{"apply"}, e); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
@@ -74,14 +92,28 @@ func TestRunApply(t *testing.T) {
 			t.Fatalf("calls = %+v, want %+v", calls, want)
 		}
 	})
+
+	t.Run("rejects extra arguments", func(t *testing.T) {
+		var calls []recordedCall
+		if err := run([]string{"apply", "moss"}, testEnv(&calls)); err == nil {
+			t.Fatal("expected error for extra args, got nil")
+		}
+	})
 }
 
 func TestRunNixos(t *testing.T) {
-	t.Run("uses explicit host argument", func(t *testing.T) {
+	t.Run("falls back to fzf when hostname is not in flake", func(t *testing.T) {
 		var calls []recordedCall
 		e := testEnv(&calls)
+		e.hostname = func() (string, error) { return "unknown-host", nil }
+		e.selectItem = func(items []string, prompt, header string) (string, error) {
+			if !strings.Contains(header, "unknown-host") {
+				t.Errorf("expected header to mention hostname, got %q", header)
+			}
+			return "algae", nil
+		}
 
-		if err := run([]string{"nixos", "algae"}, e); err != nil {
+		if err := run([]string{"nixos"}, e); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 
@@ -94,23 +126,62 @@ func TestRunNixos(t *testing.T) {
 		}
 	})
 
-	t.Run("rejects extra arguments", func(t *testing.T) {
+	t.Run("returns nil when fzf selection is canceled", func(t *testing.T) {
 		var calls []recordedCall
 		e := testEnv(&calls)
+		e.hostname = func() (string, error) { return "unknown-host", nil }
+		e.selectItem = func(items []string, prompt, header string) (string, error) {
+			return "", errSelectionCanceled
+		}
 
-		if err := run([]string{"nixos", "moss", "extra"}, e); err == nil {
-			t.Fatal("expected error for extra args, got nil")
+		if err := run([]string{"nixos"}, e); err != nil {
+			t.Fatalf("unexpected error on cancel: %v", err)
+		}
+		if len(calls) != 0 {
+			t.Fatalf("expected no commands on cancel, got %+v", calls)
+		}
+	})
+
+	t.Run("fails closed in non-interactive shell when hostname does not match", func(t *testing.T) {
+		var calls []recordedCall
+		e := testEnv(&calls)
+		e.hostname = func() (string, error) { return "unknown-host", nil }
+		e.isTerminal = func() bool { return false }
+
+		err := run([]string{"nixos"}, e)
+		if err == nil || !strings.Contains(err.Error(), "non-interactive") {
+			t.Fatalf("expected non-interactive error, got %v", err)
 		}
 	})
 }
 
 func TestRunHomeManager(t *testing.T) {
-	t.Run("rejects missing host slug", func(t *testing.T) {
+	t.Run("auto-detects exact user@host match without fzf", func(t *testing.T) {
 		var calls []recordedCall
 		e := testEnv(&calls)
+		e.hostname = func() (string, error) { return "lima", nil }
+		e.selectItem = func(items []string, prompt, header string) (string, error) {
+			t.Fatal("selectItem should not be called when user@host matches")
+			return "", nil
+		}
 
-		if err := run([]string{"home-manager"}, e); err == nil {
-			t.Fatal("expected error for missing host slug, got nil")
+		if err := run([]string{"home-manager"}, e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		want := []recordedCall{{
+			name: "nix",
+			args: []string{"run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#user@lima"},
+		}}
+		if !reflect.DeepEqual(calls, want) {
+			t.Fatalf("calls = %+v, want %+v", calls, want)
+		}
+	})
+
+	t.Run("rejects extra arguments", func(t *testing.T) {
+		var calls []recordedCall
+		if err := run([]string{"home-manager", "wsl-ubuntu"}, testEnv(&calls)); err == nil {
+			t.Fatal("expected error for extra args, got nil")
 		}
 	})
 }
