@@ -240,16 +240,6 @@ in
       aliases = {
         # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
         setup = "!gh repo edit --enable-auto-merge";
-
-        # https://www.collinsdictionary.com/dictionary/english/burl
-        burl = ''
-          !set -e; owner="$(git config --global git-x.user)"; \
-            gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
-            wt_dir="$(${git-x} get --trust "$owner/$1")"; \
-            cd "$wt_dir"; \
-            gh setup; \
-            ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"
-        '';
       };
     };
 

@@ -96,6 +96,16 @@ func allGitXSubcommands() []gitXSubcommand {
 			},
 		},
 		{
+			name:        "sprout",
+			description: "Create a private template repo on GitHub, clone it, enable auto-merge, and print its worktree path",
+			newFlags: func(stderr io.Writer) *flag.FlagSet {
+				return newSproutFlagSet(stderr)
+			},
+			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
+				return runSprout(args, stdout, stderr)
+			},
+		},
+		{
 			name:        "migrate-clean-bare",
 			description: "Convert a repository into the clean-bare layout",
 			newFlags: func(stderr io.Writer) *flag.FlagSet {

@@ -14,11 +14,10 @@ flowchart LR
         gch["gch"]
     end
 
-    subgraph Aliases ["Git & GH Aliases (home-manager/git.nix)"]
+    subgraph Aliases ["Git Aliases (home-manager/git.nix)"]
         git_x["git x <subcommand>"]
         git_all["git all"]
         git_lf["git lf"]
-        gh_burl["gh burl"]
     end
 
     subgraph Hooks ["Git 2.54+ Config Hooks"]
@@ -32,6 +31,7 @@ flowchart LR
 
         subgraph Repo ["Repository & Clean-Bare Layout"]
             cmd_get["get"]
+            cmd_sprout["sprout"]
             cmd_init["init-clean-bare"]
             cmd_migrate["migrate-clean-bare"]
             cmd_repofzf["repo-fzf"]
@@ -69,7 +69,6 @@ flowchart LR
     cdrepo --> cmd_reponame
     cdrepo --> cmd_repofzf
     getrepo --> cmd_get
-    gh_burl --> cmd_get
     wt_fn -->|"wt _cd-helper"| cmd_wt
     gx_fn --> cmd_menu
     gch --> cmd_hist
@@ -85,6 +84,8 @@ flowchart LR
     cmd_menu --> cmd_repofzf
     cmd_menu --> cmd_refresh
     cmd_menu --> cmd_dmb
+    cmd_sprout --> cmd_get
+    cmd_sprout --> ext_gh
     cmd_get -->|"git clone --bare"| cmd_init
     cmd_wt -->|"ctrl-l"| cmd_logfzf
     cmd_logfzf -->|"--ja"| cmd_show
@@ -110,7 +111,8 @@ flowchart LR
 | Category            | Subcommand                                                         | Caller / Alias                            | Purpose                                                                                           |
 | ------------------- | ------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                            | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos      |
-| Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `gh burl`                      | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                |
+| Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `git x sprout`                 | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                |
+| Repository & Layout | `sprout <repo>`                                                    | `git x sprout`                            | Create a private template repo on GitHub, clone in clean-bare layout, and enable auto-merge       |
 | Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                             |
 | Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                                 |
 | Repository & Layout | `repo-fzf [--list] [query]`                                        | `cdrepo`                                  | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
@@ -130,7 +132,7 @@ flowchart LR
 
 `git-x` organizes repositories in a clean-bare layout where `.git` holds the bare repository and every branch lives in a flat sibling directory at depth 1 (`feat/foo` becomes `feat-foo`).
 
-Commands that return a directory path (`menu`, `get`, `init-clean-bare`, `migrate-clean-bare`, `repo-fzf`, `wt add`, `wt select`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
+Commands that return a directory path (`menu`, `get`, `sprout`, `init-clean-bare`, `migrate-clean-bare`, `repo-fzf`, `wt add`, `wt select`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
 
 ```mermaid
 flowchart TD
