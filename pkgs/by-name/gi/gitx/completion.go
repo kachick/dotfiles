@@ -357,18 +357,33 @@ func runCompletion(args []string, stdout, stderr io.Writer) error {
 	}
 }
 
-// Keep shell wrappers thin and delegate parsing to `gitx __complete` so subcommand
+// Keep shell wrappers thin and delegate parsing to `git-x __complete` so subcommand
 // and flag changes in Go never drift from generated completion scripts.
-const bashCompletionScript = `# bash completion for gitx -*- shell-script -*-
+const bashCompletionScript = `# bash completion for git-x -*- shell-script -*-
 
-_gitx() {
-  local out directive value _desc
-  local -a args=("${COMP_WORDS[@]:1:COMP_CWORD}")
-  if [[ ${#args[@]} -eq 0 ]]; then
-    args=("")
+_git_x() {
+  local out directive value _desc cur bin
+  local -a args
+
+  if [[ -n "${__git_cmd_idx:-}" ]]; then
+    local start=$((__git_cmd_idx + 1))
+    local len=$((cword - __git_cmd_idx))
+    if (( len > 0 )); then
+      args=("${words[@]:start:len}")
+    else
+      args=("")
+    fi
+    cur="${words[cword]:-}"
+    bin="git-x"
+  else
+    args=("${COMP_WORDS[@]:1:COMP_CWORD}")
+    if [[ ${#args[@]} -eq 0 ]]; then
+      args=("")
+    fi
+    cur="${COMP_WORDS[COMP_CWORD]:-}"
+    bin="${COMP_WORDS[0]:-git-x}"
   fi
 
-  local bin="${COMP_WORDS[0]:-gitx}"
   if ! out="$(command "$bin" __complete "${args[@]}" 2>/dev/null)"; then
     COMPREPLY=()
     return
@@ -383,20 +398,20 @@ _gitx() {
   } <<< "$out"
 
   if [[ "$directive" == "dir" ]]; then
-    local cur="${COMP_WORDS[COMP_CWORD]}"
     while IFS= read -r value; do
       COMPREPLY+=("$value")
     done < <(compgen -d -- "$cur")
   fi
 }
 
-complete -F _gitx gitx
+complete -F _git_x git-x
 `
 
-const zshCompletionScript = `#compdef gitx
+const zshCompletionScript = `#compdef git-x
+#description Unified Git and GitHub workflow helper CLI
 
-_gitx() {
-  local out directive line value desc
+_git-x() {
+  local out directive line value desc bin="git-x"
   local -a args items
 
   args=("${(@)words[2,CURRENT]}")
@@ -404,7 +419,11 @@ _gitx() {
     args=("")
   fi
 
-  out="$(command "${words[1]}" __complete "${args[@]}" 2>/dev/null)" || return 1
+  if [[ "${words[1]}" == */git-x || "${words[1]}" == "git-x" ]]; then
+    bin="${words[1]}"
+  fi
+
+  out="$(command "$bin" __complete "${args[@]}" 2>/dev/null)" || return 1
 
   local first=1
   for line in "${(@f)out}"; do
@@ -424,7 +443,7 @@ _gitx() {
   done
 
   if (( ${#items} > 0 )); then
-    _describe -t completions 'gitx' items
+    _describe -t completions 'git-x' items
   fi
 
   if [[ "$directive" == "dir" ]]; then
@@ -432,9 +451,9 @@ _gitx() {
   fi
 }
 
-if [ "$funcstack[1]" = "_gitx" ]; then
-  _gitx "$@"
+if [ "$funcstack[1]" = "_git-x" ]; then
+  _git-x "$@"
 else
-  (( $+functions[compdef] )) && compdef _gitx gitx
+  (( $+functions[compdef] )) && compdef _git-x git-x
 fi
 `

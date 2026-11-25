@@ -53,7 +53,11 @@ buildGo127Module (finalAttrs: {
     typos
   ];
 
-  postInstall = lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
+  # Install as `git-x` so Git dispatches `git x <subcommand>` and loads shell completions for it.
+  postInstall = ''
+    mv "$out/bin/${finalAttrs.pname}" "$out/bin/${finalAttrs.meta.mainProgram}"
+  ''
+  + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     installShellCompletion --cmd ${finalAttrs.meta.mainProgram} \
       --bash <("$out/bin/${finalAttrs.meta.mainProgram}" completion bash) \
       --zsh <("$out/bin/${finalAttrs.meta.mainProgram}" completion zsh)
@@ -93,6 +97,6 @@ buildGo127Module (finalAttrs: {
 
   meta = {
     description = "Unified Git and GitHub workflow helper CLI";
-    mainProgram = finalAttrs.pname;
+    mainProgram = "git-x";
   };
 })

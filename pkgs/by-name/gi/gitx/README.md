@@ -15,7 +15,7 @@ flowchart LR
     end
 
     subgraph Aliases ["Git & GH Aliases (home-manager/git.nix)"]
-        git_wt["git wt"]
+        git_x["git x <subcommand>"]
         git_all["git all"]
         git_lf["git lf / lfj"]
         git_show_ja["git show-ja"]
@@ -75,7 +75,7 @@ flowchart LR
     gx_fn --> cmd_menu
     gch --> cmd_hist
 
-    git_wt --> cmd_wt
+    git_x --> Subcommands
     git_all --> cmd_refresh
     git_all --> cmd_dmb
     git_lf --> cmd_logfzf
@@ -109,24 +109,24 @@ flowchart LR
 
 ## Subcommands
 
-| Category            | Subcommand                                                         | Caller / Alias                          | Purpose                                                                                       |
-| ------------------- | ------------------------------------------------------------------ | --------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                          | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos  |
-| Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `gh burl`                    | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree            |
-| Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git init-clean-bare`, `gitx get`       | Configure origin fetch refspec and create the default branch worktree                         |
-| Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                             |
-| Repository & Layout | `repo-fzf [--list] [query]`                                        | `cdrepo`                                | List worktrees under `GITX_ROOT` or `gitx.root` (`~/repos`) and select via `fzf`              |
-| Repository & Layout | `gh-reponame`                                                      | `cdrepo`                                | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                              |
-| Worktree & Branch   | `wt [list\|select\|add\|pr\|promote\|path\|default-branch]`        | `wt`, `git wt`, `git switch-default`    | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                         |
-| Worktree & Branch   | `refresh`                                                          | `git refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                             |
-| Worktree & Branch   | `delete-merged-branches [--dry-run] [--pr]`                        | `git delete-merged-branches`, `git all` | Remove merged local branches and clean worktrees (`--pr` checks merged GitHub PRs)            |
-| Worktree & Branch   | `reset-branch [--remote <name>] [--dry-run] [branch]`              | `git reset-branch`                      | Rename local branch to `backup-<branch>-<uuid>` and recreate it from remote                   |
-| Log & Review        | `show [--ja] [git-show-args...]`                                   | `git show-ja`, `gitx log-fzf`           | Run `git show` through `riff` (`--ja` injects Japanese translation via local `llama-server`)  |
-| Log & Review        | `log-fzf [--ja] [query]`                                           | `git lf`, `git lfj`                     | Search `git log` in `fzf` with `riff`/`bat` preview and background `--ja` prefetching         |
-| Log & Review        | `resolve-conflict`                                                 | `git resolve-conflict`                  | Find `<<<<<< HEAD` markers in unmerged files with `rg` and open them in Helix (`hx --hsplit`) |
-| Log & Review        | `commit-from-history`                                              | `gch`                                   | Pick a shell history line via `fzf` and commit all changes with `` `<command>` ``             |
-| Hooks               | `hooks pre-push <subcommand>`                                      | Git `hook.*` config                     | Run `betterleaks`, `typos-commits`, or `typos-branch` before pushing                          |
-| Shell               | `completion <bash\|zsh>`                                           | Nix `installShellCompletion`            | Print shell completion wrappers backed by `gitx __complete`                                   |
+| Category            | Subcommand                                                         | Caller / Alias                            | Purpose                                                                                       |
+| ------------------- | ------------------------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                            | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos  |
+| Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `gh burl`                      | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree            |
+| Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                         |
+| Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                             |
+| Repository & Layout | `repo-fzf [--list] [query]`                                        | `cdrepo`                                  | List worktrees under `GITX_ROOT` or `gitx.root` (`~/repos`) and select via `fzf`              |
+| Repository & Layout | `gh-reponame`                                                      | `cdrepo`                                  | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                              |
+| Worktree & Branch   | `wt [list\|select\|add\|pr\|promote\|path\|default-branch]`        | `wt`, `git x wt`, `git switch-default`    | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                         |
+| Worktree & Branch   | `refresh`                                                          | `git x refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                             |
+| Worktree & Branch   | `delete-merged-branches [--dry-run] [--pr]`                        | `git x delete-merged-branches`, `git all` | Remove merged local branches and clean worktrees (`--pr` checks merged GitHub PRs)            |
+| Worktree & Branch   | `reset-branch [--remote <name>] [--dry-run] [branch]`              | `git x reset-branch`                      | Rename local branch to `backup-<branch>-<uuid>` and recreate it from remote                   |
+| Log & Review        | `show [--ja] [git-show-args...]`                                   | `git show-ja`, `git x log-fzf`            | Run `git show` through `riff` (`--ja` injects Japanese translation via local `llama-server`)  |
+| Log & Review        | `log-fzf [--ja] [query]`                                           | `git lf`, `git lfj`                       | Search `git log` in `fzf` with `riff`/`bat` preview and background `--ja` prefetching         |
+| Log & Review        | `resolve-conflict`                                                 | `git x resolve-conflict`                  | Find `<<<<<< HEAD` markers in unmerged files with `rg` and open them in Helix (`hx --hsplit`) |
+| Log & Review        | `commit-from-history`                                              | `gch`                                     | Pick a shell history line via `fzf` and commit all changes with `` `<command>` ``             |
+| Hooks               | `hooks pre-push <subcommand>`                                      | Git `hook.*` config                       | Run `betterleaks`, `typos-commits`, or `typos-branch` before pushing                          |
+| Shell               | `completion <bash\|zsh>`                                           | Nix `installShellCompletion` (`git-x`)    | Print shell completion wrappers backed by `git-x __complete`                                  |
 
 ## Clean-Bare Worktree Layout & Lifecycle
 

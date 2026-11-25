@@ -175,13 +175,6 @@ in
         all = "!${gitx} refresh && ${gitx} delete-merged-branches";
         lf = "!${gitx} log-fzf";
         lfj = "!${gitx} log-fzf --ja";
-        wt = "!${gitx} wt";
-        refresh = "!${gitx} refresh";
-        delete-merged-branches = "!${gitx} delete-merged-branches";
-        init-clean-bare = "!${gitx} init-clean-bare";
-        migrate-clean-bare = "!${gitx} migrate-clean-bare";
-        reset-branch = "!${gitx} reset-branch";
-        resolve-conflict = "!${gitx} resolve-conflict";
         show-ja = "!${gitx} show --ja";
       };
 

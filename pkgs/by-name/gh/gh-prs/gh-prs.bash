@@ -7,6 +7,6 @@ GH_FORCE_TTY='100%' gh pr list --state 'open' |
 		--preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1}' \
 		--preview-window down \
 		--header $'ALT-C (Checkout) / CTRL-O (Open in browser)\n\n' \
-		--bind 'alt-c:become(gitx wt pr {1})' \
+		--bind 'alt-c:become(git-x wt pr {1})' \
 		--bind 'ctrl-o:execute-silent(gh pr view {1} --web)' \
 		--bind 'enter:become(echo {1} | tr -d "#")'

@@ -268,18 +268,20 @@ func TestBashCompletionBehavior(t *testing.T) {
 		t.Fatalf("bash -n failed: %v\n%s", err, string(out))
 	}
 
-	binPath := filepath.Join(t.TempDir(), "gitx")
+	binDir := t.TempDir()
+	binPath := filepath.Join(binDir, "git-x")
 	buildCmd := exec.Command("go", "build", "-o", binPath, ".")
 	if out, err := buildCmd.CombinedOutput(); err != nil {
-		t.Fatalf("go build gitx failed: %v\n%s", err, string(out))
+		t.Fatalf("go build git-x failed: %v\n%s", err, string(out))
 	}
 
 	cases := []struct {
-		name     string
-		words    string
-		cword    int
-		wantAll  []string
-		wantNone []string
+		name      string
+		words     string
+		cword     int
+		gitCmdIdx int
+		wantAll   []string
+		wantNone  []string
 	}{
 		{
 			name:     "top-level subcommands",
@@ -287,6 +289,21 @@ func TestBashCompletionBehavior(t *testing.T) {
 			cword:    1,
 			wantAll:  []string{"menu", "wt", "get", "hooks", "completion", "help"},
 			wantNone: []string{"_cd-helper", "__complete"},
+		},
+		{
+			name:      "git x top-level subcommands",
+			words:     `("git" "x" "")`,
+			cword:     2,
+			gitCmdIdx: 1,
+			wantAll:   []string{"menu", "wt", "get", "hooks", "completion", "help"},
+			wantNone:  []string{"_cd-helper", "__complete"},
+		},
+		{
+			name:      "git -C repo x wt add flags",
+			words:     `("git" "-C" "repo" "x" "wt" "add" "--")`,
+			cword:     6,
+			gitCmdIdx: 3,
+			wantAll:   []string{"--branch", "--base", "--trust", "--interactive", "--help"},
 		},
 		{
 			name:    "wt subcommands",
@@ -328,10 +345,20 @@ func TestBashCompletionBehavior(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
+			var setup string
+			if tc.gitCmdIdx > 0 {
+				setup = "PATH=" + strconv.Quote(binDir) + ":\"$PATH\"\n" +
+					"words=" + tc.words + "\n" +
+					"cword=" + strconv.Itoa(tc.cword) + "\n" +
+					"__git_cmd_idx=" + strconv.Itoa(tc.gitCmdIdx) + "\n"
+			} else {
+				setup = "COMP_WORDS=" + tc.words + "\n" +
+					"COMP_CWORD=" + strconv.Itoa(tc.cword) + "\n"
+			}
+
 			driver := bashCompletionScript + "\n" +
-				"COMP_WORDS=" + tc.words + "\n" +
-				"COMP_CWORD=" + strconv.Itoa(tc.cword) + "\n" +
-				"_gitx\n" +
+				setup +
+				"_git_x\n" +
 				"printf '%s\\n' \"${COMPREPLY[@]}\"\n"
 
 			cmd := exec.Command("bash", "-c", driver)
