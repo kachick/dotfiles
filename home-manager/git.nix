@@ -236,11 +236,6 @@ in
       # or dprint) will not treat the current git repository as their workspace.
       # This keeps temporary files under /tmp isolated from repository configs.
       editor = "${pkgs.helix.meta.mainProgram} -w /tmp";
-
-      aliases = {
-        # https://github.com/kachick/wait-other-jobs/blob/b576def89f0816aab642bed952817a018e99b373/docs/examples.md#github_token-vs-pat
-        setup = "!gh repo edit --enable-auto-merge";
-      };
     };
 
     gitCredentialHelper = {
