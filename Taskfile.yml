@@ -13,16 +13,15 @@ tasks:
 
   apply:
     desc: Shorthand to rebuild NixOS or home-manager
+    deps:
+      - build-cmd
     cmds:
-      - |
-        if [ -f '/etc/NIXOS' ]; then
-          task nixos -- {{.CLI_ARGS}}
-        else
-          task home-manager -- {{.CLI_ARGS}}
-        fi
+      - ./dist/dot-task apply {{.CLI_ARGS}}
 
   nixos:
     desc: Enable NixOS config for current device
+    deps:
+      - build-cmd
     sources:
       - 'flake.nix'
       - 'flake.lock'
@@ -32,20 +31,14 @@ tasks:
       - 'pkgs/**/*'
       - 'config/**/*'
     cmds:
-      - |
-        set -euo pipefail
-        set -- {{.CLI_ARGS}}
-        if [ "$#" -gt 1 ]; then
-          echo 'Usage: task nixos [-- <host>]' >&2
-          exit 1
-        fi
-        host="${1:-$(hostname)}"
-        sudo nixos-rebuild switch --flake ".#${host}" --show-trace
+      - ./dist/dot-task nixos {{.CLI_ARGS}}
 
   home-manager:
     aliases:
       - hm
     desc: Enable home-manager config for current user and device
+    deps:
+      - build-cmd
     sources:
       - 'flake.nix'
       - 'flake.lock'
@@ -54,15 +47,7 @@ tasks:
       - 'pkgs/**/*'
       - 'config/**/*'
     cmds:
-      # Require an explicit host slug instead of hostname because multiple machines may share one config (e.g. wsl-ubuntu).
-      - |
-        set -euo pipefail
-        set -- {{.CLI_ARGS}}
-        if [ "$#" -ne 1 ]; then
-          echo 'Usage: task home-manager -- <host-slug>' >&2
-          exit 1
-        fi
-        nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#${USER}@$1"
+      - ./dist/dot-task home-manager {{.CLI_ARGS}}
 
   test:
     desc: Make sure NixOS and/or home-manager will work for current user and device
@@ -174,14 +159,10 @@ tasks:
 
   update:
     desc: Bump dependencies
+    deps:
+      - build-cmd
     cmds:
-      - nix flake update
-      - nix run .#dedup-flake-inputs
-      - |
-        if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
-          git commit --no-gpg-sign -m "flake.lock: Update" flake.nix flake.lock
-        fi
-      - nix run .#bump_gomod -- . cmd/winit-reg
+      - ./dist/dot-task update
 
   help:
     desc: If forgot anything
@@ -202,14 +183,10 @@ tasks:
     # It looks like no paging and sorting API. So keep feawest than last 50 images
     # Now it is cared in deployment workflow (container.yml) via reusable cleanup-ghcr workflow
     desc: Run container with selecting the tag with fuzzy finder
+    deps:
+      - build-cmd
     cmds:
-      - |
-        set -euo pipefail
-        # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
-        token="$(curl --fail --silent --show-error --location 'https://ghcr.io/token?scope=repository:kachick/home:pull' | jq --raw-output --exit-status '.token // empty')"
-        curl --fail --silent --show-error --header "Authorization: Bearer ${token}" 'https://ghcr.io/v2/kachick/home/tags/list' \
-          | jq --raw-output '.tags | map(select(. | contains("utc"))) | reverse | .[]' \
-          | fzf --bind 'enter:become(task ghcr-{})'
+      - ./dist/dot-task ghcr
 
   ghcr-*:
     desc: Run container which is built and registered via GitHub Actions
