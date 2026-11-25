@@ -263,7 +263,7 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 		// Fail-closed: check health first
 		ctx := context.Background()
 		if err := checkServerHealth(ctx, serverURL); err != nil {
-			return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: systemctl --user start llama-plamo (or 'plamo-start')", serverURL, err)
+			return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: plamo start", serverURL, err)
 		}
 
 		// Fetch commit message

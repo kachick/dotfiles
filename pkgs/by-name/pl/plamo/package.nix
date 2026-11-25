@@ -5,7 +5,7 @@
 }:
 
 buildGo127Module (finalAttrs: {
-  pname = "plamo-trans";
+  pname = "plamo";
   version = "0.0.1";
 
   __structuredAttrs = true;
@@ -19,7 +19,7 @@ buildGo127Module (finalAttrs: {
         ../../../../go.mod
         ../../../../go.sum
         ../../../../internal
-        ./.
+        (difference ./. (maybeMissing ./README.md))
       ];
     };
 
@@ -31,8 +31,13 @@ buildGo127Module (finalAttrs: {
 
   passthru.shared-gomod = true;
 
+  # Expose `trans` as a symlink instead of a shell alias so editors, scripts, and non-POSIX shells (e.g. nushell) can call it directly.
+  postInstall = ''
+    ln -s ${finalAttrs.meta.mainProgram} $out/bin/trans
+  '';
+
   meta = {
-    description = "Translate text using local PLaMo-3-Translate via llama-server";
+    description = "Local PLaMo-3-Translate CLI and service controller";
     mainProgram = finalAttrs.pname;
   };
 })

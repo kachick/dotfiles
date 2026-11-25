@@ -8,14 +8,8 @@
   home.packages = [
     # PLaMo-3 tokenizer ('plamo3') requires llama.cpp v0.8.0+
     pkgs.llama-cpp
-    pkgs.local.plamo-trans
+    pkgs.local.plamo
   ];
-
-  home.shellAliases = {
-    "plamo-start" = "systemctl --user start llama-plamo";
-    "plamo-stop" = "systemctl --user stop llama-plamo";
-    "plamo-status" = "systemctl --user status llama-plamo";
-  };
 
   # Background server for local translation using PLaMo-3-Translate 0.8B.
   systemd.user.services.llama-plamo = {
