@@ -29,10 +29,10 @@ var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 const usageText = `Usage:
   microvm-sandbox console
   microvm-sandbox up [--plain] [--mount <DIR>] <NAME>
-  microvm-sandbox exec <NAME> -- <COMMAND...>
+  microvm-sandbox exec [NAME] -- <COMMAND...>
   microvm-sandbox ssh [NAME]
   microvm-sandbox status
-  microvm-sandbox down <NAME>|--all
+  microvm-sandbox down [NAME|--all]
 `
 
 type upOptions struct {
@@ -336,21 +336,29 @@ func parseUpArgs(args []string) (upOptions, error) {
 }
 
 func parseExecArgs(args []string) (string, []string, error) {
-	if len(args) == 0 || args[0] == "--" {
-		return "", nil, errors.New("missing instance name")
+	if len(args) == 0 {
+		return "", nil, errors.New("missing command after '--'")
 	}
 
-	name := args[0]
-	if len(args) < 2 || args[1] != "--" {
-		return "", nil, errors.New("expected '--' before command")
+	var name string
+	var cmd []string
+	if args[0] == "--" {
+		cmd = args[1:]
+	} else {
+		name = args[0]
+		if len(args) < 2 || args[1] != "--" {
+			return "", nil, errors.New("expected '--' before command")
+		}
+		cmd = args[2:]
 	}
-	cmd := args[2:]
 
 	if len(cmd) == 0 {
 		return "", nil, errors.New("missing command after '--'")
 	}
-	if err := validateName(name); err != nil {
-		return "", nil, err
+	if name != "" {
+		if err := validateName(name); err != nil {
+			return "", nil, err
+		}
 	}
 	return name, cmd, nil
 }
@@ -523,7 +531,18 @@ func cmdExec(args []string) error {
 	if err != nil {
 		return err
 	}
-	port, err := requireRunningPort(stateRoot(), name)
+	root := stateRoot()
+	if name == "" {
+		instances, err := listRunningInstances(root)
+		if err != nil {
+			return err
+		}
+		name, err = selectInstance(instances, "exec> ", "no running microvm-sandbox instances")
+		if err != nil {
+			return err
+		}
+	}
+	port, err := requireRunningPort(root, name)
 	if err != nil {
 		return err
 	}
@@ -592,18 +611,35 @@ func listRunningInstances(root string) ([]instanceInfo, error) {
 	return running, nil
 }
 
-func pickInstanceWithFzf(instances []instanceInfo, fzfBin string) (string, error) {
+func formatInstanceRow(inst instanceInfo) string {
+	state := "stopped"
+	pidStr := "-"
+	if inst.running {
+		state = "running"
+		if inst.pid > 0 {
+			pidStr = strconv.Itoa(inst.pid)
+		}
+	}
+	portStr := "-"
+	if inst.port > 0 {
+		portStr = strconv.Itoa(inst.port)
+	}
+	return fmt.Sprintf("%-20s %-10s %-10s %s", inst.name, state, pidStr, portStr)
+}
+
+func pickInstanceWithFzf(instances []instanceInfo, prompt, fzfBin string) (string, error) {
 	if len(instances) == 0 {
-		return "", errors.New("no running microvm-sandbox instances")
+		return "", errors.New("no microvm-sandbox instances")
 	}
 
 	var input strings.Builder
 	for _, inst := range instances {
-		fmt.Fprintf(&input, "%-20s %-10d %d\n", inst.name, inst.pid, inst.port)
+		input.WriteString(formatInstanceRow(inst))
+		input.WriteByte('\n')
 	}
 
-	header := fmt.Sprintf("%-20s %-10s %s", "NAME", "PID", "PORT")
-	cmd := exec.Command(fzfBin, "--reverse", "--prompt", "ssh> ", "--header", header)
+	header := fmt.Sprintf("%-20s %-10s %-10s %s", "NAME", "STATE", "PID", "PORT")
+	cmd := exec.Command(fzfBin, "--reverse", "--prompt", prompt, "--header", header)
 	cmd.Stdin = strings.NewReader(input.String())
 	cmd.Stderr = os.Stderr
 
@@ -618,30 +654,41 @@ func pickInstanceWithFzf(instances []instanceInfo, fzfBin string) (string, error
 	return fields[0], nil
 }
 
+func selectInstance(instances []instanceInfo, prompt, emptyErr string) (string, error) {
+	if len(instances) == 0 {
+		return "", errors.New(emptyErr)
+	}
+	fzfBin, err := exec.LookPath("fzf")
+	if err != nil {
+		return "", err
+	}
+	name, err := pickInstanceWithFzf(instances, prompt, fzfBin)
+	if err != nil {
+		return "", err
+	}
+	if err := validateName(name); err != nil {
+		return "", err
+	}
+	return name, nil
+}
+
 func cmdSSH(args []string) error {
 	root := stateRoot()
 	var name string
 	if len(args) > 0 {
 		name = args[0]
+		if err := validateName(name); err != nil {
+			return err
+		}
 	} else {
 		instances, err := listRunningInstances(root)
 		if err != nil {
 			return err
 		}
-		if len(instances) == 0 {
-			return errors.New("no running microvm-sandbox instances")
-		}
-		fzfBin, err := exec.LookPath("fzf")
+		name, err = selectInstance(instances, "ssh> ", "no running microvm-sandbox instances")
 		if err != nil {
 			return err
 		}
-		name, err = pickInstanceWithFzf(instances, fzfBin)
-		if err != nil {
-			return err
-		}
-	}
-	if err := validateName(name); err != nil {
-		return err
 	}
 	port, err := requireRunningPort(root, name)
 	if err != nil {
@@ -668,19 +715,7 @@ func cmdStatus(stdout io.Writer) error {
 
 	_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", "NAME", "STATE", "PID", "PORT")
 	for _, inst := range instances {
-		state := "stopped"
-		pidStr := "-"
-		if inst.running {
-			state = "running"
-			if inst.pid > 0 {
-				pidStr = strconv.Itoa(inst.pid)
-			}
-		}
-		portStr := "-"
-		if inst.port > 0 {
-			portStr = strconv.Itoa(inst.port)
-		}
-		_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", inst.name, state, pidStr, portStr)
+		_, _ = fmt.Fprintln(stdout, formatInstanceRow(inst))
 	}
 	return nil
 }
@@ -716,14 +751,23 @@ func stopInstance(root, name string, stdout io.Writer) error {
 }
 
 func cmdDown(args []string, stdout io.Writer) error {
-	if len(args) == 0 {
-		return errors.New("missing instance name or --all")
-	}
 	if len(args) > 1 {
 		return fmt.Errorf("unexpected arguments: %s", strings.Join(args[1:], " "))
 	}
 
 	root := stateRoot()
+	if len(args) == 0 {
+		instances, err := listInstances(root)
+		if err != nil {
+			return err
+		}
+		name, err := selectInstance(instances, "down> ", "no microvm-sandbox instances")
+		if err != nil {
+			return err
+		}
+		return stopInstance(root, name, stdout)
+	}
+
 	if args[0] == "--all" {
 		entries, err := os.ReadDir(root)
 		if err != nil {

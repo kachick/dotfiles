@@ -126,12 +126,17 @@ func TestParseUpArgs(t *testing.T) {
 func TestParseExecArgs(t *testing.T) {
 	t.Parallel()
 
-	name, cmd, err := parseExecArgs([]string{"task-1", "--", "go", "test"})
+	name, cmd, err := parseExecArgs([]string{"--", "echo", "hi"})
+	if err != nil || name != "" || strings.Join(cmd, " ") != "echo hi" {
+		t.Fatalf("unexpected result: name=%q cmd=%v err=%v", name, cmd, err)
+	}
+
+	name, cmd, err = parseExecArgs([]string{"task-1", "--", "go", "test"})
 	if err != nil || name != "task-1" || strings.Join(cmd, " ") != "go test" {
 		t.Fatalf("unexpected result: name=%q cmd=%v err=%v", name, cmd, err)
 	}
 
-	for _, bad := range [][]string{nil, {"--", "echo", "hi"}, {"task-1"}, {"task-1", "echo"}, {"task-1", "--"}} {
+	for _, bad := range [][]string{nil, {"--"}, {"task-1"}, {"task-1", "echo"}, {"task-1", "--"}} {
 		if _, _, err := parseExecArgs(bad); err == nil {
 			t.Errorf("parseExecArgs(%v) expected error", bad)
 		}
@@ -290,11 +295,11 @@ func TestRunSubcommands(t *testing.T) {
 		}
 	})
 
-	t.Run("down without args returns error", func(t *testing.T) {
+	t.Run("down with extra args returns error", func(t *testing.T) {
 		t.Parallel()
 		var stdout, stderr bytes.Buffer
-		if err := run([]string{"down"}, &stdout, &stderr); err == nil {
-			t.Fatal("expected error for missing down target")
+		if err := run([]string{"down", "a", "b"}, &stdout, &stderr); err == nil {
+			t.Fatal("expected error for extra down args")
 		}
 	})
 }
@@ -416,9 +421,9 @@ func TestListRunningInstances(t *testing.T) {
 func TestPickInstanceWithFzf(t *testing.T) {
 	t.Parallel()
 
-	t.Run("errors when no running instances", func(t *testing.T) {
+	t.Run("errors when no instances", func(t *testing.T) {
 		t.Parallel()
-		if _, err := pickInstanceWithFzf(nil, "fzf"); err == nil {
+		if _, err := pickInstanceWithFzf(nil, "ssh> ", "fzf"); err == nil {
 			t.Fatal("expected error for empty instances")
 		}
 	})
@@ -433,9 +438,9 @@ func TestPickInstanceWithFzf(t *testing.T) {
 
 		instances := []instanceInfo{
 			{name: "alpha", running: true, pid: 1001, port: 2221},
-			{name: "work-1", running: true, pid: 1002, port: 2222},
+			{name: "work-1", running: false, port: 2222},
 		}
-		got, err := pickInstanceWithFzf(instances, fakeFzf)
+		got, err := pickInstanceWithFzf(instances, "down> ", fakeFzf)
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
@@ -455,7 +460,7 @@ func TestPickInstanceWithFzf(t *testing.T) {
 		instances := []instanceInfo{
 			{name: "alpha", running: true, pid: 1001, port: 2221},
 		}
-		_, err := pickInstanceWithFzf(instances, fakeFzf)
+		_, err := pickInstanceWithFzf(instances, "exec> ", fakeFzf)
 		var exitErr *exec.ExitError
 		if !errors.As(err, &exitErr) || exitErr.ExitCode() != 130 {
 			t.Fatalf("got err=%v, want ExitError with code 130", err)
