@@ -8,11 +8,36 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+  queue: max
+
 jobs:
+  plan:
+    name: 🧭 Plan Update Scope
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    outputs:
+      flake-inputs: ${{ steps.scope.outputs.flake-inputs }}
+    steps:
+      - name: Determine flake inputs to update
+        id: scope
+        run: |
+          # Run full update on workflow_dispatch or every Sunday (Asia/Tokyo);
+          # update only nixpkgs on other scheduled days for timely security patches.
+          if [ "${GITHUB_EVENT_NAME}" = "schedule" ] && [ "$(TZ='Asia/Tokyo' date +%u)" != "7" ]; then
+            echo "flake-inputs=nixpkgs" >> "${GITHUB_OUTPUT}"
+          else
+            echo "flake-inputs=" >> "${GITHUB_OUTPUT}"
+          fi
+
   bump:
+    needs: plan
     uses: kachick/workflows/.github/workflows/reusable-bump-flake-lock.yml@main # zizmor: ignore[unpinned-uses]
     with:
       app-id: ${{ vars.SAMU_APP_ID }}
+      flake-inputs: ${{ needs.plan.outputs.flake-inputs }}
       post-commit-lock-file: nix run .#dedup-flake-inputs && nix run .#bump_gomod -- . cmd/winit-reg
     secrets:
       APP_PRIVATE_KEY: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
