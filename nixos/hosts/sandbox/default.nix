@@ -138,24 +138,56 @@
     };
   };
 
-  # Dynamically synchronize sandbox user UID to match mounted host repos ownership
+  # Mount optional per-instance workspace 9p share when launched with --mount
+  systemd.services."mount-workspace" = {
+    description = "Mount optional 9p workspace share at /home/user/workspace";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "sync-user-uid.service" ];
+    after = [ "local-fs.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "mount-workspace" ''
+        set -eu
+        for tag_file in /sys/bus/virtio/devices/*/mount_tag; do
+          [ -r "$tag_file" ] || continue
+          if [ "$(${pkgs.coreutils}/bin/tr -d '\0' < "$tag_file")" = "workspace" ]; then
+            ${pkgs.coreutils}/bin/mkdir -p /home/user/workspace
+            ${pkgs.util-linux}/bin/mount -t 9p -o trans=virtio,version=9p2000.L,msize=104857600 workspace /home/user/workspace
+            exit 0
+          fi
+        done
+      '';
+      StandardOutput = "journal+console";
+      StandardError = "journal+console";
+    };
+  };
+
+  # Dynamically synchronize sandbox user UID to match mounted host directory ownership
   # This avoids hardcoding host-specific numeric UIDs while ensuring seamless write access.
   systemd.services."sync-user-uid" = {
-    description = "Synchronize guest user UID with mounted host repos directory";
+    description = "Synchronize guest user UID with mounted host directory";
     wantedBy = [ "multi-user.target" ];
     before = [ "home-manager-user.service" ];
-    after = [ "local-fs.target" ];
+    after = [
+      "local-fs.target"
+      "mount-workspace.service"
+    ];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
       ExecStart = pkgs.writeShellScript "sync-user-uid" ''
         set -eu
-        TARGET_DIR="/home/user/repos/github.com/kachick"
+        if ${pkgs.util-linux}/bin/mountpoint -q /home/user/workspace; then
+          TARGET_DIR="/home/user/workspace"
+        else
+          TARGET_DIR="/home/user/repos/github.com/kachick"
+        fi
         if [ -d "$TARGET_DIR" ]; then
           TARGET_UID=$(${pkgs.coreutils}/bin/stat -c '%u' "$TARGET_DIR")
           CURRENT_UID=$(${pkgs.coreutils}/bin/id -u user)
           if [ -n "$TARGET_UID" ] && [ "$TARGET_UID" -ne 0 ] && [ "$TARGET_UID" -ne "$CURRENT_UID" ]; then
-            echo "Synchronizing sandbox user UID from $CURRENT_UID to $TARGET_UID to match host repos ownership"
+            echo "Synchronizing sandbox user UID from $CURRENT_UID to $TARGET_UID to match host directory ownership"
             ${pkgs.gnused}/bin/sed -i "s/^user:x:[0-9]*:/user:x:$TARGET_UID:/" /etc/passwd
             ${pkgs.coreutils}/bin/chown -h "$TARGET_UID" /home/user /home/user/repos || true
             if [ -d /home/user/.local ]; then

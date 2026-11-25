@@ -8,6 +8,7 @@ nix run .#microvm-sandbox
 
 # Background instances over SSH (pubkey auth via config/ssh/keys.nix)
 nix run .#microvm-sandbox -- up test-1
+nix run .#microvm-sandbox -- up --plain --mount "$PWD" work-1
 nix run .#microvm-sandbox -- status
 nix run .#microvm-sandbox -- exec test-1 -- hostname
 nix run .#microvm-sandbox -- ssh test-1
@@ -15,7 +16,8 @@ nix run .#microvm-sandbox -- down test-1
 nix run .#microvm-sandbox -- down --all
 ```
 
-- `/home/user/repos/github.com/kachick` is shared read-write with the host.
+- By default, `/home/user/repos/github.com/kachick` is shared read-write with the host.
+- With `--plain`, the host repos share is replaced with a read-only empty directory. Adding `--mount <DIR>` exposes only `<DIR>` read-write at `/home/user/workspace`.
 - `/nix/store` uses a volatile `tmpfs` overlay (`2G`) and resets on shutdown.
 - Background SSH logins require a local private key or `ssh-agent` matching `config/ssh/keys.nix`.
 
@@ -55,15 +57,15 @@ flowchart TD
     dns -.->|"probe & forward"| host_dns
 ```
 
-## CLI & Lifecycle (`microvm-sandbox.bash`)
+## CLI & Lifecycle (`cmd/microvm-sandbox`)
 
 ```mermaid
 flowchart TD
-    cli["microvm-sandbox (package.nix -> writeShellApplication)"]
+    cli["microvm-sandbox (package.nix -> buildGo127Module)"]
 
     cli -->|"no args / console"| fg["exec declaredRunner/bin/microvm-run (foreground stdio)"]
 
-    cli -->|"up [NAME]"| up["Patch microvm-run & pick free port (2221-2320)"]
+    cli -->|"up [--plain] [--mount DIR] [NAME]"| up["Patch microvm-run & pick free port (2221-2320)"]
     up --> state["$XDG_RUNTIME_DIR/microvm-sandbox/<NAME>/{microvm-run,qemu.pid,ssh.port,console.log}"]
     state -->|"QEMU -daemonize + hostfwd"| wait["Poll SSH (BatchMode=yes, timeout 30s)"]
 
