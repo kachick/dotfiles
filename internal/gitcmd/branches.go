@@ -386,26 +386,40 @@ func SelectBranchesWithFzf(opts FzfBranchSelectOptions, candidates []BranchCandi
 
 // RenderBranchPreview writes target path, diff stat vs defaultBranch, and recent commits for branch.
 func RenderBranchPreview(repoDir, defaultBranch, branch string, stdout, stderr io.Writer) error {
+	branch = strings.TrimSpace(branch)
 	if branch == "" {
 		return nil
 	}
 
-	dirName, err := WorktreeDirName(branch)
+	r := NewIsolated(repoDir, stdout, stderr)
+	resolvedRef := "refs/heads/" + branch
+	found := r.Ok("show-ref", "--verify", "--quiet", resolvedRef)
+	if !found {
+		if r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/"+branch) {
+			resolvedRef = "refs/remotes/" + branch
+			found = true
+		} else if r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch) {
+			resolvedRef = "refs/remotes/origin/" + branch
+			found = true
+		}
+	}
+
+	localName := strings.TrimPrefix(branch, "origin/")
+	dirName, err := WorktreeDirName(localName)
 	targetText := "(invalid directory name)"
 	if err == nil {
 		targetText = filepath.Join(repoDir, dirName)
 	}
 	fmt.Fprintf(stdout, "Branch:   %s\nWorktree: %s\n", branch, targetText)
 
-	r := NewIsolated(repoDir, stdout, stderr)
-	if !r.Ok("show-ref", "--verify", "--quiet", "refs/heads/"+branch) {
+	if !found {
 		fmt.Fprintln(stdout, "\n(unborn branch; no commits yet)")
 		return nil
 	}
 
-	if defaultBranch != "" && branch != defaultBranch {
+	if defaultBranch != "" && localName != defaultBranch {
 		if targetRef := ResolveTargetRef(r, defaultBranch); targetRef != "" {
-			if stat, err := r.Output("diff", "--stat", "--color=always", targetRef+"..."+branch); err == nil && stat != "" {
+			if stat, err := r.Output("diff", "--stat", "--color=always", targetRef+"..."+resolvedRef); err == nil && stat != "" {
 				fmt.Fprintf(stdout, "\nDiff vs %s:\n%s\n", defaultBranch, stat)
 			}
 		}
@@ -414,5 +428,5 @@ func RenderBranchPreview(repoDir, defaultBranch, branch string, stdout, stderr i
 	fmt.Fprintln(stdout)
 	return r.Stream("log",
 		"--format=format:%C(cyan)%ad %C(auto)%h %C(auto)%s %C(auto)%d",
-		"--date=short", "--color=always", "-n", "20", branch)
+		"--date=short", "--color=always", "-n", "20", resolvedRef)
 }

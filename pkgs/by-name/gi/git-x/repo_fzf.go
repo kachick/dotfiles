@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"os"
@@ -341,78 +340,4 @@ func collectAllWorktrees() ([]repoWorktreeEntry, error) {
 		result = append(result, inspectRepoWorktrees(rel, fullPath)...)
 	}
 	return result, nil
-}
-
-func repoFzfFilterArgs(query string) []string {
-	return []string{
-		"--query", query,
-		// Expects 3-level `<host>/<owner>/<repo>` paths; deeper paths (e.g. GitLab subgroups) are rare here.
-		// Splitting `<repo>` with `\t` would add tab gaps in the path and make the boundary with worktree labels unclear.
-		"--delimiter=[/\t]",
-		"--nth=3,4",
-		"--with-nth=1..4",
-		"--accept-nth=5..",
-		"--tiebreak=begin,index",
-		"--preview", "eza --group-directories-first --icons=always --color=always --no-user --no-time --no-filesize --no-permissions --sort=modified {5..}",
-		"--preview-window", "right,60%,~3",
-	}
-}
-
-func newRepoFzfFlagSet(stderr io.Writer) (*flag.FlagSet, *bool) {
-	fs := flag.NewFlagSet("git-x repo-fzf", flag.ContinueOnError)
-	fs.SetOutput(stderr)
-	listOnly := fs.Bool("list", false, "print flat worktree entries without invoking fzf")
-
-	fs.Usage = func() {
-		fmt.Fprintf(stderr, "Usage: git x repo-fzf [--list] [query]\n\n")
-		fmt.Fprintf(stderr, "Select a repository worktree via fzf and print its path.\n\n")
-		fs.PrintDefaults()
-	}
-	return fs, listOnly
-}
-
-func runRepoFzf(args []string, stdout, stderr io.Writer) error {
-	fs, listOnly := newRepoFzfFlagSet(stderr)
-
-	if err := fs.Parse(args); err != nil {
-		return err
-	}
-
-	var query string
-	remaining := fs.Args()
-	if len(remaining) >= 1 {
-		query = remaining[0]
-	}
-
-	entries, err := collectAllWorktrees()
-	if err != nil {
-		return err
-	}
-
-	var input strings.Builder
-	for _, entry := range entries {
-		input.WriteString(entry.formatLine())
-		input.WriteByte('\n')
-	}
-
-	if *listOnly {
-		_, err := io.WriteString(stdout, input.String())
-		return err
-	}
-
-	if len(entries) == 0 {
-		return nil
-	}
-
-	cmd := exec.Command("fzf", repoFzfFilterArgs(query)...)
-	cmd.Stdin = strings.NewReader(input.String())
-	cmd.Stdout = stdout
-	cmd.Stderr = stderr
-	if err := cmd.Run(); err != nil {
-		if isCancelExitError(err) {
-			return nil
-		}
-		return fmt.Errorf("fzf failed: %w", err)
-	}
-	return nil
 }

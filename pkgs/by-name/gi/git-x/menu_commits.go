@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
-	"flag"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -17,16 +17,18 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
 
 const (
-	maxParallelSlots       = 4
-	maxPrefetchSlots       = 2
-	commitIndexLimit       = 2000
-	logFzfBorderLabelPlain = "🪵 Logs"
-	logFzfBorderLabelJa    = "🪵 Logs (ja)"
-	jaEnabledFilename      = "ja_enabled"
-	previewColsFilename    = "preview_cols"
+	maxParallelSlots           = 4
+	maxPrefetchSlots           = 2
+	commitIndexLimit           = 2000
+	menuCommitBorderLabelPlain = "🪵 Commits (Ctrl-G)"
+	menuCommitBorderLabelJa    = "🪵 Commits (ja) (Ctrl-G)"
+	jaEnabledFilename          = "ja_enabled"
+	previewColsFilename        = "preview_cols"
 )
 
 type commitIndex struct {
@@ -35,6 +37,25 @@ type commitIndex struct {
 }
 
 var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+
+func localeDefaultsToJa() bool {
+	for _, key := range []string{"LC_ALL", "LC_MESSAGES", "LANG"} {
+		val := strings.TrimSpace(os.Getenv(key))
+		if val == "" {
+			continue
+		}
+		lower := strings.ToLower(val)
+		return lower == "ja" || strings.HasPrefix(lower, "ja_") || strings.HasPrefix(lower, "ja-")
+	}
+	return false
+}
+
+func menuCommitBorderLabel(ja bool) string {
+	if ja {
+		return menuCommitBorderLabelJa
+	}
+	return menuCommitBorderLabelPlain
+}
 
 func cleanRev(raw string) string {
 	clean := ansiRegex.ReplaceAllString(raw, "")
@@ -143,7 +164,7 @@ func renderCmdPipeline(cmd1 *exec.Cmd, stdout, stderr io.Writer) error {
 	return cmd3.Wait()
 }
 
-func renderCommit(selfExe, rev, placeholder string, columns int, stdout, stderr io.Writer) error {
+func renderCommitInDir(selfExe, workDir, rev, placeholder string, columns int, stdout, stderr io.Writer) error {
 	showArgs := []string{"show", "--ja"}
 	if placeholder != "" {
 		showArgs = append(showArgs, "--placeholder", placeholder)
@@ -153,7 +174,11 @@ func renderCommit(selfExe, rev, placeholder string, columns int, stdout, stderr 
 	}
 	showArgs = append(showArgs, "--color=always", rev)
 
-	return renderCmdPipeline(exec.Command(selfExe, showArgs...), stdout, stderr)
+	cmd := exec.Command(selfExe, showArgs...)
+	if workDir != "" {
+		cmd.Dir = workDir
+	}
+	return renderCmdPipeline(cmd, stdout, stderr)
 }
 
 func envPreviewColumns() int {
@@ -197,21 +222,12 @@ func previewCachePath(cacheDir, rev string, cols int) string {
 	return filepath.Join(cacheDir, rev+".out")
 }
 
-func renderPlainCommit(revRaw string, stdout, stderr io.Writer) error {
-	rev := cleanRev(revRaw)
-	if rev == "" {
-		return nil
-	}
-
-	return renderCmdPipeline(exec.Command("git", "show", "--color=always", rev), stdout, stderr)
-}
-
-func hasPersistentTranslation(rev string) bool {
+func hasPersistentTranslation(workDir, rev string) bool {
 	cacheDir, err := translationCacheDir()
 	if err != nil {
 		return false
 	}
-	msg, _, systemPrompt, err := loadCommitTranslationInput(rev, "")
+	msg, _, systemPrompt, err := loadCommitTranslationInput(rev, workDir)
 	if err != nil {
 		return false
 	}
@@ -241,27 +257,23 @@ func setJaEnabled(cacheDir string, enabled bool) error {
 	return nil
 }
 
-func logFzfRunToggleJa(cacheDir string, stdout io.Writer) error {
+func menuRunToggleJa(cacheDir string, stdout io.Writer) error {
 	next := !isJaEnabled(cacheDir)
 	if err := setJaEnabled(cacheDir, next); err != nil {
 		return err
 	}
-	label := logFzfBorderLabelPlain
-	if next {
-		label = logFzfBorderLabelJa
-	}
-	_, err := fmt.Fprintf(stdout, "change-border-label(%s)+refresh-preview\n", label)
+	_, err := fmt.Fprintf(stdout, "change-border-label(%s)+refresh-preview\n", menuCommitBorderLabel(next))
 	return err
 }
 
-func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Writer) error {
+func menuRunCommitPreview(selfExe, workDir, cacheDir, rawItem string, stdout, stderr io.Writer) error {
 	rev := cleanRev(rawItem)
 	if rev == "" {
 		return nil
 	}
 
 	if !isJaEnabled(cacheDir) {
-		return renderPlainCommit(rev, stdout, stderr)
+		return renderPlainCommitInDir(workDir, rev, stdout, stderr)
 	}
 
 	cols := envPreviewColumns()
@@ -279,9 +291,9 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 		return err
 	}
 
-	if hasPersistentTranslation(rev) {
+	if hasPersistentTranslation(workDir, rev) {
 		var buf bytes.Buffer
-		if err := renderCommit(selfExe, rev, "", cols, &buf, stderr); err == nil {
+		if err := renderCommitInDir(selfExe, workDir, rev, "", cols, &buf, stderr); err == nil {
 			tmpOutPath := outPath + ".tmp"
 			if writeErr := os.WriteFile(tmpOutPath, buf.Bytes(), 0o600); writeErr == nil {
 				_ = os.Rename(tmpOutPath, outPath)
@@ -301,7 +313,7 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 		placeholder = "PLaMo-3 サービス未起動 (systemctl --user start llama-plamo)"
 	}
 
-	return renderCommit(selfExe, rev, placeholder, cols, stdout, stderr)
+	return renderCommitInDir(selfExe, workDir, rev, placeholder, cols, stdout, stderr)
 }
 
 func neighborRevs(commits []string, idxMap map[string]int, rev string) []string {
@@ -322,8 +334,12 @@ func neighborRevs(commits []string, idxMap map[string]int, rev string) []string 
 	return neighbors
 }
 
-func loadCommitIndex(limit int) ([]string, map[string]int) {
-	out, err := exec.Command("git", "log", "--format=%h", fmt.Sprintf("-n%d", limit)).Output()
+func loadCommitIndex(workDir string, limit int) ([]string, map[string]int) {
+	cmd := exec.Command("git", "log", "--format=%h", fmt.Sprintf("-n%d", limit))
+	if workDir != "" {
+		cmd.Dir = workDir
+	}
+	out, err := cmd.Output()
 	if err != nil {
 		return nil, nil
 	}
@@ -335,8 +351,12 @@ func loadCommitIndex(limit int) ([]string, map[string]int) {
 	return commits, idxMap
 }
 
-func fetchFollowingRevs(rev string) []string {
-	out, err := exec.Command("git", "log", "--format=%h", "-n", "3", rev).Output()
+func fetchFollowingRevs(workDir, rev string) []string {
+	cmd := exec.Command("git", "log", "--format=%h", "-n", "3", rev)
+	if workDir != "" {
+		cmd.Dir = workDir
+	}
+	out, err := cmd.Output()
 	if err != nil {
 		return nil
 	}
@@ -347,7 +367,7 @@ func fetchFollowingRevs(rev string) []string {
 	return lines[1:]
 }
 
-func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io.Writer) {
+func runCommitTranslationWorker(ctx context.Context, selfExe, workDir, cacheDir, fzfSock string, stderr io.Writer) {
 	serverURL := plamoServerURL()
 
 	focusFile := filepath.Join(cacheDir, "current_focus")
@@ -398,7 +418,7 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 			if err != nil {
 				renderErr = err
 			} else {
-				renderErr = renderCommit(selfExe, targetRev, "", cols, f, stderr)
+				renderErr = renderCommitInDir(selfExe, workDir, targetRev, "", cols, f, stderr)
 				_ = f.Close()
 				if renderErr == nil {
 					_ = os.Rename(tmpOutPath, outPath)
@@ -440,7 +460,7 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
-			// Stay idle while translation is off so default `git lf` does not touch git log or llama-server.
+			// Stay idle while translation is off so non-ja locales do not touch git log or llama-server.
 			if !isJaEnabled(cacheDir) {
 				prevFocus = ""
 				continue
@@ -448,7 +468,7 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 
 			indexOnce.Do(func() {
 				go func() {
-					commits, idxMap := loadCommitIndex(commitIndexLimit)
+					commits, idxMap := loadCommitIndex(workDir, commitIndexLimit)
 					if len(commits) > 0 {
 						indexPtr.Store(&commitIndex{commits: commits, idxMap: idxMap})
 					}
@@ -495,7 +515,7 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 			if len(neighbors) == 0 {
 				if current != lastFallbackRev {
 					lastFallbackRev = current
-					lastFallbackNeighbors = fetchFollowingRevs(current)
+					lastFallbackNeighbors = fetchFollowingRevs(workDir, current)
 				}
 				neighbors = lastFallbackNeighbors
 			}
@@ -506,92 +526,23 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 	}
 }
 
-type logFzfOptions struct {
-	ja    bool
-	query string
-	help  bool
-}
-
-func parseLogFzfArgs(args []string) (logFzfOptions, error) {
-	var opts logFzfOptions
-	var positional []string
-	for _, arg := range args {
-		switch arg {
-		case "-h", "--help":
-			opts.help = true
-			return opts, nil
-		case "--ja":
-			opts.ja = true
-		default:
-			if strings.HasPrefix(arg, "-") {
-				return opts, fmt.Errorf("unknown flag: %s", arg)
-			}
-			positional = append(positional, arg)
-		}
-	}
-	if len(positional) > 1 {
-		return opts, fmt.Errorf("expected at most 1 query argument, got %d", len(positional))
-	}
-	if len(positional) == 1 {
-		opts.query = positional[0]
-	}
-	return opts, nil
-}
-
-func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []string {
-	borderLabel := logFzfBorderLabelPlain
-	if opts.ja {
-		borderLabel = logFzfBorderLabelJa
-	}
-	previewCmd := fmt.Sprintf("%q log-fzf _preview %q {2}", selfExe, cacheDir)
-	toggleJaBind := fmt.Sprintf("alt-j:transform(%q log-fzf _toggle-ja %q)", selfExe, cacheDir)
-
-	fzfArgs := []string{
-		"--ansi",
-		"--nth", "1,3..",
-		"--no-sort",
-		"--border-label", borderLabel,
-		"--preview", previewCmd,
-		"--preview-window", "right,60%",
-		"--preview-border", "line",
-		"--layout", "reverse",
-		"--multi",
-		"--border",
-		"--no-separator",
-		"--header-border", "horizontal",
-		"--border-label-pos", "2",
-		"--color", "label:blue",
-		"--header", "CTRL-O (Open in browser) / CTRL-R (Revert)\nALT-J (Toggle ja) / ALT-F (Zoom preview)\n\n",
-		"--bind", "ctrl-o:execute-silent(gh browse {2})",
-		"--bind", "ctrl-r:become(git revert {2})",
-		"--bind", toggleJaBind,
-		"--bind", "alt-f:change-preview-window(down,80%|)",
-		"--bind", "ctrl-/:change-preview-window(down,60%|hidden|)",
-	}
-
-	if fzfSock != "" {
-		fzfArgs = append(fzfArgs, "--listen="+fzfSock)
-	}
-	if opts.query != "" {
-		fzfArgs = append(fzfArgs, "--query", opts.query)
-	}
-	return fzfArgs
-}
-
-func runLogFzfPipeline(logCmd, fzfCmd *exec.Cmd) error {
+func runMenuCommitPipeline(logCmd, fzfCmd *exec.Cmd) (selectChoice, error) {
 	// Use os.Pipe instead of logCmd.StdoutPipe so the parent can close the read end
 	// right after fzf starts; otherwise git log blocks on a full pipe after fzf exits early.
 	r, w, err := os.Pipe()
 	if err != nil {
-		return fmt.Errorf("failed to create git log pipe: %w", err)
+		return selectChoice{}, fmt.Errorf("failed to create git log pipe: %w", err)
 	}
 	logCmd.Stdout = w
 	fzfCmd.Stdin = r
 
+	var out bytes.Buffer
+	fzfCmd.Stdout = &out
+
 	if err := logCmd.Start(); err != nil {
 		_ = r.Close()
 		_ = w.Close()
-		return fmt.Errorf("failed to start git log: %w", err)
+		return selectChoice{}, fmt.Errorf("failed to start git log: %w", err)
 	}
 	_ = w.Close()
 
@@ -599,7 +550,7 @@ func runLogFzfPipeline(logCmd, fzfCmd *exec.Cmd) error {
 		_ = r.Close()
 		_ = logCmd.Process.Kill()
 		_ = logCmd.Wait()
-		return fmt.Errorf("failed to start fzf: %w", err)
+		return selectChoice{}, fmt.Errorf("failed to start fzf: %w", err)
 	}
 	_ = r.Close()
 
@@ -607,103 +558,42 @@ func runLogFzfPipeline(logCmd, fzfCmd *exec.Cmd) error {
 	_ = logCmd.Process.Kill()
 	_ = logCmd.Wait()
 	if fzfErr != nil {
-		if isCancelExitError(fzfErr) {
-			return nil
+		var exitErr *exec.ExitError
+		if errors.As(fzfErr, &exitErr) {
+			switch exitErr.ExitCode() {
+			case 130:
+				return selectChoice{}, gitcmd.ErrSelectionCanceled
+			case 1:
+				choice := parseFzfSelectOutput(out.String())
+				if choice.Query == "" && choice.Key == "" && choice.Path == "" {
+					return selectChoice{}, gitcmd.ErrSelectionCanceled
+				}
+				return choice, nil
+			}
 		}
-		return fzfErr
+		return selectChoice{}, fmt.Errorf("fzf failed: %w", fzfErr)
 	}
-	return nil
+	return parseFzfSelectOutput(out.String()), nil
 }
 
-func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer) error {
-	selfExe, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("failed to get executable path: %w", err)
+func selectMenuCommitStreaming(gitDir string, fzfArgs []string, stderr io.Writer) (selectChoice, error) {
+	r := gitcmd.New(gitDir, stderr, stderr)
+	if !r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
+		return selectMenuItemWithFzf(menuModeCommits, fzfArgs, strings.NewReader(""), stderr)
 	}
-
-	cacheDir, err := os.MkdirTemp("", "git-x-log-fzf-*")
-	if err != nil {
-		return fmt.Errorf("failed to create temp cache dir: %w", err)
-	}
-	defer os.RemoveAll(cacheDir)
-
-	if opts.ja {
-		if err := setJaEnabled(cacheDir, true); err != nil {
-			return fmt.Errorf("failed to enable translation mode: %w", err)
-		}
-	}
-
-	fzfSock := filepath.Join(cacheDir, "fzf.sock")
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	go runWorker(ctx, selfExe, cacheDir, fzfSock, stderr)
 
 	// Do not add `--graph`, it makes it too slow in large repositories such as NixOS/nixpkgs.
 	logCmd := exec.Command("git", "log", "--format="+defaultLogFormat, "--date=short", "--color=always")
+	if gitDir != "" {
+		logCmd.Dir = gitDir
+	}
 	logCmd.Stderr = stderr
 
-	fzfArgs := buildLogFzfArgs(selfExe, cacheDir, fzfSock, opts)
 	fzfCmd := exec.Command("fzf", fzfArgs...)
-	fzfCmd.Stdout = stdout
+	if gitDir != "" {
+		fzfCmd.Dir = gitDir
+	}
 	fzfCmd.Stderr = stderr
-	_ = stdin
 
-	return runLogFzfPipeline(logCmd, fzfCmd)
-}
-
-func logFzfFlags() []cliFlagSpec {
-	return []cliFlagSpec{
-		{
-			name:        "ja",
-			description: "Start with asynchronous Japanese commit message translation preview enabled",
-		},
-	}
-}
-
-func printLogFzfUsage(w io.Writer) {
-	fmt.Fprintf(w, "Usage: git x log-fzf [--ja] [query]\n\n")
-	fmt.Fprintf(w, "Search git log via fzf with preview and quick actions.\n\n")
-	fmt.Fprintf(w, "Options:\n")
-	for _, f := range logFzfFlags() {
-		fmt.Fprintf(w, "  --%-6s%s\n", f.name, f.description)
-	}
-}
-
-func runLogFzf(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-	if len(args) > 0 {
-		switch args[0] {
-		case "_preview":
-			if len(args) < 3 {
-				return nil
-			}
-			selfExe, err := os.Executable()
-			if err != nil {
-				return fmt.Errorf("failed to get executable path: %w", err)
-			}
-			return logFzfRunPreview(selfExe, args[1], args[2], stdout, stderr)
-		case "_toggle-ja":
-			if len(args) < 2 {
-				return nil
-			}
-			return logFzfRunToggleJa(args[1], stdout)
-		case "_preview-plain":
-			if len(args) < 2 {
-				return nil
-			}
-			return renderPlainCommit(args[1], stdout, stderr)
-		}
-	}
-
-	opts, err := parseLogFzfArgs(args)
-	if err != nil {
-		printLogFzfUsage(stderr)
-		return err
-	}
-	if opts.help {
-		printLogFzfUsage(stderr)
-		return flag.ErrHelp
-	}
-
-	return runLogFzfMain(opts, stdin, stdout, stderr)
+	return runMenuCommitPipeline(logCmd, fzfCmd)
 }

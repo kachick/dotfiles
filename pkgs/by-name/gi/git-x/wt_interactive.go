@@ -25,7 +25,6 @@ const (
 	actionSwitch worktreeAction = iota
 	actionAdd
 	actionRemove
-	actionLog
 )
 
 const (
@@ -36,7 +35,6 @@ const (
 	actionLabelSwitch = "Switch (cd)"
 	actionLabelAdd    = "Add worktree"
 	actionLabelRemove = "Remove worktree"
-	actionLabelLog    = "Open git x log-fzf"
 )
 
 type selectChoice struct {
@@ -52,10 +50,7 @@ type wtInteractiveUI struct {
 	chooseBaseRef          func(branch string, baseOptions []string, containerDir string, stderr io.Writer) (string, error)
 	confirmDirenvAllow     func(dirName string, stderr io.Writer) (bool, error)
 	confirmCreateWorktree  func(branch string, stderr io.Writer) (bool, error)
-	selectWorktree         func(selfExe, query string, listInput io.Reader, stderr io.Writer) (selectChoice, error)
-	chooseWorktreeAction   func(label, branch string, stderr io.Writer) (worktreeAction, error)
 	confirmRemoveWorktree  func(label, branch string, stderr io.Writer) (bool, error)
-	runLogFzf              func(wtPath string, stderr io.Writer) error
 }
 
 func (ui wtInteractiveUI) withDefaults() wtInteractiveUI {
@@ -77,17 +72,8 @@ func (ui wtInteractiveUI) withDefaults() wtInteractiveUI {
 	if ui.confirmCreateWorktree == nil {
 		ui.confirmCreateWorktree = confirmCreateWorktreeWithGum
 	}
-	if ui.selectWorktree == nil {
-		ui.selectWorktree = selectWorktreeWithFzf
-	}
-	if ui.chooseWorktreeAction == nil {
-		ui.chooseWorktreeAction = chooseWorktreeActionWithGum
-	}
 	if ui.confirmRemoveWorktree == nil {
 		ui.confirmRemoveWorktree = confirmRemoveWorktreeWithGum
-	}
-	if ui.runLogFzf == nil {
-		ui.runLogFzf = runLogFzfInWorktree
 	}
 	return ui
 }
@@ -148,19 +134,23 @@ func chooseAddModeWithGum(stderr io.Writer) (addMode, error) {
 	}
 }
 
-func inputNewBranchWithGum(stderr io.Writer) (string, error) {
-	branch, err := runGumOutput([]string{
+func inputTextWithGum(prompt, placeholder string, stderr io.Writer) (string, error) {
+	val, err := runGumOutput([]string{
 		"input",
-		"--prompt=Branch name: ",
-		"--placeholder=feat/my-topic",
+		"--prompt=" + prompt,
+		"--placeholder=" + placeholder,
 	}, stderr)
 	if err != nil {
 		return "", err
 	}
-	if branch == "" {
+	if val == "" {
 		return "", gitcmd.ErrSelectionCanceled
 	}
-	return branch, nil
+	return val, nil
+}
+
+func inputNewBranchWithGum(stderr io.Writer) (string, error) {
+	return inputTextWithGum("Branch name: ", "feat/my-topic", stderr)
 }
 
 func fzfBaseRefArgs(containerDir string) []string {
@@ -169,23 +159,12 @@ func fzfBaseRefArgs(containerDir string) []string {
 		shellQuote(containerDir),
 		shellQuote(defaultLogFormat),
 	)
-	return []string{
-		"--height=75%",
-		"--tmux=90%,70%",
-		"--layout=reverse",
-		"--min-height=20+",
-		"--border",
-		"--no-separator",
-		"--header-border=horizontal",
-		"--border-label-pos=2",
-		"--color=label:blue",
-		"--border-label=🌿 Base Ref",
-		"--preview=" + previewCmd,
+	args := commonFzfStyleArgs("🌿 Base Ref", "ENTER: select base ref | ESC: cancel | CTRL-/: toggle preview")
+	return append(args,
+		"--preview="+previewCmd,
 		"--preview-window=right,60%",
 		"--preview-border=line",
-		"--header=ENTER: select base ref | ESC: cancel | CTRL-/: toggle preview",
-		"--bind=ctrl-/:change-preview-window(down,60%|hidden|)",
-	}
+	)
 }
 
 func selectOtherBaseRefWithFzf(containerDir string, stderr io.Writer) (string, error) {
@@ -259,36 +238,6 @@ func confirmRemoveWorktreeWithGum(label, branch string, stderr io.Writer) (bool,
 	return runGumConfirm(fmt.Sprintf("Remove worktree %s?", target), stderr)
 }
 
-func chooseWorktreeActionWithGum(label, branch string, stderr io.Writer) (worktreeAction, error) {
-	header := fmt.Sprintf("Action for %s", label)
-	if branch != "" {
-		header = fmt.Sprintf("Action for %s (%s)", label, branch)
-	}
-	picked, err := runGumOutput([]string{
-		"choose",
-		"--header=" + header,
-		actionLabelSwitch,
-		actionLabelAdd,
-		actionLabelRemove,
-		actionLabelLog,
-	}, stderr)
-	if err != nil {
-		return actionSwitch, err
-	}
-	switch picked {
-	case actionLabelSwitch:
-		return actionSwitch, nil
-	case actionLabelAdd:
-		return actionAdd, nil
-	case actionLabelRemove:
-		return actionRemove, nil
-	case actionLabelLog:
-		return actionLog, nil
-	default:
-		return actionSwitch, fmt.Errorf("unexpected action selection: %q", picked)
-	}
-}
-
 func parseFzfSelectOutput(raw string) selectChoice {
 	if raw == "" {
 		return selectChoice{}
@@ -304,46 +253,6 @@ func parseFzfSelectOutput(raw string) selectChoice {
 		choice.Path = strings.TrimSpace(lines[2])
 	}
 	return choice
-}
-
-func selectWorktreeWithFzf(selfExe, query string, listInput io.Reader, stderr io.Writer) (selectChoice, error) {
-	cmd := exec.Command("fzf", wtFzfSelectArgs(selfExe, query)...)
-	cmd.Stdin = listInput
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = stderr
-	if err := cmd.Run(); err != nil {
-		var exitErr *exec.ExitError
-		if errors.As(err, &exitErr) {
-			switch exitErr.ExitCode() {
-			case 130:
-				return selectChoice{}, gitcmd.ErrSelectionCanceled
-			case 1:
-				// Exit code 1 means "no match"; keep a non-empty query so select can offer creating a new worktree.
-				choice := parseFzfSelectOutput(out.String())
-				if choice.Query == "" && choice.Key == "" && choice.Path == "" {
-					return selectChoice{}, gitcmd.ErrSelectionCanceled
-				}
-				return choice, nil
-			}
-		}
-		return selectChoice{}, fmt.Errorf("fzf failed: %w", err)
-	}
-	return parseFzfSelectOutput(out.String()), nil
-}
-
-func runLogFzfInWorktree(wtPath string, stderr io.Writer) error {
-	selfExe, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("resolve executable path: %w", err)
-	}
-	cmd := exec.Command(selfExe, "log-fzf")
-	cmd.Dir = wtPath
-	cmd.Stdin = os.Stdin
-	// Keep stdout clean for shell callers such as `cd "$(git-x wt select)"` by routing child output to stderr.
-	cmd.Stdout = stderr
-	cmd.Stderr = stderr
-	return cmd.Run()
 }
 
 func collectBaseRefOptions(r *gitcmd.Runner, defaultBranch, currentBranch string) []string {

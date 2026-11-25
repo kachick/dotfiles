@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"flag"
 	"fmt"
@@ -43,6 +44,9 @@ const (
 	menuActionRefresh            = "Refresh default branch (git x refresh)"
 	menuActionDeleteMerged       = "Delete merged branches (git x delete-merged-branches)"
 	menuActionDeleteMergedWithPR = "Delete merged branches + PRs (git x delete-merged-branches --pr)"
+	menuActionWTCommits          = "Show worktree commits"
+	menuActionWTPR               = "Check out PR worktree (git x wt pr)"
+	menuActionWTPromote          = "Promote current branch (git x wt promote)"
 	menuActionBranchSwitch       = "Switch / checkout worktree"
 	menuActionBranchShow         = "Show tip commit details"
 	menuActionCommitDetail       = "Show commit details"
@@ -51,7 +55,14 @@ const (
 	menuActionTagShow            = "Show tag commit details"
 	menuActionTagBrowse          = "Open in browser (gh browse)"
 	menuActionRepoSwitch         = "Switch to repository (cd)"
+	menuActionRepoClone          = "Clone repository (git x get)"
 )
+
+type menuStepResult struct {
+	nextMode  menuMode
+	commitDir string
+	done      bool
+}
 
 type menuBranchEntry struct {
 	Name       string
@@ -74,23 +85,51 @@ type menuTagEntry struct {
 }
 
 type menuInteractiveUI struct {
-	wtUI            wtInteractiveUI
-	selectMenuItem  func(mode menuMode, fzfArgs []string, input io.Reader, stderr io.Writer) (selectChoice, error)
-	chooseAction    func(header string, options []string, stderr io.Writer) (string, error)
-	runRefresh      func(workDir string, stderr io.Writer) error
-	runDeleteMerged func(pr bool, workDir string, stderr io.Writer) error
-	showRevDetail   func(workDir, rev string, stderr io.Writer) error
-	browseRev       func(workDir, rev string, stderr io.Writer) error
-	revertRev       func(workDir, rev string, stderr io.Writer) error
+	wtUI             wtInteractiveUI
+	selectMenuItem   func(mode menuMode, fzfArgs []string, input io.Reader, stderr io.Writer) (selectChoice, error)
+	selectCommitItem func(gitDir string, fzfArgs []string, stderr io.Writer) (selectChoice, error)
+	chooseAction     func(header string, options []string, stderr io.Writer) (string, error)
+	inputText        func(prompt, placeholder string, stderr io.Writer) (string, error)
+	runRefresh       func(workDir string, stderr io.Writer) error
+	runDeleteMerged  func(pr bool, workDir string, stderr io.Writer) error
+	runWTPR          func(spec, workDir string, stdout, stderr io.Writer) error
+	runWTPromote     func(workDir string, stdout, stderr io.Writer) error
+	runRepoClone     func(spec string, stdout, stderr io.Writer) error
+	showRevDetail    func(workDir, rev string, stderr io.Writer) error
+	browseRev        func(workDir, rev string, stderr io.Writer) error
+	revertRev        func(workDir, rev string, stderr io.Writer) error
 }
 
 func (ui menuInteractiveUI) withDefaults() menuInteractiveUI {
 	ui.wtUI = ui.wtUI.withDefaults()
+	customSelectMenuItem := ui.selectMenuItem != nil
 	if ui.selectMenuItem == nil {
 		ui.selectMenuItem = selectMenuItemWithFzf
 	}
+	if ui.selectCommitItem == nil {
+		if customSelectMenuItem {
+			selectFn := ui.selectMenuItem
+			ui.selectCommitItem = func(gitDir string, fzfArgs []string, stderr io.Writer) (selectChoice, error) {
+				r := gitcmd.New(gitDir, stderr, stderr)
+				var logInput bytes.Buffer
+				if r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
+					rawLog, err := r.OutputRaw("log", "--format="+defaultLogFormat, "--date=short", "--color=always")
+					if err != nil {
+						return selectChoice{}, err
+					}
+					logInput.Write(rawLog)
+				}
+				return selectFn(menuModeCommits, fzfArgs, &logInput, stderr)
+			}
+		} else {
+			ui.selectCommitItem = selectMenuCommitStreaming
+		}
+	}
 	if ui.chooseAction == nil {
 		ui.chooseAction = chooseMenuActionWithGum
+	}
+	if ui.inputText == nil {
+		ui.inputText = inputTextWithGum
 	}
 	if ui.runRefresh == nil {
 		ui.runRefresh = func(workDir string, stderr io.Writer) error {
@@ -104,6 +143,21 @@ func (ui menuInteractiveUI) withDefaults() menuInteractiveUI {
 				args = []string{"--pr"}
 			}
 			return runDeleteMergedBranches(args, workDir, stderr, stderr)
+		}
+	}
+	if ui.runWTPR == nil {
+		ui.runWTPR = func(spec, workDir string, stdout, stderr io.Writer) error {
+			return wtRunPRWithDeps([]string{spec}, workDir, wtPRDeps{}, stdout, stderr)
+		}
+	}
+	if ui.runWTPromote == nil {
+		ui.runWTPromote = func(workDir string, stdout, stderr io.Writer) error {
+			return wtRunPromote(nil, workDir, stdout, stderr)
+		}
+	}
+	if ui.runRepoClone == nil {
+		ui.runRepoClone = func(spec string, stdout, stderr io.Writer) error {
+			return runGet([]string{spec}, stdout, stderr)
 		}
 	}
 	if ui.showRevDetail == nil {
@@ -220,46 +274,6 @@ func renderTagPreview(workDir, tag string, stdout, stderr io.Writer) error {
 		cmd.Dir = workDir
 	}
 	return renderCmdPipeline(cmd, stdout, stderr)
-}
-
-func renderMenuBranchPreview(repoDir, defaultBranch, branch string, stdout, stderr io.Writer) error {
-	branch = strings.TrimSpace(branch)
-	if branch == "" {
-		return nil
-	}
-
-	r := gitcmd.NewIsolated(repoDir, stdout, stderr)
-	resolvedRef := "refs/heads/" + branch
-	if !r.Ok("show-ref", "--verify", "--quiet", resolvedRef) {
-		if r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/"+branch) {
-			resolvedRef = "refs/remotes/" + branch
-		} else if r.Ok("show-ref", "--verify", "--quiet", "refs/remotes/origin/"+branch) {
-			resolvedRef = "refs/remotes/origin/" + branch
-		} else {
-			fmt.Fprintf(stdout, "Branch: %s\n\n(branch not found)\n", branch)
-			return nil
-		}
-	}
-
-	localName := strings.TrimPrefix(branch, "origin/")
-	if dirName, err := gitcmd.WorktreeDirName(localName); err == nil {
-		fmt.Fprintf(stdout, "Branch:   %s\nWorktree: %s\n", branch, filepath.Join(repoDir, dirName))
-	} else {
-		fmt.Fprintf(stdout, "Branch:   %s\n", branch)
-	}
-
-	if defaultBranch != "" && localName != defaultBranch {
-		if targetRef := gitcmd.ResolveTargetRef(r, defaultBranch); targetRef != "" {
-			if stat, err := r.Output("diff", "--stat", "--color=always", targetRef+"..."+resolvedRef); err == nil && stat != "" {
-				fmt.Fprintf(stdout, "\nDiff vs %s:\n%s\n", defaultBranch, stat)
-			}
-		}
-	}
-
-	fmt.Fprintln(stdout)
-	return r.Stream("log",
-		"--format="+defaultLogFormat,
-		"--date=short", "--color=always", "-n", "20", resolvedRef)
 }
 
 func collectMenuBranches(r *gitcmd.Runner, defaultBranch, currentBranch string) ([]menuBranchEntry, error) {
@@ -461,22 +475,11 @@ func formatMenuTagLine(t menuTagEntry) string {
 }
 
 func menuCommonFzfStyleArgs(borderLabel, header, expectKeys, query string) []string {
-	args := []string{
-		"--height=75%",
-		"--tmux=90%,70%",
-		"--layout=reverse",
-		"--min-height=20+",
-		"--border",
-		"--no-separator",
-		"--header-border=horizontal",
-		"--border-label-pos=2",
-		"--color=label:blue",
-		"--border-label=" + borderLabel,
+	args := commonFzfStyleArgs(borderLabel, header)
+	args = append(args,
 		"--print-query",
-		"--expect=" + expectKeys,
-		"--header=" + header,
-		"--bind=ctrl-/:change-preview-window(down,60%|hidden|)",
-	}
+		"--expect="+expectKeys,
+	)
 	if query != "" {
 		args = append(args, "--query", query)
 	}
@@ -519,12 +522,22 @@ func menuBranchFzfArgs(selfExe, containerDir, defaultBranch, query string) []str
 	)
 }
 
-func menuCommitFzfArgs(selfExe, query string) []string {
-	previewCmd := fmt.Sprintf("%q log-fzf _preview-plain {2}", selfExe)
-	header := "ENTER: detail | ^O: browser | ^X: actions | ^/: preview\n" + menuNavHeader
+func menuCommitFzfArgs(selfExe, gitDir, cacheDir, fzfSock, query string, ja bool) []string {
+	previewCmd := fmt.Sprintf(
+		"%s menu _preview-commit %s %s {2}",
+		shellQuote(selfExe),
+		shellQuote(gitDir),
+		shellQuote(cacheDir),
+	)
+	toggleJaBind := fmt.Sprintf(
+		"alt-j:transform(%s menu _toggle-ja %s)",
+		shellQuote(selfExe),
+		shellQuote(cacheDir),
+	)
+	header := "ENTER: detail | ^O: browser | Alt-J: ja | Alt-F: zoom | ^X: actions\n" + menuNavHeader
 	expect := menuSwitchKeys + ",ctrl-x"
-	args := menuCommonFzfStyleArgs("🪵 Commits (Ctrl-G)", header, expect, query)
-	return append(args,
+	args := menuCommonFzfStyleArgs(menuCommitBorderLabel(ja), header, expect, query)
+	args = append(args,
 		"--ansi",
 		"--nth=1,3..",
 		"--no-sort",
@@ -533,7 +546,13 @@ func menuCommitFzfArgs(selfExe, query string) []string {
 		"--preview-window=right,60%",
 		"--preview-border=line",
 		"--bind=ctrl-o:execute-silent(gh browse {2})",
+		"--bind="+toggleJaBind,
+		"--bind=alt-f:change-preview-window(down,80%|)",
 	)
+	if fzfSock != "" {
+		args = append(args, "--listen="+fzfSock)
+	}
+	return args
 }
 
 func menuTagFzfArgs(selfExe, query string) []string {
@@ -554,10 +573,12 @@ func menuTagFzfArgs(selfExe, query string) []string {
 }
 
 func menuRepoFzfArgs(query string) []string {
-	header := "ENTER: switch repo | ^X: actions | ^/: preview\n" + menuNavHeader
-	expect := menuSwitchKeys + ",ctrl-x"
+	header := "ENTER: switch repo | ^A: clone | ^X: actions | ^/: preview\n" + menuNavHeader
+	expect := menuSwitchKeys + ",ctrl-x,ctrl-a"
 	args := menuCommonFzfStyleArgs("📦 Repositories (Ctrl-G)", header, expect, query)
 	return append(args,
+		// Expects 3-level `<host>/<owner>/<repo>` paths; deeper paths (e.g. GitLab subgroups) are rare here.
+		// Splitting `<repo>` with `\t` would add tab gaps in the path and make the boundary with worktree labels unclear.
 		"--delimiter=[/\t]",
 		"--nth=3,4",
 		"--with-nth=1..4",
@@ -660,16 +681,16 @@ func handleMenuWorktreesStep(
 	ctx gitcmd.RepoContext,
 	ui menuInteractiveUI,
 	stdout, stderr io.Writer,
-) (menuMode, bool, error) {
+) (menuStepResult, error) {
 	if !hasRepo {
 		fmt.Fprintln(stderr, "Not inside a git repository; switching to repositories view.")
-		return menuModeRepos, false, nil
+		return menuStepResult{nextMode: menuModeRepos}, nil
 	}
 
 	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
 	wts, err := gitcmd.ListWorktrees(r)
 	if err != nil {
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
 	sortWorktrees(wts, ctx.ContainerDir, defaultBranch)
@@ -680,63 +701,77 @@ func handleMenuWorktreesStep(
 	choice, err := ui.selectMenuItem(menuModeWorktrees, menuWorktreeFzfArgs(selfExe, query), &listBuf, stderr)
 	if err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, err
-	}
-
-	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
-		return nextMode, false, nil
+		return menuStepResult{done: true}, err
 	}
 
 	wt, hasWT := findWorktreeByPath(wts, choice.Path)
+	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
+		res := menuStepResult{nextMode: nextMode}
+		if nextMode == menuModeCommits && hasWT {
+			res.commitDir = wt.Path
+		}
+		return res, nil
+	}
+
 	switch choice.Key {
 	case "":
 		if hasWT {
-			return "", true, runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+			return menuStepResult{done: true}, runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
 		}
-		return "", true, createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui.wtUI, stdout, stderr)
+		return menuStepResult{done: true}, createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui.wtUI, stdout, stderr)
 	case "ctrl-a":
-		return "", true, runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+		return menuStepResult{done: true}, runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
 	case "ctrl-d":
-		return "", true, runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+		return menuStepResult{done: true}, runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
 	case "ctrl-x":
 		var options []string
 		header := "Repository actions"
-		label := ""
 		if hasWT {
-			label = wtWorktreeLabel(ctx.ContainerDir, wt.Path)
+			label := wtWorktreeLabel(ctx.ContainerDir, wt.Path)
 			header = fmt.Sprintf("Action for %s (%s)", label, wt.Branch)
-			options = append(options, actionLabelSwitch, actionLabelAdd, actionLabelRemove, actionLabelLog)
+			options = append(options, actionLabelSwitch, actionLabelAdd, actionLabelRemove, menuActionWTCommits)
 		} else {
 			options = append(options, actionLabelAdd)
 		}
-		options = append(options, menuActionRefresh, menuActionDeleteMerged, menuActionDeleteMergedWithPR)
+		options = append(options, menuActionWTPR, menuActionWTPromote, menuActionRefresh, menuActionDeleteMerged, menuActionDeleteMergedWithPR)
 
 		picked, err := ui.chooseAction(header, options, stderr)
 		if err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return "", true, nil
+				return menuStepResult{done: true}, nil
 			}
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		if handled, err := runGlobalRepoMaintenanceAction(picked, workDir, ui, stderr); handled {
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		switch picked {
 		case actionLabelSwitch:
-			return "", true, runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+			return menuStepResult{done: true}, runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
 		case actionLabelAdd:
-			return "", true, runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+			return menuStepResult{done: true}, runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
 		case actionLabelRemove:
-			return "", true, runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
-		case actionLabelLog:
-			return "", true, runSelectAction(actionLog, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+			return menuStepResult{done: true}, runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui.wtUI, stdout, stderr)
+		case menuActionWTCommits:
+			return menuStepResult{nextMode: menuModeCommits, commitDir: wt.Path}, nil
+		case menuActionWTPR:
+			spec, err := ui.inputText("PR number, URL, or branch: ", "123", stderr)
+			if err != nil {
+				if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+					return menuStepResult{done: true}, nil
+				}
+				return menuStepResult{done: true}, err
+			}
+			return menuStepResult{done: true}, ui.runWTPR(spec, workDir, stdout, stderr)
+		case menuActionWTPromote:
+			return menuStepResult{done: true}, ui.runWTPromote(workDir, stdout, stderr)
 		default:
-			return "", true, fmt.Errorf("unexpected action selection: %q", picked)
+			return menuStepResult{done: true}, fmt.Errorf("unexpected action selection: %q", picked)
 		}
 	default:
-		return "", true, fmt.Errorf("unexpected fzf key: %q", choice.Key)
+		return menuStepResult{done: true}, fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}
 }
 
@@ -746,10 +781,10 @@ func handleMenuBranchesStep(
 	ctx gitcmd.RepoContext,
 	ui menuInteractiveUI,
 	stdout, stderr io.Writer,
-) (menuMode, bool, error) {
+) (menuStepResult, error) {
 	if !hasRepo {
 		fmt.Fprintln(stderr, "Not inside a git repository; switching to repositories view.")
-		return menuModeRepos, false, nil
+		return menuStepResult{nextMode: menuModeRepos}, nil
 	}
 
 	r := gitcmd.NewIsolated(ctx.ContainerDir, stderr, stderr)
@@ -758,7 +793,7 @@ func handleMenuBranchesStep(
 
 	entries, err := collectMenuBranches(r, defaultBranch, currentBranch)
 	if err != nil {
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	var listBuf bytes.Buffer
@@ -770,22 +805,22 @@ func handleMenuBranchesStep(
 	choice, err := ui.selectMenuItem(menuModeBranches, menuBranchFzfArgs(selfExe, ctx.ContainerDir, defaultBranch, query), &listBuf, stderr)
 	if err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
-		return nextMode, false, nil
+		return menuStepResult{nextMode: nextMode}, nil
 	}
 
 	targetBranch := strings.TrimSpace(choice.Path)
 	switch choice.Key {
 	case "":
 		if targetBranch != "" {
-			return "", true, switchOrCheckoutMenuBranch(ctx, targetBranch, workDir, defaultBranch, ui, stdout, stderr)
+			return menuStepResult{done: true}, switchOrCheckoutMenuBranch(ctx, targetBranch, workDir, defaultBranch, ui, stdout, stderr)
 		}
-		return "", true, createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui.wtUI, stdout, stderr)
+		return menuStepResult{done: true}, createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui.wtUI, stdout, stderr)
 	case "ctrl-x":
 		var options []string
 		header := "Repository actions"
@@ -798,71 +833,84 @@ func handleMenuBranchesStep(
 		picked, err := ui.chooseAction(header, options, stderr)
 		if err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return "", true, nil
+				return menuStepResult{done: true}, nil
 			}
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		if handled, err := runGlobalRepoMaintenanceAction(picked, workDir, ui, stderr); handled {
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		switch picked {
 		case menuActionBranchSwitch:
-			return "", true, switchOrCheckoutMenuBranch(ctx, targetBranch, workDir, defaultBranch, ui, stdout, stderr)
+			return menuStepResult{done: true}, switchOrCheckoutMenuBranch(ctx, targetBranch, workDir, defaultBranch, ui, stdout, stderr)
 		case menuActionBranchShow:
-			return "", true, ui.showRevDetail(ctx.ContainerDir, targetBranch, stderr)
+			return menuStepResult{done: true}, ui.showRevDetail(ctx.ContainerDir, targetBranch, stderr)
 		default:
-			return "", true, fmt.Errorf("unexpected action selection: %q", picked)
+			return menuStepResult{done: true}, fmt.Errorf("unexpected action selection: %q", picked)
 		}
 	default:
-		return "", true, fmt.Errorf("unexpected fzf key: %q", choice.Key)
+		return menuStepResult{done: true}, fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}
 }
 
 func handleMenuCommitsStep(
-	selfExe, query, workDir string,
+	selfExe, query, workDir, commitDir string,
 	hasRepo bool,
 	ctx gitcmd.RepoContext,
 	ui menuInteractiveUI,
 	stderr io.Writer,
-) (menuMode, bool, error) {
+) (menuStepResult, error) {
 	if !hasRepo {
 		fmt.Fprintln(stderr, "Not inside a git repository; switching to repositories view.")
-		return menuModeRepos, false, nil
+		return menuStepResult{nextMode: menuModeRepos}, nil
 	}
 
-	gitDir := workDir
+	gitDir := commitDir
+	if gitDir == "" {
+		gitDir = workDir
+	}
 	if gitDir == "" {
 		gitDir = ctx.ContainerDir
 	}
-	r := gitcmd.New(gitDir, stderr, stderr)
-	var logInput bytes.Buffer
-	if r.Ok("rev-parse", "--verify", "--quiet", "HEAD^{commit}") {
-		rawLog, err := r.OutputRaw("log", "--format="+defaultLogFormat, "--date=short", "--color=always")
-		if err != nil {
-			return "", true, err
+
+	cacheDir, err := os.MkdirTemp("", "git-x-menu-commits-*")
+	if err != nil {
+		return menuStepResult{done: true}, fmt.Errorf("failed to create temp cache dir: %w", err)
+	}
+	defer os.RemoveAll(cacheDir)
+
+	jaDefault := localeDefaultsToJa()
+	if jaDefault {
+		if err := setJaEnabled(cacheDir, true); err != nil {
+			return menuStepResult{done: true}, fmt.Errorf("failed to enable translation mode: %w", err)
 		}
-		logInput.Write(rawLog)
 	}
 
-	choice, err := ui.selectMenuItem(menuModeCommits, menuCommitFzfArgs(selfExe, query), &logInput, stderr)
+	fzfSock := filepath.Join(cacheDir, "fzf.sock")
+	workerCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go runCommitTranslationWorker(workerCtx, selfExe, gitDir, cacheDir, fzfSock, stderr)
+
+	fzfArgs := menuCommitFzfArgs(selfExe, gitDir, cacheDir, fzfSock, query, jaDefault)
+	choice, err := ui.selectCommitItem(gitDir, fzfArgs, stderr)
 	if err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
-		return nextMode, false, nil
+		return menuStepResult{nextMode: nextMode}, nil
 	}
 
 	rev := cleanRev(choice.Path)
 	switch choice.Key {
 	case "":
 		if rev == "" {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, ui.showRevDetail(gitDir, rev, stderr)
+		return menuStepResult{done: true}, ui.showRevDetail(gitDir, rev, stderr)
 	case "ctrl-x":
 		var options []string
 		header := "Repository actions"
@@ -875,25 +923,25 @@ func handleMenuCommitsStep(
 		picked, err := ui.chooseAction(header, options, stderr)
 		if err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return "", true, nil
+				return menuStepResult{done: true}, nil
 			}
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		if handled, err := runGlobalRepoMaintenanceAction(picked, workDir, ui, stderr); handled {
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		switch picked {
 		case menuActionCommitDetail:
-			return "", true, ui.showRevDetail(gitDir, rev, stderr)
+			return menuStepResult{done: true}, ui.showRevDetail(gitDir, rev, stderr)
 		case menuActionCommitBrowse:
-			return "", true, ui.browseRev(gitDir, rev, stderr)
+			return menuStepResult{done: true}, ui.browseRev(gitDir, rev, stderr)
 		case menuActionCommitRevert:
-			return "", true, ui.revertRev(gitDir, rev, stderr)
+			return menuStepResult{done: true}, ui.revertRev(gitDir, rev, stderr)
 		default:
-			return "", true, fmt.Errorf("unexpected action selection: %q", picked)
+			return menuStepResult{done: true}, fmt.Errorf("unexpected action selection: %q", picked)
 		}
 	default:
-		return "", true, fmt.Errorf("unexpected fzf key: %q", choice.Key)
+		return menuStepResult{done: true}, fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}
 }
 
@@ -903,16 +951,16 @@ func handleMenuTagsStep(
 	ctx gitcmd.RepoContext,
 	ui menuInteractiveUI,
 	stderr io.Writer,
-) (menuMode, bool, error) {
+) (menuStepResult, error) {
 	if !hasRepo {
 		fmt.Fprintln(stderr, "Not inside a git repository; switching to repositories view.")
-		return menuModeRepos, false, nil
+		return menuStepResult{nextMode: menuModeRepos}, nil
 	}
 
 	r := gitcmd.NewIsolated(ctx.ContainerDir, stderr, stderr)
 	tags, err := collectMenuTags(r)
 	if err != nil {
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	var listBuf bytes.Buffer
@@ -924,22 +972,22 @@ func handleMenuTagsStep(
 	choice, err := ui.selectMenuItem(menuModeTags, menuTagFzfArgs(selfExe, query), &listBuf, stderr)
 	if err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
-		return nextMode, false, nil
+		return menuStepResult{nextMode: nextMode}, nil
 	}
 
 	tag := strings.TrimSpace(choice.Path)
 	switch choice.Key {
 	case "":
 		if tag == "" {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, ui.showRevDetail(ctx.ContainerDir, tag, stderr)
+		return menuStepResult{done: true}, ui.showRevDetail(ctx.ContainerDir, tag, stderr)
 	case "ctrl-x":
 		var options []string
 		header := "Repository actions"
@@ -952,24 +1000,35 @@ func handleMenuTagsStep(
 		picked, err := ui.chooseAction(header, options, stderr)
 		if err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return "", true, nil
+				return menuStepResult{done: true}, nil
 			}
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		if handled, err := runGlobalRepoMaintenanceAction(picked, workDir, ui, stderr); handled {
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		switch picked {
 		case menuActionTagShow:
-			return "", true, ui.showRevDetail(ctx.ContainerDir, tag, stderr)
+			return menuStepResult{done: true}, ui.showRevDetail(ctx.ContainerDir, tag, stderr)
 		case menuActionTagBrowse:
-			return "", true, ui.browseRev(ctx.ContainerDir, tag, stderr)
+			return menuStepResult{done: true}, ui.browseRev(ctx.ContainerDir, tag, stderr)
 		default:
-			return "", true, fmt.Errorf("unexpected action selection: %q", picked)
+			return menuStepResult{done: true}, fmt.Errorf("unexpected action selection: %q", picked)
 		}
 	default:
-		return "", true, fmt.Errorf("unexpected fzf key: %q", choice.Key)
+		return menuStepResult{done: true}, fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}
+}
+
+func runRepoCloneAction(ui menuInteractiveUI, stdout, stderr io.Writer) error {
+	spec, err := ui.inputText("Repository: ", "OWNER/REPO or URL", stderr)
+	if err != nil {
+		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			return nil
+		}
+		return err
+	}
+	return ui.runRepoClone(spec, stdout, stderr)
 }
 
 func handleMenuReposStep(
@@ -977,10 +1036,10 @@ func handleMenuReposStep(
 	hasRepo bool,
 	ui menuInteractiveUI,
 	stdout, stderr io.Writer,
-) (menuMode, bool, error) {
+) (menuStepResult, error) {
 	entries, err := collectAllWorktrees()
 	if err != nil {
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	var listBuf bytes.Buffer
@@ -992,13 +1051,13 @@ func handleMenuReposStep(
 	choice, err := ui.selectMenuItem(menuModeRepos, menuRepoFzfArgs(query), &listBuf, stderr)
 	if err != nil {
 		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return "", true, nil
+			return menuStepResult{done: true}, nil
 		}
-		return "", true, err
+		return menuStepResult{done: true}, err
 	}
 
 	if nextMode, ok := modeFromSwitchKey(choice.Key); ok {
-		return nextMode, false, nil
+		return menuStepResult{nextMode: nextMode}, nil
 	}
 
 	targetPath := strings.TrimSpace(choice.Path)
@@ -1007,7 +1066,9 @@ func handleMenuReposStep(
 		if targetPath != "" {
 			fmt.Fprintln(stdout, targetPath)
 		}
-		return "", true, nil
+		return menuStepResult{done: true}, nil
+	case "ctrl-a":
+		return menuStepResult{done: true}, runRepoCloneAction(ui, stdout, stderr)
 	case "ctrl-x":
 		var options []string
 		header := "Repository actions"
@@ -1015,6 +1076,7 @@ func handleMenuReposStep(
 			header = fmt.Sprintf("Action for %s", targetPath)
 			options = append(options, menuActionRepoSwitch)
 		}
+		options = append(options, menuActionRepoClone)
 		actionDir := targetPath
 		if actionDir == "" && hasRepo {
 			actionDir = workDir
@@ -1022,39 +1084,54 @@ func handleMenuReposStep(
 		if actionDir != "" {
 			options = append(options, menuActionRefresh, menuActionDeleteMerged, menuActionDeleteMergedWithPR)
 		}
-		if len(options) == 0 {
-			return "", true, nil
-		}
 
 		picked, err := ui.chooseAction(header, options, stderr)
 		if err != nil {
 			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return "", true, nil
+				return menuStepResult{done: true}, nil
 			}
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		if handled, err := runGlobalRepoMaintenanceAction(picked, actionDir, ui, stderr); handled {
-			return "", true, err
+			return menuStepResult{done: true}, err
 		}
 		switch picked {
 		case menuActionRepoSwitch:
 			if targetPath != "" {
 				fmt.Fprintln(stdout, targetPath)
 			}
-			return "", true, nil
+			return menuStepResult{done: true}, nil
+		case menuActionRepoClone:
+			return menuStepResult{done: true}, runRepoCloneAction(ui, stdout, stderr)
 		default:
-			return "", true, fmt.Errorf("unexpected action selection: %q", picked)
+			return menuStepResult{done: true}, fmt.Errorf("unexpected action selection: %q", picked)
 		}
 	default:
-		return "", true, fmt.Errorf("unexpected fzf key: %q", choice.Key)
+		return menuStepResult{done: true}, fmt.Errorf("unexpected fzf key: %q", choice.Key)
 	}
+}
+
+func isInsideWorkTree(workDir string, stderr io.Writer) bool {
+	r := gitcmd.New(workDir, stderr, stderr)
+	inside, err := r.Output("rev-parse", "--is-inside-work-tree")
+	return err == nil && inside == "true"
+}
+
+func resolveAutoMenuMode(workDir string, hasRepo bool, stderr io.Writer) menuMode {
+	if !hasRepo {
+		return menuModeRepos
+	}
+	if isInsideWorkTree(workDir, stderr) {
+		return menuModeCommits
+	}
+	return menuModeWorktrees
 }
 
 func printMenuUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: git x menu [--mode <worktrees|branches|commits|tags|repos>] [<query>]\n\n")
 	fmt.Fprintf(w, "Unified interactive fzf/gum launcher for worktrees, branches, commits, tags, and repositories.\n")
 	fmt.Fprintf(w, "Switch views inside fzf with Ctrl-W (worktrees), Ctrl-B (branches), Ctrl-L (commits), Ctrl-T (tags), or Ctrl-R (repos).\n")
-	fmt.Fprintf(w, "Press Ctrl-X for context and maintenance actions (refresh, delete-merged-branches).\n")
+	fmt.Fprintf(w, "Press Ctrl-X for context and maintenance actions (clone, PR checkout, promote, refresh, delete-merged-branches).\n")
 }
 
 func newMenuFlagSet(stderr io.Writer) (*flag.FlagSet, *string) {
@@ -1074,12 +1151,26 @@ func runMenuWithUI(args []string, workDir string, ui menuInteractiveUI, stdout, 
 			if len(args) < 4 {
 				return nil
 			}
-			return renderMenuBranchPreview(args[1], args[2], args[3], stdout, stderr)
+			return gitcmd.RenderBranchPreview(args[1], args[2], args[3], stdout, stderr)
 		case "_preview-tag":
 			if len(args) < 2 {
 				return nil
 			}
 			return renderTagPreview(workDir, args[1], stdout, stderr)
+		case "_preview-commit":
+			if len(args) < 4 {
+				return nil
+			}
+			selfExe, err := os.Executable()
+			if err != nil {
+				return fmt.Errorf("resolve executable path: %w", err)
+			}
+			return menuRunCommitPreview(selfExe, args[1], args[2], args[3], stdout, stderr)
+		case "_toggle-ja":
+			if len(args) < 2 {
+				return nil
+			}
+			return menuRunToggleJa(args[1], stdout)
 		}
 	}
 
@@ -1103,11 +1194,7 @@ func runMenuWithUI(args []string, workDir string, ui menuInteractiveUI, stdout, 
 	hasRepo := repoErr == nil
 
 	if mode == menuModeAuto {
-		if hasRepo {
-			mode = menuModeWorktrees
-		} else {
-			mode = menuModeRepos
-		}
+		mode = resolveAutoMenuMode(workDir, hasRepo, stderr)
 	}
 
 	selfExe, err := os.Executable()
@@ -1115,35 +1202,40 @@ func runMenuWithUI(args []string, workDir string, ui menuInteractiveUI, stdout, 
 		return fmt.Errorf("resolve executable path: %w", err)
 	}
 
+	commitDir := ""
 	for {
 		var (
-			nextMode menuMode
-			done     bool
-			stepErr  error
+			res     menuStepResult
+			stepErr error
 		)
 		switch mode {
 		case menuModeWorktrees:
-			nextMode, done, stepErr = handleMenuWorktreesStep(selfExe, query, workDir, hasRepo, ctx, ui, stdout, stderr)
+			res, stepErr = handleMenuWorktreesStep(selfExe, query, workDir, hasRepo, ctx, ui, stdout, stderr)
 		case menuModeBranches:
-			nextMode, done, stepErr = handleMenuBranchesStep(selfExe, query, workDir, hasRepo, ctx, ui, stdout, stderr)
+			res, stepErr = handleMenuBranchesStep(selfExe, query, workDir, hasRepo, ctx, ui, stdout, stderr)
 		case menuModeCommits:
-			nextMode, done, stepErr = handleMenuCommitsStep(selfExe, query, workDir, hasRepo, ctx, ui, stderr)
+			res, stepErr = handleMenuCommitsStep(selfExe, query, workDir, commitDir, hasRepo, ctx, ui, stderr)
 		case menuModeTags:
-			nextMode, done, stepErr = handleMenuTagsStep(selfExe, query, workDir, hasRepo, ctx, ui, stderr)
+			res, stepErr = handleMenuTagsStep(selfExe, query, workDir, hasRepo, ctx, ui, stderr)
 		case menuModeRepos:
-			nextMode, done, stepErr = handleMenuReposStep(query, workDir, hasRepo, ui, stdout, stderr)
+			res, stepErr = handleMenuReposStep(query, workDir, hasRepo, ui, stdout, stderr)
 		default:
 			return fmt.Errorf("unsupported menu mode: %q", mode)
 		}
 		if stepErr != nil {
 			return stepErr
 		}
-		if done {
+		if res.done {
 			return nil
 		}
 		// Clear initial query when switching views via keybindings so the new view starts unfiltered.
 		query = ""
-		mode = nextMode
+		mode = res.nextMode
+		if mode == menuModeCommits {
+			commitDir = res.commitDir
+		} else {
+			commitDir = ""
+		}
 	}
 }
 

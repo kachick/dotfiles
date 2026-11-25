@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -64,9 +63,15 @@ func TestCollectAndRepoFzfRanking(t *testing.T) {
 		t.Fatalf("remove stale worktree dir: %v", err)
 	}
 
-	var listOut, stderr bytes.Buffer
-	if err := runRepoFzf([]string{"--list"}, &listOut, &stderr); err != nil {
-		t.Fatalf("repo-fzf --list failed: %v, stderr: %s", err, stderr.String())
+	entries, err := collectAllWorktrees()
+	if err != nil {
+		t.Fatalf("collectAllWorktrees failed: %v", err)
+	}
+
+	var listOut strings.Builder
+	for _, entry := range entries {
+		listOut.WriteString(entry.formatLine())
+		listOut.WriteByte('\n')
 	}
 
 	lines := strings.Split(strings.TrimSpace(listOut.String()), "\n")
@@ -93,14 +98,15 @@ func TestCollectAndRepoFzfRanking(t *testing.T) {
 		t.Errorf("expected trunk (idx=%d) before feat-1 (idx=%d)", trunkIdx, featIdx)
 	}
 
-	filterArgs := append([]string{"--filter=dotfiles"}, repoFzfFilterArgs("")...)
+	filterArgs := append([]string{"--filter=dotfiles"}, menuRepoFzfArgs("")...)
 	cmd := exec.Command("fzf", filterArgs...)
 	cmd.Stdin = strings.NewReader(listOut.String())
 	out, err := cmd.Output()
 	if err != nil {
 		t.Fatalf("fzf --filter failed: %v", err)
 	}
-	ranked := strings.Split(strings.TrimSpace(string(out)), "\n")
+	// menuRepoFzfArgs includes --print-query, so the first output line is the query itself.
+	ranked := strings.Split(strings.TrimSpace(string(out)), "\n")[1:]
 	if len(ranked) < 3 {
 		t.Fatalf("expected at least 3 matches for 'dotfiles', got %v", ranked)
 	}

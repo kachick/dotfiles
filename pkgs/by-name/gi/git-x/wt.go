@@ -673,37 +673,6 @@ func wtRunPreview(wtPath string, stdout, stderr io.Writer) error {
 	return r.Stream("log", "--format="+defaultLogFormat, "--date=short", "--color=always", "-n", "40")
 }
 
-func wtFzfSelectArgs(selfExe, query string) []string {
-	previewCmd := fmt.Sprintf("%q wt _preview {3}", selfExe)
-	args := []string{
-		"--height=75%",
-		"--tmux=90%,70%",
-		"--layout=reverse",
-		"--min-height=20+",
-		"--border",
-		"--no-separator",
-		"--header-border=horizontal",
-		"--border-label-pos=2",
-		"--color=label:blue",
-		"--border-label=🌴 Worktrees",
-		"--delimiter=\t",
-		"--with-nth=1,2",
-		"--accept-nth=3",
-		"--print-query",
-		"--expect=ctrl-x,ctrl-a,ctrl-d",
-		"--preview=" + previewCmd,
-		"--preview-window=right,60%",
-		"--preview-border=line",
-		"--header=ENTER: switch/new | CTRL-X: actions | CTRL-A: add | CTRL-D: remove | CTRL-L: log | CTRL-/: preview",
-		"--bind=ctrl-l:execute(cd {3} && " + shellQuote(selfExe) + " log-fzf)",
-		"--bind=ctrl-/:change-preview-window(down,60%|hidden|)",
-	}
-	if query != "" {
-		args = append(args, "--query", query)
-	}
-	return args
-}
-
 func findWorktreeByPath(wts []gitcmd.Worktree, path string) (gitcmd.Worktree, bool) {
 	if path == "" {
 		return gitcmd.Worktree{}, false
@@ -757,11 +726,6 @@ func runSelectAction(
 			return err
 		}
 		return nil
-	case actionLog:
-		if !hasWT {
-			return errors.New("no worktree selected")
-		}
-		return ui.runLogFzf(wt.Path, stderr)
 	default:
 		return fmt.Errorf("unknown worktree action: %d", action)
 	}
@@ -844,91 +808,16 @@ func createWorktreeFromUnmatchedQuery(
 	return err
 }
 
-func wtRunSelectWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error {
-	ui = ui.withDefaults()
-
-	fs := flag.NewFlagSet("git-x wt select", flag.ContinueOnError)
-	fs.SetOutput(stderr)
-	fs.Usage = func() {
-		fmt.Fprintf(stderr, "Usage: git x wt select [<query>]\n\nSelect a worktree via fzf or run actions via gum, and print the target path.\n")
-	}
-	if err := fs.Parse(args); err != nil {
-		return err
-	}
-	query := strings.Join(fs.Args(), " ")
-
-	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
-	if err != nil {
-		return err
-	}
-	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
-	wts, err := gitcmd.ListWorktrees(r)
-	if err != nil {
-		return err
-	}
-	if len(wts) == 0 {
-		return nil
-	}
-
-	defaultBranch, _ := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
-	sortWorktrees(wts, ctx.ContainerDir, defaultBranch)
-
-	var listBuf bytes.Buffer
-	writeWorktreeList(wts, ctx.ContainerDir, &listBuf)
-
-	selfExe, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("resolve executable path: %w", err)
-	}
-
-	choice, err := ui.selectWorktree(selfExe, query, &listBuf, stderr)
-	if err != nil {
-		if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-			return nil
-		}
-		return err
-	}
-
-	wt, hasWT := findWorktreeByPath(wts, choice.Path)
-	switch choice.Key {
-	case "":
-		if hasWT {
-			return runSelectAction(actionSwitch, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
-		}
-		return createWorktreeFromUnmatchedQuery(ctx, r, choice.Query, workDir, defaultBranch, ui, stdout, stderr)
-	case "ctrl-a":
-		return runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
-	case "ctrl-d":
-		return runSelectAction(actionRemove, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
-	case "ctrl-x":
-		if !hasWT {
-			return runSelectAction(actionAdd, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
-		}
-		label := wtWorktreeLabel(ctx.ContainerDir, wt.Path)
-		action, err := ui.chooseWorktreeAction(label, wt.Branch, stderr)
-		if err != nil {
-			if errors.Is(err, gitcmd.ErrSelectionCanceled) {
-				return nil
-			}
-			return err
-		}
-		return runSelectAction(action, ctx, wt, hasWT, defaultBranch, workDir, ui, stdout, stderr)
-	default:
-		return fmt.Errorf("unexpected fzf key: %q", choice.Key)
-	}
-}
-
 type wtSubcommand struct {
-	name          string
-	usage         string
-	description   string
-	hidden        bool
-	outputsTarget bool
-	newFlags      func(stderr io.Writer) *flag.FlagSet
-	flagValues    map[string][]string
-	argKind       argCompletionKind
-	argLabel      string
-	run           func(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error
+	name        string
+	usage       string
+	description string
+	hidden      bool
+	newFlags    func(stderr io.Writer) *flag.FlagSet
+	flagValues  map[string][]string
+	argKind     argCompletionKind
+	argLabel    string
+	run         func(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error
 }
 
 func allWTSubcommands() []wtSubcommand {
@@ -942,17 +831,9 @@ func allWTSubcommands() []wtSubcommand {
 			},
 		},
 		{
-			name:          "select",
-			usage:         "select [<query>]",
-			description:   "Select a worktree or run actions via fzf and gum",
-			outputsTarget: true,
-			run:           wtRunSelectWithUI,
-		},
-		{
-			name:          "add",
-			usage:         "add [--branch <branch> [--base <ref>] | --interactive]",
-			description:   "Add flat worktree(s) (defaults to --interactive)",
-			outputsTarget: true,
+			name:        "add",
+			usage:       "add [--branch <branch> [--base <ref>] | --interactive]",
+			description: "Add flat worktree(s) (defaults to --interactive)",
 			newFlags: func(stderr io.Writer) *flag.FlagSet {
 				fs, _ := newWTAddFlagSet(stderr)
 				return fs
@@ -960,10 +841,9 @@ func allWTSubcommands() []wtSubcommand {
 			run: wtRunAddWithUI,
 		},
 		{
-			name:          "pr",
-			usage:         "pr [--repo <OWNER/REPO>] [--trust] <number|url|branch>",
-			description:   "Check out a GitHub PR into a flat worktree",
-			outputsTarget: true,
+			name:        "pr",
+			usage:       "pr [--repo <OWNER/REPO>] [--trust] <number|url|branch>",
+			description: "Check out a GitHub PR into a flat worktree",
 			newFlags: func(stderr io.Writer) *flag.FlagSet {
 				fs, _, _ := newWTPRFlagSet(stderr)
 				return fs
@@ -973,10 +853,9 @@ func allWTSubcommands() []wtSubcommand {
 			},
 		},
 		{
-			name:          "promote",
-			usage:         "promote [--trust]",
-			description:   "Move the current branch into its own flat worktree",
-			outputsTarget: true,
+			name:        "promote",
+			usage:       "promote [--trust]",
+			description: "Move the current branch into its own flat worktree",
 			newFlags: func(stderr io.Writer) *flag.FlagSet {
 				fs, _ := newWTPromoteFlagSet(stderr)
 				return fs
@@ -986,18 +865,12 @@ func allWTSubcommands() []wtSubcommand {
 			},
 		},
 		{
-			name:          "path",
-			usage:         "path [<name>]",
-			description:   "Print worktree path for <name> or default branch",
-			outputsTarget: true,
+			name:        "path",
+			usage:       "path [<name>]",
+			description: "Print worktree path for <name> or default branch",
 			run: func(args []string, workDir string, _ wtInteractiveUI, stdout, stderr io.Writer) error {
 				return wtRunPath(args, workDir, stdout, stderr)
 			},
-		},
-		{
-			name:   "_cd-helper",
-			hidden: true,
-			run:    wtRunCdHelperWithUI,
 		},
 		{
 			name:   "_preview",
@@ -1020,43 +893,6 @@ func allWTSubcommands() []wtSubcommand {
 			},
 		},
 	}
-}
-
-func printCdHelperUsage(w io.Writer) {
-	fmt.Fprintf(w, "Usage: wt [<query> | add ... | pr ... | promote | path ... | select ...]\n\n")
-	fmt.Fprintf(w, "Switch to or create a flat git worktree and print the target directory for shell cd.\n")
-	fmt.Fprintf(w, "Non-cd commands like `list` should be run via `git wt`.\n")
-}
-
-func wtRunCdHelperWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error {
-	if len(args) == 0 {
-		return wtRunSelectWithUI(nil, workDir, ui, stdout, stderr)
-	}
-
-	first := args[0]
-	switch first {
-	case "-h", "--help", "help":
-		printCdHelperUsage(stderr)
-		if first == "help" {
-			return nil
-		}
-		return flag.ErrHelp
-	}
-
-	for _, cmd := range allWTSubcommands() {
-		if cmd.name == first {
-			if cmd.outputsTarget {
-				return cmd.run(args[1:], workDir, ui, stdout, stderr)
-			}
-			return fmt.Errorf("%q does not return a cd target; run `git wt %s` instead", first, first)
-		}
-	}
-
-	if isGitXSubcommandName(first) {
-		return fmt.Errorf("%q is a git x subcommand, not a worktree query; run `git x %s` instead (or `wt select %s` to search)", first, first, first)
-	}
-
-	return wtRunSelectWithUI(args, workDir, ui, stdout, stderr)
 }
 
 func printWTUsage(w io.Writer) {

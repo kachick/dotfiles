@@ -177,3 +177,20 @@ func isCancelExitError(err error) bool {
 	var exitErr *exec.ExitError
 	return errors.As(err, &exitErr) && (exitErr.ExitCode() == 1 || exitErr.ExitCode() == 130)
 }
+
+func commonFzfStyleArgs(borderLabel, header string) []string {
+	return []string{
+		"--height=75%",
+		"--tmux=90%,70%",
+		"--layout=reverse",
+		"--min-height=20+",
+		"--border",
+		"--no-separator",
+		"--header-border=horizontal",
+		"--border-label-pos=2",
+		"--color=label:blue",
+		"--border-label=" + borderLabel,
+		"--header=" + header,
+		"--bind=ctrl-/:change-preview-window(down,60%|hidden|)",
+	}
+}

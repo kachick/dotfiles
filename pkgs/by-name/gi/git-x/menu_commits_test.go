@@ -2,13 +2,47 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"os"
 	"os/exec"
 	"slices"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/kachick/dotfiles/internal/gitcmd"
 )
+
+func TestLocaleDefaultsToJa(t *testing.T) {
+	cases := []struct {
+		name       string
+		lcAll      string
+		lcMessages string
+		lang       string
+		want       bool
+	}{
+		{name: "ja_JP.UTF-8 via LANG", lang: "ja_JP.UTF-8", want: true},
+		{name: "ja via LANG", lang: "ja", want: true},
+		{name: "ja-JP via LANG", lang: "ja-JP", want: true},
+		{name: "LC_ALL=C overrides LANG=ja_JP.UTF-8", lcAll: "C", lang: "ja_JP.UTF-8", want: false},
+		{name: "LC_MESSAGES=en_US.UTF-8 overrides LANG=ja_JP.UTF-8", lcMessages: "en_US.UTF-8", lang: "ja_JP.UTF-8", want: false},
+		{name: "LC_ALL=ja_JP.UTF-8 overrides LANG=C", lcAll: "ja_JP.UTF-8", lang: "C", want: true},
+		{name: "LC_MESSAGES=ja_JP.UTF-8 overrides LANG=C", lcMessages: "ja_JP.UTF-8", lang: "C", want: true},
+		{name: "LANG=C", lang: "C", want: false},
+		{name: "all empty", want: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("LC_ALL", tc.lcAll)
+			t.Setenv("LC_MESSAGES", tc.lcMessages)
+			t.Setenv("LANG", tc.lang)
+			if got := localeDefaultsToJa(); got != tc.want {
+				t.Errorf("localeDefaultsToJa() = %v, want %v", got, tc.want)
+			}
+		})
+	}
+}
 
 func TestCleanRev(t *testing.T) {
 	tests := []struct {
@@ -100,50 +134,31 @@ func TestNeighborRevs(t *testing.T) {
 	}
 }
 
-func TestParseAndBuildLogFzfArgs(t *testing.T) {
-	opts, err := parseLogFzfArgs([]string{"--ja", "fix typo"})
-	if err != nil {
-		t.Fatalf("parseLogFzfArgs failed: %v", err)
-	}
-	if !opts.ja || opts.query != "fix typo" {
-		t.Errorf("unexpected opts: %+v", opts)
-	}
-
-	jaArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "/tmp/cache", "/tmp/cache/fzf.sock", opts), "\n")
-	wantPreviewSubcmd := `"/bin/git-x" log-fzf _preview "/tmp/cache" {2}`
-	wantToggleBind := `alt-j:transform("/bin/git-x" log-fzf _toggle-ja "/tmp/cache")`
-	wantZoomBind := "alt-f:change-preview-window(down,80%|)"
-	if !strings.Contains(jaArgs, "--border-label\n🪵 Logs (ja)") ||
+func TestMenuCommitFzfArgs(t *testing.T) {
+	jaArgs := strings.Join(menuCommitFzfArgs("/bin/git-x", "/repo/wt", "/tmp/cache", "/tmp/cache/fzf.sock", "fix typo", true), "\n")
+	wantPreview := `--preview='/bin/git-x' menu _preview-commit '/repo/wt' '/tmp/cache' {2}`
+	wantToggle := `--bind=alt-j:transform('/bin/git-x' menu _toggle-ja '/tmp/cache')`
+	wantZoom := `--bind=alt-f:change-preview-window(down,80%|)`
+	if !strings.Contains(jaArgs, "--border-label=🪵 Commits (ja) (Ctrl-G)") ||
 		!strings.Contains(jaArgs, "--listen=/tmp/cache/fzf.sock") ||
-		!strings.Contains(jaArgs, "--preview\n"+wantPreviewSubcmd) ||
-		!strings.Contains(jaArgs, wantToggleBind) ||
-		!strings.Contains(jaArgs, wantZoomBind) ||
-		strings.Contains(jaArgs, "enter:") {
-		t.Errorf("unexpected ja fzf args:\n%s", jaArgs)
+		!strings.Contains(jaArgs, wantPreview) ||
+		!strings.Contains(jaArgs, wantToggle) ||
+		!strings.Contains(jaArgs, wantZoom) ||
+		!strings.Contains(jaArgs, "--query\nfix typo") {
+		t.Errorf("unexpected ja menu commit fzf args:\n%s", jaArgs)
 	}
 
-	plainOpts, err := parseLogFzfArgs([]string{"feat"})
-	if err != nil {
-		t.Fatalf("parseLogFzfArgs plain failed: %v", err)
-	}
-	plainArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "/tmp/cache", "/tmp/cache/fzf.sock", plainOpts), "\n")
-	if !strings.Contains(plainArgs, "--border-label\n🪵 Logs\n") ||
-		strings.Contains(plainArgs, "🪵 Logs (ja)") ||
-		!strings.Contains(plainArgs, "--listen=/tmp/cache/fzf.sock") ||
-		!strings.Contains(plainArgs, "--query\nfeat") ||
-		!strings.Contains(plainArgs, "--preview\n"+wantPreviewSubcmd) ||
-		!strings.Contains(plainArgs, wantToggleBind) ||
-		!strings.Contains(plainArgs, wantZoomBind) ||
-		strings.Contains(plainArgs, "enter:") ||
-		strings.Contains(plainArgs, "--height") ||
-		strings.Contains(plainArgs, "--tmux") ||
-		strings.Contains(plainArgs, "ansi2txt") ||
-		strings.Contains(plainArgs, "xargs") {
-		t.Errorf("unexpected plain fzf args:\n%s", plainArgs)
+	plainArgs := strings.Join(menuCommitFzfArgs("/bin/git-x", "/repo/wt", "/tmp/cache", "/tmp/cache/fzf.sock", "", false), "\n")
+	if !strings.Contains(plainArgs, "--border-label=🪵 Commits (Ctrl-G)") ||
+		strings.Contains(plainArgs, "Commits (ja)") ||
+		!strings.Contains(plainArgs, wantPreview) ||
+		!strings.Contains(plainArgs, wantToggle) ||
+		!strings.Contains(plainArgs, wantZoom) {
+		t.Errorf("unexpected plain menu commit fzf args:\n%s", plainArgs)
 	}
 }
 
-func TestLogFzfToggleJa(t *testing.T) {
+func TestMenuToggleJa(t *testing.T) {
 	cacheDir := t.TempDir()
 
 	if isJaEnabled(cacheDir) {
@@ -152,39 +167,39 @@ func TestLogFzfToggleJa(t *testing.T) {
 
 	var out bytes.Buffer
 	var stderr bytes.Buffer
-	if err := runLogFzf([]string{"_toggle-ja", cacheDir}, strings.NewReader(""), &out, &stderr); err != nil {
+	if err := runMenu([]string{"_toggle-ja", cacheDir}, "", &out, &stderr); err != nil {
 		t.Fatalf("first _toggle-ja failed: %v", err)
 	}
 	if !isJaEnabled(cacheDir) {
 		t.Fatal("expected ja mode to be enabled after first toggle")
 	}
-	if got, want := out.String(), "change-border-label(🪵 Logs (ja))+refresh-preview\n"; got != want {
+	if got, want := out.String(), "change-border-label(🪵 Commits (ja) (Ctrl-G))+refresh-preview\n"; got != want {
 		t.Errorf("first _toggle-ja output = %q, want %q", got, want)
 	}
 
 	out.Reset()
-	if err := runLogFzf([]string{"_toggle-ja", cacheDir}, strings.NewReader(""), &out, &stderr); err != nil {
+	if err := runMenu([]string{"_toggle-ja", cacheDir}, "", &out, &stderr); err != nil {
 		t.Fatalf("second _toggle-ja failed: %v", err)
 	}
 	if isJaEnabled(cacheDir) {
 		t.Fatal("expected ja mode to be disabled after second toggle")
 	}
-	if got, want := out.String(), "change-border-label(🪵 Logs)+refresh-preview\n"; got != want {
+	if got, want := out.String(), "change-border-label(🪵 Commits (Ctrl-G))+refresh-preview\n"; got != want {
 		t.Errorf("second _toggle-ja output = %q, want %q", got, want)
 	}
 }
 
-func TestRunLogFzfPreviewPlainEmpty(t *testing.T) {
+func TestMenuCommitPreviewEmpty(t *testing.T) {
 	var stdout, stderr bytes.Buffer
-	if err := runLogFzf([]string{"_preview-plain", ""}, strings.NewReader(""), &stdout, &stderr); err != nil {
-		t.Fatalf("runLogFzf(_preview-plain, empty) failed: %v", err)
+	if err := runMenu([]string{"_preview-commit", "", t.TempDir(), ""}, "", &stdout, &stderr); err != nil {
+		t.Fatalf("runMenu(_preview-commit, empty) failed: %v", err)
 	}
 	if stdout.Len() != 0 || stderr.Len() != 0 {
 		t.Errorf("expected empty output, got stdout=%q stderr=%q", stdout.String(), stderr.String())
 	}
 }
 
-func TestLogFzfPipelineHelperProcess(t *testing.T) {
+func TestMenuCommitPipelineHelperProcess(t *testing.T) {
 	mode := os.Getenv("GIT_X_TEST_PIPE_MODE")
 	if mode == "" {
 		return
@@ -214,24 +229,25 @@ func helperPipeCommand(t *testing.T, mode string) *exec.Cmd {
 	if err != nil {
 		t.Fatalf("os.Executable: %v", err)
 	}
-	cmd := exec.Command(exe, "-test.run=^TestLogFzfPipelineHelperProcess$")
+	cmd := exec.Command(exe, "-test.run=^TestMenuCommitPipelineHelperProcess$")
 	cmd.Env = append(os.Environ(), "GIT_X_TEST_PIPE_MODE="+mode)
 	return cmd
 }
 
-func TestRunLogFzfPipelineEarlyCancel(t *testing.T) {
+func TestRunMenuCommitPipelineEarlyCancel(t *testing.T) {
 	producer := helperPipeCommand(t, "producer-large")
 	consumer := helperPipeCommand(t, "consumer-cancel")
 
 	done := make(chan error, 1)
 	go func() {
-		done <- runLogFzfPipeline(producer, consumer)
+		_, err := runMenuCommitPipeline(producer, consumer)
+		done <- err
 	}()
 
 	select {
 	case err := <-done:
-		if err != nil {
-			t.Fatalf("runLogFzfPipeline() returned unexpected error: %v", err)
+		if !errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			t.Fatalf("runMenuCommitPipeline() err = %v, want ErrSelectionCanceled", err)
 		}
 	case <-time.After(2 * time.Second):
 		if producer.Process != nil {
@@ -240,23 +256,24 @@ func TestRunLogFzfPipelineEarlyCancel(t *testing.T) {
 		if consumer.Process != nil {
 			_ = consumer.Process.Kill()
 		}
-		t.Fatal("runLogFzfPipeline() deadlocked after consumer exited early")
+		t.Fatal("runMenuCommitPipeline() deadlocked after consumer exited early")
 	}
 }
 
-func TestRunLogFzfPipelineConsumerError(t *testing.T) {
+func TestRunMenuCommitPipelineConsumerError(t *testing.T) {
 	producer := helperPipeCommand(t, "producer-large")
 	consumer := helperPipeCommand(t, "consumer-fail")
 
 	done := make(chan error, 1)
 	go func() {
-		done <- runLogFzfPipeline(producer, consumer)
+		_, err := runMenuCommitPipeline(producer, consumer)
+		done <- err
 	}()
 
 	select {
 	case err := <-done:
-		if err == nil {
-			t.Fatal("runLogFzfPipeline() returned nil, want non-zero consumer error")
+		if err == nil || errors.Is(err, gitcmd.ErrSelectionCanceled) {
+			t.Fatalf("runMenuCommitPipeline() err = %v, want non-cancel error", err)
 		}
 	case <-time.After(2 * time.Second):
 		if producer.Process != nil {
@@ -265,6 +282,6 @@ func TestRunLogFzfPipelineConsumerError(t *testing.T) {
 		if consumer.Process != nil {
 			_ = consumer.Process.Kill()
 		}
-		t.Fatal("runLogFzfPipeline() deadlocked after consumer failed")
+		t.Fatal("runMenuCommitPipeline() deadlocked after consumer failed")
 	}
 }

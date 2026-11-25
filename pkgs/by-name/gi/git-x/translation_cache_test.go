@@ -110,8 +110,7 @@ func TestRunShow_PersistentTranslationCache(t *testing.T) {
 		t.Errorf("completionsCalls = %d, want 1 after cache hit", got)
 	}
 
-	t.Chdir(repoDir)
-	if !hasPersistentTranslation("HEAD") {
-		t.Error("expected hasPersistentTranslation(\"HEAD\") to be true after caching")
+	if !hasPersistentTranslation(repoDir, "HEAD") {
+		t.Error("expected hasPersistentTranslation(repoDir, \"HEAD\") to be true after caching")
 	}
 }

@@ -7,8 +7,6 @@ Unified CLI combining local Git and GitHub helper subcommands.
 ```mermaid
 flowchart LR
     subgraph Shell ["Shell Functions & Keybinds (posix_dev_functions / dev.nix)"]
-        repo_fn["repo"]
-        wt_fn["wt"]
         gx_fn["gx (Ctrl-G)"]
         gch["gch"]
     end
@@ -16,7 +14,6 @@ flowchart LR
     subgraph Aliases ["Git Aliases (home-manager/git.nix)"]
         git_x["git x <subcommand>"]
         git_all["git all"]
-        git_lf["git lf"]
     end
 
     subgraph Hooks ["Git 2.54+ Config Hooks"]
@@ -33,8 +30,6 @@ flowchart LR
             cmd_sprout["sprout"]
             cmd_init["init-clean-bare"]
             cmd_migrate["migrate-clean-bare"]
-            cmd_repofzf["repo-fzf"]
-            cmd_reponame["gh-reponame"]
         end
 
         subgraph Worktree ["Worktree & Branch Lifecycle"]
@@ -44,8 +39,7 @@ flowchart LR
             cmd_reset["reset-branch"]
         end
 
-        subgraph Review ["Log, Translation & Conflict"]
-            cmd_logfzf["log-fzf"]
+        subgraph Review ["Review, Translation & Conflict"]
             cmd_show["show"]
             cmd_conflict["resolve-conflict"]
             cmd_hist["commit-from-history"]
@@ -65,39 +59,31 @@ flowchart LR
         ext_lint["betterleaks / typos"]
     end
 
-    repo_fn --> cmd_reponame
-    repo_fn --> cmd_repofzf
-    repo_fn -->|"repo get"| cmd_get
-    wt_fn -->|"wt _cd-helper"| cmd_wt
     gx_fn --> cmd_menu
     gch --> cmd_hist
 
     git_x --> Subcommands
     git_all --> cmd_refresh
     git_all --> cmd_dmb
-    git_lf --> cmd_logfzf
     pre_push --> cmd_hooks
 
     cmd_menu -->|"^W / ^B / ^L / ^T / ^R / ^X"| ext_tui
     cmd_menu --> cmd_wt
-    cmd_menu --> cmd_repofzf
+    cmd_menu --> cmd_get
+    cmd_menu --> cmd_show
     cmd_menu --> cmd_refresh
     cmd_menu --> cmd_dmb
     cmd_sprout --> cmd_get
     cmd_sprout --> ext_gh
     cmd_get -->|"git clone --bare"| cmd_init
-    cmd_wt -->|"ctrl-l"| cmd_logfzf
-    cmd_logfzf -->|"--ja"| cmd_show
 
     Repo --> ext_git
     Worktree --> ext_git
-    cmd_repofzf --> ext_tui
     cmd_wt --> ext_tui
     cmd_migrate --> ext_tui
     cmd_dmb -->|"--pr"| ext_gh
-    cmd_logfzf --> ext_tui
-    cmd_logfzf --> ext_diff
-    cmd_logfzf --> ext_gh
+    cmd_menu --> ext_diff
+    cmd_menu --> ext_gh
     cmd_show --> ext_diff
     cmd_show -->|"--ja"| ext_plamo
     cmd_conflict --> ext_diff
@@ -107,31 +93,28 @@ flowchart LR
 
 ## Subcommands
 
-| Category            | Subcommand                                                         | Caller / Alias                            | Purpose                                                                                           |
-| ------------------- | ------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                            | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos      |
-| Repository & Layout | `get [--trust] <spec>`                                             | `repo get`, `git x sprout`                | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                |
-| Repository & Layout | `sprout <repo>`                                                    | `git x sprout`                            | Create a private template repo on GitHub, clone in clean-bare layout, and enable auto-merge       |
-| Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                             |
-| Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                                 |
-| Repository & Layout | `repo-fzf [--list] [query]`                                        | `repo`                                    | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
-| Repository & Layout | `gh-reponame`                                                      | `repo`                                    | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                                  |
-| Worktree & Branch   | `wt [list\|select\|add\|pr\|promote\|path]`                        | `wt`, `git x wt`                          | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                             |
-| Worktree & Branch   | `refresh`                                                          | `git x refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                                 |
-| Worktree & Branch   | `delete-merged-branches [--dry-run] [--pr]`                        | `git x delete-merged-branches`, `git all` | Remove merged local branches and clean worktrees (`--pr` checks merged GitHub PRs)                |
-| Worktree & Branch   | `reset-branch [--remote <name>] [--dry-run] [branch]`              | `git x reset-branch`                      | Rename local branch to `backup-<branch>-<uuid>` and recreate it from remote                       |
-| Log & Review        | `show [--ja] [git-show-args...]`                                   | `git x show`, `git x log-fzf`             | Run `git show` through `riff` (`--ja` injects Japanese translation via local `llama-server`)      |
-| Log & Review        | `log-fzf [--ja] [query]`                                           | `git lf`                                  | Search `git log` in `fzf` with `riff`/`bat` preview, `Alt-J` translation toggle, and `Alt-F` zoom |
-| Log & Review        | `resolve-conflict`                                                 | `git x resolve-conflict`                  | Find `<<<<<< HEAD` markers in unmerged files with `rg` and open them in Helix (`hx --hsplit`)     |
-| Log & Review        | `commit-from-history`                                              | `gch`                                     | Pick a shell history line via `fzf` and commit all changes with `` `<command>` ``                 |
-| Hooks               | `hooks pre-push <subcommand>`                                      | Git `hook.*` config                       | Run `betterleaks`, `typos-commits`, or `typos-branch` before pushing                              |
-| Shell               | `completion <bash\|zsh>`                                           | Nix `installShellCompletion` (`git-x`)    | Print shell completion wrappers backed by `git-x __complete`                                      |
+| Category            | Subcommand                                                         | Caller / Alias                            | Purpose                                                                                                        |
+| ------------------- | ------------------------------------------------------------------ | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                            | Single-entry `fzf`/`gum` launcher for commits, worktrees, branches, tags, and repos (`Alt-J` ja, `Alt-F` zoom) |
+| Repository & Layout | `get [--trust] <spec>`                                             | `git x get`, `git x menu`, `git x sprout` | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                             |
+| Repository & Layout | `sprout <repo>`                                                    | `git x sprout`                            | Create a private template repo on GitHub, clone in clean-bare layout, and enable auto-merge                    |
+| Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                                          |
+| Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                                              |
+| Worktree & Branch   | `wt [list\|add\|pr\|promote\|path]`                                | `git x wt`, `git x menu`                  | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                                          |
+| Worktree & Branch   | `refresh`                                                          | `git x refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                                              |
+| Worktree & Branch   | `delete-merged-branches [--dry-run] [--pr]`                        | `git x delete-merged-branches`, `git all` | Remove merged local branches and clean worktrees (`--pr` checks merged GitHub PRs)                             |
+| Worktree & Branch   | `reset-branch [--remote <name>] [--dry-run] [branch]`              | `git x reset-branch`                      | Rename local branch to `backup-<branch>-<uuid>` and recreate it from remote                                    |
+| Log & Review        | `show [--ja] [git-show-args...]`                                   | `git x show`, `git x menu`                | Run `git show` through `riff` (`--ja` injects Japanese translation via local `llama-server`)                   |
+| Log & Review        | `resolve-conflict`                                                 | `git x resolve-conflict`                  | Find `<<<<<< HEAD` markers in unmerged files with `rg` and open them in Helix (`hx --hsplit`)                  |
+| Log & Review        | `commit-from-history`                                              | `gch`                                     | Pick a shell history line via `fzf` and commit all changes with `` `<command>` ``                              |
+| Hooks               | `hooks pre-push <subcommand>`                                      | Git `hook.*` config                       | Run `betterleaks`, `typos-commits`, or `typos-branch` before pushing                                           |
+| Shell               | `completion <bash\|zsh>`                                           | Nix `installShellCompletion` (`git-x`)    | Print shell completion wrappers backed by `git-x __complete`                                                   |
 
 ## Clean-Bare Worktree Layout & Lifecycle
 
 `git-x` organizes repositories in a clean-bare layout where `.git` holds the bare repository and every branch lives in a flat sibling directory at depth 1 (`feat/foo` becomes `feat-foo`).
 
-Commands that return a directory path (`menu`, `get`, `sprout`, `init-clean-bare`, `migrate-clean-bare`, `repo-fzf`, `wt add`, `wt select`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
+Commands that return a directory path (`menu`, `get`, `sprout`, `init-clean-bare`, `migrate-clean-bare`, `wt add`, `wt pr`, `wt promote`, `wt path`) send all Git progress and TUI prompts to `stderr` so `stdout` only prints the target path for shell `cd` wrappers.
 
 ```mermaid
 flowchart TD
@@ -144,20 +127,22 @@ flowchart TD
     clone["git x get <spec>"] -->|"git clone --bare"| bare
     std["Standard Repo (.git/ + working files)"] -->|"git x migrate-clean-bare"| bare
     bare -->|"git x init-clean-bare"| wt_main
-    bare -->|"git x wt add / wt select"| wt_feat
+    bare -->|"git x wt add / git x menu"| wt_feat
     wt_main -->|"git x refresh"| wt_main
     wt_feat -->|"git x delete-merged-branches [--pr]"| prune["Remove clean worktree & branch"]
 ```
 
-## `git x log-fzf` Asynchronous Translation Flow
+## `git x menu` Commits View & Asynchronous Translation Flow
 
-`log-fzf` starts with plain preview by default (`--ja` starts with translation on). Pressing `Alt-J` toggles Japanese translation on or off inside the same `fzf` session without losing the cursor position or query, pressing `Alt-F` toggles a larger preview pane (`down,80%`) while keeping the `fzf` list visible, and pressing `Enter` prints the selected log line(s). When the preview pane is wide enough (100+ columns), the original commit message and Japanese translation are shown side by side above the diff. While translation is on, a background worker watches the focused commit in `fzf`, translates it first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket. Translated commit messages are cached under `$XDG_CACHE_HOME/git-x/translations/` (shared with `git x show --ja`), so previously translated commits render right away across sessions.
+When `--mode` is omitted, `git x menu` (`Ctrl-G` / `gx`) picks the initial view from the current directory: `repos` outside a Git repository, `commits` inside a worktree, and `worktrees` at a clean-bare repository root.
+
+In the Commits view, Japanese translation defaults to on when the effective locale (`LC_ALL`, `LC_MESSAGES`, `LANG`) starts with `ja` and off otherwise (set `LANG=C` for a lightweight plain session). Pressing `Alt-J` toggles Japanese translation on or off inside the same `fzf` session without losing the cursor position or query, pressing `Alt-F` toggles a larger preview pane (`down,80%`) while keeping the `fzf` list visible, and pressing `Enter` displays the selected commit details. When the preview pane is wide enough (100+ columns), the original commit message and Japanese translation are shown side by side above the diff. While translation is on, a background worker watches the focused commit in `fzf`, translates it first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket. Translated commit messages are cached under `$XDG_CACHE_HOME/git-x/translations/` (shared with `git x show --ja`), so previously translated commits render right away across sessions.
 
 ```mermaid
 sequenceDiagram
     participant User
     participant FZF as fzf (--listen fzf.sock)
-    participant Preview as git x log-fzf _preview
+    participant Preview as git x menu _preview-commit
     participant Cache as Temp Cache Dir
     participant Worker as Background Worker
     participant Show as git x show --ja

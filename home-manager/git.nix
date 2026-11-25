@@ -170,7 +170,6 @@ in
       alias = {
         fixup = "commit --all --amend";
         all = "!${git-x} refresh && ${git-x} delete-merged-branches";
-        lf = "!${git-x} log-fzf";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet

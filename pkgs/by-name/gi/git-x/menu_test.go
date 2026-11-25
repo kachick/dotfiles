@@ -13,7 +13,7 @@ import (
 )
 
 func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
-	t.Run("defaults to worktrees inside a git repo and switches across branches, commits, tags, and repos", func(t *testing.T) {
+	t.Run("defaults to commits inside a worktree, worktrees at bare repo root, and switches views", func(t *testing.T) {
 		isolateEnv(t)
 		repoDir, defaultWT := setupCleanBareRepo(t, "main", []string{"feat/remote-branch"}, "")
 		runGit(t, defaultWT, "config", "user.name", "Tester")
@@ -21,6 +21,7 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 		runGit(t, defaultWT, "branch", "feat/local-branch")
 		runGit(t, defaultWT, "tag", "-a", "v1.0.0", "-m", "Release v1.0.0")
 
+		// Inside a worktree, auto mode opens commits first.
 		var visitedModes []menuMode
 		var shownRev string
 		ui := menuInteractiveUI{
@@ -29,6 +30,11 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 				rawInput, _ := io.ReadAll(input)
 				text := string(rawInput)
 				switch mode {
+				case menuModeCommits:
+					if !strings.Contains(text, "Initial commit") {
+						t.Errorf("commits input missing Initial commit:\n%s", text)
+					}
+					return selectChoice{Key: "ctrl-w"}, nil
 				case menuModeWorktrees:
 					if !strings.Contains(text, defaultWT) {
 						t.Errorf("worktrees input missing defaultWT %q:\n%s", defaultWT, text)
@@ -37,11 +43,6 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 				case menuModeBranches:
 					if !strings.Contains(text, "feat/local-branch") || !strings.Contains(text, "origin/feat/remote-branch") {
 						t.Errorf("branches input missing local or remote branch:\n%s", text)
-					}
-					return selectChoice{Key: "ctrl-l"}, nil
-				case menuModeCommits:
-					if !strings.Contains(text, "Initial commit") {
-						t.Errorf("commits input missing Initial commit:\n%s", text)
 					}
 					return selectChoice{Key: "ctrl-t"}, nil
 				case menuModeTags:
@@ -65,7 +66,7 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 			t.Fatalf("runMenuWithUI failed: %v, stderr: %s", err, stderr.String())
 		}
 
-		wantModes := []menuMode{menuModeWorktrees, menuModeBranches, menuModeCommits, menuModeTags}
+		wantModes := []menuMode{menuModeCommits, menuModeWorktrees, menuModeBranches, menuModeTags}
 		if !slices.Equal(visitedModes, wantModes) {
 			t.Errorf("visitedModes = %v, want %v", visitedModes, wantModes)
 		}
@@ -75,7 +76,168 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 		if stdout.Len() != 0 {
 			t.Errorf("expected empty stdout for tag detail action, got %q", stdout.String())
 		}
-		_ = repoDir
+
+		// At the clean-bare container root (outside any worktree), auto mode opens worktrees first.
+		var rootInitialMode menuMode
+		rootUI := menuInteractiveUI{
+			selectMenuItem: func(mode menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				rootInitialMode = mode
+				return selectChoice{Key: "", Path: defaultWT}, nil
+			},
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runMenuWithUI(nil, repoDir, rootUI, &stdout, &stderr); err != nil {
+			t.Fatalf("runMenuWithUI at bare root failed: %v, stderr: %s", err, stderr.String())
+		}
+		if rootInitialMode != menuModeWorktrees {
+			t.Errorf("initial mode at bare repo root = %q, want %q", rootInitialMode, menuModeWorktrees)
+		}
+		if got := strings.TrimSpace(stdout.String()); got != defaultWT {
+			t.Errorf("stdout at bare repo root = %q, want %q", got, defaultWT)
+		}
+	})
+
+	t.Run("worktrees ctrl-l switches to commits view for the selected worktree", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", []string{"feat/other-log"}, "")
+		var addOut, addErr bytes.Buffer
+		if err := runWT([]string{"add", "--branch", "feat/other-log"}, defaultWT, &addOut, &addErr); err != nil {
+			t.Fatalf("wt add feat/other-log failed: %v, stderr: %s", err, addErr.String())
+		}
+		otherWT := filepath.Join(repoDir, "feat-other-log")
+
+		var gotCommitDir string
+		var gotCommitLog string
+		ui := menuInteractiveUI{
+			selectMenuItem: func(mode menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				if mode != menuModeWorktrees {
+					t.Fatalf("unexpected mode %q", mode)
+				}
+				return selectChoice{Key: "ctrl-l", Path: otherWT}, nil
+			},
+			selectCommitItem: func(gitDir string, _ []string, stderr io.Writer) (selectChoice, error) {
+				gotCommitDir = gitDir
+				r := gitcmd.New(gitDir, stderr, stderr)
+				raw, err := r.OutputRaw("log", "--format="+defaultLogFormat, "--date=short", "--color=always")
+				if err != nil {
+					return selectChoice{}, err
+				}
+				gotCommitLog = string(raw)
+				return selectChoice{}, gitcmd.ErrSelectionCanceled
+			},
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runMenuWithUI([]string{"--mode", "worktrees"}, defaultWT, ui, &stdout, &stderr); err != nil {
+			t.Fatalf("worktrees ctrl-l failed: %v, stderr: %s", err, stderr.String())
+		}
+		if gotCommitDir != otherWT {
+			t.Errorf("commits view gitDir = %q, want %q", gotCommitDir, otherWT)
+		}
+		if !strings.Contains(gotCommitLog, "Commit on feat/other-log") {
+			t.Errorf("expected commits log from selected worktree, got:\n%s", gotCommitLog)
+		}
+	})
+
+	t.Run("worktrees ctrl-a, ctrl-d guards, ctrl-x pr and promote, and repos ctrl-a clone", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
+
+		// Worktrees ctrl-d refuses to remove current or default worktree.
+		var stdout, stderr bytes.Buffer
+		removeDefaultUI := menuInteractiveUI{
+			selectMenuItem: func(_ menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-d", Path: defaultWT}, nil
+			},
+			wtUI: wtInteractiveUI{
+				confirmRemoveWorktree: func(_, _ string, _ io.Writer) (bool, error) {
+					t.Fatal("confirmRemoveWorktree should not be called for default worktree")
+					return false, nil
+				},
+			},
+		}
+		if err := runMenuWithUI([]string{"--mode", "worktrees"}, defaultWT, removeDefaultUI, &stdout, &stderr); err == nil {
+			t.Fatal("expected error when removing default worktree")
+		}
+
+		// Worktrees ctrl-x -> PR checkout.
+		var gotPRSpec string
+		prUI := menuInteractiveUI{
+			selectMenuItem: func(_ menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-x", Path: defaultWT}, nil
+			},
+			chooseAction: func(_ string, options []string, _ io.Writer) (string, error) {
+				if !slices.Contains(options, menuActionWTPR) || !slices.Contains(options, menuActionWTPromote) {
+					t.Errorf("expected PR and promote actions in options, got %v", options)
+				}
+				return menuActionWTPR, nil
+			},
+			inputText: func(_, _ string, _ io.Writer) (string, error) {
+				return "42", nil
+			},
+			runWTPR: func(spec, _ string, stdout, _ io.Writer) error {
+				gotPRSpec = spec
+				stdout.Write([]byte(filepath.Join(repoDir, "pr-42") + "\n"))
+				return nil
+			},
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runMenuWithUI([]string{"--mode", "worktrees"}, defaultWT, prUI, &stdout, &stderr); err != nil {
+			t.Fatalf("worktrees ctrl-x pr failed: %v, stderr: %s", err, stderr.String())
+		}
+		if gotPRSpec != "42" || strings.TrimSpace(stdout.String()) != filepath.Join(repoDir, "pr-42") {
+			t.Errorf("gotPRSpec=%q stdout=%q", gotPRSpec, stdout.String())
+		}
+
+		// Worktrees ctrl-x -> promote.
+		var promoteCalled bool
+		promoteUI := menuInteractiveUI{
+			selectMenuItem: func(_ menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-x", Path: defaultWT}, nil
+			},
+			chooseAction: func(_ string, _ []string, _ io.Writer) (string, error) {
+				return menuActionWTPromote, nil
+			},
+			runWTPromote: func(wd string, stdout, _ io.Writer) error {
+				promoteCalled = wd == defaultWT
+				stdout.Write([]byte(filepath.Join(repoDir, "promoted") + "\n"))
+				return nil
+			},
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runMenuWithUI([]string{"--mode", "worktrees"}, defaultWT, promoteUI, &stdout, &stderr); err != nil {
+			t.Fatalf("worktrees ctrl-x promote failed: %v, stderr: %s", err, stderr.String())
+		}
+		if !promoteCalled || strings.TrimSpace(stdout.String()) != filepath.Join(repoDir, "promoted") {
+			t.Errorf("promoteCalled=%v stdout=%q", promoteCalled, stdout.String())
+		}
+
+		// Repos ctrl-a -> clone via git x get.
+		var clonedSpec string
+		cloneUI := menuInteractiveUI{
+			selectMenuItem: func(_ menuMode, _ []string, _ io.Reader, _ io.Writer) (selectChoice, error) {
+				return selectChoice{Key: "ctrl-a"}, nil
+			},
+			inputText: func(_, _ string, _ io.Writer) (string, error) {
+				return "kachick/dotfiles", nil
+			},
+			runRepoClone: func(spec string, stdout, _ io.Writer) error {
+				clonedSpec = spec
+				stdout.Write([]byte("/repos/github.com/kachick/dotfiles/main\n"))
+				return nil
+			},
+		}
+		stdout.Reset()
+		stderr.Reset()
+		if err := runMenuWithUI([]string{"--mode", "repos"}, t.TempDir(), cloneUI, &stdout, &stderr); err != nil {
+			t.Fatalf("repos ctrl-a clone failed: %v, stderr: %s", err, stderr.String())
+		}
+		if clonedSpec != "kachick/dotfiles" || strings.TrimSpace(stdout.String()) != "/repos/github.com/kachick/dotfiles/main" {
+			t.Errorf("clonedSpec=%q stdout=%q", clonedSpec, stdout.String())
+		}
 	})
 
 	t.Run("defaults to repos mode outside a git repository and prints selected repo path", func(t *testing.T) {

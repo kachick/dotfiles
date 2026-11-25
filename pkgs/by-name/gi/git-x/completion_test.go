@@ -103,11 +103,6 @@ func TestCompleteArgsMatchesCommandDefinitions(t *testing.T) {
 			t.Errorf("expected no internal completions for menu _, got %v", res.items)
 		}
 
-		res = completeArgs(tree, []string{"log-fzf", "_"})
-		if len(res.items) != 0 {
-			t.Errorf("expected no internal completions for log-fzf _, got %v", res.items)
-		}
-
 		res = completeArgs(tree, []string{"show", "--"})
 		got := completionValues(res)
 		if !slices.Contains(got, "--ja") {
@@ -183,18 +178,6 @@ func TestCompleteArgsMatchesCommandDefinitions(t *testing.T) {
 				args:          []string{"get", "--"},
 				wantDirective: completionDirectiveNone,
 				wantAll:       []string{"--trust"},
-			},
-			{
-				name:          "repo-fzf flags",
-				args:          []string{"repo-fzf", "--"},
-				wantDirective: completionDirectiveNone,
-				wantAll:       []string{"--list"},
-			},
-			{
-				name:          "log-fzf flags",
-				args:          []string{"log-fzf", "--"},
-				wantDirective: completionDirectiveNone,
-				wantAll:       []string{"--ja"},
 			},
 			{
 				name:          "completion shell values",
@@ -309,7 +292,7 @@ func TestBashCompletionBehavior(t *testing.T) {
 			name:    "wt subcommands",
 			words:   `("` + binPath + `" "wt" "")`,
 			cword:   2,
-			wantAll: []string{"list", "select", "add", "path", "help"},
+			wantAll: []string{"list", "add", "pr", "promote", "path", "help"},
 		},
 		{
 			name:    "wt add flags",

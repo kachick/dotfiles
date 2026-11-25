@@ -138,14 +138,6 @@ func allGitXSubcommands() []gitXSubcommand {
 			},
 		},
 		{
-			name:        "log-fzf",
-			description: "Interactive git log searcher (--ja enables translation)",
-			flags:       logFzfFlags(),
-			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-				return runLogFzf(args, stdin, stdout, stderr)
-			},
-		},
-		{
 			name:        "resolve-conflict",
 			description: "Open unresolved conflict locations in helix",
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
@@ -159,24 +151,6 @@ func allGitXSubcommands() []gitXSubcommand {
 			subcommands:     allHooksEvents,
 			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return runHooks(args, stdin, stdout, stderr)
-			},
-		},
-		{
-			name:        "repo-fzf",
-			description: "Select a repository worktree via fzf",
-			newFlags: func(stderr io.Writer) *flag.FlagSet {
-				fs, _ := newRepoFzfFlagSet(stderr)
-				return fs
-			},
-			run: func(args []string, _ io.Reader, stdout, stderr io.Writer) error {
-				return runRepoFzf(args, stdout, stderr)
-			},
-		},
-		{
-			name:        "gh-reponame",
-			description: "Extract repository name from OWNER/REPO or GitHub URL",
-			run: func(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-				return runGhReponame(args, stdin, stdout, stderr)
 			},
 		},
 		{
@@ -197,15 +171,6 @@ func allGitXSubcommands() []gitXSubcommand {
 			},
 		},
 	}
-}
-
-func isGitXSubcommandName(name string) bool {
-	for _, cmd := range allGitXSubcommands() {
-		if cmd.name == name {
-			return true
-		}
-	}
-	return false
 }
 
 func printGitXUsage(w io.Writer) {
