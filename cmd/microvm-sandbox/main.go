@@ -18,7 +18,6 @@ import (
 )
 
 const (
-	defaultName        = "default"
 	portStart          = 2221
 	portEnd            = 2320
 	bootTimeoutSeconds = 30
@@ -29,11 +28,11 @@ var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 
 const usageText = `Usage:
   microvm-sandbox console
-  microvm-sandbox up [--plain] [--mount <DIR>] [NAME]
-  microvm-sandbox exec [NAME] -- <COMMAND...>
+  microvm-sandbox up [--plain] [--mount <DIR>] <NAME>
+  microvm-sandbox exec <NAME> -- <COMMAND...>
   microvm-sandbox ssh [NAME]
   microvm-sandbox status
-  microvm-sandbox down [NAME|--all]
+  microvm-sandbox down <NAME>|--all
 `
 
 type upOptions struct {
@@ -212,11 +211,36 @@ func sshBaseArgs(port int) []string {
 	}
 }
 
+// Build an RFC 1123 hostname accepted by systemd.hostname=.
+func guestHostname(name string) string {
+	const (
+		prefix = "sandbox-"
+		maxLen = 63
+	)
+	var labels []string
+	for part := range strings.SplitSeq(name, ".") {
+		part = strings.ReplaceAll(part, "_", "-")
+		part = strings.Trim(part, "-")
+		if part != "" {
+			labels = append(labels, part)
+		}
+	}
+	if len(labels) == 0 {
+		return "sandbox"
+	}
+	host := prefix + strings.Join(labels, ".")
+	if len(host) > maxLen {
+		host = strings.TrimRight(host[:maxLen], "-.")
+	}
+	return host
+}
+
 func patchRunnerContent(src string, opts patchOptions) (string, error) {
 	requiredTokens := []string{
 		"-name sandbox",
 		"-chardev 'stdio,id=stdio,signal=off'",
 		"-serial chardev:stdio",
+		"-append '",
 		"-netdev 'user,id=net0'",
 	}
 
@@ -241,6 +265,13 @@ func patchRunnerContent(src string, opts patchOptions) (string, error) {
 		out,
 		"-serial chardev:stdio",
 		fmt.Sprintf("-serial 'file:%s/console.log' -daemonize -pidfile '%s/qemu.pid'", opts.stateDir, opts.stateDir),
+		1,
+	)
+	// systemd.hostname= overrides static /etc/hostname during early boot without rebuilding the NixOS image.
+	out = strings.Replace(
+		out,
+		"-append '",
+		fmt.Sprintf("-append 'systemd.hostname=%s ", guestHostname(opts.name)),
 		1,
 	)
 	out = strings.Replace(
@@ -287,14 +318,14 @@ func parseUpArgs(args []string) (upOptions, error) {
 	if err := fs.Parse(args); err != nil {
 		return upOptions{}, err
 	}
+	if fs.NArg() == 0 {
+		return upOptions{}, errors.New("missing instance name")
+	}
 	if fs.NArg() > 1 {
 		return upOptions{}, fmt.Errorf("unexpected arguments: %s", strings.Join(fs.Args()[1:], " "))
 	}
 
-	opts.name = defaultName
-	if fs.NArg() == 1 {
-		opts.name = fs.Arg(0)
-	}
+	opts.name = fs.Arg(0)
 	if err := validateName(opts.name); err != nil {
 		return upOptions{}, err
 	}
@@ -305,21 +336,15 @@ func parseUpArgs(args []string) (upOptions, error) {
 }
 
 func parseExecArgs(args []string) (string, []string, error) {
-	if len(args) == 0 {
-		return "", nil, errors.New("missing command after '--'")
+	if len(args) == 0 || args[0] == "--" {
+		return "", nil, errors.New("missing instance name")
 	}
 
-	name := defaultName
-	var cmd []string
-	if args[0] == "--" {
-		cmd = args[1:]
-	} else {
-		name = args[0]
-		if len(args) < 2 || args[1] != "--" {
-			return "", nil, errors.New("expected '--' before command")
-		}
-		cmd = args[2:]
+	name := args[0]
+	if len(args) < 2 || args[1] != "--" {
+		return "", nil, errors.New("expected '--' before command")
 	}
+	cmd := args[2:]
 
 	if len(cmd) == 0 {
 		return "", nil, errors.New("missing command after '--'")
@@ -691,8 +716,15 @@ func stopInstance(root, name string, stdout io.Writer) error {
 }
 
 func cmdDown(args []string, stdout io.Writer) error {
+	if len(args) == 0 {
+		return errors.New("missing instance name or --all")
+	}
+	if len(args) > 1 {
+		return fmt.Errorf("unexpected arguments: %s", strings.Join(args[1:], " "))
+	}
+
 	root := stateRoot()
-	if len(args) > 0 && args[0] == "--all" {
+	if args[0] == "--all" {
 		entries, err := os.ReadDir(root)
 		if err != nil {
 			if errors.Is(err, os.ErrNotExist) {
@@ -711,10 +743,7 @@ func cmdDown(args []string, stdout io.Writer) error {
 		return nil
 	}
 
-	name := defaultName
-	if len(args) > 0 {
-		name = args[0]
-	}
+	name := args[0]
 	if err := validateName(name); err != nil {
 		return err
 	}

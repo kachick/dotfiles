@@ -66,14 +66,14 @@ flowchart TD
 
     cli -->|"console"| fg["exec declaredRunner/bin/microvm-run (foreground stdio)"]
 
-    cli -->|"up [--plain] [--mount DIR] [NAME]"| up["Patch microvm-run & pick free port (2221-2320)"]
+    cli -->|"up [--plain] [--mount DIR] <NAME>"| up["Patch microvm-run (hostname, port) & pick free port (2221-2320)"]
     up --> state["$XDG_RUNTIME_DIR/microvm-sandbox/<NAME>/{microvm-run,qemu.pid,ssh.port,console.log}"]
     state -->|"QEMU -daemonize + hostfwd"| wait["Poll SSH banner (timeout 30s)"]
 
-    cli -->|"exec [NAME] -- <CMD>"| exec_cmd["ssh -o BatchMode=yes -o ControlMaster=no user@127.0.0.1 -- <CMD>"]
+    cli -->|"exec <NAME> -- <CMD>"| exec_cmd["ssh -o BatchMode=yes -o ControlMaster=no user@127.0.0.1 -- <CMD>"]
     cli -->|"ssh [NAME]"| ssh_cmd["Interactive ssh -o ControlMaster=no user@127.0.0.1"]
     cli -->|"status"| status_cmd["Read qemu.pid & ssh.port under state dir"]
-    cli -->|"down [NAME|--all]"| down_cmd["SIGTERM -> SIGKILL QEMU & remove state dir"]
+    cli -->|"down <NAME>|--all"| down_cmd["SIGTERM -> SIGKILL QEMU & remove state dir"]
 
     state -.-> exec_cmd
     state -.-> ssh_cmd

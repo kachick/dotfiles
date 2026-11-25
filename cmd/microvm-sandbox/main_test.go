@@ -14,7 +14,7 @@ import (
 )
 
 const sampleMicrovmRun = `#!/bin/bash
-exec -a "microvm@sandbox" qemu-system-x86_64 -name sandbox -chardev 'stdio,id=stdio,signal=off' -serial chardev:stdio -fsdev 'local,id=fs0,path=/nix/store,security_model=none,readonly=true' -device 'virtio-9p-pci,fsdev=fs0,mount_tag=ro-store' -fsdev 'local,id=fs2,path=/home/kachick/repos/github.com/kachick,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs2,mount_tag=repos' -netdev 'user,id=net0'
+exec -a "microvm@sandbox" qemu-system-x86_64 -name sandbox -chardev 'stdio,id=stdio,signal=off' -serial chardev:stdio -append 'console=ttyS0 quiet' -fsdev 'local,id=fs0,path=/nix/store,security_model=none,readonly=true' -device 'virtio-9p-pci,fsdev=fs0,mount_tag=ro-store' -fsdev 'local,id=fs2,path=/home/kachick/repos/github.com/kachick,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs2,mount_tag=repos' -netdev 'user,id=net0'
 `
 
 func TestValidateName(t *testing.T) {
@@ -35,6 +35,28 @@ func TestValidateName(t *testing.T) {
 	}
 }
 
+func TestGuestHostname(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		want string
+	}{
+		{name: "dev-1", want: "sandbox-dev-1"},
+		{name: "fix-lint-a1b2c3", want: "sandbox-fix-lint-a1b2c3"},
+		{name: "test_1.2", want: "sandbox-test-1.2"},
+		{name: "_foo_..bar-", want: "sandbox-foo.bar"},
+		{name: "___", want: "sandbox"},
+		{name: strings.Repeat("a", 80), want: "sandbox-" + strings.Repeat("a", 55)},
+	}
+
+	for _, tt := range tests {
+		if got := guestHostname(tt.name); got != tt.want {
+			t.Errorf("guestHostname(%q) = %q, want %q", tt.name, got, tt.want)
+		}
+	}
+}
+
 func TestParseUpArgs(t *testing.T) {
 	t.Parallel()
 
@@ -45,9 +67,9 @@ func TestParseUpArgs(t *testing.T) {
 		wantError bool
 	}{
 		{
-			name: "default",
-			args: nil,
-			want: upOptions{name: defaultName},
+			name:      "missing name",
+			args:      nil,
+			wantError: true,
 		},
 		{
 			name: "named",
@@ -104,17 +126,12 @@ func TestParseUpArgs(t *testing.T) {
 func TestParseExecArgs(t *testing.T) {
 	t.Parallel()
 
-	name, cmd, err := parseExecArgs([]string{"--", "echo", "hi"})
-	if err != nil || name != defaultName || strings.Join(cmd, " ") != "echo hi" {
-		t.Fatalf("unexpected result: name=%q cmd=%v err=%v", name, cmd, err)
-	}
-
-	name, cmd, err = parseExecArgs([]string{"task-1", "--", "go", "test"})
+	name, cmd, err := parseExecArgs([]string{"task-1", "--", "go", "test"})
 	if err != nil || name != "task-1" || strings.Join(cmd, " ") != "go test" {
 		t.Fatalf("unexpected result: name=%q cmd=%v err=%v", name, cmd, err)
 	}
 
-	for _, bad := range [][]string{nil, {"task-1"}, {"task-1", "echo"}, {"task-1", "--"}} {
+	for _, bad := range [][]string{nil, {"--", "echo", "hi"}, {"task-1"}, {"task-1", "echo"}, {"task-1", "--"}} {
 		if _, _, err := parseExecArgs(bad); err == nil {
 			t.Errorf("parseExecArgs(%v) expected error", bad)
 		}
@@ -136,6 +153,9 @@ func TestPatchRunnerContent(t *testing.T) {
 		}
 		if !strings.Contains(got, "-name 'sandbox-dev-1'") {
 			t.Errorf("missing patched name: %s", got)
+		}
+		if !strings.Contains(got, "-append 'systemd.hostname=sandbox-dev-1 console=ttyS0 quiet'") {
+			t.Errorf("missing patched hostname in kernel cmdline: %s", got)
 		}
 		if !strings.Contains(got, "hostfwd=tcp:127.0.0.1:2221-:22") {
 			t.Errorf("missing hostfwd: %s", got)
@@ -267,6 +287,14 @@ func TestRunSubcommands(t *testing.T) {
 		}
 		if stderr.String() != usageText {
 			t.Errorf("got stderr %q, want %q", stderr.String(), usageText)
+		}
+	})
+
+	t.Run("down without args returns error", func(t *testing.T) {
+		t.Parallel()
+		var stdout, stderr bytes.Buffer
+		if err := run([]string{"down"}, &stdout, &stderr); err == nil {
+			t.Fatal("expected error for missing down target")
 		}
 	})
 }
