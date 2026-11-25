@@ -2,9 +2,12 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -333,6 +336,101 @@ func TestProbeSSHBanner(t *testing.T) {
 
 		if probeSSHBanner(ln.Addr().String(), time.Second) {
 			t.Fatal("expected probeSSHBanner to fail on non-SSH response")
+		}
+	})
+}
+
+func TestListRunningInstances(t *testing.T) {
+	t.Parallel()
+
+	root := t.TempDir()
+	pid := os.Getpid()
+
+	runningDir := filepath.Join(root, "alpha")
+	if err := os.MkdirAll(runningDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(runningDir, "qemu.pid"), []byte(strconv.Itoa(pid)+"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(runningDir, "ssh.port"), []byte("2221\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	stoppedDir := filepath.Join(root, "beta")
+	if err := os.MkdirAll(stoppedDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(stoppedDir, "ssh.port"), []byte("2222\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	missingPortDir := filepath.Join(root, "gamma")
+	if err := os.MkdirAll(missingPortDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(missingPortDir, "qemu.pid"), []byte(strconv.Itoa(pid)+"\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	got, err := listRunningInstances(root)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("got %d running instances, want 1: %+v", len(got), got)
+	}
+	if got[0].name != "alpha" || got[0].pid != pid || got[0].port != 2221 || !got[0].running {
+		t.Errorf("unexpected instance: %+v", got[0])
+	}
+}
+
+func TestPickInstanceWithFzf(t *testing.T) {
+	t.Parallel()
+
+	t.Run("errors when no running instances", func(t *testing.T) {
+		t.Parallel()
+		if _, err := pickInstanceWithFzf(nil, "fzf"); err == nil {
+			t.Fatal("expected error for empty instances")
+		}
+	})
+
+	t.Run("returns selected instance name from fzf output", func(t *testing.T) {
+		t.Parallel()
+		fakeFzf := filepath.Join(t.TempDir(), "fzf")
+		script := "#!/bin/sh\nsed -n '2p'\n"
+		if err := os.WriteFile(fakeFzf, []byte(script), 0o755); err != nil {
+			t.Fatal(err)
+		}
+
+		instances := []instanceInfo{
+			{name: "alpha", running: true, pid: 1001, port: 2221},
+			{name: "work-1", running: true, pid: 1002, port: 2222},
+		}
+		got, err := pickInstanceWithFzf(instances, fakeFzf)
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if got != "work-1" {
+			t.Errorf("got %q, want %q", got, "work-1")
+		}
+	})
+
+	t.Run("propagates fzf cancel exit code", func(t *testing.T) {
+		t.Parallel()
+		fakeFzf := filepath.Join(t.TempDir(), "fzf")
+		script := "#!/bin/sh\nexit 130\n"
+		if err := os.WriteFile(fakeFzf, []byte(script), 0o755); err != nil {
+			t.Fatal(err)
+		}
+
+		instances := []instanceInfo{
+			{name: "alpha", running: true, pid: 1001, port: 2221},
+		}
+		_, err := pickInstanceWithFzf(instances, fakeFzf)
+		var exitErr *exec.ExitError
+		if !errors.As(err, &exitErr) || exitErr.ExitCode() != 130 {
+			t.Fatalf("got err=%v, want ExitError with code 130", err)
 		}
 	})
 }

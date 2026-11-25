@@ -11,6 +11,7 @@ nix run .#microvm-sandbox -- up test-1
 nix run .#microvm-sandbox -- up --plain --mount "$PWD" work-1
 nix run .#microvm-sandbox -- status
 nix run .#microvm-sandbox -- exec test-1 -- hostname
+nix run .#microvm-sandbox -- ssh # Pick a running instance with fzf
 nix run .#microvm-sandbox -- ssh test-1
 nix run .#microvm-sandbox -- down test-1
 nix run .#microvm-sandbox -- down --all

@@ -38,7 +38,12 @@ pkgs.buildGo127Module {
 
   postFixup = ''
     wrapProgram $out/bin/microvm-sandbox \
-      --prefix PATH : "${pkgs.lib.makeBinPath [ pkgs.openssh ]}" \
+      --prefix PATH : "${
+        pkgs.lib.makeBinPath [
+          pkgs.fzf
+          pkgs.openssh
+        ]
+      }" \
       --set-default MICROVM_RUN "${declaredRunner}/bin/microvm-run"
   '';
 

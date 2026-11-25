@@ -512,15 +512,113 @@ func cmdExec(args []string) error {
 	return syscall.Exec(sshBin, argv, os.Environ())
 }
 
+type instanceInfo struct {
+	name    string
+	running bool
+	pid     int
+	port    int
+}
+
+func listInstances(root string) ([]instanceInfo, error) {
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	var instances []instanceInfo
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		name := entry.Name()
+		dir := filepath.Join(root, name)
+		inst := instanceInfo{name: name}
+		if data, err := os.ReadFile(filepath.Join(dir, "ssh.port")); err == nil {
+			if port, err := strconv.Atoi(strings.TrimSpace(string(data))); err == nil && port > 0 {
+				inst.port = port
+			}
+		}
+		pidFile := filepath.Join(dir, "qemu.pid")
+		if isRunning(pidFile) {
+			inst.running = true
+			if pid, ok := readPID(pidFile); ok {
+				inst.pid = pid
+			}
+		}
+		instances = append(instances, inst)
+	}
+	return instances, nil
+}
+
+func listRunningInstances(root string) ([]instanceInfo, error) {
+	all, err := listInstances(root)
+	if err != nil {
+		return nil, err
+	}
+	var running []instanceInfo
+	for _, inst := range all {
+		if inst.running && inst.port > 0 {
+			running = append(running, inst)
+		}
+	}
+	return running, nil
+}
+
+func pickInstanceWithFzf(instances []instanceInfo, fzfBin string) (string, error) {
+	if len(instances) == 0 {
+		return "", errors.New("no running microvm-sandbox instances")
+	}
+
+	var input strings.Builder
+	for _, inst := range instances {
+		fmt.Fprintf(&input, "%-20s %-10d %d\n", inst.name, inst.pid, inst.port)
+	}
+
+	header := fmt.Sprintf("%-20s %-10s %s", "NAME", "PID", "PORT")
+	cmd := exec.Command(fzfBin, "--reverse", "--prompt", "ssh> ", "--header", header)
+	cmd.Stdin = strings.NewReader(input.String())
+	cmd.Stderr = os.Stderr
+
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+	fields := strings.Fields(strings.TrimSpace(string(out)))
+	if len(fields) == 0 {
+		return "", errors.New("no instance selected")
+	}
+	return fields[0], nil
+}
+
 func cmdSSH(args []string) error {
-	name := defaultName
+	root := stateRoot()
+	var name string
 	if len(args) > 0 {
 		name = args[0]
+	} else {
+		instances, err := listRunningInstances(root)
+		if err != nil {
+			return err
+		}
+		if len(instances) == 0 {
+			return errors.New("no running microvm-sandbox instances")
+		}
+		fzfBin, err := exec.LookPath("fzf")
+		if err != nil {
+			return err
+		}
+		name, err = pickInstanceWithFzf(instances, fzfBin)
+		if err != nil {
+			return err
+		}
 	}
 	if err := validateName(name); err != nil {
 		return err
 	}
-	port, err := requireRunningPort(stateRoot(), name)
+	port, err := requireRunningPort(root, name)
 	if err != nil {
 		return err
 	}
@@ -534,45 +632,30 @@ func cmdSSH(args []string) error {
 }
 
 func cmdStatus(stdout io.Writer) error {
-	root := stateRoot()
-	entries, err := os.ReadDir(root)
+	instances, err := listInstances(stateRoot())
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			_, err := io.WriteString(stdout, "No microvm-sandbox instances.\n")
-			return err
-		}
 		return err
 	}
-
-	found := false
-	for _, entry := range entries {
-		if !entry.IsDir() {
-			continue
-		}
-		if !found {
-			_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", "NAME", "STATE", "PID", "PORT")
-			found = true
-		}
-		name := entry.Name()
-		dir := filepath.Join(root, name)
-		portStr := "-"
-		if data, err := os.ReadFile(filepath.Join(dir, "ssh.port")); err == nil {
-			portStr = strings.TrimSpace(string(data))
-		}
-		state := "stopped"
-		pidStr := "-"
-		if isRunning(filepath.Join(dir, "qemu.pid")) {
-			state = "running"
-			if pid, ok := readPID(filepath.Join(dir, "qemu.pid")); ok {
-				pidStr = strconv.Itoa(pid)
-			}
-		}
-		_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", name, state, pidStr, portStr)
-	}
-
-	if !found {
+	if len(instances) == 0 {
 		_, err := io.WriteString(stdout, "No microvm-sandbox instances.\n")
 		return err
+	}
+
+	_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", "NAME", "STATE", "PID", "PORT")
+	for _, inst := range instances {
+		state := "stopped"
+		pidStr := "-"
+		if inst.running {
+			state = "running"
+			if inst.pid > 0 {
+				pidStr = strconv.Itoa(inst.pid)
+			}
+		}
+		portStr := "-"
+		if inst.port > 0 {
+			portStr = strconv.Itoa(inst.port)
+		}
+		_, _ = fmt.Fprintf(stdout, "%-20s %-10s %-10s %s\n", inst.name, state, pidStr, portStr)
 	}
 	return nil
 }
