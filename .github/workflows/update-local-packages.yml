@@ -48,7 +48,7 @@ jobs:
       # To push workflow changes and trigger CIs
       - name: Generate GitHub Apps token
         id: publish-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
           # Required to set workflow permission for the APP
           # Why replaced from secrets?: https://github.com/github/docs/commit/eaac671cdd9189afd410366e9eb5edd4ee815194#diff-19d2b329775bf781d0cf19fabafa7f231bd85f133cbf9e23594036ea68f7021dL53-R54
@@ -175,7 +175,7 @@ jobs:
     steps:
       - name: Generate GitHub Apps token
         id: publish-token
-        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3.4.0
         with:
           client-id: ${{ vars.SAMU_APP_ID }}
           private-key: ${{ secrets.SAMU_APP_PRIVATE_KEY }}
