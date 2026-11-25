@@ -10,7 +10,8 @@ permissions:
 
 concurrency:
   group: container-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: false
+  queue: max
 
 env:
   # The image name in GHCR
@@ -86,7 +87,8 @@ jobs:
     # https://github.com/orgs/community/discussions/8336
     concurrency:
       group: 'deploy-container-${{ github.ref }}'
-      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+      cancel-in-progress: false
+      queue: max
     needs: [get-meta, minimize-old-comments]
     if: >-
       (! failure()) &&

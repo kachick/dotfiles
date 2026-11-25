@@ -65,7 +65,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: false
+  queue: max
 
 env:
   NIX_ABORT_ON_WARN: '1'

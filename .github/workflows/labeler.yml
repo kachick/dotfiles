@@ -10,6 +10,7 @@ permissions:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
+  queue: max
 
 env:
   NIX_ABORT_ON_WARN: '1'
