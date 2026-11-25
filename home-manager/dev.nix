@@ -113,41 +113,32 @@
       source "${pkgs.local.posix_dev_functions}"
       if [[ -z "''${BRUSH_VERSION+this_shell_is_brush_not_the_bash}" ]]; then
         bind -x '"\C-g": gx'
-        bind -x '"\er": repo'
       fi
     '';
 
     zsh.initContent = lib.mkOrder 1001 ''
       source_sh "${pkgs.local.posix_dev_functions}"
+      # Run cd through accept-line (like fzf-cd-widget) so precmd hooks update prompt, title, and direnv.
       git-x-menu-widget() {
-        gx
+        local target
+        target="$(${lib.getExe pkgs.local.git-x} menu < /dev/tty)"
+        local ret=$?
+        if [[ -z "$target" ]]; then
+          zle reset-prompt
+          return $ret
+        fi
+        zle push-line
+        BUFFER="builtin cd -- ''${(q)target}"
+        zle accept-line
+        ret=$?
+        unset target
         zle reset-prompt
+        return $ret
       }
       zle     -N            git-x-menu-widget
       bindkey -M emacs '^G' git-x-menu-widget
       bindkey -M vicmd '^G' git-x-menu-widget
       bindkey -M viins '^G' git-x-menu-widget
-
-      # Run cd through accept-line (like fzf-cd-widget) so precmd hooks update prompt, title, and direnv.
-      git-x-repo-widget() {
-        local target
-        target="$(${lib.getExe pkgs.local.git-x} repo-fzf < /dev/tty)"
-        if [[ -z "$target" ]]; then
-          zle redisplay
-          return 0
-        fi
-        zle push-line
-        BUFFER="builtin cd -- ''${(q)target}"
-        zle accept-line
-        local ret=$?
-        unset target
-        zle reset-prompt
-        return $ret
-      }
-      zle     -N             git-x-repo-widget
-      bindkey -M emacs '\er' git-x-repo-widget
-      bindkey -M vicmd '\er' git-x-repo-widget
-      bindkey -M viins '\er' git-x-repo-widget
     '';
 
     # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix

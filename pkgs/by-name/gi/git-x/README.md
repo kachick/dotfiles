@@ -7,7 +7,7 @@ Unified CLI combining local Git and GitHub helper subcommands.
 ```mermaid
 flowchart LR
     subgraph Shell ["Shell Functions & Keybinds (posix_dev_functions / dev.nix)"]
-        repo_fn["repo (Alt-R)"]
+        repo_fn["repo"]
         wt_fn["wt"]
         gx_fn["gx (Ctrl-G)"]
         gch["gch"]
@@ -114,7 +114,7 @@ flowchart LR
 | Repository & Layout | `sprout <repo>`                                                    | `git x sprout`                            | Create a private template repo on GitHub, clone in clean-bare layout, and enable auto-merge       |
 | Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                             |
 | Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                                 |
-| Repository & Layout | `repo-fzf [--list] [query]`                                        | `repo`, `Alt-R`                           | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
+| Repository & Layout | `repo-fzf [--list] [query]`                                        | `repo`                                    | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
 | Repository & Layout | `gh-reponame`                                                      | `repo`                                    | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                                  |
 | Worktree & Branch   | `wt [list\|select\|add\|pr\|promote\|path]`                        | `wt`, `git x wt`                          | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                             |
 | Worktree & Branch   | `refresh`                                                          | `git x refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                                 |
