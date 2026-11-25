@@ -200,8 +200,8 @@ jobs:
           - name: ghadiag
             run: go run ./cmd/ci-build package ghadiag
 
-          - name: gitx
-            run: go run ./cmd/ci-build package gitx
+          - name: git-x
+            run: go run ./cmd/ci-build package git-x
 
           - name: hcpu_shogi
             run: go run ./cmd/ci-build package hcpu_shogi

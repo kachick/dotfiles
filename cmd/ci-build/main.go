@@ -795,7 +795,7 @@ builtins.attrNames flake.packages.%s
 			return fmt.Errorf("evaluating flake packages: %w", err)
 		}
 
-		// Use an upstream nixpkgs package instead of a local package (e.g. gitx)
+		// Use an upstream nixpkgs package instead of a local package (e.g. git-x)
 		// so warmup pulls cached store paths without building local code twice.
 		fmt.Println("Warming up common store paths with upstream baseline package (nixpkgs#go)...")
 		buildTarget := fmt.Sprintf("nixpkgs#legacyPackages.%s.go", arch)

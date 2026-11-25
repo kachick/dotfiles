@@ -11,7 +11,7 @@
 let
   # NOTE: Don't use the home-manager module. Enabling it forces `programs.git.iniContent.pager.log` to be set, which makes it much slower in large repositories https://github.com/nix-community/home-manager/pull/5748
   riff = lib.getExe pkgs.riffdiff;
-  gitx = lib.getExe pkgs.local.gitx;
+  git-x = lib.getExe pkgs.local.git-x;
 in
 {
   home.file."repos/.keep".text = "Put repositories here";
@@ -152,7 +152,7 @@ in
 
       url = {
         # Why?
-        # - gitx get defaults to https, so omit ssh options when pushing
+        # - git x get defaults to https, so omit ssh options when pushing
         # - https://blog.n-z.jp/blog/2013-11-28-git-insteadof.html
         "git@github.com:" = {
           pushInsteadOf = [
@@ -162,7 +162,7 @@ in
         };
       };
 
-      gitx = {
+      git-x = {
         root = "~/repos";
       };
 
@@ -170,12 +170,12 @@ in
       alias = {
         fixup = "commit --all --amend";
         current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch \"$(${gitx} wt default-branch)\"";
+        switch-default = "!git switch \"$(${git-x} wt default-branch)\"";
         upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
-        all = "!${gitx} refresh && ${gitx} delete-merged-branches";
-        lf = "!${gitx} log-fzf";
-        lfj = "!${gitx} log-fzf --ja";
-        show-ja = "!${gitx} show --ja";
+        all = "!${git-x} refresh && ${git-x} delete-merged-branches";
+        lf = "!${git-x} log-fzf";
+        lfj = "!${git-x} log-fzf --ja";
+        show-ja = "!${git-x} show --ja";
       };
 
       # Don't use home-manager hooks feature. It does not consider Git 2.54 introduced config based hooks yet
@@ -208,20 +208,20 @@ in
         #   - Disable in a repository:
         #     git config set hook.pre-push-no-typos-in-commits.enabled false
         #   - Skip a single commit safely:
-        #     See pkgs/by-name/gi/gitx/README.md
+        #     See pkgs/by-name/gi/git-x/README.md
         pre-push-no-leaks = {
           event = "pre-push";
-          command = "${gitx} hooks pre-push betterleaks";
+          command = "${git-x} hooks pre-push betterleaks";
         };
 
         pre-push-no-typos-in-commits = {
           event = "pre-push";
-          command = "${gitx} hooks pre-push typos-commits";
+          command = "${git-x} hooks pre-push typos-commits";
         };
 
         pre-push-no-typos-in-branch = {
           event = "pre-push";
-          command = "${gitx} hooks pre-push typos-branch";
+          command = "${git-x} hooks pre-push typos-branch";
         };
       };
     };
@@ -248,9 +248,9 @@ in
 
         # https://www.collinsdictionary.com/dictionary/english/burl
         burl = ''
-          !set -e; owner="$(git config --global gitx.user)"; \
+          !set -e; owner="$(git config --global git-x.user)"; \
             gh repo create "$1" --private --template='kachick/anylang-template' --description='🚧'; \
-            wt_dir="$(${gitx} get --trust "$owner/$1")"; \
+            wt_dir="$(${git-x} get --trust "$owner/$1")"; \
             cd "$wt_dir"; \
             gh setup; \
             ${lib.getExe pkgs.neo-cowsay} -W 100 --rainbow "cdrepo $1"

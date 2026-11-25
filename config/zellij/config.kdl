@@ -9,7 +9,7 @@ show_startup_tips false
 // It cannot be getting with another method, see https://github.com/zellij-org/zellij/issues/3724#issuecomment-2456468487
 keybinds clear-defaults=true {
     locked {
-        // Shifted from Ctrl g so shells can bind Ctrl g to gitx menu
+        // Shifted from Ctrl g so shells can bind Ctrl g to git x menu
         bind "Ctrl b" {
             SwitchToMode "normal"
         }

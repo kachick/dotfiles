@@ -35,7 +35,7 @@
         rumdl
         go_1_27
 
-        # Required by Go package tests (`gitx`)
+        # Required by Go package tests (`git-x`)
         fzf
         direnv
 

@@ -86,7 +86,7 @@
         iets
       ])
       ++ (with pkgs.local; [
-        gitx
+        git-x
         todo
         task-completions
         walk
@@ -118,14 +118,14 @@
 
     zsh.initContent = lib.mkOrder 1001 ''
       source_sh "${pkgs.local.posix_dev_functions}"
-      gitx-menu-widget() {
+      git-x-menu-widget() {
         gx
         zle reset-prompt
       }
-      zle     -N            gitx-menu-widget
-      bindkey -M emacs '^G' gitx-menu-widget
-      bindkey -M vicmd '^G' gitx-menu-widget
-      bindkey -M viins '^G' gitx-menu-widget
+      zle     -N            git-x-menu-widget
+      bindkey -M emacs '^G' git-x-menu-widget
+      bindkey -M vicmd '^G' git-x-menu-widget
+      bindkey -M viins '^G' git-x-menu-widget
     '';
 
     # https://github.com/nix-community/home-manager/blob/release-26.05/modules/programs/direnv.nix

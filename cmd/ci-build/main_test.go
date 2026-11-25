@@ -56,8 +56,8 @@ func TestParsePackageArgs(t *testing.T) {
 		},
 		{
 			name:          "no flags",
-			args:          []string{"gitx"},
-			wantPname:     "gitx",
+			args:          []string{"git-x"},
+			wantPname:     "git-x",
 			wantArch:      "",
 			wantSkipTests: false,
 		},
@@ -110,7 +110,7 @@ func TestIsPackageFree(t *testing.T) {
 		pkg  string
 		want bool
 	}{
-		{pkg: "gitx", want: true},
+		{pkg: "git-x", want: true},
 		{pkg: "antigravity-cli", want: false},
 		{pkg: "antigravity-hub", want: false},
 		{pkg: "ludii-bin", want: false},

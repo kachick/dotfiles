@@ -15,7 +15,7 @@ dot-writable-sync = { build = true, test = true, update = false }
 filen-cli-rs = { build = true, test = true, update = true }
 gh-actions-lock = { build = true, test = true, update = true }
 ghadiag = { build = true, test = true, update = false } # Flake input, updated by Renovate
-gitx = { build = true, test = true, update = false }
+git-x = { build = true, test = true, update = false }
 hcpu_shogi = { build = true, test = true, update = false }
 ibus = { build = true, test = false, update = false } # Follows nixpkgs flake input
 ibus-engine-selector = { build = true, test = true, update = false }
