@@ -40,7 +40,7 @@ This repository provides a mount based solution, mount from another instance as 
 1. Ubuntu: Activate the home-manager with `--flake '.#user@wsl-ubuntu'`.
 2. Look the [definitions](../home-manager/wsl.nix), it includes how to mount with systemd.
 3. podman-machine: Make sure podman-machine can read there `ls /mnt/wsl/instances/ubuntu24/home`
-4. Ubuntu: `cdrepo project_path`
+4. Ubuntu: `repo project_path`
 5. Ubuntu: `podman run -v /mnt/wsl/instances/ubuntu24/"$(pwd)":/workdir -it ghcr.io/ruby/ruby:master-dev-76732b3e7b42d23290cd96cd695b2373172c8a43-jammy`
 
 ## How SSH login to podman-machine from another WSL instance like default Ubuntu?

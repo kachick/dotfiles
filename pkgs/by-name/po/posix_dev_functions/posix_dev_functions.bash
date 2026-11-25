@@ -1,22 +1,20 @@
 # shellcheck shell=bash
 # Shared between bash and zsh for development environments; see posix_shared_functions.bash for conventions.
 
-cdrepo() {
-	local query_repoonly=""
-	if [ $# -ge 1 ] && [ -n "$1" ]; then
-		query_repoonly="$(printf '%s\n' "$1" | '@git_x@' gh-reponame)"
+repo() {
+	local target
+	if [ $# -ge 1 ] && [ "$1" = "get" ]; then
+		shift
+		target="$('@git_x@' get "$@")" || return 1
+	else
+		local query_repoonly=""
+		if [ $# -ge 1 ] && [ -n "$1" ]; then
+			query_repoonly="$(printf '%s\n' "$1" | '@git_x@' gh-reponame)"
+		fi
+		target="$('@git_x@' repo-fzf "$query_repoonly")" || return 1
 	fi
-	local -r target="$('@git_x@' repo-fzf "$query_repoonly")"
 	if [ -n "$target" ]; then
 		cd "$target" || return 1
-	fi
-}
-
-getrepo() {
-	local target_dir
-	target_dir="$('@git_x@' get "$@")" || return 1
-	if [ -n "$target_dir" ]; then
-		cd "$target_dir" || return 1
 	fi
 }
 

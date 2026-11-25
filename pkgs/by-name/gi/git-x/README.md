@@ -7,8 +7,7 @@ Unified CLI combining local Git and GitHub helper subcommands.
 ```mermaid
 flowchart LR
     subgraph Shell ["Shell Functions & Keybinds (posix_dev_functions / dev.nix)"]
-        cdrepo["cdrepo"]
-        getrepo["getrepo"]
+        repo_fn["repo (Alt-R)"]
         wt_fn["wt"]
         gx_fn["gx (Ctrl-G)"]
         gch["gch"]
@@ -66,9 +65,9 @@ flowchart LR
         ext_lint["betterleaks / typos"]
     end
 
-    cdrepo --> cmd_reponame
-    cdrepo --> cmd_repofzf
-    getrepo --> cmd_get
+    repo_fn --> cmd_reponame
+    repo_fn --> cmd_repofzf
+    repo_fn -->|"repo get"| cmd_get
     wt_fn -->|"wt _cd-helper"| cmd_wt
     gx_fn --> cmd_menu
     gch --> cmd_hist
@@ -111,12 +110,12 @@ flowchart LR
 | Category            | Subcommand                                                         | Caller / Alias                            | Purpose                                                                                           |
 | ------------------- | ------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Launcher            | `menu [--mode <view>] [query]`                                     | `gx`, `Ctrl-G`                            | Single-entry `fzf`/`gum` launcher switching across worktrees, branches, commits, tags, repos      |
-| Repository & Layout | `get [--trust] <spec>`                                             | `getrepo`, `git x sprout`                 | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                |
+| Repository & Layout | `get [--trust] <spec>`                                             | `repo get`, `git x sprout`                | Clone into `<root>/<host>/<owner>/<repo>/.git` and initialize the default worktree                |
 | Repository & Layout | `sprout <repo>`                                                    | `git x sprout`                            | Create a private template repo on GitHub, clone in clean-bare layout, and enable auto-merge       |
 | Repository & Layout | `init-clean-bare [--trust] <dir>`                                  | `git x init-clean-bare`, `git x get`      | Configure origin fetch refspec and create the default branch worktree                             |
 | Repository & Layout | `migrate-clean-bare [--dry-run] [--trust] [--interactive] [<dir>]` | `git x migrate-clean-bare`                | Convert a standard Git repository into clean-bare layout in place                                 |
-| Repository & Layout | `repo-fzf [--list] [query]`                                        | `cdrepo`                                  | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
-| Repository & Layout | `gh-reponame`                                                      | `cdrepo`                                  | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                                  |
+| Repository & Layout | `repo-fzf [--list] [query]`                                        | `repo`, `Alt-R`                           | List worktrees under `GIT_X_ROOT` or `git-x.root` (`~/repos`) and select via `fzf`                |
+| Repository & Layout | `gh-reponame`                                                      | `repo`                                    | Extract repository name from `OWNER/REPO` or GitHub URL on stdin                                  |
 | Worktree & Branch   | `wt [list\|select\|add\|pr\|promote\|path]`                        | `wt`, `git x wt`                          | Manage flat depth-1 worktrees (`/` in branch names replaced with `-`)                             |
 | Worktree & Branch   | `refresh`                                                          | `git x refresh`, `git all`                | Update `upstream` or `origin` and fast-forward the default branch                                 |
 | Worktree & Branch   | `delete-merged-branches [--dry-run] [--pr]`                        | `git x delete-merged-branches`, `git all` | Remove merged local branches and clean worktrees (`--pr` checks merged GitHub PRs)                |

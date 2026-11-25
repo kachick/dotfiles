@@ -12,7 +12,7 @@
 
   # Restore access from the guest home to the host-path mounts.
   # This allows 'limactl shell' to sync CWD (via absolute host paths) while keeping
-  # compatibility with tools expecting '~/repos' such as git-x and cdrepo.
+  # compatibility with tools expecting '~/repos' such as git-x and repo.
   home.activation.setupHostReposSymlink = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     for d in /home/*; do
       # 1. Skip if it's the current guest home (e.g., /home/user.guest)
