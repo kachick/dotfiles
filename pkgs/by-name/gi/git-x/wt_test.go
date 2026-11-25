@@ -216,15 +216,6 @@ func TestRunWT_AddListPath(t *testing.T) {
 
 		stdout.Reset()
 		stderr.Reset()
-		if err := runWT([]string{"default-branch"}, originTopicWT, &stdout, &stderr); err != nil {
-			t.Fatalf("default-branch failed: %v, stderr: %s", err, stderr.String())
-		}
-		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
-			t.Errorf("default-branch = %q, want trunk", got)
-		}
-
-		stdout.Reset()
-		stderr.Reset()
 		if err := runWT([]string{"add", "--base", "topic-from-trunk", "--branch", "child-topic"}, defaultWT, &stdout, &stderr); err != nil {
 			t.Fatalf("add with --base failed: %v, stderr: %s", err, stderr.String())
 		}
@@ -305,16 +296,6 @@ func TestRunWT_AddListPath(t *testing.T) {
 		if err == nil {
 			t.Fatal("expected add on non-bare repo to fail, got nil")
 		}
-
-		runGit(t, legacyDir, "checkout", "-b", "feat-current")
-		stdout.Reset()
-		stderr.Reset()
-		if err := runWT([]string{"default-branch"}, legacyDir, &stdout, &stderr); err != nil {
-			t.Fatalf("default-branch failed: %v, stderr: %s", err, stderr.String())
-		}
-		if got := strings.TrimSpace(stdout.String()); got != "main" {
-			t.Errorf("default-branch = %q, want main", got)
-		}
 	})
 
 	t.Run("renders git status and recent git log in preview with compatible fzf select args", func(t *testing.T) {
@@ -361,11 +342,11 @@ func TestRunWT_AddListPath(t *testing.T) {
 
 		t.Setenv("GIT_DIR", ".git")
 		var stdout, stderr bytes.Buffer
-		if err := runWT([]string{"default-branch"}, repoDir, &stdout, &stderr); err != nil {
-			t.Fatalf("default-branch from bare root with GIT_DIR=.git failed: %v, stderr: %s", err, stderr.String())
+		if err := runWT([]string{"path"}, repoDir, &stdout, &stderr); err != nil {
+			t.Fatalf("path from bare root with GIT_DIR=.git failed: %v, stderr: %s", err, stderr.String())
 		}
-		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
-			t.Errorf("default-branch = %q, want trunk", got)
+		if got := strings.TrimSpace(stdout.String()); got != defaultWT {
+			t.Errorf("path = %q, want %q", got, defaultWT)
 		}
 
 		stdout.Reset()
@@ -380,11 +361,11 @@ func TestRunWT_AddListPath(t *testing.T) {
 		t.Setenv("GIT_DIR", filepath.Join(repoDir, ".git", "worktrees", "trunk"))
 		stdout.Reset()
 		stderr.Reset()
-		if err := runWT([]string{"default-branch"}, defaultWT, &stdout, &stderr); err != nil {
-			t.Fatalf("default-branch from worktree with worktree GIT_DIR failed: %v, stderr: %s", err, stderr.String())
+		if err := runWT([]string{"path"}, defaultWT, &stdout, &stderr); err != nil {
+			t.Fatalf("path from worktree with worktree GIT_DIR failed: %v, stderr: %s", err, stderr.String())
 		}
-		if got := strings.TrimSpace(stdout.String()); got != "trunk" {
-			t.Errorf("default-branch = %q, want trunk", got)
+		if got := strings.TrimSpace(stdout.String()); got != defaultWT {
+			t.Errorf("path = %q, want %q", got, defaultWT)
 		}
 	})
 }

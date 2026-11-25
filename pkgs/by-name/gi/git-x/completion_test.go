@@ -309,7 +309,7 @@ func TestBashCompletionBehavior(t *testing.T) {
 			name:    "wt subcommands",
 			words:   `("` + binPath + `" "wt" "")`,
 			cword:   2,
-			wantAll: []string{"list", "select", "add", "path", "default-branch", "help"},
+			wantAll: []string{"list", "select", "add", "path", "help"},
 		},
 		{
 			name:    "wt add flags",

@@ -654,33 +654,6 @@ func wtRunAddWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, s
 	return nil
 }
 
-func wtRunDefaultBranch(args []string, workDir string, stdout, stderr io.Writer) error {
-	fs := flag.NewFlagSet("git-x wt default-branch", flag.ContinueOnError)
-	fs.SetOutput(stderr)
-	fs.Usage = func() {
-		fmt.Fprintf(stderr, "Usage: git x wt default-branch\n\nPrint the detected default branch name for the current repository.\n")
-	}
-	if err := fs.Parse(args); err != nil {
-		return err
-	}
-	if len(fs.Args()) != 0 {
-		fs.Usage()
-		return fmt.Errorf("expected no arguments, got %d", len(fs.Args()))
-	}
-
-	ctx, err := gitcmd.DetectRepoContext(workDir, stderr, stderr)
-	if err != nil {
-		return err
-	}
-	r := gitcmd.NewIsolated(ctx.CommonDir, stderr, stderr)
-	defaultBranch, err := gitcmd.DetectDefaultBranch(r, ctx.CommonDir, ctx.IsBare)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintln(stdout, defaultBranch)
-	return nil
-}
-
 func wtRunPreview(wtPath string, stdout, stderr io.Writer) error {
 	if wtPath == "" {
 		return nil
@@ -1022,14 +995,6 @@ func allWTSubcommands() []wtSubcommand {
 			},
 		},
 		{
-			name:        "default-branch",
-			usage:       "default-branch",
-			description: "Print the detected default branch name",
-			run: func(args []string, workDir string, _ wtInteractiveUI, stdout, stderr io.Writer) error {
-				return wtRunDefaultBranch(args, workDir, stdout, stderr)
-			},
-		},
-		{
 			name:   "_cd-helper",
 			hidden: true,
 			run:    wtRunCdHelperWithUI,
@@ -1060,7 +1025,7 @@ func allWTSubcommands() []wtSubcommand {
 func printCdHelperUsage(w io.Writer) {
 	fmt.Fprintf(w, "Usage: wt [<query> | add ... | pr ... | promote | path ... | select ...]\n\n")
 	fmt.Fprintf(w, "Switch to or create a flat git worktree and print the target directory for shell cd.\n")
-	fmt.Fprintf(w, "Non-cd commands like `list` or `default-branch` should be run via `git wt`.\n")
+	fmt.Fprintf(w, "Non-cd commands like `list` should be run via `git wt`.\n")
 }
 
 func wtRunCdHelperWithUI(args []string, workDir string, ui wtInteractiveUI, stdout, stderr io.Writer) error {

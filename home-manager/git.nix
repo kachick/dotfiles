@@ -169,9 +169,6 @@ in
       # `git config --get-regexp ^alias` will show current aliases
       alias = {
         fixup = "commit --all --amend";
-        current = "symbolic-ref --short HEAD";
-        switch-default = "!git switch \"$(${git-x} wt default-branch)\"";
-        upstream = "!git remote | grep -E '^upstream$'|| git remote | grep -E '^origin$'";
         all = "!${git-x} refresh && ${git-x} delete-merged-branches";
         lf = "!${git-x} log-fzf";
         lfj = "!${git-x} log-fzf --ja";
