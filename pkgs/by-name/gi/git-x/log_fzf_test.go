@@ -110,7 +110,14 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 	}
 
 	jaArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "/tmp/cache", "/tmp/cache/fzf.sock", opts), "\n")
-	if !strings.Contains(jaArgs, "🪵 Logs (ja)") || !strings.Contains(jaArgs, "--listen=/tmp/cache/fzf.sock") || !strings.Contains(jaArgs, "log-fzf _preview") {
+	wantPreviewSubcmd := `"/bin/git-x" log-fzf _preview "/tmp/cache" {2}`
+	wantToggleBind := `alt-j:transform("/bin/git-x" log-fzf _toggle-ja "/tmp/cache")`
+	wantEnterBind := "enter:change-preview-window(down,80%|)"
+	if !strings.Contains(jaArgs, "--border-label\n🪵 Logs (ja)") ||
+		!strings.Contains(jaArgs, "--listen=/tmp/cache/fzf.sock") ||
+		!strings.Contains(jaArgs, "--preview\n"+wantPreviewSubcmd) ||
+		!strings.Contains(jaArgs, wantToggleBind) ||
+		!strings.Contains(jaArgs, wantEnterBind) {
 		t.Errorf("unexpected ja fzf args:\n%s", jaArgs)
 	}
 
@@ -118,16 +125,48 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 	if err != nil {
 		t.Fatalf("parseLogFzfArgs plain failed: %v", err)
 	}
-	plainArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "", "", plainOpts), "\n")
-	wantPlainSubcmd := `"/bin/git-x" log-fzf _preview-plain {2}`
-	if !strings.Contains(plainArgs, "🪵 Logs") ||
-		strings.Contains(plainArgs, "--listen=") ||
+	plainArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "/tmp/cache", "/tmp/cache/fzf.sock", plainOpts), "\n")
+	if !strings.Contains(plainArgs, "--border-label\n🪵 Logs\n") ||
+		strings.Contains(plainArgs, "🪵 Logs (ja)") ||
+		!strings.Contains(plainArgs, "--listen=/tmp/cache/fzf.sock") ||
 		!strings.Contains(plainArgs, "--query\nfeat") ||
-		!strings.Contains(plainArgs, "--preview\n"+wantPlainSubcmd) ||
-		!strings.Contains(plainArgs, "enter:become("+wantPlainSubcmd+")") ||
+		!strings.Contains(plainArgs, "--preview\n"+wantPreviewSubcmd) ||
+		!strings.Contains(plainArgs, wantToggleBind) ||
+		!strings.Contains(plainArgs, wantEnterBind) ||
 		strings.Contains(plainArgs, "ansi2txt") ||
 		strings.Contains(plainArgs, "xargs") {
 		t.Errorf("unexpected plain fzf args:\n%s", plainArgs)
+	}
+}
+
+func TestLogFzfToggleJa(t *testing.T) {
+	cacheDir := t.TempDir()
+
+	if isJaEnabled(cacheDir) {
+		t.Fatal("expected ja mode to start disabled")
+	}
+
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	if err := runLogFzf([]string{"_toggle-ja", cacheDir}, strings.NewReader(""), &out, &stderr); err != nil {
+		t.Fatalf("first _toggle-ja failed: %v", err)
+	}
+	if !isJaEnabled(cacheDir) {
+		t.Fatal("expected ja mode to be enabled after first toggle")
+	}
+	if got, want := out.String(), "change-border-label(🪵 Logs (ja))+refresh-preview\n"; got != want {
+		t.Errorf("first _toggle-ja output = %q, want %q", got, want)
+	}
+
+	out.Reset()
+	if err := runLogFzf([]string{"_toggle-ja", cacheDir}, strings.NewReader(""), &out, &stderr); err != nil {
+		t.Fatalf("second _toggle-ja failed: %v", err)
+	}
+	if isJaEnabled(cacheDir) {
+		t.Fatal("expected ja mode to be disabled after second toggle")
+	}
+	if got, want := out.String(), "change-border-label(🪵 Logs)+refresh-preview\n"; got != want {
+		t.Errorf("second _toggle-ja output = %q, want %q", got, want)
 	}
 }
 

@@ -150,9 +150,9 @@ flowchart TD
     wt_feat -->|"git x delete-merged-branches [--pr]"| prune["Remove clean worktree & branch"]
 ```
 
-## `git x log-fzf --ja` Asynchronous Translation Flow
+## `git x log-fzf` Asynchronous Translation Flow
 
-When `--ja` is enabled, `log-fzf` starts a background worker that watches the focused commit in `fzf`, translates the focused commit first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket. Translated commit messages are cached under `$XDG_CACHE_HOME/git-x/translations/` (shared with `git x show --ja`), so previously translated commits render right away across sessions.
+`log-fzf` starts with plain preview by default (`--ja` starts with translation on). Pressing `Alt-J` toggles Japanese translation on or off inside the same `fzf` session without losing the cursor position or query, and pressing `Enter` toggles a larger preview pane (`down,80%`) while keeping the `fzf` list visible. While translation is on, a background worker watches the focused commit in `fzf`, translates it first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket. Translated commit messages are cached under `$XDG_CACHE_HOME/git-x/translations/` (shared with `git x show --ja`), so previously translated commits render right away across sessions.
 
 ```mermaid
 sequenceDiagram

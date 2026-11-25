@@ -19,9 +19,12 @@ import (
 )
 
 const (
-	maxParallelSlots = 4
-	maxPrefetchSlots = 2
-	commitIndexLimit = 2000
+	maxParallelSlots       = 4
+	maxPrefetchSlots       = 2
+	commitIndexLimit       = 2000
+	logFzfBorderLabelPlain = "🪵 Logs"
+	logFzfBorderLabelJa    = "🪵 Logs (ja)"
+	jaEnabledFilename      = "ja_enabled"
 )
 
 type commitIndex struct {
@@ -170,10 +173,49 @@ func hasPersistentTranslation(rev string) bool {
 	return ok
 }
 
+func isJaEnabled(cacheDir string) bool {
+	if cacheDir == "" {
+		return false
+	}
+	_, err := os.Stat(filepath.Join(cacheDir, jaEnabledFilename))
+	return err == nil
+}
+
+func setJaEnabled(cacheDir string, enabled bool) error {
+	if cacheDir == "" {
+		return nil
+	}
+	path := filepath.Join(cacheDir, jaEnabledFilename)
+	if enabled {
+		return os.WriteFile(path, []byte("1"), 0o600)
+	}
+	if err := os.Remove(path); err != nil && !os.IsNotExist(err) {
+		return err
+	}
+	return nil
+}
+
+func logFzfRunToggleJa(cacheDir string, stdout io.Writer) error {
+	next := !isJaEnabled(cacheDir)
+	if err := setJaEnabled(cacheDir, next); err != nil {
+		return err
+	}
+	label := logFzfBorderLabelPlain
+	if next {
+		label = logFzfBorderLabelJa
+	}
+	_, err := fmt.Fprintf(stdout, "change-border-label(%s)+refresh-preview\n", label)
+	return err
+}
+
 func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Writer) error {
 	rev := cleanRev(rawItem)
 	if rev == "" {
 		return nil
+	}
+
+	if !isJaEnabled(cacheDir) {
+		return renderPlainCommit(rev, stdout, stderr)
 	}
 
 	focusFile := filepath.Join(cacheDir, "current_focus")
@@ -211,19 +253,6 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 	}
 
 	return renderCommit(selfExe, rev, placeholder, stdout, stderr)
-}
-
-func logFzfRunDetail(selfExe, cacheDir, revRaw string, stdout, stderr io.Writer) error {
-	rev := cleanRev(revRaw)
-	if rev == "" {
-		return nil
-	}
-	outPath := filepath.Join(cacheDir, rev+".out")
-	if data, err := os.ReadFile(outPath); err == nil {
-		_, err = stdout.Write(data)
-		return err
-	}
-	return renderCommit(selfExe, rev, "", stdout, stderr)
 }
 
 func neighborRevs(commits []string, idxMap map[string]int, rev string) []string {
@@ -275,13 +304,10 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 	focusFile := filepath.Join(cacheDir, "current_focus")
 	serviceDownFile := filepath.Join(cacheDir, "service_down")
 
-	var indexPtr atomic.Pointer[commitIndex]
-	go func() {
-		commits, idxMap := loadCommitIndex(commitIndexLimit)
-		if len(commits) > 0 {
-			indexPtr.Store(&commitIndex{commits: commits, idxMap: idxMap})
-		}
-	}()
+	var (
+		indexOnce sync.Once
+		indexPtr  atomic.Pointer[commitIndex]
+	)
 
 	var (
 		mu          sync.Mutex
@@ -311,7 +337,9 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 
 		translatingPath := filepath.Join(cacheDir, targetRev+".translating")
 		_ = os.WriteFile(translatingPath, []byte("1"), 0o600)
-		_ = sendRefreshPreview(fzfSock)
+		if isJaEnabled(cacheDir) {
+			_ = sendRefreshPreview(fzfSock)
+		}
 
 		go func() {
 			outPath := filepath.Join(cacheDir, targetRev+".out")
@@ -340,7 +368,9 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 			activeCount--
 			mu.Unlock()
 
-			_ = sendRefreshPreview(fzfSock)
+			if isJaEnabled(cacheDir) {
+				_ = sendRefreshPreview(fzfSock)
+			}
 		}()
 
 		return true
@@ -361,6 +391,21 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 		case <-ctx.Done():
 			return
 		case <-ticker.C:
+			// Stay idle while translation is off so default `git lf` does not touch git log or llama-server.
+			if !isJaEnabled(cacheDir) {
+				prevFocus = ""
+				continue
+			}
+
+			indexOnce.Do(func() {
+				go func() {
+					commits, idxMap := loadCommitIndex(commitIndexLimit)
+					if len(commits) > 0 {
+						indexPtr.Store(&commitIndex{commits: commits, idxMap: idxMap})
+					}
+				}()
+			})
+
 			if !checkPlamoHealth(serverURL) {
 				_ = os.WriteFile(serviceDownFile, []byte("1"), 0o600)
 				time.Sleep(500 * time.Millisecond)
@@ -443,15 +488,12 @@ func parseLogFzfArgs(args []string) (logFzfOptions, error) {
 }
 
 func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []string {
-	borderLabel := "🪵 Logs"
-	previewCmd := fmt.Sprintf("%q log-fzf _preview-plain {2}", selfExe)
-	detailBind := fmt.Sprintf("enter:become(%q log-fzf _preview-plain {2})", selfExe)
-
+	borderLabel := logFzfBorderLabelPlain
 	if opts.ja {
-		borderLabel = "🪵 Logs (ja)"
-		previewCmd = fmt.Sprintf("%q log-fzf _preview %q {2}", selfExe, cacheDir)
-		detailBind = fmt.Sprintf("enter:become(%q log-fzf _detail %q {2})", selfExe, cacheDir)
+		borderLabel = logFzfBorderLabelJa
 	}
+	previewCmd := fmt.Sprintf("%q log-fzf _preview %q {2}", selfExe, cacheDir)
+	toggleJaBind := fmt.Sprintf("alt-j:transform(%q log-fzf _toggle-ja %q)", selfExe, cacheDir)
 
 	fzfArgs := []string{
 		"--ansi",
@@ -471,14 +513,15 @@ func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []st
 		"--header-border", "horizontal",
 		"--border-label-pos", "2",
 		"--color", "label:blue",
-		"--header", "CTRL-O (Open in browser) / CTRL-R (Revert)\nEnter (Detail)\n\n",
+		"--header", "CTRL-O (Open in browser) / CTRL-R (Revert)\nEnter (Zoom preview) / ALT-J (Toggle ja)\n\n",
 		"--bind", "ctrl-o:execute-silent(gh browse {2})",
 		"--bind", "ctrl-r:become(git revert {2})",
-		"--bind", detailBind,
+		"--bind", "enter:change-preview-window(down,80%|)",
+		"--bind", toggleJaBind,
 		"--bind", "ctrl-/:change-preview-window(down,60%|hidden|)",
 	}
 
-	if opts.ja && fzfSock != "" {
+	if fzfSock != "" {
 		fzfArgs = append(fzfArgs, "--listen="+fzfSock)
 	}
 	if opts.query != "" {
@@ -530,27 +573,23 @@ func runLogFzfMain(opts logFzfOptions, stdin io.Reader, stdout, stderr io.Writer
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}
 
-	var (
-		cacheDir string
-		fzfSock  string
-		cancel   context.CancelFunc
-	)
+	cacheDir, err := os.MkdirTemp("", "git-x-log-fzf-*")
+	if err != nil {
+		return fmt.Errorf("failed to create temp cache dir: %w", err)
+	}
+	defer os.RemoveAll(cacheDir)
 
 	if opts.ja {
-		cacheDir, err = os.MkdirTemp("", "git-x-log-fzf-ja-*")
-		if err != nil {
-			return fmt.Errorf("failed to create temp cache dir: %w", err)
+		if err := setJaEnabled(cacheDir, true); err != nil {
+			return fmt.Errorf("failed to enable translation mode: %w", err)
 		}
-		defer os.RemoveAll(cacheDir)
-
-		fzfSock = filepath.Join(cacheDir, "fzf.sock")
-
-		var ctx context.Context
-		ctx, cancel = context.WithCancel(context.Background())
-		defer cancel()
-
-		go runWorker(ctx, selfExe, cacheDir, fzfSock, stderr)
 	}
+
+	fzfSock := filepath.Join(cacheDir, "fzf.sock")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	go runWorker(ctx, selfExe, cacheDir, fzfSock, stderr)
 
 	// Do not add `--graph`, it makes it too slow in large repositories such as NixOS/nixpkgs.
 	logCmd := exec.Command("git", "log", "--format="+defaultLogFormat, "--date=short", "--color=always")
@@ -569,7 +608,7 @@ func logFzfFlags() []cliFlagSpec {
 	return []cliFlagSpec{
 		{
 			name:        "ja",
-			description: "Enable asynchronous Japanese commit message translation preview",
+			description: "Start with asynchronous Japanese commit message translation preview enabled",
 		},
 	}
 }
@@ -595,15 +634,11 @@ func runLogFzf(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
 				return fmt.Errorf("failed to get executable path: %w", err)
 			}
 			return logFzfRunPreview(selfExe, args[1], args[2], stdout, stderr)
-		case "_detail":
-			if len(args) < 3 {
+		case "_toggle-ja":
+			if len(args) < 2 {
 				return nil
 			}
-			selfExe, err := os.Executable()
-			if err != nil {
-				return fmt.Errorf("failed to get executable path: %w", err)
-			}
-			return logFzfRunDetail(selfExe, args[1], args[2], stdout, stderr)
+			return logFzfRunToggleJa(args[1], stdout)
 		case "_preview-plain":
 			if len(args) < 2 {
 				return nil
