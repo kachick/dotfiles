@@ -18,10 +18,6 @@
   };
 
   # Background server for local translation using PLaMo-3-Translate 0.8B.
-  #
-  # WHY NOT wantedBy = [ "default.target" ]:
-  # Keep autostart disabled so it does not consume resources on boot.
-  # Start on demand via `systemctl --user start llama-plamo` (or `plamo-start`).
   systemd.user.services.llama-plamo = {
     Unit = {
       Description = "PLaMo-3-Translate 0.8B server via llama.cpp";
@@ -36,7 +32,12 @@
       # WHY NOT -t / -tb: llama-server detects physical CPU cores automatically at runtime, which works across hosts with different core counts (e.g. 8 cores on algae, 6 cores on moss).
       # WHY NOT port 8080: Port 8080 is commonly used by local web development servers; 18080 avoids conflicts.
       ExecStart = "${lib.getExe' pkgs.llama-cpp "llama-server"} -hf pfnet/plamo-3-translate-0.8b-GGUF:Q4_K_M --host 127.0.0.1 --port 18080 -c 8192 -np 4 -kvu -fa on";
+      # WHY NOT Restart = "on-failure": Keep startup simple; fail once if offline before the first model download, instead of retrying in the background.
       Restart = "no";
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
     };
   };
 }
