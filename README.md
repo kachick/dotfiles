@@ -11,16 +11,17 @@ Also known as [盆栽(bonsai)](https://en.wikipedia.org/wiki/Bonsai) 🌳
 Apply config:
 
 ```bash
-# For non-NixOS:
-echo 'HM_HOST_SLUG=wsl-ubuntu' >.env
-
+# NixOS
 task apply
+
+# Non-NixOS
+task apply -- wsl-ubuntu
 ```
 
 Start a sandbox:
 
 ```bash
-nix run .#microvm-sandbox -- console
+microvm-sandbox
 
 # Pre-built container
 task ghcr

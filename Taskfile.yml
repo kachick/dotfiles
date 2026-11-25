@@ -16,15 +16,14 @@ tasks:
     cmds:
       - |
         if [ -f '/etc/NIXOS' ]; then
-          task nixos
+          task nixos -- {{.CLI_ARGS}}
         else
-          task home-manager
+          task home-manager -- {{.CLI_ARGS}}
         fi
 
   nixos:
     desc: Enable NixOS config for current device
     sources:
-      - '.env'
       - 'flake.nix'
       - 'flake.lock'
       - 'nixos/**/*'
@@ -33,14 +32,21 @@ tasks:
       - 'pkgs/**/*'
       - 'config/**/*'
     cmds:
-      - sudo nixos-rebuild switch --flake ".#$(hostname)" --show-trace
+      - |
+        set -euo pipefail
+        set -- {{.CLI_ARGS}}
+        if [ "$#" -gt 1 ]; then
+          echo 'Usage: task nixos [-- <host>]' >&2
+          exit 1
+        fi
+        host="${1:-$(hostname)}"
+        sudo nixos-rebuild switch --flake ".#${host}" --show-trace
 
   home-manager:
     aliases:
       - hm
     desc: Enable home-manager config for current user and device
     sources:
-      - '.env'
       - 'flake.nix'
       - 'flake.lock'
       - 'overlays/**/*'
@@ -48,9 +54,15 @@ tasks:
       - 'pkgs/**/*'
       - 'config/**/*'
     cmds:
-      # Using hostname simplify flake option, see https://discourse.nixos.org/t/get-hostname-in-home-manager-flake-for-host-dependent-user-configs/18859/2
-      # However prefer to use special ENV here for my current use. It is useful if sharing same config for similar env but on different devices
-      - nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#${USER}@${HM_HOST_SLUG}"
+      # Require an explicit host slug instead of hostname because multiple machines may share one config (e.g. wsl-ubuntu).
+      - |
+        set -euo pipefail
+        set -- {{.CLI_ARGS}}
+        if [ "$#" -ne 1 ]; then
+          echo 'Usage: task home-manager -- <host-slug>' >&2
+          exit 1
+        fi
+        nix run '.#home-manager' -- switch -b backup --show-trace --flake ".#${USER}@$1"
 
   test:
     desc: Make sure NixOS and/or home-manager will work for current user and device
@@ -61,7 +73,7 @@ tasks:
       - test-home-session-vars
       - test-shell-delegation
     cmds:
-      - ./scripts/dry.bash
+      - ./scripts/dry.bash {{.CLI_ARGS}}
 
   test-home-session-vars:
     desc: Verify non-NixOS Home Manager session variables in sandbox
@@ -186,19 +198,18 @@ tasks:
     cmds:
       - ./containers/sandbox.bash
 
-  get-ghcr-token:
-    desc: Get public token. You can use as `task get-ghcr-token >> .env`
-    # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
-    cmds:
-      - echo "GHCR_READONLY_TOKEN=$(curl https://ghcr.io/token\?scope\="repository:kachick/home:pull" | jq .token)"
-
   ghcr:
     # It looks like no paging and sorting API. So keep feawest than last 50 images
     # Now it is cared in deployment workflow (container.yml) via reusable cleanup-ghcr workflow
     desc: Run container with selecting the tag with fuzzy finder
     cmds:
       - |
-        curl -H "Authorization: Bearer ${GHCR_READONLY_TOKEN}" https://ghcr.io/v2/kachick/home/tags/list | jq -r '.tags | map(select(. | contains("utc"))) | reverse | .[]' | fzf --bind 'enter:become(task ghcr-{})'
+        set -euo pipefail
+        # https://github.com/orgs/community/discussions/26279#discussioncomment-3251171
+        token="$(curl --fail --silent --show-error --location 'https://ghcr.io/token?scope=repository:kachick/home:pull' | jq --raw-output --exit-status '.token // empty')"
+        curl --fail --silent --show-error --header "Authorization: Bearer ${token}" 'https://ghcr.io/v2/kachick/home/tags/list' \
+          | jq --raw-output '.tags | map(select(. | contains("utc"))) | reverse | .[]' \
+          | fzf --bind 'enter:become(task ghcr-{})'
 
   ghcr-*:
     desc: Run container which is built and registered via GitHub Actions
