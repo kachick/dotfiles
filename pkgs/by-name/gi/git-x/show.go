@@ -10,15 +10,19 @@ import (
 	"net/http"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 const (
-	ansiCyan      = "\033[36m"
-	ansiYellow    = "\033[33m"
-	ansiReset     = "\033[0m"
-	ansiClearLine = "\033[2K\r"
+	ansiCyan             = "\033[36m"
+	ansiDim              = "\033[90m"
+	ansiYellow           = "\033[33m"
+	ansiReset            = "\033[0m"
+	ansiClearLine        = "\033[2K\r"
+	sideBySideMinColumns = 100
 )
 
 var diffHeaderRegex = regexp.MustCompile(`^(\x1b\[[0-9;]*m)?diff --git`)
@@ -48,11 +52,12 @@ type parsedShowArgs struct {
 	ja          bool
 	ref         string
 	placeholder string
+	columns     int
 	gitArgs     []string
 }
 
 func showFlags() []cliFlagSpec {
-	// Omit internal --placeholder used only by `git-x log-fzf` preview workers.
+	// Omit internal --placeholder and --columns used only by `git-x log-fzf` preview workers.
 	return []cliFlagSpec{
 		{
 			name:        "ja",
@@ -79,6 +84,19 @@ func parseShowArgs(args []string) parsedShowArgs {
 		}
 		if strings.HasPrefix(arg, "--placeholder=") {
 			parsed.placeholder = strings.TrimPrefix(arg, "--placeholder=")
+			continue
+		}
+		if arg == "--columns" && i+1 < len(args) {
+			if n, err := strconv.Atoi(args[i+1]); err == nil && n > 0 {
+				parsed.columns = n
+			}
+			i++
+			continue
+		}
+		if strings.HasPrefix(arg, "--columns=") {
+			if n, err := strconv.Atoi(strings.TrimPrefix(arg, "--columns=")); err == nil && n > 0 {
+				parsed.columns = n
+			}
 			continue
 		}
 		if !strings.HasPrefix(arg, "-") && !refFound {
@@ -136,6 +154,176 @@ func injectTranslation(gitShowOutput, formattedBlock string) string {
 	}
 
 	return strings.Join(result, "\n")
+}
+
+func runeDisplayWidth(r rune) int {
+	if r == 0 || unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Me, r) || unicode.Is(unicode.Cf, r) {
+		return 0
+	}
+	switch {
+	case r >= 0x1100 && r <= 0x115F,
+		r >= 0x2E80 && r <= 0x303E,
+		r >= 0x3041 && r <= 0x33FF,
+		r >= 0x3400 && r <= 0x4DBF,
+		r >= 0x4E00 && r <= 0xA4CF,
+		r >= 0xAC00 && r <= 0xD7A3,
+		r >= 0xF900 && r <= 0xFAFF,
+		r >= 0xFE10 && r <= 0xFE19,
+		r >= 0xFE30 && r <= 0xFE6F,
+		r >= 0xFF01 && r <= 0xFF60,
+		r >= 0xFFE0 && r <= 0xFFE6,
+		r >= 0x1F300 && r <= 0x1FAFF,
+		r >= 0x20000 && r <= 0x3FFFF:
+		return 2
+	default:
+		return 1
+	}
+}
+
+func displayWidth(s string) int {
+	w := 0
+	for _, r := range s {
+		w += runeDisplayWidth(r)
+	}
+	return w
+}
+
+func wrapLineToWidth(line string, maxWidth int) []string {
+	if maxWidth <= 0 {
+		return []string{line}
+	}
+	line = strings.ReplaceAll(line, "\t", "    ")
+	if line == "" {
+		return []string{""}
+	}
+
+	runes := []rune(line)
+	var out []string
+	start := 0
+	for start < len(runes) {
+		width := 0
+		end := start
+		lastSpace := -1
+		for end < len(runes) {
+			rw := runeDisplayWidth(runes[end])
+			if width+rw > maxWidth {
+				break
+			}
+			if runes[end] == ' ' {
+				lastSpace = end
+			}
+			width += rw
+			end++
+		}
+		if end == start {
+			// Ensure progress even if a single rune is wider than maxWidth.
+			end++
+		} else if end < len(runes) && lastSpace > start && width >= maxWidth/2 {
+			out = append(out, string(runes[start:lastSpace]))
+			start = lastSpace + 1
+			continue
+		}
+		out = append(out, string(runes[start:end]))
+		start = end
+	}
+	return out
+}
+
+func wrapLinesToWidth(lines []string, maxWidth int) []string {
+	var out []string
+	for _, line := range lines {
+		out = append(out, wrapLineToWidth(line, maxWidth)...)
+	}
+	return out
+}
+
+func splitGitShowSections(gitShowOutput string) (header, message, diff []string) {
+	lines := strings.Split(gitShowOutput, "\n")
+	inHeader := true
+	inDiff := false
+
+	for _, line := range lines {
+		if inHeader {
+			if line == "" {
+				inHeader = false
+				continue
+			}
+			header = append(header, line)
+			continue
+		}
+		if !inDiff && diffHeaderRegex.MatchString(line) {
+			inDiff = true
+		}
+		if inDiff {
+			diff = append(diff, line)
+		} else {
+			message = append(message, line)
+		}
+	}
+
+	for len(message) > 0 && strings.TrimSpace(message[len(message)-1]) == "" {
+		message = message[:len(message)-1]
+	}
+	return header, message, diff
+}
+
+func injectSideBySideTranslation(gitShowOutput, translationText string, columns int) string {
+	header, rawMessage, diff := splitGitShowSections(gitShowOutput)
+
+	origLines := make([]string, len(rawMessage))
+	for i, line := range rawMessage {
+		clean := ansiRegex.ReplaceAllString(line, "")
+		origLines[i] = strings.TrimPrefix(clean, "    ")
+	}
+
+	const sepWidth = 3 // " │ "
+	usable := columns - sepWidth
+	leftWidth := usable / 2
+	rightWidth := usable - leftWidth
+
+	leftWrapped := wrapLinesToWidth(origLines, leftWidth)
+	rightWrapped := wrapLinesToWidth(strings.Split(translationText, "\n"), rightWidth)
+
+	rowCount := max(len(leftWrapped), len(rightWrapped))
+	var result []string
+	result = append(result, header...)
+	result = append(result, "")
+
+	sep := " " + ansiDim + "│" + ansiReset + " "
+	for i := range rowCount {
+		var left, right string
+		if i < len(leftWrapped) {
+			left = leftWrapped[i]
+		}
+		if i < len(rightWrapped) {
+			right = rightWrapped[i]
+		}
+		pad := max(leftWidth-displayWidth(left), 0)
+		var row strings.Builder
+		row.WriteString(left)
+		row.WriteString(strings.Repeat(" ", pad))
+		row.WriteString(sep)
+		if right != "" {
+			row.WriteString(ansiCyan)
+			row.WriteString(right)
+			row.WriteString(ansiReset)
+		}
+		result = append(result, row.String())
+	}
+
+	if len(diff) > 0 {
+		result = append(result, "")
+		result = append(result, diff...)
+	}
+
+	return strings.Join(result, "\n")
+}
+
+func injectTranslationLayout(gitShowOutput, translationText string, columns int) string {
+	if columns >= sideBySideMinColumns {
+		return injectSideBySideTranslation(gitShowOutput, translationText, columns)
+	}
+	return injectTranslation(gitShowOutput, formatTranslationBlock(translationText))
 }
 
 func checkServerHealth(ctx context.Context, serverURL string) error {
@@ -272,9 +460,9 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 		return cmd.Run()
 	}
 
-	var formattedBlock string
+	var translationText string
 	if parsed.placeholder != "" {
-		formattedBlock = formatTranslationBlock(parsed.placeholder)
+		translationText = parsed.placeholder
 	} else {
 		rev := parsed.ref
 		msg, commitContext, systemPrompt, err := loadCommitTranslationInput(rev, workDir)
@@ -309,7 +497,7 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 			_ = writeTranslationCache(cacheDir, cacheKey, translated)
 		}
 
-		formattedBlock = formatTranslationBlock(translated)
+		translationText = translated
 	}
 
 	// Fetch git show with ANSI colors
@@ -323,7 +511,7 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 		return fmt.Errorf("git show failed: %w", err)
 	}
 
-	finalOutput := injectTranslation(string(showBytes), formattedBlock)
+	finalOutput := injectTranslationLayout(string(showBytes), translationText, parsed.columns)
 
 	// If connected to a terminal and riff is available, stream into riff for diff highlighting and paging
 	if isTerminal(stdout) {

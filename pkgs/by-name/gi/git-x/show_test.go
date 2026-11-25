@@ -44,6 +44,7 @@ func TestParseShowArgs(t *testing.T) {
 		wantJa          bool
 		wantRef         string
 		wantPlaceholder string
+		wantColumns     int
 		wantGitArgs     []string
 	}{
 		{
@@ -52,22 +53,25 @@ func TestParseShowArgs(t *testing.T) {
 			wantJa:          false,
 			wantRef:         "HEAD",
 			wantPlaceholder: "",
+			wantColumns:     0,
 			wantGitArgs:     nil,
 		},
 		{
 			name:            "ja flag with placeholder and ref",
-			args:            []string{"--ja", "--placeholder", "翻訳中...", "HEAD~1"},
+			args:            []string{"--ja", "--placeholder", "翻訳中...", "--columns", "120", "HEAD~1"},
 			wantJa:          true,
 			wantRef:         "HEAD~1",
 			wantPlaceholder: "翻訳中...",
+			wantColumns:     120,
 			wantGitArgs:     []string{"HEAD~1"},
 		},
 		{
 			name:            "ja flag with placeholder equal and git flag",
-			args:            []string{"--ja", "--placeholder=翻訳中...", "--stat"},
+			args:            []string{"--ja", "--placeholder=翻訳中...", "--columns=100", "--stat"},
 			wantJa:          true,
 			wantRef:         "HEAD",
 			wantPlaceholder: "翻訳中...",
+			wantColumns:     100,
 			wantGitArgs:     []string{"--stat"},
 		},
 	}
@@ -83,6 +87,9 @@ func TestParseShowArgs(t *testing.T) {
 			}
 			if got.placeholder != tt.wantPlaceholder {
 				t.Errorf("parseShowArgs().placeholder = %q, want %q", got.placeholder, tt.wantPlaceholder)
+			}
+			if got.columns != tt.wantColumns {
+				t.Errorf("parseShowArgs().columns = %d, want %d", got.columns, tt.wantColumns)
 			}
 			if len(got.gitArgs) != len(tt.wantGitArgs) {
 				t.Errorf("parseShowArgs().gitArgs = %v, want %v", got.gitArgs, tt.wantGitArgs)
@@ -176,6 +183,48 @@ func TestInjectTranslation(t *testing.T) {
 
 		if !strings.HasSuffix(got, "\n\n<ja>\n空コミット\n</ja>") {
 			t.Errorf("expected block at the end of git show, got:\n%s", got)
+		}
+	})
+}
+
+func TestInjectTranslationLayout(t *testing.T) {
+	gitShow := "commit 1234567\nAuthor: John\nDate: 2026-01-01\n\n    Subject line\n\n    Body line\n\ndiff --git a/file b/file\n-old\n+new"
+	jaText := "件名の翻訳\n\n本文の翻訳"
+
+	t.Run("narrow falls back to stacked layout", func(t *testing.T) {
+		got := injectTranslationLayout(gitShow, jaText, 80)
+		if !strings.Contains(got, "<ja>") || strings.Contains(got, "│") {
+			t.Errorf("expected stacked layout for 80 cols, got:\n%s", got)
+		}
+	})
+
+	t.Run("wide uses side-by-side above diff", func(t *testing.T) {
+		got := injectTranslationLayout(gitShow, jaText, 120)
+		if strings.Contains(got, "<ja>") {
+			t.Errorf("did not expect stacked <ja> tags in wide layout:\n%s", got)
+		}
+		if !strings.Contains(got, "│") {
+			t.Errorf("expected side-by-side separator in wide layout:\n%s", got)
+		}
+		idxSep := strings.Index(got, "│")
+		idxDiff := strings.Index(got, "diff --git a/file b/file")
+		if idxSep == -1 || idxDiff == -1 || idxSep > idxDiff {
+			t.Errorf("expected side-by-side block above diff, got:\n%s", got)
+		}
+		// Verify left column alignment across rows (120 cols -> sepWidth 3 -> leftWidth 58).
+		for _, line := range strings.Split(got, "\n") {
+			if !strings.Contains(line, "│") {
+				continue
+			}
+			clean := ansiRegex.ReplaceAllString(line, "")
+			before, _, ok := strings.Cut(clean, " │ ")
+			if !ok {
+				t.Errorf("missing padded separator in line %q", clean)
+				continue
+			}
+			if w := displayWidth(before); w != 58 {
+				t.Errorf("left column display width = %d, want 58 in line %q", w, clean)
+			}
 		}
 	})
 }

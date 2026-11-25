@@ -112,12 +112,13 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 	jaArgs := strings.Join(buildLogFzfArgs("/bin/git-x", "/tmp/cache", "/tmp/cache/fzf.sock", opts), "\n")
 	wantPreviewSubcmd := `"/bin/git-x" log-fzf _preview "/tmp/cache" {2}`
 	wantToggleBind := `alt-j:transform("/bin/git-x" log-fzf _toggle-ja "/tmp/cache")`
-	wantEnterBind := "enter:change-preview-window(down,80%|)"
+	wantZoomBind := "alt-f:change-preview-window(down,80%|)"
 	if !strings.Contains(jaArgs, "--border-label\n🪵 Logs (ja)") ||
 		!strings.Contains(jaArgs, "--listen=/tmp/cache/fzf.sock") ||
 		!strings.Contains(jaArgs, "--preview\n"+wantPreviewSubcmd) ||
 		!strings.Contains(jaArgs, wantToggleBind) ||
-		!strings.Contains(jaArgs, wantEnterBind) {
+		!strings.Contains(jaArgs, wantZoomBind) ||
+		strings.Contains(jaArgs, "enter:") {
 		t.Errorf("unexpected ja fzf args:\n%s", jaArgs)
 	}
 
@@ -132,7 +133,8 @@ func TestParseAndBuildLogFzfArgs(t *testing.T) {
 		!strings.Contains(plainArgs, "--query\nfeat") ||
 		!strings.Contains(plainArgs, "--preview\n"+wantPreviewSubcmd) ||
 		!strings.Contains(plainArgs, wantToggleBind) ||
-		!strings.Contains(plainArgs, wantEnterBind) ||
+		!strings.Contains(plainArgs, wantZoomBind) ||
+		strings.Contains(plainArgs, "enter:") ||
 		strings.Contains(plainArgs, "ansi2txt") ||
 		strings.Contains(plainArgs, "xargs") {
 		t.Errorf("unexpected plain fzf args:\n%s", plainArgs)

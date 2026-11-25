@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -25,6 +26,7 @@ const (
 	logFzfBorderLabelPlain = "🪵 Logs"
 	logFzfBorderLabelJa    = "🪵 Logs (ja)"
 	jaEnabledFilename      = "ja_enabled"
+	previewColsFilename    = "preview_cols"
 )
 
 type commitIndex struct {
@@ -141,14 +143,58 @@ func renderCmdPipeline(cmd1 *exec.Cmd, stdout, stderr io.Writer) error {
 	return cmd3.Wait()
 }
 
-func renderCommit(selfExe, rev, placeholder string, stdout, stderr io.Writer) error {
+func renderCommit(selfExe, rev, placeholder string, columns int, stdout, stderr io.Writer) error {
 	showArgs := []string{"show", "--ja"}
 	if placeholder != "" {
 		showArgs = append(showArgs, "--placeholder", placeholder)
 	}
+	if columns > 0 {
+		showArgs = append(showArgs, "--columns", strconv.Itoa(columns))
+	}
 	showArgs = append(showArgs, "--color=always", rev)
 
 	return renderCmdPipeline(exec.Command(selfExe, showArgs...), stdout, stderr)
+}
+
+func envPreviewColumns() int {
+	n, err := strconv.Atoi(strings.TrimSpace(os.Getenv("FZF_PREVIEW_COLUMNS")))
+	if err != nil || n <= 0 {
+		return 0
+	}
+	return n
+}
+
+func savePreviewColumns(cacheDir string, cols int) {
+	if cacheDir == "" || cols <= 0 {
+		return
+	}
+	path := filepath.Join(cacheDir, previewColsFilename)
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, []byte(strconv.Itoa(cols)), 0o600); err == nil {
+		_ = os.Rename(tmp, path)
+	}
+}
+
+func loadPreviewColumns(cacheDir string) int {
+	if cacheDir == "" {
+		return 0
+	}
+	data, err := os.ReadFile(filepath.Join(cacheDir, previewColsFilename))
+	if err != nil {
+		return 0
+	}
+	n, err := strconv.Atoi(strings.TrimSpace(string(data)))
+	if err != nil || n <= 0 {
+		return 0
+	}
+	return n
+}
+
+func previewCachePath(cacheDir, rev string, cols int) string {
+	if cols > 0 {
+		return filepath.Join(cacheDir, fmt.Sprintf("%s.%d.out", rev, cols))
+	}
+	return filepath.Join(cacheDir, rev+".out")
 }
 
 func renderPlainCommit(revRaw string, stdout, stderr io.Writer) error {
@@ -218,13 +264,16 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 		return renderPlainCommit(rev, stdout, stderr)
 	}
 
+	cols := envPreviewColumns()
+	savePreviewColumns(cacheDir, cols)
+
 	focusFile := filepath.Join(cacheDir, "current_focus")
 	focusTmp := focusFile + ".tmp"
 	if err := os.WriteFile(focusTmp, []byte(rev), 0o600); err == nil {
 		_ = os.Rename(focusTmp, focusFile)
 	}
 
-	outPath := filepath.Join(cacheDir, rev+".out")
+	outPath := previewCachePath(cacheDir, rev, cols)
 	if data, err := os.ReadFile(outPath); err == nil {
 		_, err = stdout.Write(data)
 		return err
@@ -232,7 +281,7 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 
 	if hasPersistentTranslation(rev) {
 		var buf bytes.Buffer
-		if err := renderCommit(selfExe, rev, "", &buf, stderr); err == nil {
+		if err := renderCommit(selfExe, rev, "", cols, &buf, stderr); err == nil {
 			tmpOutPath := outPath + ".tmp"
 			if writeErr := os.WriteFile(tmpOutPath, buf.Bytes(), 0o600); writeErr == nil {
 				_ = os.Rename(tmpOutPath, outPath)
@@ -252,7 +301,7 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 		placeholder = "PLaMo-3 サービス未起動 (systemctl --user start llama-plamo)"
 	}
 
-	return renderCommit(selfExe, rev, placeholder, stdout, stderr)
+	return renderCommit(selfExe, rev, placeholder, cols, stdout, stderr)
 }
 
 func neighborRevs(commits []string, idxMap map[string]int, rev string) []string {
@@ -316,13 +365,13 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 		activeCount int
 	)
 
-	isCached := func(rev string) bool {
-		_, err := os.Stat(filepath.Join(cacheDir, rev+".out"))
+	isCached := func(rev string, cols int) bool {
+		_, err := os.Stat(previewCachePath(cacheDir, rev, cols))
 		return err == nil
 	}
 
-	startTranslation := func(targetRev string, maxAllowed int) bool {
-		if targetRev == "" || isCached(targetRev) {
+	startTranslation := func(targetRev string, cols, maxAllowed int) bool {
+		if targetRev == "" || isCached(targetRev, cols) {
 			return false
 		}
 
@@ -342,14 +391,14 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 		}
 
 		go func() {
-			outPath := filepath.Join(cacheDir, targetRev+".out")
-			tmpOutPath := filepath.Join(cacheDir, targetRev+".out.tmp")
+			outPath := previewCachePath(cacheDir, targetRev, cols)
+			tmpOutPath := outPath + ".tmp"
 			var renderErr error
 			f, err := os.Create(tmpOutPath)
 			if err != nil {
 				renderErr = err
 			} else {
-				renderErr = renderCommit(selfExe, targetRev, "", f, stderr)
+				renderErr = renderCommit(selfExe, targetRev, "", cols, f, stderr)
 				_ = f.Close()
 				if renderErr == nil {
 					_ = os.Rename(tmpOutPath, outPath)
@@ -430,9 +479,11 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 				continue
 			}
 
+			cols := loadPreviewColumns(cacheDir)
+
 			// Prioritize currently focused commit before dispatching any prefetch jobs.
-			if !isCached(current) {
-				startTranslation(current, maxParallelSlots)
+			if !isCached(current, cols) {
+				startTranslation(current, cols, maxParallelSlots)
 				continue
 			}
 
@@ -449,7 +500,7 @@ func runWorker(ctx context.Context, selfExe, cacheDir, fzfSock string, stderr io
 				neighbors = lastFallbackNeighbors
 			}
 			for _, neighbor := range neighbors {
-				startTranslation(neighbor, maxPrefetchSlots)
+				startTranslation(neighbor, cols, maxPrefetchSlots)
 			}
 		}
 	}
@@ -513,11 +564,11 @@ func buildLogFzfArgs(selfExe, cacheDir, fzfSock string, opts logFzfOptions) []st
 		"--header-border", "horizontal",
 		"--border-label-pos", "2",
 		"--color", "label:blue",
-		"--header", "CTRL-O (Open in browser) / CTRL-R (Revert)\nEnter (Zoom preview) / ALT-J (Toggle ja)\n\n",
+		"--header", "CTRL-O (Open in browser) / CTRL-R (Revert)\nALT-J (Toggle ja) / ALT-F (Zoom preview)\n\n",
 		"--bind", "ctrl-o:execute-silent(gh browse {2})",
 		"--bind", "ctrl-r:become(git revert {2})",
-		"--bind", "enter:change-preview-window(down,80%|)",
 		"--bind", toggleJaBind,
+		"--bind", "alt-f:change-preview-window(down,80%|)",
 		"--bind", "ctrl-/:change-preview-window(down,60%|hidden|)",
 	}
 
