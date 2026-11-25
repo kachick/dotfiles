@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"fmt"
@@ -156,6 +157,19 @@ func renderPlainCommit(revRaw string, stdout, stderr io.Writer) error {
 	return renderCmdPipeline(exec.Command("git", "show", "--color=always", rev), stdout, stderr)
 }
 
+func hasPersistentTranslation(rev string) bool {
+	cacheDir, err := translationCacheDir()
+	if err != nil {
+		return false
+	}
+	msg, _, systemPrompt, err := loadCommitTranslationInput(rev, "")
+	if err != nil {
+		return false
+	}
+	_, ok := readTranslationCache(cacheDir, translationCacheKey(systemPrompt, msg))
+	return ok
+}
+
 func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Writer) error {
 	rev := cleanRev(rawItem)
 	if rev == "" {
@@ -172,6 +186,18 @@ func logFzfRunPreview(selfExe, cacheDir, rawItem string, stdout, stderr io.Write
 	if data, err := os.ReadFile(outPath); err == nil {
 		_, err = stdout.Write(data)
 		return err
+	}
+
+	if hasPersistentTranslation(rev) {
+		var buf bytes.Buffer
+		if err := renderCommit(selfExe, rev, "", &buf, stderr); err == nil {
+			tmpOutPath := outPath + ".tmp"
+			if writeErr := os.WriteFile(tmpOutPath, buf.Bytes(), 0o600); writeErr == nil {
+				_ = os.Rename(tmpOutPath, outPath)
+			}
+			_, err = stdout.Write(buf.Bytes())
+			return err
+		}
 	}
 
 	placeholder := "翻訳待機中 (PLaMo-3)..."

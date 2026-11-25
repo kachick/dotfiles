@@ -240,6 +240,25 @@ func translateMessage(ctx context.Context, serverURL, message, surroundingContex
 	return strings.TrimSpace(chatResp.Choices[0].Message.Content), nil
 }
 
+func loadCommitTranslationInput(rev, workDir string) (msg, commitContext, systemPrompt string, err error) {
+	gitLogCmd := exec.Command("git", "log", "-1", "--format=%B", rev)
+	if workDir != "" {
+		gitLogCmd.Dir = workDir
+	}
+	msgBytes, err := gitLogCmd.Output()
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to retrieve commit message for '%s': %w", rev, err)
+	}
+	msg = strings.TrimSpace(string(msgBytes))
+	if msg == "" {
+		return "", "", "", fmt.Errorf("commit message for '%s' is empty", rev)
+	}
+
+	commitContext = buildCommitContext(rev, workDir)
+	systemPrompt = buildSystemPrompt(commitContext)
+	return msg, commitContext, systemPrompt, nil
+}
+
 func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.Writer) error {
 	parsed := parseShowArgs(args)
 	if !parsed.ja {
@@ -258,40 +277,36 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 		formattedBlock = formatTranslationBlock(parsed.placeholder)
 	} else {
 		rev := parsed.ref
-		serverURL := plamoServerURL()
-
-		// Fail-closed: check health first
-		ctx := context.Background()
-		if err := checkServerHealth(ctx, serverURL); err != nil {
-			return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: plamo start", serverURL, err)
-		}
-
-		// Fetch commit message
-		gitLogCmd := exec.Command("git", "log", "-1", "--format=%B", rev)
-		if workDir != "" {
-			gitLogCmd.Dir = workDir
-		}
-		msgBytes, err := gitLogCmd.Output()
+		msg, commitContext, systemPrompt, err := loadCommitTranslationInput(rev, workDir)
 		if err != nil {
-			return fmt.Errorf("failed to retrieve commit message for '%s': %w", rev, err)
-		}
-		msg := strings.TrimSpace(string(msgBytes))
-		if msg == "" {
-			return fmt.Errorf("commit message for '%s' is empty", rev)
+			return err
 		}
 
-		// Progress indicator
-		if isTerminal(stderr) {
-			fmt.Fprint(stderr, ansiYellow+"Translating commit message with PLaMo-3..."+ansiReset+"\r")
-		}
+		cacheDir, _ := translationCacheDir()
+		cacheKey := translationCacheKey(systemPrompt, msg)
 
-		commitContext := buildCommitContext(rev, workDir)
-		translated, err := translateMessage(ctx, serverURL, msg, commitContext)
-		if isTerminal(stderr) {
-			fmt.Fprint(stderr, ansiClearLine)
-		}
-		if err != nil {
-			return fmt.Errorf("translation failed: %w", err)
+		// Check persistent cache before llama-server health so cached commits stay readable offline.
+		translated, ok := readTranslationCache(cacheDir, cacheKey)
+		if !ok {
+			serverURL := plamoServerURL()
+			ctx := context.Background()
+			if err := checkServerHealth(ctx, serverURL); err != nil {
+				return fmt.Errorf("llama-server is not reachable at %s: %w\nStart the service with: plamo start", serverURL, err)
+			}
+
+			if isTerminal(stderr) {
+				fmt.Fprint(stderr, ansiYellow+"Translating commit message with PLaMo-3..."+ansiReset+"\r")
+			}
+
+			translated, err = translateMessage(ctx, serverURL, msg, commitContext)
+			if isTerminal(stderr) {
+				fmt.Fprint(stderr, ansiClearLine)
+			}
+			if err != nil {
+				return fmt.Errorf("translation failed: %w", err)
+			}
+
+			_ = writeTranslationCache(cacheDir, cacheKey, translated)
 		}
 
 		formattedBlock = formatTranslationBlock(translated)

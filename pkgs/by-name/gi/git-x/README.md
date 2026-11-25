@@ -152,7 +152,7 @@ flowchart TD
 
 ## `git x log-fzf --ja` Asynchronous Translation Flow
 
-When `--ja` is enabled, `log-fzf` starts a background worker that watches the focused commit in `fzf`, translates the focused commit first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket.
+When `--ja` is enabled, `log-fzf` starts a background worker that watches the focused commit in `fzf`, translates the focused commit first, prefetches adjacent commits, and tells `fzf` to refresh its preview over a Unix socket. Translated commit messages are cached under `$XDG_CACHE_HOME/git-x/translations/` (shared with `git x show --ja`), so previously translated commits render right away across sessions.
 
 ```mermaid
 sequenceDiagram

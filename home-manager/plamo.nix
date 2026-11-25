@@ -34,4 +34,10 @@
       WantedBy = [ "default.target" ];
     };
   };
+
+  # Clean up cached git-x commit translations untouched for 30 days.
+  # git-x refreshes mtime on cache hits so recently viewed commits stay cached.
+  systemd.user.tmpfiles.rules = [
+    "e %C/git-x/translations - - - 30d"
+  ];
 }
