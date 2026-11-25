@@ -27,6 +27,8 @@ const (
 var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 
 const usageText = `Usage:
+  microvm-sandbox                       # Interactive TUI menu
+  microvm-sandbox menu
   microvm-sandbox console
   microvm-sandbox up [--plain] [--mount <DIR>] <NAME>
   microvm-sandbox exec [NAME] -- <COMMAND...>
@@ -62,6 +64,9 @@ func main() {
 
 func run(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
+		if isTerminalFile(os.Stdin) && isTerminal(stdout) {
+			return cmdMenu(stdout, stderr)
+		}
 		_, _ = io.WriteString(stderr, usageText)
 		return errors.New("missing subcommand")
 	}
@@ -73,6 +78,10 @@ func run(args []string, stdout, stderr io.Writer) error {
 	case "-h", "--help", "help":
 		_, err := io.WriteString(stdout, usageText)
 		return err
+	case "menu":
+		return cmdMenu(stdout, stderr)
+	case "_preview":
+		return cmdPreview(rest, stdout)
 	case "console":
 		return cmdConsole(rest)
 	case "up":
@@ -672,6 +681,20 @@ func selectInstance(instances []instanceInfo, prompt, emptyErr string) (string, 
 	return name, nil
 }
 
+func sshInstance(root, name string) error {
+	port, err := requireRunningPort(root, name)
+	if err != nil {
+		return err
+	}
+	sshBin, err := exec.LookPath("ssh")
+	if err != nil {
+		return err
+	}
+	argv := append([]string{"ssh"}, sshBaseArgs(port)...)
+	argv = append(argv, "user@127.0.0.1")
+	return syscall.Exec(sshBin, argv, os.Environ())
+}
+
 func cmdSSH(args []string) error {
 	root := stateRoot()
 	var name string
@@ -690,17 +713,7 @@ func cmdSSH(args []string) error {
 			return err
 		}
 	}
-	port, err := requireRunningPort(root, name)
-	if err != nil {
-		return err
-	}
-	sshBin, err := exec.LookPath("ssh")
-	if err != nil {
-		return err
-	}
-	argv := append([]string{"ssh"}, sshBaseArgs(port)...)
-	argv = append(argv, "user@127.0.0.1")
-	return syscall.Exec(sshBin, argv, os.Environ())
+	return sshInstance(root, name)
 }
 
 func cmdStatus(stdout io.Writer) error {
@@ -750,6 +763,25 @@ func stopInstance(root, name string, stdout io.Writer) error {
 	return err
 }
 
+func stopAllInstances(root string, stdout io.Writer) error {
+	entries, err := os.ReadDir(root)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return err
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		if err := stopInstance(root, entry.Name(), stdout); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func cmdDown(args []string, stdout io.Writer) error {
 	if len(args) > 1 {
 		return fmt.Errorf("unexpected arguments: %s", strings.Join(args[1:], " "))
@@ -769,22 +801,7 @@ func cmdDown(args []string, stdout io.Writer) error {
 	}
 
 	if args[0] == "--all" {
-		entries, err := os.ReadDir(root)
-		if err != nil {
-			if errors.Is(err, os.ErrNotExist) {
-				return nil
-			}
-			return err
-		}
-		for _, entry := range entries {
-			if !entry.IsDir() {
-				continue
-			}
-			if err := stopInstance(root, entry.Name(), stdout); err != nil {
-				return err
-			}
-		}
-		return nil
+		return stopAllInstances(root, stdout)
 	}
 
 	name := args[0]

@@ -3,6 +3,9 @@
 Lightweight, volatile NixOS microvm built with [microvm.nix](https://github.com/microvm-nix/microvm.nix) and QEMU.
 
 ```bash
+# Interactive TUI menu (inspect instances, ssh, up, down, console)
+nix run .#microvm-sandbox
+
 # Foreground serial console (autologin as user)
 nix run .#microvm-sandbox -- console
 

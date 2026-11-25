@@ -41,6 +41,7 @@ pkgs.buildGo127Module {
       --prefix PATH : "${
         pkgs.lib.makeBinPath [
           pkgs.fzf
+          pkgs.gum
           pkgs.openssh
         ]
       }" \
