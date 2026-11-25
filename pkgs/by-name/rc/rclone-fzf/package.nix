@@ -17,14 +17,13 @@ buildGo127Module (finalAttrs: {
     makeWrapper
   ];
 
-  vendorHash = "sha256-8v4EL++G1Di/nBkd/N/nNAEqpDmtjbL6DFHaXPt2JcQ=";
+  vendorHash = null;
   src =
     with lib.fileset;
     toSource {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../go.sum
         ./.
       ];
     };
@@ -51,8 +50,6 @@ buildGo127Module (finalAttrs: {
         ]
       }
   '';
-
-  passthru.shared-gomod = true;
 
   meta = {
     description = "List and operate rclone remotes";

@@ -134,7 +134,7 @@ func isCoreNixCIPath(p string) bool {
 }
 
 func isPackageInputPath(p string) bool {
-	if p == "go.mod" || p == "go.sum" || p == "typos.toml" {
+	if p == "go.mod" || p == "typos.toml" {
 		return true
 	}
 	for _, prefix := range []string{"pkgs/", "config/", "internal/", "cmd/ci-build/"} {

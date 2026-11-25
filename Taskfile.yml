@@ -121,7 +121,6 @@ tasks:
     sources:
       - '**/*.go'
       - 'go.mod'
-      - 'go.sum'
     generates:
       - dist/**
     # Checking race condition requires CGO_ENABLED=1 and gcc. See https://github.com/golang/go/issues/9918
@@ -170,7 +169,7 @@ tasks:
         if ! git diff --exit-code flake.nix flake.lock > /dev/null; then
           git commit --no-gpg-sign -m "flake.lock: Update" flake.nix flake.lock
         fi
-      - nix run .#bump_gomod -- .
+      - nix run .#bump_gomod -- . cmd/winit-reg
 
   help:
     desc: If forgot anything

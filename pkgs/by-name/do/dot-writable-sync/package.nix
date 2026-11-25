@@ -10,14 +10,13 @@ buildGo127Module (finalAttrs: {
 
   __structuredAttrs = true;
 
-  vendorHash = "sha256-k/qRQykTmtKBdYeT1vtKXNVTjPkhzjYeJgiXR3zQ/js=";
+  vendorHash = null;
   src =
     with lib.fileset;
     toSource {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../go.sum
         ../../../../internal
         ./.
       ];
@@ -33,8 +32,6 @@ buildGo127Module (finalAttrs: {
     "-s"
     "-w"
   ];
-
-  passthru.shared-gomod = true;
 
   meta = {
     description = "Repository-internal Home Manager helper to initialize writable config files";

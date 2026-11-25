@@ -8,7 +8,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/kachick/dotfiles/internal/windows"
+	"github.com/kachick/dotfiles/cmd/winit-reg/internal/windows"
 )
 
 func usage() string {

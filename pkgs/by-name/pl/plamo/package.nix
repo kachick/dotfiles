@@ -10,14 +10,13 @@ buildGo127Module (finalAttrs: {
 
   __structuredAttrs = true;
 
-  vendorHash = "sha256-k/qRQykTmtKBdYeT1vtKXNVTjPkhzjYeJgiXR3zQ/js=";
+  vendorHash = null;
   src =
     with lib.fileset;
     toSource {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../go.sum
         ../../../../internal
         (difference ./. (maybeMissing ./README.md))
       ];
@@ -28,8 +27,6 @@ buildGo127Module (finalAttrs: {
   ];
 
   env.CGO_ENABLED = 0;
-
-  passthru.shared-gomod = true;
 
   # Expose `trans` as a symlink instead of a shell alias so editors, scripts, and non-POSIX shells (e.g. nushell) can call it directly.
   postInstall = ''

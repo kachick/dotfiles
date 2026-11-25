@@ -7,7 +7,6 @@ pkgs.writeShellApplication rec {
     go_1_27
     gnugrep
     findutils # `xargs`
-    nix-update
   ];
   meta = {
     description = "Update go.mod with method of https://github.com/kachick/times_kachick/issues/265";

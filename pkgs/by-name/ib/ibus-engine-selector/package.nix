@@ -22,12 +22,11 @@ buildGo127Module (finalAttrs: {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../go.sum
         ./.
       ];
     };
 
-  vendorHash = "sha256-8v4EL++G1Di/nBkd/N/nNAEqpDmtjbL6DFHaXPt2JcQ=";
+  vendorHash = null;
 
   subPackages = [ "pkgs/by-name/ib/${finalAttrs.pname}" ];
 
@@ -45,8 +44,6 @@ buildGo127Module (finalAttrs: {
         ]
       }
   '';
-
-  passthru.shared-gomod = true;
 
   meta = {
     description = "Select IBus engine with fzf";

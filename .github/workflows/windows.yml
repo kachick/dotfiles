@@ -129,11 +129,13 @@ jobs:
       - name: Test and vet Go packages
         # Limit test and vet to Windows targets since pkgs/* tests expect Nix devshell tools
         run: |
-          go test . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows ./internal/configsync
-          go vet . ./cmd/winit-reg ./cmd/winit-conf ./internal/windows ./internal/configsync
+          go test . ./cmd/winit-conf ./internal/configsync
+          go vet . ./cmd/winit-conf ./internal/configsync
+          go test -C cmd/winit-reg ./...
+          go vet -C cmd/winit-reg ./...
       - name: Build winit-*
         run: |
-          go build -o 'dist/' ./cmd/winit-reg
+          go build -C cmd/winit-reg -o '../../dist/' .
           go build -o 'dist/' ./cmd/winit-conf
       - name: List files - after build
         run: |

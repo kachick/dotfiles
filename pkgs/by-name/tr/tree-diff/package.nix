@@ -20,14 +20,13 @@ buildGo127Module (finalAttrs: {
     gitMinimal
   ];
 
-  vendorHash = "sha256-8v4EL++G1Di/nBkd/N/nNAEqpDmtjbL6DFHaXPt2JcQ=";
+  vendorHash = null;
   src =
     with lib.fileset;
     toSource {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../go.sum
         ./.
       ];
     };
@@ -48,8 +47,6 @@ buildGo127Module (finalAttrs: {
     wrapProgram $out/bin/${finalAttrs.meta.mainProgram} \
       --suffix PATH : "${lib.makeBinPath [ gitMinimal ]}"
   '';
-
-  passthru.shared-gomod = true;
 
   meta = {
     description = "Compare and visualize file tree differences across two directories";
