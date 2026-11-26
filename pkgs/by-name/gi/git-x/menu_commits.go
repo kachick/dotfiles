@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/kachick/dotfiles/internal/gitcmd"
+	"github.com/kachick/dotfiles/internal/plamocache"
 )
 
 const (
@@ -223,7 +224,7 @@ func previewCachePath(cacheDir, rev string, cols int) string {
 }
 
 func hasPersistentTranslation(workDir, rev string) bool {
-	cacheDir, err := translationCacheDir()
+	cacheDir, err := plamocache.Dir()
 	if err != nil {
 		return false
 	}
@@ -231,7 +232,7 @@ func hasPersistentTranslation(workDir, rev string) bool {
 	if err != nil {
 		return false
 	}
-	_, ok := readTranslationCache(cacheDir, translationCacheKey(systemPrompt, msg))
+	_, ok := plamocache.Read(cacheDir, plamocache.Key(systemPrompt, msg))
 	return ok
 }
 

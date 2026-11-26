@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+	"sync/atomic"
 	"testing"
 )
 
@@ -176,6 +177,7 @@ func TestRunTransBehavior(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv("XDG_CACHE_HOME", t.TempDir())
 			var gotReq chatRequest
 			port := startMockPlamoServer(t, &gotReq)
 			t.Setenv("PLAMO_PORT", port)
@@ -274,4 +276,90 @@ func TestRunErrors(t *testing.T) {
 			t.Errorf("expected trans usage in stderr, got: %s", stderr.String())
 		}
 	})
+}
+
+func TestRunTransPersistentCache(t *testing.T) {
+	t.Setenv("XDG_CACHE_HOME", t.TempDir())
+
+	var calls atomic.Int32
+	var responseText atomic.Value
+	responseText.Store("最初の翻訳")
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/health":
+			w.WriteHeader(http.StatusOK)
+		case "/v1/chat/completions":
+			calls.Add(1)
+			w.Header().Set("Content-Type", "application/json")
+			_ = json.NewEncoder(w).Encode(chatResponse{
+				Choices: []chatChoice{
+					{Message: chatMessage{Role: "assistant", Content: responseText.Load().(string)}},
+				},
+			})
+		default:
+			w.WriteHeader(http.StatusNotFound)
+		}
+	}))
+	defer srv.Close()
+
+	u, err := url.Parse(srv.URL)
+	if err != nil {
+		t.Fatalf("parse mock server URL: %v", err)
+	}
+	t.Setenv("PLAMO_PORT", u.Port())
+
+	// First run calls llama-server and saves the result to persistent cache.
+	var stdout, stderr bytes.Buffer
+	if err := run("trans", nil, strings.NewReader("Long input text from stdin\n"), &stdout, &stderr); err != nil {
+		t.Fatalf("first run failed: %v", err)
+	}
+	if strings.TrimSpace(stdout.String()) != "最初の翻訳" {
+		t.Errorf("first stdout = %q, want %q", stdout.String(), "最初の翻訳\n")
+	}
+	if got := calls.Load(); got != 1 {
+		t.Fatalf("calls after first run = %d, want 1", got)
+	}
+
+	// --no-cache bypasses reading and writing the cache.
+	responseText.Store("キャッシュ無視の翻訳")
+	stdout.Reset()
+	stderr.Reset()
+	if err := run("trans", []string{"--no-cache"}, strings.NewReader("Long input text from stdin\n"), &stdout, &stderr); err != nil {
+		t.Fatalf("--no-cache run failed: %v", err)
+	}
+	if strings.TrimSpace(stdout.String()) != "キャッシュ無視の翻訳" {
+		t.Errorf("--no-cache stdout = %q, want %q", stdout.String(), "キャッシュ無視の翻訳\n")
+	}
+	if got := calls.Load(); got != 2 {
+		t.Fatalf("calls after --no-cache = %d, want 2", got)
+	}
+
+	// Different prompt options (--form polite) must not collide with the cached entry.
+	responseText.Store("丁寧な翻訳")
+	stdout.Reset()
+	stderr.Reset()
+	if err := run("trans", []string{"--form", "polite"}, strings.NewReader("Long input text from stdin\n"), &stdout, &stderr); err != nil {
+		t.Fatalf("--form polite run failed: %v", err)
+	}
+	if strings.TrimSpace(stdout.String()) != "丁寧な翻訳" {
+		t.Errorf("--form polite stdout = %q, want %q", stdout.String(), "丁寧な翻訳\n")
+	}
+	if got := calls.Load(); got != 3 {
+		t.Fatalf("calls after --form polite = %d, want 3", got)
+	}
+
+	// Second default run must return the original cached value even after llama-server stops.
+	srv.Close()
+	stdout.Reset()
+	stderr.Reset()
+	if err := run("trans", nil, strings.NewReader("Long input text from stdin\n"), &stdout, &stderr); err != nil {
+		t.Fatalf("cached run failed with server stopped: %v", err)
+	}
+	if strings.TrimSpace(stdout.String()) != "最初の翻訳" {
+		t.Errorf("cached stdout = %q, want %q", stdout.String(), "最初の翻訳\n")
+	}
+	if got := calls.Load(); got != 3 {
+		t.Errorf("calls after cache hit = %d, want 3", got)
+	}
 }

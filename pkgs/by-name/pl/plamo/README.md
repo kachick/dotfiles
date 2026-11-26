@@ -37,6 +37,9 @@ trans en:ja --form polite "Good morning"
 # Pipe input
 echo "Hello, world!" | trans
 
+# Bypass persistent translation cache ($XDG_CACHE_HOME/plamo/translations/)
+echo "Hello, world!" | trans --no-cache
+
 # Service control and full options
 plamo status
 plamo start

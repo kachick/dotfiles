@@ -14,6 +14,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/kachick/dotfiles/internal/plamocache"
 )
 
 const (
@@ -470,11 +472,11 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 			return err
 		}
 
-		cacheDir, _ := translationCacheDir()
-		cacheKey := translationCacheKey(systemPrompt, msg)
+		cacheDir, _ := plamocache.Dir()
+		cacheKey := plamocache.Key(systemPrompt, msg)
 
 		// Check persistent cache before llama-server health so cached commits stay readable offline.
-		translated, ok := readTranslationCache(cacheDir, cacheKey)
+		translated, ok := plamocache.Read(cacheDir, cacheKey)
 		if !ok {
 			serverURL := plamoServerURL()
 			ctx := context.Background()
@@ -494,7 +496,7 @@ func runShow(args []string, workDir string, stdin io.Reader, stdout, stderr io.W
 				return fmt.Errorf("translation failed: %w", err)
 			}
 
-			_ = writeTranslationCache(cacheDir, cacheKey, translated)
+			_ = plamocache.Write(cacheDir, cacheKey, translated)
 		}
 
 		translationText = translated

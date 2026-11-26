@@ -35,9 +35,9 @@
     };
   };
 
-  # Clean up cached git-x commit translations untouched for 30 days.
-  # git-x refreshes mtime on cache hits so recently viewed commits stay cached.
+  # Clean up cached plamo/trans and git-x translations untouched for 30 days.
+  # Callers refresh mtime on cache hits so frequently used translations stay cached.
   systemd.user.tmpfiles.rules = [
-    "e %C/git-x/translations - - - 30d"
+    "e %C/plamo/translations - - - 30d"
   ];
 }

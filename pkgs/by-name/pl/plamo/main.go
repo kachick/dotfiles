@@ -15,6 +15,8 @@ import (
 	"strings"
 	"time"
 	"unicode"
+
+	"github.com/kachick/dotfiles/internal/plamocache"
 )
 
 const (
@@ -237,10 +239,12 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 	}
 
 	var targetFlag, form, surroundingContext, port string
+	var noCache bool
 	fs.StringVar(&targetFlag, "to", "", "Target language code")
 	fs.StringVar(&form, "form", "", "Sentence form for target_lang=ja: plain or polite (default: plain)")
 	fs.StringVar(&surroundingContext, "context", "", "Surrounding context or background information")
 	fs.StringVar(&port, "port", defaultP, "Port of llama-server")
+	fs.BoolVar(&noCache, "no-cache", false, "Bypass reading and writing the translation cache")
 
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: %s [OPTIONS] [[SOURCE]:TARGET] [TEXT...]\n\n", progName)
@@ -256,6 +260,7 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 		fmt.Fprintf(stderr, "  --form FORM      Sentence form for target_lang=ja: plain or polite (default: plain)\n")
 		fmt.Fprintf(stderr, "  --context TEXT   Surrounding context or background information\n")
 		fmt.Fprintf(stderr, "  --port PORT      Port of llama-server (default: %s, env: PLAMO_PORT)\n", defaultP)
+		fmt.Fprintf(stderr, "  --no-cache       Bypass reading and writing the translation cache\n")
 		fmt.Fprintf(stderr, "  --help           Show this help message\n")
 	}
 
@@ -319,6 +324,19 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 		form = "plain"
 	}
 
+	systemPrompt := buildSystemPrompt(sourceLang, targetLang, form, surroundingContext)
+
+	var cacheDir, cacheKey string
+	if !noCache {
+		cacheDir, _ = plamocache.Dir()
+		cacheKey = plamocache.Key(systemPrompt, text)
+		// Check persistent cache before llama-server health so cached translations stay available offline.
+		if cached, ok := plamocache.Read(cacheDir, cacheKey); ok {
+			fmt.Fprintln(stdout, cached)
+			return nil
+		}
+	}
+
 	serverURL := fmt.Sprintf("http://127.0.0.1:%s", port)
 
 	ctx := context.Background()
@@ -336,10 +354,13 @@ func runTrans(progName string, args []string, stdin io.Reader, stdout, stderr io
 	}
 	resp.Body.Close()
 
-	systemPrompt := buildSystemPrompt(sourceLang, targetLang, form, surroundingContext)
 	result, err := translateText(ctx, serverURL, systemPrompt, text)
 	if err != nil {
 		return err
+	}
+
+	if !noCache {
+		_ = plamocache.Write(cacheDir, cacheKey, result)
 	}
 
 	fmt.Fprintln(stdout, result)
