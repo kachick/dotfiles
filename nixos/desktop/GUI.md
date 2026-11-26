@@ -26,8 +26,8 @@ A: `dconf reset /org/gnome/desktop/interface/cursor-theme`
 
 Don't use fcitx5. It causes crashes. See GH-1128 for details.
 
-Mozc cannot import the exported keybindings with CLI.\
-So you should manually import it from GUI if setting up Desktop Environment on new hosts.
+Home Manager generates and syncs `~/.config/mozc/config1.db` from `config/mozc/keymap-msime-customized.txt` via `mozc-config`, so manual GUI keymap import is no longer needed.
+Run `mozc-config diff` to inspect local GUI changes against the generated config, or `mozc-config reload` to refresh IBus and `mozc_server`.
 
 ## KDE
 

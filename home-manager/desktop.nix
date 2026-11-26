@@ -171,22 +171,27 @@ in
   # mozc_tool can be run with `/run/current-system/sw/lib/mozc/mozc_tool --mode=config_dialog` on NixOS
   # Alternatively, it can also be launched via desktop entry: `gtk-launch ibus-setup-mozc-jp`
   #
-  # You should run `ibus write-cache; ibus restart` after changed the ibus config
   # See https://github.com/google/mozc/blob/master/docs/configurations.md for details
   xdg.configFile."mozc/ibus_config.textproto".source = ../config/mozc/ibus_config.textproto;
-  # You should manually load the custom keymap if changed. Because mozc_tool does not support CLI and rc files
-  xdg.configFile."mozc/keymap-msime-customized.txt".source =
-    ../config/mozc/keymap-msime-customized.txt;
+  xdg.writableConfigFile."mozc/config1.db".source =
+    "${pkgs.local.mozc-config}/share/mozc-config/config1.db";
 
   home = {
     # Putting files into xdg.userDirs.templates enables new file menu on Nautilus
     # https://askubuntu.com/a/209669
     file."Templates/blank.md".text = "";
 
+    activation.reloadMozcConfig = lib.hm.dag.entryAfter [ "syncWritableConfig" ] ''
+      if [ -z "''${DRY_RUN:-}" ]; then
+        ${lib.getExe pkgs.local.mozc-config} reload --if-running
+      fi
+    '';
+
     packages = with pkgs; [
       kanata # Don't require kanata-with-cmd for now
       pinned.kanata-tray
       local.ibus-engine-selector
+      local.mozc-config
       # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/pkgs/by-name/iw/iw/package.nix
       iw # replacement of wireless-tools(iwconfig)
     ];

@@ -1,10 +1,12 @@
 # Mozc
 
-## It didn't change the keymap even if changed the config
+## Custom keymap and `config1.db`
 
-On GNOME, you should require following command to apply changes for both keymap and ibus_config.
+Home Manager generates `$XDG_CONFIG_HOME/mozc/config1.db` from `keymap-msime-customized.txt` via `mozc-config` and syncs it as a writable file.
+Use `mozc-config` to inspect or reload settings manually:
 
 ```bash
-ibus write-cache
-ibus restart
+mozc-config dump
+mozc-config diff
+mozc-config reload
 ```
