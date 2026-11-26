@@ -30,7 +30,7 @@ wsl.exe --install "Ubuntu-26.04"
 wsl.exe --distribution "Ubuntu-26.04"
 ```
 
-Set up Nix and Home Manager (`user@wsl-ubuntu`) following [home-manager/README.md](../../home-manager/README.md).
+Set up Nix and Home Manager (`visitor@wsl-ubuntu`) following [home-manager/README.md](../../home-manager/README.md).
 
 Disable cgroup v1 with [.wslconfig](.wslconfig) for rootless Podman:
 

@@ -63,13 +63,13 @@ test_container() {
 	sleep 1 # Wait for systemd to be ready
 
 	echo "==> [1/4] Checking subprocess PATH resolution for Nix profile tools"
-	podman exec --user=user "${container_id}" which fd >/dev/null
-	podman exec --user=user "${container_id}" sh -c 'which fd' >/dev/null
+	podman exec --user=visitor "${container_id}" which fd >/dev/null
+	podman exec --user=visitor "${container_id}" sh -c 'which fd' >/dev/null
 	echo "    PASS: 'fd' is found in PATH in direct and subshell invocations"
 
 	echo "==> [2/4] Checking login shell startup for setlocale warnings"
 	local shell_output
-	shell_output="$(echo exit | podman exec --user=user --workdir=/home/user --env=TERM=xterm --interactive "${container_id}" /home/user/.nix-profile/bin/bash --login -i 2>&1)"
+	shell_output="$(echo exit | podman exec --user=visitor --workdir=/home/visitor --env=TERM=xterm --interactive "${container_id}" /home/visitor/.nix-profile/bin/bash --login -i 2>&1)"
 	if echo "${shell_output}" | grep -qi "cannot change locale"; then
 		echo "    FAIL: setlocale warning detected in login shell startup:"
 		echo "${shell_output}" | grep -i "cannot change locale"
@@ -79,7 +79,7 @@ test_container() {
 
 	echo "==> [3/4] Checking locale environment values"
 	local locale_output
-	locale_output="$(podman exec --user=user --workdir=/home/user "${container_id}" /home/user/.nix-profile/bin/bash --login -c 'locale')"
+	locale_output="$(podman exec --user=visitor --workdir=/home/visitor "${container_id}" /home/visitor/.nix-profile/bin/bash --login -c 'locale')"
 	if ! echo "${locale_output}" | grep -q 'LANG=ja_JP.UTF-8'; then
 		echo "    FAIL: Expected LANG=ja_JP.UTF-8, got:"
 		echo "${locale_output}"
@@ -89,13 +89,13 @@ test_container() {
 
 	echo "==> [4/4] Checking Nix daemon and store access as non-root user"
 	local nix_info
-	nix_info="$(podman exec --user=user --workdir=/home/user "${container_id}" nix store info --store daemon 2>&1)"
+	nix_info="$(podman exec --user=visitor --workdir=/home/visitor "${container_id}" nix store info --store daemon 2>&1)"
 	if ! echo "${nix_info}" | grep -q 'Trusted: 1'; then
 		echo "    FAIL: Expected trusted nix-daemon connection, got:"
 		echo "${nix_info}"
 		return 1
 	fi
-	echo "    PASS: nix-daemon is active and trusts user"
+	echo "    PASS: nix-daemon is active and trusts visitor"
 
 	echo "==> All container smoke tests passed!"
 }

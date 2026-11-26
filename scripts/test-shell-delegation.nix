@@ -1,7 +1,7 @@
 let
   getFlake = builtins.getAttr "getFlake" builtins;
   flake = getFlake (toString ../.);
-  hm = flake.homeConfigurations."user@container";
+  hm = flake.homeConfigurations."visitor@container";
   pkgs = hm.pkgs;
   hmConfig = hm.config;
 in

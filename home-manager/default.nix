@@ -14,14 +14,14 @@ let
 in
 # Users on NixOS are separated from this file.
 {
-  "user@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration (
+  "visitor@wsl-ubuntu" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
       modules = [
-        outputs.homeManagerModules.kachick # Intentionally use a specific user config in WSL despite using the ephemeral "user" username
+        outputs.homeManagerModules.kachick # Intentionally use a specific user config in WSL despite using the ephemeral "visitor" username
         {
-          home.username = "user"; # Enforce the ephemeral "user" username
+          home.username = "visitor"; # Enforce the ephemeral "visitor" username
         }
         outputs.homeManagerModules.linux
         outputs.homeManagerModules.genericLinux
@@ -33,7 +33,7 @@ in
     }
   );
 
-  "user@lima" = home-manager.lib.homeManagerConfiguration (
+  "visitor@lima" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;
@@ -49,7 +49,7 @@ in
     }
   );
 
-  "user@container" = home-manager.lib.homeManagerConfiguration (
+  "visitor@container" = home-manager.lib.homeManagerConfiguration (
     shared
     // {
       pkgs = x86-Linux-pkgs;

@@ -15,7 +15,7 @@
     outputs.nixosModules.desktop
     outputs.nixosModules.game
     outputs.nixosModules.hardware
-    ../../desktop/kachick.nix
+    ../../desktop/owner.nix
 
     ./hardware-configuration.nix
   ];

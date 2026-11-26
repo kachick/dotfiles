@@ -144,7 +144,7 @@ jobs:
           set -uxo
           # https://unix.stackexchange.com/questions/311090/how-to-disable-set-x
           set +e
-          /home/user/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' 'kachick1'
+          /home/visitor/.nix-profile/bin/rg --hidden --follow --glob='!.local/state' --glob='!.nix-*' 'kachick1'
           # Need to check the exit code if we want to make sure "not found" in grep family
           # https://github.com/BurntSushi/ripgrep/issues/1290#issuecomment-761170095
 
@@ -152,7 +152,7 @@ jobs:
           [[ "$ripgrep_exit_code" -eq 1 ]]
           EOF
 
-          podman exec --user=user --workdir=/home/user -it "${container_id}" bash -c "$command"
+          podman exec --user=visitor --workdir=/home/visitor -it "${container_id}" bash -c "$command"
       - name: Inspect the created image
         env:
           REF_TAG: ${{ needs.get-meta.outputs.ref_tag }}
@@ -167,8 +167,8 @@ jobs:
           # shellcheck disable=SC2064
           trap "podman kill '$container_id'" EXIT ERR
           sleep 2 # Wait for the systemd to be ready
-          podman exec --user=user "$container_id" cat /etc/nix/nix.conf
-          podman exec --user=user --workdir='/home/user' -it "$container_id" '/home/user/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
+          podman exec --user=visitor "$container_id" cat /etc/nix/nix.conf
+          podman exec --user=visitor --workdir='/home/visitor' -it "$container_id" '/home/visitor/.nix-profile/bin/zsh' -c 'la; lat ~/.config'
       - name: Compare layers with GHCR latest
         id: compare-ghcr
         env:

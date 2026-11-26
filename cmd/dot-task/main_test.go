@@ -32,7 +32,7 @@ func testEnv(calls *[]recordedCall) env {
 				return []byte(`["algae","moss","wsl"]`), nil
 			}
 			if name == "nix" && len(args) >= 3 && args[2] == ".#homeConfigurations" {
-				return []byte(`["user@container","user@lima","user@wsl-ubuntu"]`), nil
+				return []byte(`["visitor@container","visitor@lima","visitor@wsl-ubuntu"]`), nil
 			}
 			return []byte(`[]`), nil
 		},
@@ -53,7 +53,7 @@ func testEnv(calls *[]recordedCall) env {
 		},
 		getenv: func(key string) string {
 			if key == "USER" {
-				return "user"
+				return "visitor"
 			}
 			return ""
 		},
@@ -83,7 +83,7 @@ func TestRunApply(t *testing.T) {
 		var calls []recordedCall
 		e := testEnv(&calls)
 		e.selectItem = func(items []string, prompt, header string) (string, error) {
-			return "user@wsl-ubuntu", nil
+			return "visitor@wsl-ubuntu", nil
 		}
 
 		if err := run([]string{"apply"}, e); err != nil {
@@ -92,7 +92,7 @@ func TestRunApply(t *testing.T) {
 
 		want := []recordedCall{{
 			name: "nix",
-			args: []string{"run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#user@wsl-ubuntu"},
+			args: []string{"run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#visitor@wsl-ubuntu"},
 		}}
 		if !reflect.DeepEqual(calls, want) {
 			t.Fatalf("calls = %+v, want %+v", calls, want)
@@ -128,7 +128,7 @@ func TestRunApply(t *testing.T) {
 
 		want := []recordedCall{{
 			name: "nix",
-			args: []string{"run", ".#home-manager", "--", "switch", "-n", "-b", "backup", "--show-trace", "--flake", ".#user@lima"},
+			args: []string{"run", ".#home-manager", "--", "switch", "-n", "-b", "backup", "--show-trace", "--flake", ".#visitor@lima"},
 		}}
 		if !reflect.DeepEqual(calls, want) {
 			t.Fatalf("calls = %+v, want %+v", calls, want)
@@ -213,7 +213,7 @@ func TestRunHomeManager(t *testing.T) {
 
 		want := []recordedCall{{
 			name: "nix",
-			args: []string{"run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#user@lima"},
+			args: []string{"run", ".#home-manager", "--", "switch", "-b", "backup", "--show-trace", "--flake", ".#visitor@lima"},
 		}}
 		if !reflect.DeepEqual(calls, want) {
 			t.Fatalf("calls = %+v, want %+v", calls, want)

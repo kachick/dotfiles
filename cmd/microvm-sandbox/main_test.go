@@ -14,7 +14,7 @@ import (
 )
 
 const sampleMicrovmRun = `#!/bin/bash
-exec -a "microvm@sandbox" qemu-system-x86_64 -name sandbox -chardev 'stdio,id=stdio,signal=off' -serial chardev:stdio -append 'console=ttyS0 quiet' -fsdev 'local,id=fs0,path=/nix/store,security_model=none,readonly=true' -device 'virtio-9p-pci,fsdev=fs0,mount_tag=ro-store' -fsdev 'local,id=fs2,path=/home/kachick/repos/github.com/kachick,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs2,mount_tag=repos' -netdev 'user,id=net0'
+exec -a "microvm@sandbox" qemu-system-x86_64 -name sandbox -chardev 'stdio,id=stdio,signal=off' -serial chardev:stdio -append 'console=ttyS0 quiet' -fsdev 'local,id=fs0,path=/nix/store,security_model=none,readonly=true' -device 'virtio-9p-pci,fsdev=fs0,mount_tag=ro-store' -fsdev 'local,id=fs2,path=/home/owner/repos/github.com/kachick,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs2,mount_tag=repos' -netdev 'user,id=net0'
 `
 
 func TestValidateName(t *testing.T) {
@@ -202,7 +202,7 @@ func TestPatchRunnerContent(t *testing.T) {
 			port:     2223,
 			stateDir: "/run/user/1000/microvm-sandbox/agent-2",
 			plain:    true,
-			mountDir: "/home/kachick/repos/github.com/kachick/dotfiles/main",
+			mountDir: "/home/owner/repos/github.com/kachick/dotfiles/main",
 		})
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -210,7 +210,7 @@ func TestPatchRunnerContent(t *testing.T) {
 		if strings.Contains(got, "path="+hostReposPath+",") {
 			t.Errorf("host repos root must not remain mounted: %s", got)
 		}
-		want := "-fsdev 'local,id=fs_workspace,path=/home/kachick/repos/github.com/kachick/dotfiles/main,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs_workspace,mount_tag=workspace'"
+		want := "-fsdev 'local,id=fs_workspace,path=/home/owner/repos/github.com/kachick/dotfiles/main,security_model=none,readonly=false' -device 'virtio-9p-pci,fsdev=fs_workspace,mount_tag=workspace'"
 		if !strings.Contains(got, want) {
 			t.Errorf("missing workspace share %q in %s", want, got)
 		}

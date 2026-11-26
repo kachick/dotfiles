@@ -1,7 +1,7 @@
 # Containers
 
 Base image (`ghcr.io/kachick/ubuntu-26.04-systemd`) is maintained in [kachick/containers](https://github.com/kachick/containers).
-[layered-image.nix](./layered-image.nix) layers the Nix store closure and Home Manager configuration (`user@container`) on top of that Ubuntu + systemd base image using `dockerTools.buildLayeredImage`.
+[layered-image.nix](./layered-image.nix) layers the Nix store closure and Home Manager configuration (`visitor@container`) on top of that Ubuntu + systemd base image using `dockerTools.buildLayeredImage`.
 
 ## Image Composition (`layered-image.nix`)
 
@@ -9,8 +9,8 @@ Base image (`ghcr.io/kachick/ubuntu-26.04-systemd`) is maintained in [kachick/co
 flowchart TD
     subgraph Inputs ["Flake Inputs & Configs"]
         base_json["base-image.json (ghcr.io/kachick/ubuntu-26.04-systemd)"]
-        hm_cfg["homeConfigurations.user@container (activationPackage)"]
-        nix_cfg["nixos/nix.nix + container overrides (sandbox = false, extra-trusted-users = user)"]
+        hm_cfg["homeConfigurations.visitor@container (activationPackage)"]
+        nix_cfg["nixos/nix.nix + container overrides (sandbox = false, extra-trusted-users = visitor)"]
         sys_cfg["pkgs.nix / glibcLocales / corePackages / config/{containers,tailscaled}"]
     end
 
@@ -19,10 +19,10 @@ flowchart TD
         store_layers["Nix Store Layers (maxLayers = 100, includeNixDB = true): /nix/store & /nix/var/nix/db (extraCommands strips top-level /bin, /etc, /usr symlinks)"]
 
         subgraph FakeRoot ["Top Customization Layer (fakeRootCommands)"]
-            passwd["/etc/passwd & /etc/group: extract_from_base + nixbld1..32, dynamic user UID/GID chown"]
+            passwd["/etc/passwd & /etc/group: extract_from_base + nixbld1..32, dynamic visitor UID/GID chown"]
             daemon["Nix Daemon: /etc/nix/nix.conf, nix-daemon.{service,socket}, /nix/var/nix/profiles/default"]
             sys_etc["System Config: /usr/lib/locale/locale-archive, /etc/containers/policy.json, tailscaled.service"]
-            hm_state["Home Manager (/home/user): .nix-profile -> home-path, cp home-files (u+w), dot-writable-sync -> ~/.config"]
+            hm_state["Home Manager (/home/visitor): .nix-profile -> home-path, cp home-files (u+w), dot-writable-sync -> ~/.config"]
         end
     end
 
@@ -54,10 +54,10 @@ flowchart TD
         local_img -->|"--local (default)"| podman_run["podman run --detach --rm (PID 1: systemd --system -> nix-daemon.socket)"]
         ghcr_img -->|"--ghcr <TAG> / task ghcr"| podman_run
 
-        podman_run -->|"containers/test.bash"| smoke["Smoke Tests (podman exec --user=user): PATH (fd), no setlocale warnings, LANG=ja_JP.UTF-8, nix store info --store daemon"]
-        podman_run -->|"containers/sandbox.bash"| shell["Login Shell (podman exec --user=user): /home/user/.nix-profile/bin/bash --login"]
+        podman_run -->|"containers/test.bash"| smoke["Smoke Tests (podman exec --user=visitor): PATH (fd), no setlocale warnings, LANG=ja_JP.UTF-8, nix store info --store daemon"]
+        podman_run -->|"containers/sandbox.bash"| shell["Login Shell (podman exec --user=visitor): /home/visitor/.nix-profile/bin/bash --login"]
 
-        live_mount["Host Repo (--live): mounted ro at /workspace/dotfiles (.env masked with /dev/null)"] -.->|"nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#user@container"| shell
+        live_mount["Host Repo (--live): mounted ro at /workspace/dotfiles (.env masked with /dev/null)"] -.->|"nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#visitor@container"| shell
     end
 ```
 
@@ -87,5 +87,5 @@ task sandbox
 Inside a `--live` shell, apply working tree changes without rebuilding the image:
 
 ```bash
-nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#user@container
+nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#visitor@container
 ```

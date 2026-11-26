@@ -38,7 +38,7 @@ in
   };
 
   # Set up the 'nixos' user using the project's standard mkUser helper.
-  # This ensures consistency with kachick/ephemeral users, including group memberships like uinput.
+  # This ensures consistency with owner/ephemeral users, including group memberships like uinput.
   users.users.nixos = mkUser {
     description = "NixOS Live User";
     openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;

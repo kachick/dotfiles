@@ -6,7 +6,7 @@
 }:
 
 let
-  hmConfig = homeConfigurations."user@container";
+  hmConfig = homeConfigurations."visitor@container";
   hmFiles = "${hmConfig.activationPackage}/home-files";
   hmPath = "${hmConfig.activationPackage}/home-path";
 
@@ -69,7 +69,7 @@ let
       ) nixSettings)
       ++ [
         "sandbox = false"
-        "extra-trusted-users = user"
+        "extra-trusted-users = visitor"
       ]
     )
   );
@@ -109,13 +109,13 @@ in
       ./etc/systemd/system/sockets.target.wants \
       ./usr/lib/locale \
       ./nix/var/nix/daemon-socket \
-      ./nix/var/nix/profiles/per-user/user \
-      ./nix/var/nix/gcroots/per-user/user \
-      ./home/user/.local/state/nix/profiles \
-      ./home/user/.local/state/home-manager/gcroots \
-      ./home/user/.local/state/dotfiles/writable-sync \
-      ./home/user/.local/share/gnupg \
-      ./home/user/.ssh
+      ./nix/var/nix/profiles/per-user/visitor \
+      ./nix/var/nix/gcroots/per-user/visitor \
+      ./home/visitor/.local/state/nix/profiles \
+      ./home/visitor/.local/state/home-manager/gcroots \
+      ./home/visitor/.local/state/dotfiles/writable-sync \
+      ./home/visitor/.local/share/gnupg \
+      ./home/visitor/.ssh
 
     # System-level adjustments matching apply-system
     touch ./etc/ssh/ssh_config
@@ -133,16 +133,16 @@ in
     ln -sf ${pkgs.nix}/lib/systemd/system/nix-daemon.socket ./etc/systemd/system/sockets.target.wants/nix-daemon.socket
 
     # Home Manager profile and GC root registration
-    ln -sfn ${hmPath} ./home/user/.nix-profile
-    ln -sfn ${hmConfig.activationPackage} ./home/user/.local/state/nix/profiles/home-manager-1-link
-    ln -sfn home-manager-1-link ./home/user/.local/state/nix/profiles/home-manager
-    ln -sfn ${hmConfig.activationPackage} ./home/user/.local/state/home-manager/gcroots/current-home
+    ln -sfn ${hmPath} ./home/visitor/.nix-profile
+    ln -sfn ${hmConfig.activationPackage} ./home/visitor/.local/state/nix/profiles/home-manager-1-link
+    ln -sfn home-manager-1-link ./home/visitor/.local/state/nix/profiles/home-manager
+    ln -sfn ${hmConfig.activationPackage} ./home/visitor/.local/state/home-manager/gcroots/current-home
 
     # Populate home directory files from home-manager-files
-    ${pkgs.coreutils}/bin/cp -dPR ${hmFiles}/. ./home/user/
-    ${pkgs.coreutils}/bin/chmod -R u+w ./home/user/
-    chmod 0700 ./home/user/.local/share/gnupg
-    touch ./home/user/.ssh/known_hosts.local
+    ${pkgs.coreutils}/bin/cp -dPR ${hmFiles}/. ./home/visitor/
+    ${pkgs.coreutils}/bin/chmod -R u+w ./home/visitor/
+    chmod 0700 ./home/visitor/.local/share/gnupg
+    touch ./home/visitor/.ssh/known_hosts.local
 
     # Initialize writable config files managed by dot-writable-sync
     ${pkgs.lib.getExe pkgs.local.dot-writable-sync} sync \
@@ -151,24 +151,24 @@ in
           builtins.toJSON (
             (pkgs.lib.mapAttrsToList (target: cfg: {
               source = "${cfg.source}";
-              dest = "./home/user/.config/${target}";
+              dest = "./home/visitor/.config/${target}";
               inherit (cfg) perm;
             }) hmConfig.config.xdg.writableConfigFile)
             ++ (pkgs.lib.mapAttrsToList (target: cfg: {
               source = "${cfg.source}";
               dest =
-                if pkgs.lib.hasPrefix "/home/user/" target then
+                if pkgs.lib.hasPrefix "/home/visitor/" target then
                   ".${target}"
                 else if pkgs.lib.hasPrefix "/" target then
                   target
                 else
-                  "./home/user/${target}";
+                  "./home/visitor/${target}";
               inherit (cfg) perm;
             }) hmConfig.config.home.writableFile)
           )
         )
       }" \
-      --state "./home/user/.local/state/dotfiles/writable-sync/state.json"
+      --state "./home/visitor/.local/state/dotfiles/writable-sync/state.json"
 
     # Extract files from the latest baseImage layer that contains them
     extract_from_base() {
@@ -210,19 +210,19 @@ in
       } > ./etc/passwd
     fi
 
-    # Extract UID and GID of 'user' dynamically from baseImage /etc/passwd
+    # Extract UID and GID of 'visitor' dynamically from baseImage /etc/passwd
     base_uid_gid="$(
       printf '%s\n' "$base_passwd" \
-        | ${pkgs.gawk}/bin/awk -F: '$1 == "user" { print $3 ":" $4 }'
+        | ${pkgs.gawk}/bin/awk -F: '$1 == "visitor" { print $3 ":" $4 }'
     )"
     if [ -z "$base_uid_gid" ]; then
-      echo "Error: Could not find 'user' entry in baseImage /etc/passwd" >&2
+      echo "Error: Could not find 'visitor' entry in baseImage /etc/passwd" >&2
       exit 1
     fi
     ${pkgs.coreutils}/bin/chown -R "$base_uid_gid" \
-      ./home/user \
-      ./nix/var/nix/profiles/per-user/user \
-      ./nix/var/nix/gcroots/per-user/user
+      ./home/visitor \
+      ./nix/var/nix/profiles/per-user/visitor \
+      ./nix/var/nix/gcroots/per-user/visitor
   '';
 
   config = {
@@ -232,7 +232,7 @@ in
     ];
     User = "root";
     Env = [
-      "PATH=/home/user/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      "PATH=/home/visitor/.nix-profile/bin:/nix/var/nix/profiles/default/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     ];
   };
 }).overrideAttrs

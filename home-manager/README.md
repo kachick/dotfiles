@@ -28,7 +28,7 @@ curl -fsSL https://raw.githubusercontent.com/kachick/dotfiles/main/scripts/insta
 mkdir -p ~/.local/state/nix/profiles
 bash
 
-nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#user@wsl-ubuntu'
+nix run 'github:kachick/dotfiles#home-manager' -- switch -b backup --flake 'github:kachick/dotfiles#visitor@wsl-ubuntu'
 
 # System-level config (https://github.com/kachick/dotfiles/commit/2e47c6655dc74a4a56495fdcbebb9d15b0b57313)
 sudoc nix run 'github:kachick/dotfiles#apply-system'
@@ -68,12 +68,12 @@ podman run public.ecr.aws/debian/debian:stable-slim cat /etc/os-release
       ...
     }:
     {
-      homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."visitor@host" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         modules = [
           dotfiles.homeManagerModules.desktop
           dotfiles.homeManagerModules.linux
-          { home.username = "user"; }
+          { home.username = "visitor"; }
         ];
         extraSpecialArgs = {
           outputs = dotfiles;

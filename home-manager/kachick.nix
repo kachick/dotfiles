@@ -6,7 +6,7 @@ in
 {
   imports = [ ./dev.nix ];
 
-  home.username = lib.mkDefault "kachick";
+  home.username = lib.mkDefault "owner";
 
   programs.git = {
     settings = {

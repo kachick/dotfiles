@@ -21,7 +21,7 @@ const (
 	portStart          = 2221
 	portEnd            = 2320
 	bootTimeoutSeconds = 30
-	hostReposPath      = "/home/kachick/repos/github.com/kachick"
+	hostReposPath      = "/home/owner/repos/github.com/kachick"
 )
 
 var validNamePattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
@@ -322,7 +322,7 @@ func parseUpArgs(args []string) (upOptions, error) {
 
 	var opts upOptions
 	fs.BoolVar(&opts.plain, "plain", false, "disable default host repos mount")
-	fs.StringVar(&opts.mountDir, "mount", "", "host directory to mount at /home/user/workspace (implies --plain)")
+	fs.StringVar(&opts.mountDir, "mount", "", "host directory to mount at /home/visitor/workspace (implies --plain)")
 
 	if err := fs.Parse(args); err != nil {
 		return upOptions{}, err
@@ -560,7 +560,7 @@ func cmdExec(args []string) error {
 		return err
 	}
 	argv := append([]string{"ssh"}, sshBaseArgs(port)...)
-	argv = append(argv, "-o", "BatchMode=yes", "user@127.0.0.1", "--")
+	argv = append(argv, "-o", "BatchMode=yes", "visitor@127.0.0.1", "--")
 	argv = append(argv, cmdArgs...)
 	return syscall.Exec(sshBin, argv, os.Environ())
 }
@@ -691,7 +691,7 @@ func sshInstance(root, name string) error {
 		return err
 	}
 	argv := append([]string{"ssh"}, sshBaseArgs(port)...)
-	argv = append(argv, "user@127.0.0.1")
+	argv = append(argv, "visitor@127.0.0.1")
 	return syscall.Exec(sshBin, argv, os.Environ())
 }
 

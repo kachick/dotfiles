@@ -102,7 +102,7 @@ EOF
 		cat <<EOF
 Live mount enabled: ${repo_root} -> /workspace/dotfiles (read-only)
 Apply changes inside the container with:
-  nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#user@container
+  nix run /workspace/dotfiles#home-manager -- switch --flake /workspace/dotfiles#visitor@container
 EOF
 	fi
 
@@ -110,7 +110,7 @@ EOF
 	# shellcheck disable=SC2064
 	trap "podman kill '${container_id}'" EXIT ERR
 	sleep 1 # Wait for the systemd to be ready
-	podman exec --user=user --workdir='/home/user' --env=TERM --interactive --tty "${container_id}" '/home/user/.nix-profile/bin/bash' --login
+	podman exec --user=visitor --workdir='/home/visitor' --env=TERM --interactive --tty "${container_id}" '/home/visitor/.nix-profile/bin/bash' --login
 }
 
 sandbox "$@"

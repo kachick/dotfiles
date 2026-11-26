@@ -3,7 +3,7 @@
 {
   imports = [ ./dev.nix ];
 
-  home.username = lib.mkDefault "user";
+  home.username = lib.mkDefault "visitor";
 
   programs.git = {
     settings = {

@@ -6,7 +6,7 @@ Lightweight, volatile NixOS microvm built with [microvm.nix](https://github.com/
 # Interactive TUI menu (inspect instances, ssh, up, down, console)
 nix run .#microvm-sandbox
 
-# Foreground serial console (autologin as user)
+# Foreground serial console (autologin as visitor)
 nix run .#microvm-sandbox -- console
 
 # Background instances over SSH (pubkey auth via config/ssh/keys.nix)
@@ -22,8 +22,8 @@ nix run .#microvm-sandbox -- down test-1
 nix run .#microvm-sandbox -- down --all
 ```
 
-- By default, `/home/user/repos/github.com/kachick` is shared read-write with the host.
-- With `--plain`, the host repos share is replaced with a read-only empty directory. Adding `--mount <DIR>` exposes only `<DIR>` read-write at `/home/user/workspace`.
+- By default, `/home/visitor/repos/github.com/kachick` is shared read-write with the host.
+- With `--plain`, the host repos share is replaced with a read-only empty directory. Adding `--mount <DIR>` exposes only `<DIR>` read-write at `/home/visitor/workspace`.
 - `/nix/store` uses a volatile `tmpfs` overlay (`2G`) and resets on shutdown.
 - Background SSH logins require a local private key or `ssh-agent` matching `config/ssh/keys.nix`.
 
@@ -34,7 +34,7 @@ flowchart TD
     subgraph Host ["Host Machine"]
         host_store["/nix/store (ro)"]
         host_sw["/run/current-system/sw (ro)"]
-        host_repos["/home/kachick/repos/github.com/kachick (rw)"]
+        host_repos["/home/owner/repos/github.com/kachick (rw)"]
         host_dns["Host DNS Proxy (:5354, optional)"]
         host_ssh["ssh client + ssh-agent (config/ssh/keys.nix)"]
     end
@@ -42,13 +42,13 @@ flowchart TD
     subgraph Guest ["QEMU MicroVM (sandbox, 4 vCPU, 4G RAM, SLiRP net0)"]
         ro_store["/nix/.ro-store (9p) + /nix/.rw-store (2G tmpfs) -> /nix/store"]
         guest_sw["/run/host-system-sw (9p, appended to PATH)"]
-        guest_repos["/home/user/repos/github.com/kachick (9p)"]
+        guest_repos["/home/visitor/repos/github.com/kachick (9p)"]
 
         subgraph Boot ["Systemd Boot Order"]
             uid["sync-user-uid.service (match guest UID to host repos)"]
-            hm["home-manager-user.service (ephemeral + dev + containers)"]
+            hm["home-manager-visitor.service (ephemeral + dev + containers)"]
             sshd["sshd.service (PasswordAuthentication=no, keys.nix)"]
-            getty["serial-getty@ (autologin user)"]
+            getty["serial-getty@ (autologin visitor)"]
             dns["sandbox-host-dns.service (DNAT gw:53 -> gw:5354 if open)"]
         end
     end
@@ -75,8 +75,8 @@ flowchart TD
     up --> state["$XDG_RUNTIME_DIR/microvm-sandbox/<NAME>/{microvm-run,qemu.pid,ssh.port,console.log}"]
     state -->|"QEMU -daemonize + hostfwd"| wait["Poll SSH banner (timeout 30s)"]
 
-    cli -->|"exec [NAME] -- <CMD>"| exec_cmd["ssh -o BatchMode=yes -o ControlMaster=no user@127.0.0.1 -- <CMD>"]
-    cli -->|"ssh [NAME]"| ssh_cmd["Interactive ssh -o ControlMaster=no user@127.0.0.1"]
+    cli -->|"exec [NAME] -- <CMD>"| exec_cmd["ssh -o BatchMode=yes -o ControlMaster=no visitor@127.0.0.1 -- <CMD>"]
+    cli -->|"ssh [NAME]"| ssh_cmd["Interactive ssh -o ControlMaster=no visitor@127.0.0.1"]
     cli -->|"status"| status_cmd["Read qemu.pid & ssh.port under state dir"]
     cli -->|"down [NAME|--all]"| down_cmd["SIGTERM -> SIGKILL QEMU & remove state dir"]
 

@@ -13,10 +13,10 @@ in
   ];
 
   users.users = {
-    user = mkUser { };
+    visitor = mkUser { };
   };
 
-  home-manager.users.user = {
+  home-manager.users.visitor = {
     imports = [
       ../../home-manager/ephemeral.nix
       ../../home-manager/nixos-desktop-set.nix

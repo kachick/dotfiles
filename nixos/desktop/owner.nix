@@ -7,7 +7,7 @@ let
   mkUser = import ./mkUser.nix { inherit lib; };
 in
 {
-  users.users.kachick = mkUser {
+  users.users.owner = mkUser {
     description = "foolish";
     additionalGroups = [
       "wheel"
@@ -17,7 +17,7 @@ in
     openssh.authorizedKeys.keys = import ../../config/ssh/keys.nix;
   };
 
-  home-manager.users.kachick = {
+  home-manager.users.owner = {
     imports = [
       ../../home-manager/kachick.nix
       ../../home-manager/nixos-desktop-set.nix

@@ -16,7 +16,7 @@
     outputs.nixosModules.hardware
     outputs.nixosModules.cloudflare-warp
     outputs.nixosModules.swap
-    ../../desktop/kachick.nix
+    ../../desktop/owner.nix
 
     ./hardware-configuration.nix
   ];
