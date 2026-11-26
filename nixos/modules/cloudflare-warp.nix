@@ -23,7 +23,7 @@
   # - CLI's "warp-cli mode tunnel_only" works on Consumer accounts, so set it via postStart.
   systemd.services.cloudflare-warp.postStart = ''
     for _ in $(seq 1 10); do
-      if ${config.services.cloudflare-warp.package}/bin/warp-cli mode tunnel_only 2>/dev/null; then
+      if ${config.services.cloudflare-warp.package}/bin/warp-cli --accept-tos mode tunnel_only 2>/dev/null; then
         break
       fi
       sleep 1
@@ -32,7 +32,7 @@
     # Exclude Tailscale control plane and DERP relay endpoints from split tunnel.
     # WARP requires both apex and wildcard entries to match apex and subdomains.
     for host in "tailscale.com" "*.tailscale.com" "ts.net" "*.ts.net"; do
-      ${config.services.cloudflare-warp.package}/bin/warp-cli tunnel host add "$host" 2>/dev/null || true
+      ${config.services.cloudflare-warp.package}/bin/warp-cli --accept-tos tunnel host add "$host" 2>/dev/null || true
     done
   '';
 
