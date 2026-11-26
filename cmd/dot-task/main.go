@@ -3,22 +3,30 @@ package main
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"os/exec"
+	"time"
 )
 
 type env struct {
-	stdin      io.Reader
-	stdout     io.Writer
-	stderr     io.Writer
-	runCmd     func(name string, args ...string) error
-	cmdOutput  func(name string, args ...string) ([]byte, error)
-	cmdExitOK  func(name string, args ...string) (bool, error)
-	selectItem func(items []string, prompt, header string) (string, error)
-	isTerminal func() bool
-	fileExists func(path string) bool
-	hostname   func() (string, error)
-	getenv     func(key string) string
+	stdin                 io.Reader
+	stdout                io.Writer
+	stderr                io.Writer
+	runCmd                func(name string, args ...string) error
+	cmdOutput             func(name string, args ...string) ([]byte, error)
+	cmdCombinedOutput     func(name string, args ...string) ([]byte, error)
+	cmdExitOK             func(name string, args ...string) (bool, error)
+	selectItem            func(items []string, prompt, header string) (string, error)
+	selectItemWithOptions func(items []string, opts fzfOptions) (string, error)
+	isTerminal            func() bool
+	fileExists            func(path string) bool
+	hostname              func() (string, error)
+	getenv                func(key string) string
+	now                   func() time.Time
+	cacheDir              func() (string, error)
+	executable            func() (string, error)
+	httpClient            *http.Client
 }
 
 func isCharDevice(f *os.File) bool {
@@ -49,6 +57,10 @@ func defaultEnv() env {
 			cmd.Stderr = os.Stderr
 			return cmd.Output()
 		},
+		cmdCombinedOutput: func(name string, args ...string) ([]byte, error) {
+			cmd := exec.Command(name, args...)
+			return cmd.CombinedOutput()
+		},
 		cmdExitOK: func(name string, args ...string) (bool, error) {
 			cmd := exec.Command(name, args...)
 			err := cmd.Run()
@@ -63,6 +75,9 @@ func defaultEnv() env {
 		selectItem: func(items []string, prompt, header string) (string, error) {
 			return selectWithFzf(items, prompt, header, os.Stderr)
 		},
+		selectItemWithOptions: func(items []string, opts fzfOptions) (string, error) {
+			return selectWithFzfOptions(items, opts, os.Stderr)
+		},
 		isTerminal: func() bool {
 			return isCharDevice(os.Stdin) && isCharDevice(os.Stderr)
 		},
@@ -70,8 +85,12 @@ func defaultEnv() env {
 			_, err := os.Stat(path)
 			return err == nil
 		},
-		hostname: os.Hostname,
-		getenv:   os.Getenv,
+		hostname:   os.Hostname,
+		getenv:     os.Getenv,
+		now:        time.Now,
+		cacheDir:   os.UserCacheDir,
+		executable: os.Executable,
+		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
 }
 
@@ -100,6 +119,8 @@ func run(args []string, e env) error {
 		return runUpdate(rest, e)
 	case "ghcr":
 		return runGHCR(rest, e)
+	case "ghcr-preview":
+		return runGHCRPreview(rest, e)
 	default:
 		return fmt.Errorf("unknown subcommand %q (usage: dot-task <apply|nixos|home-manager|update|ghcr> [args])", subcommand)
 	}
