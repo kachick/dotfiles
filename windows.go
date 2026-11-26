@@ -9,5 +9,4 @@ import "embed"
 //go:embed config/alacritty/*
 //go:embed config/keyboards/kanata.kbd
 //go:embed config/zed/settings.jsonc
-//go:embed config/fresh/config.jsonc
 var WindowsAssets embed.FS

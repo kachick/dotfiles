@@ -93,7 +93,6 @@ func TestBuildAndSyncManifest(t *testing.T) {
 	expectedPaths := []string{
 		filepath.Join(resolver.xdgConfigPath, "alacritty", "themes", "iceberg-dark.toml"),
 		filepath.Join(resolver.appDataPath, "Zed", "settings.json"),
-		filepath.Join(resolver.appDataPath, "fresh", "config.json"),
 		filepath.Join(resolver.localAppDataPath, "Packages", "Microsoft.WindowsTerminal_8wekyb3d8bbwe", "LocalState", "settings.json"),
 		filepath.Join(resolver.localAppDataPath, "Microsoft", "WinGet", "Packages", "jtroo.kanata_gui_Microsoft.Winget.Source_8wekyb3d8bbwe", "kanata.kbd"),
 		resolver.pwshProfilePath,

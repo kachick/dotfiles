@@ -64,7 +64,6 @@ var assetSpecs = []assetSpec{
 	{embedTree: []string{"config", "nushell", "windows_config.nu"}, root: rootXdgConfig, dstTree: []string{"nushell", "windows_config.nu"}},
 
 	{embedTree: []string{"config", "zed", "settings.jsonc"}, root: rootAppData, dstTree: []string{"Zed", "settings.json"}},
-	{embedTree: []string{"config", "fresh", "config.jsonc"}, root: rootAppData, dstTree: []string{"fresh", "config.json"}},
 
 	{
 		embedTree: []string{"config", "keyboards", "kanata.kbd"},
