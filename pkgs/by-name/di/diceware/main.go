@@ -15,18 +15,15 @@ import (
 //go:embed eff_large_wordlist.txt
 var rawWordlist string
 
-// Strength comes from the random EFF words, not from symbols or digits.
-// -number and -symbol only help pass site password rules, so this small set
-// sticks to widely accepted ASCII symbols and skips shell-hostile ones like quotes and '$'.
-const defaultSymbols = "!@#%&*+-=?"
-
+// Strength comes from the random EFF words, not from digits or symbols.
+// -number and -symbols only help pass site password rules.
 type options struct {
 	words      int
 	sep        string
 	count      int
 	capitalize bool
 	number     bool
-	symbol     bool
+	symbols    string
 }
 
 func main() {
@@ -37,16 +34,12 @@ func run(args []string, stdout, stderr io.Writer) int {
 	var opts options
 	fs := flag.NewFlagSet("diceware", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	fs.IntVar(&opts.words, "w", 6, "number of words per passphrase")
 	fs.IntVar(&opts.words, "words", 6, "number of words per passphrase")
-	fs.StringVar(&opts.sep, "s", "-", "separator between words")
 	fs.StringVar(&opts.sep, "sep", "-", "separator between words")
-	fs.IntVar(&opts.count, "n", 8, "number of passphrases to generate")
 	fs.IntVar(&opts.count, "count", 8, "number of passphrases to generate")
-	fs.BoolVar(&opts.capitalize, "c", false, "capitalize the first letter of each word")
 	fs.BoolVar(&opts.capitalize, "capitalize", false, "capitalize the first letter of each word")
 	fs.BoolVar(&opts.number, "number", false, "append one random digit to a random word")
-	fs.BoolVar(&opts.symbol, "symbol", false, "append one random symbol to a random word")
+	fs.StringVar(&opts.symbols, "symbols", "", "append one random symbol chosen from this string to a random word")
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: diceware [options]\n\n")
 		fmt.Fprintf(stderr, "Generate offline passphrases from the embedded EFF Large Wordlist.\n\n")
@@ -139,16 +132,17 @@ func generatePassphrase(words []string, opts options, rng io.Reader) (string, er
 		chosen[target] = fmt.Sprintf("%s%d", chosen[target], digit)
 	}
 
-	if opts.symbol {
+	if opts.symbols != "" {
+		symbolRunes := []rune(opts.symbols)
 		target, err := randInt(rng, opts.words)
 		if err != nil {
 			return "", err
 		}
-		symIdx, err := randInt(rng, len(defaultSymbols))
+		symIdx, err := randInt(rng, len(symbolRunes))
 		if err != nil {
 			return "", err
 		}
-		chosen[target] = chosen[target] + string(defaultSymbols[symIdx])
+		chosen[target] = chosen[target] + string(symbolRunes[symIdx])
 	}
 
 	return strings.Join(chosen, opts.sep), nil

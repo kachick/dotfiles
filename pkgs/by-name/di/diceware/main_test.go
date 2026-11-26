@@ -64,7 +64,7 @@ func TestRunOptions(t *testing.T) {
 
 	t.Run("custom words, separator, and count", func(t *testing.T) {
 		var stdout, stderr bytes.Buffer
-		code := run([]string{"-w", "2", "-s", "_", "-n", "3"}, &stdout, &stderr)
+		code := run([]string{"--words", "2", "--sep", "_", "--count", "3"}, &stdout, &stderr)
 		if code != 0 {
 			t.Fatalf("exit code = %d, want 0 (stderr=%q)", code, stderr.String())
 		}
@@ -86,9 +86,10 @@ func TestRunOptions(t *testing.T) {
 		}
 	})
 
-	t.Run("capitalize, number, and symbol with single word", func(t *testing.T) {
+	t.Run("capitalize, number, and symbols with single word", func(t *testing.T) {
+		const allowedSymbols = "!@#?"
 		var stdout, stderr bytes.Buffer
-		code := run([]string{"-w", "1", "-n", "1", "-c", "-number", "-symbol"}, &stdout, &stderr)
+		code := run([]string{"--words", "1", "--count", "1", "--capitalize", "--number", "--symbols", allowedSymbols}, &stdout, &stderr)
 		if code != 0 {
 			t.Fatalf("exit code = %d, want 0 (stderr=%q)", code, stderr.String())
 		}
@@ -103,14 +104,14 @@ func TestRunOptions(t *testing.T) {
 		if !strings.ContainsAny(got, "0123456789") {
 			t.Fatalf("expected a digit in %q", got)
 		}
-		if !strings.ContainsAny(got, defaultSymbols) {
-			t.Fatalf("expected a symbol from %q in %q", defaultSymbols, got)
+		if !strings.ContainsAny(got, allowedSymbols) {
+			t.Fatalf("expected a symbol from %q in %q", allowedSymbols, got)
 		}
 	})
 
 	t.Run("help exits 0", func(t *testing.T) {
 		var stdout, stderr bytes.Buffer
-		code := run([]string{"-h"}, &stdout, &stderr)
+		code := run([]string{"--help"}, &stdout, &stderr)
 		if code != 0 {
 			t.Fatalf("exit code = %d, want 0", code)
 		}
@@ -119,10 +120,11 @@ func TestRunOptions(t *testing.T) {
 
 func TestRunInvalidArgs(t *testing.T) {
 	cases := [][]string{
-		{"-w", "0"},
-		{"-n", "0"},
+		{"--words", "0"},
+		{"--count", "0"},
+		{"-w", "2"},
 		{"extra"},
-		{"-unknown"},
+		{"--unknown"},
 	}
 
 	for _, args := range cases {
