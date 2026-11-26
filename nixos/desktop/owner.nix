@@ -10,6 +10,8 @@ in
 {
   users.users.${username} = mkUser {
     extraGroups = [
+      "wheel" # Required by sudo and Nix trusted-users
+      "libvirtd" # GUI VM management
       "wireshark"
     ];
 

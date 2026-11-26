@@ -8,15 +8,14 @@ assert lib.assertMsg (
 ) "mkUser: use standard extraGroups instead of additionalGroups";
 
 let
-  # Don't set "wheel" by default. Most distributions set sudoable.
+  # Keep privileged groups (wheel, libvirtd) opt-in per user so ephemeral
+  # accounts cannot escalate via sudo, Nix trusted-users, or libvirt.
   defaultGroups = [
     "networkmanager"
-    "wheel" # Required by Nix trusted-users and WiFi.
     "input" # Finger print in GDM
     "uinput" # Added in GH-1156. Required by keyboard remappers. This will be unassigned when `hardware.uinput.enable = false`.
     "scanner"
     "lp" # Scanner
-    "libvirtd" # GUI VM management
   ];
 in
 # Use lib.mkMerge instead of `//` so list options like extraGroups and packages

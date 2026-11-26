@@ -41,6 +41,9 @@ in
   # This ensures consistency with owner/ephemeral users, including group memberships like uinput.
   users.users.nixos = mkUser {
     description = "NixOS Live User";
+    extraGroups = [
+      "wheel"
+    ];
     openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
 

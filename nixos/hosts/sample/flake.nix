@@ -54,6 +54,8 @@
             {
               networking.hostName = "sample";
               system.stateVersion = "26.05";
+              # Grant sudo access because visitor is the sole user on this sample host.
+              users.users.visitor.extraGroups = [ "wheel" ];
             }
           )
         ];
