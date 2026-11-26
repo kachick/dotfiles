@@ -2,6 +2,9 @@ package main
 
 import (
 	"bytes"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -262,6 +265,97 @@ func TestRunChanges_FormatOutput(t *testing.T) {
 	} {
 		if !strings.Contains(got, expectedLine+"\n") {
 			t.Errorf("expected output %q to contain line %q", got, expectedLine)
+		}
+	}
+}
+
+func TestRunChanges_PushMultiCommitRange(t *testing.T) {
+	dir := t.TempDir()
+	runGit := func(args ...string) string {
+		t.Helper()
+		cmd := exec.Command("git", args...)
+		cmd.Dir = dir
+		cmd.Env = append(os.Environ(),
+			"GIT_AUTHOR_NAME=Test",
+			"GIT_AUTHOR_EMAIL=test@example.com",
+			"GIT_COMMITTER_NAME=Test",
+			"GIT_COMMITTER_EMAIL=test@example.com",
+			"GIT_CONFIG_GLOBAL=/dev/null",
+			"GIT_CONFIG_SYSTEM=/dev/null",
+		)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			t.Fatalf("git %v failed: %v\n%s", args, err, out)
+		}
+		return strings.TrimSpace(string(out))
+	}
+
+	writeFile := func(rel, content string) {
+		t.Helper()
+		full := filepath.Join(dir, rel)
+		if err := os.MkdirAll(filepath.Dir(full), 0o755); err != nil {
+			t.Fatalf("mkdir %s: %v", rel, err)
+		}
+		if err := os.WriteFile(full, []byte(content), 0o644); err != nil {
+			t.Fatalf("write %s: %v", rel, err)
+		}
+	}
+
+	runGit("init")
+	writeFile("README.md", "init\n")
+	runGit("add", ".")
+	runGit("commit", "--no-gpg-sign", "-m", "Initial commit")
+	beforeSHA := runGit("rev-parse", "HEAD")
+
+	// Earlier commit in the same push changes home-manager and nixos
+	writeFile("home-manager/default.nix", "{ }\n")
+	writeFile("nixos/desktop/game-unfree.nix", "{ }\n")
+	runGit("add", ".")
+	runGit("commit", "--no-gpg-sign", "-m", "Update home-manager and nixos")
+
+	// Final commit in the same push changes only containers/
+	writeFile("containers/base-image.json", "{}\n")
+	runGit("add", ".")
+	runGit("commit", "--no-gpg-sign", "-m", "Update container base image")
+
+	t.Chdir(dir)
+	t.Setenv("BASE_SHA", beforeSHA)
+
+	var buf bytes.Buffer
+	if err := runChanges([]string{"--event=push"}, &buf); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	got := buf.String()
+	for _, expectedLine := range []string{
+		"packages=false",
+		"home-manager=true",
+		"nixos=true",
+		"container=true",
+		"flake-lock=false",
+	} {
+		if !strings.Contains(got, expectedLine+"\n") {
+			t.Errorf("expected output:\n%s\nto contain %q", got, expectedLine)
+		}
+	}
+}
+
+func TestRunChanges_PushZeroBaseSHAFailsClosed(t *testing.T) {
+	t.Setenv("BASE_SHA", strings.Repeat("0", 40))
+
+	var buf bytes.Buffer
+	if err := runChanges([]string{"--event=push"}, &buf); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	got := buf.String()
+	for _, expectedLine := range []string{
+		"packages=true",
+		"home-manager=true",
+		"nixos=true",
+		"container=true",
+		"flake-lock=false",
+	} {
+		if !strings.Contains(got, expectedLine+"\n") {
+			t.Errorf("expected output:\n%s\nto contain %q", got, expectedLine)
 		}
 	}
 }

@@ -145,11 +145,15 @@ func isPackageInputPath(p string) bool {
 	return false
 }
 
+func isZeroSHA(rev string) bool {
+	return len(rev) >= 40 && strings.Trim(rev, "0") == ""
+}
+
 func runChanges(args []string, stdout io.Writer) error {
 	fs := flag.NewFlagSet("changes", flag.ExitOnError)
 	eventFlag := fs.String("event", "", "GitHub event name (defaults to EVENT_NAME or GITHUB_EVENT_NAME)")
 	targetFlag := fs.String("target", "", "Target job for workflow_dispatch (defaults to TARGET)")
-	baseFlag := fs.String("base", "HEAD^1", "Base git revision for diff")
+	baseFlag := fs.String("base", "", "Base git revision for diff (defaults to BASE_SHA or HEAD^1)")
 	headFlag := fs.String("head", "HEAD", "Head git revision for diff")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -168,11 +172,19 @@ func runChanges(args []string, stdout io.Writer) error {
 		target = os.Getenv("TARGET")
 	}
 
+	baseRev := strings.TrimSpace(*baseFlag)
+	if baseRev == "" {
+		baseRev = strings.TrimSpace(os.Getenv("BASE_SHA"))
+	}
+	if baseRev == "" {
+		baseRev = "HEAD^1"
+	}
+
 	var changedFiles []string
-	if eventName == "push" || eventName == "pull_request" {
-		out, err := exec.Command("git", "diff", "--name-only", *baseFlag, *headFlag).Output()
+	if (eventName == "push" || eventName == "pull_request") && !isZeroSHA(baseRev) {
+		out, err := exec.Command("git", "diff", "--name-only", baseRev, *headFlag).Output()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Warning: git diff %s %s failed (%v); falling back to running all jobs\n", *baseFlag, *headFlag, err)
+			fmt.Fprintf(os.Stderr, "Warning: git diff %s %s failed (%v); falling back to running all jobs\n", baseRev, *headFlag, err)
 		} else {
 			for _, line := range strings.Split(string(out), "\n") {
 				trimmed := strings.TrimSpace(line)
