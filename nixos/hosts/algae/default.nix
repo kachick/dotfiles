@@ -109,6 +109,10 @@
 
   # Use WQHD on this 4K desktop host instead of the shared FHD default.
   programs.gamescope.args = [
+    "-W"
+    "2560"
+    "-H"
+    "1440"
     "-w"
     "2560"
     "-h"
