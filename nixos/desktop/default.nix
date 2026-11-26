@@ -7,6 +7,7 @@
 
 {
   imports = [
+    ./avatar.nix
     ./font.nix
     ./vm.nix
   ];

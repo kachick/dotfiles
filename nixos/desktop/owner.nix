@@ -8,7 +8,6 @@ let
 in
 {
   users.users.owner = mkUser {
-    description = "foolish";
     additionalGroups = [
       "wheel"
       "wireshark"

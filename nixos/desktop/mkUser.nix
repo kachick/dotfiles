@@ -24,7 +24,6 @@ in
 {
   inherit extraGroups;
   isNormalUser = true;
-  description = "Generic user";
   packages = [
     # Don't install unfree packages such as spotify.
     # Use Web Player or PWA
