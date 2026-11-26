@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"testing"
@@ -294,6 +297,47 @@ func TestFetchGHCRUTCTags(t *testing.T) {
 	want := []string{"20260201-utc", "20260101-utc"}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("tags = %v, want %v", got, want)
+	}
+}
+
+func TestSelectWithFzf(t *testing.T) {
+	binDir := t.TempDir()
+	argsFile := filepath.Join(binDir, "args.txt")
+	stdinFile := filepath.Join(binDir, "stdin.txt")
+	fakeFzf := filepath.Join(binDir, "fzf")
+	script := "#!/bin/sh\nprintf '%s\\n' \"$@\" > \"" + argsFile + "\"\ncat > \"" + stdinFile + "\"\nhead -n 1 \"" + stdinFile + "\"\n"
+	if err := os.WriteFile(fakeFzf, []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("PATH", binDir+string(os.PathListSeparator)+os.Getenv("PATH"))
+
+	var stderr bytes.Buffer
+	got, err := selectWithFzf([]string{"20260201-utc", "20260101-utc"}, "ghcr> ", "", &stderr)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got != "20260201-utc" {
+		t.Fatalf("selected = %q, want %q", got, "20260201-utc")
+	}
+
+	rawArgs, err := os.ReadFile(argsFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gotArgs := strings.Split(strings.TrimSuffix(string(rawArgs), "\n"), "\n")
+	wantArgs := []string{"--prompt=ghcr> "}
+	if !reflect.DeepEqual(gotArgs, wantArgs) {
+		t.Fatalf("fzf args = %v, want %v", gotArgs, wantArgs)
+	}
+
+	rawStdin, err := os.ReadFile(stdinFile)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wantStdin := "20260201-utc\n20260101-utc\n"
+	if string(rawStdin) != wantStdin {
+		t.Fatalf("fzf stdin = %q, want %q", string(rawStdin), wantStdin)
 	}
 }
 

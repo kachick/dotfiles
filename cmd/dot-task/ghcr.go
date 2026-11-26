@@ -120,7 +120,9 @@ func selectWithFzf(items []string, prompt, header string, stderr io.Writer) (str
 		return "", fmt.Errorf("finding fzf: %w", err)
 	}
 
-	args := []string{"--reverse"}
+	// Keep fzf's default bottom-up layout instead of --reverse so the first item
+	// (e.g. the newest GHCR tag) stays at the bottom under the initial cursor.
+	var args []string
 	if prompt != "" {
 		args = append(args, "--prompt="+prompt)
 	}
