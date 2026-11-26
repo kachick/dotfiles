@@ -16,19 +16,19 @@
   programs.gamescope = {
     enable = true;
     # Cap resolution and unfocused FPS to keep GNOME responsive on iGPU hosts.
-    # Match output size (-W/-H) to nested size (-w/-h) so the window does not open at 720p.
+    # Match output size to nested size so the window does not open at 720p.
     args = lib.mkDefault [
-      "-W"
+      "--output-width"
       "1920"
-      "-H"
+      "--output-height"
       "1080"
-      "-w"
+      "--nested-width"
       "1920"
-      "-h"
+      "--nested-height"
       "1080"
-      "-r"
+      "--nested-refresh"
       "60"
-      "-o"
+      "--nested-unfocused-refresh"
       "15"
     ];
   };
