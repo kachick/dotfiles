@@ -99,6 +99,7 @@
         # - https://github.com/kachick/dotfiles/issues/280
         # - https://discourse.nixos.org/t/home-manager-neovim-collision/16963/2
 
+        # NOTE: Terminal theme config is not supported yet; see https://github.com/microsoft/edit/issues/575
         msedit # `edit`
         fresh-editor # `fresh`
 
