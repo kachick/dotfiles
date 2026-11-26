@@ -54,6 +54,10 @@
         # exec-arg="";
       };
 
+      "org/gnome/desktop/peripherals/mouse" = {
+        natural-scroll = true;
+      };
+
       "org/gnome/desktop/background" = {
         picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/drool-l.svg";
       };
