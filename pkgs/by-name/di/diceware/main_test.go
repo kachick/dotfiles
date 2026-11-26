@@ -109,6 +109,20 @@ func TestRunOptions(t *testing.T) {
 		}
 	})
 
+	t.Run("dump-wordlist prints raw embedded wordlist", func(t *testing.T) {
+		var stdout, stderr bytes.Buffer
+		code := run([]string{"--dump-wordlist"}, &stdout, &stderr)
+		if code != 0 {
+			t.Fatalf("exit code = %d, want 0 (stderr=%q)", code, stderr.String())
+		}
+		if stdout.String() != rawWordlist {
+			t.Fatalf("stdout does not match embedded wordlist (got %d bytes, want %d bytes)", stdout.Len(), len(rawWordlist))
+		}
+		if stderr.Len() != 0 {
+			t.Fatalf("unexpected stderr %q", stderr.String())
+		}
+	})
+
 	t.Run("help exits 0", func(t *testing.T) {
 		var stdout, stderr bytes.Buffer
 		code := run([]string{"--help"}, &stdout, &stderr)
@@ -122,6 +136,7 @@ func TestRunInvalidArgs(t *testing.T) {
 	cases := [][]string{
 		{"--words", "0"},
 		{"--count", "0"},
+		{"--dump-wordlist", "--words", "2"},
 		{"-w", "2"},
 		{"extra"},
 		{"--unknown"},

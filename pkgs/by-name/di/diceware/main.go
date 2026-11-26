@@ -32,6 +32,7 @@ func main() {
 
 func run(args []string, stdout, stderr io.Writer) int {
 	var opts options
+	var dumpWordlist bool
 	fs := flag.NewFlagSet("diceware", flag.ContinueOnError)
 	fs.SetOutput(stderr)
 	fs.IntVar(&opts.words, "words", 6, "number of words per passphrase")
@@ -40,6 +41,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	fs.BoolVar(&opts.capitalize, "capitalize", false, "capitalize the first letter of each word")
 	fs.BoolVar(&opts.number, "number", false, "append one random digit to a random word")
 	fs.StringVar(&opts.symbols, "symbols", "", "append one random symbol chosen from this string to a random word")
+	fs.BoolVar(&dumpWordlist, "dump-wordlist", false, "print the embedded EFF Large Wordlist and exit")
 	fs.Usage = func() {
 		fmt.Fprintf(stderr, "Usage: diceware [options]\n\n")
 		fmt.Fprintf(stderr, "Generate offline passphrases from the embedded EFF Large Wordlist.\n\n")
@@ -57,6 +59,23 @@ func run(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stderr, "Error: unexpected positional arguments\n")
 		fs.Usage()
 		return 2
+	}
+	if dumpWordlist {
+		hasOtherFlag := false
+		fs.Visit(func(f *flag.Flag) {
+			if f.Name != "dump-wordlist" {
+				hasOtherFlag = true
+			}
+		})
+		if hasOtherFlag {
+			fmt.Fprintf(stderr, "Error: -dump-wordlist cannot be combined with other options\n")
+			return 2
+		}
+		if _, err := io.WriteString(stdout, rawWordlist); err != nil {
+			fmt.Fprintf(stderr, "Error: %v\n", err)
+			return 1
+		}
+		return 0
 	}
 	if opts.words < 1 {
 		fmt.Fprintf(stderr, "Error: -words must be at least 1\n")
