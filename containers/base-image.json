@@ -1,7 +1,7 @@
 {
   "imageName": "ghcr.io/kachick/ubuntu-26.04-systemd",
-  "imageDigest": "sha256:49f37ee531434816a347cd43eab724981a841f8ceed96c52e28af5118c3ab426",
-  "hash": "sha256-TupxCv1BvSPNvtVuiI00V35jcvF7X4lSwvet8ButrSc=",
+  "imageDigest": "sha256:3caeedf1db823a7bd1409decda7bf65aca1f327055ccfcdefe73daaa31c479b3",
+  "hash": "sha256-ff+WBTuTuaZOMEOAHcY8Gs/3SxbrZFMiHkpw+FfZW9w=",
   "finalImageName": "ghcr.io/kachick/ubuntu-26.04-systemd",
   "finalImageTag": "latest"
 }
