@@ -60,6 +60,8 @@
     "d /mnt/archive/libvirt/images 0770 root libvirtd -"
     # Shared ISO installation media storage readable by all users and writable by libvirtd
     "d /mnt/archive/libvirt/isos 0775 root libvirtd -"
+    # Shared archive storage writable by owner and read-only for other users
+    "d /mnt/archive/shared 0755 owner users -"
   ];
 
   # Enable swap file for hibernation.
