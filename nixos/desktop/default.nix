@@ -420,6 +420,14 @@
   # https://github.com/NixOS/nixpkgs/issues/180175#issuecomment-2541381489
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
+  # Workaround for NixOS/nixpkgs#570148: tailscaled-set only uses
+  # wantedBy = [ "tailscaled.service" ] without RemainAfterExit, so
+  # nixos-rebuild switch skips it when tailscaled itself is unchanged.
+  systemd.services.tailscaled-set = lib.mkIf (config.services.tailscale.extraSetFlags != [ ]) {
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig.RemainAfterExit = true;
+  };
+
   # Workaround for Tailscale MagicDNS with systemd-resolved when DNSStubListener is disabled.
   #
   # WHY this is needed:
