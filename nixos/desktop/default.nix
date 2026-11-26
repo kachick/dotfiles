@@ -9,6 +9,7 @@
   imports = [
     ./avatar.nix
     ./font.nix
+    ./gdm.nix
     ./vm.nix
   ];
 
