@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     # Shogi
@@ -13,5 +13,18 @@
     local.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/tanuki-hao/eval
   ];
 
-  programs.gamescope.enable = true;
+  programs.gamescope = {
+    enable = true;
+    # Cap resolution and unfocused FPS to keep GNOME responsive on iGPU hosts.
+    args = lib.mkDefault [
+      "-w"
+      "1920"
+      "-h"
+      "1080"
+      "-r"
+      "60"
+      "-o"
+      "15"
+    ];
+  };
 }

@@ -105,4 +105,16 @@
 
     local.hcpu_shogi
   ];
+
+  # Use WQHD on this 4K desktop host instead of the shared FHD default.
+  programs.gamescope.args = [
+    "-w"
+    "2560"
+    "-h"
+    "1440"
+    "-r"
+    "60"
+    "-o"
+    "15"
+  ];
 }

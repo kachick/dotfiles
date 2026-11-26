@@ -8,6 +8,24 @@
 
   environment.systemPackages = with pkgs; [
     local.ludii-bin
+
+    (makeDesktopItem {
+      name = "steam-gamescope";
+      desktopName = "Steam (Gamescope)";
+      comment = "Launch Steam inside Gamescope";
+      icon = "steam";
+      exec = "gamescope -- steam %U";
+      categories = [
+        "Network"
+        "FileTransfer"
+        "Game"
+      ];
+      # Match gamescope's Wayland app_id so GNOME Dash shows the Steam icon.
+      startupWMClass = "gamescope";
+      extraConfig = {
+        PrefersNonDefaultGPU = "true";
+      };
+    })
   ];
 
   programs.steam = {
