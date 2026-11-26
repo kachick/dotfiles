@@ -142,6 +142,14 @@ func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) err
 		}
 	}
 
+	var bareCommonRunner *gitcmd.Runner
+	if ctx, err := gitcmd.DetectRepoContext(workDir, stdout, stderr); err == nil && ctx.IsBare {
+		commonRunner := gitcmd.NewIsolated(ctx.CommonDir, stdout, stderr)
+		if bareHead, err := commonRunner.Output("symbolic-ref", "--short", "HEAD"); err == nil && bareHead == targetBranch {
+			bareCommonRunner = commonRunner
+		}
+	}
+
 	// Rename current target branch to backup branch.
 	//
 	// Why not git reset --hard:
@@ -155,6 +163,14 @@ func runResetBranch(args []string, workDir string, stdout, stderr io.Writer) err
 	remoteRef := fmt.Sprintf("%s/%s", *remote, targetBranch)
 	if _, err := r.Output("checkout", "-b", targetBranch, remoteRef); err != nil {
 		return fmt.Errorf("failed to recreate branch '%s' from '%s': %w", targetBranch, remoteRef, err)
+	}
+
+	// git branch -m also rewrites the bare repository's HEAD, while git checkout -b
+	// only updates the current worktree HEAD.
+	if bareCommonRunner != nil {
+		if _, err := bareCommonRunner.Output("symbolic-ref", "HEAD", "refs/heads/"+targetBranch); err != nil {
+			return fmt.Errorf("failed to restore bare HEAD to '%s': %w", targetBranch, err)
+		}
 	}
 
 	fmt.Fprintf(stdout, "Successfully reset branch '%s' to '%s'. (Previous state backed up as '%s')\n", targetBranch, remoteRef, backupBranch)

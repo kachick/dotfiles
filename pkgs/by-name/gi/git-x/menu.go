@@ -870,6 +870,13 @@ func handleMenuCommitsStep(
 		gitDir = workDir
 	}
 	if gitDir == "" {
+		// CLI callers pass empty workDir; resolve cwd before falling back to ctx.ContainerDir
+		// so linked worktrees show their own HEAD instead of the bare root HEAD.
+		if cwd, err := os.Getwd(); err == nil {
+			gitDir = cwd
+		}
+	}
+	if gitDir == "" {
 		gitDir = ctx.ContainerDir
 	}
 

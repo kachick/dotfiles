@@ -191,4 +191,41 @@ func TestRunResetBranch_Sandbox(t *testing.T) {
 			t.Errorf("mainWT branch = %q, want main", br)
 		}
 	})
+
+	t.Run("restores bare HEAD to default branch when resetting clean-bare default worktree", func(t *testing.T) {
+		isolateEnv(t)
+		remoteDir, _ := setupResetSandbox(t)
+
+		temp := t.TempDir()
+		repoDir := filepath.Join(temp, "clean-bare")
+		if err := os.MkdirAll(repoDir, 0o755); err != nil {
+			t.Fatalf("mkdir repoDir: %v", err)
+		}
+		bareGitDir := filepath.Join(repoDir, ".git")
+		runGit(t, repoDir, "clone", "--bare", remoteDir, bareGitDir)
+		runGit(t, repoDir, "config", "set", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
+		runGit(t, repoDir, "fetch", "--quiet", "origin")
+		runGit(t, repoDir, "remote", "set-head", "origin", "--auto")
+
+		mainWT := filepath.Join(repoDir, "main")
+		runGit(t, repoDir, "worktree", "add", mainWT, "main")
+		runGit(t, mainWT, "config", "user.name", "Tester")
+		runGit(t, mainWT, "config", "user.email", "tester@example.com")
+
+		remoteMainHash := runGit(t, mainWT, "rev-parse", "origin/main")
+		writeTestFile(t, filepath.Join(mainWT, "README.md"), "Unwanted local change")
+		runGit(t, mainWT, "commit", "-a", "-m", "Unwanted local commit")
+
+		var stdout, stderr bytes.Buffer
+		if err := runResetBranch([]string{}, mainWT, &stdout, &stderr); err != nil {
+			t.Fatalf("runResetBranch in clean-bare default worktree failed: %v, stderr: %s", err, stderr.String())
+		}
+
+		if head := runGit(t, mainWT, "rev-parse", "HEAD"); head != remoteMainHash {
+			t.Errorf("mainWT HEAD = %s, want %s", head, remoteMainHash)
+		}
+		if bareHead := runGit(t, bareGitDir, "symbolic-ref", "--short", "HEAD"); bareHead != "main" {
+			t.Errorf("bare HEAD = %q, want main", bareHead)
+		}
+	})
 }

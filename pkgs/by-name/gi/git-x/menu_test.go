@@ -140,6 +140,43 @@ func TestRunMenu_ModeSwitchingAndActions(t *testing.T) {
 		}
 	})
 
+	t.Run("commits mode with empty workDir uses current worktree instead of bare root HEAD", func(t *testing.T) {
+		isolateEnv(t)
+		repoDir, defaultWT := setupCleanBareRepo(t, "main", []string{"feat/cwd-log"}, "")
+		var addOut, addErr bytes.Buffer
+		if err := runWT([]string{"add", "--branch", "feat/cwd-log"}, defaultWT, &addOut, &addErr); err != nil {
+			t.Fatalf("wt add feat/cwd-log failed: %v, stderr: %s", err, addErr.String())
+		}
+		otherWT := filepath.Join(repoDir, "feat-cwd-log")
+		t.Chdir(otherWT)
+
+		var gotCommitDir string
+		var gotCommitLog string
+		ui := menuInteractiveUI{
+			selectCommitItem: func(gitDir string, _ []string, stderr io.Writer) (selectChoice, error) {
+				gotCommitDir = gitDir
+				r := gitcmd.New(gitDir, stderr, stderr)
+				raw, err := r.OutputRaw("log", "--format="+defaultLogFormat, "--date=short", "--color=always")
+				if err != nil {
+					return selectChoice{}, err
+				}
+				gotCommitLog = string(raw)
+				return selectChoice{}, gitcmd.ErrSelectionCanceled
+			},
+		}
+
+		var stdout, stderr bytes.Buffer
+		if err := runMenuWithUI(nil, "", ui, &stdout, &stderr); err != nil {
+			t.Fatalf("runMenuWithUI with empty workDir failed: %v, stderr: %s", err, stderr.String())
+		}
+		if gotCommitDir != otherWT {
+			t.Errorf("commits view gitDir = %q, want %q", gotCommitDir, otherWT)
+		}
+		if !strings.Contains(gotCommitLog, "Commit on feat/cwd-log") {
+			t.Errorf("expected commits log from current worktree, got:\n%s", gotCommitLog)
+		}
+	})
+
 	t.Run("worktrees ctrl-a, ctrl-d guards, ctrl-x pr and promote, and repos ctrl-a clone", func(t *testing.T) {
 		isolateEnv(t)
 		repoDir, defaultWT := setupCleanBareRepo(t, "main", nil, "")
