@@ -40,13 +40,15 @@ func TestRunDefaults(t *testing.T) {
 		t.Fatalf("exit code = %d, want 0 (stderr=%q)", code, stderr.String())
 	}
 
-	line := strings.TrimSuffix(stdout.String(), "\n")
-	if line == "" || strings.Contains(line, "\n") {
-		t.Fatalf("expected 1 non-empty line, got %q", stdout.String())
+	lines := strings.Split(strings.TrimSuffix(stdout.String(), "\n"), "\n")
+	if len(lines) != 8 {
+		t.Fatalf("got %d lines, want 8", len(lines))
 	}
-	// EFF wordlist includes hyphenated words such as "yo-yo", so 6 words joined by "-" have at least 5 hyphens.
-	if strings.Count(line, "-") < 5 {
-		t.Fatalf("expected at least 5 hyphens for default 6 words, got %q", line)
+	for _, line := range lines {
+		// EFF wordlist includes hyphenated words such as "yo-yo", so 6 words joined by "-" have at least 5 hyphens.
+		if strings.Count(line, "-") < 5 {
+			t.Fatalf("expected at least 5 hyphens for default 6 words, got %q", line)
+		}
 	}
 }
 
@@ -86,7 +88,7 @@ func TestRunOptions(t *testing.T) {
 
 	t.Run("capitalize, number, and symbol with single word", func(t *testing.T) {
 		var stdout, stderr bytes.Buffer
-		code := run([]string{"-w", "1", "-c", "-number", "-symbol"}, &stdout, &stderr)
+		code := run([]string{"-w", "1", "-n", "1", "-c", "-number", "-symbol"}, &stdout, &stderr)
 		if code != 0 {
 			t.Fatalf("exit code = %d, want 0 (stderr=%q)", code, stderr.String())
 		}

@@ -27,7 +27,7 @@ cdwin() {
 # Use the local zero-dependency diceware binary so essential/server shells get readable temp directory names without pulling in encryption tools.
 cdtemp() {
 	local words template
-	words="$('@diceware@' -words 2)" || return 1
+	words="$('@diceware@' -words 2 -count 1)" || return 1
 	if [ $# -lt 1 ]; then
 		template="cdtemp.${words}.XXX"
 	else

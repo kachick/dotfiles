@@ -39,10 +39,12 @@ buildGo127Module (finalAttrs: {
 
   meta = {
     description = "Offline passphrase generator using the EFF Large Wordlist";
-    license = [
-      lib.licenses.mit
-      lib.licenses.cc-by-30
-    ];
+    license =
+      with lib.licenses;
+      AND [
+        mit
+        cc-by-30 # for embedded EFF Large Wordlist
+      ];
     mainProgram = finalAttrs.pname;
   };
 })
