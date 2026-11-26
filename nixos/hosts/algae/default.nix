@@ -28,22 +28,21 @@
   boot.initrd.kernelModules = [ "amdgpu" ];
 
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/system/boot/luksroot.nix
-  boot.initrd.luks.devices = {
-    "luks-9b94a10b-7ca3-4e4f-b52d-b1cf5104b519" = {
-      # fstrim is enabled weekly by default:
-      # https://github.com/NixOS/nixpkgs/blob/35b4600dfe916d64506ad6dfad275faeca833a6f/nixos/modules/services/misc/fstrim.nix#L16-L22
-      # Check "Size/Capacity" and "Utilization" via: sudo smartctl -a /dev/nvme0n1
-      # To run fstrim immediately: sudo fstrim -av
-      allowDiscards = true; # See GH-1555 for the background
+  boot.initrd.luks.devices."luks-9b94a10b-7ca3-4e4f-b52d-b1cf5104b519" = {
+    # fstrim is enabled weekly by default:
+    # https://github.com/NixOS/nixpkgs/blob/35b4600dfe916d64506ad6dfad275faeca833a6f/nixos/modules/services/misc/fstrim.nix#L16-L22
+    # Check "Size/Capacity" and "Utilization" via: sudo smartctl -a /dev/nvme0n1
+    # To run fstrim immediately: sudo fstrim -av
+    allowDiscards = true; # See GH-1555 for the background
 
-      bypassWorkqueues = true;
-    };
-
-    "archive" = {
-      allowDiscards = true;
-      bypassWorkqueues = true;
-    };
+    bypassWorkqueues = true;
   };
+
+  # Unlock the secondary SSD in stage 2 using a keyfile on the encrypted root
+  # instead of prompting for two LUKS passphrases in parallel during initrd.
+  environment.etc."crypttab".text = ''
+    archive UUID=4ee41fba-4ab8-4865-8521-acfe56022ae0 /etc/cryptsetup-keys.d/archive.key discard,no-read-workqueue,no-write-workqueue
+  '';
 
   boot.loader.systemd-boot = {
     enable = true;

@@ -23,8 +23,10 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  # Use the dm-crypt mapper path so systemd stage 1 does not time out waiting
+  # for the root filesystem during passphrase entry.
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/235a8e7d-cca5-4a9d-bfaa-785289b32040";
+    device = "/dev/mapper/luks-9b94a10b-7ca3-4e4f-b52d-b1cf5104b519";
     fsType = "ext4";
   };
 
@@ -40,9 +42,6 @@
     device = "/dev/mapper/archive";
     fsType = "ext4";
   };
-
-  boot.initrd.luks.devices."archive".device =
-    "/dev/disk/by-uuid/4ee41fba-4ab8-4865-8521-acfe56022ae0";
 
   swapDevices = [ ];
 
