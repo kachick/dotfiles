@@ -348,6 +348,14 @@
         show-create-link = true;
       };
 
+      "org/gtk/settings/file-chooser" = {
+        show-hidden = true;
+      };
+
+      "org/gtk/gtk4/settings/file-chooser" = {
+        show-hidden = true;
+      };
+
       "org/gnome/TextEditor" = {
         show-line-numbers = true;
         highlight-current-line = true;
