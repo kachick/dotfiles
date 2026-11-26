@@ -127,6 +127,9 @@ in
 
       worktree = {
         guessRemote = true;
+        # Avoid absolute paths so worktrees keep working across user/dir moves and VM/container mounts.
+        # Requires Git 2.48+ (`extensions.relativeWorktrees`).
+        useRelativePaths = true;
       };
 
       branch = {
