@@ -392,7 +392,7 @@ func TestRunGHCRWithEndpointsAndCache(t *testing.T) {
 	defer srv.Close()
 
 	cacheRoot := t.TempDir()
-	cachePath := filepath.Join(cacheRoot, "dot-task", "ghcr-manifests.json")
+	cachePath := filepath.Join(cacheRoot, "dotfiles", "ghcr", "manifests.json")
 	if err := saveGHCRManifestCache(cachePath, ghcrManifestCache{
 		Version: ghcrManifestCacheVersion,
 		Manifests: map[string]cachedManifest{
@@ -455,6 +455,9 @@ func TestRunGHCRWithEndpointsAndCache(t *testing.T) {
 	}
 	if !strings.Contains(capturedRows[1], "200.0 MiB") || !strings.Contains(capturedRows[1], "PR #42") || !strings.Contains(capturedRows[1], "Test staging PR") {
 		t.Fatalf("second row missing expected columns: %q", capturedRows[1])
+	}
+	if !strings.Contains(capturedOpts.header, "DL SIZE") {
+		t.Fatalf("expected header to contain DL SIZE, got %q", capturedOpts.header)
 	}
 	if !strings.Contains(capturedOpts.preview, "ghcr-preview {1} {2} {3} {4}") {
 		t.Fatalf("unexpected preview command: %q", capturedOpts.preview)
@@ -532,7 +535,7 @@ func TestRunGHCRFallbackOnMissingScope(t *testing.T) {
 func TestRunGHCRPreview(t *testing.T) {
 	cacheRoot := t.TempDir()
 	digest := "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-	cachePath := filepath.Join(cacheRoot, "dot-task", "ghcr-manifests.json")
+	cachePath := filepath.Join(cacheRoot, "dotfiles", "ghcr", "manifests.json")
 	if err := saveGHCRManifestCache(cachePath, ghcrManifestCache{
 		Version: ghcrManifestCacheVersion,
 		Manifests: map[string]cachedManifest{

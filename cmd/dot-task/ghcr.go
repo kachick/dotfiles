@@ -366,12 +366,12 @@ func isFullCommitSHA(s string) bool {
 func resolveGHCRCachePath(e env) string {
 	if e.getenv != nil {
 		if xdg := e.getenv("XDG_CACHE_HOME"); xdg != "" {
-			return filepath.Join(xdg, "dot-task", "ghcr-manifests.json")
+			return filepath.Join(xdg, "dotfiles", "ghcr", "manifests.json")
 		}
 	}
 	if e.cacheDir != nil {
 		if dir, err := e.cacheDir(); err == nil && dir != "" {
-			return filepath.Join(dir, "dot-task", "ghcr-manifests.json")
+			return filepath.Join(dir, "dotfiles", "ghcr", "manifests.json")
 		}
 	}
 	return ""
@@ -408,7 +408,7 @@ func saveGHCRManifestCache(path string, cache ghcrManifestCache) error {
 	if err != nil {
 		return err
 	}
-	tmp, err := os.CreateTemp(dir, "ghcr-manifests-*.tmp")
+	tmp, err := os.CreateTemp(dir, "manifests-*.tmp")
 	if err != nil {
 		return err
 	}
@@ -695,7 +695,7 @@ func formatGHCRTable(entries []ghcrEntry, now time.Time) (header string, rows []
 	wTag := len("TAG")
 	wAge := len("AGE")
 	wLocal := len("LOCAL")
-	wSize := len("SIZE")
+	wSize := len("DL SIZE")
 	wKind := len("KIND")
 	wCommit := len("COMMIT")
 
@@ -740,7 +740,7 @@ func formatGHCRTable(entries []ghcrEntry, now time.Time) (header string, rows []
 		padRight("TAG", wTag),
 		padRight("AGE", wAge),
 		padRight("LOCAL", wLocal),
-		padLeft("SIZE", wSize),
+		padLeft("DL SIZE", wSize),
 		padRight("KIND", wKind),
 		padRight("COMMIT", wCommit),
 		"SUBJECT",
