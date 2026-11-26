@@ -34,6 +34,8 @@ WASM = "Wasm"
 [files]
 extend-exclude = [
   "**/go.mod",
+  # Fixed third-party EFF Large Wordlist; scanning 7,776 dictionary entries adds no value.
+  "**/eff_large_wordlist.txt",
   # typos does not have line based disabling option. See https://github.com/crate-ci/typos/issues/316#issuecomment-889836924
   "**/typo_commands.nix",
 ]

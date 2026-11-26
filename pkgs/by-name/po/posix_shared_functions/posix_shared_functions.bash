@@ -23,15 +23,15 @@ cdwin() {
 	cd "$(wslpath "$1")" || return 1
 }
 
-# Why plain mktemp instead of gopass pwgen:
-# Previously used gopass xkcd words for readable directory names without adding wordlist packages.
-# Keep essential/server shell helpers free of encryption tool dependencies; standard mktemp provides 6 random characters.
+# Why diceware instead of gopass pwgen:
+# Use the local zero-dependency diceware binary so essential/server shells get readable temp directory names without pulling in encryption tools.
 cdtemp() {
-	local template
+	local words template
+	words="$('@diceware@' -words 2)" || return 1
 	if [ $# -lt 1 ]; then
-		template="cdtemp.XXXXXX"
+		template="cdtemp.${words}.XXX"
 	else
-		template="cdtemp.$1.XXX"
+		template="cdtemp.$1.${words}.XXX"
 	fi
 
 	cd "$('@coreutils@/bin/mktemp' --tmpdir --directory "$template")" || return 1

@@ -191,6 +191,9 @@ jobs:
           - name: conoha-cli
             run: go run ./cmd/ci-build package conoha-cli
 
+          - name: diceware
+            run: go run ./cmd/ci-build package diceware
+
           - name: dot-writable-sync
             run: go run ./cmd/ci-build package dot-writable-sync
 

@@ -120,6 +120,7 @@
         pik # alt pkill
       ])
       ++ (with pkgs.local; [
+        diceware
         la
         lat
         p

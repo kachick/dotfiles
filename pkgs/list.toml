@@ -11,6 +11,7 @@ antigravity-cli = { build = true, test = true, update = true }
 antigravity-hub = { build = true, test = true, update = true }
 cloudflare-warp = { build = false, test = false, update = true }
 conoha-cli = { build = true, test = true, update = true }
+diceware = { build = true, test = true, update = false }
 dot-writable-sync = { build = true, test = true, update = false }
 filen-cli-rs = { build = true, test = true, update = true }
 gh-actions-lock = { build = true, test = true, update = true }

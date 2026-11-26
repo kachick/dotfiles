@@ -22,5 +22,6 @@
 # Note: Using `replaceVars` directly avoids Import From Derivation (IFD) which was caused by the previous `builtins.readFile` + `writeText` wrapper.
 replaceVars ./posix_shared_functions.bash {
   coreutils = lib.getBin pkgs.coreutils;
+  diceware = lib.getExe pkgs.local.diceware;
   starship = "${pkgs.starship}";
 }

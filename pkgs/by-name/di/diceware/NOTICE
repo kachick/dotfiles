@@ -1,0 +1,9 @@
+Third-Party Data Notice
+
+This package embeds the EFF Large Wordlist (`eff_large_wordlist.txt`).
+
+- Author: Electronic Frontier Foundation (EFF)
+- Source: https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt
+- Reference: https://www.eff.org/dice
+- License: Creative Commons Attribution 3.0 Unported (CC-BY-3.0)
+  https://creativecommons.org/licenses/by/3.0/
