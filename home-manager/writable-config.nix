@@ -81,10 +81,21 @@ in
 
   config = lib.mkIf (manifestEntries != [ ]) {
     home.activation.syncWritableConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      old_state="${config.xdg.stateHome}/dot-writable-sync/state.json"
+      state_path="${config.xdg.stateHome}/dotfiles/writable-sync/state.json"
+      if [ ! -e "$state_path" ] && [ -f "$old_state" ]; then
+        if [ -z "''${DRY_RUN:-}" ]; then
+          mkdir --parents "$(dirname "$state_path")"
+          mv "$old_state" "$state_path"
+          rmdir "$(dirname "$old_state")" 2>/dev/null || true
+        else
+          state_path="$old_state"
+        fi
+      fi
       ${lib.getExe pkgs.local.dot-writable-sync} sync \
         ''${DRY_RUN:+--dry-run} \
         --manifest "${manifestFile}" \
-        --state "${config.xdg.stateHome}/dot-writable-sync/state.json"
+        --state "$state_path"
     '';
   };
 }

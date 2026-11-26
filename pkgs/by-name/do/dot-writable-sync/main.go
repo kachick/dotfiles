@@ -151,7 +151,7 @@ func defaultStatePath() (string, error) {
 		}
 		stateHome = filepath.Join(home, ".local", "state")
 	}
-	return filepath.Join(stateHome, "dot-writable-sync", "state.json"), nil
+	return filepath.Join(stateHome, "dotfiles", "writable-sync", "state.json"), nil
 }
 
 func loadState(path string) (stateFile, error) {

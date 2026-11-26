@@ -113,7 +113,7 @@ in
       ./nix/var/nix/gcroots/per-user/user \
       ./home/user/.local/state/nix/profiles \
       ./home/user/.local/state/home-manager/gcroots \
-      ./home/user/.local/state/dot-writable-sync \
+      ./home/user/.local/state/dotfiles/writable-sync \
       ./home/user/.local/share/gnupg \
       ./home/user/.ssh
 
@@ -168,7 +168,7 @@ in
           )
         )
       }" \
-      --state "./home/user/.local/state/dot-writable-sync/state.json"
+      --state "./home/user/.local/state/dotfiles/writable-sync/state.json"
 
     # Extract files from the latest baseImage layer that contains them
     extract_from_base() {

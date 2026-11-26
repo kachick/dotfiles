@@ -100,3 +100,17 @@ func TestRunSync_Lifecycle(t *testing.T) {
 		t.Errorf("perm = %o, want 600", linkInfo.Mode().Perm())
 	}
 }
+
+func TestDefaultStatePath(t *testing.T) {
+	stateHome := t.TempDir()
+	t.Setenv("XDG_STATE_HOME", stateHome)
+
+	got, err := defaultStatePath()
+	if err != nil {
+		t.Fatalf("defaultStatePath failed: %v", err)
+	}
+	want := filepath.Join(stateHome, "dotfiles", "writable-sync", "state.json")
+	if got != want {
+		t.Fatalf("defaultStatePath = %q, want %q", got, want)
+	}
+}
