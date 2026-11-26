@@ -8,8 +8,7 @@ let
 in
 {
   users.users.owner = mkUser {
-    additionalGroups = [
-      "wheel"
+    extraGroups = [
       "wireshark"
     ];
 
