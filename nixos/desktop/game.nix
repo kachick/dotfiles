@@ -12,4 +12,6 @@
 
     local.tanuki-hao # NNUE evaluation file. It put under /run/current-system/sw/share/tanuki-hao/eval
   ];
+
+  programs.gamescope.enable = true;
 }

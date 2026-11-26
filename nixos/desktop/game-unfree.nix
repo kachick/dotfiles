@@ -12,6 +12,8 @@
 
   programs.steam = {
     enable = true;
+    # Make gamescope available inside Steam's FHS environment as well as on the host.
+    extraPackages = [ pkgs.gamescope ];
     # Isolate Steam and game binaries from real $HOME (~/.ssh, ~/repos, ~/.config) and /mnt
     # using Steam's existing buildFHSEnv bubblewrap layer instead of adding Flatpak.
     package = pkgs.steam.override {
