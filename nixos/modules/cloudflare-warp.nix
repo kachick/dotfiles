@@ -14,6 +14,16 @@
     package = pkgs.local.cloudflare-warp;
   };
 
+  # Upstream nixpkgs does not register cloudflare-warp in systemd.packages, so the
+  # bundled warp-taskbar.service never starts until manually triggered via D-Bus.
+  # systemd.packages ignores [Install], so set wantedBy explicitly.
+  systemd.packages = [ config.services.cloudflare-warp.package ];
+  systemd.user.services.warp-taskbar = {
+    wantedBy = [ "graphical-session.target" ];
+    # Skip system users such as the GDM greeter session.
+    unitConfig.ConditionUser = "!@system";
+  };
+
   # Avoid DNS conflicts with local DNS resolvers and Tailscale MagicDNS.
   # Using tunnel_only mode keeps the IP tunnel without breaking local DNS routing.
   #
