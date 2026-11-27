@@ -71,7 +71,7 @@ buildGo127Module (finalAttrs: {
       root = ../../../../.;
       fileset = unions [
         ../../../../go.mod
-        ../../../../internal
+        ../../../../internal/plamocache
         (difference ./. (maybeMissing ./README.md))
       ];
     };
