@@ -193,6 +193,11 @@ tasks:
     cmds:
       - './containers/test.bash {{.IMAGE}}'
 
+  copy-installer-iso:
+    desc: Build installer ISO locally, copy to MultiOS-USB, and delete ISO store path
+    cmds:
+      - './nixos/hosts/installer/copy-iso-to-usb.bash {{.CLI_ARGS}}'
+
   ci-dev:
     desc: Provided for CI
     deps:

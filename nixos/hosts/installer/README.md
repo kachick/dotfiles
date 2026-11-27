@@ -16,14 +16,17 @@ sudo sgdisk -n 3:0:0 -t 3:0700 -c 3:"Shared Data" /dev/sdX
 sudo partprobe /dev/sdX
 sudo mkfs.exfat -n SHARED_DATA /dev/sdX3
 
-# Copy the CI-built ISO onto MultiOS-USB and optional local PLaMo GGUF onto SHARED_DATA
-cp ~/Downloads/nixos-*.iso "/run/media/${USER}/MultiOS-USB/ISOs/"
+# Build the ISO locally, copy to MultiOS-USB, and remove the ISO store path right away
+task copy-installer-iso
+
+# Or copy an optional local PLaMo GGUF onto SHARED_DATA
 find ~/.cache -name '*plamo-3-translate-0.8b*.gguf' \
 	-exec cp --dereference {} "/run/media/${USER}/SHARED_DATA/" \;
 sync
 
-# Build the ISO locally instead of downloading from CI
-nix build ".#nixosConfigurations.installer.config.system.build.isoImage" --show-trace
+# Fallback: copy a CI-built ISO downloaded from GitHub Actions instead of building locally
+cp ~/Downloads/nixos-*.iso "/run/media/${USER}/MultiOS-USB/ISOs/"
+sync
 ```
 
 ## Boot and Storage Flow
