@@ -45,6 +45,11 @@ in
   # Balance image size and build time (nixpkgs defaults to level 19, which is slow for local builds)
   isoImage.squashfsCompression = "zstd -Xcompression-level 6";
 
+  # Lead with "Live" instead of nixpkgs's default " Installer" suffix so the boot
+  # menu makes it clear this entry starts a live session without touching disks.
+  isoImage.prependToMenuLabel = "Live ";
+  isoImage.appendToMenuLabel = " (Recovery & Installer)";
+
   # Wiki "SSH" section: Enable SSH for the live user (root SSH stays disabled via PermitRootLogin = "no")
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
 
