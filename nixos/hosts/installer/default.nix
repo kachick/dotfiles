@@ -42,8 +42,8 @@ in
   # Match NixOS 26.11 default recommendation and prevent evaluation warning
   boot.zfs.forceImportRoot = false;
 
-  # Wiki "Building faster" section
-  isoImage.squashfsCompression = "gzip -Xcompression-level 1";
+  # Balance image size and build time (nixpkgs defaults to level 19, which is slow for local builds)
+  isoImage.squashfsCompression = "zstd -Xcompression-level 6";
 
   # Wiki "SSH" section: Enable SSH for the live user (root SSH stays disabled via PermitRootLogin = "no")
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
