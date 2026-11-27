@@ -179,6 +179,7 @@
   xdg.configFile."nushell/unix_config.nu".source = ../config/nushell/unix_config.nu;
 
   xdg.configFile."rumdl/rumdl.toml".source = ../config/rumdl/rumdl.toml;
+  xdg.configFile."fastfetch/config.jsonc".source = ../config/fastfetch/config.jsonc;
 
   # Native Ruby extensions link via RPATH to /nix/store paths for libruby and C libraries.
   # User gem directories are outside Nix GC roots, so Ruby updates or dependency rebuilds plus GC break them with LoadError.
