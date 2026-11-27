@@ -31,6 +31,7 @@
         betterleaks
         typos
         dprint
+        yq-go
         zizmor
         rumdl
         go_1_27

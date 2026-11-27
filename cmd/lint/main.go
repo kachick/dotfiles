@@ -7,6 +7,7 @@ import (
 	"log"
 
 	"github.com/kachick/dotfiles/cmd/lint/internal/fileutils"
+	"github.com/kachick/dotfiles/cmd/lint/internal/repocheck"
 	"github.com/kachick/dotfiles/cmd/lint/internal/runner"
 )
 
@@ -63,6 +64,10 @@ func main() {
 
 	if *allFlag {
 		linters = append(linters, heavyOrTrivial...)
+	}
+
+	if err := repocheck.RunAll("."); err != nil {
+		log.Fatalln(err)
 	}
 
 	if err := linters.ParallelRun(); err != nil {
