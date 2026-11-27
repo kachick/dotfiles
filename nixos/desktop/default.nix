@@ -116,7 +116,12 @@
     gnome-music # does not support flac by defaults
     gnome-terminal # Appears with "Open In Terminal" in Nautilus even after removed. ref: https://github.com/NixOS/nixpkgs/blob/56b033fe4f9da755b1872466f24b32df7cfc229e/pkgs/by-name/gn/gnome-terminal/package.nix#L65
     gnome-console # Newer and better than gnome-terminal, however I don't have reasons to have this than ghostty
+    orca # screen reader; pulls in speech-dispatcher and large voice data
   ];
+
+  # Graphical desktops enable speech-dispatcher by default. Disable it when not
+  # using a screen reader or system TTS to avoid large voice data (such as mbrola-voices).
+  services.speechd.enable = false;
 
   services.gnome = {
     # We need gnome-keyring even though recommended to be uninstalled by gnupg.
