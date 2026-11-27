@@ -135,13 +135,13 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
-			name:         "microvm-sandbox change runs packages and home-manager",
+			name:         "microvm-sandbox change runs packages, home-manager, and nixos",
 			event:        "pull_request",
-			changedFiles: []string{"cmd/microvm-sandbox/main.go"},
+			changedFiles: []string{"nixos/hosts/sandbox/microvm-sandbox/main.go"},
 			want: changeResult{
 				Packages:    true,
 				HomeManager: true,
-				Nixos:       false,
+				Nixos:       true,
 				FlakeLock:   false,
 			},
 		},

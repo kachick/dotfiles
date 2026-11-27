@@ -63,7 +63,7 @@ flowchart TD
     dns -.->|"probe & forward"| host_dns
 ```
 
-## CLI & Lifecycle (`cmd/microvm-sandbox`)
+## CLI & Lifecycle (`nixos/hosts/sandbox/microvm-sandbox`)
 
 ```mermaid
 flowchart TD

@@ -21,12 +21,12 @@ pkgs.buildGo127Module {
       root = ../../..;
       fileset = unions [
         ../../../go.mod
-        ../../../cmd/microvm-sandbox
+        ./microvm-sandbox
       ];
     };
 
   subPackages = [
-    "cmd/microvm-sandbox"
+    "nixos/hosts/sandbox/microvm-sandbox"
   ];
 
   env.CGO_ENABLED = 0;
