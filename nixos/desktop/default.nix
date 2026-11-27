@@ -252,7 +252,6 @@
       lshw
       pciutils # `lspci`
       usbutils # `lsusb` to get IDs
-      dmidecode # `sudo dmidecode -s bios-version`
       smartmontools # `sudo smartctl -a /dev/nvme0n1`
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
       local.multios-usb # `sudo multios-usb /dev/sdX`
