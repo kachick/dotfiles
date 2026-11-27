@@ -28,7 +28,7 @@ $env.config = {
                   | uniq
                   | str join (char -i 0)
                   | fzf
-                    --preview '{}'
+                    --preview 'echo {}'
                     --preview-window 'right:30%'
                     --scheme history
                     --read0
