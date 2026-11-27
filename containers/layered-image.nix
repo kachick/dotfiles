@@ -62,7 +62,7 @@ let
       if builtins.isList v then
         "${k} = ${builtins.concatStringsSep " " v}"
       else if builtins.isBool v then
-        "${k} = ${if v then "true" else "false"}"
+        "${k} = ${pkgs.lib.boolToString v}"
       else
         "${k} = ${toString v}"
     ))
