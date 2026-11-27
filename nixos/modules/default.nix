@@ -2,6 +2,7 @@
 {
   common = ../configuration.nix;
   hardware = ../hardware.nix;
+  desktop-base = ./desktop-base.nix;
   desktop = ./desktop.nix;
   desktop-unfree = ../desktop/unfree.nix;
   game = ../desktop/game.nix;

@@ -1,6 +1,7 @@
 {
   modulesPath,
   lib,
+  pkgs,
   outputs,
   ...
 }:
@@ -13,8 +14,9 @@ in
     # Strictly follow the "Nix Flakes" section of the Wiki
     (modulesPath + "/installer/cd-dvd/installation-cd-minimal.nix")
 
-    # Project specific desktop tools/settings
-    outputs.nixosModules.desktop
+    # Project specific desktop base (excludes VM stack and daily apps) and keyboard hwdb remaps
+    outputs.nixosModules.desktop-base
+    outputs.nixosModules.hardware
   ];
 
   programs.command-not-found.enable = false; # TODO: Reconsider once https://github.com/NixOS/nixpkgs/pull/512785 has available
@@ -25,9 +27,14 @@ in
   # Wiki "Building faster" section
   isoImage.squashfsCompression = "gzip -Xcompression-level 1";
 
-  # Wiki "SSH" section: Enable SSH and set keys for root
+  # Wiki "SSH" section: Enable SSH for the live user (root SSH stays disabled via PermitRootLogin = "no")
   systemd.services.sshd.wantedBy = lib.mkForce [ "multi-user.target" ];
-  users.users.root.openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
+
+  # Live user has no password, so auto-login into the desktop session on boot.
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "nixos";
+  };
 
   # Project specific requirement: Use sudo-rs (project standard) without password
   # Explicitly force sudo-rs to resolve conflict with standard sudo in the ISO profile
@@ -47,11 +54,20 @@ in
     openssh.authorizedKeys.keys = import ../../../config/ssh/keys.nix;
   };
 
+  # Allow the live user to manage Tailscale (including tailscale-systray) without sudo.
+  services.tailscale.extraSetFlags = [ "--operator=nixos" ];
+
+  environment.systemPackages = with pkgs; [
+    # Keep explicitly so GUI disk/LUKS management stays available even if the desktop environment changes.
+    gnome-disk-utility
+    tpm2-tools
+  ];
+
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager.users.nixos = {
     imports = [
       ../../../home-manager/ephemeral.nix
-      ../../../home-manager/nixos-desktop-set.nix
+      ../../../home-manager/nixos-desktop-base.nix
       { home.username = "nixos"; }
     ];
   };

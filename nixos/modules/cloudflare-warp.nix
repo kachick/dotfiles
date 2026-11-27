@@ -46,6 +46,10 @@
     done
   '';
 
+  # Auto-connect WARP on GNOME login only on hosts that enable this module.
+  environment.etc."xdg/autostart/cloudflare-warp-connect.desktop".source =
+    ../../config/cloudflare-warp/connect.desktop;
+
   nixpkgs.allowedUnfreePackageNames = [ "cloudflare-warp" ];
 
   # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111

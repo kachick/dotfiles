@@ -2,14 +2,7 @@
 
 {
   imports = [
-    ./linux.nix
+    ./nixos-desktop-base.nix
     ./vm-host.nix
-    ./systemd.nix
-    ./desktop.nix
-    ./storage.nix
-    ./messenger.nix
-    ./containers.nix
-    ./firefox.nix
-    { targets.genericLinux.enable = false; }
   ];
 }

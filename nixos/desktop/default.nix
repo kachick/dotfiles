@@ -10,7 +10,6 @@
     ./avatar.nix
     ./font.nix
     ./gdm.nix
-    ./vm.nix
   ];
 
   xdg = {
@@ -268,27 +267,15 @@
       # Add LSP global for zed-editor. Prefer external package for helix
       vscode-langservers-extracted
 
-      # gnome-music does not support flac.
-      # tramhao/termusic and tsirysndr/music-player does not figure how to use.
-      rhythmbox
-
       evtest # To debug keyremapper as GH-786
       psmisc # e.g. `fuser -v /dev/input/event17` when want to know event17 is grabbed by which process
-
-      newsflash # `io.gitlab.news_flash.NewsFlash`
 
       # Expose mozc_tool in /run/current-system/sw/lib/mozc/mozc_tool for manual GUI configuration.
       # ibus-mozc already depends on mozc, so this adds zero extra closure size.
       mozc
 
-      # calibre # Don't install calibre if possible. It has much of Python and JavaScript dependencies. And it sets the E-book reader for opening markdown files by default.
-      readest # ebook(epub) reader. Prefer this than unstable Alexandria and heavy calibre
-
       gnome-tweaks # Maintained by GNOME org: https://gitlab.gnome.org/GNOME/gnome-tweaks
       dconf-editor
-
-      # Using unstable to test own patch: https://github.com/NixOS/nixpkgs/pull/463074
-      podman-desktop
 
       # Install one of PDF reader to enable PDF thumbnails on nautilus.
       # It should have `share/thumbnailers/`
@@ -313,9 +300,6 @@
       #   - "Error: A required Wayland protocol (zwlr_data_control_manager_v1 version 2) is not supported by the compositor"
       #   - https://github.com/YaLTeR/wl-clipboard-rs/issues/8#issuecomment-2396212342
       wl-clipboard # `wl-copy` and `wl-paste`
-
-      # As signal, it heavyly relies on their service, the delay of waiting stable version does not make sense
-      signal-desktop
 
       # Use unstable to wait https://github.com/CramBL/mdns-scanner/issues/88
       mdns-scanner
