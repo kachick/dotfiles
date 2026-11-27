@@ -59,6 +59,14 @@ stdenv.mkDerivation (finalAttrs: {
 
   dontBuild = true;
 
+  # Pass an explicit filesystem type when mounting the newly formatted data
+  # partition; without `-t`, mount falls back to /proc/filesystems before udev
+  # updates blkid and fails if the exfat kernel module is not yet loaded.
+  postPatch = ''
+    substituteInPlace multios-usb.sh \
+      --replace-fail 'mount "''${devp}2" "$part_data"' 'mount -t "$([ "$fs_type" = "fat32" ] && echo "vfat" || echo "$fs_type")" "''${devp}2" "$part_data"'
+  '';
+
   installPhase = ''
     runHook preInstall
 
