@@ -24,12 +24,7 @@ let
     else
       majorMinor (builtins.head goModMatch);
 
-  findGoInput =
-    inputs:
-    let
-      matches = builtins.filter (x: (x.pname or null) == "go") inputs;
-    in
-    if matches == [ ] then null else builtins.head matches;
+  findGoInput = lib.findFirst (x: (x.pname or null) == "go") null;
 
   devShellGo = findGoInput (devShell.buildInputs or [ ]);
   devShellGoMinor =
