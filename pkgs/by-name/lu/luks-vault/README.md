@@ -30,3 +30,33 @@ vault close --all
 # Print current container states
 vault status
 ```
+
+## How it works
+
+`vault open` moves a container from left to right. `vault close` reverses the steps.
+
+```mermaid
+flowchart LR
+    file["vault.luks (locked)"]
+    loop["/dev/loopN (attached)"]
+    dm["/dev/dm-N (unlocked)"]
+    mnt["/run/media/... (open)"]
+
+    file -->|"udisksctl loop-setup"| loop
+    loop -->|"udisksctl unlock (dm-crypt / LUKS2)"| dm
+    dm -->|"udisksctl mount (ext4)"| mnt
+
+    subgraph init["init only"]
+        crypt["cryptsetup luksFormat (LUKS2 header)"]
+        bus["busctl -> UDisks2 (ext4 format)"]
+    end
+
+    crypt -.-> file
+    bus -.-> dm
+```
+
+- `udisks2` (`udisksctl`): System storage service that lets normal users attach, unlock, and mount volumes without `sudo`, and makes them show up in Nautilus.
+- Loop device (`/dev/loopN`, `losetup`): Linux kernel feature that treats a regular `.luks` file like a disk. `losetup` checks active file-to-loop links.
+- `dm-crypt` / LUKS2 (`cryptsetup`): Linux kernel disk encryption (`dm-crypt`) with the standard LUKS2 header format. Unlocking creates a decrypted virtual disk (`/dev/dm-N`). `cryptsetup` is used only to initialize headers (`luksFormat`) and inspect them (`luksDump`).
+- `ext4` / `busctl`: Standard Linux filesystem created inside `/dev/dm-N`. Because `udisksctl` has no format subcommand, `vault init` calls UDisks2's `Block.Format` D-Bus method through `busctl`.
+- `lsblk`: Reads the `/dev/loopN` -> `/dev/dm-N` -> mountpoint tree to detect container state (`locked`, `attached`, `unlocked`, or `open`).
