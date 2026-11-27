@@ -27,7 +27,7 @@ func TestValidateName(t *testing.T) {
 		}
 	}
 
-	invalid := []string{"", "../escape", "bad name", "foo/bar", "a'b"}
+	invalid := []string{"", ".", "..", "../escape", "bad name", "foo/bar", "a'b"}
 	for _, name := range invalid {
 		if err := validateName(name); err == nil {
 			t.Errorf("validateName(%q) expected error, got nil", name)

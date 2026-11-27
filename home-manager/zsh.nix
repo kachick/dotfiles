@@ -73,7 +73,7 @@ in
         "rm *"
         "rmdir *"
         "git show *"
-        "export "
+        "export *"
         "exit"
       ];
 

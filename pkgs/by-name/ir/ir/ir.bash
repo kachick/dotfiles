@@ -1,6 +1,7 @@
 if [ $# -lt 2 ]; then
 	# shellcheck disable=SC2016
 	echo 'Should be specified $1:<PATTERN> and $2:[REPLACE]' >&2
+	exit 1
 fi
 
 # https://stackoverflow.com/a/28090709

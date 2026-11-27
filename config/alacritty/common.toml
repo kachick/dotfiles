@@ -25,11 +25,11 @@ style = "Regular"
 
 [font.bold]
 family = "PlemolJP Console NF"
-style = "Italic"
+style = "Bold"
 
 [font.italic]
 family = "PlemolJP Console NF"
-style = "Bold"
+style = "Italic"
 
 [font.bold_italic]
 family = "PlemolJP Console NF"

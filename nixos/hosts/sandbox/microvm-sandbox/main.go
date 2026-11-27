@@ -124,7 +124,7 @@ func stateDirFor(root, name string) string {
 }
 
 func validateName(name string) error {
-	if !validNamePattern.MatchString(name) {
+	if name == "." || name == ".." || !validNamePattern.MatchString(name) {
 		return fmt.Errorf("invalid instance name: %s", name)
 	}
 	return nil

@@ -80,7 +80,7 @@
     ignores = [
       ".git/"
       ".direnv/"
-      ".node_modules/"
+      "node_modules/"
     ];
   };
 }
