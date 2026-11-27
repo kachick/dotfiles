@@ -63,12 +63,19 @@ in
     tpm2-tools
   ];
 
+  # Exclude test containerd daemon from the recovery Live CD.
+  virtualisation.containerd.enable = lib.mkForce false;
+
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager.users.nixos = {
     imports = [
       ../../../home-manager/ephemeral.nix
       ../../../home-manager/nixos-desktop-base.nix
-      { home.username = "nixos"; }
+      {
+        home.username = "nixos";
+        # Avoid downloading a large GGUF model into tmpfs on Live CD boot.
+        systemd.user.services.llama-plamo.Install.WantedBy = lib.mkForce [ ];
+      }
     ];
   };
 
