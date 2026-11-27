@@ -137,7 +137,7 @@ func isPackageInputPath(p string) bool {
 	if p == "go.mod" || p == "typos.toml" {
 		return true
 	}
-	for _, prefix := range []string{"pkgs/", "config/", "internal/", "cmd/ci-build/"} {
+	for _, prefix := range []string{"pkgs/", "config/", "internal/", "cmd/ci-build/", "cmd/microvm-sandbox/"} {
 		if strings.HasPrefix(p, prefix) {
 			return true
 		}

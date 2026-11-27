@@ -135,6 +135,17 @@ func TestClassifyChanges(t *testing.T) {
 			},
 		},
 		{
+			name:         "microvm-sandbox change runs packages and home-manager",
+			event:        "pull_request",
+			changedFiles: []string{"cmd/microvm-sandbox/main.go"},
+			want: changeResult{
+				Packages:    true,
+				HomeManager: true,
+				Nixos:       false,
+				FlakeLock:   false,
+			},
+		},
+		{
 			name:         "ci-build change runs packages and home-manager but skips nixos and container",
 			event:        "push",
 			changedFiles: []string{"cmd/ci-build/main.go", "cmd/ci-build/main_test.go"},
