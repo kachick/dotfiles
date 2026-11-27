@@ -117,6 +117,17 @@
 
       devShells = forAllSystems ({ pkgs, ... }: import ./devShells.nix { inherit pkgs; });
 
+      checks = forAllSystems (
+        { pkgs, system }:
+        import ./checks.nix {
+          inherit
+            pkgs
+            system
+            outputs
+            ;
+        }
+      );
+
       packages = forAllSystems (
         { system, ... }:
         import ./packages.nix {
