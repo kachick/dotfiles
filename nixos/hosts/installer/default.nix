@@ -117,6 +117,28 @@ in
     };
   };
 
+  # Auto-mount an optional 3rd USB partition labeled SHARED_DATA read-write so
+  # both daily host usage and Live CD sessions share a writable space while the
+  # MultiOS-USB ISO partition stays read-only at /run/loopback-host.
+  # Wrap with mkImageMediaOverride to match installation-cd-base.nix's fileSystems priority.
+  fileSystems = lib.mkImageMediaOverride {
+    "/mnt/shared" = {
+      device = "/dev/disk/by-label/SHARED_DATA";
+      fsType = "exfat";
+      options = [
+        "rw"
+        "nofail"
+        "x-systemd.automount"
+        "x-systemd.device-timeout=2s"
+        # Grant read-write access to the `users` group (gid 100) without assuming
+        # a fixed UID for the live `nixos` user.
+        "gid=100"
+        "dmask=0002"
+        "fmask=0113"
+      ];
+    };
+  };
+
   # Apply home-manager settings to 'nixos' user for ephemeral desktop experience
   home-manager.users.nixos = {
     imports = [
@@ -125,7 +147,7 @@ in
       {
         home.username = "nixos";
         # Avoid downloading a large GGUF model into tmpfs on Live CD boot,
-        # while still loading a pre-placed local GGUF from the loopback USB host.
+        # while still loading a pre-placed local GGUF from the USB partitions.
         systemd.user.services.llama-plamo = {
           Service.ExecStart = lib.mkForce (lib.getExe startLlamaPlamo);
           Install.WantedBy = lib.mkForce [ ];
@@ -134,6 +156,8 @@ in
           Unit = {
             Description = "Auto-start llama-plamo when a local GGUF exists on the Live USB";
             ConditionPathExistsGlob = [
+              "|/mnt/shared/models/*plamo-3-translate-0.8b*.gguf"
+              "|/mnt/shared/*plamo-3-translate-0.8b*.gguf"
               "|/run/loopback-host/models/*plamo-3-translate-0.8b*.gguf"
               "|/run/loopback-host/*plamo-3-translate-0.8b*.gguf"
             ];
