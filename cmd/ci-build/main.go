@@ -221,38 +221,54 @@ func isPackageFree(pname string, arch string) (bool, error) {
 		return false, err
 	}
 
-	expr := fmt.Sprintf(`
-let
-  flake = builtins.getFlake "%s";
-  pkgs = flake.inputs.nixpkgs.legacyPackages.%s;
-  lib = pkgs.lib;
-  pkg = flake.packages.%s.%s;
-  licenses = pkg.meta.license or lib.licenses.free;
-in
-if lib.isAttrs licenses && licenses ? "licenseType" then
-  lib.licenses.isFree licenses
-else if lib.isAttrs licenses then
-  licenses.free or true
-else if lib.isString licenses then
-  true
-else
-  lib.all (l: l.free or true) licenses
-`, repoRoot, arch, arch, pname)
-
-	cmd := exec.Command("nix", "eval", "--impure", "--expr", expr)
-	cmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+	target := fmt.Sprintf("%s#packages.%s.%s", repoRoot, arch, pname)
+	cmd := exec.Command("nix", "eval", "--json", target, "--apply", "pkg: pkg.meta.license or null")
 	out, err := cmd.Output()
 	if err != nil {
 		return false, fmt.Errorf("failed to evaluate license for %s: %w", pname, err)
 	}
-	result := strings.TrimSpace(string(out))
-	switch result {
-	case "true":
+
+	free, err := isLicenseJSONFree(out)
+	if err != nil {
+		return false, fmt.Errorf("parsing license for %s: %w", pname, err)
+	}
+	return free, nil
+}
+
+func isLicenseJSONFree(data []byte) (bool, error) {
+	var raw any
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return false, err
+	}
+	return isLicenseValueFree(raw)
+}
+
+func isLicenseValueFree(v any) (bool, error) {
+	switch val := v.(type) {
+	case nil, string:
 		return true, nil
-	case "false":
-		return false, nil
+	case map[string]any:
+		if free, ok := val["free"]; ok {
+			b, ok := free.(bool)
+			if !ok {
+				return false, fmt.Errorf("unexpected non-boolean free field: %T", free)
+			}
+			return b, nil
+		}
+		return true, nil
+	case []any:
+		for _, elem := range val {
+			free, err := isLicenseValueFree(elem)
+			if err != nil {
+				return false, err
+			}
+			if !free {
+				return false, nil
+			}
+		}
+		return true, nil
 	default:
-		return false, fmt.Errorf("unexpected license evaluation result for %s: %s", pname, result)
+		return false, fmt.Errorf("unexpected license JSON type: %T", v)
 	}
 }
 
@@ -781,14 +797,8 @@ func runWarmup(args []string) error {
 	switch target {
 	case "packages":
 		fmt.Println("Warming up Nix packages evaluation...")
-		evalExpr := fmt.Sprintf(`
-let
-  flake = builtins.getFlake "%s";
-in
-builtins.attrNames flake.packages.%s
-`, repoRoot, arch)
-		evalCmd := exec.Command("nix", "eval", "--impure", "--expr", evalExpr)
-		evalCmd.Env = append(os.Environ(), "NIXPKGS_ALLOW_UNFREE=1")
+		evalTarget := fmt.Sprintf("%s#packages.%s", repoRoot, arch)
+		evalCmd := exec.Command("nix", "eval", evalTarget, "--apply", "builtins.attrNames")
 		evalCmd.Stdout = os.Stdout
 		evalCmd.Stderr = os.Stderr
 		if err := evalCmd.Run(); err != nil {
@@ -808,17 +818,11 @@ builtins.attrNames flake.packages.%s
 
 	case "nixos":
 		fmt.Println("Warming up NixOS configurations evaluation...")
-		evalExpr := fmt.Sprintf(`
-let
-  flake = builtins.getFlake "%s";
-  configs = flake.nixosConfigurations;
-in
-[
-  configs.desktop-free.config.system.build.toplevel.drvPath
-  configs.wsl.config.system.build.toplevel.drvPath
-]
-`, repoRoot)
-		evalCmd := exec.Command("nix", "eval", "--impure", "--expr", evalExpr)
+		evalTarget := fmt.Sprintf("%s#nixosConfigurations", repoRoot)
+		evalCmd := exec.Command(
+			"nix", "eval", evalTarget, "--apply",
+			"configs: [ configs.desktop-free.config.system.build.toplevel.drvPath configs.wsl.config.system.build.toplevel.drvPath ]",
+		)
 		evalCmd.Stdout = os.Stdout
 		evalCmd.Stderr = os.Stderr
 		if err := evalCmd.Run(); err != nil {

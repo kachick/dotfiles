@@ -96,6 +96,34 @@ func TestRunWarmup_UnknownTarget(t *testing.T) {
 	}
 }
 
+func TestIsLicenseJSONFree(t *testing.T) {
+	tests := []struct {
+		name string
+		json string
+		want bool
+	}{
+		{name: "null", json: `null`, want: true},
+		{name: "string", json: `"MIT"`, want: true},
+		{name: "free object", json: `{"free":true,"shortName":"mit"}`, want: true},
+		{name: "unfree object", json: `{"free":false,"shortName":"unfree"}`, want: false},
+		{name: "object without free defaults true", json: `{"shortName":"custom"}`, want: true},
+		{name: "all free list", json: `[{"free":true},{"free":true}]`, want: true},
+		{name: "mixed list", json: `[{"free":true},{"free":false}]`, want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := isLicenseJSONFree([]byte(tt.json))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("isLicenseJSONFree(%s) = %v, want %v", tt.json, got, tt.want)
+			}
+		})
+	}
+}
+
 func TestIsPackageFree(t *testing.T) {
 	if _, err := exec.LookPath("nix"); err != nil {
 		t.Skip("skipping test: nix is not installed in PATH")
