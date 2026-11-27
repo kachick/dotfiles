@@ -18,7 +18,7 @@ let
     in
     "${s 0 4 lastModifiedDate}-${s 4 2 lastModifiedDate}-${s 6 2 lastModifiedDate}T${s 8 2 lastModifiedDate}:${s 10 2 lastModifiedDate}:${s 12 2 lastModifiedDate}Z";
 
-  baseImage = pkgs.dockerTools.pullImage (builtins.fromJSON (builtins.readFile ./base-image.json));
+  baseImage = pkgs.dockerTools.pullImage (pkgs.lib.importJSON ./base-image.json);
 
   updateScript = pkgs.writeShellApplication {
     name = "update-container-base";

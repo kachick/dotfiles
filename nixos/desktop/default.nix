@@ -232,7 +232,7 @@
   # https://github.com/NixOS/nixpkgs/blob/nixos-26.05/nixos/modules/virtualisation/containers.nix
   virtualisation.containers = {
     enable = true;
-    policy = builtins.fromJSON (builtins.readFile ../../config/containers/policy.json);
+    policy = lib.importJSON ../../config/containers/policy.json;
   };
 
   # To test https://github.com/NixOS/nixpkgs/pull/459211

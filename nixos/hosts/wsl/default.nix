@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   outputs,
   ...
 }:
@@ -34,7 +35,7 @@
 
   virtualisation.containers = {
     enable = true;
-    policy = builtins.fromJSON (builtins.readFile ../../../config/containers/policy.json);
+    policy = lib.importJSON ../../../config/containers/policy.json;
   };
 
   home-manager.users.nixos = {

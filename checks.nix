@@ -70,8 +70,7 @@ let
     ) localGoPackages);
 
   missingPackages = lib.pipe ./pkgs/list.json [
-    builtins.readFile
-    builtins.fromJSON
+    lib.importJSON
     (json: builtins.attrNames json.packages)
     (builtins.filter (name: !(systemPackages ? ${name})))
   ];
