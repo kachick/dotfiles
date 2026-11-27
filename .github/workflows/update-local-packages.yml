@@ -38,6 +38,7 @@ jobs:
           - gh-actions-lock
           - leaf-markdown-viewer
           - lima
+          - multios-usb
           - shuck
           # END MANAGED PACKAGES
     runs-on: ubuntu-26.04

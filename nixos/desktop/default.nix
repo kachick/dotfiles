@@ -250,6 +250,7 @@
       dmidecode # `sudo dmidecode -s bios-version`
       smartmontools # `sudo smartctl -a /dev/nvme0n1`
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
+      local.multios-usb # `sudo multios-usb /dev/sdX`
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
       # - We can't trust any nixpkgs' channel for zed-editor package. Both stable and unstable are flaky.

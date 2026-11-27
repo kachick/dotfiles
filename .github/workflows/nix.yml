@@ -233,6 +233,9 @@ jobs:
           - name: mozc-config
             run: go run ./cmd/ci-build package mozc-config
 
+          - name: multios-usb
+            run: go run ./cmd/ci-build package multios-usb
+
           - name: nix-update
             run: go run ./cmd/ci-build package nix-update
 

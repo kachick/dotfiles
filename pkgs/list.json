@@ -19,6 +19,7 @@
     "lima": { "build": false, "test": false, "update": true },
     "lima-full": { "build": true, "test": true, "update": false },
     "mozc-config": { "build": true, "test": true, "update": false },
+    "multios-usb": { "build": true, "test": true, "update": true },
     "nix-update": { "build": true, "test": true, "update": false, "note": "Follows nixpkgs flake input" },
     "rclone-fzf": { "build": true, "test": true, "update": false },
     "shuck": { "build": true, "test": true, "update": true },
