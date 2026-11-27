@@ -34,7 +34,6 @@
         yq-go
         zizmor
         rumdl
-        go_1_27
 
         # Required by Go package tests (`git-x`)
         fzf
@@ -42,6 +41,9 @@
 
         typos-lsp # For zed-editor typos extension
       ])
+      ++ [
+        pkgs.local.git-x.go
+      ]
       ++ (with pkgs.pinned; [
         ghadiag
         iets
