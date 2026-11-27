@@ -85,10 +85,23 @@ in
   virtualisation.containerd.enable = lib.mkForce false;
 
   # Support loopback ISO boot (e.g. MultiOS-USB) under systemd initrd.
-  # Upstream nixpkgs passes `findiso=` from GRUB loopback.cfg, but stage 1 does
-  # not yet attach the ISO file automatically or bundle exfat in initrd.
+  # Upstream nixpkgs skips `/boot/grub/loopback.cfg` when systemd initrd is enabled,
+  # and stage 1 does not yet attach `findiso=` or bundle exfat in initrd.
+  isoImage.contents = [
+    {
+      source = pkgs.writeText "loopback.cfg" "source /EFI/BOOT/grub.cfg\n";
+      target = "/boot/grub/loopback.cfg";
+    }
+  ];
+
   boot.initrd = {
-    kernelModules = [ "loop" ];
+    # nixpkgs's exfat.nix does not add initrd modules via supportedFilesystems,
+    # so load exfat and its default UTF-8 NLS table explicitly for MultiOS-USB.
+    kernelModules = [
+      "loop"
+      "exfat"
+      "nls_utf8"
+    ];
     supportedFilesystems = [
       "exfat"
       "ext4"
