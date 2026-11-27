@@ -22,12 +22,18 @@ func main() {
 	formatters := runner.Commands{
 		{Path: "dprint", Args: []string{"check"}},
 	}
-	formatters.SequentialRun()
+	if err := formatters.SequentialRun(); err != nil {
+		log.Fatalln(err)
+	}
 
-	walker := fileutils.GetWalker()
+	walker, err := fileutils.GetWalker()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	bashPaths := walker.GetAllBash()
 	nixPaths := walker.GetAllNix()
+	desktopPaths := walker.GetAllDesktop()
 
 	// Don't add secrets scanner here. It should be done in pre-push hook now.
 	linters := runner.Commands{
@@ -42,12 +48,19 @@ func main() {
 		{Path: "zizmor", Args: []string{"--pedantic", "."}},
 		{Path: "ghadiag", Args: []string{}},
 		{Path: "kanata", Args: []string{"--check", "--cfg", "config/keyboards/kanata.kbd"}},
-		{Path: "desktop-file-validate", Args: []string{"config/keyboards/kanata-tray.desktop"}},
+	}
+	if len(desktopPaths) > 0 {
+		heavyOrTrivial = append(heavyOrTrivial, runner.Cmd{
+			Path: "desktop-file-validate",
+			Args: desktopPaths,
+		})
 	}
 
 	if *allFlag {
 		linters = append(linters, heavyOrTrivial...)
 	}
 
-	linters.ParallelRun()
+	if err := linters.ParallelRun(); err != nil {
+		log.Fatalln(err)
+	}
 }

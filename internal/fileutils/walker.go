@@ -17,18 +17,29 @@ type Walker struct {
 	reports            []WalkedReport
 }
 
-func GetWalker() Walker {
+func GetWalker() (Walker, error) {
+	return GetWalkerIn(".")
+}
+
+func GetWalkerIn(root string) (Walker, error) {
 	w := Walker{
 		ignoredDirectories: []string{".git", ".direnv", "dist", "result", "tmp"},
 	}
-	w.reports = w.GetReports()
+	reports, err := w.walk(root)
+	if err != nil {
+		return Walker{}, err
+	}
+	w.reports = reports
 
-	return w
+	return w, nil
 }
 
-func (w Walker) GetReports() []WalkedReport {
+func (w Walker) walk(root string) ([]WalkedReport, error) {
 	paths := []WalkedReport{}
-	filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
 		if d.IsDir() {
 			if slices.Contains(w.ignoredDirectories, d.Name()) {
 				return fs.SkipDir
@@ -40,13 +51,19 @@ func (w Walker) GetReports() []WalkedReport {
 		})
 		return nil
 	})
-	return paths
+	if err != nil {
+		return nil, err
+	}
+	return paths, nil
 }
 
 func (w Walker) GetAllBash() []string {
 	paths := []string{}
 
 	for _, r := range w.reports {
+		if r.Dir.IsDir() {
+			continue
+		}
 		if strings.HasSuffix(r.Dir.Name(), ".bash") ||
 			(strings.HasPrefix(r.Dir.Name(), "bash") && !strings.HasSuffix(r.Dir.Name(), ".nix")) {
 			paths = append(paths, r.Path)
@@ -60,7 +77,25 @@ func (w Walker) GetAllNix() []string {
 	paths := []string{}
 
 	for _, r := range w.reports {
+		if r.Dir.IsDir() {
+			continue
+		}
 		if strings.HasSuffix(r.Dir.Name(), ".nix") {
+			paths = append(paths, r.Path)
+		}
+	}
+
+	return paths
+}
+
+func (w Walker) GetAllDesktop() []string {
+	paths := []string{}
+
+	for _, r := range w.reports {
+		if r.Dir.IsDir() {
+			continue
+		}
+		if strings.HasSuffix(r.Dir.Name(), ".desktop") {
 			paths = append(paths, r.Path)
 		}
 	}
