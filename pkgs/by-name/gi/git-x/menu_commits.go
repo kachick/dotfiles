@@ -18,8 +18,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/kachick/dotfiles/internal/gitcmd"
 	"github.com/kachick/dotfiles/internal/plamocache"
+	"github.com/kachick/dotfiles/pkgs/by-name/gi/git-x/internal/gitcmd"
 )
 
 const (

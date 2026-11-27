@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/kachick/dotfiles/internal/gitcmd"
+	"github.com/kachick/dotfiles/pkgs/by-name/gi/git-x/internal/gitcmd"
 )
 
 func runResolveConflict(args []string, workDir string, stdin io.Reader, stdout, stderr io.Writer) error {

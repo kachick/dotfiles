@@ -11,7 +11,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/kachick/dotfiles/internal/githooks"
+	"github.com/kachick/dotfiles/pkgs/by-name/gi/git-x/internal/githooks"
 )
 
 // TyposConfigPath is injected at build time via `-X main.TyposConfigPath=...`.

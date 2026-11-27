@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/kachick/dotfiles/internal/gitcmd"
+	"github.com/kachick/dotfiles/pkgs/by-name/gi/git-x/internal/gitcmd"
 )
 
 func setupCleanBareRepo(t *testing.T, defaultBranch string, remoteBranches []string, envrcContent string) (repoDir, defaultWT string) {

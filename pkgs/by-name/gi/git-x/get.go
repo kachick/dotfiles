@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kachick/dotfiles/internal/gitcmd"
+	"github.com/kachick/dotfiles/pkgs/by-name/gi/git-x/internal/gitcmd"
 )
 
 func validateRepoPart(label, value string) error {
