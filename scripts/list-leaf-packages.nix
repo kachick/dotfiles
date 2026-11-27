@@ -105,7 +105,7 @@ let
 in
 lib.pipe (hmPackages ++ nixosPackages ++ devShellPackages) [
   # Remove local in-repo packages dynamically
-  (builtins.filter (p: !(builtins.elem p localPackages)))
+  (lib.subtractLists localPackages)
   # Normalize to attribute names when applicable
   (map (p: pnameToAttr.${p} or p))
   # Deduplicate and sort
