@@ -65,7 +65,7 @@ in
           "text/plain"
           "text/markdown"
           "application/x-cue"
-        ] (_: plainTextEditor))
+        ] (lib.const plainTextEditor))
 
         //
 
@@ -90,7 +90,7 @@ in
             "text/x-c++"
             "text/x-makefile"
             "application/xml"
-          ] (_: codeEditor))
+          ] (lib.const codeEditor))
 
         //
 
@@ -100,20 +100,20 @@ in
             "x-scheme-handler/https"
             "x-scheme-handler/about"
             "x-scheme-handler/unknown"
-          ] (_: webBrowser))
+          ] (lib.const webBrowser))
 
         //
 
           (lib.genAttrs [
             "application/pdf"
-          ] (_: pdfReader))
+          ] (lib.const pdfReader))
 
         //
 
           (lib.genAttrs [
             "application/x-terminal-emulator"
             "x-scheme-handler/terminal"
-          ] (_: terminalEmulator))
+          ] (lib.const terminalEmulator))
 
         //
 
@@ -129,7 +129,7 @@ in
             "image/vnd.microsoft.icon"
             "image/svg+xml"
             "image/svg+xml-compressed"
-          ] (_: imageViewer));
+          ] (lib.const imageViewer));
 
       defaultApplications = associations.added;
     };
