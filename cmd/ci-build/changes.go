@@ -150,7 +150,7 @@ func isZeroSHA(rev string) bool {
 }
 
 func runChanges(args []string, stdout io.Writer) error {
-	fs := flag.NewFlagSet("changes", flag.ExitOnError)
+	fs := flag.NewFlagSet("changes", flag.ContinueOnError)
 	eventFlag := fs.String("event", "", "GitHub event name (defaults to EVENT_NAME or GITHUB_EVENT_NAME)")
 	targetFlag := fs.String("target", "", "Target job for workflow_dispatch (defaults to TARGET)")
 	baseFlag := fs.String("base", "", "Base git revision for diff (defaults to BASE_SHA or HEAD^1)")

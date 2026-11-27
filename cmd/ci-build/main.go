@@ -25,44 +25,31 @@ func main() {
 	}
 
 	subcommand := os.Args[1]
+	var err error
 	switch subcommand {
 	case "package":
-		if err := runPackage(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runPackage(os.Args[2:])
 	case "nixos":
-		if err := runNixos(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runNixos(os.Args[2:])
 	case "push":
-		if err := runPush(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runPush(os.Args[2:])
 	case "pin":
-		if err := runPin(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runPin(os.Args[2:])
 	case "sync-workflows":
-		if err := runSyncWorkflows(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runSyncWorkflows(os.Args[2:])
 	case "warmup":
-		if err := runWarmup(os.Args[2:]); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runWarmup(os.Args[2:])
 	case "changes":
-		if err := runChanges(os.Args[2:], os.Stdout); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-			os.Exit(1)
-		}
+		err = runChanges(os.Args[2:], os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "Unknown subcommand: %s\nUsage: ci-build <package|nixos|push|pin|sync-workflows|warmup|changes> [options] [args]\n", subcommand)
+		os.Exit(1)
+	}
+	if err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			return
+		}
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -273,7 +260,7 @@ func isLicenseValueFree(v any) (bool, error) {
 }
 
 func runNixos(args []string) error {
-	fs := flag.NewFlagSet("nixos", flag.ExitOnError)
+	fs := flag.NewFlagSet("nixos", flag.ContinueOnError)
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -599,7 +586,7 @@ func fetchGHAOIDCToken(ctx context.Context, reqURL, reqToken, audience string) (
 }
 
 func runPush(args []string) error {
-	fs := flag.NewFlagSet("push", flag.ExitOnError)
+	fs := flag.NewFlagSet("push", flag.ContinueOnError)
 	fromDir := fs.String("from-dir", "", "Directory containing recorded output path files")
 	pinName := fs.String("pin", "", "Name of the pin to create for the pushed store path (single path only)")
 	if err := fs.Parse(args); err != nil {
@@ -663,7 +650,7 @@ func runPush(args []string) error {
 }
 
 func runPin(args []string) error {
-	fs := flag.NewFlagSet("pin", flag.ExitOnError)
+	fs := flag.NewFlagSet("pin", flag.ContinueOnError)
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -769,7 +756,7 @@ func newHTTPClient() *http.Client {
 }
 
 func runWarmup(args []string) error {
-	fs := flag.NewFlagSet("warmup", flag.ExitOnError)
+	fs := flag.NewFlagSet("warmup", flag.ContinueOnError)
 	archFlag := fs.String("arch", "", "Target system architecture (defaults to nix builtins.currentSystem)")
 	if err := fs.Parse(args); err != nil {
 		return err

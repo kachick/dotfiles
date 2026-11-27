@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"strings"
 	"testing"
 )
@@ -55,5 +56,20 @@ func TestDefaultConfigDBPath(t *testing.T) {
 	want := "/tmp/custom-xdg/mozc/config1.db"
 	if got != want {
 		t.Fatalf("got %q, want %q", got, want)
+	}
+}
+
+func TestSubcommandsReturnFlagErrors(t *testing.T) {
+	if err := runDump([]string{"--unknown-flag"}, io.Discard); err == nil {
+		t.Error("runDump: expected error for unknown flag, got nil")
+	}
+	if _, err := runDiff([]string{"--unknown-flag"}, io.Discard); err == nil {
+		t.Error("runDiff: expected error for unknown flag, got nil")
+	}
+	if err := runEncode([]string{"--unknown-flag"}, io.Discard); err == nil {
+		t.Error("runEncode: expected error for unknown flag, got nil")
+	}
+	if err := runReload([]string{"--unknown-flag"}); err == nil {
+		t.Error("runReload: expected error for unknown flag, got nil")
 	}
 }

@@ -59,6 +59,9 @@ func main() {
 	}
 
 	if err != nil {
+		if errors.Is(err, flag.ErrHelp) {
+			return
+		}
 		log.Fatalf("mozc-config %s: %v", os.Args[1], err)
 	}
 	if exitCode != 0 {
@@ -88,7 +91,7 @@ func resolveProtoDir(flagVal string) (string, error) {
 }
 
 func runDump(args []string, out io.Writer) error {
-	fs := flag.NewFlagSet("dump", flag.ExitOnError)
+	fs := flag.NewFlagSet("dump", flag.ContinueOnError)
 	protoDirFlag := fs.String("proto-dir", "", "Directory containing protocol/config.proto (default: $MOZC_PROTO_DIR)")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -122,7 +125,7 @@ func runDump(args []string, out io.Writer) error {
 }
 
 func runDiff(args []string, out io.Writer) (int, error) {
-	fs := flag.NewFlagSet("diff", flag.ExitOnError)
+	fs := flag.NewFlagSet("diff", flag.ContinueOnError)
 	protoDirFlag := fs.String("proto-dir", "", "Directory containing protocol/config.proto (default: $MOZC_PROTO_DIR)")
 	expectedFlag := fs.String("expected", "", "Expected config1.db path (default: $MOZC_EXPECTED_CONFIG_DB)")
 	if err := fs.Parse(args); err != nil {
@@ -179,7 +182,7 @@ func runDiff(args []string, out io.Writer) (int, error) {
 }
 
 func runEncode(args []string, out io.Writer) error {
-	fs := flag.NewFlagSet("encode", flag.ExitOnError)
+	fs := flag.NewFlagSet("encode", flag.ContinueOnError)
 	protoDirFlag := fs.String("proto-dir", "", "Directory containing protocol/config.proto (default: $MOZC_PROTO_DIR)")
 	keymapFlag := fs.String("keymap", "", "Path to Mozc custom keymap TSV file")
 	outputFlag := fs.String("output", "", "Output path for binary config1.db (default: stdout)")
@@ -221,7 +224,7 @@ func runEncode(args []string, out io.Writer) error {
 }
 
 func runReload(args []string) error {
-	fs := flag.NewFlagSet("reload", flag.ExitOnError)
+	fs := flag.NewFlagSet("reload", flag.ContinueOnError)
 	ifRunningFlag := fs.Bool("if-running", false, "Skip silently when IBus is not running")
 	if err := fs.Parse(args); err != nil {
 		return err

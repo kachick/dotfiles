@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -93,6 +94,28 @@ func TestRunWarmup_UnknownTarget(t *testing.T) {
 	err := runWarmup([]string{"invalid-target"})
 	if err == nil {
 		t.Error("expected error for unknown warmup target, got nil")
+	}
+}
+
+func TestSubcommandsReturnFlagErrors(t *testing.T) {
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{name: "nixos", fn: func() error { return runNixos([]string{"--unknown-flag"}) }},
+		{name: "push", fn: func() error { return runPush([]string{"--unknown-flag"}) }},
+		{name: "pin", fn: func() error { return runPin([]string{"--unknown-flag"}) }},
+		{name: "warmup", fn: func() error { return runWarmup([]string{"--unknown-flag"}) }},
+		{name: "sync-workflows", fn: func() error { return runSyncWorkflows([]string{"--unknown-flag"}) }},
+		{name: "changes", fn: func() error { return runChanges([]string{"--unknown-flag"}, io.Discard) }},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.fn(); err == nil {
+				t.Errorf("%s: expected error for unknown flag, got nil", tt.name)
+			}
+		})
 	}
 }
 

@@ -27,7 +27,7 @@ const (
 )
 
 func runSyncWorkflows(args []string) error {
-	fs := flag.NewFlagSet("sync-workflows", flag.ExitOnError)
+	fs := flag.NewFlagSet("sync-workflows", flag.ContinueOnError)
 	checkOnly := fs.Bool("check", false, "Fail if workflows are out of sync without modifying files")
 	if err := fs.Parse(args); err != nil {
 		return err
