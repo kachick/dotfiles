@@ -252,6 +252,7 @@
       usbutils # `lsusb` to get IDs
       smartmontools # `sudo smartctl -a /dev/nvme0n1`
       nvme-cli # `sudo nvme id-ctrl /dev/nvme0n1`
+      local.luks-vault # `vault` mini-TUI/CLI for LUKS2 container files
       local.multios-usb # `sudo multios-usb /dev/sdX`
 
       # - Don't use `buildFHSEnv` even through want to apply LSP smart. See GH-809
