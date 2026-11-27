@@ -29,6 +29,21 @@ cp ~/Downloads/nixos-*.iso "/run/media/${USER}/MultiOS-USB/ISOs/"
 sync
 ```
 
+### Optional Rescue ISOs (exFAT-Compatible)
+
+MultiOS-USB formats its ISO partition as exFAT by default. Ubuntu/Xubuntu and upstream NixOS minimal ISOs do not boot from exFAT in MultiOS-USB, so use exFAT-compatible images for backup rescue entries:
+
+- [SystemRescue](https://www.system-rescue.org/Download/) (`systemrescue-*-amd64.iso`, ~1.3 GiB): lightweight disk and boot repair tools.
+- [Fedora Xfce Spin](https://fedoraproject.org/spins/xfce/download) (`Fedora-Xfce-Live-*.x86_64.iso`, ~2.8 GiB): Secure Boot-ready desktop fallback with a recent kernel (keep the upstream filename so MultiOS-USB matches `fedora-live.cfg`).
+
+```bash
+# Download the latest ISOs and checksum files into a temporary directory, verify, then copy to USB
+sha256sum --check systemrescue-*-amd64.iso.sha256
+sha256sum --ignore-missing --check Fedora-Spins-*-x86_64-CHECKSUM
+cp --verbose systemrescue-*-amd64.iso Fedora-Xfce-Live-*.x86_64.iso "/run/media/${USER}/MultiOS-USB/ISOs/"
+sync
+```
+
 ## Boot and Storage Flow
 
 ```mermaid
