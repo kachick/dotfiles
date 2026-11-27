@@ -3,7 +3,10 @@
 ## Layout
 
 - `by-name/<2-prefix>/<pname>/package.nix`: Local packages exposed as `pkgs.local.<name>`. Uses the `nixpkgs` `by-name` layout so tools like `nix-update` work without extra flags.
-- `list.toml`: CI build, test, and `nix-update` metadata. Sync workflows with `task sync-workflows`.
+- `list.json`: CI build, test, and `nix-update` metadata. Sync workflows with `task sync-workflows`.
+  - `update: true`: Automated updates run `nix-update` via `update-local-packages.yml`.
+  - `update: false`: Managed outside `nix-update` (such as Renovate for flake inputs) or maintained locally.
+  - Binary caching is handled automatically by `cmd/ci-build` based on licenses; do not add caching flags here.
 
 ## Guidelines
 

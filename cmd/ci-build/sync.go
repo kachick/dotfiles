@@ -39,10 +39,10 @@ func runSyncWorkflows(args []string) error {
 	}
 	repoRoot := strings.TrimSpace(string(repoRootBytes))
 
-	packagesPath := filepath.Join(repoRoot, "pkgs", "list.toml")
+	packagesPath := filepath.Join(repoRoot, "pkgs", "list.json")
 	packagesFile, err := loadPackagesConfig(packagesPath)
 	if err != nil {
-		return fmt.Errorf("loading pkgs/list.toml: %w", err)
+		return fmt.Errorf("loading pkgs/list.json: %w", err)
 	}
 
 	// 1. Generate nix.yml parallel steps
@@ -103,7 +103,7 @@ func runSyncWorkflows(args []string) error {
 		if orig != updated {
 			hasDiff = true
 			if *checkOnly {
-				fmt.Fprintf(os.Stderr, "%s is out of sync with pkgs/list.toml\n", target.relPath)
+				fmt.Fprintf(os.Stderr, "%s is out of sync with pkgs/list.json\n", target.relPath)
 			} else {
 				if err := os.WriteFile(fullPath, []byte(updated), 0o644); err != nil {
 					return fmt.Errorf("writing %s: %w", target.relPath, err)
@@ -114,7 +114,7 @@ func runSyncWorkflows(args []string) error {
 	}
 
 	if *checkOnly && hasDiff {
-		return fmt.Errorf("workflows are not synchronized with pkgs/list.toml. Run 'go run ./cmd/ci-build sync-workflows' to update them")
+		return fmt.Errorf("workflows are not synchronized with pkgs/list.json. Run 'go run ./cmd/ci-build sync-workflows' to update them")
 	}
 
 	if !hasDiff {
@@ -125,16 +125,13 @@ func runSyncWorkflows(args []string) error {
 }
 
 func loadPackagesConfig(path string) (*PackagesFile, error) {
-	// Use nix eval with builtins.fromTOML to avoid adding external dependencies to go.mod
-	expr := fmt.Sprintf("builtins.fromTOML (builtins.readFile %s)", path)
-	cmd := exec.Command("nix", "eval", "--impure", "--json", "--expr", expr)
-	out, err := cmd.Output()
+	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("evaluating %s via nix fromTOML: %w", path, err)
+		return nil, fmt.Errorf("reading %s: %w", path, err)
 	}
 
 	var pf PackagesFile
-	if err := json.Unmarshal(out, &pf); err != nil {
+	if err := json.Unmarshal(data, &pf); err != nil {
 		return nil, fmt.Errorf("unmarshaling JSON from %s: %w", path, err)
 	}
 	return &pf, nil

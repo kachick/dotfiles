@@ -126,7 +126,7 @@ tasks:
   sync-workflows:
     aliases:
       - sync-packages
-    desc: Synchronize workflow files with pkgs/list.toml
+    desc: Synchronize workflow files with pkgs/list.json
     cmds:
       - go run ./cmd/ci-build sync-workflows
       - dprint fmt .github/workflows/nix.yml .github/workflows/update-local-packages.yml

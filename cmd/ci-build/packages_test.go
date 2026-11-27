@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-// TestUpdateScripts_FlakeArg verifies that all packages marked with `update = true`
-// in pkgs/list.toml that use nix-update-script include `--flake` in extraArgs.
+// TestUpdateScripts_FlakeArg verifies that all packages marked with `update: true`
+// in pkgs/list.json that use nix-update-script include `--flake` in extraArgs.
 // nix-update does not automatically propagate `--flake` to child update scripts:
 // https://github.com/Mic92/nix-update/pull/330
 func TestUpdateScripts_FlakeArg(t *testing.T) {
@@ -27,7 +27,7 @@ let
   flake = builtins.getFlake (toString ./.);
   system = builtins.currentSystem;
   pkgs = flake.packages.${system};
-  config = builtins.fromTOML (builtins.readFile ./pkgs/list.toml);
+  config = builtins.fromJSON (builtins.readFile ./pkgs/list.json);
   lib = flake.inputs.nixpkgs.lib;
 
   updatePkgs = lib.filterAttrs (_: cfg: cfg.update or false) config.packages;
