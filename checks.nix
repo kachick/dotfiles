@@ -77,14 +77,12 @@ let
 in
 {
   pkgs-list-exists =
-    if missingPackages != [ ] then
-      throw "pkgs/list.json references unknown packages: ${lib.concatStringsSep ", " missingPackages}"
-    else
-      pkgs.runCommandLocal "check-pkgs-list-exists" { } "touch $out";
+    lib.throwIf (missingPackages != [ ])
+      "pkgs/list.json references unknown packages: ${lib.concatStringsSep ", " missingPackages}"
+      (pkgs.runCommandLocal "check-pkgs-list-exists" { } "touch $out");
 
   go-toolchain-sync =
-    if goVersionErrors != [ ] then
-      throw "Go toolchain version mismatch:\n- ${lib.concatStringsSep "\n- " goVersionErrors}"
-    else
-      pkgs.runCommandLocal "check-go-toolchain-sync" { } "touch $out";
+    lib.throwIf (goVersionErrors != [ ])
+      "Go toolchain version mismatch:\n- ${lib.concatStringsSep "\n- " goVersionErrors}"
+      (pkgs.runCommandLocal "check-go-toolchain-sync" { } "touch $out");
 }
