@@ -243,8 +243,6 @@
   # If adding unstable packages here, you should also add it into home-manager/linux-ci.nix
   environment.systemPackages =
     (with pkgs; [
-      firefox
-
       # https://github.com/NixOS/nixpkgs/issues/33282
       xdg-user-dirs
 
@@ -367,6 +365,9 @@
       "en-US"
       "ja"
     ];
+    # Set at policy level so Japanese UI still applies when a legacy ~/.mozilla/firefox
+    # profile overrides Home Manager's ~/.config/mozilla/firefox/default/user.js.
+    policies.RequestedLocales = [ "ja" ];
   };
 
   i18n = {
