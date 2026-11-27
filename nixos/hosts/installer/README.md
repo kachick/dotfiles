@@ -79,3 +79,13 @@ flowchart TD
 - `MultiOS-USB` stays read-only at `/run/loopback-host` during Live boots to protect the mounted ISO, while `SHARED_DATA` mounts read-write at `/mnt/shared` for general files and local GGUF models.
 - `loopback-iso-finder.service` is skipped on direct-burn USBs and VMs because `findiso` is absent from `/proc/cmdline`.
 - Without a local GGUF on `/mnt/shared` or `/run/loopback-host`, `llama-plamo` does not auto-start to avoid filling `tmpfs`, while manual `plamo start` falls back to `-hf`.
+
+## Local VM Verification
+
+Test MultiOS-USB loopback boot locally in QEMU + OVMF instead of writing a physical USB stick (kept out of CI to avoid heavy VM runs):
+
+- Build a 6 GiB GPT raw image with `p1` (`MultiOS-EFI`, FAT16 via `mkfs.vfat` + `mcopy`) and `p2` (`MultiOS-USB`, exFAT via `mkfs.exfat`).
+- Because the ISO is larger than the 4 GiB FAT32 limit and exFAT has no rootless copy tool like `mcopy`, fill `p2` by booting the ISO once in QEMU (`plymouth.enable=0 console=ttyS0,115200n8`) with `virtio-9p` mounts and copying `MultiOS-USB/` and `ISOs/*.iso` onto `p2`.
+- Boot the virtual USB read-only over UEFI (`-drive if=pflash,format=raw,readonly=on,file=/run/current-system/sw/share/qemu/edk2-x86_64-code.fd`) and attach it via `-device qemu-xhci -device usb-storage,drive=usb0` so stage 1 sees `/dev/sda*` like real hardware.
+- Drive GRUB menus over the QEMU monitor (`sendkey` / `screendump`) and verify Live boot via forwarded SSH (`hostfwd=tcp:127.0.0.1:<port>-:22`).
+- Inspect initrd modules without booting via `zstd -dc <initrd> | cpio -t`.
