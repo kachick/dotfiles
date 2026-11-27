@@ -105,11 +105,8 @@ in
 
       # This will work if you enabled "pattern" highlighter
       # https://github.com/zsh-users/zsh-syntax-highlighting/blob/e0165eaa730dd0fa321a6a6de74f092fe87630b0/docs/highlighters/pattern.md
-      patterns = builtins.listToAttrs (
-        (map (typo: {
-          name = typo;
-          value = "fg=red,bold";
-        }))
+      patterns =
+        lib.pipe
           (
             [
               "rm -rf *"
@@ -118,7 +115,10 @@ in
             ]
             ++ import ./typo_commands.nix
           )
-      );
+          [
+            (map (typo: lib.nameValuePair typo "fg=red,bold"))
+            builtins.listToAttrs
+          ];
     };
 
     autosuggestion = {

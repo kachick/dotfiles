@@ -69,10 +69,12 @@ let
       ) "packages.${system}.${entry.name} uses Go ${pkgGoMinor}, but go.mod uses Go ${goModMinor}"
     ) localGoPackages);
 
-  listJSON = builtins.fromJSON (builtins.readFile ./pkgs/list.json);
-  missingPackages = builtins.filter (name: !(systemPackages ? ${name})) (
-    builtins.attrNames listJSON.packages
-  );
+  missingPackages = lib.pipe ./pkgs/list.json [
+    builtins.readFile
+    builtins.fromJSON
+    (json: builtins.attrNames json.packages)
+    (builtins.filter (name: !(systemPackages ? ${name})))
+  ];
 in
 {
   pkgs-list-exists =

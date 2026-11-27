@@ -56,23 +56,27 @@ let
   };
 
   nixSettings = (import ../nixos/nix.nix).nix.settings;
-  nixConf = pkgs.writeText "nix.conf" (
-    pkgs.lib.concatStringsSep "\n" (
-      (pkgs.lib.mapAttrsToList (
-        k: v:
-        if builtins.isList v then
-          "${k} = ${builtins.concatStringsSep " " v}"
-        else if builtins.isBool v then
-          "${k} = ${if v then "true" else "false"}"
-        else
-          "${k} = ${toString v}"
-      ) nixSettings)
+  nixConf = pkgs.lib.pipe nixSettings [
+    (pkgs.lib.mapAttrsToList (
+      k: v:
+      if builtins.isList v then
+        "${k} = ${builtins.concatStringsSep " " v}"
+      else if builtins.isBool v then
+        "${k} = ${if v then "true" else "false"}"
+      else
+        "${k} = ${toString v}"
+    ))
+    (
+      lines:
+      lines
       ++ [
         "sandbox = false"
         "extra-trusted-users = visitor"
       ]
     )
-  );
+    (pkgs.lib.concatStringsSep "\n")
+    (pkgs.writeText "nix.conf")
+  ];
 in
 (pkgs.dockerTools.buildLayeredImage {
   name = "home";

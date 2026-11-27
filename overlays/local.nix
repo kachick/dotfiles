@@ -2,27 +2,24 @@ final: _prev: {
   local =
     let
       byNameDir = ../pkgs/by-name;
-      prefixes = builtins.attrNames (builtins.readDir byNameDir);
-      packageEntries = final.lib.concatLists (
-        map (
-          prefix:
-          let
-            prefixDir = byNameDir + "/${prefix}";
-          in
-          map (name: {
-            inherit name;
-            path = prefixDir + "/${name}/package.nix";
-          }) (builtins.attrNames (builtins.readDir prefixDir))
-        ) prefixes
-      );
     in
-    builtins.listToAttrs (
-      map (
-        { name, path }:
-        {
-          inherit name;
-          value = final.callPackage path { };
-        }
-      ) packageEntries
-    );
+    final.lib.pipe byNameDir [
+      builtins.readDir
+      builtins.attrNames
+      (builtins.concatMap (
+        prefix:
+        let
+          prefixDir = byNameDir + "/${prefix}";
+        in
+        final.lib.pipe prefixDir [
+          builtins.readDir
+          builtins.attrNames
+          (map (name: {
+            inherit name;
+            value = final.callPackage (prefixDir + "/${name}/package.nix") { };
+          }))
+        ]
+      ))
+      builtins.listToAttrs
+    ];
 }

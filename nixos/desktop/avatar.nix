@@ -6,7 +6,10 @@
 }:
 
 let
-  normalUsers = lib.attrNames (lib.filterAttrs (_: user: user.isNormalUser) config.users.users);
+  normalUsers = lib.pipe config.users.users [
+    (lib.filterAttrs (_: user: user.isNormalUser))
+    lib.attrNames
+  ];
 
   # Assign a one-time random avatar from GNOME's stock faces to normal users
   # who do not have an avatar yet.

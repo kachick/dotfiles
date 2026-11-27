@@ -32,6 +32,7 @@ let
   repoRoot = toString ./..;
   system = "x86_64-linux";
   pkgs = flake.inputs.nixpkgs.legacyPackages.${system};
+  inherit (pkgs) lib;
 
   # Check if a definition location comes from this dotfiles repo
   isRepoFile =
@@ -42,56 +43,38 @@ let
       || (builtins.substring 0 (builtins.stringLength repoRoot) loc) == repoRoot
     );
 
-  # 1. Collect packages from Home Manager configurations
-  hmPackages = builtins.concatLists (
-    builtins.attrValues (
-      builtins.mapAttrs (
-        _: hmCfg:
+  extractRepoPackageNames =
+    defs:
+    lib.pipe defs [
+      (builtins.filter (d: isRepoFile d.file))
+      (builtins.concatMap (
+        d:
         let
-          defs = hmCfg.options.home.packages.definitionsWithLocations or [ ];
-          repoDefs = builtins.filter (d: isRepoFile d.file) defs;
+          val = (builtins.tryEval d.value).value or [ ];
         in
-        builtins.concatMap (
-          d:
-          let
-            val = (builtins.tryEval d.value).value or [ ];
-          in
-          map (p: p.pname or (p.name or "unknown")) val
-        ) repoDefs
-      ) flake.outputs.homeConfigurations
-    )
-  );
+        map (p: p.pname or (p.name or "unknown")) val
+      ))
+    ];
+
+  # 1. Collect packages from Home Manager configurations
+  hmPackages = lib.pipe flake.outputs.homeConfigurations [
+    builtins.attrValues
+    (builtins.concatMap (
+      hmCfg: extractRepoPackageNames (hmCfg.options.home.packages.definitionsWithLocations or [ ])
+    ))
+  ];
 
   # 2. Collect packages from NixOS configurations (systemPackages + fonts)
-  nixosPackages = builtins.concatLists (
-    builtins.attrValues (
-      builtins.mapAttrs (
-        _: osCfg:
-        let
-          defs = osCfg.options.environment.systemPackages.definitionsWithLocations or [ ];
-          repoDefs = builtins.filter (d: isRepoFile d.file) defs;
-
-          fontDefs = osCfg.options.fonts.packages.definitionsWithLocations or [ ];
-          repoFontDefs = builtins.filter (d: isRepoFile d.file) fontDefs;
-          fonts = builtins.concatMap (
-            d:
-            let
-              val = (builtins.tryEval d.value).value or [ ];
-            in
-            map (p: p.pname or (p.name or "unknown")) val
-          ) repoFontDefs;
-        in
-        fonts
-        ++ builtins.concatMap (
-          d:
-          let
-            val = (builtins.tryEval d.value).value or [ ];
-          in
-          map (p: p.pname or (p.name or "unknown")) val
-        ) repoDefs
-      ) flake.outputs.nixosConfigurations
-    )
-  );
+  nixosPackages = lib.pipe flake.outputs.nixosConfigurations [
+    builtins.attrValues
+    (builtins.concatMap (
+      osCfg:
+      extractRepoPackageNames (osCfg.options.fonts.packages.definitionsWithLocations or [ ])
+      ++ extractRepoPackageNames (
+        osCfg.options.environment.systemPackages.definitionsWithLocations or [ ]
+      )
+    ))
+  ];
 
   # 3. Collect inputs from devShell
   devShellPackages =
@@ -119,15 +102,15 @@ let
     "ibm-plex-serif-variable" = "ibm-plex.serif-variable";
   };
 
-  allRaw = hmPackages ++ nixosPackages ++ devShellPackages;
-
-  # Remove local in-repo packages dynamically
-  upstreamOnly = builtins.filter (p: !(builtins.elem p localPackages)) allRaw;
-
-  # Normalize to attribute names when applicable
-  mapped = map (p: pnameToAttr.${p} or p) upstreamOnly;
-
-  # Deduplicate and sort
-  unique = pkgs.lib.sort (a: b: a < b) (pkgs.lib.unique mapped);
 in
-builtins.concatStringsSep " " unique + "\n"
+lib.pipe (hmPackages ++ nixosPackages ++ devShellPackages) [
+  # Remove local in-repo packages dynamically
+  (builtins.filter (p: !(builtins.elem p localPackages)))
+  # Normalize to attribute names when applicable
+  (map (p: pnameToAttr.${p} or p))
+  # Deduplicate and sort
+  lib.unique
+  (lib.sort (a: b: a < b))
+  (builtins.concatStringsSep " ")
+  (s: s + "\n")
+]
