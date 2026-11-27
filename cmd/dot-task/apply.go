@@ -66,6 +66,27 @@ func executeNixos(dryRun bool, e env) error {
 	return e.runCmd("sudo", "nixos-rebuild", "switch", "--flake", ".#"+target, "--show-trace")
 }
 
+func runCheckNixos(args []string, e env) error {
+	if len(args) > 0 {
+		return errors.New("usage: dot-task check-nixos")
+	}
+
+	hosts, err := listFlakeAttrs("nixosConfigurations", e)
+	if err != nil {
+		return err
+	}
+	if len(hosts) == 0 {
+		return errors.New("no entries found in flake nixosConfigurations")
+	}
+
+	cmdArgs := make([]string, 0, len(hosts)+2)
+	cmdArgs = append(cmdArgs, "build", "--dry-run")
+	for _, host := range hosts {
+		cmdArgs = append(cmdArgs, ".#nixosConfigurations."+host+".config.system.build.toplevel")
+	}
+	return e.runCmd("nix", cmdArgs...)
+}
+
 func runHomeManager(args []string, e env) error {
 	dryRun, err := parseApplyFlags("home-manager", args)
 	if err != nil {

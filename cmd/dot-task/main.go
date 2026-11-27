@@ -103,7 +103,7 @@ func main() {
 
 func run(args []string, e env) error {
 	if len(args) < 1 {
-		return fmt.Errorf("usage: dot-task <apply|nixos|home-manager|update|ghcr> [args]")
+		return fmt.Errorf("usage: dot-task <apply|nixos|home-manager|check-nixos|update|ghcr> [args]")
 	}
 
 	subcommand := args[0]
@@ -115,6 +115,8 @@ func run(args []string, e env) error {
 		return runNixos(rest, e)
 	case "home-manager":
 		return runHomeManager(rest, e)
+	case "check-nixos":
+		return runCheckNixos(rest, e)
 	case "update":
 		return runUpdate(rest, e)
 	case "ghcr":
@@ -122,6 +124,6 @@ func run(args []string, e env) error {
 	case "ghcr-preview":
 		return runGHCRPreview(rest, e)
 	default:
-		return fmt.Errorf("unknown subcommand %q (usage: dot-task <apply|nixos|home-manager|update|ghcr> [args])", subcommand)
+		return fmt.Errorf("unknown subcommand %q (usage: dot-task <apply|nixos|home-manager|check-nixos|update|ghcr> [args])", subcommand)
 	}
 }

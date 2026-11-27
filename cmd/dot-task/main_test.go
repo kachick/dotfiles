@@ -60,6 +60,38 @@ func testEnv(calls *[]recordedCall) env {
 	}
 }
 
+func TestRunCheckNixos(t *testing.T) {
+	t.Run("dry-runs all hosts from flake nixosConfigurations", func(t *testing.T) {
+		var calls []recordedCall
+		e := testEnv(&calls)
+
+		if err := run([]string{"check-nixos"}, e); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		want := []recordedCall{{
+			name: "nix",
+			args: []string{
+				"build", "--dry-run",
+				".#nixosConfigurations.algae.config.system.build.toplevel",
+				".#nixosConfigurations.moss.config.system.build.toplevel",
+				".#nixosConfigurations.wsl.config.system.build.toplevel",
+			},
+		}}
+		if !reflect.DeepEqual(calls, want) {
+			t.Fatalf("calls = %+v, want %+v", calls, want)
+		}
+	})
+
+	t.Run("rejects unexpected arguments", func(t *testing.T) {
+		var calls []recordedCall
+		e := testEnv(&calls)
+		if err := run([]string{"check-nixos", "extra"}, e); err == nil {
+			t.Fatal("expected error for extra argument, got nil")
+		}
+	})
+}
+
 func TestRunApply(t *testing.T) {
 	t.Run("routes to nixos when /etc/NIXOS exists", func(t *testing.T) {
 		var calls []recordedCall

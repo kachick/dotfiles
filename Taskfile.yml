@@ -58,12 +58,10 @@ tasks:
 
   check-nixos:
     desc: Dry-run all NixOS configurations in this repository
+    deps:
+      - build-cmd
     cmds:
-      - nix build .#nixosConfigurations.moss.config.system.build.toplevel --dry-run
-      - nix build .#nixosConfigurations.algae.config.system.build.toplevel --dry-run
-      - nix build .#nixosConfigurations.desktop-free.config.system.build.toplevel --dry-run
-      - nix build .#nixosConfigurations.wsl.config.system.build.toplevel --dry-run
-      - nix build .#nixosConfigurations.sandbox.config.system.build.toplevel --dry-run
+      - ./dist/dot-task check-nixos
 
   test-sample-nixos:
     desc: Verify the sample NixOS configuration template
