@@ -6,10 +6,15 @@ import (
 	"flag"
 	"log"
 
-	"github.com/kachick/dotfiles/internal/constants"
-	"github.com/kachick/dotfiles/internal/fileutils"
-	"github.com/kachick/dotfiles/internal/runner"
+	"github.com/kachick/dotfiles/cmd/lint/internal/fileutils"
+	"github.com/kachick/dotfiles/cmd/lint/internal/runner"
 )
+
+var typosTargetedRoots = []string{
+	".",
+	".github",
+	".vscode",
+}
 
 func main() {
 	allFlag := flag.Bool("all", false, "includes heavy linters")
@@ -38,7 +43,7 @@ func main() {
 	// Don't add secrets scanner here. It should be done in pre-push hook now.
 	linters := runner.Commands{
 		{Path: "shellcheck", Args: bashPaths},
-		{Path: "typos", Args: constants.GetTyposTargetedRoots()},
+		{Path: "typos", Args: typosTargetedRoots},
 		{Path: "go", Args: []string{"vet", "./..."}},
 		{Path: "nixf-diagnose", Args: append([]string{"--"}, nixPaths...)},
 	}
