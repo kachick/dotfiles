@@ -44,6 +44,9 @@
     archive UUID=4ee41fba-4ab8-4865-8521-acfe56022ae0 /etc/cryptsetup-keys.d/archive.key discard,no-read-workqueue,no-write-workqueue
   '';
 
+  # GVfs hides /mnt/* mounts by default; expose the archive drive in Nautilus.
+  fileSystems."/mnt/archive".options = [ "x-gvfs-show" ];
+
   boot.loader.systemd-boot = {
     enable = true;
     configurationLimit = 20;

@@ -143,6 +143,8 @@ in
         "nofail"
         "x-systemd.automount"
         "x-systemd.device-timeout=2s"
+        # GVfs hides /mnt/* mounts by default; expose this shared partition in Nautilus.
+        "x-gvfs-show"
         # Grant read-write access to the `users` group (gid 100) without assuming
         # a fixed UID for the live `nixos` user.
         "gid=100"
